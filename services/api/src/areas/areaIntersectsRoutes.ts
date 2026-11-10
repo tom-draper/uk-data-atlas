@@ -6,14 +6,14 @@ import {
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
 import { cursorFor, nextPageHref, readCursor } from "../pagination";
 import { latestPublishedBoundaryRelease } from "../pointLookup";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { readChoice, readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import { readChoice, readWholeNumber } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 /**

@@ -1,13 +1,13 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
+import { areaNotFound } from "../runtime/index.ts";
 import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import {
 	problem,
 	requirementDetail,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import type { RouteContextFor } from "../runtime/index.ts";
 
 type AreaIdentity = {
 	geography: string;

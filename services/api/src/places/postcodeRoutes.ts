@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
@@ -18,14 +18,14 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { readBatchInput } from "../batchInput";
 import type {
 	RouteRequestFor,
 	RouteContextFor,
 	RouteContext,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";

@@ -5,7 +5,7 @@ import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type { LocationCoverage } from "./locationAggregation";
 import type { NamedLocation } from "@uk-data-atlas/places";
 import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/loader";
-import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, type ApiResponse } from "./runtime/index.ts";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 
 export type AggregateWeighting = {

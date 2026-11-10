@@ -3,11 +3,7 @@ import type { AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
 import { aggregateRecordsForTarget } from "./aggregateTargetMembers";
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
 import { calculateWeightedMean } from "@uk-data-atlas/measures";
 
 type WeightedAggregateResult =

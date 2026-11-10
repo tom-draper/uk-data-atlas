@@ -8,8 +8,8 @@ import type {
 	CompatibilityStatus,
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
-import type { ProblemCode } from "@uk-data-atlas/atlas-runtime/api";
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { ProblemCode } from "../runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 
 /**
  * The first slice of the resolution layer described under

@@ -13,7 +13,7 @@ import {
 	COMPATIBILITY_STATUSES,
 	readAtlasPayload,
 } from "@uk-data-atlas/catalogue/node";
-import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
+import { PROBLEM_CODES } from "../../src/runtime/index.ts";
 import { route as domainRoute } from "../../src/routes";
 import { indexResponse } from "../../src/indexRoutes";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";

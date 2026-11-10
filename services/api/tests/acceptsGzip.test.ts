@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { acceptsGzip, httpResponse } from "../src/httpResponse";
-import { envelope } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope } from "../src/runtime/index.ts";
 
 test("uses an explicit gzip preference before the wildcard", () => {
 	for (const header of [

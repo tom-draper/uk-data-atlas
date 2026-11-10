@@ -12,7 +12,7 @@ import type { LocationCoverage } from "./locationAggregation";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import type { NamedLocation } from "@uk-data-atlas/places";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
-import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { type ApiResponse } from "./runtime/index.ts";
 
 export type PreparedAggregate = {
 	aggregate: AggregateMembers;

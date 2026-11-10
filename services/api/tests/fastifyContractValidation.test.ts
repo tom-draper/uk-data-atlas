@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import Fastify from "fastify";
 import { z } from "zod";
-import { envelope } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope } from "../src/runtime/index.ts";
 import { registerGetRoute } from "../src/contract/registerGetRoute";
 
 test("the contract rejects an invalid successful response before sending it", async () => {

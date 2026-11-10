@@ -1,8 +1,8 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { directRelationshipPath } from "@uk-data-atlas/relationships";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
-import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
+import { readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 import { readPostedRows } from "../requestRows";
 import {
@@ -10,11 +10,8 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import {
 	convertSuppliedCounts,
 	readSuppliedCounts,

@@ -1,12 +1,8 @@
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	envelope,
-	invalidQuery,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "../runtime/index.ts";
+import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
-import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
+import { readWholeNumber } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const DEPTH =

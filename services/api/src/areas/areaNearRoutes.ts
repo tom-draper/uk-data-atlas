@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { DISTANCE_METHOD } from "@uk-data-atlas/geography/area-distance";
 import {
 	MAX_STATED_ACCURACY_M,
@@ -9,13 +9,9 @@ import {
 	parseLookupRequest,
 	parseStatedAccuracy,
 } from "../pointLookup";
-import {
-	envelope,
-	invalidQuery,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { readWholeNumber } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const NEAR = QUERY_RULES["GET /areas:near"];

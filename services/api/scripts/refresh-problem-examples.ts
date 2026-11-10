@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { parseDocument } from "yaml";
 import { readApiCatalogues } from "../src/catalogueLoader";
 import { publicJson } from "@uk-data-atlas/atlas-db";
-import { PROBLEM_CODES } from "@uk-data-atlas/atlas-runtime/api";
+import { PROBLEM_CODES } from "../src/runtime/index.ts";
 import { route } from "../src/routes";
 
 const root = resolve(import.meta.dirname, "..");

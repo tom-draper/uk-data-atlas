@@ -10,8 +10,8 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import {
 	areaNamedBy,

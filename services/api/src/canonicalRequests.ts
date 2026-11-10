@@ -1,9 +1,6 @@
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "./runtime/index.ts";
 import { boundaryReleaseMonth } from "@uk-data-atlas/areas";
-import type {
-	RouteRequest,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequest, RouteRequestFor } from "./runtime/index.ts";
 import { measureSlug } from "@uk-data-atlas/catalogue";
 import { canonicalMeasureId } from "./catalogue/measureTerms";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";

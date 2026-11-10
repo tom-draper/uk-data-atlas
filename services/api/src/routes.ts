@@ -1,11 +1,11 @@
-import { unexpectedQueryParameter } from "@uk-data-atlas/atlas-runtime/api";
+import { unexpectedQueryParameter } from "./runtime/index.ts";
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
 import type {
 	RequestBody,
 	RouteDispatchContext,
 	RouteRequest,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+} from "./runtime/index.ts";
+import { problem, type ApiResponse } from "./runtime/index.ts";
 
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
 import {
@@ -14,7 +14,7 @@ import {
 	seriesResponse,
 } from "./dimensions/dimensionResponses";
 
-export { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+export { type ApiResponse } from "./runtime/index.ts";
 
 const decodePathSegment = (segment: string) => {
 	try {

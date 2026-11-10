@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { GEOJSON_TIERS } from "@uk-data-atlas/map-tiles/node";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "./runtime/index.ts";
 import type { FullDetailSource } from "@uk-data-atlas/atlas-runtime/loader";
 import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/loader";
 import { releaseKey } from "@uk-data-atlas/geography";
@@ -12,9 +12,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
-import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
+} from "./runtime/index.ts";
+import type { RouteRequest } from "./runtime/index.ts";
+import { choices, readChoice } from "./runtime/index.ts";
 import { QUERY_RULES } from "./queryRules";
 
 /**

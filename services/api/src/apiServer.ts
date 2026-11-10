@@ -46,18 +46,14 @@ import {
 	deprecationHeaders,
 	type MatchedOperation,
 	unexpectedQueryParameter,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "./runtime/index.ts";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./places/postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { ResponseCache } from "./responseCache";
-import {
-	isStoredFile,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { isStoredFile, problem, type ApiResponse } from "./runtime/index.ts";
 import { routeAsync } from "./routes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "./runtime/index.ts";
 import {
 	DEFAULT_MAX_URL_LENGTH,
 	DEFAULT_MAX_CONCURRENT_REQUESTS,

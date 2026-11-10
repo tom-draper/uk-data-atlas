@@ -7,10 +7,7 @@ import { gzipSync } from "node:zlib";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
 import { readPostedRows } from "../src/requestRows";
 import { route, routeAsync } from "../src/routes";
-import type {
-	RequestBody,
-	RouteContext,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RequestBody, RouteContext } from "../src/runtime/index.ts";
 import { areaLookup, registry, testContext } from "./routeFixtures";
 
 const json = (value: unknown): RequestBody => ({

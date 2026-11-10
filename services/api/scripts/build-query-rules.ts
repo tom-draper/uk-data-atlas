@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { compileQueryRules } from "@uk-data-atlas/atlas-runtime/api";
+import { compileQueryRules } from "../src/runtime/index.ts";
 
 /**
  * Writes `src/queryRules.ts` from `openapi.yaml`. The file is committed, so

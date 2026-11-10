@@ -1,13 +1,13 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
+import { areaNotFound } from "../runtime/index.ts";
 import { parseSelectionDate } from "@uk-data-atlas/areas";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 
 type AreaQueryRequest = Pick<
 	RouteRequestFor<

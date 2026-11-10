@@ -41,3 +41,6 @@ export type {
 } from "./resolver/releaseComparison.ts";
 export * from "./resolver/spatial.ts";
 export * from "./resolver/postcodes.ts";
+
+export { PostcodeResolver } from "./resolver/postcodes.ts";
+export type { AreaValidation } from "./resolver/areaValidation.ts";

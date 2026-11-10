@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import {
 	readAtlasCatalogues,
 	type CatalogueOptions,
-} from "../loader/catalogueLoader.ts";
+} from "@uk-data-atlas/atlas-runtime/loader";
 import { createOperationMatcher } from "./operationTemplates.ts";
 import { readOperations } from "./operationsLoader.ts";
 import { apiRootOf } from "@uk-data-atlas/atlas-db";

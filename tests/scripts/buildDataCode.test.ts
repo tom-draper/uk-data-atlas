@@ -464,7 +464,7 @@ test("production builders resolve without UI code and include declared workers a
 	for (const path of [
 		"pipeline/src/build-operations.ts",
 		"pipeline/src/atlas/operationTemplates.ts",
-		"packages/atlas-runtime/src/api/operations.ts",
+		"packages/artifacts/src/operations.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 	]) {

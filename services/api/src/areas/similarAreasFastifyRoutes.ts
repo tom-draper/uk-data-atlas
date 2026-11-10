@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import type {
 	RouteContextFor,
 	RouteDispatchContext,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import {
 	registerGetRoute,
 	type ContractDispatch,

@@ -15,14 +15,14 @@ import {
 } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
 import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/loader";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 
 /** One area's source-exact, or explicitly reviewed derived, values over time. */
 export const handleDataSeriesRoutes = ({

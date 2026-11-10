@@ -8,7 +8,7 @@ import {
 	LocationProjectionStore,
 } from "@uk-data-atlas/places";
 import { cursorFor } from "../src/pagination";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
 	registry,

@@ -1,12 +1,12 @@
 import {
 	handleAnalysisGeographyRoutes,
 	handleGovernanceRoutes,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../src/runtime/index.ts";
 import { route } from "../src/routes";
 import type {
 	RouteDispatchContext,
 	RouteRequest,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../src/runtime/index.ts";
 
 /** Exercise report adapters using the route fixtures. */
 export const reportRequest = (

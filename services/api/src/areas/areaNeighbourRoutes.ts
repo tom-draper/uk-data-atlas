@@ -1,15 +1,15 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { areaMetrics } from "../areaMetrics";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
-import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
+import { readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const NEIGHBOURS =

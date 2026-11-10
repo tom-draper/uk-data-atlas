@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import {
@@ -20,7 +20,7 @@ import {
 	type CallerSelectedGeometry,
 } from "@uk-data-atlas/atlas-runtime/loader";
 import { nextPageHref, paginate } from "../pagination";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {
 	areaNamedBy,
@@ -34,8 +34,8 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const DATA = QUERY_RULES["GET /data/{measure-id}"];

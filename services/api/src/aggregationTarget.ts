@@ -10,11 +10,7 @@ import {
 	pathMembershipClaims,
 } from "./aggregationMembership";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
 
 export type AggregationTarget = {

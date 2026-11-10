@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
@@ -25,12 +25,9 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { readBatchInput } from "../batchInput";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;

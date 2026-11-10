@@ -11,7 +11,7 @@ import {
 	readWholeNumber,
 	type ApiResponse,
 	type RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { refused } from "../observationResolution/observationPlan";
 import { publishedPartitions } from "../dataDefaults";
 import { QUERY_RULES } from "../queryRules";
