@@ -187,8 +187,8 @@ export const dimensionCatalogue = (
 const identities = new WeakMap<DataCatalog, MeasureDimensions>();
 
 /**
- * Each catalogue measure as a measure of its own with no dimensions, for a
- * server started without the reviewed mapping, such as a test fixture.
+ * Minimal labels and members for a catalogue without a supplied vocabulary.
+ * An older catalogue without identities treats each measure as its own series.
  */
 export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
 	const cached = identities.get(catalog);
