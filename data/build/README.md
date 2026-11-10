@@ -1004,12 +1004,12 @@ an area's boundary. Read the value as the first non-null along the chain of
 fallbacks, which always point to earlier positions. Columns with no fallback are
 never null, and zero is always stored as zero. The writer picks each fallback
 as the earlier release that matches most often, the earliest on a tie. This is
-lossless: the reader rebuilds the same centimetres and shard bytes, and
+lossless: the reader rebuilds the same centimetres, and
 `postcodes_decoded` returns the resolved values. On the 2.67 million postcode build it
 cut `postcodes` by about 105 MB.
 
 ```sql
-SELECT p.postcode, a.code, a.name
+SELECT p.postcode, a.code, v.name
 FROM postcodes p
 JOIN postcode_area_set s ON s.id = p.area_set_id
 JOIN area_version v ON v.id = s.countryAreaId
@@ -1029,10 +1029,10 @@ before: the postcode fields, each `AreaId` and `DistanceCm` pair, then each `Cod
 A null area ID means no single interior match. `postcode_area_matches` holds
 multiple or boundary matches, with their containment, distance and original order.
 Its decoded view, `postcode_area_matches_decoded`, adds geography, boundary
-release, code and name. `postcode_area_columns` preserves release order and the
-presence of the optional several-match field per district. `postcode_area_codes`
-preserves each district's code dictionary as ordered references to `area_version`.
-These small tables retain the details needed to reconstruct the original bytes.
+release, code and name. The reader derives each district's code dictionary and
+release order from these rows and `postcode_area_releases`. It verifies the
+derived shard against `postcode_area_shard_hash`; the original input shard hashes
+in the inventory remain provenance and need not match the derived JSON bytes.
 
 The `postcode-areas` stage places each postcode once and writes the shards. The
 `verify-postcode-areas` check stage reads them back and compares every 5,000th
@@ -1043,23 +1043,14 @@ nearest-edge lookup. A local build skips it; `pnpm data:build --verify` and
 The reader selects a compact-postcode prefix range, filters to the district's
 postcode length, and orders by postcode using the primary key. This reproduces
 the compiler's code-unit order, including districts such as M1, M10 and M1A.
-It reconstructs the original district JSON and verifies the manifest SHA-256
-before returning it. Postcode and area content hashes and API ETags are unchanged.
+It derives district JSON from the relational data and verifies its derived hash
+before returning it. Source inventory hashes identify the inputs used by the build.
 
-Build this schema through the normal atlas and postcode build stages. The
-postcode-area writer checks every reconstructed area shard before publishing its
-temporary database atomically. Rebuild older databases with the current builders;
-the runtime supports only the current schema. The writer records `postcodeAreaLayout`
-(currently `"3"`) in `meta`. Postcode area readers throw, naming the rebuild, when
-it is missing or different, as it is for a database that stores `AreaId` columns
-on `postcodes` (layout 1) or has no `distanceFallback` (layout 2).
-
-Compare an old database with the rebuilt database using
-`NODE_OPTIONS=--max-old-space-size=2560 npx tsx services/api/scripts/compare-postcode-sqlite.ts BEFORE.sqlite services/api services/api/benchmarks/sqlite-postcode-areas.json`.
-The check requires nonempty shard inventories and exits nonzero on any byte or
-hash mismatch. It reports both shard counts, mismatch counts, database bytes,
-`dbstat` bytes per object, and nine warm timing samples for the largest area
-shard and a direct postcode lookup. Each timed read opens its own connection.
+Build this schema through the normal atlas and postcode build stages. The writer
+checks input shard hashes before publishing its temporary database atomically.
+Rebuild older databases with the current builders; the runtime supports only the
+current schema. The writer records `postcodeAreaLayout` (currently `"4"`) in
+`meta`, and readers refuse older layouts.
 
 Deprecated read-only compatibility views preserve the earlier names and column
 spellings. New queries should use the stored tables:

@@ -14,7 +14,7 @@ import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
-export const POSTCODE_AREA_LAYOUT = "3";
+export const POSTCODE_AREA_LAYOUT = "4";
 
 /** Refuse a database built before distances could fall back to another release. */
 export function requirePostcodeAreaLayout(database: SqlReader) {
@@ -75,6 +75,7 @@ export function readPostcodeAreaShard(
 	artifact: PostcodeAreasArtifact,
 	path: string,
 	table = "postcodes",
+	verify = true,
 ): string {
 	const entry = artifact.shards.find((e) => e.path === path);
 	if (!entry) throw new Error(`Missing postcode area shard ${path}`);
@@ -97,11 +98,6 @@ export function readPostcodeAreaShard(
 			entry.district.length + 3,
 		);
 	const columns = postcodeAreaColumns(artifact);
-	const headers = database
-		.prepare(
-			"SELECT * FROM postcode_area_columns WHERE district = ? ORDER BY position",
-		)
-		.all(entry.district);
 	const fallbacks = distanceFallbacks(database);
 	const resolved = new Map<number, number[]>();
 	const distancesOf = (position: number): number[] => {
@@ -121,23 +117,32 @@ export function readPostcodeAreaShard(
 		return distances;
 	};
 	const releases: PostcodeAreasShard["releases"] = {};
-	for (const header of headers) {
-		const position = Number(header.releasePosition);
-		const column = columns[position]!;
-		const codes = database
-			.prepare(
-				"SELECT c.areaId, a.code FROM postcode_area_codes c JOIN area_version v ON v.id = c.areaId JOIN area a ON a.id = v.area_id WHERE c.district = ? AND c.releasePosition = ? ORDER BY c.position",
-			)
-			.all(entry.district, position);
-		const codePositions = new Map(
-			codes.map((c, at) => [Number(c.areaId), at]),
-		);
-		const several: NonNullable<PostcodeAreaColumn["several"]> = {};
-		for (const match of database
+	const findCode = database.prepare(
+		"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.id = ?",
+	);
+	for (const [position, column] of columns.entries()) {
+		const matches = database
 			.prepare(
 				"SELECT * FROM postcode_area_matches WHERE district = ? AND releasePosition = ? ORDER BY postcodePosition, position",
 			)
-			.all(entry.district, position)) {
+			.all(entry.district, position);
+		const ids = new Set<number>();
+		for (const row of rows)
+			if (row[column.area] !== null) ids.add(Number(row[column.area]));
+		for (const match of matches) ids.add(Number(match.areaId));
+		const areaCodes = new Map<number, string>();
+		for (const id of ids) {
+			const code = findCode.get(id)?.code;
+			if (typeof code !== "string")
+				throw new Error(`Missing postcode area ${id}`);
+			areaCodes.set(id, code);
+		}
+		const sorted = [...areaCodes].sort((a, b) =>
+			a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0,
+		);
+		const codePositions = new Map(sorted.map(([id], at) => [id, at]));
+		const several: NonNullable<PostcodeAreaColumn["several"]> = {};
+		for (const match of matches) {
 			const at = String(match.postcodePosition);
 			(several[at] ??= []).push([
 				codePositions.get(Number(match.areaId))!,
@@ -146,7 +151,7 @@ export function readPostcodeAreaShard(
 			]);
 		}
 		releases[column.key] = {
-			codes: codes.map((c) => String(c.code)),
+			codes: sorted.map(([, code]) => code),
 			area: rows.map((row, at) =>
 				row[column.area] === null
 					? several[at]
@@ -155,7 +160,7 @@ export function readPostcodeAreaShard(
 					: codePositions.get(Number(row[column.area]))!,
 			),
 			distanceCm: distancesOf(position),
-			...(header.hasSeveral ? { several } : {}),
+			...(matches.length ? { several } : {}),
 		};
 	}
 	const shard: PostcodeAreasShard = {
@@ -166,7 +171,14 @@ export function readPostcodeAreaShard(
 		releases,
 	};
 	const text = `${JSON.stringify(shard)}\n`;
-	if (sha256(text) !== entry.contentHash)
-		throw new Error(`Invalid SQLite postcode area shard ${path}`);
+	if (verify) {
+		const expected = database
+			.prepare(
+				"SELECT sha256 FROM postcode_area_shard_hash WHERE district = ?",
+			)
+			.get(entry.district)?.sha256;
+		if (expected !== sha256(text))
+			throw new Error(`Invalid SQLite postcode area shard ${path}`);
+	}
 	return text;
 }

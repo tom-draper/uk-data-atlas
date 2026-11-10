@@ -127,8 +127,12 @@ export const readPostcodeAreaIndex = (
 			`The postcode area index at ${path} ${mismatch}. Run pnpm --dir ../.. data:build --only postcode-areas.`,
 		);
 	}
-	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
-		readSqlitePostcodeAreaShard(repositoryRoot, shard),
+	return new PostcodeAreaIndex(
+		artifact,
+		postcodeIndex,
+		(shard) => readSqlitePostcodeAreaShard(repositoryRoot, shard),
+		256,
+		false, // The SQLite reader verifies its derived shard hash.
 	);
 };
 

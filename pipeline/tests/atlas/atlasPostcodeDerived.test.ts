@@ -202,11 +202,11 @@ test("readers refuse a database built before postcode area sets", (t) => {
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 1 but this code needs 3/,
+		/postcode area layout 1 but this code needs 4/,
 	);
 });
 
-test("SQLite mappings retain exact bytes, boundary matches, distances and empty placements without JSON", (t) => {
+test("SQLite mappings retain boundary matches, distances and empty placements without JSON", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	mkdirSync(
 		join(
@@ -535,6 +535,61 @@ test("failed mapping replacements preserve the published database and old files;
 	assert.throws(() => readSqlitePostcodeAreas(root));
 });
 
+test("derived shards use canonical code order without preserving unused dictionary entries", (t) => {
+	const { root, path, compiled } = fixture(t);
+	const files = new Map(
+		compiled.files.map((file) => {
+			const shard: PostcodeAreasShard = JSON.parse(file.text);
+			for (const column of Object.values(shard.releases)) {
+				if (column.codes.length !== 2) continue;
+				column.codes.reverse();
+				column.area = column.area.map((value) =>
+					value >= 0 ? 1 - value : value,
+				);
+				for (const matches of Object.values(column.several ?? {}))
+					for (const match of matches) match[0] = 1 - match[0];
+			}
+			return [file.path, JSON.stringify(shard) + "\n"];
+		}),
+	);
+	const artifact = {
+		...compiled.artifact,
+		shards: compiled.artifact.shards.map((entry) => ({
+			...entry,
+			contentHash: sha256(files.get(entry.path)!),
+		})),
+	};
+	storePostcodeAreas(root, artifact, (name) => files.get(name)!);
+	const entry = artifact.shards[0]!;
+	const derived = JSON.parse(
+		readSqlitePostcodeAreaShard(root, entry.path),
+	) as PostcodeAreasShard;
+	assert.deepEqual(derived.releases["ward/2026"]!.codes, ["A", "B"]);
+	assert.deepEqual(derived.releases["ward/2026"]!.area, [0, SEVERAL]);
+	assert.notEqual(sha256(JSON.stringify(derived) + "\n"), entry.contentHash);
+	const postcodes = readPostcodeIndex(root);
+	const index = new PostcodeAreaIndex(
+		artifact,
+		postcodes,
+		(name) => readSqlitePostcodeAreaShard(root, name),
+		256,
+		false,
+	);
+	assert.deepEqual(index.containing("M11AA", "ward", "2026"), [
+		{ code: "A", containment: "interior", distanceToBoundaryM: 12.34 },
+	]);
+	const db = new DatabaseSync(path);
+	assert.equal(
+		db
+			.prepare(
+				"SELECT count(*) AS n FROM sqlite_schema WHERE name IN ('postcode_area_codes', 'postcode_area_columns')",
+			)
+			.get()!.n,
+		0,
+	);
+	db.close();
+});
+
 test("stored area corruption fails the shard hash check", (t) => {
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
@@ -553,7 +608,7 @@ test("stored area corruption fails the shard hash check", (t) => {
 	);
 });
 
-test("repeated geographies use exact releases and preserve shard release order", (t) => {
+test("repeated geographies use exact releases and canonical release order", (t) => {
 	const { root, apiRoot, path, compiled } = fixture(t);
 	const db = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	db.exec(
@@ -580,9 +635,9 @@ test("repeated geographies use exact releases and preserve shard release order",
 	};
 	storePostcodeAreas(root, artifact, (path) => files.get(path)!);
 	for (const entry of artifact.shards)
-		assert.equal(
-			readSqlitePostcodeAreaShard(root, entry.path),
-			files.get(entry.path),
+		assert.deepEqual(
+			JSON.parse(readSqlitePostcodeAreaShard(root, entry.path)),
+			JSON.parse(files.get(entry.path)!),
 		);
 	const after = new DatabaseSync(path);
 	assert.equal(
@@ -642,9 +697,9 @@ test("a release stores null where an earlier release has the same distance", (t)
 	};
 	storePostcodeAreas(root, artifact, (name) => files.get(name)!);
 	for (const entry of artifact.shards)
-		assert.equal(
-			readSqlitePostcodeAreaShard(root, entry.path),
-			files.get(entry.path),
+		assert.deepEqual(
+			JSON.parse(readSqlitePostcodeAreaShard(root, entry.path)),
+			JSON.parse(files.get(entry.path)!),
 		);
 	const after = new DatabaseSync(path);
 	assert.deepEqual(
