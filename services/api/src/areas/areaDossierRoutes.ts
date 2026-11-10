@@ -1,6 +1,6 @@
 import { requireGeography } from "../runtime/index.ts";
 import { areaNotFound } from "../runtime/index.ts";
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import {
 	problem,

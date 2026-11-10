@@ -1,5 +1,5 @@
 import proj4 from "proj4";
-import type { GeometryValidityReport } from "../index.ts";
+import type { GeometryValidityReport } from "../geometryValidity.ts";
 import {
 	packGeometry,
 	roundDegrees,
@@ -12,8 +12,14 @@ import {
 	type Position,
 } from "../geometryPositions.ts";
 
-import type { GeometryProvenance, GeometryTransformation } from "../index.ts";
-export type { GeometryProvenance, GeometryTransformation } from "../index.ts";
+import type {
+	GeometryProvenance,
+	GeometryTransformation,
+} from "../geometryProvenance.ts";
+export type {
+	GeometryProvenance,
+	GeometryTransformation,
+} from "../geometryProvenance.ts";
 
 type Reprojection = {
 	transformation: GeometryTransformation;

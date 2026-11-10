@@ -3,10 +3,10 @@ import type {
 	AreaGeometryCache,
 	GeoJsonGeometry,
 } from "@uk-data-atlas/geometry";
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 
-import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
-export type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
+import type { NamedLocationGeometry } from "@uk-data-atlas/geography";
+export type { NamedLocationGeometry } from "@uk-data-atlas/geography";
 
 const multiPolygon = (geometry: GeoJsonGeometry): MultiPolygon[] =>
 	geometry.type === "Polygon"

@@ -5,11 +5,8 @@ import {
 	readSqlitePostcodeAreaShard,
 } from "@uk-data-atlas/postcodes";
 
-import {
-	releaseKey,
-	type PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
-import type { PostcodeShard } from "@uk-data-atlas/geography/postcode-index-types";
+import { releaseKey, type PostcodeAreasShard } from "@uk-data-atlas/geography";
+import type { PostcodeShard } from "@uk-data-atlas/geography";
 
 export function validateShards(root: string) {
 	const index = readSqlitePostcodeIndexArtifact(root);

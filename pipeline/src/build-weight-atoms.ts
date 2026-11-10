@@ -6,7 +6,7 @@ import {
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
 import { parseCrosswalkAdapters } from "@uk-data-atlas/relationships";
-import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { readdirSync, readFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

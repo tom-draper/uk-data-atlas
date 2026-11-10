@@ -33,10 +33,7 @@ import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,
 } from "@uk-data-atlas/geography";
-import {
-	packGeometry,
-	unpackGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+import { packGeometry, unpackGeometry } from "@uk-data-atlas/geography";
 import { route } from "../src/routes";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";

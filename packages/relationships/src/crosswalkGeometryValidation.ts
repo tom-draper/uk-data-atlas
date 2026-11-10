@@ -4,14 +4,11 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
-import {
-	containPoint,
-	ringsOf,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+import { containPoint, ringsOf } from "@uk-data-atlas/geography";
 import {
 	boundaryDistanceWithinM,
 	distanceToBoundaryM,
-} from "@uk-data-atlas/geography/area-distance";
+} from "@uk-data-atlas/geography";
 import type { CrosswalkArea } from "./crosswalkTypes.ts";
 import {
 	geometrySubstitution,

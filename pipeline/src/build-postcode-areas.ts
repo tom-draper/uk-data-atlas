@@ -48,7 +48,7 @@ import {
 	type PostcodeAreaRelease,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
+} from "@uk-data-atlas/geography";
 
 /**
  * Compile postcode placements into a component: the areas each postcode's centroid lies in,

@@ -1,4 +1,4 @@
-import type { NamedLocationGeometry } from "@uk-data-atlas/geography/geometry-types";
+import type { NamedLocationGeometry } from "@uk-data-atlas/geography";
 
 /**
  * What a named location is. An official kind is an area ONS defines, with its

@@ -7,26 +7,7 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts",
-		"./geometry-positions": "./src/geometryPositions.ts",
-		"./geometry-point-containment": "./src/geometryPointContainment.ts",
-		"./geometry-types": "./src/geometryTypes.ts",
-		"./area-distance": "./src/areaDistance.ts",
-		"./packed-geometry": "./src/packedGeometry.ts",
-		"./reverse-grid-offset": "./src/reverseGridOffset.ts",
-		"./geometry-spatial-index": "./src/geometrySpatialIndex.ts",
-		"./area-geometry-pieces": "./src/areaGeometryPieces.ts",
-		"./crosswalk-spatial-index": "./src/crosswalkSpatialIndex.ts",
-		"./piece-intersection": "./src/pieceIntersection.ts",
-		"./postcode-area-types": "./src/postcodeAreaTypes.ts",
-		"./postcode-index-types": "./src/postcodeIndexTypes.ts",
-		"./postcode-count-types": "./src/postcodeCountTypes.ts",
-		"./postcode-defaults": "./src/postcodeDefaults.ts",
-		"./coordinates": "./src/coordinates/index.ts",
-		"./atlasBoundaryVintages": "./src/atlasBoundaryVintages.ts",
-		"./boundaryRegistry": "./src/boundaryRegistry.ts",
-		"./boundaryReleaseOrder": "./src/boundaryReleaseOrder.ts",
-		"./boundaryReleaseDeprecations": "./src/boundaryReleaseDeprecations.ts"
+		".": "./src/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

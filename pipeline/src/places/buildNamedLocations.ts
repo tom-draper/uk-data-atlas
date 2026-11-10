@@ -1,7 +1,7 @@
 import { packNamedLocations } from "../storage/index.ts";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 import {
 	countyMemberships,
 	SCOTTISH_LIEUTENANCY_AREAS,
@@ -11,7 +11,7 @@ import {
 } from "@uk-data-atlas/places";
 import { compileNamedLocations, membersAt } from "@uk-data-atlas/places";
 import { releaseMonth } from "@uk-data-atlas/catalogue";
-import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Geometry } from "@uk-data-atlas/geography";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";

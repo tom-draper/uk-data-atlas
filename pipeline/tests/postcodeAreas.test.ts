@@ -8,8 +8,8 @@ import { test } from "vitest";
 import {
 	boundaryDistanceFinder,
 	distanceToBoundaryM,
-} from "@uk-data-atlas/geography/area-distance";
-import { containPoint } from "@uk-data-atlas/geography/geometry-point-containment";
+} from "@uk-data-atlas/geography";
+import { containPoint } from "@uk-data-atlas/geography";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import {
 	NONE,

@@ -1,4 +1,4 @@
-import { canServeAsWgs84 } from "@uk-data-atlas/geography/coordinates";
+import { canServeAsWgs84 } from "@uk-data-atlas/geography";
 import type {
 	ValidationResource,
 	ValidationReport,

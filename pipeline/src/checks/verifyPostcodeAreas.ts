@@ -4,8 +4,8 @@ import {
 	releaseKey,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
-import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
+} from "@uk-data-atlas/geography";
+import { distanceToBoundaryM } from "@uk-data-atlas/geography";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { readFileSync } from "node:fs";

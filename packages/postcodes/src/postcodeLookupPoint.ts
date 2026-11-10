@@ -1,7 +1,7 @@
 import {
 	parseLookupCoordinate,
 	type LookupPoint,
-} from "@uk-data-atlas/geography/coordinates";
+} from "@uk-data-atlas/geography";
 import type { PostcodeCentroid } from "./postcodeIndex.ts";
 
 /**

@@ -13,7 +13,7 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
-import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Geometry } from "@uk-data-atlas/geography";
 
 const writeSource = (root: string, input: string, geojson: unknown) => {
 	const path = join(root, "data/source", input);

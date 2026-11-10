@@ -1,8 +1,8 @@
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 import type {
 	GeoJsonGeometry,
 	NamedLocationGeometry,
-} from "@uk-data-atlas/geography/geometry-types";
+} from "@uk-data-atlas/geography";
 import { packText, unpackText } from "./storedPayload.ts";
 
 /**

@@ -1,5 +1,5 @@
-import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
-import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography/postcode-count-types";
+import { releaseKey } from "@uk-data-atlas/geography";
+import type { PostcodeCountsArtifact } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { aggregateCounts } from "./duckdbPostcodeCounts.ts";
 import {

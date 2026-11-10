@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/geography/atlasBoundaryVintages";
+export * from "@uk-data-atlas/geography";

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { postcodeTables } from "../storage/index.ts";
 import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 
 export const storePostcodeIndex = (

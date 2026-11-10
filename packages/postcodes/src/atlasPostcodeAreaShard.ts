@@ -9,8 +9,8 @@ import {
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
 	type PostcodeAreaColumn,
-} from "@uk-data-atlas/geography/postcode-area-types";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
+} from "@uk-data-atlas/geography";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";

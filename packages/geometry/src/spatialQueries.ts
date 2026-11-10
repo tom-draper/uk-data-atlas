@@ -1,7 +1,7 @@
 import {
 	distanceToBoundsM,
 	distanceToGeometryM,
-} from "@uk-data-atlas/geography/area-distance";
+} from "@uk-data-atlas/geography";
 import {
 	boundsIntersect,
 	boundsWithin,
@@ -11,8 +11,8 @@ import {
 	type Coordinate,
 	type GeometryBounds,
 	type PointContainment,
-} from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
+} from "@uk-data-atlas/geography";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
 import { borderIndex, sharedBorderWith, type Neighbour } from "./borders.ts";
 
 export type GeometryRelease = {
