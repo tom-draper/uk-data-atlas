@@ -27,9 +27,16 @@ export const statisticsArtifactReader = (
 		);
 	const names = new Set<string>();
 	const seriesKeys = new Set<string>();
+	const byId = new Map(
+		catalog.measures.map((measure) => [measure.id, measure]),
+	);
+	const canonical = Boolean(
+		readPath.series &&
+		(identities || catalog.measures.some((measure) => measure.series)),
+	);
 	const selectorFor = (measureId: string, source: MeasureSource) => {
-		const identity = identities?.[measureId];
-		if (readPath.series && identities) {
+		const identity = byId.get(measureId)?.series ?? identities?.[measureId];
+		if (readPath.series && canonical) {
 			if (!identity)
 				throw new Error(`Missing series identity for ${measureId}.`);
 			const key = measureSeriesSourceKey(identity, source);
@@ -60,7 +67,7 @@ export const statisticsArtifactReader = (
 	for (const name of Object.keys(readPath.statistics ?? {}))
 		if (!names.has(name))
 			throw new Error(`Unexpected statistics selector: ${name}.`);
-	if (readPath.series && identities)
+	if (readPath.series && canonical)
 		for (const key of Object.keys(readPath.series))
 			if (!seriesKeys.has(key))
 				throw new Error(
@@ -96,7 +103,8 @@ export const openStatisticsArtifactReader = (
 				database,
 				catalog,
 				readPath,
-				readPath.series
+				readPath.series &&
+					catalog.measures.some((measure) => !measure.series)
 					? readMeasureDimensionsMapping(repositoryRoot).ids
 					: undefined,
 			),
