@@ -1,3 +1,4 @@
+import { datasetCoverageGapTables } from "../storage/datasetCoverageGaps.ts";
 import { crosswalkInputSourceTables } from "../storage/crosswalkInputSources.ts";
 import { licenceTables } from "../storage/licenceTables.ts";
 import {
@@ -342,6 +343,7 @@ export const buildAtlasSqlite = (
 					]),
 				),
 			),
+			...datasetCoverageGapTables(directory, manifest.datasets),
 			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
 			...crosswalkInputSourceTables(repositoryRoot, ids),
 		},
