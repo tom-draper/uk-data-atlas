@@ -30,6 +30,7 @@ import type {
 	ExistingManifestDataset,
 	ReuseContext,
 } from "./types.mts";
+import { readJson } from "../lib/json.ts";
 
 /**
  * Registers a compiled dataset to be read back off disk if region chunks are
@@ -43,13 +44,10 @@ export const readCompiledFromDisk = (
 	compiledDatasets.set(definition.precompiledFile, {
 		load: async () =>
 			decodeCompactPayload(
-				JSON.parse(
-					await readFile(
-						join(
-							COMPILED_DATASETS,
-							`${definition.precompiledFile}.json`,
-						),
-						"utf8",
+				await readJson(
+					join(
+						COMPILED_DATASETS,
+						`${definition.precompiledFile}.json`,
 					),
 				),
 			),

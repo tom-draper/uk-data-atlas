@@ -1,5 +1,5 @@
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, existsSync, writeFileSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -16,6 +16,7 @@ import {
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
@@ -32,16 +33,14 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 		"relationship-paths.json",
 	);
 	const relationshipPaths = existsSync(pathsPath)
-		? (JSON.parse(
-				readFileSync(pathsPath, "utf8"),
-			) as RelationshipPathInventory)
+		? (readJsonSync(pathsPath) as RelationshipPathInventory)
 		: undefined;
 	const inventory = compileAnalysisGeographies(
 		readAnalysisGeographySupport(
 			join(configDirectory(repositoryRoot), "analysis-geographies.json"),
 		),
-		JSON.parse(readFileSync(catalogPath, "utf8")) as DataCatalog,
-		JSON.parse(readFileSync(crosswalkPath, "utf8")) as CrosswalkInventory,
+		readJsonSync(catalogPath) as DataCatalog,
+		readJsonSync(crosswalkPath) as CrosswalkInventory,
 		relationshipPaths,
 	);
 	const outputPath = buildArtifactPath(

@@ -1,5 +1,5 @@
 import { atlasAssetsDirectory } from "@uk-data-atlas/atlas-db";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { hashFile } from "../fileHashCache.ts";
@@ -15,6 +15,7 @@ import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
 const JSON_ARTIFACTS = [
@@ -58,8 +59,8 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 			artifactReference(id, join(publicDirectory, `${id}.json`)),
 		),
 	];
-	const maps: MapResources = JSON.parse(
-		readFileSync(join(publicDirectory, "map-resources.json"), "utf8"),
+	const maps: MapResources = readJsonSync(
+		join(publicDirectory, "map-resources.json"),
 	);
 	for (const resource of maps.resources) {
 		artifacts.push(

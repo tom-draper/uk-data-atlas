@@ -3,7 +3,6 @@ import {
 	readAreaLookup,
 	readSqliteAreaInventory,
 } from "@uk-data-atlas/areas";
-import { readFileSync } from "node:fs";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,
@@ -16,6 +15,7 @@ import {
 	type CrosswalkTranslatorInputs,
 	type RelationshipPathInventory,
 } from "@uk-data-atlas/relationships";
+import { readJsonSync } from "../lib/json.ts";
 
 export const createLookupResolver = (
 	inputs: CrosswalkTranslatorInputs & {
@@ -61,9 +61,7 @@ export const readLookupResolver = (
 		databasePath,
 	);
 	const path = buildArtifactPath(repositoryRoot, "relationship-paths.json");
-	const paths = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as RelationshipPathInventory;
+	const paths = readJsonSync(path) as RelationshipPathInventory;
 	if (
 		paths.schemaVersion !== 1 ||
 		!Array.isArray(paths.paths) ||

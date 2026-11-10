@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { isDeepStrictEqual } from "node:util";
@@ -10,6 +9,7 @@ import {
 } from "@uk-data-atlas/catalogue/node";
 import { payloadDifference } from "./payloadComparison.ts";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Checks that every dataset the atlas serves from statistics rows has the
@@ -21,9 +21,9 @@ import { atlasCachePath } from "@uk-data-atlas/atlas-db";
  */
 export function verifyDatasetPayloads(repositoryRoot: string): number {
 	const datasets = join(repositoryRoot, "data/build/datasets");
-	const manifest = JSON.parse(
-		readFileSync(join(datasets, "dataset-manifest.json"), "utf8"),
-	) as { datasets: { type: string; output: string }[] };
+	const manifest = readJsonSync(join(datasets, "dataset-manifest.json")) as {
+		datasets: { type: string; output: string }[];
+	};
 	const cache = new DatabaseSync(atlasCachePath(repositoryRoot), {
 		readOnly: true,
 	});
@@ -42,8 +42,8 @@ export function verifyDatasetPayloads(repositoryRoot: string): number {
 			const generated: unknown = JSON.parse(
 				gunzipSync(row.gzip).toString("utf8"),
 			);
-			const compiled: unknown = JSON.parse(
-				readFileSync(join(datasets, `${entry.output}.json`), "utf8"),
+			const compiled: unknown = readJsonSync(
+				join(datasets, `${entry.output}.json`),
 			);
 			if (generatedFromRows(entry.type)) {
 				const difference = payloadDifference(

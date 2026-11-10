@@ -15,6 +15,7 @@ import {
 	type DatasetPayloadLayout,
 } from "@uk-data-atlas/datasets";
 import { aggregatePopulation } from "./datasetAggregation/population.ts";
+import { readJson } from "./lib/json.ts";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
 	"E12000002",
@@ -210,12 +211,9 @@ const COUNTRY_BY_PREFIX: Readonly<Record<string, string>> = {
 
 /** Council populations from the latest UK-wide estimates, by council code. */
 const readCouncilPopulations = async (root: string) => {
-	const editions = JSON.parse(
-		await readFile(
-			join(root, "data/build", "datasets", "population-uk.json"),
-			"utf8",
-		),
-	) as Record<
+	const editions = (await readJson(
+		join(root, "data/build", "datasets", "population-uk.json"),
+	)) as Record<
 		string,
 		{ data: Record<string, { total: Record<string, number> }> }
 	>;

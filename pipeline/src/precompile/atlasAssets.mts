@@ -1,11 +1,10 @@
 import { existsSync } from "fs";
-import { readFile } from "fs/promises";
 import { join, relative } from "path";
 import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
-import { loadGazetteerCore } from "@uk-data-atlas/datasets";
+import { loadGazetteerCore, type GazetteerCore } from "@uk-data-atlas/datasets";
 import { loadMatchIndex } from "../gazetteer/matchIndex.ts";
 import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
@@ -20,6 +19,7 @@ import { readAtlasLookup } from "../atlasLookups.ts";
 import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.mts";
 import { readBoundaryAsset } from "./sources/read.mts";
 import type { ReuseContext } from "./types.mts";
+import { readJson } from "../lib/json.ts";
 
 /**
  * Compiles the gazetteer core and the upload match index from the boundary
@@ -91,11 +91,8 @@ export async function compileAtlasAssets({
 
 	const gazetteerCore = canReuseAtlasAssets
 		? Promise.resolve({
-				data: JSON.parse(
-					await readFile(
-						join(OUT_DIR, "gazetteer.core.json"),
-						"utf8",
-					),
+				data: await readJson<GazetteerCore>(
+					join(OUT_DIR, "gazetteer.core.json"),
 				),
 				compiled: cachedAtlasAssets.outputs.gazetteerCore,
 			})

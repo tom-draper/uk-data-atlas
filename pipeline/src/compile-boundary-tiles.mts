@@ -32,6 +32,7 @@ import {
 	formatCount,
 	msSince,
 } from "@uk-data-atlas/atlas-db";
+import { readJson } from "./lib/json.ts";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
 	"ward/2017-12-gb-bgc": 3,
@@ -116,9 +117,7 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 		?.slice(7);
 	const manifestPath = join(ROOT, "data/build", TILES_MANIFEST);
 	const manifest: BoundaryResources = only
-		? parseBoundaryResources(
-				JSON.parse(await readFile(manifestPath, "utf8")),
-			)
+		? parseBoundaryResources(await readJson(manifestPath))
 		: {
 				schemaVersion: 2,
 				minZoom: MIN_ZOOM,
@@ -182,7 +181,7 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 		if (source?.sourcePath && existsSync(source.sourcePath))
 			inputs.push(source.sourcePath);
 		if (!(await isStale(inputs, descriptorPath))) {
-			const cached = JSON.parse(await readFile(descriptorPath, "utf8"));
+			const cached = await readJson(descriptorPath);
 			const parsed = parseBoundaryResources({
 				...manifest,
 				releases: { [label]: cached },
@@ -213,9 +212,7 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 						await readFile(source.sourcePath, "utf8"),
 						source,
 					)
-				: decodeBoundaryData(
-						JSON.parse(await readFile(topologyPath, "utf8")),
-					);
+				: decodeBoundaryData(await readJson(topologyPath));
 		const release =
 			source ??
 			(() => {
@@ -223,12 +220,10 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 			})();
 		const features = collection.features;
 		const areas = areasByCode(features, release.codeKey, label);
-		const properties: { features: Record<string, unknown>[] } = JSON.parse(
-			await readFile(
+		const properties: { features: Record<string, unknown>[] } =
+			await readJson(
 				join(INTERMEDIATES, relativeDirectory, "properties.json"),
-				"utf8",
-			),
-		);
+			);
 		const propertyCodes = [
 			...new Set(
 				properties.features.map(
@@ -257,11 +252,8 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 			}),
 		);
 		const meta = parseDatasetMeta(
-			JSON.parse(
-				await readFile(
-					join(dirname(release.topologySourcePath), "meta.json"),
-					"utf8",
-				),
+			await readJson(
+				join(dirname(release.topologySourcePath), "meta.json"),
 			),
 			basename(dirname(release.topologySourcePath)),
 		);
@@ -304,9 +296,7 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 			)
 				throw error;
 			// Keep the shapes previously drawn from TopoJSON, including overlaps.
-			const polygons = decodeBoundaryData(
-				JSON.parse(await readFile(topologyPath, "utf8")),
-			);
+			const polygons = decodeBoundaryData(await readJson(topologyPath));
 			const archive = compilePolygonArchive(
 				areasByCode(polygons.features, release.codeKey, label),
 				{

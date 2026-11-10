@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
@@ -14,6 +14,7 @@ import {
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 // Long enough to rebase a local authority across a decade of releases, which
 // takes one identity step per release in between.
@@ -23,8 +24,8 @@ export const MAXIMUM_DISCOVERED_STEPS = Number(
 
 export const buildRelationshipPaths = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
-	const crosswalks = JSON.parse(
-		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
+	const crosswalks = readJsonSync(
+		join(directory, "crosswalk-inventory.json"),
 	) as CrosswalkInventory;
 	// Path discovery needs only whether each crosswalk is one to one in each
 	// direction, which the edges in atlas-base.sqlite answer without records.

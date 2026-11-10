@@ -38,6 +38,7 @@ import {
 	buildLog,
 	formatCount,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
 
 export function buildPlaceProfiles(ROOT: string) {
 	const readDataset = (output: string) =>
@@ -198,7 +199,7 @@ export function buildPlaceProfiles(ROOT: string) {
 		const { folder, codeField } = GEOGRAPHY_SOURCES[geography];
 		for (const release of readdirSync(join(BOUNDARIES, folder))) {
 			const path = join(BOUNDARIES, folder, release, "properties.json");
-			const { features } = JSON.parse(readFileSync(path, "utf8")) as {
+			const { features } = readJsonSync(path) as {
 				features: Record<string, unknown>[];
 			};
 			const byCode = new Map<string, number>();
@@ -223,11 +224,8 @@ export function buildPlaceProfiles(ROOT: string) {
 	// The atlas's maps pages: one per council, and one per curated named place.
 	const mapsSlugByCode = new Map<string, string>();
 	const mapsSlugByName = new Map<string, string>();
-	const core = JSON.parse(
-		readFileSync(
-			join(artifactDirectory(ROOT), "source-data", "gazetteer.core.json"),
-			"utf8",
-		),
+	const core = readJsonSync(
+		join(artifactDirectory(ROOT), "source-data", "gazetteer.core.json"),
 	) as {
 		byCode: Record<string, { name: string; level: string }>;
 		namedLocations: Record<string, unknown>;

@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { DataCatalog } from "@uk-data-atlas/measures";
 import { isGeographyKind } from "@uk-data-atlas/geography";
@@ -12,6 +11,7 @@ import type {
 	AnalysisGeographySupportConfig,
 	CrosswalkSummary,
 } from "@uk-data-atlas/relationships";
+import { readJsonSync } from "../lib/json.ts";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
@@ -65,7 +65,7 @@ const readSupport = (
 export const readAnalysisGeographySupport = (
 	path: string,
 ): AnalysisGeographySupportConfig[] => {
-	const file = JSON.parse(readFileSync(path, "utf8")) as unknown;
+	const file = readJsonSync(path) as unknown;
 	if (
 		!isRecord(file) ||
 		file.schemaVersion !== 1 ||

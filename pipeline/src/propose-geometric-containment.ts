@@ -1,6 +1,6 @@
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory } from "@uk-data-atlas/areas";
@@ -11,6 +11,7 @@ import { isGeographyKind } from "@uk-data-atlas/geography";
 import type { readGeometries as readGeometriesForCache } from "@uk-data-atlas/areas";
 import { measureContainment } from "./relationships/geometricContainment.ts";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
+import { readJsonSync } from "./lib/json.ts";
 
 // The sliver width the area-overlap crosswalks use, so every method here
 // agrees on what counts as two borders generalised apart.
@@ -68,9 +69,7 @@ export const proposeGeometricContainment = (
 ) => {
 	const directory = artifactDirectory(repositoryRoot);
 	const read = <T>(path: string) =>
-		JSON.parse(
-			readFileSync(buildArtifactPath(repositoryRoot, path), "utf8"),
-		) as T;
+		readJsonSync(buildArtifactPath(repositoryRoot, path)) as T;
 	const geometrySources = readGeometrySourceLookup(repositoryRoot);
 	const areaCounts = new Map(
 		read<AreaInventory>("area-inventory.json")
@@ -277,7 +276,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",
 		);
-		const file = JSON.parse(readFileSync(path, "utf8")) as {
+		const file = readJsonSync(path) as {
 			schemaVersion: 1;
 			crosswalks: Array<{ id: string; method: string }>;
 		};

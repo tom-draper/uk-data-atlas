@@ -20,6 +20,7 @@ import {
 	censusTableRecords,
 	type CensusTable,
 } from "../catalog/censusSmallArea.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * The census small-area tables as statistics rows: one dataset per table,
@@ -305,9 +306,7 @@ export function censusSmallAreaStatistics(
 			CENSUS_SMALL_AREA_DIRECTORY,
 			table.table,
 		);
-		const meta = JSON.parse(
-			readFileSync(join(directory, "meta.json"), "utf8"),
-		) as Meta;
+		const meta = readJsonSync(join(directory, "meta.json")) as Meta;
 		const files = CENSUS_SMALL_AREA_GEOGRAPHIES.map((geography) => ({
 			geography,
 			path: join(

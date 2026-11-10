@@ -29,6 +29,7 @@ import {
 } from "@uk-data-atlas/atlas-db";
 import { hashFile } from "../fileHashCache.ts";
 import { recordOutputHash } from "../storage/outputManifest.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -83,7 +84,7 @@ export const buildGeometryStore = (
 	);
 	const statePath = join(directory, "build-state.json");
 	const previous: Record<string, string> = existsSync(statePath)
-		? JSON.parse(readFileSync(statePath, "utf8"))
+		? readJsonSync(statePath)
 		: {};
 	const state: Record<string, string> = {};
 	const saveState = () =>

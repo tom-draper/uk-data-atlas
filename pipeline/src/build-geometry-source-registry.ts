@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -10,22 +10,19 @@ import {
 	formatCount,
 	repoPath,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = artifactDirectory(root);
 	if (!existsSync(out))
 		throw new Error(
 			"Create the API public directory before building geometry sources.",
 		);
-	const inventory = JSON.parse(
-		readFileSync(join(out, "area-inventory.json"), "utf8"),
+	const inventory = readJsonSync(
+		join(out, "area-inventory.json"),
 	) as AreaInventory;
 	const artifacts = inventory.releases.flatMap((r) =>
 		r.status === "available"
-			? [
-					JSON.parse(
-						readFileSync(join(out, r.artifact), "utf8"),
-					) as AreaReleaseArtifact,
-				]
+			? [readJsonSync(join(out, r.artifact)) as AreaReleaseArtifact]
 			: [],
 	);
 	const hashes = createFileHashCache(

@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { MEASURES, type Measure, type WeightAtoms } from "./atoms.ts";
 import { atomsKey } from "./placements.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * The measures of the atoms, kept by the `weight-atoms` stage for the
@@ -55,9 +56,10 @@ export const writeStoredAtoms = (root: string, atoms: WeightAtoms) => {
 
 export const readStoredAtoms = (root: string): StoredAtoms => {
 	const directory = weightAtomsDirectory(root);
-	const meta = JSON.parse(
-		readFileSync(join(directory, "atoms.json"), "utf8"),
-	) as Omit<StoredAtoms, "measures">;
+	const meta = readJsonSync(join(directory, "atoms.json")) as Omit<
+		StoredAtoms,
+		"measures"
+	>;
 	const bytes = readFileSync(join(directory, "measures.f64"));
 	const all = new Float64Array(
 		bytes.buffer.slice(

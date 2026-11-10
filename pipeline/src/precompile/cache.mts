@@ -14,6 +14,7 @@ import type {
 	SourceFileStamp,
 	SourceRelease,
 } from "./types.mts";
+import { readJson } from "../lib/json.ts";
 
 const splitSheetArtifactPath = (path: string): [string, string] => {
 	const separator = path.lastIndexOf("#");
@@ -294,9 +295,7 @@ const readExistingManifest = async (
 	directory: string,
 ): Promise<ExistingManifest> => {
 	try {
-		return JSON.parse(
-			await readFile(join(directory, "dataset-manifest.json"), "utf8"),
-		);
+		return await readJson(join(directory, "dataset-manifest.json"));
 	} catch {
 		return {};
 	}

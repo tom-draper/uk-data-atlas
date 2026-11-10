@@ -2,6 +2,7 @@ import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Download an ONS Open Geography Portal lookup table as GeoJSON, with the
@@ -185,10 +186,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 			"Usage: tsx pipeline/src/sources/fetch-ons-lookup.ts <sources.json>",
 		);
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
-	const { readFileSync } = await import("node:fs");
-	const sources = JSON.parse(
-		readFileSync(sourcesPath, "utf8"),
-	) as LookupSource[];
+	const sources = readJsonSync<LookupSource[]>(sourcesPath);
 	for (const source of sources) {
 		const { path, rows } = await fetchOnsLookup(repositoryRoot, source);
 		buildLog.info(`Wrote ${formatCount(rows)} rows to ${repoPath(path)}`);

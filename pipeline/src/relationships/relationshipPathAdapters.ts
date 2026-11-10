@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
 import type {
 	ApprovedRelationshipPath,
 	RelationshipPurpose,
 } from "@uk-data-atlas/relationships";
+import { readJsonSync } from "../lib/json.ts";
 
 const purposes = ["identity", "membership", "apportion"] as const;
 const directions = ["forward", "reverse"] as const;
@@ -21,7 +21,7 @@ const isDirection = (value: unknown): value is "forward" | "reverse" =>
 export const readApprovedRelationshipPaths = (
 	path: string,
 ): ApprovedRelationshipPath[] => {
-	const value: unknown = JSON.parse(readFileSync(path, "utf8"));
+	const value: unknown = readJsonSync(path);
 	if (!isRecord(value) || !Array.isArray(value.paths))
 		throw new Error(`Invalid relationship path adapters at ${path}`);
 	const ids = new Set<string>();

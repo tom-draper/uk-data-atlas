@@ -39,6 +39,7 @@ import {
 	shouldCompile,
 	writeAtomically,
 } from "./geographies/boundaryBuildFiles.ts";
+import { readJson } from "./lib/json.ts";
 export {
 	PROPERTIES_FILENAME,
 	releaseSources,
@@ -301,9 +302,9 @@ export async function compileBoundaryAssets(
 				await copyFile(topologySourcePath, outputPath);
 			}
 			if (propertiesChanged) {
-				const topologyData = JSON.parse(
-					await readFile(topologySourcePath, "utf8"),
-				) as ReturnType<typeof topology>;
+				const topologyData = (await readJson(
+					topologySourcePath,
+				)) as ReturnType<typeof topology>;
 				const properties = serializeProperties(
 					label,
 					type,

@@ -2,7 +2,6 @@ import {
 	CROSSWALK_COVERAGE_VIEW,
 	CROSSWALK_INVENTORY_VIEW,
 } from "./deprecatedViews.ts";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	DatabaseSync,
@@ -20,6 +19,7 @@ import {
 	SINGLE_TARGET_SQL,
 } from "../crosswalk-weights/exactEdges.ts";
 import { WEIGHT_BASES_FROM_COUNTS } from "../crosswalk-weights/bases.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of
@@ -182,8 +182,8 @@ export const crosswalkTables = (
 	directory: string,
 	ids: IdRegistries = IdRegistries.memory(),
 ): Record<string, SqliteTable> => {
-	const inventory: CrosswalkInventory = JSON.parse(
-		readFileSync(join(directory, "crosswalk-inventory.json"), "utf8"),
+	const inventory: CrosswalkInventory = readJsonSync(
+		join(directory, "crosswalk-inventory.json"),
 	);
 	const read = (entry: CrosswalkInventory["crosswalks"][number]) => {
 		const text = readStoredText(join(directory, entry.artifact));

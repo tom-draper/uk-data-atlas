@@ -27,6 +27,7 @@ import {
 	formatCount,
 	formatDuration,
 } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "./lib/json.ts";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and
@@ -94,12 +95,10 @@ export const buildMapResources = (
 		throw new Error(
 			"Create the API public directory before building map resources.",
 		);
-	const registry = JSON.parse(
-		readFileSync(buildArtifactPath(root, "boundary-releases.json"), "utf8"),
+	const registry = readJsonSync(
+		buildArtifactPath(root, "boundary-releases.json"),
 	) as { releases: BoundaryReleaseSummary[] };
-	const inventory = JSON.parse(
-		readFileSync(join(out, "area-inventory.json"), "utf8"),
-	) as {
+	const inventory = readJsonSync(join(out, "area-inventory.json")) as {
 		releases: Array<{
 			geography: string;
 			id: string;
@@ -137,9 +136,7 @@ export const buildMapResources = (
 		string,
 		| { key: string; descriptor: MapResourceDescriptor }
 		| { key: string; unavailable: Unavailable }
-	> = existsSync(statePath)
-		? JSON.parse(readFileSync(statePath, "utf8"))
-		: {};
+	> = existsSync(statePath) ? readJsonSync(statePath) : {};
 	const state = { ...previous };
 	const saveState = () =>
 		writeFileSync(statePath, JSON.stringify(state) + "\n");
@@ -160,9 +157,9 @@ export const buildMapResources = (
 			throw new Error(
 				`No boundary release ${geography}/${boundaryRelease} to compile as a map resource.`,
 			);
-		const areas = JSON.parse(
-			readFileSync(join(out, identity.artifact), "utf8"),
-		) as { areas: Array<{ code: string; name: string }> };
+		const areas = readJsonSync(join(out, identity.artifact)) as {
+			areas: Array<{ code: string; name: string }>;
+		};
 		const names = new Map(
 			areas.areas.map((area) => [area.code, area.name]),
 		);

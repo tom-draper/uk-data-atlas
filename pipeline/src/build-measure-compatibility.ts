@@ -4,7 +4,7 @@ import {
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
 import { tableMeasureObservations } from "@uk-data-atlas/measures";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -13,9 +13,9 @@ import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { compileMeasureCompatibility } from "./statistics/measureCompatibility.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
+import { readJsonSync } from "./lib/json.ts";
 
-const read = <T>(path: string): T =>
-	JSON.parse(readFileSync(path, "utf8")) as T;
+const read = <T>(path: string): T => readJsonSync(path) as T;
 
 export const buildMeasureCompatibility = (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);

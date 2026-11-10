@@ -11,7 +11,7 @@ import {
 	storePostcodeAreas,
 } from "./postcodes/storePostcodeAreas.ts";
 import { readPostcodeCoordinates } from "./postcodes/postcodeCoordinates.ts";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 
 import { availableParallelism } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -49,6 +49,7 @@ import {
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/geography";
+import { readJsonSync } from "./lib/json.ts";
 
 /**
  * Compile postcode placements into a component: the areas each postcode's centroid lies in,
@@ -132,9 +133,7 @@ const previousBuild = (repositoryRoot: string, postcodeIndex: string) => {
 		"manifest.json",
 	);
 	if (!existsSync(manifest)) return undefined;
-	const artifact: PostcodeAreasArtifact = JSON.parse(
-		readFileSync(manifest, "utf8"),
-	);
+	const artifact: PostcodeAreasArtifact = readJsonSync(manifest);
 	if (
 		artifact.schemaVersion !== 1 ||
 		artifact.postcodeIndex !== postcodeIndex
