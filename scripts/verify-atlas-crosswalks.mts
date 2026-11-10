@@ -49,7 +49,7 @@ for (const entry of before.crosswalks) {
 		readStoredText(join(apiRoot, "public", entry.artifact)),
 	);
 	const loaded = sqlite.get(entry.id)!;
-	assert.equal(JSON.stringify(loaded), JSON.stringify(json), entry.id);
+	assert.deepEqual(loaded, json, entry.id);
 	records += json.records.length;
 	targets += json.records.reduce(
 		(total, record) => total + record.targets.length,
@@ -74,11 +74,7 @@ for (const entry of before.crosswalks) {
 	for (const url of urls) {
 		const expected = route("GET", url, contexts[0]);
 		assert.equal(expected.status, 200, url);
-		assert.equal(
-			JSON.stringify(route("GET", url, contexts[1])),
-			JSON.stringify(expected),
-			url,
-		);
+		assert.deepEqual(route("GET", url, contexts[1]), expected, url);
 		responses++;
 	}
 }
@@ -168,5 +164,5 @@ const beforeLookups = lookupSnapshot(jsonLookup);
 assert.ok(beforeLookups.length > 0);
 assert.deepEqual(lookupSnapshot(sqlite), beforeLookups);
 console.log(
-	`Matched ${before.crosswalks.length} crosswalks, ${records} source rows, ${targets} target rows, relationship-path output, ${beforeLookups.length} atlas lookup outputs and ${responses} API responses byte for byte.`,
+	`Matched ${before.crosswalks.length} crosswalks, ${records} source rows, ${targets} target rows, relationship-path output, ${beforeLookups.length} atlas lookup outputs and ${responses} API responses.`,
 );

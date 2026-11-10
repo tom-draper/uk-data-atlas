@@ -29,8 +29,8 @@ import { readJsonSync } from "../lib/json.ts";
  * from the area's name and aliases.
  *
  * Order is not stored: records are in source code order and targets in target
- * code order, and the build refuses input that is not. Each crosswalk keeps
- * the order of its endpoint fields, so artifacts rebuild byte for byte.
+ * code order, and the build refuses input that is not. JSON endpoint field
+ * order is derived by readers rather than stored.
  */
 
 type Endpoint = Record<string, unknown> & { code: string; labels: string[] };
@@ -86,32 +86,6 @@ const WEIGHT_COLUMNS = ["weight", "overlap", "source_share", "target_share"];
 const WEIGHT_BASES: Record<string, string> = {
 	area: "Area of overlap, in square metres",
 	population: "Residents in the overlap",
-};
-
-/**
- * One crosswalk side's field order: every key in the order endpoints give
- * them. An endpoint must list its keys in this order, leaving out the ones it
- * does not have.
- */
-const mergeFields = (fields: string[], keys: string[]) => {
-	let previous = -1;
-	for (const key of keys) {
-		const index = fields.indexOf(key);
-		if (index === -1) fields.splice((previous += 1), 0, key);
-		else previous = index;
-	}
-};
-
-const checkFields = (fields: string[], keys: string[], id: string) => {
-	let previous = -1;
-	for (const key of keys) {
-		const index = fields.indexOf(key);
-		if (index <= previous)
-			throw new Error(
-				`Crosswalk ${id} lists endpoint fields out of order`,
-			);
-		previous = index;
-	}
 };
 
 const canonicalLabels = (name: SQLOutputValue, aliases: SQLOutputValue) =>
@@ -205,7 +179,6 @@ export const crosswalkTables = (
 			);
 		return weighting.basis;
 	};
-	const fields: { source: string[]; target: string[] }[] = [];
 	function* headers(database: DatabaseSync) {
 		const release = database.prepare(
 			"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
@@ -226,22 +199,6 @@ export const crosswalkTables = (
 			entry,
 		] of inventory.crosswalks.entries()) {
 			const { artifact, bytes } = read(entry);
-			// Source facts live on the area version, shared by every crosswalk,
-			// so a crosswalk's sources must all give the same fields.
-			const source = Object.keys(artifact.records[0]?.source ?? {});
-			const target: string[] = [];
-			for (const record of artifact.records) {
-				if (
-					JSON.stringify(Object.keys(record.source)) !==
-					JSON.stringify(source)
-				)
-					throw new Error(
-						`Crosswalk ${entry.id} sources do not all give the same fields`,
-					);
-				for (const value of record.targets)
-					mergeFields(target, Object.keys(value));
-			}
-			fields.push({ source, target });
 			const header = Object.fromEntries(
 				Object.entries(artifact).map(([key, value]) => [
 					key,
@@ -264,8 +221,6 @@ export const crosswalkTables = (
 				entry.contentHash,
 				JSON.stringify(header),
 				bytes,
-				JSON.stringify(source),
-				JSON.stringify(target),
 			];
 		}
 	}
@@ -306,10 +261,7 @@ export const crosswalkTables = (
 		const releases = database.prepare(
 			"SELECT from_release_id AS source, to_release_id AS target, basis_id AS basis FROM crosswalk WHERE id = ?",
 		);
-		for (const [
-			inventoryPosition,
-			entry,
-		] of inventory.crosswalks.entries()) {
+		for (const entry of inventory.crosswalks) {
 			const crosswalk = ids.crosswalk.assign(entry.id);
 			const { artifact } = read(entry);
 			const { source, target, basis } = releases.get(crosswalk) as {
@@ -317,7 +269,6 @@ export const crosswalkTables = (
 				target: number;
 				basis: string | null;
 			};
-			const order = fields[inventoryPosition]!;
 			let previousSource: string | undefined;
 			for (const record of artifact.records) {
 				const value = record.source as Endpoint;
@@ -329,7 +280,6 @@ export const crosswalkTables = (
 						`Crosswalk ${entry.id} records are not in source code order`,
 					);
 				previousSource = value.code;
-				checkFields(order.source, Object.keys(value), entry.id);
 				for (const key of Object.keys(value))
 					if (
 						key !== "code" &&
@@ -340,6 +290,15 @@ export const crosswalkTables = (
 							`Unknown crosswalk endpoint field ${key}`,
 						);
 				const from = endpoint(value, source, true);
+				if (
+					(value.areaM2 !== undefined && basis !== "area") ||
+					(value.population !== undefined &&
+						basis !== "population") ||
+					(value.coverage !== undefined && basis === null)
+				)
+					throw new Error(
+						`Crosswalk ${entry.id} has source facts outside its weight basis`,
+					);
 				label(crosswalk, from.id, from.labels);
 				const coverage = value.coverage as number | undefined;
 				if (coverage !== undefined || record.targets.length === 0)
@@ -355,7 +314,6 @@ export const crosswalkTables = (
 							`Crosswalk ${entry.id} targets of ${previousSource} are not in code order`,
 						);
 					previousTarget = value.code;
-					checkFields(order.target, Object.keys(value), entry.id);
 					const columns: Record<string, SQLInputValue> = {};
 					for (const [key, field] of Object.entries(value)) {
 						if (key === "code" || key === "labels") continue;
@@ -477,8 +435,6 @@ export const crosswalkTables = (
 				"content_hash TEXT NOT NULL",
 				"header TEXT NOT NULL",
 				"bytes INTEGER NOT NULL",
-				"source_fields TEXT NOT NULL",
-				"target_fields TEXT NOT NULL",
 			],
 			key: ["id"],
 			rows: headers,
