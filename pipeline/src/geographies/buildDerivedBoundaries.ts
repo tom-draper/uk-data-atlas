@@ -1,0 +1,76 @@
+import { existsSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { type AreaSourceAdapterManifest } from "@uk-data-atlas/areas";
+import { sourceGeoJsonPath } from "./boundarySourcePaths.ts";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { readJsonSync } from "../lib/json.ts";
+
+type FeatureCollection = {
+	type?: unknown;
+	features?: Array<{ properties?: Record<string, unknown> }>;
+};
+
+const toKebabCase = (value: string) =>
+	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+export const buildDerivedBoundaries = (
+	repositoryRoot: string,
+	adapters: AreaSourceAdapterManifest,
+) => {
+	const outputDirectory = join(
+		artifactDirectory(repositoryRoot),
+		"boundaries",
+	);
+	if (!existsSync(artifactDirectory(repositoryRoot))) {
+		throw new Error(
+			"Create the API public directory before building derived boundaries.",
+		);
+	}
+	for (const [identity, adapter] of Object.entries(adapters)) {
+		const [geography, boundaryRelease] = identity.split("/");
+		const sourceDirectory = join(
+			repositoryRoot,
+			"data/source",
+			"boundaries",
+			toKebabCase(adapter.source.geography),
+			adapter.source.boundaryRelease,
+		);
+		const path = sourceGeoJsonPath(sourceDirectory);
+		if (!path || !existsSync(path)) {
+			throw new Error(
+				`${identity}: no declared GeoJSON source is available`,
+			);
+		}
+		const source = readJsonSync(path) as FeatureCollection;
+		if (
+			source.type !== "FeatureCollection" ||
+			!Array.isArray(source.features)
+		) {
+			throw new Error(
+				`${identity}: source is not a GeoJSON FeatureCollection`,
+			);
+		}
+		const features = source.features.filter((feature) => {
+			const value = feature.properties?.[adapter.filter.property];
+			return (
+				typeof value === "string" &&
+				value.startsWith(adapter.filter.startsWith)
+			);
+		});
+		if (features.length === 0) {
+			throw new Error(
+				`${identity}: source selection did not match any features`,
+			);
+		}
+		const artifact = { type: "FeatureCollection", features };
+		const content = `${JSON.stringify(artifact)}\n`;
+		const directory = join(outputDirectory, geography);
+		mkdirSync(directory, { recursive: true });
+		const outputPath = join(directory, `${boundaryRelease}.geojson`);
+		writeFileSync(outputPath, content);
+	}
+	rmSync(join(artifactDirectory(repositoryRoot), "derived-boundaries.json"), {
+		force: true,
+	});
+	return { releaseCount: Object.keys(adapters).length };
+};

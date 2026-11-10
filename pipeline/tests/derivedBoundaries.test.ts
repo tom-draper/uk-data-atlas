@@ -10,7 +10,7 @@ import {
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import { buildDerivedBoundaries } from "../src/build-derived-boundaries";
+import { buildDerivedBoundaries } from "../src/geographies/buildDerivedBoundaries";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 test("writes a derived GeoJSON artifact from the configured raw source selection", () => {
