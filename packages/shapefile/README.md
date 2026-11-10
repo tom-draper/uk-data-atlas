@@ -1,5 +1,7 @@
 # @uk-data-atlas/shapefile
 
+Reads shapefile geometry and DBF records.
+
 Read polygon Shapefiles and dBase records in Node.js via `@uk-data-atlas/shapefile`.
 
 `readShapefileFeatures(path)` reads the `.shp` and its matching `.dbf`, returning polygon features with their record properties. Deleted dBase rows and null shapes are skipped without shifting the remaining records. The reader accepts Polygon, PolygonZ and PolygonM shapes; it reads their two-dimensional coordinates.
