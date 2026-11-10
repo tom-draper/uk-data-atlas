@@ -2,18 +2,24 @@ import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	reconcileMembers,
 	reconcileMembersForYear,
+	type CrosswalkInventory,
 } from "@uk-data-atlas/relationships";
+import type { AreaIdentity } from "@uk-data-atlas/geography";
 import type {
 	LocationProjection,
 	LocationProjections,
-} from "@uk-data-atlas/places";
-import type {
-	NamedLocationInventory,
-	NamedLocationLookup,
-} from "@uk-data-atlas/places";
-import { NamedLocationResolver } from "@uk-data-atlas/places";
-import type { CatalogueResolver } from "./catalogue.ts";
-import type { AreaIdentity } from "@uk-data-atlas/geography";
+} from "./locationProjections.ts";
+import type { NamedLocationInventory } from "./namedLocationTypes.ts";
+import type { NamedLocationLookup } from "./namedLocations.ts";
+import { NamedLocationResolver } from "./namedLocationResolver.ts";
+
+/** What a location needs from the crosswalk catalogue: summaries by id, and all of them. */
+export type CrosswalkSummarySource = {
+	crosswalkSummary(
+		id: string,
+	): CrosswalkInventory["crosswalks"][number] | undefined;
+	crosswalkSummaries(): CrosswalkInventory["crosswalks"];
+};
 
 export type LocationsResolverInputs = {
 	areaLookup?: AreaLookup;
@@ -27,8 +33,11 @@ export class LocationsResolver {
 	private readonly named: NamedLocationResolver;
 
 	private readonly inputs: LocationsResolverInputs;
-	private readonly catalogue: CatalogueResolver;
-	constructor(inputs: LocationsResolverInputs, catalogue: CatalogueResolver) {
+	private readonly catalogue: CrosswalkSummarySource;
+	constructor(
+		inputs: LocationsResolverInputs,
+		catalogue: CrosswalkSummarySource,
+	) {
 		this.inputs = inputs;
 		this.catalogue = catalogue;
 
