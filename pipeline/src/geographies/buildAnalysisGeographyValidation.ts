@@ -10,10 +10,10 @@ import type {
 	DataCatalog,
 } from "@uk-data-atlas/catalogue/node";
 import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
-import { createCrosswalkArtifacts } from "./storage/crosswalkArtifacts.ts";
+import { createCrosswalkArtifacts } from "../storage/crosswalkArtifacts.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { openStatisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
-import { readJsonSync } from "./lib/json.ts";
+import { openStatisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = artifactDirectory(repositoryRoot);
