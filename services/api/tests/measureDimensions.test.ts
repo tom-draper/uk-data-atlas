@@ -14,6 +14,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	dimensionCatalogue,
+	identityDimensions,
 	readMeasureDimensionsMapping,
 	withDeclaredMeasureIds,
 } from "@uk-data-atlas/measures";
@@ -342,6 +343,27 @@ test("uses catalogue series identities without an id mapping", () => {
 	assert.equal(
 		indexed.series(measureSeriesKey(identity))?.measure.id,
 		"recorded-crimes",
+	);
+});
+
+test("builds fallback dimensions from embedded series identities", () => {
+	const data = {
+		measures: [
+			{
+				id: "old-id",
+				label: "Burglary",
+				series: {
+					measure: "recorded-crimes",
+					dimensions: { offence: "burglary" },
+				},
+				sources: [source("crime")],
+			},
+		],
+	} as unknown as Parameters<typeof dimensionCatalogue>[0];
+	const indexed = dimensionCatalogue(data, identityDimensions(data));
+	assert.equal(
+		indexed.measure("recorded-crimes")?.dimensions[0]?.members[0]?.code,
+		"burglary",
 	);
 });
 

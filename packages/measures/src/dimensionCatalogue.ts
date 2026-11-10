@@ -193,13 +193,22 @@ const identities = new WeakMap<DataCatalog, MeasureDimensions>();
 export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
 	const cached = identities.get(catalog);
 	if (cached) return cached;
+	const dimensions = new Map<string, Set<string>>();
+	for (const measure of catalog.measures)
+		for (const [dimension, member] of Object.entries(
+			measure.series?.dimensions ?? {},
+		)) {
+			if (!dimensions.has(dimension))
+				dimensions.set(dimension, new Set());
+			dimensions.get(dimension)!.add(member);
+		}
 	const built: MeasureDimensions = {
 		vocabulary: { schemaVersion: 1, measures: {}, dimensions: {} },
 		config: {
 			schemaVersion: 1,
 			measures: Object.fromEntries(
 				catalog.measures.map((measure) => [
-					measure.id,
+					measure.series?.measure ?? measure.id,
 					{
 						label: measure.label,
 						description: measure.label,
@@ -207,13 +216,25 @@ export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
 					},
 				]),
 			),
-			dimensions: {},
+			dimensions: Object.fromEntries(
+				[...dimensions].map(([id, members]) => [
+					id,
+					{
+						label: id,
+						reason: "",
+						members: [...members].map((code) => ({
+							code,
+							label: code,
+						})),
+					},
+				]),
+			),
 			members: {},
 			defaults: {},
 			ids: Object.fromEntries(
 				catalog.measures.map((measure) => [
 					measure.id,
-					{ measure: measure.id },
+					measure.series ?? { measure: measure.id },
 				]),
 			),
 		},
