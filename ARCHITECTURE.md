@@ -149,9 +149,9 @@ The package manifests define this dependency order, from lower layers upwards:
 - `artifacts`, `geography`, `datasets` and `shapefile` have no workspace dependencies. `search-index` uses `geography`, and `terrain` uses `artifacts`.
 - `atlas-db` uses `artifacts`, `geography` and `search-index`. `map-tiles` uses `atlas-db`, `artifacts` and `geography`.
 - `geometry` builds on `map-tiles`, `atlas-db`, `artifacts`, `geography` and `shapefile`. `areas` also uses `datasets` and `search-index`.
-- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets`, and `catalogue` builds on `measures` and `relationships`.
+- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets` and `search-index`, and `catalogue` builds on `measures` and `relationships`.
 - `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers. `postcodes` depends on `atlas-db`, `artifacts`, `geography` and `search-index`.
-- `atlas-loader` composes the domains, including `places`, `postcodes` and `terrain`. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
+- `atlas-loader` composes the domains, including `places`, `postcodes` and `terrain`. It holds only the loaders and the resolvers that need several domains at once (`GeographyResolver`, the areas and catalogue resolvers). Each domain defines the narrow interface it needs from them (for example `AreaReleaseSource`, `PlacedAreaResolver`, `CrosswalkSummarySource`), which the loader's resolvers satisfy structurally. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
 
 `tests/packages/packageImports.test.ts` enforces acyclic package dependencies,
 one-line manifest descriptions, explicit exports without `./*`, and the
