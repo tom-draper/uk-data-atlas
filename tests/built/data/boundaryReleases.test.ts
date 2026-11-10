@@ -8,7 +8,7 @@ import {
 	BOUNDARY_TYPES,
 	type BoundaryType,
 } from "@/lib/data/boundaries/catalog";
-import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
 
 /**

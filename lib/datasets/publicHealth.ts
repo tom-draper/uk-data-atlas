@@ -1,4 +1,4 @@
-import { publicHealthDatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/definitions/publicHealth";
+import { publicHealthDatasetDefinition } from "@uk-data-atlas/datasets";
 import {
 	PUBLIC_HEALTH_MEASURES,
 	type PublicHealthRecord,

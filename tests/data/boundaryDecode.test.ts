@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets";
 
 describe("decodeBoundaryData", () => {
 	it("wraps a lone geometry as a one-feature collection, with the CRS map layers expect", () => {

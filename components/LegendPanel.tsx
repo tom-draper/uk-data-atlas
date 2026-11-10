@@ -18,7 +18,7 @@ import type {
 	EthnicityCode,
 	PartyCode,
 } from "@/lib/types";
-import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";

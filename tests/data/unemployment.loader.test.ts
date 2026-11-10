@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
-import {
-	annualPeriod,
-	loadUnemployment,
-} from "@uk-data-atlas/datasets/data/unemployment/loader";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
+import { annualPeriod, loadUnemployment } from "@uk-data-atlas/datasets";
 
 // The loader builds the April 2023 authorities, so their districts are needed.
 const districts = Object.values(APRIL_2023_LAD_MERGERS).flatMap(

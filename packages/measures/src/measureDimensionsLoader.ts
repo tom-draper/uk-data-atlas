@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import {
 	configDirectory,
 	statisticsVocabularyPath,

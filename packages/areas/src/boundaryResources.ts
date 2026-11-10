@@ -1,7 +1,4 @@
-import {
-	BOUNDARY_CATALOG,
-	BOUNDARY_TYPES,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "@uk-data-atlas/datasets";
 
 export type BoundaryResource = { href: string; bytes: number } & (
 	{ method: "shared-arcs" } | { method: "compiled-polygons"; reason: string }

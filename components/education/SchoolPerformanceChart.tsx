@@ -16,7 +16,7 @@ import type {
 	AggregatedSchoolPerformanceData,
 	SchoolPerformanceDataset,
 	SchoolPerformanceLADData,
-} from "@uk-data-atlas/datasets/types/schoolPerformance";
+} from "@uk-data-atlas/datasets";
 
 const MEASURES = {
 	grade4: {

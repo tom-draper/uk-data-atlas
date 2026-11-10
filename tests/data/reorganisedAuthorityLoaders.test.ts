@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
-import { addMergedLifeExpectancyAuthorities } from "@uk-data-atlas/datasets/data/life-expectancy/loader";
-import { addMergedQualificationAuthorities } from "@uk-data-atlas/datasets/data/qualification/loader";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
+import { addMergedLifeExpectancyAuthorities } from "@uk-data-atlas/datasets";
+import { addMergedQualificationAuthorities } from "@uk-data-atlas/datasets";
 import {
 	addMergedUnemploymentAuthorities,
 	normaliseUnemploymentBoundaryCodes,
-} from "@uk-data-atlas/datasets/data/unemployment/loader";
-import type { LifeExpectancyLADData } from "@uk-data-atlas/datasets/types/lifeExpectancy";
-import type { QualificationBreakdown } from "@uk-data-atlas/datasets/types/qualification";
-import type { UnemploymentLADData } from "@uk-data-atlas/datasets/types/unemployment";
+} from "@uk-data-atlas/datasets";
+import type { LifeExpectancyLADData } from "@uk-data-atlas/datasets";
+import type { QualificationBreakdown } from "@uk-data-atlas/datasets";
+import type { UnemploymentLADData } from "@uk-data-atlas/datasets";
 
 const predecessors = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
 	({ predecessors }) => predecessors,

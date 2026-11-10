@@ -13,7 +13,7 @@ import type {
 	PartyCode,
 	WardStats,
 } from "@/lib/types";
-import type { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
+import type { BoundaryData } from "@uk-data-atlas/datasets";
 import type {
 	EthnicityDisplayData,
 	LegendAggregates,

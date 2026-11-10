@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { loadGeneralHealth } from "@uk-data-atlas/datasets/data/general-health/loader";
+import { loadGeneralHealth } from "@uk-data-atlas/datasets";
 import { sumGeneralHealth } from "@/lib/datasets/generalHealth";
 it("loads census counts and recomputes regional percentages", async () => {
 	const values = {

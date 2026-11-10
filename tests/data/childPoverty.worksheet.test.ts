@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { loadChildPoverty } from "@uk-data-atlas/datasets/data/child-poverty/loader";
-import { odsTableRows } from "@uk-data-atlas/datasets/data/spreadsheet/ods";
+import { loadChildPoverty } from "@uk-data-atlas/datasets";
+import { odsTableRows } from "@uk-data-atlas/datasets";
 
 const worksheet = `
 <table:table table:name="7_BHC_Relative_LA">

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { getChartDatasetDefinition } from "@/lib/datasets";
-import type { BroadbandDataset } from "@uk-data-atlas/datasets/types/broadband";
+import type { BroadbandDataset } from "@uk-data-atlas/datasets";
 
 const dataset: BroadbandDataset = {
 	id: "broadband2025",

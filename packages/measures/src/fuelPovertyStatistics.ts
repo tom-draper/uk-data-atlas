@@ -5,7 +5,7 @@ import {
 import type {
 	FuelPovertyDataset,
 	FuelPovertyLSOAData,
-} from "@uk-data-atlas/datasets/types/fuelPoverty";
+} from "@uk-data-atlas/datasets";
 import type { SqlReader } from "@uk-data-atlas/atlas-db";
 import type {
 	AreaRelease,

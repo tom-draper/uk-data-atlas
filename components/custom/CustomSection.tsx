@@ -8,7 +8,7 @@ import {
 	type CustomImport,
 } from "@/lib/data/custom/import";
 import type { SelectedCustomArea } from "./types";
-import { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
+import { BoundaryData } from "@uk-data-atlas/datasets";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { WardDataResolver } from "@/lib/data/boundaries/codeMapper";
 import { useIsDark } from "@/lib/context/ThemeContext";

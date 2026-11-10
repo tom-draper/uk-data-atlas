@@ -10,7 +10,7 @@ import {
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
 import { fetchMapBoundaries } from "../data/boundaries/tiles";
-import type { Crosswalk } from "@uk-data-atlas/datasets/data/gazetteer/types";
+import type { Crosswalk } from "@uk-data-atlas/datasets";
 
 type GeometryState = {
 	geometry: BoundaryGeojson | null;

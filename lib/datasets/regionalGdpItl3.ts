@@ -4,7 +4,7 @@ import type {
 	AggregatedRegionalGdpData,
 	RegionalGdpItl3Dataset,
 	RegionalGdpMetrics,
-} from "@uk-data-atlas/datasets/types/regionalGdp";
+} from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

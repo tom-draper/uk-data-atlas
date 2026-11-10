@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { afterAll, expect, test, vi } from "vitest";
-import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets/data/gazetteer/places";
+import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets";
 
 const fixture = await vi.hoisted(async () => {
 	const { mkdtempSync } = await import("node:fs");
@@ -26,7 +26,8 @@ vi.mock("@uk-data-atlas/geography", async (importOriginal) => ({
 	parseBoundaryWardToLad: () => ({}),
 	parseParishLadMappings: () => ({}),
 }));
-vi.mock("@uk-data-atlas/datasets/data/gazetteer/loader", () => ({
+vi.mock("@uk-data-atlas/datasets", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@uk-data-atlas/datasets")>()),
 	loadGazetteerCore: vi.fn(async () => ({ places: [] })),
 }));
 vi.mock("../src/gazetteer/matchIndex.ts", () => ({
@@ -48,7 +49,7 @@ vi.mock("../src/precompile/websiteOutput.mts", async () => {
 	};
 });
 
-import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
+import { loadGazetteerCore } from "@uk-data-atlas/datasets";
 import { compileAtlasAssets } from "../src/precompile/atlasAssets.mts";
 
 afterAll(() => rmSync(fixture.root, { recursive: true, force: true }));

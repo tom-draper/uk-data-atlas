@@ -12,8 +12,8 @@ import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 	propertiesAsset,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
-import { localDataPath } from "@uk-data-atlas/datasets/data/boundaries/dataPath";
+} from "@uk-data-atlas/datasets";
+import { localDataPath } from "@uk-data-atlas/datasets";
 import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 
 type MatchIndex = Record<

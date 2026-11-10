@@ -1,14 +1,11 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
-import type { DeclaredDatasetId } from "@uk-data-atlas/datasets/data/declarations";
-import {
-	definitionOf,
-	type DatasetDeclaration,
-} from "@uk-data-atlas/datasets/declaration/dataset";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import type { DeclaredDatasetId } from "@uk-data-atlas/datasets";
+import { definitionOf, type DatasetDeclaration } from "@uk-data-atlas/datasets";
 import type {
 	DatasetDisplay,
 	DisplayFormat,
 	DisplayMeasure,
-} from "@uk-data-atlas/datasets/declaration/display";
+} from "@uk-data-atlas/datasets";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { formatCompactCount, formatCount } from "@/lib/helpers/formatCount";

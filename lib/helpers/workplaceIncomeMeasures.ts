@@ -1,4 +1,4 @@
-import type { IncomeLADData } from "@uk-data-atlas/datasets/types/income";
+import type { IncomeLADData } from "@uk-data-atlas/datasets";
 export const WORKPLACE_PAY_MEASURES = [
 	{
 		value: "annualMedian",

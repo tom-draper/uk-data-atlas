@@ -2,39 +2,39 @@
 import {
 	type HousePriceDataset,
 	type AggregatedHousePriceData,
-} from "@uk-data-atlas/datasets/types/housePrice";
+} from "@uk-data-atlas/datasets";
 import {
 	type AggregatedCrimeData,
 	type CrimeDataset,
-} from "@uk-data-atlas/datasets/types/crime";
+} from "@uk-data-atlas/datasets";
 import {
 	type AggregatedIncomeData,
 	type IncomeDataset,
 	type WorkplaceIncomeDataset,
-} from "@uk-data-atlas/datasets/types/income";
+} from "@uk-data-atlas/datasets";
 import { type AggregatedCustomData, type CustomDataset } from "./custom.ts";
 import { type NetworkDataset } from "./network.ts";
 import {
 	type AggregatedAirQualityData,
 	type AirQualityDataset,
-} from "@uk-data-atlas/datasets/types/airQuality";
+} from "@uk-data-atlas/datasets";
 import {
 	type AggregatedSchoolPerformanceData,
 	type SchoolPerformanceDataset,
-} from "@uk-data-atlas/datasets/types/schoolPerformance";
+} from "@uk-data-atlas/datasets";
 import {
 	type AggregatedNHSWaitingData,
 	type NHSWaitingDataset,
-} from "@uk-data-atlas/datasets/types/nhsWaiting";
+} from "@uk-data-atlas/datasets";
 import {
 	type AggregatedUnemploymentData,
 	type UnemploymentDataset,
-} from "@uk-data-atlas/datasets/types/unemployment";
+} from "@uk-data-atlas/datasets";
 import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
 } from "../data/catalog/index.ts";
-import type { DatasetCoverage } from "@uk-data-atlas/datasets/types/coverage";
+import type { DatasetCoverage } from "@uk-data-atlas/datasets";
 
 type DatasetValue =
 	| HousePriceDataset

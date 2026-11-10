@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { addPopulationMetrics } from "@uk-data-atlas/datasets/data/population/metrics";
+import { addPopulationMetrics } from "@uk-data-atlas/datasets";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
 import { wasteDefinition } from "@/lib/datasets/waste";
 import type {
 	ElectricityConsumptionDataset,
 	GasConsumptionDataset,
-} from "@uk-data-atlas/datasets/types/energyConsumption";
-import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
+} from "@uk-data-atlas/datasets";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets";
 
 const electricity: ElectricityConsumptionDataset = {
 	id: "electricityConsumption2024",

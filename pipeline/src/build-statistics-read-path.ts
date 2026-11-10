@@ -12,11 +12,11 @@ import {
 import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
 	SERVED_WARD_CODES_UNTIL,
-} from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
+} from "@uk-data-atlas/datasets";
 import {
 	HOUSE_PRICE_SERVED_WARD_CODES,
 	SALFORD_WARD_CODE_REMAP,
-} from "@uk-data-atlas/datasets/data/house-price/wardCodes";
+} from "@uk-data-atlas/datasets";
 import {
 	readMeasureDimensionsConfig,
 	rebuildStatisticsObservationText,

@@ -4,12 +4,12 @@ import {
 	parseLeapLocalElection,
 	parseLocalElectionTable,
 	wardCodesByName,
-} from "@uk-data-atlas/datasets/data/election/local-election/load";
+} from "@uk-data-atlas/datasets";
 import {
 	ELECTION_SOURCES,
 	type ElectionTableSourceConfig,
 	type LeapElectionSourceConfig,
-} from "@uk-data-atlas/datasets/data/election/local-election/config";
+} from "@uk-data-atlas/datasets";
 
 const codedConfig: ElectionTableSourceConfig = {
 	year: 2022,

@@ -10,7 +10,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
+import type { DatasetModule } from "@uk-data-atlas/datasets";
 import { sha256 } from "./values.ts";
 
 /**

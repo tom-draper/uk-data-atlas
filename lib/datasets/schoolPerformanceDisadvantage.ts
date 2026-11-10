@@ -3,7 +3,7 @@ import { schoolPerformanceGapAggregation } from "@/lib/helpers/datasetAggregatio
 import type {
 	AggregatedSchoolPerformanceGapData,
 	SchoolPerformanceGapDataset,
-} from "@uk-data-atlas/datasets/types/schoolPerformance";
+} from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

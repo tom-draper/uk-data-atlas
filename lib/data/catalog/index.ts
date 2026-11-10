@@ -6,17 +6,17 @@ export type {
 	DatasetReader,
 	RegionalChunkLayout,
 	DatasetSource,
-} from "@uk-data-atlas/datasets/data/catalog/types";
+} from "@uk-data-atlas/datasets";
 export {
 	codeKeyedFieldsFor,
 	DEFAULT_CODE_KEYED_FIELDS,
-} from "@uk-data-atlas/datasets/data/catalog/types";
+} from "@uk-data-atlas/datasets";
 export {
 	validatePrecompiledDataset,
 	type DatasetPrecompileSummary,
 	type SourceArtifact,
-} from "@uk-data-atlas/datasets/data/catalog/ingestion";
-export { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
+} from "@uk-data-atlas/datasets";
+export { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 export {
 	DATASET_SOURCES,
 	boundaryCoverageMarkdown,
@@ -26,4 +26,4 @@ export type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
 	CatalogueDatasetType,
-} from "@uk-data-atlas/datasets/data/catalog/generated";
+} from "@uk-data-atlas/datasets";

@@ -8,16 +8,13 @@ import {
 import {
 	DATASET_DECLARATIONS,
 	DECLARED_DEFINITIONS,
-} from "@uk-data-atlas/datasets/data/declarations";
+} from "@uk-data-atlas/datasets";
 import {
 	CATALOGUE_DATASET_DEFINITIONS,
 	LEGACY_DATASET_DEFINITIONS,
-} from "@uk-data-atlas/datasets/data/catalog/registry";
-import {
-	DATASET_MODULES,
-	isDatasetModule,
-} from "@uk-data-atlas/datasets/declaration/modules";
-import { UPDATE_CADENCES } from "@uk-data-atlas/datasets/declaration/dataset";
+} from "@uk-data-atlas/datasets";
+import { DATASET_MODULES, isDatasetModule } from "@uk-data-atlas/datasets";
+import { UPDATE_CADENCES } from "@uk-data-atlas/datasets";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import { writeSqliteTables } from "../../pipeline/src/storage/index";
 
