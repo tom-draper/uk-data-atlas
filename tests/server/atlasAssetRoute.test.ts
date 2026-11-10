@@ -11,8 +11,8 @@ import { gunzipSync } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
-import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/atlas/buildAtlasAssets";
+import { assembleAtlas } from "@/pipeline/src/atlas/assembleAtlas";
 import { readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 

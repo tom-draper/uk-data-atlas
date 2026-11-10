@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { ATLAS_LOOKUP_NAMES } from "@/scripts/atlas-lookups";
-import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/atlas/buildAtlasAssets";
+import { assembleAtlas } from "@/pipeline/src/atlas/assembleAtlas";
 import { writeEmptyPostcodeComponent } from "@/services/api/tests/atlasComponentFixtures";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
 
