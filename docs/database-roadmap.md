@@ -187,3 +187,13 @@ Top five: tasks 33, 41, 34, 36 with 37, and 45.
 6. New derived products, top five first: tasks 33, 41, 34, 36, 37 and 45,
    then the rest of 35–51.
 7. Refactoring alongside: tasks 8–10, easier once rows are the only compiled form.
+
+### Licence table coverage
+
+The source `licence` and `source_licence` tables record recognised source
+licences, and `election_licence` separates the historic local-election years.
+Boundary releases link to `source`; crosswalk provenance links identifiable
+boundary input paths to those sources. Crosswalks can also use other inputs,
+including postcode and population data, which still need source links. The
+customer-specific licence record described in DATA-LICENCES.md remains a
+separate delivery concern and is not supplied by the source licence table.

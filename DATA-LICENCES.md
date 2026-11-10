@@ -95,3 +95,19 @@ The API and website code are AGPL-3.0 licensed. A commercial licence for the
 code is available separately; see the [README](./README.md#licence).
 
 This file is a project policy and licence summary, not legal advice.
+
+### Source licences in SQLite
+
+The `licence` table describes known source licences and their commercial-use
+and ShareAlike flags; it does not record a customer's order or contractual
+terms. `source_licence` associates each identified source with its licences.
+A source without an association has not been classified, rather than being
+unlicensed. The mixed local-election source has both licences: use
+`election_licence` for the licence applicable to an individual election.
+
+`boundary_release_source` connects boundary releases to their source records.
+`crosswalk_provenance_source` connects crosswalks to boundary inputs that can
+be identified from their provenance paths. Other inputs, including postcode
+and population inputs, are not necessarily represented there; consult the
+crosswalk header and weighting provenance as well. The tables describe source
+terms, not customer entitlement or a complete attribution for derived data.
