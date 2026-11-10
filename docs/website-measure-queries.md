@@ -60,12 +60,12 @@ About 56 files import `datasetAggregation` and 53 define `calculateStats`.
 ### What the API provides
 
 The API (`services/api`) reads the same statistics rows through the shared
-runtime package (`packages/atlas-runtime`):
+measure package (`packages/measures`):
 
-- **Reader.** `ObservationCache` (`catalogue/observationTables.ts`) rebuilds a
+- **Reader.** `ObservationCache` (`packages/measures/src/observationTables.ts`) rebuilds a
   measure source's observation artifact from the statistics rows using the
   selector recorded in `statistics-read-path.json`
-  (`catalogue/atlasStatisticsObservations.ts`). `lazySourceObservations` exposes
+  (`packages/measures/src/atlasStatisticsObservations.ts`). `lazySourceObservations` exposes
   it as an artifact with one block of records per period, parsed on first use.
   `observationsFor` finds a source's period.
 - **Measures and dimensions.** A catalogue measure id such as `crime-burglary`

@@ -12,7 +12,7 @@ A dataset is described in separate places that nothing keeps in step:
 | `packages/datasets/src/data/<name>/loader.ts`                                                    | Reads raw files into the compiled payload                                                   |
 | `packages/datasets/src/data/catalog/definitions/<camelCase>.ts`                                  | Manifest `type`, output file, boundary type, source and licence, loader hook                |
 | `packages/datasets/src/types/<camelCase>.ts`                                                     | Types of the compiled payload                                                               |
-| `packages/atlas-runtime/.../statisticsDatasets/*.ts`                                             | Statistics declaration: measures, dimensions, fields, payload header, boundary year         |
+| `packages/measures/src/statisticsDatasets/*.ts`                                                  | Statistics declaration: measures, dimensions, fields, payload header, boundary year         |
 | `pipeline/src/catalog/<name>.ts`, `compileDataCatalog.ts`                                        | A second compiler for the API catalogue: indicator ids, units, notes, boundary year, period |
 | `pipeline/src/build-data-catalog.ts`                                                             | Input file per dataset                                                                      |
 | `pipeline/src/statistics/bindCompiledFields.ts`                                                  | API measure id to dataset field                                                             |
@@ -97,8 +97,8 @@ registry and the dataset record types from them.
 
 - It extends the existing `DeclaredDataset` (the statistics declaration) rather
   than replacing it. The declaration types and the `periods`, `measure` and
-  `yearParts` helpers move from `atlas-runtime` to `packages/datasets` so a
-  declaration can sit beside its loader. `atlas-runtime` re-exports them.
+  `yearParts` helpers move to `packages/datasets` so a declaration can sit
+  beside its loader.
 - `module` is a required tag from a closed union, written to
   `dataset.module` in `atlas.sqlite`, so a package step can select by topic.
 - Everything that used to be a second copy reads the declaration: the API
