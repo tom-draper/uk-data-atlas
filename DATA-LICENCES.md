@@ -62,7 +62,7 @@ the source data.
   and publishing individual values with the attribution the source requires.
 - **CC BY-SA material.** Material derived from CC BY-SA sources is exempt from
   the sharing term and stays under CC BY-SA, as that licence requires.
-- **Licence record.** Each delivered file contains a `licence` table naming
+- **Licence record.** Each customer-specific delivered file contains a `delivery_licence` table naming
   the customer, the order, the release and a summary of these terms.
 - **Attribution.** Each delivered file carries the source, publisher, licence
   and method of every series, so customers can meet the attribution terms of
@@ -106,8 +106,24 @@ unlicensed. The mixed local-election source has both licences: use
 `election_licence` for the licence applicable to an individual election.
 
 `boundary_release_source` connects boundary releases to their source records.
-`crosswalk_provenance_source` connects crosswalks to boundary inputs that can
-be identified from their provenance paths. Other inputs, including postcode
-and population inputs, are not necessarily represented there; consult the
-crosswalk header and weighting provenance as well. The tables describe source
-terms, not customer entitlement or a complete attribution for derived data.
+`crosswalk_provenance_source` connects crosswalks to boundary inputs.
+`crosswalk_count_source` and `crosswalk_input_source` identify the population
+and postcode atom inputs used by crosswalks. `crosswalk_weight_input` records
+the atom inputs used for each added crosswalk weight basis, and
+`crosswalk_weight_boundary_source` identifies the boundary sources placed for
+each basis. These links are input provenance, not a complete attribution for all derived series.
+
+### Creating a customer delivery
+
+Create a JSON file outside the distributed database containing the actual
+`customer`, `order`, `release` and `terms` strings agreed for that delivery.
+Then run:
+
+```sh
+pnpm delivery:create data/build/atlas.sqlite /path/to/new-delivery.sqlite /path/to/licence-details.json
+```
+
+The command creates a new copy, refuses to replace an existing file, and adds
+one `delivery_licence` row. The shared build remains customer-free. Supply the
+actual agreed terms, including the applicable source-licence exceptions; the
+command does not invent contractual terms or publish the file.
