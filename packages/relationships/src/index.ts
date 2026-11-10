@@ -31,3 +31,4 @@ export type {
 	ReleaseComparisonSources,
 } from "./releaseComparison.ts";
 export * from "./lineageResolver.ts";
+export * from "./areaAbsence.ts";
