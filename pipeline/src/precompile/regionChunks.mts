@@ -13,7 +13,7 @@ import {
 	snapshotFileContents,
 } from "./cache.mts";
 import { chunksResult } from "./output.mts";
-import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlasLookups.ts";
+import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas/atlasLookups.ts";
 import { ROOT } from "./paths.mts";
 import { OUT_DIR } from "./websiteOutput.mts";
 import type {

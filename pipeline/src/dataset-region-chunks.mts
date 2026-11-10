@@ -7,7 +7,7 @@ import {
 	lsoaLadMappingsFile,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { readAtlasLookup } from "./atlasLookups.ts";
+import { readAtlasLookup } from "./atlas/atlasLookups.ts";
 import { BOUNDARY_CATALOG } from "@uk-data-atlas/datasets";
 import { getProp } from "@uk-data-atlas/datasets";
 import {
