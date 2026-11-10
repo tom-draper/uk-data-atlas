@@ -106,11 +106,9 @@ served area codes, derive ratios and totals, calculate confidence bounds, read
 contest winners or construct a shared census table. The runtime validates the
 selector inventory and catalogue hash before reading observations.
 
-The `data-catalog` stage writes independent compiler artifacts to
-`data/build/compiled-observations/`. The `statistics-read-path` stage compares
-those artifacts with reconstructed statistics by value, including statuses,
-bounds, periods and area codes. The build fails if any artifact cannot be
-reconstructed. The compiled artifacts are build inputs, not a runtime fallback.
+The `statistics-read-path` stage derives selectors from the catalogue,
+statistics registry and declared rules. Fixture tests cover the selection
+rules; observation artifacts are generated from the rows.
 
 ## Dataset payloads
 

@@ -1,6 +1,6 @@
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { AtlasDatasetInput } from "./input.ts";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	compileDataCatalog,
@@ -13,7 +13,6 @@ import {
 import {
 	artifactDirectory,
 	compiledObservationDirectory,
-	compiledObservationPath,
 } from "@uk-data-atlas/atlas-db";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/measures";
 
@@ -103,9 +102,11 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 	assertMeasureDimensions(catalog, config, vocabulary);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
-	const compiledDirectory = compiledObservationDirectory(repositoryRoot);
-	rmSync(compiledDirectory, { recursive: true, force: true });
-	mkdirSync(compiledDirectory, { recursive: true });
+	// Remove artifacts from older builds; observations now come from rows.
+	rmSync(compiledObservationDirectory(repositoryRoot), {
+		recursive: true,
+		force: true,
+	});
 	const observationArtifacts = [
 		ghgEmissionsObservations,
 		...populationObservations,
@@ -122,7 +123,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		...lifeExpectancyObservations,
 		...electionObservations,
 	];
-	function* observationEntries(): Generator<readonly [string, string]> {
+	function* observationEntries(): Generator<string> {
 		for (const observations of observationArtifacts) {
 			const measure = catalog.measures.find(
 				(candidate) => candidate.id === observations.measureId,
@@ -143,17 +144,10 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 				observations.measureId,
 				source,
 			);
-			const text = `${JSON.stringify(observations)}\n`;
-			writeFileSync(compiledObservationPath(repositoryRoot, name), text);
-			yield [name, text] as const;
+			yield name;
 		}
 		for (const table of censusTables) {
-			const text = `${JSON.stringify(table)}\n`;
-			writeFileSync(
-				compiledObservationPath(repositoryRoot, table.id),
-				text,
-			);
-			yield [table.id, text];
+			yield table.id;
 		}
 	}
 	const required = new Set(
@@ -163,7 +157,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			),
 		),
 	);
-	for (const [name] of observationEntries()) {
+	for (const name of observationEntries()) {
 		if (!required.delete(name))
 			throw new Error(
 				`Unexpected or duplicate observation artifact: ${name}`,

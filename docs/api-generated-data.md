@@ -7,17 +7,15 @@ gzipped and the API decompresses them when it needs the JSON. Deploy both
 databases from the same build; the API checks the cache stamp and the payload
 columns at startup.
 
-The `data-catalog` stage writes the catalogue and independently compiled
-observation artifacts to `data/build/compiled-observations/`. The
-`statistics-read-path` stage compares these artifacts by value with the
-statistics rows in `atlas-base.sqlite`. It writes a selector for every
-catalogue artifact and fails when a comparison does not pass. The selectors
-include the catalogue hash, which readers validate before serving data.
+The `data-catalog` stage writes the catalogue. The
+`statistics-read-path` stage derives a selector for every catalogue artifact
+from the statistics registry and declared selection rules. Selectors include
+the catalogue hash, which readers validate before serving data.
 
 The API reconstructs observation artifacts from statistics rows. Compatibility,
 analysis geography validation, the validation report and exports use the same
 read path. Reconstructed JSON and parsed views share a bounded LRU cache.
-Compiled observation artifacts are build inputs and are not a runtime fallback.
+Observation JSON is derived from the rows; fixture tests cover the selectors.
 
 The generated `statistics-vocabulary.json` and `statistics-read-path.json`
 are build intermediates. Runtime readers use the vocabulary and selectors in
