@@ -9,7 +9,7 @@ import { problem, type ApiResponse } from "./runtime/index.ts";
 
 import { resolveDatasetAliases } from "./datasetAliasRequests";
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
-import type { Series } from "@uk-data-atlas/atlas-runtime/catalogue";
+import type { Series } from "@uk-data-atlas/measures";
 import {
 	breakdownResponse,
 	restatedResponse,
