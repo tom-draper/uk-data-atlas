@@ -2,7 +2,7 @@ export { compileAreaOverlapCrosswalk } from "../../../pipeline/src/geographies/a
 export { assembleAtlas } from "../../../pipeline/src/atlas/assembleAtlas";
 export { buildGeographyCatalogues } from "../../../pipeline/src/geographies/buildGeographyCatalogues";
 export { compileOperations } from "../../../pipeline/src/atlas/buildOperations";
-export { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
+export { buildPostcodeIndex } from "../../../pipeline/src/postcodes/buildPostcodeIndex";
 export { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
 export { buildAtlasSqlite } from "../../../pipeline/src/atlas/buildAtlasSqlite";
 export { buildGeometryStore } from "../../../pipeline/src/maps/buildGeometryStore";
