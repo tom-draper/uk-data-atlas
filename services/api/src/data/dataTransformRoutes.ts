@@ -157,6 +157,7 @@ export const handleDataTransformRoutes = ({
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
+		measure,
 		periods: [period],
 		geography,
 		boundaryYear,

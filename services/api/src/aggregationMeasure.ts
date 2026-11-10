@@ -17,9 +17,11 @@ export type AggregationMeasure = {
 export const resolveAggregationMeasure = ({
 	dataCatalog,
 	measureId,
+	selectedMeasure,
 }: {
 	dataCatalog?: DataCatalog;
 	measureId: string;
+	selectedMeasure?: Measure;
 }): AggregationMeasure | ApiResponse => {
 	if (!dataCatalog) {
 		return problem(
@@ -28,9 +30,9 @@ export const resolveAggregationMeasure = ({
 			"Build the data catalogue before aggregating observations.",
 		);
 	}
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measure =
+		selectedMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,

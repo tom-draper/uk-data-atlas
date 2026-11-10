@@ -41,6 +41,7 @@ export const aggregateValue = ({
 	const resolvedMeasure = resolveAggregationMeasure({
 		dataCatalog,
 		measureId,
+		selectedMeasure: series?.catalogueMeasure,
 	});
 	if ("status" in resolvedMeasure) return resolvedMeasure;
 	const {
@@ -80,6 +81,7 @@ export const aggregateValue = ({
 	const partition = resolveAggregationPartition({
 		context,
 		measureId,
+		measure,
 		period: period!,
 		geography: geography!,
 		boundaryYear: boundaryYear!,
