@@ -17,7 +17,6 @@
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
-		"@uk-data-atlas/search-index": "workspace:*",
 		"@uk-data-atlas/terrain": "workspace:*",
 		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/areas": "workspace:*",
