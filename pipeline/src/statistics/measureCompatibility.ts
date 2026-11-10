@@ -131,7 +131,7 @@ export const compileMeasureCompatibility = (
 			};
 		});
 	const measures = dataCatalog.measures.map((measure) => {
-		const identity = identities?.[measure.id];
+		const identity = measure.series ?? identities?.[measure.id];
 		if (identities && !identity)
 			throw new Error(`Missing series identity for ${measure.id}.`);
 		return {
