@@ -1,7 +1,4 @@
-import {
-	PARTIES,
-	PARTY_INFO,
-} from "@uk-data-atlas/datasets/data/election/parties";
+import { PARTIES, PARTY_INFO } from "@uk-data-atlas/datasets";
 import { historicalConstituencyCode } from "@uk-data-atlas/datasets";
 import { calculateTurnout } from "@uk-data-atlas/datasets";
 import {

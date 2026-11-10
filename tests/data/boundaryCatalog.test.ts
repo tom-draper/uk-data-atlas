@@ -9,7 +9,7 @@ import {
 import {
 	BOUNDARY_CAPABILITIES,
 	boundaryCapabilityFor,
-} from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+} from "@uk-data-atlas/datasets";
 
 describe("boundary catalogue", () => {
 	it("describes every downloadable boundary vintage", () => {

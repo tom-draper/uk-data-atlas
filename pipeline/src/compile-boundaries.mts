@@ -16,8 +16,8 @@ import { topology } from "topojson-server";
 import { presimplify, simplify } from "topojson-simplify";
 
 import type { BoundaryType } from "@uk-data-atlas/datasets";
-import { boundaryReadsFeatureExtent } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
-import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
+import { boundaryReadsFeatureExtent } from "@uk-data-atlas/datasets";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets";
 import {
 	buildLog,
 	elapsedSince,

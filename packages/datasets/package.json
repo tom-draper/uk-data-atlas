@@ -8,14 +8,7 @@
 	"sideEffects": false,
 	"exports": {
 		".": "./src/index.ts",
-		"./data/boundaries/capabilities": "./src/data/boundaries/capabilities.ts",
-		"./data/boundaries/properties": "./src/data/boundaries/properties.ts",
-		"./data/election/parties": "./src/data/election/parties.ts",
-		"./data/public-health/loader": "./src/data/public-health/loader.ts",
-		"./helpers/parseCsv": "./src/helpers/parseCsv.ts",
-		"./helpers/population": "./src/helpers/population.ts",
-		"./types": "./src/types/index.ts",
-		"./types/geometry": "./src/types/geometry.ts"
+		"./types": "./src/types/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

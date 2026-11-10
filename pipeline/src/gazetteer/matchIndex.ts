@@ -14,7 +14,7 @@ import {
 	propertiesAsset,
 } from "@uk-data-atlas/datasets";
 import { localDataPath } from "@uk-data-atlas/datasets";
-import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { getProp } from "@uk-data-atlas/datasets";
 
 type MatchIndex = Record<
 	string,

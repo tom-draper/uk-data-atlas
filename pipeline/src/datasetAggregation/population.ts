@@ -1,14 +1,11 @@
-import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
-import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets";
+import { getFeatureProp } from "@uk-data-atlas/datasets";
 import type {
 	AgeGroups,
 	PopulationAgeSexRecord,
 	PopulationStats,
 } from "@uk-data-atlas/datasets";
-import {
-	calculateTotal,
-	polygonAreaSqKm,
-} from "@uk-data-atlas/datasets/helpers/population";
+import { calculateTotal, polygonAreaSqKm } from "@uk-data-atlas/datasets";
 
 type Feature = BoundaryGeojson["features"][number];
 type Features = Feature[];

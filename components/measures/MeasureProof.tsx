@@ -6,7 +6,7 @@ import {
 	type BoundaryType,
 } from "@/lib/data/boundaries/catalog";
 import { boundaryTiles, fetchMapBoundaries } from "@/lib/data/boundaries/tiles";
-import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
+import { getFeatureProp } from "@uk-data-atlas/datasets";
 import { valuesByCode } from "@/lib/measures/client";
 import {
 	buildScale,

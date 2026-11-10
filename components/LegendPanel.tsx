@@ -1,6 +1,6 @@
 "use client";
 
-import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import {

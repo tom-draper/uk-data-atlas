@@ -4,10 +4,7 @@ import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import { drawnTileState } from "./tileState";
 import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
-import type {
-	BoundaryGeojson,
-	Feature,
-} from "@uk-data-atlas/datasets/types/geometry";
+import type { BoundaryGeojson, Feature } from "@uk-data-atlas/datasets";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapInstance } from "@/lib/types/mapInstance";
 import { DEFAULT_COLOR } from "./featureBuilder";

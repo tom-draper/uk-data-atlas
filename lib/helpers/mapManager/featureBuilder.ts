@@ -5,7 +5,7 @@ import {
 	Feature,
 	Features,
 	getFeatureProp,
-} from "@uk-data-atlas/datasets/types/geometry";
+} from "@uk-data-atlas/datasets";
 import {
 	LocalElectionDataset,
 	GeneralElectionDataset,

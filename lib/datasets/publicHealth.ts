@@ -4,7 +4,7 @@ import {
 	type PublicHealthRecord,
 	type PublicHealthDataset,
 	type PublicHealthMeasure,
-} from "@uk-data-atlas/datasets/data/public-health/loader";
+} from "@uk-data-atlas/datasets";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import type { ChartDatasetDefinition } from "./types";

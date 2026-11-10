@@ -114,20 +114,7 @@ describe("shared packages", () => {
 	it.each([
 		["geography", ["."]],
 		["map-tiles", [".", "./node", "./featureIds", "./mapValues"]],
-		[
-			"datasets",
-			[
-				".",
-				"./data/boundaries/capabilities",
-				"./data/boundaries/properties",
-				"./data/election/parties",
-				"./data/public-health/loader",
-				"./helpers/parseCsv",
-				"./helpers/population",
-				"./types",
-				"./types/geometry",
-			],
-		],
+		["datasets", [".", "./types"]],
 		[
 			"catalogue",
 			[
@@ -151,6 +138,13 @@ describe("shared packages", () => {
 			expect(problems(join(PACKAGES, name))).toEqual([]);
 		},
 	);
+
+	it("keeps the datasets barrel tree-shakeable", () => {
+		const manifest = JSON.parse(
+			readFileSync(join(PACKAGES, "datasets/package.json"), "utf8"),
+		);
+		expect(manifest.sideEffects).toBe(false);
+	});
 
 	it.each(packages)("%s has no wildcard export", (name) => {
 		const manifest = JSON.parse(

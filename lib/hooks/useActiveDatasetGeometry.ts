@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 import type { BoundaryGeojson, BoundaryType, Dataset } from "@lib/types";
-import { boundaryCapabilityFor } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
+import { boundaryCapabilityFor } from "@uk-data-atlas/datasets";
 import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "../data/boundaries/catalog";
-import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { getProp } from "@uk-data-atlas/datasets";
 import type { ConstituencyLadOverlaps } from "../data/boundaries/constituencyLadOverlaps";
 import { getChartDatasetDefinition } from "../datasets";
 import { filterGeometryToDatasetCoverage } from "../helpers/datasetCoverage";

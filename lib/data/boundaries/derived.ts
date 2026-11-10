@@ -8,7 +8,7 @@
  * geometry, which keeps an uploaded file — compiled by nobody — working.
  */
 import type { Feature } from "../../types/index.ts";
-import { polygonAreaSqKm } from "@uk-data-atlas/datasets/helpers/population";
+import { polygonAreaSqKm } from "@uk-data-atlas/datasets";
 
 type Extent = [number, number, number, number];
 
