@@ -5,7 +5,7 @@ import { AreasResolver } from "@uk-data-atlas/atlas-loader";
 import { LineageResolver } from "@uk-data-atlas/relationships";
 import { SpatialResolver } from "@uk-data-atlas/areas";
 import { type GeographyResolverInputs } from "@uk-data-atlas/atlas-loader";
-import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
+import { readBuildBoundaryRegistry } from "../geographies/buildBoundaryRegistry.ts";
 import {
 	readCrosswalkInventory,
 	readCrosswalkLookup,

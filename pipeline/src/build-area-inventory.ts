@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { readAreaAdapters } from "@uk-data-atlas/areas";
 import { readAreaSourceAdapters } from "@uk-data-atlas/areas";
 import { compileAreas } from "./geographies/areaInventory.ts";
-import { createBoundaryRegistry } from "./build-boundary-registry.ts";
+import { createBoundaryRegistry } from "./geographies/buildBoundaryRegistry.ts";
 import {
 	artifactDirectory,
 	configDirectory,

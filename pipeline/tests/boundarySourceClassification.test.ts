@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { createBoundaryRegistry } from "../src/build-boundary-registry";
+import { createBoundaryRegistry } from "../src/geographies/buildBoundaryRegistry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { selectReleaseForDate } from "@uk-data-atlas/areas";
 import { createSourceInventory } from "../src/geographies/sourceInventory";

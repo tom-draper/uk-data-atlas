@@ -4,7 +4,7 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { readAreaAdapters } from "@uk-data-atlas/areas";
 import { compileAreas } from "../../src/geographies/areaInventory";
-import { createBoundaryRegistry } from "../../src/build-boundary-registry";
+import { createBoundaryRegistry } from "../../src/geographies/buildBoundaryRegistry";
 
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
