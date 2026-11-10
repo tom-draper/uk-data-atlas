@@ -127,6 +127,7 @@ export const handleDataRoutes = ({
 	const resolved = resolveObservations(context, {
 		measureId,
 		measure,
+		seriesKey: selectedSeries?.id,
 		periods: [period],
 		geography,
 		boundaryYear,

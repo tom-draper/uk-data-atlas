@@ -82,6 +82,7 @@ export const aggregateValue = ({
 		context,
 		measureId,
 		measure,
+		seriesKey: series?.id,
 		period: period!,
 		geography: geography!,
 		boundaryYear: boundaryYear!,

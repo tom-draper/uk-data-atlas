@@ -10,6 +10,8 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import type { ProblemCode } from "../runtime/index.ts";
 import { problem, type ApiResponse } from "../runtime/index.ts";
+import type { MeasureDimensions } from "@uk-data-atlas/measures";
+import { seriesCompatibility } from "../seriesCompatibility";
 
 /**
  * The first slice of the resolution layer described under
@@ -39,6 +41,7 @@ export type JoinableStatus = (typeof JOINABLE)[number];
 export type ObservationRequest = {
 	measureId: string;
 	measure?: Measure;
+	seriesKey?: string;
 	/**
 	 * Every period the partition must publish. One for a single observation,
 	 * two for a change measured across a partition, and none where the caller
@@ -126,6 +129,7 @@ const periodsOf = (measure: Measure) => [
 export type ResolverInput = {
 	dataCatalog?: DataCatalog;
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
+	measureDimensions?: MeasureDimensions;
 };
 
 /**
@@ -138,7 +142,11 @@ export type ResolverInput = {
  * catalogue order.
  */
 export const resolveObservations = (
-	{ dataCatalog, measureCompatibilityInventory }: ResolverInput,
+	{
+		dataCatalog,
+		measureCompatibilityInventory,
+		measureDimensions,
+	}: ResolverInput,
 	request: ObservationRequest,
 ): Resolution => {
 	const refuse = (refusal: ObservationRefusal): Resolution => ({
@@ -218,15 +226,18 @@ export const resolveObservations = (
 	const plan: ObservationPlan = { measure, source, periods: wanted };
 	if (request.release == null) return { kind: "plan", plan };
 
-	const compatibility = measureCompatibilityInventory?.measures
-		.find((entry) => entry.measureId === measure.id)
-		?.sources.find(
-			(entry) =>
-				entry.datasetId === source.datasetId &&
-				entry.sourceGeography.type === source.sourceGeography.type &&
-				entry.sourceGeography.boundaryYear ===
-					source.sourceGeography.boundaryYear,
-		);
+	const compatibility = seriesCompatibility(
+		measureCompatibilityInventory,
+		measureDimensions?.config,
+		request.seriesKey,
+		measure.id,
+	)?.sources.find(
+		(entry) =>
+			entry.datasetId === source.datasetId &&
+			entry.sourceGeography.type === source.sourceGeography.type &&
+			entry.sourceGeography.boundaryYear ===
+				source.sourceGeography.boundaryYear,
+	);
 	const joinable = (
 		candidate: CompatibilityCandidate,
 	): candidate is CompatibilityCandidate & { status: JoinableStatus } =>
