@@ -1,4 +1,4 @@
-import type { GeographyResolver } from "./sourceExactProvenance.ts";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
