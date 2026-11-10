@@ -15,6 +15,7 @@ import {
 	compiledObservationDirectory,
 } from "@uk-data-atlas/atlas-db";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/measures";
+import { catalogueWithSeries } from "./catalog/catalogueSeries.ts";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
@@ -74,7 +75,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	const inputs = datasetCatalogInputs(repositoryRoot);
 	const outputDirectory = artifactDirectory(repositoryRoot);
 	const {
-		catalog,
+		catalog: sourceCatalog,
 		populationObservations,
 		ghgEmissionsObservations,
 		jobsObservations,
@@ -95,7 +96,8 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	// Every measure id must say which measure and dimension members it is,
 	// so an id that encodes a breakdown is never published unmapped.
 	const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
-	assertMeasureDimensions(catalog, config, vocabulary);
+	assertMeasureDimensions(sourceCatalog, config, vocabulary);
+	const catalog = catalogueWithSeries(sourceCatalog, config.ids);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	// Remove artifacts from older builds; observations now come from rows.
 	rmSync(compiledObservationDirectory(repositoryRoot), {
