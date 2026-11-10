@@ -230,6 +230,11 @@ test("atlas assembly depends on each declared component output", async () => {
 		),
 	);
 	assert.ok(
+		stage("data-catalog").requiredOutputs.includes(
+			"data/build/artifacts/data-catalog.json",
+		),
+	);
+	assert.ok(
 		stage("geography-catalogues").requiredOutputs.includes(
 			"data/build/geography-payloads.json",
 		),
