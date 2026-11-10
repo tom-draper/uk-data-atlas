@@ -69,9 +69,12 @@ export function crosswalkInputSourceTables(
 					needsAtoms || hasAtoms ? weightInputPaths(root) : [],
 				);
 				for (const row of db
-					.prepare("SELECT header FROM crosswalk")
+					.prepare("SELECT provenance FROM crosswalk")
 					.iterate()) {
-					const p = JSON.parse(String(row.header)).provenance;
+					const p =
+						row.provenance === null
+							? {}
+							: JSON.parse(String(row.provenance));
 					if (typeof p?.population?.input === "string")
 						inputs.add(p.population.input);
 				}
@@ -120,11 +123,12 @@ export function crosswalkInputSourceTables(
 			rows: function* (db) {
 				let atoms: string[] | undefined;
 				for (const row of db
-					.prepare("SELECT id, method, header FROM crosswalk")
+					.prepare("SELECT id, method, provenance FROM crosswalk")
 					.iterate()) {
-					const provenance = JSON.parse(
-						String(row.header),
-					).provenance;
+					const provenance =
+						row.provenance === null
+							? {}
+							: JSON.parse(String(row.provenance));
 					const inputs =
 						row.method === "postcode-overlap"
 							? (atoms ??= weightInputPaths(root))

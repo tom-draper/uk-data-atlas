@@ -30,19 +30,17 @@ test("records boundary provenance and isolates historical local election licence
 		CREATE TABLE source (id INTEGER PRIMARY KEY, publisher TEXT NOT NULL, url TEXT, licence TEXT NOT NULL, licence_url TEXT, citation TEXT);
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT NOT NULL);
 		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), date TEXT NOT NULL);
-		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, header TEXT NOT NULL);
+		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, provenance TEXT NOT NULL);
 		INSERT INTO source VALUES (1, 'mixed', 'https://example.org/mixed', 'Open Parliament Licence (2021–2025); CC BY-SA 3.0 (2016–2019)', NULL, NULL);
 		INSERT INTO dataset VALUES (1, 'local-election');
 		INSERT INTO election VALUES (1, 1, '2019-05-02'), (2, 1, '2024-05-02');`);
 		db.prepare("INSERT INTO crosswalk VALUES (?, ?)").run(
 			1,
 			JSON.stringify({
-				provenance: {
-					inputs: [
-						{ input: "boundaries/ward/2024/ward.geojson" },
-						{ input: "other/unknown.csv" },
-					],
-				},
+				inputs: [
+					{ input: "boundaries/ward/2024/ward.geojson" },
+					{ input: "other/unknown.csv" },
+				],
 			}),
 		);
 		writeSqliteTables(db, boundaryReleaseTables(registry));

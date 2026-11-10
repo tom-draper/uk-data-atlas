@@ -3,6 +3,7 @@ import {
 	CROSSWALK_INVENTORY_VIEW,
 } from "./deprecatedViews.ts";
 import { join } from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import {
 	DatabaseSync,
 	type SQLInputValue,
@@ -168,6 +169,22 @@ export const crosswalkTables = (
 			artifact.records.length !== entry.recordCount
 		)
 			throw new Error(`Invalid crosswalk artifact ${entry.id}`);
+		for (const key of [
+			"id",
+			"method",
+			"quality",
+			"relationshipPurpose",
+			"weighting",
+			"from",
+			"to",
+		] as const)
+			if (
+				artifact[key] !== undefined &&
+				!isDeepStrictEqual(artifact[key], entry[key])
+			)
+				throw new Error(
+					`Crosswalk ${entry.id} has inconsistent ${key}`,
+				);
 		return { artifact, bytes: Buffer.byteLength(text) };
 	};
 	const basisOf = (entry: CrosswalkInventory["crosswalks"][number]) => {
@@ -199,12 +216,23 @@ export const crosswalkTables = (
 			entry,
 		] of inventory.crosswalks.entries()) {
 			const { artifact, bytes } = read(entry);
-			const header = Object.fromEntries(
-				Object.entries(artifact).map(([key, value]) => [
-					key,
-					key === "records" ? null : value,
-				]),
-			);
+			const allowed = new Set([
+				"schemaVersion",
+				"id",
+				"method",
+				"quality",
+				"relationshipPurpose",
+				"weighting",
+				"from",
+				"to",
+				"provenance",
+				"validation",
+				"records",
+				"contentHash",
+			]);
+			for (const key of Object.keys(artifact))
+				if (!allowed.has(key))
+					throw new Error(`Unknown crosswalk metadata field ${key}`);
 			yield [
 				ids.crosswalk.assign(entry.id),
 				entry.id,
@@ -219,7 +247,12 @@ export const crosswalkTables = (
 				entry.recordCount,
 				entry.artifact,
 				entry.contentHash,
-				JSON.stringify(header),
+				artifact.provenance === undefined
+					? null
+					: JSON.stringify(artifact.provenance),
+				artifact.validation === undefined
+					? null
+					: JSON.stringify(artifact.validation),
 				bytes,
 			];
 		}
@@ -433,7 +466,8 @@ export const crosswalkTables = (
 				"record_count INTEGER NOT NULL",
 				"artifact TEXT NOT NULL",
 				"content_hash TEXT NOT NULL",
-				"header TEXT NOT NULL",
+				"provenance TEXT",
+				"validation TEXT",
 				"bytes INTEGER NOT NULL",
 			],
 			key: ["id"],

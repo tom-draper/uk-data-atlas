@@ -176,6 +176,14 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	]);
 	const database = new DatabaseSync(path);
 	try {
+		const crosswalkColumns = database
+			.prepare("PRAGMA table_info(crosswalk)")
+			.all()
+			.map((row) => row.name);
+		assert.equal(crosswalkColumns.includes("header"), false);
+		assert.equal(crosswalkColumns.includes("source_fields"), false);
+		assert.equal(crosswalkColumns.includes("target_fields"), false);
+		assert.equal(crosswalkColumns.includes("provenance"), true);
 		const all = (sql: string) =>
 			database
 				.prepare(sql)
