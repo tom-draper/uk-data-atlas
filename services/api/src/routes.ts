@@ -90,13 +90,7 @@ const buildRequest = (
 				targetSegments[1] === "data" &&
 				decodePathSegment(targetSegments[2] ?? "") === segments[2]
 			) {
-				return routeSeries(
-					"GET",
-					nextUrl,
-					context,
-					undefined,
-					series,
-				);
+				return routeSeries("GET", nextUrl, context, undefined, series);
 			}
 			return routeSeries("GET", nextUrl, context);
 		},
