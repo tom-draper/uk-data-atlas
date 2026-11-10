@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "./lib/args.ts";
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { writeFileSync } from "node:fs";
@@ -194,7 +195,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { adapters, skipped } = proposeExtentContinuity(repositoryRoot);
 	for (const reason of skipped) console.log(`Skipped ${reason}`);
-	if (process.argv.includes("--write")) {
+	if (parseScriptArgs({ write: { type: "boolean" } }).values.write === true) {
 		const path = join(
 			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",

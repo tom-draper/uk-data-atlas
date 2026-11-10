@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "./lib/args.ts";
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { writeFileSync } from "node:fs";
@@ -248,9 +249,13 @@ export const proposeGeometricContainment = (
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
-	const geographies = process.argv
-		.filter((argument) => argument.startsWith("--from="))
-		.flatMap((argument) => argument.slice("--from=".length).split(","));
+	const flags = parseScriptArgs({
+		from: { type: "string", multiple: true },
+		write: { type: "boolean" },
+	}).values;
+	const geographies = (flags.from ?? []).flatMap((value) =>
+		typeof value === "string" ? value.split(",") : [],
+	);
 	const { adapters, rejected, candidateCount } = proposeGeometricContainment(
 		repositoryRoot,
 		{
@@ -271,7 +276,7 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	console.log(
 		`${adapters.length} containments of ${candidateCount} candidates.`,
 	);
-	if (process.argv.includes("--write")) {
+	if (flags.write === true) {
 		const path = join(
 			configDirectory(repositoryRoot),
 			"crosswalk-adapters.json",

@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "./lib/args.ts";
 import {
 	buildLog,
 	configDirectory,
@@ -97,7 +98,11 @@ if (
 ) {
 	const result = await buildWeightAtomsStage(
 		resolve(dirname(scriptPath), "../.."),
-		{ rebuild: process.argv.includes("--rebuild") },
+		{
+			rebuild:
+				parseScriptArgs({ rebuild: { type: "boolean" } }).values
+					.rebuild === true,
+		},
 	);
 	buildLog.info(
 		`Placed ${formatCount(result.atoms.count)} atoms in ${formatCount(result.releases)} releases in ${formatDuration(result.seconds * 1000)}, to ${repoPath(result.directory)}`,

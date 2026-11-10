@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "./lib/args.ts";
 import {
 	buildLog,
 	formatCount,
@@ -282,7 +283,9 @@ if (
 ) {
 	const { output, summary, skipped, atoms, seconds } =
 		await buildCrosswalkWeights(resolve(dirname(scriptPath), "../.."), {
-			rebuild: process.argv.includes("--rebuild"),
+			rebuild:
+				parseScriptArgs({ rebuild: { type: "boolean" } }).values
+					.rebuild === true,
 		});
 	for (const measure of MEASURES)
 		buildLog.info(

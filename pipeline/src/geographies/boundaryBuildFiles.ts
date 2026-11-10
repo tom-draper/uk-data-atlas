@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "../lib/args.ts";
 import { mkdir, rename, stat, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
@@ -22,7 +23,8 @@ export const shouldCompile = async (
 	inputPaths: string[],
 	outputPath: string,
 ) => {
-	if (process.argv.includes("--force")) return true;
+	if (parseScriptArgs({ force: { type: "boolean" } }).values.force === true)
+		return true;
 	try {
 		const [output, ...inputs] = await Promise.all(
 			[outputPath, ...inputPaths].map((path) => stat(path)),
