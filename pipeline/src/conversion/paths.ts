@@ -17,3 +17,7 @@ export const convertedSeriesDirectory = (root: string) =>
 /** The result of the `converted-series` stage, which `assemble-atlas` copies in. */
 export const convertedSeriesPath = (root: string) =>
 	join(convertedSeriesDirectory(root), "converted-series.sqlite");
+
+/** What was converted, as markdown, for `docs/conversion-accuracy.md`. */
+export const convertedSeriesSummaryPath = (root: string) =>
+	join(convertedSeriesDirectory(root), "converted-series.md");

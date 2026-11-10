@@ -158,16 +158,16 @@ export const writeBacktestDatabase = (path: string, run: BacktestRun) => {
 	renameSync(temporary, path);
 };
 
-const percent = (value: number | null, digits = 2) =>
+export const percent = (value: number | null, digits = 2) =>
 	value === null ? "" : `${(value * 100).toFixed(digits)}%`;
-const number = (value: number | null, digits = 0) =>
+export const number = (value: number | null, digits = 0) =>
 	value === null
 		? ""
 		: value.toLocaleString("en-GB", {
 				minimumFractionDigits: digits,
 				maximumFractionDigits: digits,
 			});
-const table = (head: string[], rows: string[][]) =>
+export const table = (head: string[], rows: string[][]) =>
 	[
 		`| ${head.join(" | ")} |`,
 		`| ${head.map(() => "---").join(" | ")} |`,
