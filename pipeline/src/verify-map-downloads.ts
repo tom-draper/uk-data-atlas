@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import {
 	AreaGeometryCache,
 	readGeometrySourceLookup,

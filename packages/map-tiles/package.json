@@ -9,7 +9,8 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./node": "./src/node/index.ts",
-		"./*": "./src/*.ts"
+		"./featureIds": "./src/featureIds.ts",
+		"./mapValues": "./src/mapValues.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

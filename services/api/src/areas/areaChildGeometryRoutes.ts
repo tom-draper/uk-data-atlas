@@ -8,7 +8,7 @@ import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
 	simplifyGeometry,
-} from "@uk-data-atlas/map-tiles/simplifyGeometry";
+} from "@uk-data-atlas/map-tiles";
 import { areaNotFound } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";

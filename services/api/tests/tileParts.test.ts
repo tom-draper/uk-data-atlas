@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { Coordinate } from "@uk-data-atlas/geography";
-import { tileBounds } from "@uk-data-atlas/map-tiles/tileGrid";
+import { tileBounds } from "@uk-data-atlas/map-tiles";
 import {
 	boundsOf,
 	tileFeatures,
 	type MapFeature,
-} from "@uk-data-atlas/map-tiles/tileset";
+} from "@uk-data-atlas/map-tiles";
 
 // Coordinates expressed on the zoom 2 world grid make the expected tile
 // coordinates literal, including a polygon that only reaches the tile's buffer.
