@@ -289,6 +289,22 @@ describe("extracted domain packages", () => {
 	});
 });
 
+describe("loader domain boundaries", () => {
+	it.each([
+		"batchValidation.ts",
+		"geographyInventory.ts",
+		"resolver/conversionCapability.ts",
+		"resolver/releaseComparison.ts",
+		"areaResources.ts",
+		"rankCompatibilityReleases.ts",
+		"sourceExactProvenance.ts",
+	])("keeps %s out of the loader", (file) => {
+		expect(
+			existsSync(join(PACKAGES, "atlas-runtime/src/loader", file)),
+		).toBe(false);
+	});
+});
+
 describe("atlas domain boundaries", () => {
 	it("keeps domain modules and evidence loading independent of the API", () => {
 		const atlas = join(PACKAGES, "atlas-runtime/src");
