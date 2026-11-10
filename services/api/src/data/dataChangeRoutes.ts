@@ -209,6 +209,7 @@ export const handleDataChangeRoutes = ({
 	}
 	const artifacts = {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	};
 	const startObservations = observationsFor(
 		measureId,

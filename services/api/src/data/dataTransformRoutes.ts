@@ -165,6 +165,7 @@ export const handleDataTransformRoutes = ({
 	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period!, {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	});
 	if (!observations)
 		return problem(

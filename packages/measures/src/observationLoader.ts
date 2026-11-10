@@ -7,6 +7,7 @@ import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
 	measureSeriesSourceKey,
+	registerSeriesObservations,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 	type MeasureSeriesIdentity,
@@ -34,9 +35,10 @@ export const readMeasureObservations = (
 	const databasePath = atlasDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);
 	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
-	return dataCatalog.measures.flatMap((measure) =>
-		measure.sources.map((source) =>
-			lazySourceObservations(
+	const bySeriesSource = new Map<string, AnyMeasureObservationArtifact>();
+	const observations = dataCatalog.measures.flatMap((measure) =>
+		measure.sources.map((source) => {
+			const view = lazySourceObservations(
 				databasePath,
 				readPath.series && identities?.[measure.id]
 					? measureSeriesSourceKey(identities[measure.id], source)
@@ -44,7 +46,16 @@ export const readMeasureObservations = (
 				measure.id,
 				source.sourceGeography,
 				tables,
-			),
-		),
+			);
+			const identity = identities?.[measure.id];
+			if (identity)
+				bySeriesSource.set(
+					measureSeriesSourceKey(identity, source),
+					view,
+				);
+			return view;
+		}),
 	);
+	if (identities) registerSeriesObservations(observations, bySeriesSource);
+	return observations;
 };

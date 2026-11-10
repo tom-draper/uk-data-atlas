@@ -346,9 +346,11 @@ const readPeriod = (
 	measureId: string,
 	source: MeasureSource,
 	period: string,
+	seriesKey?: string,
 ): { records: PeriodRecords; contentHash: string } | undefined => {
 	const observations = observationsFor(measureId, source, period, {
 		measureObservations: context.measureObservations,
+		seriesKey,
 	});
 	if (!observations) return undefined;
 	const byCode = new Map<
@@ -481,7 +483,13 @@ export function queryMeasureValues(
 	const reads = new Map<string, PeriodRecords>();
 	let contentHash = "";
 	for (const period of periods) {
-		const read = readPeriod(context, catalogueMeasure.id, source, period);
+		const read = readPeriod(
+			context,
+			catalogueMeasure.id,
+			source,
+			period,
+			series.id,
+		);
 		if (!read)
 			return refuse(
 				503,
