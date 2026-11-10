@@ -33,3 +33,4 @@ export type {
 export * from "./lineageResolver.ts";
 export * from "./areaAbsence.ts";
 export * from "./relationshipRepairs.ts";
+export * from "./capabilityResolver.ts";

@@ -3,23 +3,23 @@ import type {
 	AreaLookup,
 	AreaRecord,
 } from "@uk-data-atlas/areas";
-import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
+import type { CrosswalkInventory } from "./crosswalkInventory.ts";
+import type { RelationshipCandidateInventory } from "./relationshipCandidates.ts";
+import type { AreaRelation, AreaRelationship } from "./areaRelationships.ts";
+import type { RelationshipPurpose } from "./relationshipPaths.ts";
 import type {
-	AreaRelation,
-	AreaRelationship,
-} from "@uk-data-atlas/relationships";
-import type { RelationshipPurpose } from "@uk-data-atlas/relationships";
-import type { AreaIdentity, GeographyEndpoint } from "@uk-data-atlas/geography";
+	AreaIdentity,
+	BoundaryRegistry,
+	GeographyEndpoint,
+} from "@uk-data-atlas/geography";
 import {
 	ConversionCapabilities,
 	type GeographyReach,
 	type RelationshipOperation,
 	type ResolvedConversionPlan,
 	type ResolvedRelationshipCapability,
-} from "@uk-data-atlas/relationships";
-import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
+} from "./conversionCapability.ts";
+import type { CrosswalkTranslator } from "./translation.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { areaId } from "@uk-data-atlas/areas";
 
