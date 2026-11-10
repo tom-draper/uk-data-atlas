@@ -18,7 +18,7 @@ import {
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "../sourceExactProvenance.ts";
 import { nextPageHref, paginate } from "../pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";

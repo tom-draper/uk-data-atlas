@@ -24,7 +24,6 @@ export {
 	type ReleaseCoverage,
 } from "@uk-data-atlas/relationships";
 export type { CrosswalkLookup } from "@uk-data-atlas/relationships";
-export * from "./sourceExactProvenance.ts";
 export * from "./resolver/areas.ts";
 export * from "./resolver/capability.ts";
 export * from "./resolver/catalogue.ts";
