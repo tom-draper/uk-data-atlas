@@ -3,7 +3,7 @@ export { assembleAtlas } from "../../../pipeline/src/atlas/assembleAtlas";
 export { buildGeographyCatalogues } from "../../../pipeline/src/geographies/buildGeographyCatalogues";
 export { compileOperations } from "../../../pipeline/src/atlas/buildOperations";
 export { buildPostcodeIndex } from "../../../pipeline/src/postcodes/buildPostcodeIndex";
-export { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
+export { buildTerrainCatalogue } from "../../../pipeline/src/catalog/buildTerrainCatalogue";
 export { buildAtlasSqlite } from "../../../pipeline/src/atlas/buildAtlasSqlite";
 export { buildGeometryStore } from "../../../pipeline/src/maps/buildGeometryStore";
 export { buildLocationProjections } from "../../../pipeline/src/places/buildLocationProjections";
