@@ -1,12 +1,15 @@
-import type { AreaRecord } from "@uk-data-atlas/areas";
-import type { CrosswalkLookup } from "@uk-data-atlas/relationships";
+import {
+	areaId,
+	type AreaRecord,
+	type ResolvedSameCodeArea,
+} from "@uk-data-atlas/areas";
+import type { CrosswalkLookup } from "./translation.ts";
 import {
 	LazyAreaRelationshipIndex,
 	isLineageRelation,
 	type AreaRelation,
 	type AreaRelationship,
-} from "@uk-data-atlas/relationships";
-import { areaId, type ResolvedSameCodeArea } from "@uk-data-atlas/areas";
+} from "./areaRelationships.ts";
 import { type AreaIdentity } from "@uk-data-atlas/geography";
 
 /** A published graph edge, reported once at its shortest distance from origin. */

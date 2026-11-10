@@ -3,10 +3,12 @@ import {
 	type ValidatedValue,
 } from "@uk-data-atlas/relationships";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
-import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
+import type {
+	CrosswalkTranslator,
+	LineageResolver,
+} from "@uk-data-atlas/relationships";
 import type { AreasResolver } from "./areas.ts";
 import type { GeographyEndpoint } from "@uk-data-atlas/geography";
-import type { LineageResolver } from "./lineage.ts";
 
 export class AreaValidation {
 	private readonly areas: Pick<
