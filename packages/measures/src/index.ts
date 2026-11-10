@@ -36,3 +36,4 @@ export * from "./measureContext.ts";
 export * from "./measureCapability.ts";
 export * from "./dataCatalogLoader.ts";
 export * from "./measureValuesContext.ts";
+export * from "./postcodeAreaReleases.ts";
