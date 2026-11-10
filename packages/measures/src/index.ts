@@ -32,3 +32,5 @@ export * from "./measureValues.ts";
 export * from "./rankCompatibilityReleases.ts";
 
 export * from "./areaResources.ts";
+export * from "./measureContext.ts";
+export * from "./measureCapability.ts";
