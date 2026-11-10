@@ -10,7 +10,7 @@ import {
 	summariseBatch,
 	validateBatch,
 	type ValidatedValue,
-} from "../batchValidation.ts";
+} from "@uk-data-atlas/relationships";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { resolvePlaces } from "@uk-data-atlas/places";
 import type { PlaceIndex } from "@uk-data-atlas/places";

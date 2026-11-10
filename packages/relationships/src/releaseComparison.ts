@@ -2,12 +2,12 @@ import type { AreaLookup, AreaRecord } from "@uk-data-atlas/areas";
 import type {
 	CrosswalkArtifact,
 	ExtentContinuityCrosswalkArtifact,
-} from "@uk-data-atlas/relationships";
+} from "./index.ts";
 import {
 	selectCrosswalks,
 	type CrosswalkLookup,
 	type GeographyEndpoint,
-} from "@uk-data-atlas/relationships";
+} from "./index.ts";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 
 const areaId = ({
