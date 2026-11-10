@@ -67,6 +67,7 @@ export const selectSourcePartition = ({
 		};
 	const resolution = resolveObservations(context, {
 		measureId: measure.id,
+		measure,
 		periods: periodsForResolution?.(period) ?? periods,
 		geography,
 		boundaryYear,
