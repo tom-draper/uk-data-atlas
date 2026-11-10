@@ -51,6 +51,7 @@ export type MeasureCompatibilityInventory = {
 	};
 	measures: Array<{
 		measureId: string;
+		seriesKey?: string;
 		sources: MeasureCompatibilitySource[];
 	}>;
 };

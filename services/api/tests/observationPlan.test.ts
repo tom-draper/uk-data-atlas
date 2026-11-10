@@ -75,6 +75,30 @@ test("selects compatibility by canonical series instead of the supplied old id",
 	);
 });
 
+test("selects published canonical compatibility without the legacy mapping", () => {
+	const key = measureSeriesKey({
+		measure: "households",
+		dimensions: { tenure: "rented" },
+	});
+	const entry = { measureId: "legacy-rented", seriesKey: key, sources: [] };
+	const inventory = {
+		measures: [entry],
+	} as unknown as MeasureCompatibilityInventory;
+	assert.equal(
+		seriesCompatibility(inventory, undefined, key, "unrelated"),
+		entry,
+	);
+	assert.equal(
+		seriesCompatibility(
+			inventory,
+			undefined,
+			measureSeriesKey({ measure: "missing" }),
+			"legacy-rented",
+		),
+		undefined,
+	);
+});
+
 test("plans a geometry join from the selected series compatibility", () => {
 	const source = {
 		datasetId: "census",
