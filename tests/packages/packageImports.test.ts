@@ -632,7 +632,8 @@ describe("pipeline boundaries", () => {
 			"services/api/scripts",
 		].flatMap((directory) => sourceFiles(join(ROOT, directory)));
 		for (const name of readdirSync(PACKAGES))
-			files.push(...sourceFiles(join(PACKAGES, name, "src")));
+			if (existsSync(join(PACKAGES, name, "package.json")))
+				files.push(...sourceFiles(join(PACKAGES, name, "src")));
 		expect(files.length).toBeGreaterThan(0);
 		const invalid = files.flatMap((file) =>
 			specifiers(readFileSync(file, "utf8"))
