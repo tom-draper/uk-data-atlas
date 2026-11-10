@@ -147,7 +147,7 @@ const observedValues = (
 const idsOfSeries = (database: DatabaseSync, series: number) =>
 	database
 		.prepare(
-			"SELECT dataset_id AS datasetId, measure_id AS measureId FROM series WHERE id = ?",
+			"SELECT dataset_id AS datasetId, measure_id AS measureId FROM series WHERE id = ? AND method = 'published'",
 		)
 		.get(series) as { datasetId: number; measureId: number };
 

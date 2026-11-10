@@ -44,7 +44,8 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	JOIN selections selection
 	JOIN json_each(selection.value, '$.periods') selected_period
 	JOIN period selected_label ON selected_label.label = selected_period.value
-	WHERE selected_dataset.slug = json_extract(selection.value, '$.dataset')
+	WHERE selected_series.method = 'published'
+	AND selected_dataset.slug = json_extract(selection.value, '$.dataset')
 	AND selected_measure.slug = json_extract(selection.value, '$.measure')
 	AND selected_release.geography = json_extract(selection.value, '$.geography')
 	AND selected_release.release = json_extract(selection.value, '$.release')
@@ -73,7 +74,7 @@ export function expandStatisticsSelection(
 		.all(JSON.stringify(selection));
 	const details =
 		database.prepare(`SELECT d.slug AS dataset, m.slug AS measure, s.dataset_id, s.measure_id
-		FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id WHERE s.id = ?`);
+		FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id WHERE s.id = ? AND s.method = 'published'`);
 	const dimensions =
 		database.prepare(`SELECT dim.slug, dm.code FROM series_member sm
 		JOIN dimension dim ON dim.id = sm.dimension_id JOIN dimension_member dm ON dm.id = sm.member_id
@@ -82,7 +83,7 @@ export function expandStatisticsSelection(
 		database.prepare(`SELECT r.geography, r.release AS release, p.label AS period
 		FROM series s JOIN area_releases r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
-		WHERE s.dataset_id = ? AND s.measure_id = ?
+		WHERE s.dataset_id = ? AND s.measure_id = ? AND s.method = 'published'
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
 		AND NOT EXISTS (SELECT 1 FROM json_each(?) expected WHERE NOT EXISTS (
 			SELECT 1 FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
@@ -145,7 +146,7 @@ export function hashStatisticsSelection(
 	const query = database.prepare(`SELECT a.code, o.value, st.slug
 		FROM (${selectedRows}) selected
 		CROSS JOIN observation o ON o.series_id = selected.series_id AND o.period_id = selected.period_id
-		JOIN series s ON s.id = o.series_id
+		JOIN series s ON s.method = 'published' AND s.id = o.series_id
 		JOIN area_version av ON av.id = o.area_version_id
 		JOIN area a ON a.id = av.area_id
 		JOIN status st ON st.id = o.status_id
@@ -169,7 +170,7 @@ export function exportStatisticsMeasure(
 	selection?: readonly StatisticsSelection[],
 ) {
 	const source = selection
-		? `(${selectedRows}) selected CROSS JOIN observation o ON o.series_id = selected.series_id AND o.period_id = selected.period_id JOIN series s ON s.id = o.series_id`
+		? `(${selectedRows}) selected CROSS JOIN observation o ON o.series_id = selected.series_id AND o.period_id = selected.period_id JOIN series s ON s.method = 'published' AND s.id = o.series_id`
 		: "series s JOIN observation o ON o.series_id = s.id";
 	const filter = selection ? "1" : "m.slug = ?";
 	const dimensionFilter = selection
@@ -190,7 +191,7 @@ export function exportStatisticsMeasure(
 			JOIN area_releases r ON r.id = s.release_id
 			JOIN series_member sm ON sm.series_id = s.id
 			JOIN dimension d ON d.id = sm.dimension_id
-			WHERE ${dimensionFilter} ORDER BY d.slug`,
+			WHERE s.method = 'published' AND ${dimensionFilter} ORDER BY d.slug`,
 					)
 					.all(parameter);
 	const columns: ParquetColumn[] = [
@@ -222,7 +223,7 @@ export function exportStatisticsMeasure(
 				: undefined;
 	const intervalJoins = intervalMeasure
 		? `LEFT JOIN measure im ON im.slug = '${intervalMeasure}'
-		LEFT JOIN series ins ON ins.dataset_id = s.dataset_id AND ins.release_id = s.release_id AND ins.measure_id = im.id
+		LEFT JOIN series ins ON ins.method = 'published' AND ins.dataset_id = s.dataset_id AND ins.release_id = s.release_id AND ins.measure_id = im.id
 		LEFT JOIN observation ino ON ino.series_id = ins.id AND ino.area_version_id = o.area_version_id AND ino.period_id = o.period_id`
 		: "";
 	const lower = intervalMeasure ? "round(o.value - ino.value, 1)" : "o.lower";
@@ -230,7 +231,7 @@ export function exportStatisticsMeasure(
 	const density = measure === "population-density";
 	const housePrice = measure === "house-price-median";
 	const aggregatePopulation = measure === "population" || density;
-	const landArea = `(SELECT lo.value / 100.0 FROM dataset ld JOIN series ls ON ls.dataset_id=ld.id
+	const landArea = `(SELECT lo.value / 100.0 FROM dataset ld JOIN series ls ON ls.method='published' AND ls.dataset_id=ld.id
 		JOIN measure lm ON lm.id=ls.measure_id JOIN series_member lsm ON lsm.series_id=ls.id
 		JOIN dimension ldim ON ldim.id=lsm.dimension_id JOIN dimension_member ldm ON ldm.id=lsm.member_id
 		JOIN observation lo ON lo.series_id=ls.id JOIN area_version lav ON lav.id=lo.area_version_id

@@ -43,7 +43,7 @@ export function declaredFieldSeries(
 	const labels = database
 		.prepare(
 			`SELECT DISTINCT p.label FROM series s JOIN dataset d ON d.id = s.dataset_id
-			JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id WHERE d.slug = ?`,
+			JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id WHERE d.slug = ? AND s.method = 'published'`,
 		)
 		.all(slug)
 		.map((row) => String(row.label));

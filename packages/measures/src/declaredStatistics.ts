@@ -851,7 +851,7 @@ export function declaredStatistics(
 			verify(database: DatabaseSync) {
 				const row = database
 					.prepare(
-						"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
+						"SELECT count(*) AS n FROM observation o JOIN series s ON s.method = 'published' AND s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
 					)
 					.get(
 						JSON.stringify(

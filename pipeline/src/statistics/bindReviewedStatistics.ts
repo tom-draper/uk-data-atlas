@@ -43,7 +43,7 @@ export function bindReviewedStatistics(
 				`SELECT s.id, r.release AS release, p.label AS period
 			FROM series s JOIN dataset d ON d.id=s.dataset_id JOIN measure m ON m.id=s.measure_id
 			JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
-			JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug=? AND r.geography=?
+			JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug=? AND r.geography=? AND s.method='published'
 			GROUP BY s.id, p.id`,
 			)
 			.all(selector.datasetId, selector.measure, selector.geography);

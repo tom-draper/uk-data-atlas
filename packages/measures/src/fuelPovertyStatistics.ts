@@ -170,7 +170,7 @@ export function rebuildFuelPoverty(database: SqlReader): string {
 			`
 		SELECT DISTINCT p.label, p.start_date, r.geography, r.release AS release
 		FROM dataset d
-		JOIN series s ON s.dataset_id = d.id
+		JOIN series s ON s.method = 'published' AND s.dataset_id = d.id
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
 		JOIN area_releases r ON r.id = s.release_id
@@ -183,7 +183,7 @@ export function rebuildFuelPoverty(database: SqlReader): string {
 	const values = database.prepare(`
 		SELECT a.code, coalesce(n.name, v.name) AS name, m.slug AS measure, o.value
 		FROM dataset d
-		JOIN series s ON s.dataset_id = d.id
+		JOIN series s ON s.method = 'published' AND s.dataset_id = d.id
 		JOIN measure m ON m.id = s.measure_id
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
