@@ -630,6 +630,43 @@ placed nowhere would be one: that is how the Dolgellau wards, drawn as an
 enclave inside a ward without its hole, were found, and a point inside several
 areas is now placed in the one nested in the others.
 
+### Converted series
+
+Two stages move published series onto other areas, and `assemble-atlas` copies
+the result into the atlas. See
+[conversion accuracy](../../docs/conversion-accuracy.md) for the method and the
+measured error.
+
+- `conversion-backtest` converts published series onto areas where the same
+  quantity is also published, compares them, and fits an error factor for each
+  splitting method and weight basis. It writes
+  `conversion-backtest/conversion-backtest.sqlite` and `backtest-tables.md`.
+- `converted-series` builds the series of the plan in
+  `pipeline/src/conversion/convertedPlan.ts` and writes
+  `converted-series/converted-series.sqlite` and `converted-series.md`.
+
+Both folders are components and do not ship.
+
+A converted series is a `series` row with `method = 'converted'` and
+`derived_from_id` set. Its key is the source key followed by
+`~converted:<geography>:<release>`, and its id comes from
+`pipeline/ids/series.txt` like any other. A value that regrouped whole areas has
+status `derived` and no bounds. A value that passed through a split has status
+`estimated` and `lower` and `upper`. No converted value is `observed`, and the
+copy fails if one is.
+
+| Table                                                                                                                       | Holds                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `series_input`                                                                                                              | Each input series of a converted series, and its role                  |
+| `series_conversion`                                                                                                         | Rule, weight basis, whether every value is an exact regrouping, a note |
+| `series_crosswalk`                                                                                                          | The crosswalks of the route, in order, and their direction             |
+| `series_gap`                                                                                                                | Each area and period with no value, and the reason                     |
+| `measure_conversion`                                                                                                        | The rule of every measure (`sum`, `rebuild`, `refuse`) and its reason  |
+| `conversion_backtest`, `conversion_backtest_gap`, `conversion_backtest_worst`, `conversion_error`, `conversion_error_check` | The backtest results                                                   |
+
+A query that reads `series` must name the method it wants.
+`pipeline/tests/seriesReadersNamePublished.test.ts` fails on one that does not.
+
 ### Named locations
 
 `named_location_inventory_metadata` has one row keyed by integer `position = 0`. Its
