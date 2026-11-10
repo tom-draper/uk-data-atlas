@@ -96,7 +96,9 @@ export const openStatisticsArtifactReader = (
 				database,
 				catalog,
 				readPath,
-				readMeasureDimensionsMapping(repositoryRoot).ids,
+				readPath.series
+					? readMeasureDimensionsMapping(repositoryRoot).ids
+					: undefined,
 			),
 		};
 	} catch (error) {
