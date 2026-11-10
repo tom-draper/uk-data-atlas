@@ -184,6 +184,54 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 	assert.match(inventory.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
 
+test("publishes canonical series identities and rejects missing mappings", () => {
+	const observations = [
+		wardObservations,
+		localAuthorityObservations,
+		emissionsObservations,
+	];
+	const inventory = compileMeasureCompatibility(
+		dataCatalog,
+		boundaryRegistry,
+		artifacts,
+		observations,
+		{
+			population: {
+				measure: "population",
+				dimensions: { tenure: "owned", age: "all" },
+			},
+		},
+	);
+	const reordered = compileMeasureCompatibility(
+		dataCatalog,
+		boundaryRegistry,
+		artifacts,
+		observations,
+		{
+			population: {
+				measure: "population",
+				dimensions: { age: "all", tenure: "owned" },
+			},
+		},
+	);
+	assert.ok(inventory.measures[0]?.seriesKey);
+	assert.equal(
+		inventory.measures[0]?.seriesKey,
+		reordered.measures[0]?.seriesKey,
+	);
+	assert.throws(
+		() =>
+			compileMeasureCompatibility(
+				dataCatalog,
+				boundaryRegistry,
+				artifacts,
+				observations,
+				{},
+			),
+		/Missing series identity for population/,
+	);
+});
+
 test("assesses the codes of every period in a partition, not only the first", () => {
 	const catalogue: DataCatalog = {
 		...dataCatalog,

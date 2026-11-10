@@ -17,10 +17,14 @@ export const seriesCompatibility = (
 	measureId: string,
 ): Entry | undefined => {
 	if (!inventory) return undefined;
-	if (!seriesKey || !config)
+	if (!seriesKey)
 		return inventory.measures.find(
 			(entry) => entry.measureId === measureId,
 		);
+	const published = inventory.measures.find(
+		(entry) => entry.seriesKey === seriesKey,
+	);
+	if (published || !config) return published;
 	let configs = indexes.get(inventory);
 	if (!configs) {
 		configs = new WeakMap();
@@ -31,7 +35,9 @@ export const seriesCompatibility = (
 		index = new Map();
 		for (const entry of inventory.measures) {
 			const identity = config.ids[entry.measureId];
-			if (identity) index.set(measureSeriesKey(identity), entry);
+			const key =
+				entry.seriesKey ?? (identity && measureSeriesKey(identity));
+			if (key) index.set(key, entry);
 		}
 		configs.set(config, index);
 	}

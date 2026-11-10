@@ -810,7 +810,13 @@ const apiStages = [
 			"statistics-read-path",
 		],
 		["pipeline/src/build-measure-compatibility.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			codeInputs: [
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+				"services/api/config/measure-dimensions.json",
+			],
+		},
 	),
 	stage(
 		"statistics-read-path",
