@@ -28,7 +28,7 @@ import {
 	type DiscoveredDataset,
 } from "./precompile/datasetDiscovery.ts";
 import { writeDatasetRegionChunks } from "./precompile/datasetRegionChunks.mts";
-import { compileCatalogueDatasets } from "./compile-datasets.mts";
+import { compileCatalogueDatasets } from "./precompile/compileCatalogueDatasets.mts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
