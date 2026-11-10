@@ -73,6 +73,15 @@ function fixture(t: TestContext) {
 	);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
+		join(root, "data/build/statistics-read-path.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			dataCatalogHash: "fixture",
+			statistics: {},
+			observations: {},
+		}),
+	);
+	writeFileSync(
 		join(
 			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
 			"postcode-index.json",

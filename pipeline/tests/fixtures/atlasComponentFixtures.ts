@@ -1,3 +1,4 @@
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
@@ -16,6 +17,15 @@ export function writeEmptyPostcodeComponent(root: string) {
 }
 
 export function writeEmptyPostcodeAreas(root: string) {
+	writeFileSync(
+		join(root, "data/build/statistics-read-path.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			dataCatalogHash: "fixture",
+			statistics: {},
+			observations: {},
+		}),
+	);
 	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	base.exec(`CREATE TABLE IF NOT EXISTS geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		CREATE TABLE IF NOT EXISTS area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);

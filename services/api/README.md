@@ -91,8 +91,8 @@ crosswalk's stored field order. See `data/build/README.md`.
 
 The API reconstructs observations from the `dataset`, `measure`, `series`,
 `observation`, `area_version`, `period` and related statistics tables. The
-generated `statistics-read-path.json` binds each catalogue artifact to its
-statistics selectors and catalogue hash. The build compares reconstructed
+database stores the validated selectors and catalogue hash in the
+`statistics_selector` tables. The build compares reconstructed
 values, statuses, bounds, areas and periods against independent compiler output.
 Exports and compatibility checks use the same statistics-backed reads.
 

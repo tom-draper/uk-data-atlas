@@ -72,6 +72,27 @@ beforeEach(() => {
 			],
 		}),
 	);
+	mkdirSync(join(root, "services/api/config"), { recursive: true });
+	writeFileSync(
+		join(root, "services/api/config/measure-dimensions.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			measures: {},
+			dimensions: {},
+			members: {},
+			defaults: {},
+			ids: {},
+		}),
+	);
+	mkdirSync(join(root, "data/build/geography"), { recursive: true });
+	writeFileSync(
+		join(root, "data/build/geography/boundary-releases.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "registry",
+			releases: [],
+		}),
+	);
 	writeFileSync(
 		join(artifactDirectory(root), "area-inventory.json"),
 		JSON.stringify({

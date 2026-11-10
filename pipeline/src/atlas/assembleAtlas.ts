@@ -1,3 +1,6 @@
+import { statisticsReadPathTables } from "../storage/statisticsReadPathTables.ts";
+import { writeSqliteTables } from "@uk-data-atlas/artifacts";
+import type { StatisticsReadPath } from "@uk-data-atlas/measures";
 import { randomUUID } from "node:crypto";
 import { copyFileSync, existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -77,6 +80,14 @@ export function assembleAtlas(
 			const insertPayload = (id: string, text: string) =>
 				insertStored.run(id, packText(text));
 			for (const { id, payload } of payloads) insertPayload(id, payload);
+			writeSqliteTables(
+				database,
+				statisticsReadPathTables(
+					readJsonSync(
+						join(directory, "statistics-read-path.json"),
+					) as StatisticsReadPath,
+				),
+			);
 			const postcode = database
 				.prepare(
 					"SELECT payload FROM postcode_component.payloads WHERE id = 'postcode-index'",

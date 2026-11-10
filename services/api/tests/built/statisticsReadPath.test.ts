@@ -10,6 +10,7 @@ import {
 import {
 	tableMeasureObservations,
 	readStatisticsObservationText,
+	readAtlasStatisticsReadPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import {
@@ -37,6 +38,10 @@ const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 ) as StatisticsReadPath;
+
+test("database selectors match the validated build plan", () => {
+	assert.deepEqual(readAtlasStatisticsReadPath(databasePath), readPath);
+});
 
 test("names every catalogue artifact once as statistics", () => {
 	const names = new Set(

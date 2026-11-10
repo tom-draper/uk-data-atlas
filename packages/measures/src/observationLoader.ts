@@ -1,8 +1,5 @@
-import { readFileSync } from "node:fs";
-import {
-	atlasDatabasePath,
-	statisticsReadPathPath,
-} from "@uk-data-atlas/atlas-db";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
+import { readAtlasStatisticsReadPath } from "./atlasStatisticsReadPath.ts";
 import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
@@ -24,9 +21,9 @@ export const readMeasureObservations = (
 	repositoryRoot: string,
 	dataCatalog: DataCatalog,
 	maxBytes = DEFAULT_OBSERVATION_CACHE_BYTES,
-	readPath: StatisticsReadPath = JSON.parse(
-		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
-	) as StatisticsReadPath,
+	readPath: StatisticsReadPath = readAtlasStatisticsReadPath(
+		atlasDatabasePath(repositoryRoot),
+	),
 ): AnyMeasureObservationArtifact[] => {
 	const databasePath = atlasDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);

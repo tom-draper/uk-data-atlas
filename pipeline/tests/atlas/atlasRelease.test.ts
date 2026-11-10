@@ -82,12 +82,9 @@ test("identifies binary data and remaining runtime files without migrated JSON o
 		false,
 	);
 	for (const id of ["statistics-read-path", "statistics-vocabulary"])
-		assert.ok(
-			release.artifacts.some(
-				(artifact) =>
-					artifact.id === id &&
-					artifact.path === `data/build/${id}.json`,
-			),
+		assert.equal(
+			release.artifacts.some((artifact) => artifact.id === id),
+			false,
 		);
 	assert.deepEqual(createAtlasRelease(root), release);
 });

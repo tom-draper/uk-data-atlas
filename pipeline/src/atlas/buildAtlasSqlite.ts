@@ -50,6 +50,10 @@ import {
 	closeAllReadOnlyDatabases,
 	packText,
 } from "@uk-data-atlas/atlas-db";
+import { measureMappingTables } from "../storage/measureMappingTables.ts";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
+import { boundaryReleaseTables } from "../storage/boundaryReleaseTables.ts";
+import { readBuildBoundaryRegistry } from "../geographies/buildBoundaryRegistry.ts";
 import { electionWinnerStatistics } from "../statistics/electionWinnerStatistics.ts";
 
 /** Whether an earlier database holds ids that a rebuild could renumber. */
@@ -254,6 +258,10 @@ export const buildAtlasSqlite = (
 		{ schemaVersion: "3" },
 		{
 			...areaTables(artifactDirectory(repositoryRoot), ids),
+			...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),
+			...measureMappingTables(
+				readMeasureDimensionsMapping(repositoryRoot),
+			),
 			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
 			...namedLocationTables(artifactDirectory(repositoryRoot)),
 			payloads: {

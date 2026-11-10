@@ -105,6 +105,15 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas-base.sqlite"),
 	);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
+	writeFileSync(
+		join(root, "data/build/statistics-read-path.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			dataCatalogHash: "fixture",
+			statistics: {},
+			observations: {},
+		}),
+	);
 	const postcodes = postcodeIndexFor([
 		postcodeRow("M1 1AA", { usrtypind: "1" }),
 		postcodeRow("M1 1AB", { doterm: "200102" }),

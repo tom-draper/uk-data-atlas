@@ -345,7 +345,8 @@ from these same statistics rows. The base database schema version is 3.
 `data-catalog` writes independently compiled observation artifacts under
 `compiled-observations/`. `statistics-read-path` compares their values, statuses,
 intervals, periods and areas with statistics-backed artifacts and records the
-selectors in `statistics-read-path.json`. The build fails if an artifact cannot
+selectors in `statistics-read-path.json`, then assembly stores them in the
+`statistics_selector` tables. The JSON is a build intermediate. The build fails if an artifact cannot
 be reconstructed. These compiler outputs are build inputs, not API storage.
 
 All tables are `STRICT` with integer keys. Writer: `packages/measures/src/atlasStatistics.ts`.
@@ -449,6 +450,21 @@ and `status`. Available releases have `recordCount INTEGER`,
 `artifact TEXT`, `contentHash TEXT`, `codeProperty TEXT`, and `nameProperty TEXT`.
 `derivedFrom TEXT` holds optional JSON source-adapter metadata. Unavailable
 releases have `reason TEXT` instead. Inapplicable columns are null.
+
+`boundary_registry` records the boundary registry schema version and content hash.
+`boundary_release` holds each registry release’s title, description, temporal
+coverage, source, licence and deprecation metadata, keyed by `(geography,
+release)`. `boundary_release_country` holds its country codes. Join these to
+`area_releases` on geography and release; the registry may also contain releases
+without an area inventory. Temporal coverage is the source’s description, not
+an effective-date interval.
+
+`catalogue_measure` and `catalogue_measure_member` map API catalogue IDs to
+statistics measures and fixed members. `measure_default_member` records
+defaults; `additional_measure`, `additional_dimension`, and
+`additional_dimension_member` hold reviewed vocabulary not in the statistics
+tables. The statistics vocabulary itself is read from `measure`, `dimension`,
+and `dimension_member`.
 
 Area identity is three `STRICT` tables:
 

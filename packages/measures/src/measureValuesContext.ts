@@ -11,8 +11,8 @@ import type { MeasureValuesContext } from "./measureValues.ts";
  * `atlas.sqlite` is replaced.
  *
  * Needs `pnpm data:build` to have written `data-catalog.json`,
- * `statistics-read-path.json` and `statistics-vocabulary.json`, next to
- * `atlas.sqlite`.
+ * `atlas.sqlite`. Selectors, the reviewed mapping and the vocabulary are
+ * read from the database.
  */
 export const readMeasureValuesContext = (
 	repositoryRoot: string,

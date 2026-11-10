@@ -9,12 +9,7 @@ import type {
 	AtlasRelease,
 	AtlasReleaseArtifactRef,
 } from "@uk-data-atlas/atlas-db";
-import {
-	artifactDirectory,
-	atlasDatabasePath,
-	statisticsReadPathPath,
-	statisticsVocabularyPath,
-} from "@uk-data-atlas/atlas-db";
+import { artifactDirectory, atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
 
 // Catalogues that still have runtime JSON readers. Migrated data is covered by atlas.sqlite.
@@ -47,14 +42,6 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 	};
 	const artifacts = [
 		artifactReference("atlas-sqlite", atlasDatabasePath(repositoryRoot)),
-		artifactReference(
-			"statistics-read-path",
-			statisticsReadPathPath(repositoryRoot),
-		),
-		artifactReference(
-			"statistics-vocabulary",
-			statisticsVocabularyPath(repositoryRoot),
-		),
 		...JSON_ARTIFACTS.map((id) =>
 			artifactReference(id, join(publicDirectory, `${id}.json`)),
 		),

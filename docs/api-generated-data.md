@@ -20,7 +20,8 @@ read path. Reconstructed JSON and parsed views share a bounded LRU cache.
 Compiled observation artifacts are build inputs and are not a runtime fallback.
 
 The generated `statistics-vocabulary.json` and `statistics-read-path.json`
-must accompany `atlas.sqlite`. The committed vocabulary in
+are build intermediates. Runtime readers use the vocabulary and selectors in
+`atlas.sqlite`. The committed vocabulary in
 `services/api/config/statistics-vocabulary.json` supports unbuilt checks. After
 reviewing a vocabulary change, copy the generated vocabulary there and commit it.
 
