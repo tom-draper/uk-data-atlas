@@ -3,6 +3,11 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { parseBuildArgs } from "./build-data-args.mjs";
 import {
+	createBuildReport,
+	formatAssetTree,
+	plural,
+} from "./build-data-report.mjs";
+import {
 	planBuild,
 	resolveChecks,
 	selectStages,
@@ -28,69 +33,12 @@ import {
 	formatDuration,
 } from "../packages/atlas-db/src/buildTiming.ts";
 
-export { planBuild, resolveChecks };
+export { formatAssetTree, planBuild, resolveChecks };
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 // A stage that always runs reaches later stages through their inputs.
 const ALWAYS_RUNS = "always-runs";
-
-const plural = (count, noun) =>
-	`${formatCount(count)} ${noun}${count === 1 ? "" : "s"}`;
-
-export function formatAssetTree(files, { verbose = false } = {}) {
-	const root = new Map();
-	for (const [path, size] of files) {
-		const parts = path.split("/");
-		let node = root;
-		for (const part of parts.slice(0, -1)) {
-			if (!node.has(part)) node.set(part, new Map());
-			node = node.get(part);
-		}
-		node.set(parts.at(-1), size);
-	}
-	const summarize = (node) => {
-		let count = 0;
-		let bytes = 0;
-		let hasSqlite = false;
-		for (const [name, value] of node) {
-			if (value instanceof Map) {
-				const child = summarize(value);
-				count += child.count;
-				bytes += child.bytes;
-				hasSqlite ||= child.hasSqlite;
-			} else {
-				count += 1;
-				bytes += value;
-				hasSqlite ||= name.endsWith(".sqlite");
-			}
-		}
-		return { count, bytes, hasSqlite };
-	};
-	const lines = [];
-	const visit = (node, prefix) => {
-		const entries = [...node].sort(([a], [b]) => a.localeCompare(b));
-		entries.forEach(([name, value], index) => {
-			const last = index === entries.length - 1;
-			const branch = `${prefix}${last ? "└── " : "├── "}`;
-			if (value instanceof Map) {
-				const summary = summarize(value);
-				if (!verbose && summary.count > 8 && !summary.hasSqlite) {
-					lines.push(
-						`${branch}${name}/ (${formatCount(summary.count)} files, ${formatBytes(summary.bytes)})`,
-					);
-				} else {
-					lines.push(`${branch}${name}/`);
-					visit(value, prefix + (last ? "    " : "│   "));
-				}
-			} else {
-				lines.push(`${branch}${name} (${formatBytes(value)})`);
-			}
-		});
-	};
-	visit(root, "  ");
-	return lines;
-}
 
 /**
  * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
@@ -139,77 +87,20 @@ export async function runBuild({
 	});
 	const startedAt = performance.now();
 	const buildStartedAt = new Date().toISOString();
-	const timings = [];
-	const recordTiming = (name, startedAt, command = 0, skipped = false) => {
-		const total = performance.now() - startedAt;
-		timings.push({
-			name,
-			total,
-			command,
-			overhead: total - command,
-			skipped,
-		});
-		return total;
-	};
-	const reportSummary = (failed) => {
-		if (plan) return;
-		cache?.writeBuildSummary({
-			startedAt: buildStartedAt,
-			finishedAt: new Date().toISOString(),
-			totalMs: performance.now() - startedAt,
-			failed,
-			stages: timings.map(
-				({ name, total, command, skipped, failed }) => ({
-					name,
-					status: failed ? "failed" : skipped ? "skipped" : "ran",
-					totalMs: total,
-					commandMs: command,
-				}),
-			),
-		});
-		const ran = timings.filter((timing) => !timing.skipped);
-		const unchanged = timings.length - ran.length;
-		const failures = Math.max(
-			1,
-			timings.filter((timing) => timing.failed).length,
-		);
-		const elapsed = formatDuration(performance.now() - startedAt);
-		log("");
-		log(
-			failed
-				? `Data build failed after ${elapsed} (${formatCount(Math.max(0, ran.length - failures))} ran, ${formatCount(failures)} failed, ${formatCount(unchanged)} unchanged)`
-				: `Data build done in ${elapsed} (${formatCount(ran.length)} ran, ${formatCount(unchanged)} unchanged)`,
-		);
-		const slowest = [...ran].sort((a, b) => b.total - a.total).slice(0, 5);
-		if (slowest.length) {
-			const width = Math.max(
-				...slowest.map((timing) => timing.name.length),
-			);
-			log("Slowest stages:");
-			for (const timing of slowest)
-				log(
-					`  ${timing.name.padEnd(width)}  ${formatDuration(timing.total)}${verbose ? ` (command ${formatDuration(timing.command)}, overhead ${formatDuration(timing.overhead)})` : ""}`,
-				);
-		}
-		const generated =
-			!failed && !adopt ? (cache?.generatedFiles?.() ?? []) : [];
-		if (generated.length) {
-			const generatedBytes = generated.reduce(
-				(total, [, size]) => total + size,
-				0,
-			);
-			log(
-				`Generated assets (${plural(generated.length, "file")}, ${formatBytes(generatedBytes)} total):`,
-			);
-			for (const line of formatAssetTree(generated, { verbose }))
-				log(line);
-		}
-	};
 	const logCommand = (stage) => {
 		log(`  Command: pnpm ${stage.args.join(" ")}`);
 		log(`  Depends on: ${stage.dependencies.join(", ") || "none"}`);
 	};
 	const cache = createCache();
+	const { timings, recordTiming, reportSummary } = createBuildReport({
+		cache,
+		log,
+		plan,
+		adopt,
+		verbose,
+		startedAt,
+		buildStartedAt,
+	});
 	let failed = false;
 	try {
 		if (adopt) {
