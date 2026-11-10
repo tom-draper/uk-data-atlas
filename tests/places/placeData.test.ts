@@ -2,8 +2,8 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
-import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/build-atlas-assets";
-import { assembleAtlas } from "@/pipeline/src/assemble-atlas";
+import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/atlas/buildAtlasAssets";
+import { assembleAtlas } from "@/pipeline/src/atlas/assembleAtlas";
 
 const buildAtlasAssets = (root: string) => {
 	stageAtlasAssets(root);
