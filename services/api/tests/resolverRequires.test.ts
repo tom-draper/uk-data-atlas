@@ -5,7 +5,7 @@ import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import {
 	createGeographyResolver,
 	type GeographyRequirement,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import type { LocationProjectionStore } from "@uk-data-atlas/places";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/places";

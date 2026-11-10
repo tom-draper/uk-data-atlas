@@ -8,7 +8,7 @@ import {
 	withDeclaredMeasureIds,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
-import { type CatalogueOptions } from "@uk-data-atlas/atlas-runtime/loader";
+import { type CatalogueOptions } from "@uk-data-atlas/atlas-loader";
 import {
 	statisticsReadPathPath,
 	statisticsVocabularyPath,

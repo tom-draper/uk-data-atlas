@@ -8,11 +8,11 @@ import {
 	type AreaReleaseArtifact,
 } from "@uk-data-atlas/areas";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readAreaInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaInventory } from "@uk-data-atlas/atlas-loader";
 import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
 import { apiRootOf } from "@uk-data-atlas/atlas-db";

@@ -1,5 +1,5 @@
 import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 import { describeCandidate } from "./placeResponses";
 import { problem, type ApiResponse } from "./runtime/index.ts";

@@ -6,7 +6,7 @@ import type {
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
 import { geographyHealthReport } from "../../../pipeline/src/checks/geographyHealthReport.ts";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "../../../pipeline/src/relationships/relationshipPaths";
 import {

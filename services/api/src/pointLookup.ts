@@ -1,7 +1,7 @@
 import { areaNotFound } from "./runtime/index.ts";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
-import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-runtime/loader";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import {
 	parseSelectionDate,
 	type ReleaseReference,
@@ -457,8 +457,8 @@ const COUNTRY_BY_PREFIX: Record<string, string> = {
 export const countryOfCode = (code: string) =>
 	/^[ENSW]\d{8}$/.test(code) ? COUNTRY_BY_PREFIX[code[0]!] : undefined;
 
-export { countryRelease } from "@uk-data-atlas/atlas-runtime/loader";
-import { countryRelease } from "@uk-data-atlas/atlas-runtime/loader";
+export { countryRelease } from "@uk-data-atlas/atlas-loader";
+import { countryRelease } from "@uk-data-atlas/atlas-loader";
 
 const tolerance = (
 	point: LookupPoint,

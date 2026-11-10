@@ -3,11 +3,8 @@ import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { AreaSearch } from "@uk-data-atlas/areas";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import { readAreaSearchIndex } from "@uk-data-atlas/atlas-runtime/loader";
-import {
-	readAreaInventory,
-	readPlaceIndex,
-} from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaSearchIndex } from "@uk-data-atlas/atlas-loader";
+import { readAreaInventory, readPlaceIndex } from "@uk-data-atlas/atlas-loader";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { resolvePlaces } from "@uk-data-atlas/places";
 import { buildLocationProjections } from "./pipelineFixtures";
@@ -44,7 +41,7 @@ import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { buildAtlasSqlite } from "./pipelineFixtures";
 import { buildTerrainCatalogue } from "./pipelineFixtures";
-import { readTerrainCatalogue } from "@uk-data-atlas/atlas-runtime/loader";
+import { readTerrainCatalogue } from "@uk-data-atlas/atlas-loader";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { route } from "../src/routes";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";

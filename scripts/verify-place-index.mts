@@ -1,10 +1,7 @@
 import assert from "node:assert/strict";
 import { resolve, join } from "node:path";
 import { readAreaLookup } from "@uk-data-atlas/areas";
-import {
-	readAreaInventory,
-	readPlaceIndex,
-} from "@uk-data-atlas/atlas-runtime/loader";
+import { readAreaInventory, readPlaceIndex } from "@uk-data-atlas/atlas-loader";
 import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { compilePlaceIndex } from "@uk-data-atlas/places";

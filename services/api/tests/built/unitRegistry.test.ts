@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import { readDataCatalog } from "@uk-data-atlas/atlas-runtime/loader";
+import { readDataCatalog } from "@uk-data-atlas/atlas-loader";
 import {
 	normaliseObservation,
 	unitDefinitionFor,

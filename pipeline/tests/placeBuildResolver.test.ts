@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createPlaceResolver } from "../src/places/placeResolver";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 
 test("place build resolver answers with the same supplied area and relationship data", () => {
 	const areaLookup = new Map([

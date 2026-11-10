@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { handleAreaHistoryRoutes } from "../src/areas/areaHistoryRoutes";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PropertyCrosswalkArtifact } from "@uk-data-atlas/relationships";
 import {
 	crosswalkArtifact,

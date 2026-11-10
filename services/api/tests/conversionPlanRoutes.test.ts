@@ -1,7 +1,7 @@
-import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyServices } from "@uk-data-atlas/atlas-loader";
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "./pipelineFixtures";
 import { route } from "../src/routes";
