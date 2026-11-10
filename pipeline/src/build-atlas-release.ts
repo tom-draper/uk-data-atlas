@@ -1,22 +1,8 @@
 import { isMainModule } from "./lib/entrypoint.ts";
-import { existsSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createAtlasRelease } from "./atlas/atlasRelease.ts";
-import { artifactDirectory, buildLog, repoPath } from "@uk-data-atlas/atlas-db";
-
-export const buildAtlasRelease = (repositoryRoot: string) => {
-	const outputDirectory = artifactDirectory(repositoryRoot);
-	if (!existsSync(outputDirectory)) {
-		throw new Error(
-			`Create the API public directory before building: ${outputDirectory}`,
-		);
-	}
-	const release = createAtlasRelease(repositoryRoot);
-	const releasePath = join(outputDirectory, "atlas-release.json");
-	writeFileSync(releasePath, `${JSON.stringify(release, null, "\t")}\n`);
-	return { releasePath, releaseId: release.releaseId };
-};
+import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
+import { buildAtlasRelease } from "./atlas/buildAtlasRelease.ts";
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (isMainModule(import.meta.url)) {
