@@ -126,7 +126,7 @@ export function readPostcodeAreaShard(
 		const column = columns[position]!;
 		const codes = database
 			.prepare(
-				"SELECT c.areaId, a.code FROM postcode_area_codes c JOIN areas a ON a.id = c.areaId WHERE c.district = ? AND c.releasePosition = ? ORDER BY c.position",
+				"SELECT c.areaId, a.code FROM postcode_area_codes c JOIN area_version v ON v.id = c.areaId JOIN area a ON a.id = v.area_id WHERE c.district = ? AND c.releasePosition = ? ORDER BY c.position",
 			)
 			.all(entry.district, position);
 		const codePositions = new Map(

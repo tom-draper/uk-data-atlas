@@ -10,8 +10,6 @@ export const CROSSWALK_COVERAGE_VIEW =
 	"SELECT geography, boundary_release AS boundaryRelease, position, area_count AS areaCount, related_area_count AS relatedAreaCount FROM crosswalk_coverage_entry";
 export const AREA_INVENTORY_VIEW =
 	"SELECT position, schema_version AS schemaVersion, content_hash AS contentHash, boundary_registry_hash AS boundaryRegistryHash FROM area_inventory_metadata";
-export const DATASETS_VIEW =
-	"SELECT type, output, source, contract, summary, fingerprint, sha256, bytes, payload_id AS payloadId FROM dataset_catalogue";
 
 /** Read-only aliases for database consumers using retired names. */
 export function createDeprecatedViews(database: DatabaseSync) {

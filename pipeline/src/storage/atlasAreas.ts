@@ -6,9 +6,6 @@ import type { DatabaseSync } from "node:sqlite";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { readJsonSync } from "../lib/json.ts";
 
-/** The legacy `areas` shape, read from `area` and `area_version`. */
-export const AREAS_VIEW = `SELECT v.id, v.release_id AS releasePosition, a.code, v.in_inventory AS inInventory, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area_version v JOIN area a ON a.id = v.area_id`;
-
 /**
  * The stable public key of an area version: `geography`, `release` and `code`
  * identify it for good. `area_version_id` is the compact integer the other
@@ -280,7 +277,7 @@ export const areaTables = (
 				"UNIQUE (release_id, area_id)",
 				"CHECK ((inventory_position IS NOT NULL) = (in_inventory = 1))",
 			],
-			views: { areas: AREAS_VIEW, v_area_version: AREA_VERSION_VIEW },
+			views: { v_area_version: AREA_VERSION_VIEW },
 		},
 	};
 };

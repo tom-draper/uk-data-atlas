@@ -16,7 +16,6 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { AREAS_VIEW } from "../../src/storage";
 import { IdRegistries, idDirectory } from "../../src/ids/idRegistries";
 import { seedIdRegistries } from "../../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -96,8 +95,7 @@ function fixture(t: TestContext) {
 		CREATE TABLE area (id INTEGER PRIMARY KEY, geography_id INTEGER NOT NULL REFERENCES geography(id), code TEXT NOT NULL, UNIQUE(code, geography_id));
 		INSERT INTO area VALUES (1, 1, 'A');
 		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_releases(id), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
-		INSERT INTO area_version VALUES (1, 1, 0, 'Area A', NULL, NULL, NULL, 1);
-		CREATE VIEW areas AS ${AREAS_VIEW};`,
+		INSERT INTO area_version VALUES (1, 1, 0, 'Area A', NULL, NULL, NULL, 1);`,
 	);
 	db.close();
 	copyFileSync(
@@ -280,15 +278,18 @@ test("SQLite mappings retain exact bytes, boundary matches, distances and empty 
 		{
 			...db
 				.prepare(
-					"SELECT p.postcode, a.code, a.name FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN areas a ON a.id = s.wardAreaId",
+					"SELECT p.postcode, a.code, v.name FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.wardAreaId JOIN area a ON a.id = v.area_id",
 				)
 				.get(),
 		},
 		{ postcode: "M11AA", code: "A", name: "Area A" },
 	);
 	assert.equal(
-		db.prepare("SELECT inInventory FROM areas WHERE code = 'B'").get()!
-			.inInventory,
+		db
+			.prepare(
+				"SELECT v.in_inventory AS inInventory FROM area_version v JOIN area a ON a.id = v.area_id WHERE a.code = 'B'",
+			)
+			.get()!.inInventory,
 		0,
 	);
 	assert.equal(

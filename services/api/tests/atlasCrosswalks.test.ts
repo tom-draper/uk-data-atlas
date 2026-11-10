@@ -250,7 +250,9 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			],
 		);
 		assert.deepEqual(
-			all("SELECT code, population FROM areas ORDER BY id"),
+			all(
+				"SELECT a.code, v.population FROM area_version v JOIN area a ON a.id = v.area_id ORDER BY v.id",
+			),
 			[
 				["B", 5],
 				["A", 3],

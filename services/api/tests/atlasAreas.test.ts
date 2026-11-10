@@ -77,9 +77,17 @@ test("relational areas preserve inventory order, aliases and record order withou
 	);
 	const database = new DatabaseSync(path);
 	try {
+		assert.equal(
+			database
+				.prepare("SELECT name FROM sqlite_schema WHERE name = ?")
+				.get("areas"),
+			undefined,
+		);
 		assert.deepEqual(
 			database
-				.prepare("SELECT id, code FROM areas ORDER BY id")
+				.prepare(
+					"SELECT v.id, a.code FROM area_version v JOIN area a ON a.id = v.area_id ORDER BY v.id",
+				)
 				.all()
 				.map((row) => ({ ...row })),
 			areas.map((area, index) => ({ id: index + 1, code: area.code })),
@@ -196,7 +204,7 @@ test("an area keeps one identity across releases, with a version per release", (
 		{
 			...database
 				.prepare(
-					"SELECT * FROM areas WHERE releasePosition = 1 AND code = 'A'",
+					"SELECT v.id, v.release_id AS releasePosition, a.code, v.in_inventory AS inInventory, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.release_id = 1 AND a.code = 'A'",
 				)
 				.get(),
 		},
@@ -210,9 +218,5 @@ test("an area keeps one identity across releases, with a version per release", (
 			areaM2: null,
 			population: null,
 		},
-	);
-	assert.throws(
-		() => database.exec("UPDATE areas SET name = 'x'"),
-		/cannot modify areas because it is a view/,
 	);
 });
