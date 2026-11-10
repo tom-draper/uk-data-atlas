@@ -16,7 +16,6 @@ export * from "./resolver/capability.ts";
 export * from "./resolver/catalogue.ts";
 export * from "./resolver/lineage.ts";
 export * from "./resolver/locations.ts";
-export * from "./resolver/spatial.ts";
 export * from "./resolver/postcodes.ts";
 
 export { PostcodeResolver } from "./resolver/postcodes.ts";

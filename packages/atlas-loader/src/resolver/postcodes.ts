@@ -4,7 +4,7 @@ import type {
 	PostcodeIndex,
 } from "@uk-data-atlas/postcodes";
 import type { AreaIdentity } from "@uk-data-atlas/geography";
-import type { SpatialResolver } from "./spatial.ts";
+import type { SpatialResolver } from "@uk-data-atlas/areas";
 
 export type PostcodeResolverInputs = {
 	postcodeIndex?: PostcodeIndex;
