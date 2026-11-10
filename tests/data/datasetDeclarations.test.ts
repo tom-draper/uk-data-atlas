@@ -167,6 +167,9 @@ describe("claimant count declaration", () => {
 			({ type }) => type === "claimant-count",
 		)!;
 		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
 		try {
 			writeSqliteTables(database, {
 				...areas,

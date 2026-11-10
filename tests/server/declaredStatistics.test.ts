@@ -100,6 +100,7 @@ const file = (data: Record<string, object>, header: object = {}) =>
 
 const write = (config: DeclaredDataset, text: string) => {
 	const database = new DatabaseSync(":memory:");
+	database.exec("CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)");
 	database.exec("PRAGMA foreign_keys = ON");
 	writeSqliteTables(database, {
 		...areas(),
@@ -277,6 +278,9 @@ describe("declared statistics", () => {
 			},
 		};
 		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
 		try {
 			writeSqliteTables(database, {
 				...areas(),
@@ -1335,6 +1339,9 @@ describe("declared statistics", () => {
 				}),
 			);
 			const database = new DatabaseSync(":memory:");
+			database.exec(
+				"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+			);
 			try {
 				writeSqliteTables(database, {
 					...areas(),

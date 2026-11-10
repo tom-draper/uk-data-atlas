@@ -119,7 +119,9 @@ const record = (
 
 const memory = (tables: Record<string, SqliteTable>) => {
 	const database = new DatabaseSync(":memory:");
-	database.exec("PRAGMA foreign_keys = ON");
+	database.exec(
+		"PRAGMA foreign_keys = ON; CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+	);
 	writeSqliteTables(database, { ...areaFixture(), ...tables });
 	return database;
 };
@@ -165,28 +167,21 @@ describe("fuel poverty on the statistics model", () => {
 						key: ["id"],
 						rows: [],
 					},
-					dataset_catalogue: {
-						columns: [
-							"type TEXT",
-							"output TEXT",
-							"sha256 TEXT",
-							"bytes INTEGER",
-							"payload_id TEXT",
-						],
-						key: ["type"],
-						rows: [
+					...statisticsTables(
+						[fuelPovertyStatistics(compiled, entry)],
+						undefined,
+						new Map([
 							[
-								"fuelPoverty",
 								"fuel-poverty",
-								sourceHash,
-								Buffer.byteLength(compiled),
-								null,
+								{
+									type: "fuelPoverty",
+									sha256: sourceHash,
+									bytes: Buffer.byteLength(compiled),
+									payloadId: null,
+								},
 							],
-						],
-					},
-					...statisticsTables([
-						fuelPovertyStatistics(compiled, entry),
-					]),
+						]),
+					),
 				},
 			);
 			const database = new DatabaseSync(path);

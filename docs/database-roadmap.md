@@ -34,7 +34,7 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   the registries against the base branch. Left: confirm the seed against the
   deployed file (`pnpm ids verify`), and the postcode lookup's own numbering,
   which is internal. See `docs/stable-ids.md`.
-- Task 8 progress: the `areas` and `datasets` compatibility views have been removed; postcode and other readers query canonical area tables. Postcode area dictionaries and column-order tables are replaced by row-derived JSON and per-shard integrity hashes. Crosswalk endpoint fields and common metadata are derived by readers, and labels come from area versions. The separate `dataset_catalogue` remains.
+- Task 8 progress: the `areas` and `datasets` compatibility views have been removed; postcode and other readers query canonical area tables. Postcode area dictionaries and column-order tables are replaced by row-derived JSON and per-shard integrity hashes. Crosswalk endpoint fields and common metadata are derived by readers, labels come from area versions, and compiled output metadata is held on `dataset`.
 - 1,643 series are `published` and 1,093 are `converted` (task 25: every convertible
   measure on the latest authorities, wards, constituencies and 2021 LSOAs, each
   scored for exact share and coverage; 42 refused measures and unrouted pairs

@@ -1,6 +1,9 @@
 import { crosswalkInputSourceTables } from "../storage/crosswalkInputSources.ts";
 import { licenceTables } from "../storage/licenceTables.ts";
-import { type StatisticsInput } from "@uk-data-atlas/measures";
+import {
+	type StatisticsInput,
+	type DatasetModule,
+} from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics } from "@uk-data-atlas/measures";
 import { fuelPovertyStatistics } from "@uk-data-atlas/measures";
@@ -89,7 +92,9 @@ const statisticsInputs = (
 		source: unknown;
 		fingerprint: string;
 	}[],
-	unstored: Readonly<Record<string, string>>,
+	unstored: Readonly<
+		Record<string, { reason: string; module: DatasetModule }>
+	>,
 ): StatisticsInput[] =>
 	entries.flatMap((entry): StatisticsInput[] => {
 		const read = () =>
@@ -117,7 +122,40 @@ const statisticsInputs = (
 				];
 			return [statistics];
 		}
-		if (entry.type in unstored) return [];
+		if (entry.type in unstored) {
+			const metadata = entry.source as {
+				name?: string;
+				source?: string;
+				sourceUrl?: string;
+				licence?: string;
+				licenceUrl?: string;
+				description?: string;
+			};
+			if (!metadata.source || !metadata.licence)
+				throw new Error(
+					`Dataset ${entry.type} needs a publisher and licence`,
+				);
+			return [
+				{
+					slug: entry.output,
+					module: unstored[entry.type]!.module,
+					title: metadata.name ?? entry.output,
+					description:
+						metadata.description ?? unstored[entry.type]!.reason,
+					source: {
+						publisher: metadata.source,
+						url: metadata.sourceUrl,
+						licence: metadata.licence,
+						licenceUrl: metadata.licenceUrl,
+					},
+					fingerprint: entry.fingerprint,
+					measures: [],
+					periods: [],
+					series: [],
+					observations: () => [],
+				},
+			];
+		}
 		throw new Error(
 			`Dataset ${entry.type} has no statistics configuration; add one or list it in UNSTORED_DATASETS.`,
 		);
@@ -135,7 +173,9 @@ export const buildAtlasSqlite = (
 		unstored = {},
 		censusTables = CENSUS_SMALL_AREA_TABLES,
 	}: {
-		unstored?: Readonly<Record<string, string>>;
+		unstored?: Readonly<
+			Record<string, { reason: string; module: DatasetModule }>
+		>;
 		censusTables?: readonly CensusTable[];
 	} = {},
 ) => {
@@ -173,6 +213,13 @@ export const buildAtlasSqlite = (
 			compiled: { sha256: string; bytes: number };
 		}[];
 	};
+	for (const key of ["type", "output"] as const) {
+		if (
+			new Set(manifest.datasets.map((entry) => entry[key])).size !==
+			manifest.datasets.length
+		)
+			throw new Error(`Dataset manifest repeats a ${key}`);
+	}
 	const publicDirectory = artifactDirectory(repositoryRoot);
 	const projectionDirectory = join(directory, "location-projections");
 	const projectionPayload = readFileSync(
@@ -270,33 +317,6 @@ export const buildAtlasSqlite = (
 				key: ["id"],
 				rows: payloads(),
 			},
-			dataset_catalogue: {
-				columns: [
-					"type TEXT NOT NULL",
-					"output TEXT NOT NULL UNIQUE",
-					"source TEXT NOT NULL",
-					"contract TEXT NOT NULL",
-					"summary TEXT NOT NULL",
-					"fingerprint TEXT NOT NULL",
-					"sha256 TEXT NOT NULL",
-					"bytes INTEGER NOT NULL",
-					"payload_id TEXT REFERENCES payloads(id)",
-				],
-				key: ["type"],
-				rows: manifest.datasets.map((entry) => [
-					entry.type,
-					entry.output,
-					JSON.stringify(entry.source),
-					JSON.stringify(entry.contract),
-					JSON.stringify(entry.summary),
-					entry.fingerprint,
-					entry.compiled.sha256,
-					entry.compiled.bytes,
-					servedFromRows(entry.type)
-						? null
-						: `dataset:${entry.output}`,
-				]),
-			},
 			...statisticsTables(
 				[
 					...statisticsInputs(directory, manifest.datasets, {
@@ -308,6 +328,19 @@ export const buildAtlasSqlite = (
 					...censusSmallAreaStatistics(repositoryRoot, censusTables),
 				],
 				ids,
+				new Map(
+					manifest.datasets.map((entry) => [
+						entry.output,
+						{
+							type: entry.type,
+							sha256: entry.compiled.sha256,
+							bytes: entry.compiled.bytes,
+							payloadId: servedFromRows(entry.type)
+								? null
+								: `dataset:${entry.output}`,
+						},
+					]),
+				),
 			),
 			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
 			...crosswalkInputSourceTables(repositoryRoot, ids),

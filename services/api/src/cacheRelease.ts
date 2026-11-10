@@ -43,7 +43,7 @@ export function validateCacheRelease(root: string): void {
 			);
 			for (const dataset of canonicalDatabase
 				.prepare(
-					"SELECT output, sha256 FROM dataset_catalogue WHERE payload_id IS NULL",
+					"SELECT slug AS output, compiled_sha256 AS sha256 FROM dataset WHERE compiled_type IS NOT NULL AND payload_id IS NULL",
 				)
 				.all()) {
 				if (!payload.get(dataset.output, dataset.sha256))
