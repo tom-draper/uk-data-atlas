@@ -331,6 +331,23 @@ export const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Moves published series onto the latest releases under the rules the
+	// backtest supports. Every value is marked as converted.
+	stage(
+		"converted-series",
+		["atlas-sqlite", "crosswalk-weights", "conversion-backtest"],
+		["pipeline/src/stages/build-converted-series.ts"],
+		{
+			rawInputs: [],
+			writes: ["data/build/converted-series"],
+			outputs: ["data/build/converted-series"],
+			requiredOutputs: [
+				"data/build/converted-series/converted-series.sqlite",
+				"data/build/converted-series/converted-series.md",
+			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"assemble-atlas",
 		[
@@ -340,6 +357,7 @@ export const apiStages = [
 			"postcode-index",
 			"postcode-areas",
 			"crosswalk-weights",
+			"converted-series",
 		],
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{
