@@ -192,9 +192,6 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:packages/geography
-      '@uk-data-atlas/geometry':
-        specifier: workspace:*
-        version: link:packages/geometry
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:packages/map-tiles
@@ -213,9 +210,6 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:packages/search-index
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:packages/shapefile
       lucide-react:
         specifier: ^1.48.0
         version: 1.48.0(react@19.2.8)
