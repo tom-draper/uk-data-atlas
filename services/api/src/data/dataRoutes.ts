@@ -126,6 +126,7 @@ export const handleDataRoutes = ({
 	}
 	const resolved = resolveObservations(context, {
 		measureId,
+		measure,
 		periods: [period],
 		geography,
 		boundaryYear,

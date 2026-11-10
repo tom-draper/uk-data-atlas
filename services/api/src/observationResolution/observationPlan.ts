@@ -38,6 +38,7 @@ export type JoinableStatus = (typeof JOINABLE)[number];
 
 export type ObservationRequest = {
 	measureId: string;
+	measure?: Measure;
 	/**
 	 * Every period the partition must publish. One for a single observation,
 	 * two for a change measured across a partition, and none where the caller
@@ -150,9 +151,11 @@ export const resolveObservations = (
 			title: "Catalogue Unavailable",
 			detail: "Build the data catalogue before requesting observations.",
 		});
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === request.measureId,
-	);
+	const measure =
+		request.measure ??
+		dataCatalog.measures.find(
+			(candidate) => candidate.id === request.measureId,
+		);
 	if (!measure)
 		return refuse({
 			status: 404,

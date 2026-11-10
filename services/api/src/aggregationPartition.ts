@@ -6,7 +6,7 @@ import type { AggregationTarget } from "./aggregationTarget";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
-import type { MeasureSource } from "@uk-data-atlas/measures";
+import type { Measure, MeasureSource } from "@uk-data-atlas/measures";
 import type { RouteContextFor } from "./runtime/index.ts";
 import { type ApiResponse } from "./runtime/index.ts";
 
@@ -20,6 +20,7 @@ export type AggregationPartition = {
 export const resolveAggregationPartition = ({
 	context,
 	measureId,
+	measure,
 	period,
 	geography,
 	boundaryYear,
@@ -33,6 +34,7 @@ export const resolveAggregationPartition = ({
 		"area" | "crosswalk" | "indexedPathSteps" | "relationshipPath"
 	>;
 	measureId: string;
+	measure?: Measure;
 	period: string;
 	geography: string;
 	boundaryYear: string;
@@ -44,6 +46,7 @@ export const resolveAggregationPartition = ({
 }): AggregationPartition | ApiResponse => {
 	const resolved = resolveObservations(context, {
 		measureId,
+		measure,
 		periods: [period],
 		geography,
 		boundaryYear,
