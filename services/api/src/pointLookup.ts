@@ -457,8 +457,8 @@ const COUNTRY_BY_PREFIX: Record<string, string> = {
 export const countryOfCode = (code: string) =>
 	/^[ENSW]\d{8}$/.test(code) ? COUNTRY_BY_PREFIX[code[0]!] : undefined;
 
-export { countryRelease } from "@uk-data-atlas/atlas-loader";
-import { countryRelease } from "@uk-data-atlas/atlas-loader";
+export { countryRelease } from "@uk-data-atlas/areas";
+import { countryRelease } from "@uk-data-atlas/areas";
 
 const tolerance = (
 	point: LookupPoint,
