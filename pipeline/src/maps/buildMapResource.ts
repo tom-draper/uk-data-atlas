@@ -11,15 +11,15 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { compileFlatDownloads } from "./atlas/flatDownloads.ts";
-import { writeFileHashedSync } from "./storage/outputManifest.ts";
+import { compileFlatDownloads } from "../atlas/flatDownloads.ts";
+import { writeFileHashedSync } from "../storage/outputManifest.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { roundKeepingValidity } from "./maps/compileGeometryValidity.ts";
+import { roundKeepingValidity } from "./compileGeometryValidity.ts";
 import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
-} from "./maps/compileMapResource.ts";
+} from "./compileMapResource.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import {
 	artifactDirectory,
@@ -27,7 +27,7 @@ import {
 	formatCount,
 	formatDuration,
 } from "@uk-data-atlas/atlas-db";
-import { readJsonSync } from "./lib/json.ts";
+import { readJsonSync } from "../lib/json.ts";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and
@@ -43,7 +43,7 @@ import { readJsonSync } from "./lib/json.ts";
 const sourceFiles = (directory: string) =>
 	readdirSync(
 		resolve(
-			resolve(dirname(fileURLToPath(import.meta.url)), "../.."),
+			resolve(dirname(fileURLToPath(import.meta.url)), "../../.."),
 			directory,
 		),
 	)
@@ -61,7 +61,7 @@ const COMPILER_SOURCES = [
 	"packages/artifacts/src/parquet.ts",
 	"pipeline/src/atlas/flatDownloads.ts",
 	"pipeline/src/maps/compileMapResource.ts",
-	"pipeline/src/buildMapResource.ts",
+	"pipeline/src/maps/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
 	"pipeline/src/maps/compileGeometryValidity.ts",

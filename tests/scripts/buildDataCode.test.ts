@@ -343,7 +343,7 @@ test("production builders resolve without UI code and include declared workers a
 			.includes("pipeline/src/maps/compileGeometryValidity.ts"),
 	);
 	for (const path of [
-		"pipeline/src/buildMapResource.ts",
+		"pipeline/src/maps/buildMapResource.ts",
 		"pipeline/src/maps/compileMapResource.ts",
 		"pipeline/src/atlas/flatDownloads.ts",
 	]) {
