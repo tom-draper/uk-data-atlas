@@ -5,7 +5,7 @@ import {
 	loadModule,
 	readCatalogueDefinitions,
 	writeGenerated,
-} from "../pipeline/src/build-catalogue-registry.ts";
+} from "../pipeline/src/catalog/buildCatalogueRegistry.ts";
 import {
 	chartDefinitionFiles,
 	chartMetadata,
