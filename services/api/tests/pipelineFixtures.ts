@@ -1,6 +1,6 @@
 export { compileAreaOverlapCrosswalk } from "../../../pipeline/src/geographies/areaOverlap";
 export { assembleAtlas } from "../../../pipeline/src/atlas/assembleAtlas";
-export { buildGeographyCatalogues } from "../../../pipeline/src/build-geography-catalogues";
+export { buildGeographyCatalogues } from "../../../pipeline/src/geographies/buildGeographyCatalogues";
 export { compileOperations } from "../../../pipeline/src/build-operations";
 export { buildPostcodeIndex } from "../../../pipeline/src/build-postcode-index";
 export { buildTerrainCatalogue } from "../../../pipeline/src/build-terrain-catalogue";
