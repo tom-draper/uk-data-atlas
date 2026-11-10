@@ -9,13 +9,14 @@ import {
 	databaseGeneration,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
-import { observationArtifactName } from "./index.ts";
+import { measureSeriesSourceKey, observationArtifactName } from "./index.ts";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureObservationArtifact,
 	PopulationObservation,
 	SourceGeography,
+	MeasureSeriesIdentity,
 } from "./index.ts";
 
 import { isMeasureTable, type MeasureTableArtifact } from "./measureTable.ts";
@@ -149,6 +150,7 @@ export class ObservationCache {
 		databasePath: string,
 		catalog: DataCatalog,
 		readPath: StatisticsReadPath,
+		identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 	) {
 		if (readPath.dataCatalogHash !== catalog.contentHash)
 			throw new Error(
@@ -171,14 +173,33 @@ export class ObservationCache {
 				"The statistics read path contains unsupported observation artifacts.",
 			);
 		const names = new Set<string>();
+		const seriesKeys = new Set<string>();
+		const canonical = Boolean(
+			readPath.series &&
+			(identities || catalog.measures.some((measure) => measure.series)),
+		);
 		for (const measure of catalog.measures)
 			for (const source of measure.sources) {
 				const name = observationArtifactName(measure.id, source);
-				const selector = readPath.statistics[name];
+				const identity = measure.series ?? identities?.[measure.id];
+				if (canonical && !identity)
+					throw new Error(
+						`Missing series identity for ${measure.id}.`,
+					);
+				const key =
+					identity && measureSeriesSourceKey(identity, source);
+				const selector =
+					canonical && key
+						? readPath.series?.[key]
+						: readPath.statistics?.[name];
 				if (!selector)
-					throw new Error(`Missing statistics selector for ${name}.`);
+					throw new Error(
+						`Missing statistics selector for ${key ?? name}.`,
+					);
+				if (canonical && key) seriesKeys.add(key);
 				names.add(name);
-				this.statistics.set(`${databasePath}:${name}`, {
+				const cacheKey = canonical && key ? key : name;
+				this.statistics.set(`${databasePath}:${cacheKey}`, {
 					selector,
 					artifact: {
 						measureId: measure.id,
@@ -187,9 +208,15 @@ export class ObservationCache {
 					},
 				});
 			}
-		for (const name of Object.keys(readPath.statistics))
+		for (const name of Object.keys(readPath.statistics ?? {}))
 			if (!names.has(name))
 				throw new Error(`Unexpected statistics selector: ${name}.`);
+		if (readPath.series && canonical)
+			for (const key of Object.keys(readPath.series))
+				if (!seriesKeys.has(key))
+					throw new Error(
+						`Unexpected statistics series selector: ${key}.`,
+					);
 	}
 
 	/** Whether an artifact is read from the statistics tables. */

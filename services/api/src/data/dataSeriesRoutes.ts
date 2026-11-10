@@ -30,6 +30,7 @@ export const handleDataSeriesRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<"crosswalk" | "places">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
@@ -46,10 +47,11 @@ export const handleDataSeriesRoutes = ({
 			"Build the data catalogue before retrieving source-exact series.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,
@@ -144,6 +146,7 @@ export const handleDataSeriesRoutes = ({
 	for (const period of source.periods) {
 		const observations = observationsFor(measureId, source, period, {
 			measureObservations,
+			seriesKey: selectedSeries?.id,
 		});
 		if (!observations)
 			return problem(

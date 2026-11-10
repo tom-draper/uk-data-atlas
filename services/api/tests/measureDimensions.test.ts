@@ -4,15 +4,251 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import {
 	measureDimensionProblems,
+	measureSeriesKey,
+	measureSeriesSourceKey,
 	totalMember,
 	type MeasureDimensionsConfig,
 	type StatisticsVocabulary,
 } from "@uk-data-atlas/measures";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
+import {
+	dimensionCatalogue,
+	identityDimensions,
+	readMeasureDimensionsMapping,
+	withDeclaredMeasureIds,
+} from "@uk-data-atlas/measures";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+test("travel to work series come from the travel method declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of [
+		"bicycle",
+		"car",
+		"home",
+		"motorcycle",
+		"on-foot",
+		"other",
+		"public-transport",
+		"taxi",
+		"total",
+	]) {
+		const id = `travel-to-work-${member}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "people-in-employment",
+			dimensions: { "travel-method": member },
+		});
+	}
+});
+
+test("temporary accommodation series come from the homelessness fields", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	const expected = {
+		"temporary-accommodation-children": {
+			measure: "children-in-temporary-accommodation",
+		},
+		"temporary-accommodation-households": {
+			measure: "households-in-temporary-accommodation",
+			dimensions: { "household-type": "all" },
+		},
+		"temporary-accommodation-households-with-children": {
+			measure: "households-in-temporary-accommodation",
+			dimensions: { "household-type": "with-children" },
+		},
+	};
+	for (const [id, identity] of Object.entries(expected)) {
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], identity);
+	}
+});
+
+test("median pay series come from the pay fields", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const place of ["residence", "workplace"])
+		for (const period of ["annual", "hourly"]) {
+			const id = `median-${place === "workplace" ? "workplace-" : ""}${period}-pay`;
+			assert.equal(config.ids[id], undefined);
+			assert.deepEqual(merged.ids[id], {
+				measure: `gross-${period}-pay`,
+				dimensions: {
+					"pay-statistic": "median",
+					"earnings-place": place,
+				},
+			});
+		}
+});
+
+test("life expectancy series come from the sex declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["female", "male"]) {
+		const id = `life-expectancy-${member}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "life-expectancy",
+			dimensions: { sex: member },
+		});
+	}
+	assert.equal(merged.ids["life-expectancy-all"], undefined);
+});
+
+test("air quality series come from the pollutant declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["no2", "pm10", "pm25"]) {
+		const id = `${member}-background-mean`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "background-concentration",
+			dimensions: { pollutant: member },
+		});
+	}
+});
+
+test("road collision series come from the severity declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const member of ["all", "fatal", "serious", "slight"]) {
+		const id = `road-collisions${member === "all" ? "" : `-${member}`}`;
+		assert.equal(config.ids[id], undefined);
+		assert.deepEqual(merged.ids[id], {
+			measure: "road-collisions",
+			dimensions: { "collision-severity": member },
+		});
+	}
+});
+
+test("crime series come from the offence declaration", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	const crime = Object.entries(merged.ids).filter(([id]) =>
+		id.startsWith("crime-"),
+	);
+	assert.equal(crime.length, 23);
+	assert.ok(crime.every(([id]) => !(id in config.ids)));
+	assert.deepEqual(merged.ids["crime-theft-offences"], {
+		measure: "recorded-crimes",
+		dimensions: { offence: "theft" },
+	});
+	assert.deepEqual(
+		merged.ids["crime-death-or-serious-injury-by-illegal-driving"],
+		{
+			measure: "recorded-crimes",
+			dimensions: {
+				offence: "death-or-serious-injury-by-unlawful-driving",
+			},
+		},
+	);
+});
+
+test("energy series come from their meter declarations", () => {
+	const config = JSON.parse(
+		readFileSync(join(apiRoot, "config/measure-dimensions.json"), "utf8"),
+	) as MeasureDimensionsConfig;
+	const merged = withDeclaredMeasureIds(config);
+	for (const fuel of ["electricity", "gas"])
+		for (const member of ["all", "domestic", "non-domestic"]) {
+			const id = `${fuel}-consumption${member === "all" ? "" : `-${member}`}`;
+			assert.equal(config.ids[id], undefined);
+			assert.deepEqual(merged.ids[id], {
+				measure: `${fuel}-consumption`,
+				dimensions: { "meter-type": member },
+			});
+		}
+	assert.throws(
+		() =>
+			withDeclaredMeasureIds({
+				...config,
+				ids: {
+					...config.ids,
+					"gas-consumption": merged.ids["gas-consumption"]!,
+				},
+			}),
+		/which a dataset declaration publishes/,
+	);
+});
+
+test("series keys sort members and distinguish datasets", () => {
+	const dimensions = { party: "lab", sex: "female" };
+	const reordered = { sex: "female", party: "lab" };
+	assert.equal(
+		measureSeriesKey({ measure: "votes", dimensions }),
+		measureSeriesKey({ measure: "votes", dimensions: reordered }),
+	);
+	assert.notEqual(
+		measureSeriesKey({ measure: "votes", dimensions }),
+		measureSeriesKey({ measure: "votes", dimensions, datasetId: "local" }),
+	);
+});
+
+test("series source keys distinguish dataset and geography partitions", () => {
+	const series = {
+		measure: "votes",
+		dimensions: { party: "lab", sex: "female" },
+	};
+	const source = {
+		datasetId: "local-election",
+		sourceGeography: { type: "ward" as const, boundaryYear: 2023 },
+	};
+	const key = measureSeriesSourceKey(series, source);
+	assert.equal(
+		key,
+		measureSeriesSourceKey(
+			{ measure: "votes", dimensions: { sex: "female", party: "lab" } },
+			source,
+		),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			datasetId: "general-election",
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			sourceGeography: {
+				...source.sourceGeography,
+				type: "constituency",
+			},
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(series, {
+			...source,
+			sourceGeography: { ...source.sourceGeography, boundaryYear: 2024 },
+		}),
+	);
+	assert.notEqual(
+		key,
+		measureSeriesSourceKey(
+			{ ...series, datasetId: "local-election" },
+			source,
+		),
+	);
+});
 
 const vocabulary: StatisticsVocabulary = {
 	schemaVersion: 1,
@@ -70,6 +306,65 @@ const config = (
 	defaults: {},
 	ids,
 	...extra,
+});
+
+test("indexes canonical series separately from catalogue ids", () => {
+	const mapping = {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	};
+	const indexed = dimensionCatalogue(
+		catalog({ "crime-burglary": ["crime"] }) as Parameters<
+			typeof dimensionCatalogue
+		>[0],
+		{ config: config({ "crime-burglary": mapping }), vocabulary },
+	);
+	const found = indexed.series(measureSeriesKey(mapping));
+	assert.equal(found?.measure.id, "recorded-crimes");
+	assert.equal(found?.series.catalogueMeasure.id, "crime-burglary");
+	assert.equal(indexed.series("crime-burglary"), undefined);
+	assert.deepEqual(indexed.catalogueSeries("crime-burglary"), found);
+});
+
+test("uses catalogue series identities without an id mapping", () => {
+	const identity = {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	};
+	const data = {
+		measures: [
+			{ id: "legacy", sources: [source("crime")], series: identity },
+		],
+	} as unknown as Parameters<typeof dimensionCatalogue>[0];
+	const indexed = dimensionCatalogue(data, {
+		config: config({}),
+		vocabulary,
+	});
+	assert.equal(
+		indexed.series(measureSeriesKey(identity))?.measure.id,
+		"recorded-crimes",
+	);
+});
+
+test("builds fallback dimensions from embedded series identities", () => {
+	const data = {
+		measures: [
+			{
+				id: "old-id",
+				label: "Burglary",
+				series: {
+					measure: "recorded-crimes",
+					dimensions: { offence: "burglary" },
+				},
+				sources: [source("crime")],
+			},
+		],
+	} as unknown as Parameters<typeof dimensionCatalogue>[0];
+	const indexed = dimensionCatalogue(data, identityDimensions(data));
+	assert.equal(
+		indexed.measure("recorded-crimes")?.dimensions[0]?.members[0]?.code,
+		"burglary",
+	);
 });
 
 const problems = (

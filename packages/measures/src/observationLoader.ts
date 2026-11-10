@@ -6,8 +6,11 @@ import {
 import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
+	type MeasureSeriesIdentity,
 } from "./index.ts";
 import {
 	lazySourceObservations,
@@ -27,19 +30,37 @@ export const readMeasureObservations = (
 	readPath: StatisticsReadPath = JSON.parse(
 		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 	) as StatisticsReadPath,
+	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): AnyMeasureObservationArtifact[] => {
 	const databasePath = atlasDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);
-	tables.bindCatalogue(databasePath, dataCatalog, readPath);
-	return dataCatalog.measures.flatMap((measure) =>
-		measure.sources.map((source) =>
-			lazySourceObservations(
+	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
+	const bySeriesSource = new Map<string, AnyMeasureObservationArtifact>();
+	const canonical = Boolean(
+		readPath.series &&
+		(identities || dataCatalog.measures.some((measure) => measure.series)),
+	);
+	const observations = dataCatalog.measures.flatMap((measure) =>
+		measure.sources.map((source) => {
+			const identity = measure.series ?? identities?.[measure.id];
+			const view = lazySourceObservations(
 				databasePath,
-				observationArtifactName(measure.id, source),
+				canonical && identity
+					? measureSeriesSourceKey(identity, source)
+					: observationArtifactName(measure.id, source),
 				measure.id,
 				source.sourceGeography,
 				tables,
-			),
-		),
+			);
+			if (identity)
+				bySeriesSource.set(
+					measureSeriesSourceKey(identity, source),
+					view,
+				);
+			return view;
+		}),
 	);
+	if (identities || dataCatalog.measures.some((measure) => measure.series))
+		registerSeriesObservations(observations, bySeriesSource);
+	return observations;
 };

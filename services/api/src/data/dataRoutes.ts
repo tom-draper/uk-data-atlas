@@ -46,6 +46,7 @@ export const handleDataRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<"area" | "places" | "missingRequirement">):
 	ApiResponse | undefined => {
 	if (segments.length !== 3 || segments[0] !== "v1" || segments[1] !== "data")
@@ -59,10 +60,11 @@ export const handleDataRoutes = ({
 			"Build the data catalogue before retrieving observations.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,
@@ -124,6 +126,8 @@ export const handleDataRoutes = ({
 	}
 	const resolved = resolveObservations(context, {
 		measureId,
+		measure,
+		seriesKey: selectedSeries?.id,
 		periods: [period],
 		geography,
 		boundaryYear,
@@ -197,6 +201,7 @@ export const handleDataRoutes = ({
 	}
 	const observations = observationsFor(measureId, source, period as string, {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	});
 	if (!observations) {
 		return problem(
@@ -232,6 +237,7 @@ export const handleDataRoutes = ({
 	const page = paginate(parsedUrl, matches, {
 		keyOf: (record) => record.areaCode,
 		subject: `${measureId} query`,
+		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
 	const { items: records, nextCursor } = page;
@@ -278,6 +284,18 @@ export const handleDataRoutes = ({
 		(record): record is MeasureExportRecord => isNumericObservation(record),
 	);
 	if (requestedFormat !== "json") {
+		const nextPageUrl = new URL(parsedUrl);
+		if (selectedSeries) {
+			for (const [dimension, member] of Object.entries(
+				selectedSeries.dimensions,
+			))
+				nextPageUrl.searchParams.set(dimension, member);
+			if (selectedSeries.datasetId)
+				nextPageUrl.searchParams.set(
+					"datasetId",
+					selectedSeries.datasetId,
+				);
+		}
 		const exported = exportMeasureRecords(
 			requestedFormat as TabularFormat,
 			{
@@ -309,7 +327,7 @@ export const handleDataRoutes = ({
 				// the page size.
 				headers: nextCursor
 					? {
-							link: `<${nextPageHref(parsedUrl, nextCursor)}>; rel="next"`,
+							link: `<${nextPageHref(nextPageUrl, nextCursor)}>; rel="next"`,
 						}
 					: {},
 			},

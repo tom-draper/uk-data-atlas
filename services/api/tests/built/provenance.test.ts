@@ -16,6 +16,7 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
+import { measureSeriesSourceKey } from "@uk-data-atlas/measures";
 
 /**
  * Provenance as a client receives it.
@@ -81,6 +82,7 @@ const partitions = (catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
 						measure: measure.id,
 						datasetId: source.datasetId,
 						geography: source.sourceGeography,
+						source,
 						periods: source.periods,
 						url: `/v1/data/${mapping.measure}?${query}`,
 					},
@@ -107,7 +109,15 @@ test("names an artifact that exists and hashes to what it says", () => {
 				compiledObservationPath(repositoryRoot, observations.artifact),
 				"utf8",
 			);
-			const selector = readPath.statistics[observations.artifact];
+			const selector =
+				readPath.series?.[
+					measureSeriesSourceKey(
+						catalogues.measureDimensions.config.ids[
+							partition.measure
+						]!,
+						partition.source,
+					)
+				];
 			assert.ok(
 				selector,
 				`Missing selector for ${observations.artifact}`,

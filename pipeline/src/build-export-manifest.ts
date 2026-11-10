@@ -1,9 +1,6 @@
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
-import {
-	readMeasureDimensionsConfig,
-	type StatisticsReadPath,
-} from "@uk-data-atlas/measures";
+import { type StatisticsReadPath } from "@uk-data-atlas/measures";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,6 +12,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections.ts";
 import { compileMeasureDownloads } from "./statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "./catalog/manifest.ts";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 import { statisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
@@ -35,7 +33,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = JSON.parse(
 		readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 	) as StatisticsReadPath;
-	const { ids } = readMeasureDimensionsConfig(repositoryRoot).config;
+	const identities = readMeasureDimensionsMapping(repositoryRoot).ids;
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },
@@ -44,7 +42,12 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		const manifest = compileExportManifest(
 			publicDirectory,
 			dataCatalog,
-			statisticsArtifactReader(database, dataCatalog, readPath),
+			statisticsArtifactReader(
+				database,
+				dataCatalog,
+				readPath,
+				identities,
+			),
 		);
 		manifest.measureExports = [];
 		for (const measure of dataCatalog.measures) {
@@ -53,7 +56,8 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 				measure,
 				bindings,
 				readPath,
-				ids,
+				undefined,
+				identities,
 			);
 			if (!selection) continue;
 			const formats = await compileMeasureDownloads(

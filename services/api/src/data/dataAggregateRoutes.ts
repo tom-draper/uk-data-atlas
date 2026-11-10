@@ -23,6 +23,7 @@ export const aggregateValue = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series,
 }: RouteRequestFor<
 	| "area"
 	| "crosswalk"
@@ -36,10 +37,11 @@ export const aggregateValue = ({
 	| "countryIdentity"
 >): ApiResponse => {
 	const { dataCatalog, measureObservations } = context;
-	const measureId = segments[2] as string;
+	const measureId = series?.catalogueMeasure.id ?? (segments[2] as string);
 	const resolvedMeasure = resolveAggregationMeasure({
 		dataCatalog,
 		measureId,
+		selectedMeasure: series?.catalogueMeasure,
 	});
 	if ("status" in resolvedMeasure) return resolvedMeasure;
 	const {
@@ -79,6 +81,8 @@ export const aggregateValue = ({
 	const partition = resolveAggregationPartition({
 		context,
 		measureId,
+		measure,
+		seriesKey: series?.id,
 		period: period!,
 		geography: geography!,
 		boundaryYear: boundaryYear!,
@@ -101,6 +105,7 @@ export const aggregateValue = ({
 		period: period as string,
 		artifacts: {
 			measureObservations,
+			seriesKey: series?.id,
 		},
 	});
 	if ("status" in numericObservationResult) return numericObservationResult;
@@ -132,6 +137,7 @@ export const aggregateValue = ({
 			context,
 			dataCatalog: availableDataCatalog,
 			weightMeasureId,
+			weightSeriesIdentity: measure.weightSeries,
 			measureId,
 			period: period as string,
 			source,

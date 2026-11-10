@@ -124,6 +124,17 @@ const payFields = (place: "residence" | "workplace"): DeclaredField[] =>
 		];
 	});
 
+export const medianPaySeries = () =>
+	(["residence", "workplace"] as const).flatMap((place) =>
+		payFields(place)
+			.filter((field) => field.path.endsWith(".median"))
+			.map((field) => ({
+				id: `median-${place === "workplace" ? "workplace-" : ""}${field.path.split(".")[0]}-pay`,
+				measure: field.measure,
+				dimensions: field.members!,
+			})),
+	);
+
 /** Pay tables cover England with its regions and counties as well as districts. */
 const payAreas = {
 	alsoIn: [

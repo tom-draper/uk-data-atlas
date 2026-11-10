@@ -32,6 +32,7 @@ export const handleDataValueRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 	dispatch,
 }: RouteRequestFor<
 	| "places"
@@ -78,10 +79,11 @@ export const handleDataValueRoutes = ({
 			"Build the data catalogue before answering for a place.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,
@@ -147,13 +149,14 @@ export const handleDataValueRoutes = ({
 			releaseId,
 			parsedUrl,
 			segments,
+			series: selectedSeries,
 			dispatch,
 		});
 	const requestedGeography = parsedUrl.searchParams.get("geography");
 	const requestedCodeYear = parsedUrl.searchParams.get("codeYear");
 	const requestedDataset = parsedUrl.searchParams.get("datasetId");
 	const outcome = valueForPlace(
-		measure,
+		{ ...measure, id: segments[2] as string },
 		candidates,
 		period,
 		(url, operation) => {
@@ -164,6 +167,7 @@ export const handleDataValueRoutes = ({
 				releaseId,
 				parsedUrl: aggregateUrl,
 				segments: aggregateUrl.pathname.split("/").filter(Boolean),
+				series: selectedSeries,
 				dispatch,
 			});
 		},
@@ -249,6 +253,7 @@ const postcodeValue = (
 		context,
 		releaseId,
 		parsedUrl,
+		segments,
 		dispatch,
 	}: RouteRequestFor<
 		| "places"
@@ -318,7 +323,7 @@ const postcodeValue = (
 		return {
 			geography: other.source.sourceGeography.type,
 			boundaryYear: other.source.sourceGeography.boundaryYear,
-			ask: `/v1/data/${measure.id}/value?${query}`,
+			ask: `/v1/data/${encodeURIComponent(segments[2] as string)}/value?${query}`,
 		};
 	};
 	// The finest geography holds the most areas in the release it is placed in.
@@ -378,7 +383,7 @@ const postcodeValue = (
 	for (const candidate of candidates) {
 		attempt = attemptSource(
 			context,
-			measure,
+			{ ...measure, id: segments[2] as string },
 			candidate.source,
 			candidate.releases,
 			point,

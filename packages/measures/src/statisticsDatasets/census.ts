@@ -185,6 +185,18 @@ export const QUALIFICATION: DeclaredDataset = {
 	],
 };
 
+export const travelToWorkSeries = () =>
+	TRAVEL_TO_WORK.dimensions!.find(
+		(dimension) => dimension.slug === "travel-method",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `travel-to-work-${member}`,
+			measure: "people-in-employment",
+			dimensions: { "travel-method": member },
+		};
+	});
+
 export const TRAVEL_TO_WORK: DeclaredDataset = {
 	type: "travelToWork",
 	module: "transport",

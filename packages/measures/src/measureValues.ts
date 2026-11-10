@@ -1,10 +1,12 @@
 import {
 	isNumericObservation,
+	measureSeriesKey,
 	observationsFor,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 	type Measure,
 	type MeasureSource,
+	type MeasureSeriesIdentity,
 	type PopulationObservation,
 } from "./index.ts";
 import {
@@ -43,7 +45,7 @@ export type MeasureValuesContext = {
 };
 
 export type MeasureValuesRequest = {
-	/** A measure id such as `population`, or a catalogue series id. */
+	/** A measure id such as `population`, or a canonical series key. */
 	measure: string;
 	/** Members by dimension id. A dimension left out takes its total or default. */
 	dimensions?: Readonly<Record<string, readonly string[]>>;
@@ -138,7 +140,7 @@ export type MeasureValuesMeasure = {
 export type MeasureValues = {
 	ok: true;
 	measure: MeasureValuesMeasure;
-	/** The series read: its catalogue id and the member of each dimension. */
+	/** The series read: its canonical key and the member of each dimension. */
 	series: { id: string; dimensions: Record<string, string> };
 	source: {
 		datasetId: string;
@@ -268,6 +270,10 @@ const resolveSeries = (
 			wrong.members.map((member) => ({ member })),
 		);
 	let candidates = matchingSeries(measure, filters, request.datasetId);
+	if (byId)
+		candidates = candidates.filter(
+			(candidate) => candidate.id === byId.series.id,
+		);
 	candidates = narrowByGeography(candidates, request.geography);
 	if (candidates.length > 0)
 		candidates = preferDefaultBreakdown(measure, candidates);
@@ -342,9 +348,11 @@ const readPeriod = (
 	measureId: string,
 	source: MeasureSource,
 	period: string,
+	seriesKey?: string,
 ): { records: PeriodRecords; contentHash: string } | undefined => {
 	const observations = observationsFor(measureId, source, period, {
 		measureObservations: context.measureObservations,
+		seriesKey,
 	});
 	if (!observations) return undefined;
 	const byCode = new Map<
@@ -375,13 +383,23 @@ const PARTIAL = MEASURE_VALUE_STATUSES.indexOf("partial");
 const readWeights = (
 	context: MeasureValuesContext,
 	weightMeasureId: string | undefined,
+	weightSeriesIdentity: MeasureSeriesIdentity | undefined,
 	source: MeasureSource,
 	period: string,
 ): Map<string, number> | undefined => {
-	if (!weightMeasureId) return undefined;
-	const weight = context.dataCatalog.measures.find(
-		(candidate) => candidate.id === weightMeasureId,
+	if (!weightMeasureId && !weightSeriesIdentity) return undefined;
+	const catalogue = dimensionCatalogue(
+		context.dataCatalog,
+		context.measureDimensions ?? identityDimensions(context.dataCatalog),
 	);
+	const weightSeries = weightSeriesIdentity
+		? catalogue.series(measureSeriesKey(weightSeriesIdentity))?.series
+		: catalogue.catalogueSeries(weightMeasureId!)?.series;
+	const weight =
+		weightSeries?.catalogueMeasure ??
+		context.dataCatalog.measures.find(
+			(candidate) => candidate.id === weightMeasureId,
+		);
 	const weightSource = weight?.sources.find(
 		(candidate) =>
 			candidate.sourceGeography.type === source.sourceGeography.type &&
@@ -390,7 +408,13 @@ const readWeights = (
 			candidate.periods.includes(period),
 	);
 	if (!weight || !weightSource) return undefined;
-	const read = readPeriod(context, weight.id, weightSource, period);
+	const read = readPeriod(
+		context,
+		weight.id,
+		weightSource,
+		period,
+		weightSeries?.id,
+	);
 	if (!read?.records.numeric) return undefined;
 	return new Map(
 		[...read.records.byCode].flatMap(([code, record]) =>
@@ -477,7 +501,13 @@ export function queryMeasureValues(
 	const reads = new Map<string, PeriodRecords>();
 	let contentHash = "";
 	for (const period of periods) {
-		const read = readPeriod(context, catalogueMeasure.id, source, period);
+		const read = readPeriod(
+			context,
+			catalogueMeasure.id,
+			source,
+			period,
+			series.id,
+		);
 		if (!read)
 			return refuse(
 				503,
@@ -541,6 +571,7 @@ export function queryMeasureValues(
 					? readWeights(
 							context,
 							rule.weighted.weight.measureId,
+							catalogueMeasure.weightSeries,
 							source,
 							period,
 						)

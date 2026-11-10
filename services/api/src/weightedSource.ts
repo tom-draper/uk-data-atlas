@@ -1,4 +1,9 @@
 import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
+import { dimensionCatalogue } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	type MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
@@ -19,6 +24,7 @@ export const readWeightedSource = ({
 	context,
 	dataCatalog,
 	weightMeasureId,
+	weightSeriesIdentity,
 	measureId,
 	period,
 	source,
@@ -27,16 +33,27 @@ export const readWeightedSource = ({
 	context: RouteContextFor<never>;
 	dataCatalog: DataCatalog;
 	weightMeasureId: string;
+	weightSeriesIdentity?: MeasureSeriesIdentity;
 	measureId: string;
 	period: string;
 	source: MeasureSource;
 	artifacts: Parameters<typeof numericObservationsFor>[3];
 }): WeightedSource | ApiResponse => {
-	const weightMeasure = dataCatalog.measures.find(
-		(candidate) => candidate.id === weightMeasureId,
-	);
+	const catalogue = context.measureDimensions
+		? dimensionCatalogue(dataCatalog, context.measureDimensions)
+		: undefined;
+	const weightSeries = weightSeriesIdentity
+		? catalogue?.series(measureSeriesKey(weightSeriesIdentity))?.series
+		: catalogue?.catalogueSeries(weightMeasureId)?.series;
+	const weightMeasure =
+		weightSeries?.catalogueMeasure ??
+		dataCatalog.measures.find(
+			(candidate) => candidate.id === weightMeasureId,
+		);
 	const weightPlan = resolveObservations(context, {
 		measureId: weightMeasureId,
+		measure: weightMeasure,
+		seriesKey: weightSeries?.id,
 		periods: [period],
 		geography: source.sourceGeography.type,
 		boundaryYear: String(source.sourceGeography.boundaryYear),
@@ -51,10 +68,10 @@ export const readWeightedSource = ({
 		);
 	}
 	const result = numericObservationsFor(
-		weightMeasureId,
+		weightMeasure.id,
 		weightSource,
 		period,
-		artifacts,
+		{ ...artifacts, seriesKey: weightSeries?.id },
 	);
 	if (result.kind === "missing") {
 		return problem(

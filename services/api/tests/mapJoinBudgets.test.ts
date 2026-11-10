@@ -8,6 +8,7 @@ import {
 	MAX_MAP_JOIN_COLUMN_BYTES,
 } from "../src/mapResourceRoutes";
 import { route } from "../src/routes";
+import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import { readParquet } from "./parquetFixtures";
 import {
 	compatibleWardAreaLookup,
@@ -71,6 +72,61 @@ const record: PopulationObservation = {
 	value: 5,
 	status: "observed",
 };
+
+test("joins a dimensional series using its public measure id", () => {
+	const base = contextFor([record]);
+	const context = {
+		...base,
+		measureDimensions: {
+			vocabulary: {
+				schemaVersion: 1 as const,
+				measures: {
+					residents: {
+						label: "Residents",
+						description: "Resident population.",
+						unit: "people",
+						valueKind: "count" as const,
+						aggregation: "sum" as const,
+					},
+				},
+				dimensions: {
+					age: {
+						label: "Age",
+						members: [{ code: "all", label: "All ages" }],
+					},
+				},
+			},
+			config: {
+				schemaVersion: 1 as const,
+				measures: {},
+				dimensions: {},
+				members: {},
+				defaults: {},
+				ids: {
+					population: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				},
+			},
+		},
+	};
+	const request = url.replace("/population?", "/residents?") + "&age=all";
+	const resolved = resolveDimensionRequest(request, context);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") return;
+	assert.match(resolved.url, /\/join\/residents\?/);
+	const response = route("GET", `${request}&format=json`, context);
+	assert.equal(response.status, 200);
+	assert.ok("data" in response.body);
+	assert.match(JSON.stringify(response.body.data), /"value":5/);
+	const parquet = route("GET", `${request}&format=parquet`, context);
+	assert.equal(parquet.status, 200);
+	assert.match(
+		parquet.representation!.headers!["content-disposition"]!,
+		/-residents-2022\.parquet/,
+	);
+});
 
 test("refuses oversized joins before reading records for either representation", () => {
 	const records = new Array<PopulationObservation>(MAX_MAP_JOIN_ROWS + 1);

@@ -24,8 +24,16 @@ export const measureExportRoutes: FastifyPluginAsync<{
 			const url =
 				resolution.kind === "series" ? resolution.url : request.url;
 			const parsedUrl = new URL(url, "http://localhost");
+			if (resolution.kind === "series")
+				parsedUrl.pathname = new URL(
+					request.url,
+					"http://localhost",
+				).pathname;
 			const routeRequest = {
 				context,
+				...(resolution.kind === "series"
+					? { series: resolution.series }
+					: {}),
 				releaseId:
 					context.atlasRelease?.releaseId ??
 					context.boundaryRegistry.contentHash,

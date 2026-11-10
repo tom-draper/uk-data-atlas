@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
 	observationArtifactName,
+	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
 	type MeasureSource,
 } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
@@ -77,6 +80,47 @@ test("is undefined for a period the artifact does not hold", () => {
 	assert.equal(
 		observationsFor("owned", source, "1999", {
 			measureObservations: [tableMeasureObservations(table, "owned")],
+		}),
+		undefined,
+	);
+});
+
+test("selects observations by canonical series and source", () => {
+	const first = tableMeasureObservations(table, "owned");
+	const second = tableMeasureObservations(
+		{ ...table, contentHash: "sha256:second" },
+		"owned",
+	);
+	const all = [first, second];
+	const firstIdentity = {
+		measure: "housing",
+		dimensions: { tenure: "owned" },
+	};
+	const secondIdentity = {
+		measure: "housing",
+		dimensions: { tenure: "rented" },
+	};
+	registerSeriesObservations(
+		all,
+		new Map([
+			[measureSeriesSourceKey(firstIdentity, source), first],
+			[measureSeriesSourceKey(secondIdentity, source), second],
+		]),
+	);
+	assert.equal(
+		observationsFor("owned", source, "2021", {
+			measureObservations: all,
+			seriesKey: measureSeriesKey(secondIdentity),
+		})?.contentHash,
+		"sha256:second",
+	);
+	assert.equal(
+		observationsFor("owned", source, "2021", {
+			measureObservations: all,
+			seriesKey: measureSeriesKey({
+				measure: "housing",
+				dimensions: { tenure: "unknown" },
+			}),
 		}),
 		undefined,
 	);

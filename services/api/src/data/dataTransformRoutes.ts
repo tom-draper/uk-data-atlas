@@ -28,6 +28,7 @@ export const handleDataTransformRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<"places">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
@@ -43,10 +44,10 @@ export const handleDataTransformRoutes = ({
 			"Catalogue Unavailable",
 			"Build the data catalogue before comparing source-exact observations.",
 		);
-	const measureId = segments[2]!;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId = selectedSeries?.catalogueMeasure.id ?? segments[2]!;
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure)
 		return problem(
 			404,
@@ -156,6 +157,8 @@ export const handleDataTransformRoutes = ({
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
+		measure,
+		seriesKey: selectedSeries?.id,
 		periods: [period],
 		geography,
 		boundaryYear,
@@ -164,6 +167,7 @@ export const handleDataTransformRoutes = ({
 	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period!, {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	});
 	if (!observations)
 		return problem(

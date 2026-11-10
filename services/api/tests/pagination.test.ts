@@ -21,6 +21,36 @@ test("pages through items after the one each cursor names", () => {
 	assert.deepEqual(pageOf("limit=3"), { items, nextCursor: null });
 });
 
+test("scoped cursors cannot be reused for another series", () => {
+	const page = (scope: string, cursor?: string) =>
+		paginate(
+			new URL(
+				`http://localhost/v1/letters?limit=1${cursor ? `&cursor=${cursor}` : ""}`,
+			),
+			items,
+			{ keyOf: (item) => item.id, subject: "letter query", scope },
+		);
+	const first = page("series-a");
+	assert.ok(!("problem" in first) && first.nextCursor);
+	assert.deepEqual(page("series-a", first.nextCursor), {
+		items: [{ id: "b" }],
+		nextCursor: cursorFor(JSON.stringify(["series-a", "b"])),
+	});
+	for (const cursor of [
+		first.nextCursor,
+		cursorFor("a"),
+		cursorFor("not-json"),
+	]) {
+		const result = page("series-b", cursor);
+		assert.ok("problem" in result);
+		assert.equal(result.problem.status, 400);
+		assert.equal(
+			(result.problem.body as { code?: string }).code,
+			"invalid_cursor",
+		);
+	}
+});
+
 test("asks a view with an index where a cursor falls", () => {
 	const view = {
 		length: items.length,

@@ -99,6 +99,20 @@ const yearRange = (text: unknown) => {
 	return periods.years(Number(match[1]), Number(match[2]));
 };
 
+export const lifeExpectancySeries = () =>
+	LIFE_EXPECTANCY_SERIES.dimensions!.find(
+		(dimension) => dimension.slug === "sex",
+	)!
+		.members!.filter(({ key }) => key !== "all")
+		.map(({ code, key }) => {
+			const member = code ?? key;
+			return {
+				id: `life-expectancy-${member}`,
+				measure: "life-expectancy",
+				dimensions: { sex: member },
+			};
+		});
+
 export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
 	type: "lifeExpectancySeries",
 	module: "health",

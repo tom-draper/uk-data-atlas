@@ -12,6 +12,12 @@ import {
 } from "@uk-data-atlas/measures";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { createMeasureFixture } from "../helpers/measureFixture";
+import {
+	dimensionCatalogue,
+	identityDimensions,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 
 let fixture: ReturnType<typeof createMeasureFixture>;
 
@@ -154,7 +160,7 @@ describe("measure values and dimensions", () => {
 	it("takes the total for a dimension left out", () => {
 		const result = values({ measure: "households" });
 		expect(result.series).toEqual({
-			id: "households-total",
+			id: '["households",[["tenure","total"]],null]',
 			dimensions: { tenure: "total" },
 		});
 		expect(column(result, "2021").values).toEqual([40, 120]);
@@ -165,7 +171,9 @@ describe("measure values and dimensions", () => {
 			measure: "households",
 			dimensions: { tenure: ["rented"] },
 		});
-		expect(result.series.id).toBe("households-rented");
+		expect(result.series.id).toBe(
+			'["households",[["tenure","rented"]],null]',
+		);
 		expect(column(result, "2021").values).toEqual([15, 50]);
 		expect(result.measure.dimensions).toEqual([
 			{
@@ -181,16 +189,25 @@ describe("measure values and dimensions", () => {
 		]);
 	});
 
-	it("reads a catalogue series id as its measure and members", () => {
-		const result = values({ measure: "households-owned" });
+	it("refuses an encoded catalogue series id", () => {
+		expect(problem({ measure: "households-owned" })).toMatchObject({
+			status: 404,
+			code: "unknown_measure",
+		});
+	});
+
+	it("reads a canonical series key as its measure and members", () => {
+		const result = values({
+			measure: '["households",[["tenure","owned"]],null]',
+		});
 		expect(result.measure.id).toBe("households");
-		expect(column(result, "2021").values).toEqual([25, 70]);
+		expect(result.series.dimensions).toEqual({ tenure: "owned" });
 	});
 
 	it("refuses a series id filtered off its own member", () => {
 		expect(
 			problem({
-				measure: "households-owned",
+				measure: '["households",[["tenure","owned"]],null]',
 				dimensions: { tenure: ["rented"] },
 			}),
 		).toMatchObject({ status: 400, code: "unknown_dimension_member" });
@@ -262,6 +279,80 @@ describe("measure values combined over areas", () => {
 		// (50 * 110 + 100 * 290) / 400
 		expect(column(result, "2023").values[0]).toBeCloseTo(86.25, 10);
 		expect(result.combined?.operation).toBe("weighted-mean");
+	});
+
+	it("reads weighted values by their selected series", () => {
+		const { measureObservations } = fixture.context;
+		const dataCatalog = {
+			...fixture.context.dataCatalog,
+			measures: fixture.context.dataCatalog.measures.map((measure) =>
+				measure.id === "access-rate" &&
+				measure.aggregation.kind === "intensive"
+					? {
+							...measure,
+							weightSeries: { measure: "population" },
+							aggregation: {
+								...measure.aggregation,
+								weight: {
+									...measure.aggregation.weight,
+									measureId: "incorrect-legacy-id",
+								},
+							},
+						}
+					: measure,
+			),
+		};
+		const dimensions = identityDimensions(dataCatalog);
+		const catalogue = dimensionCatalogue(dataCatalog, dimensions);
+		const population = measureObservations.find(
+			(artifact) => artifact.measureId === "population",
+		)!;
+		const misleading = {
+			...population,
+			periods: population.periods.map((entry) => ({
+				...entry,
+				records: entry.records
+					.filter(isNumericObservation)
+					.map((record) => ({ ...record, value: 1 })),
+			})),
+		};
+		const observations = [misleading, ...measureObservations];
+		const index = new Map();
+		for (const measure of dataCatalog.measures) {
+			const series = catalogue.catalogueSeries(measure.id)?.series;
+			if (!series) continue;
+			for (const source of measure.sources) {
+				const artifact = measureObservations.find(
+					(entry) =>
+						entry.measureId === measure.id &&
+						entry.sourceGeography.type ===
+							source.sourceGeography.type &&
+						entry.sourceGeography.boundaryYear ===
+							source.sourceGeography.boundaryYear,
+				);
+				if (artifact)
+					index.set(
+						measureSeriesSourceKey({ measure: measure.id }, source),
+						artifact,
+					);
+			}
+		}
+		registerSeriesObservations(observations, index);
+		const result = queryMeasureValues(
+			{
+				dataCatalog,
+				measureDimensions: dimensions,
+				measureObservations: observations,
+			},
+			{
+				measure: "access-rate",
+				parents: [
+					{ code: "P1", memberCodes: ["E06000001", "E06000002"] },
+				],
+			},
+		);
+		if (!result.ok) throw new Error(result.detail);
+		expect(column(result, "2023").values[0]).toBeCloseTo(86.25, 10);
 	});
 
 	it("takes no mean where an area has a value but no weight", () => {

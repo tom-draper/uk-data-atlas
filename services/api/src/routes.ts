@@ -8,6 +8,7 @@ import type {
 import { problem, type ApiResponse } from "./runtime/index.ts";
 
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
+import type { Series } from "@uk-data-atlas/measures";
 import {
 	breakdownResponse,
 	restatedResponse,
@@ -40,6 +41,8 @@ const buildRequest = (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body: RequestBody | undefined,
+	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const matched = context.operationMatcher?.(parsedUrl.pathname);
@@ -74,21 +77,44 @@ const buildRequest = (
 			context.boundaryRegistry.contentHash,
 		parsedUrl,
 		segments: segments as string[],
-		// A route's own calls name series by catalogue id, so they skip the
-		// dimension layer and are never restated twice.
-		dispatch: (nextUrl) => routeSeries("GET", nextUrl, context),
+		...(series ? { series } : {}),
+		...(measureSeries ? { measureSeries } : {}),
+		dispatch: (nextUrl) => {
+			const target = new URL(nextUrl, "http://localhost");
+			const targetSegments = target.pathname.split("/").filter(Boolean);
+			if (
+				series &&
+				segments[0] === "v1" &&
+				segments[1] === "data" &&
+				targetSegments[0] === "v1" &&
+				targetSegments[1] === "data" &&
+				decodePathSegment(targetSegments[2] ?? "") === segments[2]
+			) {
+				return routeSeries("GET", nextUrl, context, undefined, series);
+			}
+			return routeSeries("GET", nextUrl, context);
+		},
 	};
 };
 
-/** Route a request that names series by catalogue id. */
+/** Route a request with its selected series, when one was resolved. */
 const routeSeries = (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
-	const request = buildRequest(method, url, context, body);
+	const request = buildRequest(
+		method,
+		url,
+		context,
+		body,
+		series,
+		measureSeries,
+	);
 	if ("status" in request) return request;
 	return handleRoute(request) ?? notFound();
 };
@@ -98,10 +124,19 @@ const routeSeriesAsync = async (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	series?: Series,
+	measureSeries?: RouteRequest["measureSeries"],
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")
-		return routeSeries(method, url, context, body);
-	const request = buildRequest(method, url, context, body);
+		return routeSeries(method, url, context, body, series, measureSeries);
+	const request = buildRequest(
+		method,
+		url,
+		context,
+		body,
+		series,
+		measureSeries,
+	);
 	if ("status" in request) return request;
 	return (await handleRouteAsync(request)) ?? notFound();
 };
@@ -146,14 +181,30 @@ export const route = (
 		case "rewritten":
 			return withLocation(
 				restatedResponse(
-					routeSeries(method, resolved.url, context, body),
+					routeSeries(
+						method,
+						resolved.url,
+						context,
+						body,
+						undefined,
+						resolved.read.map(({ measure, series }) => ({
+							measureId: measure.id,
+							series,
+						})),
+					),
 					resolved.read,
 				),
 				resolved.location,
 			);
 		case "series":
 			return seriesResponse(
-				routeSeries(method, resolved.url, context, body),
+				routeSeries(
+					method,
+					resolved.url,
+					context,
+					body,
+					resolved.series,
+				),
 				resolved.series,
 				resolved.reading,
 			);
@@ -161,7 +212,13 @@ export const route = (
 			return breakdownResponse(
 				resolved.entries.map(({ url: entryUrl, series }) => ({
 					series,
-					response: routeSeries(method, entryUrl, context, body),
+					response: routeSeries(
+						method,
+						entryUrl,
+						context,
+						body,
+						series,
+					),
 				})),
 				resolved.reading,
 			);
@@ -183,14 +240,30 @@ export const routeAsync = async (
 		case "rewritten":
 			return withLocation(
 				restatedResponse(
-					await routeSeriesAsync(method, resolved.url, context, body),
+					await routeSeriesAsync(
+						method,
+						resolved.url,
+						context,
+						body,
+						undefined,
+						resolved.read.map(({ measure, series }) => ({
+							measureId: measure.id,
+							series,
+						})),
+					),
 					resolved.read,
 				),
 				resolved.location,
 			);
 		case "series":
 			return seriesResponse(
-				await routeSeriesAsync(method, resolved.url, context, body),
+				await routeSeriesAsync(
+					method,
+					resolved.url,
+					context,
+					body,
+					resolved.series,
+				),
 				resolved.series,
 				resolved.reading,
 			);
@@ -204,6 +277,7 @@ export const routeAsync = async (
 							entryUrl,
 							context,
 							body,
+							series,
 						),
 					})),
 				),

@@ -14,8 +14,11 @@ import { readParquet } from "./parquetFixtures";
 import { bindStatisticsField } from "../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../src/statistics/bindReviewedStatistics";
-import { observationArtifactName } from "@uk-data-atlas/measures";
-import { type StatisticsReadPath } from "@uk-data-atlas/measures";
+import {
+	measureSeriesSourceKey,
+	observationArtifactName,
+	type StatisticsReadPath,
+} from "@uk-data-atlas/measures";
 import { bindCompiledFields } from "../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
@@ -64,13 +67,7 @@ test("binds a census measure only when every source partition is complete", () =
 				},
 			],
 		} as unknown as Measure;
-		const ids = {
-			"age-0-to-4": {
-				measure: "usual-residents",
-				dimensions: { "age-band": "0-to-4" },
-			},
-		};
-		const bound = bindCensusStatistics(db, measure, ids);
+		const bound = bindCensusStatistics(db, measure);
 		assert.equal(bound?.length, 2);
 		assert.deepEqual(bound?.[0], {
 			dataset: "census-2021-ts007a",
@@ -81,16 +78,15 @@ test("binds a census measure only when every source partition is complete", () =
 			release: "lsoa-2021",
 			periods: ["2021-census"],
 		});
-		assert.equal(bindCensusStatistics(db, measure, {}), undefined);
 		measure.sources.push({
 			...measure.sources[0]!,
 			datasetId: "ethnicity",
 		});
-		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
-		assert.equal(bindCensusStatistics(db, measure, ids, true)?.length, 2);
+		assert.equal(bindCensusStatistics(db, measure), undefined);
+		assert.equal(bindCensusStatistics(db, measure, true)?.length, 2);
 		measure.sources.pop();
 		measure.sources[1]!.coverage.recordCount = 2;
-		assert.equal(bindCensusStatistics(db, measure, ids), undefined);
+		assert.equal(bindCensusStatistics(db, measure), undefined);
 	} finally {
 		db.close();
 	}
@@ -141,11 +137,31 @@ test("uses reviewed source mappings only when each requested period exists", () 
 			observations: {},
 		};
 		assert.equal(bindReviewedStatistics(db, measure, reviewed)?.length, 1);
+		const identity = { measure: "population", dimensions: { sex: "all" } };
+		const key = measureSeriesSourceKey(identity, measure.sources[0]!);
+		const canonical = {
+			...reviewed,
+			statistics: undefined,
+			series: { [key]: Object.values(reviewed.statistics!)[0]! },
+		};
+		assert.equal(
+			bindReviewedStatistics(db, measure, canonical, identity)?.length,
+			1,
+		);
+		assert.equal(
+			bindReviewedStatistics(
+				db,
+				measure,
+				{ ...canonical, series: {} },
+				identity,
+			),
+			undefined,
+		);
 		// A selector that serves values its series do not hold as they are.
 		const zeroed = {
 			...reviewed,
 			statistics: Object.fromEntries(
-				Object.entries(reviewed.statistics).map(([name, selector]) => [
+				Object.entries(reviewed.statistics!).map(([name, selector]) => [
 					name,
 					{ ...selector, absentAsZero: true },
 				]),
@@ -549,7 +565,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				catalogueMeasure,
 				bindings,
 				undefined,
-				undefined,
 				lookup,
 			)?.length,
 			1,
@@ -560,7 +575,6 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				db,
 				catalogueMeasure,
 				bindings,
-				undefined,
 				undefined,
 				lookup,
 			),

@@ -38,6 +38,7 @@ export const handleDataChangeRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	series: selectedSeries,
 }: RouteRequestFor<"places">): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
@@ -54,10 +55,11 @@ export const handleDataChangeRoutes = ({
 			"Build the data catalogue before measuring change.",
 		);
 	}
-	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
+	const measureId =
+		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const measure =
+		selectedSeries?.catalogueMeasure ??
+		dataCatalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure) {
 		return problem(
 			404,
@@ -207,6 +209,7 @@ export const handleDataChangeRoutes = ({
 	}
 	const artifacts = {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	};
 	const startObservations = observationsFor(
 		measureId,
@@ -296,6 +299,7 @@ export const handleDataChangeRoutes = ({
 		const page = paginate(parsedUrl, ranked, {
 			keyOf: (entry) => entry.areaCode,
 			subject: "change query",
+			scope: selectedSeries?.id,
 		});
 		if ("problem" in page) return page.problem;
 		records = page.items;

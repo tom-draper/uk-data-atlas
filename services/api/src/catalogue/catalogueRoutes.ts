@@ -1,6 +1,5 @@
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { retiredMeasure } from "../dimensions/retiredMeasure";
 import { searchMeasures } from "./measureTerms";
 import {
 	dimensionCatalogue,
@@ -88,7 +87,7 @@ export const handleCatalogueRoutes = ({
 	if (dimensional && segments[1] === "measures" && segments.length === 3) {
 		const term = segments[2]!;
 		const named = dimensional.measure(term);
-		const aliased = named ? undefined : dimensional.series(term);
+		const aliased = named ? undefined : dimensional.catalogueSeries(term);
 		const measure = named ?? aliased?.measure;
 		if (!measure)
 			return problem(
@@ -96,8 +95,12 @@ export const handleCatalogueRoutes = ({
 				"Not Found",
 				"No published measure matches that id.",
 			);
-		if (aliased && aliased.series.id !== measure.id)
-			return retiredMeasure(term, measure, aliased.series);
+		if (aliased && aliased.series.catalogueMeasure.id !== measure.id)
+			return problem(
+				404,
+				"Not Found",
+				"No published measure matches that id.",
+			);
 		return {
 			status: 200,
 			body: envelope(

@@ -184,144 +184,6 @@
 		"council-tax": {
 			"measure": "band-d-council-tax"
 		},
-		"crime-bicycle-theft": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "bicycle-theft"
-			}
-		},
-		"crime-burglary": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "burglary"
-			}
-		},
-		"crime-criminal-damage-and-arson": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "criminal-damage-and-arson"
-			}
-		},
-		"crime-death-or-serious-injury-by-illegal-driving": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "death-or-serious-injury-by-unlawful-driving"
-			}
-		},
-		"crime-drug-offences": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "drug-offences"
-			}
-		},
-		"crime-homicide": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "homicide"
-			}
-		},
-		"crime-miscellaneous-crimes-against-society": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "miscellaneous-crimes-against-society"
-			}
-		},
-		"crime-non-residential-burglary": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "non-residential-burglary"
-			}
-		},
-		"crime-other-theft": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "other-theft"
-			}
-		},
-		"crime-possession-of-weapons": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "possession-of-weapons"
-			}
-		},
-		"crime-public-order-offences": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "public-order-offences"
-			}
-		},
-		"crime-residential-burglary": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "residential-burglary"
-			}
-		},
-		"crime-robbery": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "robbery"
-			}
-		},
-		"crime-sexual-offences": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "sexual-offences"
-			}
-		},
-		"crime-shoplifting": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "shoplifting"
-			}
-		},
-		"crime-stalking-and-harassment": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "stalking-and-harassment"
-			}
-		},
-		"crime-theft-from-the-person": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "theft-from-the-person"
-			}
-		},
-		"crime-theft-offences": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "theft"
-			}
-		},
-		"crime-total": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "total"
-			}
-		},
-		"crime-vehicle-offences": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "vehicle-offences"
-			}
-		},
-		"crime-violence-against-the-person": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "violence-against-the-person"
-			}
-		},
-		"crime-violence-with-injury": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "violence-with-injury"
-			}
-		},
-		"crime-violence-without-injury": {
-			"measure": "recorded-crimes",
-			"dimensions": {
-				"offence": "violence-without-injury"
-			}
-		},
 		"economic-activity-employed": {
 			"measure": "usual-residents-16-plus",
 			"dimensions": {
@@ -384,24 +246,6 @@
 		},
 		"electric-vehicle-chargers": {
 			"measure": "public-ev-chargers"
-		},
-		"electricity-consumption": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "all"
-			}
-		},
-		"electricity-consumption-domestic": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "domestic"
-			}
-		},
-		"electricity-consumption-non-domestic": {
-			"measure": "electricity-consumption",
-			"dimensions": {
-				"meter-type": "non-domestic"
-			}
 		},
 		"ethnicity-african": {
 			"measure": "usual-residents",
@@ -515,24 +359,6 @@
 			"measure": "usual-residents",
 			"dimensions": {
 				"ethnic-group": "english-welsh-scottish-northern-irish-or-british"
-			}
-		},
-		"gas-consumption": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "all"
-			}
-		},
-		"gas-consumption-domestic": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "domestic"
-			}
-		},
-		"gas-consumption-non-domestic": {
-			"measure": "gas-consumption",
-			"dimensions": {
-				"meter-type": "non-domestic"
 			}
 		},
 		"gdp": {
@@ -904,18 +730,6 @@
 		"imd-rank": {
 			"measure": "imd-rank"
 		},
-		"life-expectancy-female": {
-			"measure": "life-expectancy",
-			"dimensions": {
-				"sex": "female"
-			}
-		},
-		"life-expectancy-male": {
-			"measure": "life-expectancy",
-			"dimensions": {
-				"sex": "male"
-			}
-		},
 		"local-election-con-votes": {
 			"measure": "party-votes",
 			"dimensions": {
@@ -994,62 +808,16 @@
 		"local-government-finance": {
 			"measure": "education-services-budget"
 		},
-		"median-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "residence"
-			}
-		},
-		"median-workplace-annual-pay": {
-			"measure": "gross-annual-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
-		"median-workplace-hourly-pay": {
-			"measure": "gross-hourly-pay",
-			"dimensions": {
-				"pay-statistic": "median",
-				"earnings-place": "workplace"
-			}
-		},
 		"net-additional-dwellings": {
 			"measure": "net-additional-dwellings"
 		},
 		"nimdm-rank": {
 			"measure": "nimdm-rank"
 		},
-		"no2-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "no2"
-			}
-		},
 		"planning-applications": {
 			"measure": "planning-applications",
 			"dimensions": {
 				"application-stage": "received"
-			}
-		},
-		"pm10-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "pm10"
-			}
-		},
-		"pm25-background-mean": {
-			"measure": "background-concentration",
-			"dimensions": {
-				"pollutant": "pm25"
 			}
 		},
 		"pm25-population-weighted": {
@@ -1112,50 +880,11 @@
 				"highest-qualification": "total"
 			}
 		},
-		"road-collisions": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "all"
-			}
-		},
-		"road-collisions-fatal": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "fatal"
-			}
-		},
-		"road-collisions-serious": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "serious"
-			}
-		},
-		"road-collisions-slight": {
-			"measure": "road-collisions",
-			"dimensions": {
-				"collision-severity": "slight"
-			}
-		},
 		"simd-decile": {
 			"measure": "simd-decile"
 		},
 		"simd-rank": {
 			"measure": "simd-rank"
-		},
-		"temporary-accommodation-children": {
-			"measure": "children-in-temporary-accommodation"
-		},
-		"temporary-accommodation-households": {
-			"measure": "households-in-temporary-accommodation",
-			"dimensions": {
-				"household-type": "all"
-			}
-		},
-		"temporary-accommodation-households-with-children": {
-			"measure": "households-in-temporary-accommodation",
-			"dimensions": {
-				"household-type": "with-children"
-			}
 		},
 		"tenure-owned-outright": {
 			"measure": "households",
@@ -1213,60 +942,6 @@
 		},
 		"total-jobs": {
 			"measure": "total-jobs"
-		},
-		"travel-to-work-bicycle": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "bicycle"
-			}
-		},
-		"travel-to-work-car": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "car"
-			}
-		},
-		"travel-to-work-home": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "home"
-			}
-		},
-		"travel-to-work-motorcycle": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "motorcycle"
-			}
-		},
-		"travel-to-work-on-foot": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "on-foot"
-			}
-		},
-		"travel-to-work-other": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "other"
-			}
-		},
-		"travel-to-work-public-transport": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "public-transport"
-			}
-		},
-		"travel-to-work-taxi": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "taxi"
-			}
-		},
-		"travel-to-work-total": {
-			"measure": "people-in-employment",
-			"dimensions": {
-				"travel-method": "total"
-			}
 		},
 		"unemployment-level": {
 			"measure": "unemployed-people"

@@ -7,8 +7,76 @@ import { test } from "vitest";
 import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureObservations,
+	ObservationCache,
+	indexStatisticsSeries,
+	measureSeriesSourceKey,
 	type StatisticsReadPath,
+	measureSeriesKey,
+	observationsFor,
 } from "@uk-data-atlas/measures";
+
+test("indexes each shared table column by its series and source", () => {
+	const source = {
+		datasetId: "census",
+		sourceGeography: { type: "ward" as const, boundaryYear: 2021 },
+		observationArtifact: "shared-table",
+	};
+	const catalog = {
+		measures: [
+			{ id: "first", sources: [source] },
+			{ id: "second", sources: [source] },
+		],
+	} as unknown as DataCatalog;
+	const selector = {
+		kind: "measure-table" as const,
+		id: "shared-table",
+		datasetId: "census",
+		geography: "ward",
+		boundaryYear: 2021,
+		period: "2021",
+		measures: ["first", "second"],
+		columns: [],
+	};
+	const readPath: StatisticsReadPath = {
+		schemaVersion: 1,
+		dataCatalogHash: "fixture",
+		statistics: { "shared-table": selector },
+		observations: {},
+	};
+	const identities = {
+		first: { measure: "residents", dimensions: { sex: "female" } },
+		second: { measure: "residents", dimensions: { sex: "male" } },
+	};
+	const identityFor = (id: string) =>
+		identities[id as keyof typeof identities];
+	const indexed = indexStatisticsSeries(catalog, readPath, identityFor);
+	assert.deepEqual(
+		indexed[measureSeriesSourceKey(identities.first, source)],
+		selector,
+	);
+	assert.deepEqual(
+		indexed[measureSeriesSourceKey(identities.second, source)],
+		selector,
+	);
+	assert.equal(Object.keys(indexed).length, 2);
+	assert.throws(
+		() => indexStatisticsSeries(catalog, readPath, () => identities.first),
+		/Duplicate statistics series source/,
+	);
+	assert.throws(
+		() => indexStatisticsSeries(catalog, readPath, () => undefined),
+		/Missing series identity/,
+	);
+	assert.throws(
+		() =>
+			indexStatisticsSeries(
+				catalog,
+				{ ...readPath, statistics: {} },
+				identityFor,
+			),
+		/Missing statistics selector/,
+	);
+});
 
 test("reads catalogue observations from statistics without legacy tables", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "statistics-observation-cache-"));
@@ -79,6 +147,95 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		value: 42,
 		status: "observed",
 	});
+	const identity = { measure: "count", dimensions: { kind: "all" } };
+	const source = catalog.measures[0]!.sources[0]!;
+	const key = measureSeriesSourceKey(identity, source);
+	const canonicalReadPath = {
+		...readPath,
+		statistics: {
+			"count-observations": {
+				datasetId: "fixture",
+				measure: "not-the-stored-measure",
+				dimensions: {},
+				geography: "ward",
+			},
+		},
+		series: { [key]: readPath.statistics!["count-observations"]! },
+	};
+	const canonicalArtifacts = readMeasureObservations(
+		root,
+		catalog,
+		0,
+		canonicalReadPath,
+		{ count: identity },
+	);
+	const [canonical] = canonicalArtifacts;
+	assert.deepEqual(
+		observationsFor("unused", source, "2024", {
+			measureObservations: canonicalArtifacts,
+			seriesKey: measureSeriesKey(identity),
+		})?.recordFor("E1"),
+		{ areaCode: "E1", value: 42, status: "observed" },
+	);
+	const cache = new ObservationCache();
+	const databasePath = join(root, "data/build/atlas.sqlite");
+	cache.bindCatalogue(databasePath, catalog, canonicalReadPath, {
+		count: identity,
+	});
+	assert.equal(cache.has(databasePath, key), true);
+	assert.equal(cache.has(databasePath, "count-observations"), false);
+	assert.deepEqual(canonical?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	const [canonicalOnly] = readMeasureObservations(
+		root,
+		catalog,
+		0,
+		{ ...canonicalReadPath, statistics: undefined },
+		{ count: identity },
+	);
+	assert.deepEqual(canonicalOnly?.periods[0]?.records[0], {
+		areaCode: "E1",
+		value: 42,
+		status: "observed",
+	});
+	const embeddedCatalog = {
+		...catalog,
+		measures: catalog.measures.map((measure) => ({
+			...measure,
+			series: identity,
+		})),
+	};
+	const embedded = readMeasureObservations(
+		root,
+		embeddedCatalog,
+		0,
+		canonicalReadPath,
+	);
+	assert.deepEqual(
+		observationsFor("wrong-id", source, "2024", {
+			measureObservations: embedded,
+			seriesKey: measureSeriesKey(identity),
+		})?.recordFor("E1"),
+		{ areaCode: "E1", value: 42, status: "observed" },
+	);
+	assert.throws(
+		() =>
+			readMeasureObservations(
+				root,
+				catalog,
+				0,
+				{ ...canonicalReadPath, series: {} },
+				{ count: identity },
+			),
+		/Missing statistics selector/,
+	);
+	assert.throws(
+		() => readMeasureObservations(root, catalog, 0, canonicalReadPath, {}),
+		/Missing series identity/,
+	);
 	const update = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	update.exec("UPDATE observation SET value = 43");
 	update.close();

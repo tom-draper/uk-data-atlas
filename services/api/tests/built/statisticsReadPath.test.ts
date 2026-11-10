@@ -22,6 +22,7 @@ import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readFileSync } from "node:fs";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
+import { measureSeriesSourceKey } from "@uk-data-atlas/measures";
 
 /**
  * The statistics read path. An artifact is read from the statistics tables
@@ -38,20 +39,18 @@ const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 ) as StatisticsReadPath;
 
-test("names every catalogue artifact once as statistics", () => {
-	const names = new Set(
+test("names every catalogue series source once as statistics", () => {
+	const keys = new Set(
 		catalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>
-				observationArtifactName(measure.id, source),
+				measureSeriesSourceKey(
+					catalogues.measureDimensions.config.ids[measure.id]!,
+					source,
+				),
 			),
 		),
 	);
-	const planned = [
-		...Object.keys(readPath.statistics),
-		...Object.keys(readPath.observations),
-	];
-	assert.equal(new Set(planned).size, planned.length);
-	assert.deepEqual(new Set(planned), names);
+	assert.deepEqual(new Set(Object.keys(readPath.series ?? {})), keys);
 	assert.deepEqual(readPath.observations, {});
 });
 
@@ -59,7 +58,13 @@ test("rebuilds every moved artifact by value from statistics rows", () => {
 	for (const measure of catalog.measures)
 		for (const source of measure.sources) {
 			const name = observationArtifactName(measure.id, source);
-			const selector = readPath.statistics[name];
+			const selector =
+				readPath.series?.[
+					measureSeriesSourceKey(
+						catalogues.measureDimensions.config.ids[measure.id]!,
+						source,
+					)
+				];
 			assert.ok(selector, `Missing selector for ${name}`);
 			assert.ok(
 				observationValuesEqual(
@@ -84,8 +89,11 @@ const samples = () => {
 	for (const measure of catalog.measures)
 		for (const source of measure.sources) {
 			if (
-				!readPath.statistics[
-					observationArtifactName(measure.id, source)
+				!readPath.series?.[
+					measureSeriesSourceKey(
+						catalogues.measureDimensions.config.ids[measure.id]!,
+						source,
+					)
 				]
 			)
 				continue;

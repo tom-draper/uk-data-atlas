@@ -19,13 +19,19 @@ export const readMeasureValuesContext = (
 	options: { observationCacheBytes?: number } = {},
 ): MeasureValuesContext => {
 	const dataCatalog = readDataCatalog(repositoryRoot);
+	const measureDimensions = readMeasureDimensions(
+		repositoryRoot,
+		dataCatalog,
+	);
 	return {
 		dataCatalog,
-		measureDimensions: readMeasureDimensions(repositoryRoot, dataCatalog),
+		measureDimensions,
 		measureObservations: readMeasureObservations(
 			repositoryRoot,
 			dataCatalog,
 			options.observationCacheBytes,
+			undefined,
+			measureDimensions.config.ids,
 		),
 	};
 };

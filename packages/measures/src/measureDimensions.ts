@@ -1,4 +1,4 @@
-import type { DataCatalog } from "./dataCatalog.ts";
+import type { DataCatalog, MeasureSource } from "./dataCatalog.ts";
 
 /**
  * Measures and their dimensions, and how each catalogue measure id maps onto
@@ -46,8 +46,8 @@ export type StatisticsVocabulary = {
 	dimensions: Record<string, DimensionDefinition>;
 };
 
-/** What one catalogue measure id stands for. */
-export type MeasureIdMapping = {
+/** A measure and the members that identify one series. */
+export type MeasureSeriesIdentity = {
 	measure: string;
 	/** Fixed members, by dimension. Absent when the measure has no breakdown. */
 	dimensions?: Record<string, string>;
@@ -57,6 +57,9 @@ export type MeasureIdMapping = {
 	 */
 	datasetId?: string;
 };
+
+/** What one catalogue measure id stands for. */
+export type MeasureIdMapping = MeasureSeriesIdentity;
 
 /** The reviewed mapping, `services/api/config/measure-dimensions.json`. */
 export type MeasureDimensionsConfig = {
@@ -105,13 +108,31 @@ export const totalMember = (members: DimensionMemberDefinition[]) => {
 	return roots.size === 1 && members.length > 1 ? [...roots][0] : undefined;
 };
 
-const key = (mapping: MeasureIdMapping) =>
+/** Stable identity for a measure, its fixed members and optional dataset. */
+export const measureSeriesKey = (mapping: MeasureSeriesIdentity) =>
 	JSON.stringify([
 		mapping.measure,
 		Object.entries(mapping.dimensions ?? {}).sort(([left], [right]) =>
-			left.localeCompare(right),
+			left < right ? -1 : left > right ? 1 : 0,
 		),
 		mapping.datasetId ?? null,
+	]);
+
+/** Stable identity of a series on one published source partition. */
+export const measureSeriesSourceKey = (
+	series: MeasureSeriesIdentity,
+	source: Pick<MeasureSource, "datasetId" | "sourceGeography">,
+) => measureSeriesKeySourceKey(measureSeriesKey(series), source);
+
+export const measureSeriesKeySourceKey = (
+	seriesKey: string,
+	source: Pick<MeasureSource, "datasetId" | "sourceGeography">,
+) =>
+	JSON.stringify([
+		seriesKey,
+		source.datasetId,
+		source.sourceGeography.type,
+		source.sourceGeography.boundaryYear,
 	]);
 
 /** Everything wrong with a mapping, against a catalogue and the vocabulary. */
@@ -203,7 +224,7 @@ export const measureDimensionProblems = (
 			problems.push(
 				`${id} names dataset ${mapping.datasetId}, which none of its sources is from.`,
 			);
-		const identity = key(mapping);
+		const identity = measureSeriesKey(mapping);
 		const other = seen.get(identity);
 		if (other)
 			problems.push(

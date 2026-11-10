@@ -22,6 +22,24 @@ const offence = (
 	parent?: string,
 ) => ({ key, code, label, ...(parent ? { parent } : {}) });
 
+export const crimeSeries = () =>
+	CRIME.dimensions!.find(
+		(dimension) => dimension.slug === "offence",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		const suffix =
+			member === "theft"
+				? "theft-offences"
+				: member === "death-or-serious-injury-by-unlawful-driving"
+					? "death-or-serious-injury-by-illegal-driving"
+					: member;
+		return {
+			id: `crime-${suffix}`,
+			measure: "recorded-crimes",
+			dimensions: { offence: member },
+		};
+	});
+
 export const CRIME: DeclaredDataset = {
 	type: "crime",
 	module: "crime",
@@ -248,6 +266,18 @@ export const CRIME: DeclaredDataset = {
 	fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 };
 
+export const roadCollisionSeries = () =>
+	ROAD_COLLISIONS.dimensions!.find(
+		(dimension) => dimension.slug === "collision-severity",
+	)!.members!.map(({ code, key }) => {
+		const member = code ?? key;
+		return {
+			id: `road-collisions${member === "all" ? "" : `-${member}`}`,
+			measure: "road-collisions",
+			dimensions: { "collision-severity": member },
+		};
+	});
+
 export const ROAD_COLLISIONS: DeclaredDataset = {
 	type: "roadCollisions",
 	module: "transport",
@@ -307,6 +337,23 @@ export const ROAD_COLLISIONS: DeclaredDataset = {
 	],
 	fields: [{ path: "{collision-severity}", measure: "road-collisions" }],
 };
+
+export const homelessnessSeries = () =>
+	(HOMELESSNESS.fields as DeclaredField[])
+		.filter((field) =>
+			[
+				"households-in-temporary-accommodation",
+				"children-in-temporary-accommodation",
+			].includes(field.measure),
+		)
+		.map((field) => ({
+			id:
+				field.measure === "children-in-temporary-accommodation"
+					? "temporary-accommodation-children"
+					: `temporary-accommodation-households${field.members?.["household-type"] === "all" ? "" : `-${field.members?.["household-type"]}`}`,
+			measure: field.measure,
+			...(field.members ? { dimensions: field.members } : {}),
+		}));
 
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
