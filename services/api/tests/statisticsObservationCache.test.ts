@@ -201,6 +201,26 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		value: 42,
 		status: "observed",
 	});
+	const embeddedCatalog = {
+		...catalog,
+		measures: catalog.measures.map((measure) => ({
+			...measure,
+			series: identity,
+		})),
+	};
+	const embedded = readMeasureObservations(
+		root,
+		embeddedCatalog,
+		0,
+		canonicalReadPath,
+	);
+	assert.deepEqual(
+		observationsFor("wrong-id", source, "2024", {
+			measureObservations: embedded,
+			seriesKey: measureSeriesKey(identity),
+		})?.recordFor("E1"),
+		{ areaCode: "E1", value: 42, status: "observed" },
+	);
 	assert.throws(
 		() =>
 			readMeasureObservations(
