@@ -32,3 +32,4 @@ export type {
 } from "./releaseComparison.ts";
 export * from "./lineageResolver.ts";
 export * from "./areaAbsence.ts";
+export * from "./relationshipRepairs.ts";
