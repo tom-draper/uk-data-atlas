@@ -57,7 +57,17 @@ export function crosswalkInputSourceTables(
 			],
 			key: ["input"],
 			rows: function* (db) {
-				const inputs = new Set(weightInputPaths(root));
+				const needsAtoms = db
+					.prepare(
+						"SELECT 1 FROM crosswalk WHERE method = 'postcode-overlap' LIMIT 1",
+					)
+					.get();
+				const hasAtoms = existsSync(
+					join(root, "data/source/postcodes/onspd"),
+				);
+				const inputs = new Set(
+					needsAtoms || hasAtoms ? weightInputPaths(root) : [],
+				);
 				for (const row of db
 					.prepare("SELECT header FROM crosswalk")
 					.iterate()) {
@@ -108,7 +118,7 @@ export function crosswalkInputSourceTables(
 			],
 			key: ["crosswalk_id", "input"],
 			rows: function* (db) {
-				const atoms = weightInputPaths(root);
+				let atoms: string[] | undefined;
 				for (const row of db
 					.prepare("SELECT id, method, header FROM crosswalk")
 					.iterate()) {
@@ -117,7 +127,7 @@ export function crosswalkInputSourceTables(
 					).provenance;
 					const inputs =
 						row.method === "postcode-overlap"
-							? atoms
+							? (atoms ??= weightInputPaths(root))
 							: typeof provenance?.population?.input === "string"
 								? [provenance.population.input]
 								: [];
