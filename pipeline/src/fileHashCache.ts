@@ -1,31 +1,17 @@
-import { createHash } from "node:crypto";
 import {
-	closeSync,
 	existsSync,
 	mkdirSync,
-	openSync,
 	readFileSync,
-	readSync,
 	statSync,
 	writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
+import { sha256FileHexSync } from "./lib/hash.ts";
 
 type Entry = { size: number; mtimeNs: string; ino: number; hash: string };
 
 /** A file's sha256, read a chunk at a time rather than held whole. */
-export const hashFile = (path: string) => {
-	const hash = createHash("sha256");
-	const chunk = Buffer.allocUnsafe(1 << 20);
-	const fd = openSync(path, "r");
-	try {
-		for (let read; (read = readSync(fd, chunk, 0, chunk.length, null));)
-			hash.update(chunk.subarray(0, read));
-	} finally {
-		closeSync(fd);
-	}
-	return `sha256:${hash.digest("hex")}`;
-};
+export const hashFile = (path: string) => `sha256:${sha256FileHexSync(path)}`;
 
 /**
  * File hashes kept between builds, so gigabytes of unchanged boundary

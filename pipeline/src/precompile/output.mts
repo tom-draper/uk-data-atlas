@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { rename, stat, writeFile } from "fs/promises";
 import { join } from "path";
 import { formatCount, type ArtifactResult } from "@uk-data-atlas/atlas-db";
@@ -23,7 +23,7 @@ export const out = async (
 	await writeAtomically(path, json);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
-		sha256: createHash("sha256").update(json).digest("hex"),
+		sha256: sha256Hex(json),
 		modifiedAt: (await stat(path)).mtimeMs,
 	};
 };

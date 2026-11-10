@@ -7,7 +7,7 @@ import {
 	rmSync,
 	writeFileSync,
 } from "node:fs";
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
@@ -77,9 +77,6 @@ const COMPILER_SOURCES = [
 	"packages/shapefile/src/shapefile.ts",
 	"packages/shapefile/src/dbf.ts",
 ];
-
-const sha256 = (content: string | Buffer) =>
-	createHash("sha256").update(content).digest("hex");
 
 type Unavailable = {
 	geography: string;
@@ -265,9 +262,7 @@ export const buildMapResources = (
 	const withoutHash = { schemaVersion: 1 as const, resources, unavailable };
 	const manifest = {
 		...withoutHash,
-		contentHash: `sha256:${createHash("sha256")
-			.update(JSON.stringify(withoutHash))
-			.digest("hex")}`,
+		contentHash: sha256(JSON.stringify(withoutHash)),
 	};
 	writeFileSync(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
 	rmSync(join(out, "map-resources"), { recursive: true, force: true });

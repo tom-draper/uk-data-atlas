@@ -8,8 +8,9 @@
  * website-datasets stage. Run it alone with:
  *   pnpm exec tsx pipeline/src/build-map-values.mts
  */
-import { createHash } from "node:crypto";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { sha256Hex } from "./lib/hash.ts";
+import { readJson } from "./lib/json.ts";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import {
 	BOUNDARY_CATALOG,
@@ -51,12 +52,6 @@ export type BuildMapValuesPaths = {
 	boundariesDir: string;
 	outDir: string;
 };
-
-const sha256 = (text: string) =>
-	createHash("sha256").update(text).digest("hex");
-
-const readJson = async <T,>(path: string): Promise<T> =>
-	JSON.parse(await readFile(path, "utf8")) as T;
 
 /** The release a boundary year resolves to, and the folder holding its sidecar. */
 function releaseFor(type: BoundaryType, boundaryYear: number) {
@@ -120,7 +115,7 @@ export async function buildMapValues(
 				(code) => dataset.data[code]?.[field],
 			);
 			const text = encodeMapValues(values);
-			const hash = sha256(text);
+			const hash = sha256Hex(text);
 			const key = mapValuesKey(definition.type, releaseKey, dataset.year);
 			// The hash is in the name so a rebuilt array is a new URL.
 			const file = `${key}.${hash.slice(0, 12)}.json`;

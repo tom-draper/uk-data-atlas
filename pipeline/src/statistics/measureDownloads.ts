@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	createReadStream,
 	createWriteStream,
@@ -9,6 +8,7 @@ import {
 	statSync,
 } from "node:fs";
 import { join } from "node:path";
+import { sha256FileHex } from "../lib/hash.ts";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
 import type { DatabaseSync } from "node:sqlite";
@@ -17,12 +17,6 @@ import {
 	exportStatisticsMeasure,
 	type StatisticsSelection,
 } from "./statisticsExport.ts";
-
-async function fileHash(path: string): Promise<string> {
-	const hash = createHash("sha256");
-	for await (const chunk of createReadStream(path)) hash.update(chunk);
-	return hash.digest("hex");
-}
 
 /** Write both representations without retaining a measure's rows or bytes in Node. */
 export async function compileMeasureDownloads(
@@ -46,8 +40,8 @@ export async function compileMeasureDownloads(
 		);
 		if (!count)
 			throw new Error(`${measure}: no canonical observation rows`);
-		const csvHash = await fileHash(csv);
-		const parquetHash = await fileHash(parquet);
+		const csvHash = await sha256FileHex(csv);
+		const parquetHash = await sha256FileHex(parquet);
 		await pipeline(
 			createReadStream(csv),
 			createGzip({ level: 9 }),

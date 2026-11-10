@@ -1,5 +1,5 @@
 import { compileDatasetContents } from "@uk-data-atlas/datasets";
-import { createHash } from "crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { readFile } from "fs/promises";
 import { join, relative, sep } from "path";
 import {
@@ -227,7 +227,7 @@ export async function compileStaleDataset(
 			throw error;
 
 		const content = await readFile(compiledPath, "utf8");
-		const actualSha256 = createHash("sha256").update(content).digest("hex");
+		const actualSha256 = sha256Hex(content);
 		if (actualSha256 !== existing.compiled.sha256) {
 			throw new Error(
 				`Cannot preserve ${definition.type}: ${compiledPath} does not match dataset-manifest.json`,

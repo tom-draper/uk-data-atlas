@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
+import { sha256Hex } from "../lib/hash.ts";
 
 // Two kinds of fingerprint come out of this file, so that changing one
 // dataset's loader recompiles that dataset alone.
@@ -222,9 +223,7 @@ const createContext = async (root) => {
 			),
 		digestOf: (file) =>
 			memoised(digests, file, async () =>
-				createHash("sha256")
-					.update(await contentsOf(root, file))
-					.digest("hex"),
+				sha256Hex(await contentsOf(root, file)),
 			),
 	};
 };

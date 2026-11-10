@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
@@ -474,9 +474,6 @@ const PERIOD = "2021";
 export const CENSUS_SMALL_AREA_DIRECTORY =
 	"demographics/census-2021-small-area";
 
-const fileSha256 = (content: Buffer) =>
-	createHash("sha256").update(content).digest("hex");
-
 /** The artifact name each measure of a table partition names. */
 export const censusTableArtifactName = (table: string, geography: string) =>
 	`census-2021-${table}-${geography}-${BOUNDARY_YEAR}-table`;
@@ -627,7 +624,7 @@ export const compileCensusSmallArea = (
 					kind: "text",
 					path: `${CENSUS_SMALL_AREA_DIRECTORY}/${table.table}/${file}`,
 					bytes: content.byteLength,
-					sha256: fileSha256(content),
+					sha256: sha256Hex(content),
 				},
 			};
 		});
@@ -654,7 +651,7 @@ export const compileCensusSmallArea = (
 			},
 			compiled: {
 				bytes: Buffer.byteLength(compiledContent),
-				sha256: fileSha256(Buffer.from(compiledContent)),
+				sha256: sha256Hex(Buffer.from(compiledContent)),
 			},
 		});
 		for (const [index, [, , label]] of table.categories.entries()) {

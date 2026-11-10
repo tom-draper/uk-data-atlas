@@ -8,7 +8,7 @@ import {
 } from "@uk-data-atlas/catalogue/node";
 import { measureCapability } from "@uk-data-atlas/measures";
 import { relationshipRepairsReport } from "@uk-data-atlas/relationships";
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -33,8 +33,6 @@ import {
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const directory = artifactDirectory(repositoryRoot);
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const write = (id: string, data: unknown) =>
 	writeEvidenceDocument(directory, id, data);

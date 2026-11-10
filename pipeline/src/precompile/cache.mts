@@ -1,8 +1,7 @@
-import { createHash } from "crypto";
-import { createReadStream } from "fs";
 import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
+import { sha256FileHex, sha256Hex } from "../lib/hash.ts";
 import { datasetFingerprints, precompileFingerprints } from "./fingerprint.mjs";
 import { COMPILED_DATASETS, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {
@@ -114,12 +113,6 @@ export const isReleasedSource = (
 	input.modifiedAt <= release.validatedAt &&
 	release.files.has(relative(SOURCE_DATA, path));
 
-const fileHash = async (path: string) => {
-	const hash = createHash("sha256");
-	for await (const chunk of createReadStream(path)) hash.update(chunk);
-	return hash.digest("hex");
-};
-
 export const fileSnapshots = async (
 	directory: string,
 	prefix = "",
@@ -163,7 +156,8 @@ export const sameFileSnapshots = async (
 		if (sameFileStamp(snapshot, current)) continue;
 		if (
 			!snapshot.sha256 ||
-			(await fileHash(join(directory, current.path))) !== snapshot.sha256
+			(await sha256FileHex(join(directory, current.path))) !==
+				snapshot.sha256
 		)
 			return false;
 	}
@@ -177,7 +171,7 @@ export const snapshotFileContents = async (
 	Promise.all(
 		snapshots.map(async (snapshot) => ({
 			...snapshot,
-			sha256: await fileHash(join(directory, snapshot.path)),
+			sha256: await sha256FileHex(join(directory, snapshot.path)),
 		})),
 	);
 
@@ -198,11 +192,7 @@ const cachedDatasetOutput = async (
 		if (expected.modifiedAt === output.mtimeMs)
 			return { ...expected, modifiedAt: output.mtimeMs };
 		const contents = await readFile(path);
-		if (
-			createHash("sha256").update(contents).digest("hex") !==
-			expected.sha256
-		)
-			return undefined;
+		if (sha256Hex(contents) !== expected.sha256) return undefined;
 		return { ...expected, modifiedAt: output.mtimeMs };
 	} catch {
 		return undefined;

@@ -1,7 +1,5 @@
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
-import { createHash } from "node:crypto";
 import {
-	createReadStream,
 	createWriteStream,
 	mkdirSync,
 	mkdtempSync,
@@ -11,6 +9,7 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { writeFile } from "node:fs/promises";
+import { sha256FileHex } from "../lib/hash.ts";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { Readable } from "node:stream";
@@ -91,15 +90,6 @@ const latestEdition = async () => {
 	const item = (await fetchJson(`${ITEMS}/${latest.id}?f=json`)) as Item;
 	return { edition: latest.edition, item };
 };
-
-const fileSha256 = (path: string) =>
-	new Promise<string>((done, fail) => {
-		const hash = createHash("sha256");
-		createReadStream(path)
-			.on("data", (chunk) => hash.update(chunk))
-			.on("end", () => done(hash.digest("hex")))
-			.on("error", fail);
-	});
 
 const quoteCsv = (value: string) =>
 	/[\",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
@@ -226,8 +216,8 @@ export const fetchOnspd = async (
 			pendingSourcePath,
 			pendingOutputAreaPath,
 		);
-		const sourceHash = await fileSha256(pendingSourcePath);
-		const outputAreaHash = await fileSha256(pendingOutputAreaPath);
+		const sourceHash = await sha256FileHex(pendingSourcePath);
+		const outputAreaHash = await sha256FileHex(pendingOutputAreaPath);
 		const meta = {
 			id: `${edition}-uk`,
 			kind: "postcode-directory",

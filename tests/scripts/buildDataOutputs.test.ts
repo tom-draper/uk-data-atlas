@@ -20,9 +20,9 @@ import { runBuild } from "@/pipeline/build-data.mjs";
 import {
 	OUTPUT_MANIFEST_ENV,
 	recordOutputHash,
-	sha256Hex,
 	writeFileHashedSync,
 } from "../../pipeline/src/storage/outputManifest";
+import { sha256Hex } from "../../pipeline/src/lib/hash";
 
 type Stage = {
 	name: string;

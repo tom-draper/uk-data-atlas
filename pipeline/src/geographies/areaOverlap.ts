@@ -1,5 +1,5 @@
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography";
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import polygonClipping from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import {
@@ -418,8 +418,6 @@ export const compileAreaOverlapCrosswalk = (
 	};
 	return {
 		...artifactWithoutHash,
-		contentHash: `sha256:${createHash("sha256")
-			.update(JSON.stringify(artifactWithoutHash))
-			.digest("hex")}`,
+		contentHash: sha256(JSON.stringify(artifactWithoutHash)),
 	};
 };

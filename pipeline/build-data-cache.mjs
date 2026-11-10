@@ -2,12 +2,9 @@ import { stageCodeInputs } from "./build-data-code.mjs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
-	closeSync,
 	mkdirSync,
-	openSync,
 	readdirSync,
 	readFileSync,
-	readSync,
 	renameSync,
 	rmSync,
 	statSync,
@@ -15,6 +12,7 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sha256FileHexSync, sha256Hex } from "./src/lib/hash.ts";
 
 const VERSION = 4;
 export const KEY_VERSION = 1;
@@ -24,8 +22,6 @@ const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const OUTPUT_ROOTS = ["data/build", "public/data"];
 // Environment variables a stage's output depends on.
 const ENVIRONMENT = ["MAXIMUM_DISCOVERED_STEPS"];
-
-const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 
 /** What a stat says about a file. The inode only distinguishes files. */
 const stampOf = (stats) => ({
@@ -115,7 +111,7 @@ function hashCode(root, files) {
 			if (error?.code === "ENOENT" || error?.code === "EISDIR") continue;
 			throw error;
 		}
-		hash.update(`${path}\0${sha256(content)}\0`);
+		hash.update(`${path}\0${sha256Hex(content)}\0`);
 	}
 	return hash.digest("hex");
 }
@@ -152,23 +148,6 @@ const sameFile = (a, b) =>
 /** Names a file by inode, size and mtime, so its links share a hash. */
 const identityOf = (stamp) =>
 	stamp.ino ? `${stamp.ino}:${stamp.size}:${stamp.mtimeMs}` : null;
-
-/** SHA-256 of a file, read in chunks so large outputs never sit in memory. */
-function hashFileContent(path) {
-	const hash = createHash("sha256");
-	const buffer = Buffer.allocUnsafe(1024 * 1024);
-	const descriptor = openSync(path, "r");
-	try {
-		for (;;) {
-			const read = readSync(descriptor, buffer, 0, buffer.length, null);
-			if (read === 0) break;
-			hash.update(buffer.subarray(0, read));
-		}
-	} finally {
-		closeSync(descriptor);
-	}
-	return hash.digest("hex");
-}
 
 /**
  * The hashes a stage recorded for the files it wrote, by repo path. The file
@@ -263,7 +242,7 @@ export function createStageCache({
 	codeFiles,
 	keyVersion = KEY_VERSION,
 	environment = process.env,
-	hashFile = hashFileContent,
+	hashFile = sha256FileHexSync,
 } = {}) {
 	let state;
 	let previousStages = {};
@@ -323,7 +302,7 @@ export function createStageCache({
 				}
 			})
 			.sort(([left], [right]) => left.localeCompare(right));
-		const digest = sha256(
+		const digest = sha256Hex(
 			JSON.stringify({
 				data: hashStamps(data),
 				existing,
@@ -345,7 +324,7 @@ export function createStageCache({
 				: stageCodeInputs(root, stage, files);
 			stageInputs.set(
 				stage.name,
-				sha256(
+				sha256Hex(
 					JSON.stringify({
 						...code,
 						files: hashCode(root, code.files),
@@ -394,7 +373,7 @@ export function createStageCache({
 	};
 
 	const keyFor = (stage, dependencyDigests) =>
-		sha256(
+		sha256Hex(
 			JSON.stringify({
 				version: keyVersion,
 				args: stage.args,

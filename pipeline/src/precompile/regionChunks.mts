@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "@uk-data-atlas/datasets";
@@ -51,9 +51,7 @@ export async function regionChunkLookupFingerprints(): Promise<
 		await Promise.all(
 			names.map(async (name) => [
 				`lookup:${name}`,
-				createHash("sha256")
-					.update(readAtlasLookup(ROOT, name))
-					.digest("hex"),
+				sha256Hex(readAtlasLookup(ROOT, name)),
 			]),
 		),
 	);

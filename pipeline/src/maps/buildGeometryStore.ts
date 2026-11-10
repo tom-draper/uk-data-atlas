@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import {
 	existsSync,
 	mkdirSync,
@@ -28,7 +28,7 @@ import {
 	formatDuration,
 } from "@uk-data-atlas/atlas-db";
 import { hashFile } from "../fileHashCache.ts";
-import { recordOutputHash, sha256Hex } from "../storage/outputManifest.ts";
+import { recordOutputHash } from "../storage/outputManifest.ts";
 
 /**
  * Compile every registered boundary release into the geometry store the
@@ -66,9 +66,6 @@ const COMPILER_SOURCES = [
 	"packages/geography/src/geometrySubstitutions.ts",
 ];
 
-const sha256 = (content: string | Buffer) =>
-	createHash("sha256").update(content).digest("hex");
-
 export const buildGeometryStore = (
 	root: string,
 	log: (line: string) => void = () => {},
@@ -76,7 +73,7 @@ export const buildGeometryStore = (
 	const sources = readGeometrySourceLookup(root);
 	const directory = join(artifactDirectory(root), "geometry-store");
 	mkdirSync(directory, { recursive: true });
-	const compiler = sha256(
+	const compiler = sha256Hex(
 		[
 			readFileSync(join(apiRootOf(root), "package.json"), "utf8"),
 			...COMPILER_SOURCES.map((path) =>
@@ -94,7 +91,7 @@ export const buildGeometryStore = (
 	// Grid offsets are read from data/source/boundaries rather than named by hash in
 	// the source entry, so their files are part of every key too.
 	const boundaries = join(root, "data/source", "boundaries");
-	const offsets = sha256(
+	const offsets = sha256Hex(
 		readdirSync(boundaries)
 			.filter((name) => name.endsWith(".json"))
 			.sort()
@@ -139,7 +136,7 @@ export const buildGeometryStore = (
 				releaseKey(donor.geography, donor.boundaryRelease),
 			);
 		});
-		const key = sha256(
+		const key = sha256Hex(
 			JSON.stringify({
 				compiler,
 				offsets,
