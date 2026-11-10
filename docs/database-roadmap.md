@@ -135,7 +135,7 @@ estimated (notionals, the UK-wide index, small-area estimates) is stored as
 as published data.
 
 Neighbours are currently computed from geometry at request time
-(`packages/atlas-runtime/src/loader/resolver/spatial.ts`) and are not stored.
+(`packages/atlas-loader/src/resolver/spatial.ts`) and are not stored.
 
 ### Relationships between areas
 

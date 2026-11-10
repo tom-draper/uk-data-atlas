@@ -1,7 +1,7 @@
 # Data pipeline
 
-The data pipeline lives in `pipeline/`. Shared runtime readers are in
-`packages/atlas-runtime/`, and the API is in `services/api/`.
+The data pipeline lives in `pipeline/`. Shared runtime readers are in the domain packages, composition is in
+`packages/atlas-loader/`, and the API is in `services/api/`.
 
 `pnpm data:build --plan` lists the stages in dependency order. Dataset
 compilers write `data/build/datasets/`, and `atlas-sqlite` writes statistics
