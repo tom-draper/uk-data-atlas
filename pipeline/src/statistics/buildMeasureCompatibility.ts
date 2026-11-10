@@ -61,7 +61,9 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 						: (artifact as AnyMeasureObservationArtifact);
 				}),
 			),
-			readMeasureDimensionsMapping(repositoryRoot).ids,
+			dataCatalog.measures.some((measure) => !measure.series)
+				? readMeasureDimensionsMapping(repositoryRoot).ids
+				: undefined,
 		);
 		const outputPath = join(publicDirectory, "measure-compatibility.json");
 		writeFileSync(

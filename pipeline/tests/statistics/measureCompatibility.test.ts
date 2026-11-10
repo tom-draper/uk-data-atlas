@@ -219,6 +219,25 @@ test("publishes canonical series identities and rejects missing mappings", () =>
 		inventory.measures[0]?.seriesKey,
 		reordered.measures[0]?.seriesKey,
 	);
+	const embedded = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) => ({
+			...measure,
+			series: {
+				measure: "population",
+				dimensions: { age: "all", tenure: "owned" },
+			},
+		})),
+	};
+	assert.equal(
+		compileMeasureCompatibility(
+			embedded,
+			boundaryRegistry,
+			artifacts,
+			observations,
+		).measures[0]?.seriesKey,
+		inventory.measures[0]?.seriesKey,
+	);
 	assert.throws(
 		() =>
 			compileMeasureCompatibility(
