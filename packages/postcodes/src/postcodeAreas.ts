@@ -37,6 +37,7 @@ export class PostcodeAreaIndex {
 	private readonly postcodes: PostcodeIndex;
 	private readonly readShard: (path: string) => string;
 	private readonly capacity: number;
+	private readonly verifyShardHashes: boolean;
 	constructor(
 		artifact: PostcodeAreasArtifact,
 		postcodes: PostcodeIndex,
@@ -47,11 +48,14 @@ export class PostcodeAreaIndex {
 		 * compiled release, some tens of kilobytes parsed.
 		 */
 		capacity = 256,
+		/** Disable source hashes only when the reader verifies its own derived bytes. */
+		verifyShardHashes = true,
 	) {
 		this.artifact = artifact;
 		this.postcodes = postcodes;
 		this.readShard = readShard;
 		this.capacity = capacity;
+		this.verifyShardHashes = verifyShardHashes;
 
 		this.districts = artifact.shards.map((shard) => shard.district);
 		this.releases = new Set(
@@ -76,7 +80,7 @@ export class PostcodeAreaIndex {
 		if (at === -1) return undefined;
 		const entry = this.artifact.shards[at]!;
 		const text = this.readShard(entry.path);
-		if (!this.verified.has(entry.path)) {
+		if (this.verifyShardHashes && !this.verified.has(entry.path)) {
 			if (sha256(text) !== entry.contentHash)
 				throw new Error(
 					`The postcode area shard ${entry.path} does not match the postcode area index. Run pnpm --dir ../.. data:build --only postcode-areas.`,
