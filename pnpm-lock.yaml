@@ -564,6 +564,9 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
+      '@uk-data-atlas/search-index':
+        specifier: workspace:*
+        version: link:../search-index
     devDependencies:
       '@types/node':
         specifier: ^26.6.2

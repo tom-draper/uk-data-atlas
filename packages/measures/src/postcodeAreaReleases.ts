@@ -1,10 +1,12 @@
-import type { AreasResolver } from "./resolver/areas.ts";
-import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import { countryRelease } from "@uk-data-atlas/areas";
-import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";
-import { rankReleases } from "@uk-data-atlas/measures";
-import { releaseKey, type PostcodeAreaPurpose } from "@uk-data-atlas/geography";
+import { countryRelease, type AreaReleaseSource } from "@uk-data-atlas/areas";
+import {
+	DEFAULT_POSTCODE_GEOGRAPHIES,
+	releaseKey,
+	type PostcodeAreaPurpose,
+} from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility.ts";
+import { rankReleases } from "./rankCompatibilityReleases.ts";
 
 /**
  * The releases worth compiling: those a postcode answer reads unless told
@@ -14,13 +16,7 @@ import { compareCodeUnits } from "@uk-data-atlas/search-index";
  * has geometry. Each is chosen by the rule the answering route applies.
  */
 export const postcodeAreaReleases = (
-	resolver: Pick<
-		AreasResolver,
-		| "hasAreaRelease"
-		| "selectReleaseForDate"
-		| "boundaryRelease"
-		| "boundaryReleasesFor"
-	>,
+	resolver: AreaReleaseSource,
 	compatibility: MeasureCompatibilityInventory,
 	edition: string,
 	hasGeometry: (geography: string, boundaryRelease: string) => boolean,
