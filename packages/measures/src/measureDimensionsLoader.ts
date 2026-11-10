@@ -3,8 +3,11 @@ import { join } from "node:path";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import {
 	configDirectory,
+	atlasDatabasePath,
 	statisticsVocabularyPath,
 } from "@uk-data-atlas/atlas-db";
+import { readAtlasMeasureMapping } from "./atlasMeasureMapping.ts";
+import { readStatisticsVocabulary } from "./atlasStatisticsVocabulary.ts";
 import {
 	assertMeasureDimensions,
 	type DataCatalog,
@@ -81,7 +84,10 @@ export const readMeasureDimensions = (
 	repositoryRoot: string,
 	catalog: DataCatalog,
 ): MeasureDimensions => {
-	const dimensions = readMeasureDimensionsConfig(repositoryRoot);
+	const dimensions = {
+		config: readAtlasMeasureMapping(atlasDatabasePath(repositoryRoot)),
+		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
+	};
 	assertMeasureDimensions(catalog, dimensions.config, dimensions.vocabulary);
 	return dimensions;
 };

@@ -25,6 +25,7 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   Scottish dwellings, the area basis on the new crosswalks, and other families
   as they show a need. See `data/build/README.md`, "Weights from small-area
   counts".
+- Task 3 progress: the database build stores boundary registry metadata and country coverage in `boundary_release` and `boundary_release_country`. Catalogue measure mappings and their additional vocabulary are stored in tables, and runtime readers derive the vocabulary from statistics tables. The source supplies coverage years, not authoritative validity intervals; statistics selectors are stored in tables. Verified effective dates remain to be added.
 - Task 2 progress (2026-11-08): ids are assigned once from append-only
   registries in `pipeline/ids/` (15 namespaces, 1.37M keys, 14 MB, 3 MB
   compressed, 214 files, one per release for areas), seeded from the

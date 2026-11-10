@@ -1,32 +1,14 @@
 import { readApiCatalogues as readRuntimeApiCatalogues } from "./runtime/index.ts";
+import { assertMeasureDimensions } from "@uk-data-atlas/catalogue/node";
 import {
-	assertMeasureDimensions,
-	type MeasureDimensionsConfig,
-	type StatisticsVocabulary,
-} from "@uk-data-atlas/catalogue/node";
-import {
-	withDeclaredMeasureIds,
-	type StatisticsReadPath,
+	readStatisticsVocabulary,
+	readAtlasMeasureMapping,
+	readAtlasStatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import { type CatalogueOptions } from "@uk-data-atlas/atlas-loader";
-import {
-	statisticsReadPathPath,
-	statisticsVocabularyPath,
-} from "@uk-data-atlas/atlas-db";
-
-import { readFileSync } from "node:fs";
-import measureDimensionsConfig from "../config/measure-dimensions.json" with { type: "json" };
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 export * from "@uk-data-atlas/catalogue/node";
-
-/**
- * The reviewed measure dimension mapping is bundled with the server.
- */
-export const measureDimensions = {
-	config: withDeclaredMeasureIds(
-		measureDimensionsConfig as MeasureDimensionsConfig,
-	),
-};
 
 /**
  * The catalogues the API serves: the runtime's, read with the API's
@@ -38,16 +20,14 @@ export const readApiCatalogues = (
 	options: CatalogueOptions = {},
 ) => {
 	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
-		statisticsReadPath: JSON.parse(
-			readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
-		) as StatisticsReadPath,
+		statisticsReadPath: readAtlasStatisticsReadPath(
+			atlasDatabasePath(repositoryRoot),
+		),
 		...options,
 	});
 	const dimensions = {
-		...measureDimensions,
-		vocabulary: JSON.parse(
-			readFileSync(statisticsVocabularyPath(repositoryRoot), "utf8"),
-		) as StatisticsVocabulary,
+		config: readAtlasMeasureMapping(atlasDatabasePath(repositoryRoot)),
+		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
 	};
 	assertMeasureDimensions(
 		catalogues.dataCatalog,

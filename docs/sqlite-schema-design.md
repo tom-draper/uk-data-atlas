@@ -98,8 +98,9 @@ statistics measures and dimension members. A dataset ID disambiguates measures
 published by more than one dataset. The `statistics-vocabulary` stage derives
 labels, parents and ordering from the statistics tables.
 
-`data/build/statistics-read-path.json` maps each observation artifact to a
-statistics selector and records the catalogue hash. A selector specifies a
+`data/build/statistics-read-path.json` is a build intermediate that maps each
+observation artifact to a statistics selector and records the catalogue hash.
+Assembly stores those selectors in the `statistics_selector` tables. A selector specifies a
 dataset, measure, dimensions and geography. It can also sum dimensions, map
 served area codes, derive ratios and totals, calculate confidence bounds, read
 contest winners or construct a shared census table. The runtime validates the

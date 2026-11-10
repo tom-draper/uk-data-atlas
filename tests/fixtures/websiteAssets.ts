@@ -27,6 +27,15 @@ export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 	database.close();
 	writeEmptyPostcodeComponent(root);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
+	writeFileSync(
+		join(root, "data/build/statistics-read-path.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			dataCatalogHash: "fixture",
+			statistics: {},
+			observations: {},
+		}),
+	);
 	const write = (kind: AtlasAssetKind, values: Record<string, unknown>) => {
 		const directory = join(root, "data/build/atlas-assets");
 		mkdirSync(join(directory, `atlas-${kind}`), { recursive: true });

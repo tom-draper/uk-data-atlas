@@ -64,14 +64,14 @@ measure package (`packages/measures`):
 
 - **Reader.** `ObservationCache` (`packages/measures/src/observationTables.ts`) rebuilds a
   measure source's observation artifact from the statistics rows using the
-  selector recorded in `statistics-read-path.json`
+  selector stored in `atlas.sqlite`
   (`packages/measures/src/atlasStatisticsObservations.ts`). `lazySourceObservations` exposes
   it as an artifact with one block of records per period, parsed on first use.
   `observationsFor` finds a source's period.
 - **Measures and dimensions.** A catalogue measure id such as `crime-burglary`
   is one series of a measure (`recorded-crimes`) with dimension members fixed.
-  `services/api/config/measure-dimensions.json` maps each catalogue id onto
-  that, and `dimensionCatalogue` (currently
+  The reviewed configuration and dataset declarations map each catalogue id onto
+  that at build time; SQLite stores the mappings. `dimensionCatalogue` (currently
   `services/api/src/dimensions/dimensionCatalogue.ts`) builds the dimensional
   view: measures, dimensions with members and a total, and the series that
   realise them.
@@ -188,13 +188,9 @@ cost a 304. The server keeps a bounded memo of recent bodies keyed by the
 database file's generation, so a replaced database never serves stale values.
 
 `lib/measures/` holds the typed client: request builder, response type,
-decoder to rows, and a hook. The server needs the data catalogue, the read
-path, the vocabulary and the reviewed dimension mapping on disk next to
-`atlas.sqlite` (all produced by `pnpm data:build`), so the route's tracing
-includes them. This is one new dependency of the website on build output
-besides the two databases, and it is the open question for phase 2: either
-accept it, or have `atlas-sqlite` store the catalogue and read path in the
-database.
+decoder to rows, and a hook. The server needs the data catalogue and
+`atlas.sqlite`; the database contains the selectors, vocabulary and reviewed
+mapping. Both are produced by `pnpm data:build` and included in route tracing.
 
 ### Coverage gap
 

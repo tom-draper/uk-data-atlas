@@ -30,9 +30,6 @@ const nextConfig: NextConfig = {
 		"/data/measures/*": [
 			"./data/build/atlas.sqlite",
 			"./data/build/artifacts/data-catalog.json",
-			"./data/build/statistics-read-path.json",
-			"./data/build/statistics-vocabulary.json",
-			"./services/api/config/measure-dimensions.json",
 		],
 	},
 
