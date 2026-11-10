@@ -1,24 +1,30 @@
-import {
-	summariseBatch,
-	type ValidatedValue,
-} from "@uk-data-atlas/relationships";
 import { normalisePlaceName } from "@uk-data-atlas/geography";
-import type {
-	CrosswalkTranslator,
-	LineageResolver,
-} from "@uk-data-atlas/relationships";
-import type { AreasResolver } from "./areas.ts";
 import type { GeographyEndpoint } from "@uk-data-atlas/geography";
+import { summariseBatch, type ValidatedValue } from "./batchValidation.ts";
+import type { LineageResolver } from "./lineageResolver.ts";
+import type { CrosswalkTranslator } from "./translation.ts";
+
+/** What area validation reads from the areas: batch checks and the releases to try. */
+export type AreaValidationSource = {
+	validateAreas(
+		geography: string,
+		boundaryRelease: string,
+		values: string[],
+	):
+		| {
+				values: ValidatedValue[];
+				summary: ReturnType<typeof summariseBatch>;
+		  }
+		| undefined;
+	areaReleases(): GeographyEndpoint[];
+};
 
 export class AreaValidation {
-	private readonly areas: Pick<
-		AreasResolver,
-		"validateAreas" | "areaReleases"
-	>;
+	private readonly areas: AreaValidationSource;
 	private readonly lineage: Pick<LineageResolver, "relationships">;
 	private readonly translator: Pick<CrosswalkTranslator, "paths">;
 	constructor(
-		areas: Pick<AreasResolver, "validateAreas" | "areaReleases">,
+		areas: AreaValidationSource,
 		lineage: Pick<LineageResolver, "relationships">,
 		translator: Pick<CrosswalkTranslator, "paths">,
 	) {

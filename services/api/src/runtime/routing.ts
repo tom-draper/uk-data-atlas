@@ -13,7 +13,7 @@ import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { FullDetailSource } from "@uk-data-atlas/atlas-loader";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PostcodeResolver } from "@uk-data-atlas/atlas-loader";
-import type { AreaValidation } from "@uk-data-atlas/atlas-loader";
+import type { AreaValidation } from "@uk-data-atlas/relationships";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type {
 	LocationProjectionInventory,
