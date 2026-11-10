@@ -551,13 +551,13 @@ Crosswalks are integer edges between area versions. Every table is `STRICT`.
 | `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | One row per edge and basis: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres, residents, households or postcodes), `source_share` and `target_share`. See "Weights from postcodes".                                      |
 | `crosswalk_edge_check` | as `crosswalk_edge`                                        | Sparse matching diagnostics: `contained_share`, `outside_width_m`, `match`, `widest_difference_m`, `claimed_difference_m`, unweighted `check_source_share` and `check_target_share`, and `overlap_area_m2` on population-weighted crosswalks.                     |
 | `crosswalk_source`     | `(crosswalk_id, from_version_id)`                          | Only sources with `coverage`, or with no targets.                                                                                                                                                                                                                 |
-| `crosswalk_label`      | `(crosswalk_id, area_version_id)`                          | Publisher labels, only where they differ from `[name, ...aliases]`.                                                                                                                                                                                               |
 
 Order is not stored. Records are in source code order and targets in target code
 order; the build refuses input that is not. Source `areaM2` and `population` are
 facts on `area_version`, and the build rejects conflicting facts for the same
 area. Readers derive endpoint fields in a consistent order from the stored
-values and the crosswalk's weight basis. A target
+values and the crosswalk's weight basis. Endpoint labels use the canonical area
+version name and aliases rather than retaining publisher-specific crosswalk labels. A target
 field is stored only when present; a null value is refused because it could not
 be told apart from a missing one. Missing weights stay null, distinct from zero.
 `provenance` and `validation` hold the method-specific source and quality

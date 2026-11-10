@@ -8,8 +8,7 @@ import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
  * Crosswalks as integer edges between area versions (layer 3 of
  * docs/sqlite-schema-design.md). An edge relates a source area version to a
  * target area version. Weights are rows by basis, matching diagnostics are a
- * sparse check table, and publisher labels are stored only where they differ
- * from the area's name and aliases.
+ * sparse check table. Labels come from the canonical area versions.
  *
  * Order is not stored: records are in source code order and targets in target
  * code order, and the build refuses input that is not. JSON endpoint fields
@@ -66,7 +65,10 @@ const CHECK_COLUMNS = [
 const WEIGHT_COLUMNS = ["weight", "overlap", "source_share", "target_share"];
 
 const canonicalLabels = (name: SQLOutputValue, aliases: SQLOutputValue) =>
-	JSON.stringify([name, ...JSON.parse((aliases as string | null) ?? "[]")]);
+	JSON.stringify([
+		...(name ? [name] : []),
+		...JSON.parse((aliases as string | null) ?? "[]"),
+	]);
 
 export const readSqliteCrosswalkInventory = (
 	repositoryRoot: string,
@@ -138,10 +140,7 @@ const endpointOf = (
 	for (const key of order) {
 		if (key === "code") value.code = row.code;
 		else if (key === "labels")
-			value.labels = JSON.parse(
-				(row.labels as string | null) ??
-					canonicalLabels(row.name, row.aliases),
-			);
+			value.labels = JSON.parse(canonicalLabels(row.name, row.aliases));
 		else {
 			const field = row[column(key)!];
 			if (field !== null && field !== undefined) value[key] = field;
@@ -194,7 +193,7 @@ export const readSqliteCrosswalk = (
 		const targets = new Map<number, object[]>();
 		for (const target of database
 			.prepare(
-				`SELECT e.from_version_id, a.code, v.name, v.aliases, l.labels, ${[
+				`SELECT e.from_version_id, a.code, v.name, v.aliases, ${[
 					...EDGE_COLUMNS.map((column) => `e.${column}`),
 					...WEIGHT_COLUMNS.map((column) => `w.${column}`),
 					...CHECK_COLUMNS.map((column) => `k.${column}`),
@@ -202,7 +201,6 @@ export const readSqliteCrosswalk = (
 				FROM crosswalk_edge e
 				JOIN area_version v ON v.id = e.to_version_id
 				JOIN area a ON a.id = v.area_id
-				LEFT JOIN crosswalk_label l ON l.crosswalk_id = e.crosswalk_id AND l.area_version_id = e.to_version_id
 				LEFT JOIN crosswalk_weight w ON w.crosswalk_id = e.crosswalk_id AND w.from_version_id = e.from_version_id AND w.to_version_id = e.to_version_id AND w.basis_id = ?2
 				LEFT JOIN crosswalk_edge_check k ON k.crosswalk_id = e.crosswalk_id AND k.from_version_id = e.from_version_id AND k.to_version_id = e.to_version_id
 				WHERE e.crosswalk_id = ?1
@@ -220,13 +218,12 @@ export const readSqliteCrosswalk = (
 		}
 		const records = database
 			.prepare(
-				`SELECT v.id, a.code, v.name, v.aliases, v.area_m2, v.population, s.coverage, l.labels
+				`SELECT v.id, a.code, v.name, v.aliases, v.area_m2, v.population, s.coverage
 				FROM (SELECT from_version_id AS id FROM crosswalk_edge WHERE crosswalk_id = ?1
 					UNION SELECT from_version_id FROM crosswalk_source WHERE crosswalk_id = ?1) x
 				JOIN area_version v ON v.id = x.id
 				JOIN area a ON a.id = v.area_id
 				LEFT JOIN crosswalk_source s ON s.crosswalk_id = ?1 AND s.from_version_id = v.id
-				LEFT JOIN crosswalk_label l ON l.crosswalk_id = ?1 AND l.area_version_id = v.id
 				ORDER BY a.code`,
 			)
 			.all(id)

@@ -44,12 +44,30 @@ const shapes = [
 let records = 0;
 let targets = 0;
 let responses = 0;
+// Crosswalk endpoint labels now come from area versions. Preserve every other
+// source value when comparing the derived artifact and its API responses.
+const withCanonicalLabels = (
+	original: CrosswalkArtifact,
+	canonical: CrosswalkArtifact,
+) => {
+	const result = structuredClone(original);
+	assert.equal(result.records.length, canonical.records.length);
+	for (const [index, record] of result.records.entries()) {
+		const counterpart = canonical.records[index]!;
+		record.source.labels = counterpart.source.labels;
+		assert.equal(record.targets.length, counterpart.targets.length);
+		for (const [targetIndex, target] of record.targets.entries())
+			target.labels = counterpart.targets[targetIndex]!.labels;
+	}
+	return result;
+};
 for (const entry of before.crosswalks) {
 	const json: CrosswalkArtifact = JSON.parse(
 		readStoredText(join(apiRoot, "public", entry.artifact)),
 	);
 	const loaded = sqlite.get(entry.id)!;
-	assert.deepEqual(loaded, json, entry.id);
+	const expectedArtifact = withCanonicalLabels(json, loaded);
+	assert.deepEqual(loaded, expectedArtifact, entry.id);
 	records += json.records.length;
 	targets += json.records.reduce(
 		(total, record) => total + record.targets.length,
@@ -57,7 +75,7 @@ for (const entry of before.crosswalks) {
 	);
 	shapes[0].set(entry.id, crosswalkShape(json));
 	shapes[1].set(entry.id, crosswalkShape(loaded));
-	const contexts = [json, loaded].map((artifact) =>
+	const contexts = [expectedArtifact, loaded].map((artifact) =>
 		testContext({
 			geographyResolver: createGeographyResolver({
 				crosswalkInventory: before,
@@ -122,7 +140,8 @@ const readJson = (id: string) => {
 	const entry = before.crosswalks.find((entry) => entry.id === id);
 	if (!entry) return undefined;
 	const text = readStoredText(join(apiRoot, "public", entry.artifact));
-	const artifact: CrosswalkArtifact = JSON.parse(text);
+	const original: CrosswalkArtifact = JSON.parse(text);
+	const artifact = withCanonicalLabels(original, sqlite.get(id)!);
 	const bytes = Buffer.byteLength(text);
 	if (bytes <= 64 * 1024 * 1024) {
 		while (cacheBytes + bytes > 64 * 1024 * 1024) {

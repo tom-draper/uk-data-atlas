@@ -4,11 +4,7 @@ import {
 } from "./deprecatedViews.ts";
 import { join } from "node:path";
 import { isDeepStrictEqual } from "node:util";
-import {
-	DatabaseSync,
-	type SQLInputValue,
-	type SQLOutputValue,
-} from "node:sqlite";
+import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
@@ -26,8 +22,7 @@ import { readJsonSync } from "../lib/json.ts";
  * Crosswalks as integer edges between area versions (layer 3 of
  * docs/sqlite-schema-design.md). An edge relates a source area version to a
  * target area version. Weights are rows by basis, matching diagnostics are a
- * sparse check table, and publisher labels are stored only where they differ
- * from the area's name and aliases.
+ * sparse check table. Labels come from the canonical area versions.
  *
  * Order is not stored: records are in source code order and targets in target
  * code order, and the build refuses input that is not. JSON endpoint field
@@ -89,9 +84,6 @@ const WEIGHT_BASES: Record<string, string> = {
 	population: "Residents in the overlap",
 };
 
-const canonicalLabels = (name: SQLOutputValue, aliases: SQLOutputValue) =>
-	JSON.stringify([name, ...JSON.parse((aliases as string | null) ?? "[]")]);
-
 /** Find or add an endpoint's area version, recording source area facts. */
 const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 	const find = database.prepare(
@@ -138,14 +130,7 @@ const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 					area.id as number,
 				);
 		}
-		const labels = JSON.stringify(value.labels);
-		return {
-			id: Number(area.id),
-			labels:
-				labels === canonicalLabels(area.name, area.aliases)
-					? null
-					: labels,
-		};
+		return { id: Number(area.id) };
 	};
 };
 
@@ -259,7 +244,7 @@ export const crosswalkTables = (
 	}
 	/**
 	 * Every endpoint row, written in one pass over each artifact. Yields the
-	 * sparse source rows; edges, weights, checks and labels are inserted as
+	 * sparse source rows; edges, weights and checks are inserted as
 	 * they are read.
 	 */
 	function* sources(database: DatabaseSync) {
@@ -274,23 +259,6 @@ export const crosswalkTables = (
 			"crosswalk_edge_check",
 			3 + CHECK_COLUMNS.length,
 		);
-		const findLabels = database.prepare(
-			"SELECT labels FROM crosswalk_label WHERE crosswalk_id = ? AND area_version_id = ?",
-		);
-		const addLabels = insert("crosswalk_label", 3);
-		const label = (
-			crosswalk: number,
-			id: number,
-			labels: string | null,
-		) => {
-			if (labels === null) return;
-			const existing = findLabels.get(crosswalk, id);
-			if (!existing) addLabels.run(crosswalk, id, labels);
-			else if (existing.labels !== labels)
-				throw new Error(
-					`Crosswalk ${crosswalk} gives area version ${id} two sets of labels`,
-				);
-		};
 		const releases = database.prepare(
 			"SELECT from_release_id AS source, to_release_id AS target, basis_id AS basis FROM crosswalk WHERE id = ?",
 		);
@@ -332,7 +300,6 @@ export const crosswalkTables = (
 					throw new Error(
 						`Crosswalk ${entry.id} has source facts outside its weight basis`,
 					);
-				label(crosswalk, from.id, from.labels);
 				const coverage = value.coverage as number | undefined;
 				if (coverage !== undefined || record.targets.length === 0)
 					yield [crosswalk, from.id, coverage ?? null];
@@ -362,7 +329,6 @@ export const crosswalkTables = (
 						columns[column] = field as SQLInputValue;
 					}
 					const to = endpoint(value, target, false);
-					label(crosswalk, to.id, to.labels);
 					const key = [crosswalk, from.id, to.id];
 					addEdge.run(
 						...key,
@@ -529,16 +495,6 @@ export const crosswalkTables = (
 			],
 			key: ["crosswalk_id", "from_version_id", "to_version_id"],
 			constraints: [edgeReference],
-			rows: [],
-		},
-		crosswalk_label: {
-			strict: true,
-			columns: [
-				"crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id)",
-				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
-				"labels TEXT NOT NULL",
-			],
-			key: ["crosswalk_id", "area_version_id"],
 			rows: [],
 		},
 		crosswalk_source: {
