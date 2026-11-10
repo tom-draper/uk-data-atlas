@@ -2,7 +2,7 @@ import { resolve as resolveRepositoryRoot } from "node:path";
 import { requireAtlasCache, readCachePayload } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { readMeasureObservations } from "@uk-data-atlas/measures";
-import { readDataCatalog } from "@uk-data-atlas/atlas-loader";
+import { readDataCatalog } from "@uk-data-atlas/measures";
 import { DatabaseSync } from "node:sqlite";
 
 import { geographyCatalogues } from "@uk-data-atlas/areas";
