@@ -14,7 +14,7 @@ A dataset is described in separate places that nothing keeps in step:
 | `packages/datasets/src/types/<camelCase>.ts`                                                     | Types of the compiled payload                                                               |
 | `packages/measures/src/statisticsDatasets/*.ts`                                                  | Statistics declaration: measures, dimensions, fields, payload header, boundary year         |
 | `pipeline/src/catalog/<name>.ts`, `compileDataCatalog.ts`                                        | A second compiler for the API catalogue: indicator ids, units, notes, boundary year, period |
-| `pipeline/src/build-data-catalog.ts`                                                             | Input file per dataset                                                                      |
+| `pipeline/src/stages/build-data-catalog.ts`                                                      | Input file per dataset                                                                      |
 | `pipeline/src/statistics/bindCompiledFields.ts`                                                  | API measure id to dataset field                                                             |
 | `services/api/config/measure-dimensions.json`                                                    | API measure id to statistics measure and dimension members                                  |
 | `services/api/config/statistics-vocabulary.json`                                                 | Measure vocabulary (a snapshot of the declarations)                                         |

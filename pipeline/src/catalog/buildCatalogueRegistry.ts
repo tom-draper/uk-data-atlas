@@ -16,7 +16,7 @@ const CATALOGUE_DIRECTORY = join(
 const DEFINITIONS_DIRECTORY = join(CATALOGUE_DIRECTORY, "definitions");
 const DATA_DIRECTORY = join(CATALOGUE_DIRECTORY, "..");
 
-const GENERATED_BY = "pipeline/src/build-catalogue-registry.ts";
+const GENERATED_BY = "pipeline/src/stages/build-catalogue-registry.ts";
 
 export type CatalogueDefinitionMetadata = {
 	name: string;

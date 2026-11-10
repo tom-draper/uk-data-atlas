@@ -382,7 +382,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("website-datasets")!
-			.includes("pipeline/src/compile-boundaries.mts"),
+			.includes("pipeline/src/stages/compile-boundaries.mts"),
 	);
 	for (const name of [
 		"boundaryReleaseSources",
@@ -430,7 +430,7 @@ test("production builders resolve without UI code and include declared workers a
 	);
 	assert.ok(inputs.get("operations")!.includes("services/api/openapi.yaml"));
 	for (const path of [
-		"pipeline/src/build-derived-boundaries.ts",
+		"pipeline/src/stages/build-derived-boundaries.ts",
 		"packages/areas/src/areaSourceAdapters.ts",
 		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"pipeline/package.json",
@@ -439,12 +439,12 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("derived-boundaries")!.includes(path), path);
 	}
 	for (const [stage, compiler] of [
-		["boundary-registry", "build-boundary-registry"],
+		["boundary-registry", "stages/build-boundary-registry"],
 		["area-inventory", "geographies/areaInventory"],
 		["geography-inventory", "geographies/geographyInventory"],
 	]) {
 		for (const path of [
-			`pipeline/src/build-${stage}.ts`,
+			`pipeline/src/stages/build-${stage}.ts`,
 			`pipeline/src/${compiler}.ts`,
 			"packages/artifacts/src/contentHash.ts",
 			"pipeline/package.json",
@@ -462,7 +462,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("area-inventory")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-operations.ts",
+		"pipeline/src/stages/build-operations.ts",
 		"pipeline/src/atlas/operationTemplates.ts",
 		"packages/artifacts/src/operations.ts",
 		"pipeline/package.json",
@@ -476,7 +476,7 @@ test("production builders resolve without UI code and include declared workers a
 			.includes("services/api/src/operationTemplates.ts"),
 	);
 	for (const path of [
-		"pipeline/src/build-geometry-source-registry.ts",
+		"pipeline/src/stages/build-geometry-source-registry.ts",
 		"pipeline/src/geographies/geometrySourceRegistry.ts",
 		"pipeline/src/lib/fileHashCache.ts",
 		"packages/artifacts/src/contentHash.ts",
@@ -486,7 +486,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("geometry-source-registry")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-geography-catalogues.ts",
+		"pipeline/src/stages/build-geography-catalogues.ts",
 		"packages/areas/src/geographyBuildPath.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -494,7 +494,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("geography-catalogues")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-relationship-candidates.ts",
+		"pipeline/src/stages/build-relationship-candidates.ts",
 		"pipeline/src/relationships/relationshipCandidates.ts",
 		"packages/relationships/src/crosswalkAdapters.ts",
 		"packages/geography/src/geographyKinds.ts",
@@ -504,7 +504,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("relationship-candidates")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-relationship-paths.ts",
+		"pipeline/src/stages/build-relationship-paths.ts",
 		"pipeline/src/relationships/relationshipPaths.ts",
 		"pipeline/src/relationships/relationshipPathAdapters.ts",
 		"packages/relationships/src/relationshipPaths.ts",
@@ -516,7 +516,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("relationship-paths")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-analysis-geographies.ts",
+		"pipeline/src/stages/build-analysis-geographies.ts",
 		"pipeline/src/geographies/analysisGeographies.ts",
 		"packages/geography/src/geographyKinds.ts",
 		"packages/areas/src/geographyBuildPath.ts",
@@ -535,7 +535,7 @@ test("production builders resolve without UI code and include declared workers a
 	}
 	for (const stage of ["atlas-release-initial", "atlas-release"]) {
 		for (const path of [
-			"pipeline/src/build-atlas-release.ts",
+			"pipeline/src/stages/build-atlas-release.ts",
 			"pipeline/src/atlas/atlasRelease.ts",
 			"packages/atlas-db/src/atlasAssets.ts",
 			"pipeline/src/lib/fileHashCache.ts",
@@ -546,7 +546,7 @@ test("production builders resolve without UI code and include declared workers a
 		}
 	}
 	for (const path of [
-		"pipeline/src/build-data-catalog.ts",
+		"pipeline/src/stages/build-data-catalog.ts",
 		"pipeline/src/catalog/compileDataCatalog.ts",
 		"packages/measures/src/dataCatalog.ts",
 		"packages/artifacts/src/sqliteTables.ts",
@@ -556,7 +556,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("data-catalog")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-measure-compatibility.ts",
+		"pipeline/src/stages/build-measure-compatibility.ts",
 		"pipeline/src/statistics/measureCompatibility.ts",
 		"packages/measures/src/measureCompatibility.ts",
 		"packages/measures/src/observationTables.ts",
@@ -566,7 +566,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("measure-compatibility")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-lookup-manifest.ts",
+		"pipeline/src/stages/build-lookup-manifest.ts",
 		"packages/areas/src/lookupExports.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
@@ -574,7 +574,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("lookup-manifest")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-export-manifest.ts",
+		"pipeline/src/stages/build-export-manifest.ts",
 		"pipeline/src/atlas/exportManifest.ts",
 		"pipeline/src/statistics/observationDownloads.ts",
 		"packages/artifacts/src/parquet.ts",
@@ -584,7 +584,7 @@ test("production builders resolve without UI code and include declared workers a
 		assert.ok(inputs.get("export-manifest")!.includes(path), path);
 	}
 	for (const path of [
-		"pipeline/src/build-atlas-assets.ts",
+		"pipeline/src/stages/build-atlas-assets.ts",
 		"pipeline/package.json",
 		"pipeline/tsconfig.json",
 		"packages/atlas-db/src/atlasAssets.ts",

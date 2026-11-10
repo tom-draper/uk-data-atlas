@@ -10,7 +10,7 @@
 	"scripts": {
 		"test": "vitest run --config ../vitest.config.mts --project pipeline",
 		"test:built": "vitest run --config ../vitest.config.mts --project pipeline-built",
-		"build:assets": "tsx src/build-atlas-assets.ts",
+		"build:assets": "tsx src/stages/build-atlas-assets.ts",
 		"fetch:onspd": "tsx src/sources/fetch-onspd.ts",
 		"fetch:weight-sources": "tsx src/sources/fetch-weight-sources.ts",
 		"fetch:boundaries": "tsx --max-old-space-size=3072 src/sources/fetch-ons-boundaries.ts",

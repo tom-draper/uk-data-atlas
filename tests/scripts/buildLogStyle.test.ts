@@ -26,12 +26,12 @@ const LOGGER = ["packages/atlas-db/src/buildTiming.ts"];
  * each to `buildLog` once it merges, then delete its entry.
  */
 const AWAITING_OBSERVATION_TABLES_PR = [
-	"pipeline/src/assemble-atlas.ts",
-	"pipeline/src/build-data-catalog.ts",
-	"pipeline/src/build-export-manifest.ts",
-	"pipeline/src/build-measure-compatibility.ts",
-	"pipeline/src/build-statistics-read-path.ts",
-	"pipeline/src/build-validation-report.ts",
+	"pipeline/src/stages/assemble-atlas.ts",
+	"pipeline/src/stages/build-data-catalog.ts",
+	"pipeline/src/stages/build-export-manifest.ts",
+	"pipeline/src/stages/build-measure-compatibility.ts",
+	"pipeline/src/stages/build-statistics-read-path.ts",
+	"pipeline/src/stages/build-validation-report.ts",
 ];
 
 /**
@@ -39,7 +39,7 @@ const AWAITING_OBSERVATION_TABLES_PR = [
  * for a person at a terminal, so they keep their own output.
  */
 const STANDALONE_TOOLS = [
-	"pipeline/src/verify-map-downloads.ts",
+	"pipeline/src/stages/verify-map-downloads.ts",
 	"scripts/boundaries.js",
 	"scripts/gazetteer-phase0.ts",
 	"scripts/reproject-datazone-boundary.mts",

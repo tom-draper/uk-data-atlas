@@ -423,7 +423,7 @@ describe("atlas domain boundaries", () => {
 			...sourceFiles(join(PACKAGES, "places/src")),
 			...sourceFiles(join(PACKAGES, "postcodes/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
-			join(PIPELINE, "src/build-evidence-documents.ts"),
+			join(PIPELINE, "src/stages/build-evidence-documents.ts"),
 		];
 		expect(files.length).toBeGreaterThan(1);
 		const invalid = files.flatMap((file) =>

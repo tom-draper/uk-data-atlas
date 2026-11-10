@@ -27,15 +27,15 @@ const createRepository = async () => {
 		JSON.stringify({ compilerOptions: { paths: { "@/*": ["./*"] } } }),
 	);
 	for (const file of [
-		"pipeline/src/compile-boundaries.mts",
+		"pipeline/src/stages/compile-boundaries.mts",
 		"packages/geography/src/reverseGridOffset.ts",
 		"packages/atlas-db/src/buildTiming.ts",
-		"pipeline/src/compile-boundary-tiles.mts",
+		"pipeline/src/stages/compile-boundary-tiles.mts",
 		"pipeline/src/precompile/datasetDiscovery.ts",
 		"pipeline/src/precompile/datasetRegionChunks.mts",
 		"scripts/generate-dataset-registry.ts",
-		"pipeline/src/build-catalogue-registry.ts",
-		"pipeline/src/compile-website-data.mts",
+		"pipeline/src/stages/build-catalogue-registry.ts",
+		"pipeline/src/stages/compile-website-data.mts",
 		"pipeline/src/precompile/fingerprint.mjs",
 		"pipeline/src/precompile/duckdbPublicHealth.mts",
 		"pipeline/src/precompile/duckdbRoadCollisions.mts",
@@ -135,7 +135,7 @@ describe("precompile fingerprints", () => {
 
 	it("ignores generated output reached through compiler imports", async () => {
 		await write(
-			"pipeline/src/compile-website-data.mts",
+			"pipeline/src/stages/compile-website-data.mts",
 			'import core from "../public/data/datasets/gazetteer.core.json";',
 		);
 		const before = await precompileFingerprints(root);

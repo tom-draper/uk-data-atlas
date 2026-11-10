@@ -257,7 +257,7 @@ test("rebuilding atlas pages refreshes the website assets and leaves the API rel
 		build
 			.commands()
 			.some((command) =>
-				command.includes("pipeline/src/build-atlas-assets.ts"),
+				command.includes("pipeline/src/stages/build-atlas-assets.ts"),
 			),
 	);
 });
@@ -397,9 +397,9 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 	assert.deepEqual(build.commands(), [
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/build-evidence-documents.ts",
+			"pipeline/src/stages/build-evidence-documents.ts",
 		],
-		["pipeline/src/build-atlas-release.ts"],
+		["pipeline/src/stages/build-atlas-release.ts"],
 	]);
 });
 
@@ -433,10 +433,10 @@ test("--only builds a stage and its prerequisites without unrelated or downstrea
 	]);
 	assert.deepEqual(build.commands(), [
 		...((await sourcesMatchRelease()) ? [] : [["data:download"]]),
-		["pipeline/src/compile-boundaries.mts"],
+		["pipeline/src/stages/compile-boundaries.mts"],
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/compile-boundary-tiles.mts",
+			"pipeline/src/stages/compile-boundary-tiles.mts",
 		],
 	]);
 });
@@ -445,7 +445,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	const build = fixture(context);
 	const result = build.run(
 		["--from", "crosswalk-inventory"],
-		"pipeline/src/build-relationship-paths.ts",
+		"pipeline/src/stages/build-relationship-paths.ts",
 	);
 	assert.equal(result.status, 23);
 	assert.match(
@@ -455,7 +455,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 	assert.match(result.stdout, /^Data build failed after /m);
 	assert.equal(build.commands().length, 5);
 	assert.deepEqual(build.commands().at(-1), [
-		"pipeline/src/build-relationship-paths.ts",
+		"pipeline/src/stages/build-relationship-paths.ts",
 	]);
 });
 

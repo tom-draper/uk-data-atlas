@@ -39,7 +39,7 @@ All 594 download descriptors on tiled releases match after removing the optional
 `artifact` field. This includes hashes, decoded sizes and gzip sizes. The five
 untiled records also match, excluding their compiler cache keys.
 
-`pipeline/src/verify-map-downloads.ts` compares request-time generation from the
+`pipeline/src/stages/verify-map-downloads.ts` compares request-time generation from the
 deployed geometry store with the old prebuilt files. It asserts decoded bytes,
 published SHA-256 and byte counts, and identical gzip bytes for GeoJSON. It must
 compare all five simplified variants per release or exit nonzero.
@@ -56,11 +56,11 @@ sequentially from this checkout. A nonzero exit or fewer than five JSON result
 lines per release means the comparison failed.
 
 ```sh
-pnpm exec tsx --max-old-space-size=2048 pipeline/src/verify-map-downloads.ts /path/to/baseline combinedAuthority/2025-12-en-bgc
-pnpm exec tsx --max-old-space-size=2048 pipeline/src/verify-map-downloads.ts /path/to/baseline localAuthority/2024-12-uk-bgc
-pnpm exec tsx --max-old-space-size=2048 pipeline/src/verify-map-downloads.ts /path/to/baseline ward/2024-12-uk-bgc
-pnpm exec tsx --max-old-space-size=2048 pipeline/src/verify-map-downloads.ts /path/to/baseline lsoa/2001-12-ew-bgc-v2
-pnpm exec tsx --max-old-space-size=2048 pipeline/src/verify-map-downloads.ts /path/to/baseline outputArea/2021-12-ew-bgc-v2
+pnpm exec tsx --max-old-space-size=2048 pipeline/src/stages/verify-map-downloads.ts /path/to/baseline combinedAuthority/2025-12-en-bgc
+pnpm exec tsx --max-old-space-size=2048 pipeline/src/stages/verify-map-downloads.ts /path/to/baseline localAuthority/2024-12-uk-bgc
+pnpm exec tsx --max-old-space-size=2048 pipeline/src/stages/verify-map-downloads.ts /path/to/baseline ward/2024-12-uk-bgc
+pnpm exec tsx --max-old-space-size=2048 pipeline/src/stages/verify-map-downloads.ts /path/to/baseline lsoa/2001-12-ew-bgc-v2
+pnpm exec tsx --max-old-space-size=2048 pipeline/src/stages/verify-map-downloads.ts /path/to/baseline outputArea/2021-12-ew-bgc-v2
 ```
 
 The first rebuild attempt exhausted a 2,560 MiB heap on the untiled 2001 output
