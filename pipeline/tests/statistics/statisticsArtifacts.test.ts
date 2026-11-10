@@ -54,6 +54,16 @@ test("requires an exact selector inventory for the catalogue", () => {
 				count: identity,
 			}),
 		);
+		const embedded = {
+			...catalog,
+			measures: catalog.measures.map((measure) => ({
+				...measure,
+				series: identity,
+			})),
+		};
+		assert.doesNotThrow(() =>
+			statisticsArtifactReader(database, embedded, canonical),
+		);
 		assert.doesNotThrow(() =>
 			statisticsArtifactReader(
 				database,

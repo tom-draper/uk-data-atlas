@@ -46,6 +46,9 @@ const catalog = readJsonSync(
 	join(artifactDirectory(repositoryRoot), "data-catalog.json"),
 ) as DataCatalog;
 const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
+const catalogueSeries = new Map(
+	catalog.measures.map((measure) => [measure.id, measure.series]),
+);
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */
@@ -264,7 +267,7 @@ for (const measure of catalog.measures)
 			continue;
 		}
 		const selector = selectorFor(
-			config.ids[measure.id]!,
+			measure.series ?? config.ids[measure.id]!,
 			source.datasetId,
 			source.sourceGeography.type,
 			source.sourceGeography.boundaryYear,
@@ -309,7 +312,10 @@ writeFileSync(
 				indexStatisticsSeries(
 					catalog,
 					plan,
-					(id) => config.ids[id] ?? censusSeries.get(id),
+					(id) =>
+						catalogueSeries.get(id) ??
+						config.ids[id] ??
+						censusSeries.get(id),
 				),
 			),
 			observations: sorted(plan.observations),
