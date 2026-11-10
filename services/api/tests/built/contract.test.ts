@@ -16,7 +16,7 @@ import {
 import { PROBLEM_CODES } from "../../src/runtime/index.ts";
 import { route as domainRoute } from "../../src/routes";
 import { indexResponse } from "../../src/indexRoutes";
-import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles";
 import { readApiCatalogues } from "../../src/server";
 import {
 	INDEX_END,

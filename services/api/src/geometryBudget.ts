@@ -1,5 +1,5 @@
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
-import { countVertices } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { countVertices } from "@uk-data-atlas/map-tiles";
 import { problem } from "./runtime/index.ts";
 
 export const MAX_GEOMETRY_FEATURES = 1000;

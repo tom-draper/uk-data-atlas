@@ -20,7 +20,7 @@ import {
 	compileMapResource,
 	type BoundaryReleaseSummary,
 } from "./maps/compileMapResource.ts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import {
 	artifactDirectory,
 	formatBytes,

@@ -12,10 +12,7 @@ import {
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography";
 import { readGeometries } from "@uk-data-atlas/areas";
-import {
-	multiPolygonAreaM2,
-	polygonWidthM,
-} from "@uk-data-atlas/map-tiles/equalAreaProjection";
+import { multiPolygonAreaM2, polygonWidthM } from "@uk-data-atlas/map-tiles";
 import {
 	BoundedClipper,
 	BOUNDED_CLIPPING_VERSION,

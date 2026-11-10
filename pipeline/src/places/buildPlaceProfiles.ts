@@ -1,4 +1,4 @@
-import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { simplifyGeometry } from "@uk-data-atlas/map-tiles";
 import {
 	inBox,
 	pointInGeom,

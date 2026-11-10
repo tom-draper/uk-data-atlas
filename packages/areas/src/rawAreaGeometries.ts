@@ -8,7 +8,7 @@ import {
 	type AreaGeometry,
 } from "@uk-data-atlas/geography";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
+import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles";
 import type { GeographyKind } from "@uk-data-atlas/geography";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {

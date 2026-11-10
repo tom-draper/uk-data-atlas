@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles/topologyTiers";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
 import {
 	MAX_MAP_JOIN_ROWS,
 	MAX_MAP_JOIN_COLUMN_BYTES,

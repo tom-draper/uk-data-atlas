@@ -19,7 +19,7 @@ import type {
 	LocationProjectionInventory,
 	LocationProjections,
 } from "@uk-data-atlas/places";
-import type { MapResources } from "@uk-data-atlas/map-tiles/mapResources";
+import type { MapResources } from "@uk-data-atlas/map-tiles";
 import type { MapArchive } from "@uk-data-atlas/map-tiles/node";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { MeasureDimensions } from "@uk-data-atlas/measures";
