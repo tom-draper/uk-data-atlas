@@ -411,9 +411,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../terrain
