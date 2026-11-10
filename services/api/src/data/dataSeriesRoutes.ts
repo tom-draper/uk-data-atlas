@@ -14,7 +14,7 @@ import {
 	statedDefaults,
 } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
-import { sourceSeriesProvenance } from "@uk-data-atlas/atlas-runtime/loader";
+import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {

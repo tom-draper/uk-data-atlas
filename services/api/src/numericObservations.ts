@@ -7,7 +7,7 @@ import {
 	observationsFor,
 	type ObservationArtifacts,
 } from "@uk-data-atlas/catalogue/node";
-import type { ObservationArtifactReference } from "@uk-data-atlas/atlas-runtime/loader";
+import type { ObservationArtifactReference } from "./sourceExactProvenance.ts";
 
 export type NumericObservationResult =
 	| {

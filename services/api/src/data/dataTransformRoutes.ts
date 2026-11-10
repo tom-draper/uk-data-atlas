@@ -12,7 +12,7 @@ import {
 	type ApiResponse,
 } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
+import { sourceExactProvenance } from "../sourceExactProvenance.ts";
 import {
 	areaNamedBy,
 	defaultSource,
