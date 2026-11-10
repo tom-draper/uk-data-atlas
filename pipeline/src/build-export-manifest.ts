@@ -12,7 +12,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "./statistics/measureStatisticsSelections.ts";
 import { compileMeasureDownloads } from "./statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "./catalog/manifest.ts";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 import { statisticsArtifactReader } from "./statistics/statisticsArtifacts.ts";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
