@@ -8,7 +8,10 @@ import { readAtlasPages } from "@uk-data-atlas/atlas-db";
 import { readAtlasLookups } from "@uk-data-atlas/atlas-db";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { readMeasureObservations } from "@uk-data-atlas/measures";
+import {
+	readDataCatalog,
+	readMeasureObservations,
+} from "@uk-data-atlas/measures";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -41,7 +44,6 @@ import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
 	readAtlasRelease,
-	readDataCatalog,
 	readExportManifest,
 	readLookupManifest,
 	readMeasureCompatibility,
