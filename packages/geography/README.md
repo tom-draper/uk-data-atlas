@@ -1,5 +1,7 @@
 # @uk-data-atlas/geography
 
+Area codes, kinds, coordinates and geometry primitives.
+
 Geography code shared by the atlas and the API: the area lineage, the ward,
 parish and LSOA containment file formats, geometry substitutions and grid
 offset corrections.
@@ -16,6 +18,6 @@ The tsconfig enforces most of this. It has no DOM or Node types, so
 import { followLineage } from "@uk-data-atlas/geography";
 ```
 
-Coordinate parsing and conversion are available from `@uk-data-atlas/geography/coordinates`. The module accepts WGS 84, British National Grid and Irish Grid coordinates, and point lookup results name the transformation used for projected inputs. It also converts supported geometries and packed geometries to WGS 84.
+Coordinate parsing and conversion are available from `@uk-data-atlas/geography`. The module accepts WGS 84, British National Grid and Irish Grid coordinates, and point lookup results name the transformation used for projected inputs. It also converts supported geometries and packed geometries to WGS 84.
 
 Run `pnpm --filter @uk-data-atlas/geography typecheck` after changing it.

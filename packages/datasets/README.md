@@ -1,5 +1,7 @@
 # Dataset compilers
 
+Declares datasets and compiles their contents.
+
 `@uk-data-atlas/datasets` contains dataset definitions, source parsers, boundary
 metadata and browser-safe transformations shared by the website and API.
 It exports TypeScript source, with no package build step.
