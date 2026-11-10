@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import {
+	measureSeriesSourceKey,
 	observationArtifactName,
 	totalMember,
 	type DataCatalog,
@@ -18,10 +19,10 @@ import {
 } from "@uk-data-atlas/datasets";
 import {
 	readMeasureDimensionsConfig,
-	indexStatisticsSeries,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 } from "@uk-data-atlas/measures";
+import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,
@@ -49,6 +50,12 @@ const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 const catalogueSeries = new Map(
 	catalog.measures.map((measure) => [measure.id, measure.series]),
 );
+const censusSeries = new Map(CENSUS_SMALL_AREA_TABLES.flatMap((table) =>
+	table.categories.map(([suffix, , , member]) => [
+		`${table.measurePrefix}-${suffix}`,
+		{ measure: table.measure, dimensions: { [table.dimension]: member ?? suffix } },
+	] as const),
+));
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */
@@ -230,15 +237,27 @@ const releasesIn = (geography: string, year: number) =>
 		.map((row) => String(row.release));
 
 const plan: StatisticsReadPath & {
-	statistics: NonNullable<StatisticsReadPath["statistics"]>;
+	series: NonNullable<StatisticsReadPath["series"]>;
 } = {
 	schemaVersion: 1,
 	dataCatalogHash: catalog.contentHash,
-	statistics: {},
+	series: {},
 	observations: {},
 };
+const tables = new Set<string>();
+const keys = new Set<string>();
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
+		const identity =
+			measure.series ??
+			config.ids[measure.id] ??
+			censusSeries.get(measure.id);
+		if (!identity)
+			throw new Error(`Missing series identity for ${measure.id}.`);
+		const key = measureSeriesSourceKey(identity, source);
+		if (keys.has(key))
+			throw new Error(`Duplicate statistics series source: ${key}.`);
+		keys.add(key);
 		const name = observationArtifactName(measure.id, source);
 		const table = censusTableSelector(
 			name,
@@ -250,33 +269,26 @@ for (const measure of catalog.measures)
 		if (table) {
 			if (source.periods.length !== 1)
 				throw new Error(`Census table ${name} must have one period`);
-			if (!(name in plan.statistics)) {
+			if (!tables.has(name)) {
 				for (const column of table.columns)
-					if (
-						!seriesDimensions(
-							table.datasetId,
-							column.measure,
-							table.geography,
-						).length
-					)
-						throw new Error(
-							`Census table ${name} has no ${column.measure} series`,
-						);
-				plan.statistics[name] = table;
+					if (!seriesDimensions(table.datasetId, column.measure, table.geography).length)
+						throw new Error(`Census table ${name} has no ${column.measure} series`);
+				tables.add(name);
 			}
+			plan.series[key] = table;
 			continue;
 		}
 		const selector = selectorFor(
-			measure.series ?? config.ids[measure.id]!,
+			identity,
 			source.datasetId,
 			source.sourceGeography.type,
 			source.sourceGeography.boundaryYear,
 		);
 		if (typeof selector === "string") {
-			plan.observations[name] = selector;
+			plan.observations[key] = selector;
 			continue;
 		}
-		plan.statistics[name] = partitionByCodeYear(
+		plan.series[key] = partitionByCodeYear(
 			selector,
 			source.datasetId,
 			releasesIn(
@@ -308,16 +320,7 @@ writeFileSync(
 		{
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
-			series: sorted(
-				indexStatisticsSeries(
-					catalog,
-					plan,
-					(id) =>
-						catalogueSeries.get(id) ??
-						config.ids[id] ??
-						censusSeries.get(id),
-				),
-			),
+			series: sorted(plan.series),
 			observations: sorted(plan.observations),
 		},
 		null,
@@ -325,5 +328,5 @@ writeFileSync(
 	)}\n`,
 );
 console.log(
-	`${Object.keys(plan.statistics).length} artifacts read from statistics rows. Wrote ${file}`,
+	`${Object.keys(plan.series).length} series read from statistics rows. Wrote ${file}`,
 );
