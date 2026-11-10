@@ -148,11 +148,12 @@ export function licenceTables(
 					]),
 				);
 				for (const row of database
-					.prepare("SELECT id, header FROM crosswalk")
+					.prepare("SELECT id, provenance FROM crosswalk")
 					.iterate()) {
-					const provenance = JSON.parse(
-						String(row.header),
-					).provenance;
+					const provenance =
+						row.provenance === null
+							? {}
+							: JSON.parse(String(row.provenance));
 					// Postcode-overlap records its geometry by release and hash,
 					// rather than by a boundary file path.
 					for (const item of provenance?.inputs ?? []) {

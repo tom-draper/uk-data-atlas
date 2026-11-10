@@ -545,7 +545,7 @@ Crosswalks are integer edges between area versions. Every table is `STRICT`.
 
 | Table                  | Key                                                        | Holds                                                                                                                                                                                                                                                             |
 | ---------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `crosswalk`            | `id` (stable), `slug` unique, `inventory_position` unique  | `from_release_id` and `to_release_id` (`area_releases.id`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, `header` and `bytes`.                                                                       |
+| `crosswalk`            | `id` (stable), `slug` unique, `inventory_position` unique  | `from_release_id` and `to_release_id` (`area_releases.id`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, JSON `provenance`, JSON `validation`, and `bytes`.                                          |
 | `crosswalk_edge`       | `(crosswalk_id, from_version_id, to_version_id)`           | One source and target pair. `relation` (best fit: `within`, `straddles`, `indeterminate`) and `change` (official lookups: `unchanged`, `split`, `merged`, `complex`) are null where the crosswalk does not give them. Indexed by `(crosswalk_id, to_version_id)`. |
 | `weight_basis`         | `id`                                                       | `area`, `population`, `postcodes` or `households`, with a label. A new basis is a row.                                                                                                                                                                            |
 | `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | One row per edge and basis: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres, residents, households or postcodes), `source_share` and `target_share`. See "Weights from postcodes".                                      |
@@ -560,8 +560,9 @@ area. Readers derive endpoint fields in a consistent order from the stored
 values and the crosswalk's weight basis. A target
 field is stored only when present; a null value is refused because it could not
 be told apart from a missing one. Missing weights stay null, distinct from zero.
-`header` is the artifact metadata with a null `records` placeholder, and `bytes`
-keeps the original JSON byte count for the API cache budget. `v_crosswalk_edge`
+`provenance` and `validation` hold the method-specific source and quality
+details, while the common metadata is read from columns and release tables.
+`bytes` keeps the original JSON byte count for the API cache budget. `v_crosswalk_edge`
 shows each edge with codes, names and its weights, one row per basis (an edge
 without weights appears once, with null weight columns).
 

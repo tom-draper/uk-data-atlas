@@ -34,17 +34,15 @@ test("records the actual population and postcode atom inputs with source links",
    CREATE TABLE source (id INTEGER PRIMARY KEY, publisher TEXT, url TEXT, licence TEXT, licence_url TEXT, citation TEXT);
    CREATE TABLE licence (id TEXT PRIMARY KEY); INSERT INTO licence VALUES ('ogl-3.0');
    CREATE TABLE source_licence (source_id INTEGER REFERENCES source(id), licence_id TEXT REFERENCES licence(id), PRIMARY KEY(source_id, licence_id));
-   CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, method TEXT, header TEXT);`);
+   CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, method TEXT, provenance TEXT);`);
 		const add = db.prepare("INSERT INTO crosswalk VALUES (?, ?, ?)");
 		add.run(
 			1,
 			"population-overlap",
-			JSON.stringify({
-				provenance: { population: { input: population } },
-			}),
+			JSON.stringify({ population: { input: population } }),
 		);
-		add.run(2, "postcode-overlap", JSON.stringify({ provenance: {} }));
-		add.run(3, "official-lookup", JSON.stringify({ provenance: {} }));
+		add.run(2, "postcode-overlap", JSON.stringify({}));
+		add.run(3, "official-lookup", JSON.stringify({}));
 		writeSqliteTables(
 			db,
 			crosswalkInputSourceTables(root, IdRegistries.memory()),
