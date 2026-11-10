@@ -1,4 +1,4 @@
-import { countryForCode } from "@uk-data-atlas/catalogue/node";
+import { countryForCode } from "./catalogCountries.ts";
 import type { Country, DataCatalog } from "@uk-data-atlas/measures";
 import {
 	conversionCoverageOnto,

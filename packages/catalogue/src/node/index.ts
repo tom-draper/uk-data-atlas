@@ -12,3 +12,4 @@ export * from "./observationDownloads.ts";
 export * from "./validationReport.ts";
 export * from "./datasetPayloads.ts";
 export * from "./analysisGeographyValidation.ts";
+export * from "./coveragePlan.ts";
