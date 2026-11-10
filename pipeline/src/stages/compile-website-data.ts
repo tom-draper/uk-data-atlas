@@ -4,7 +4,7 @@ import { buildAtlasSqlite } from "../atlas/buildAtlasSqlite.ts";
 import { buildDataCatalog } from "../catalog/buildDataCatalog.ts";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
- * chunks, using the catalogue intermediates in data/build/datasets.
+ * chunks, using the canonical datasets in atlas-base.sqlite.
  * Catalogue payloads are served by Next.js from data/build/atlas.sqlite.
  *
  * Run via: pnpm data:build (which compiles the datasets first)
