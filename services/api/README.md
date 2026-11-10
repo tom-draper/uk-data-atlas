@@ -79,15 +79,14 @@ with a unique `(release_id, area_id)` lookup. IDs are assigned once and follow n
 order, so release reads order by `inventory_position` (see `docs/stable-ids.md`). `in_inventory = 1`
 selects the published area inventory. Missing crosswalk endpoints become
 supplemental versions with `in_inventory = 0` and do not change area API
-responses. The `areas` view keeps the earlier column names for readers.
+responses. Area readers query `area` and `area_version`.
 
 Crosswalks are `crosswalk_edge` rows between area versions, with weights in
-`crosswalk_weight` by basis, sparse diagnostics in `crosswalk_edge_check`, and
-publisher labels in `crosswalk_label` only where they differ from
-`[name, ...aliases]`. Source `areaM2` and `population` are stored on
-`area_version`, and the build rejects conflicting facts for the same area. The
-API rebuilds each artifact from these rows in code order, using each
-crosswalk's stored field order. See `data/build/README.md`.
+`crosswalk_weight` by basis and sparse diagnostics in `crosswalk_edge_check`.
+Labels use the canonical area name and aliases. Source `areaM2` and
+`population` are stored on `area_version`, and the build rejects conflicting
+facts for the same area. The API derives each artifact from these rows in code
+order. See `data/build/README.md`.
 
 The API reconstructs observations from the `dataset`, `measure`, `series`,
 `observation`, `area_version`, `period` and related statistics tables. The

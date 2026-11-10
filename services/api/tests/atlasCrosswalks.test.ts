@@ -166,11 +166,16 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		JSON.stringify(readCrosswalkInventory(root)),
 		JSON.stringify(inventory),
 	);
-	for (const value of artifacts)
-		assert.deepEqual(
-			readCrosswalkLookup(root, inventory).get(value.id),
-			value,
-		);
+	assert.deepEqual(
+		readCrosswalkLookup(root, inventory).get(artifact.id),
+		artifact,
+	);
+	const expected = structuredClone(artifacts[1]!);
+	expected.records[1]!.source.labels = ["B", "Bee"];
+	assert.deepEqual(
+		readCrosswalkLookup(root, inventory).get(expected.id),
+		expected,
+	);
 	assert.deepEqual(readSqliteAreas(root, areaInventory.releases[0]), [
 		{ code: "B", name: "B", aliases: ["Bee"] },
 	]);
@@ -244,18 +249,13 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 				["constituency-2010-to-2024", "B", 1],
 			],
 		);
-		// Labels are stored only where they differ from the area's names.
-		assert.deepEqual(
-			all(
-				"SELECT c.slug, a.code, l.labels FROM crosswalk_label l JOIN crosswalk c ON c.id = l.crosswalk_id JOIN area_version v ON v.id = l.area_version_id JOIN area a ON a.id = v.area_id ORDER BY 1, 2",
-			),
-			[
-				["another-crosswalk", "A2", "[]"],
-				["another-crosswalk", "B", '["different"]'],
-				["another-crosswalk", "Y", "[]"],
-				["constituency-2010-to-2024", "A", "[]"],
-				["constituency-2010-to-2024", "Y", "[]"],
-			],
+		assert.equal(
+			database
+				.prepare(
+					"SELECT name FROM sqlite_schema WHERE name = 'crosswalk_label'",
+				)
+				.get(),
+			undefined,
 		);
 		assert.deepEqual(
 			all(

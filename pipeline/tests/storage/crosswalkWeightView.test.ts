@@ -414,6 +414,9 @@ test("a postcode-overlap source with one target weighs 1 on every basis without 
 
 test("bases beside a crosswalk's own do not change the artifact its edges rebuild", (context) => {
 	const { path, root, inventory } = fixture(context);
+	const before = inventory.crosswalks.map((entry) =>
+		readCrosswalkById(root, entry, path),
+	);
 	const database = new DatabaseSync(path);
 	const population = Number(
 		database
@@ -429,9 +432,10 @@ test("bases beside a crosswalk's own do not change the artifact its edges rebuil
 			)
 			.run(population);
 	database.close();
-	for (const entry of inventory.crosswalks)
-		assert.deepEqual(
+	assert.deepEqual(
+		inventory.crosswalks.map((entry) =>
 			readCrosswalkById(root, entry, path),
-			crosswalks.find((crosswalk) => crosswalk.id === entry.id),
-		);
+		),
+		before,
+	);
 });
