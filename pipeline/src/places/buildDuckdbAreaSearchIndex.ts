@@ -1,11 +1,11 @@
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { areaSearchIndexTables } from "./storage/index.ts";
+import { areaSearchIndexTables } from "../storage/index.ts";
 import { readAreaLookup, readSqliteAreaInventory } from "@uk-data-atlas/areas";
 
-import { publishCacheTables, stampCacheStage } from "./storage/index.ts";
+import { publishCacheTables, stampCacheStage } from "../storage/index.ts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { compileDuckdbAreaSearchIndex } from "./places/duckdbAreaSearch.ts";
+import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch.ts";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {
 	const inventory = readSqliteAreaInventory(root);
