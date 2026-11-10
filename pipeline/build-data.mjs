@@ -12,6 +12,10 @@ import {
 	resolveChecks,
 	selectStages,
 } from "./build-data-select.mjs";
+import {
+	createDigestTracker,
+	findCurrentStages,
+} from "./build-data-digests.mjs";
 import { createStageCache } from "./build-data-cache.mjs";
 import {
 	ATLAS_CACHE_WORK_ENV,
@@ -36,9 +40,6 @@ import {
 export { formatAssetTree, planBuild, resolveChecks };
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
-
-// A stage that always runs reaches later stages through their inputs.
-const ALWAYS_RUNS = "always-runs";
 
 /**
  * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
@@ -117,50 +118,12 @@ export async function runBuild({
 		const reuse = cache !== null && useCache && from === undefined;
 		// A stage that always runs may know its work is already done, and then
 		// it is skipped without a command. Its digest is the same either way.
-		const current = new Set();
-		if (useCache && from === undefined && !adopt)
-			for (const stage of selected)
-				if (stage.cacheable === false && (await stage.isCurrent?.()))
-					current.add(stage.name);
-		// Each stage's output digest this build, or null once a stage has to run
-		// (in a plan, its outputs are not known until it does).
-		const alwaysRunning = () =>
-			new Map(
-				stages
-					.filter((stage) => stage.cacheable === false)
-					.map((stage) => [stage.name, ALWAYS_RUNS]),
-			);
-		const digests = alwaysRunning();
-		const dependencyDigests = (stage, known = digests) =>
-			stage.dependencies.map((name) =>
-				known.has(name)
-					? known.get(name)
-					: (cache?.outputDigest(name) ?? null),
-			);
-		const reusableDigest = (stage, dependencies) =>
-			reuse && stage.cacheable !== false && !dependencies.includes(null)
-				? cache.lookup(stage, dependencies)
-				: null;
-		// The stages that will run if nothing a stage rewrites turns out to be
-		// unchanged. A stage that runs can leave its outputs as they were, so
-		// the build may run fewer.
-		const stagesToRun = () => {
-			const toRun = new Set();
-			const known = alwaysRunning();
-			for (const stage of selected) {
-				if (current.has(stage.name)) continue;
-				const reused = reusableDigest(
-					stage,
-					dependencyDigests(stage, known),
-				);
-				if (reused !== null) known.set(stage.name, reused);
-				else {
-					toRun.add(stage.name);
-					if (stage.cacheable !== false) known.set(stage.name, null);
-				}
-			}
-			return toRun;
-		};
+		const current =
+			useCache && from === undefined && !adopt
+				? await findCurrentStages(selected)
+				: new Set();
+		const { digests, dependencyDigests, reusableDigest, stagesToRun } =
+			createDigestTracker({ stages, selected, cache, reuse, current });
 		const toRun = adopt ? new Set() : stagesToRun();
 		log(
 			adopt
