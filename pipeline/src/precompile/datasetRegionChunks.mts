@@ -7,15 +7,15 @@ import {
 	lsoaLadMappingsFile,
 	type PrecompiledBoundaryMappings,
 } from "@uk-data-atlas/geography";
-import { readAtlasLookup } from "./atlas/atlasLookups.ts";
+import { readAtlasLookup } from "../atlas/atlasLookups.ts";
 import { BOUNDARY_CATALOG } from "@uk-data-atlas/datasets";
 import { getProp } from "@uk-data-atlas/datasets";
 import {
 	codeKeyedFieldsFor,
 	type DatasetPayloadLayout,
 } from "@uk-data-atlas/datasets";
-import { aggregatePopulation } from "./datasetAggregation/population.ts";
-import { readJson } from "./lib/json.ts";
+import { aggregatePopulation } from "../datasetAggregation/population.ts";
+import { readJson } from "../lib/json.ts";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
 	"E12000002",

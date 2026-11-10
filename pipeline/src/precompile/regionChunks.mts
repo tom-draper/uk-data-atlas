@@ -2,7 +2,7 @@ import { sha256Hex } from "../lib/hash.ts";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "@uk-data-atlas/datasets";
-import { writeDatasetRegionChunks } from "../dataset-region-chunks.mts";
+import { writeDatasetRegionChunks } from "./datasetRegionChunks.mts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import {
 	fileSnapshots,

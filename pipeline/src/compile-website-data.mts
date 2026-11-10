@@ -26,8 +26,8 @@ import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import {
 	discoverDatasets,
 	type DiscoveredDataset,
-} from "./dataset-discovery.ts";
-import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
+} from "./precompile/datasetDiscovery.ts";
+import { writeDatasetRegionChunks } from "./precompile/datasetRegionChunks.mts";
 import { compileCatalogueDatasets } from "./compile-datasets.mts";
 import {
 	mergeManifestEntries,
