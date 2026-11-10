@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
-import { atlasReleaseResponse } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import { atlasReleaseResponse } from "../runtime/index.ts";
+import type { RouteContextFor } from "../runtime/index.ts";
 import { atlasRelease } from "./atlasRelease";
 import { registerGetRoute, type ContractDispatch } from "./registerGetRoute";
 

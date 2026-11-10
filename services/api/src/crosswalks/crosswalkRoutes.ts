@@ -1,11 +1,7 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { paginate } from "../pagination";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 
 /** Published crosswalk metadata and stable record pagination. */
 export const handleCrosswalkRoutes = ({

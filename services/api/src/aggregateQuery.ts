@@ -7,11 +7,7 @@ import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
 } from "@uk-data-atlas/areas";
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
 
 export type AggregateQuery = {
 	period: string | null;

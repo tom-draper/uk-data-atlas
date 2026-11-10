@@ -1,4 +1,4 @@
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "./runtime/index.ts";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
 import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
@@ -7,16 +7,9 @@ import {
 	type ReleaseReference,
 } from "@uk-data-atlas/areas";
 import { type GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	RouteContext,
-	RouteContextFor,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
+import type { RouteContext, RouteContextFor } from "./runtime/index.ts";
+import { readChoice } from "./runtime/index.ts";
 import { QUERY_RULES } from "./queryRules";
 
 /** A lookup reads one release per geography, and each is held in memory. */

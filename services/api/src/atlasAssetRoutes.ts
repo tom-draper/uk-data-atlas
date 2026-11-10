@@ -1,9 +1,5 @@
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, problem, type ApiResponse } from "./runtime/index.ts";
+import type { RouteRequestFor } from "./runtime/index.ts";
 
 export const handleAtlasPageRoutes = ({
 	context,

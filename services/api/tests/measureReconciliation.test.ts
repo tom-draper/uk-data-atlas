@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { reconciliationEvidence } from "../src/evidence/measureReports";
+import { reconciliationEvidence } from "../../../pipeline/src/evidence/measureReports";
 import { test } from "vitest";
 import type {
 	CrosswalkInventory,
@@ -15,7 +15,7 @@ import {
 	type RelationshipPath,
 } from "@uk-data-atlas/relationships";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,

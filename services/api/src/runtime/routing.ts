@@ -8,12 +8,12 @@ import type {
 	DataCatalog,
 } from "@uk-data-atlas/measures";
 import type { ExportManifest } from "@uk-data-atlas/catalogue/node";
-import type { GeographyInventory } from "../loader/geographyInventory.ts";
+import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
 import type { LookupManifest } from "@uk-data-atlas/areas";
-import type { FullDetailSource } from "../loader/fullDetailDownloads.ts";
-import type { GeographyResolver } from "../loader/geographyResolver.ts";
-import type { PostcodeResolver } from "../loader/resolver/postcodes.ts";
-import type { AreaValidation } from "../loader/resolver/areaValidation.ts";
+import type { FullDetailSource } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { PostcodeResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { AreaValidation } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type {
 	LocationProjectionInventory,

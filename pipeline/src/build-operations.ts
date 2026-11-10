@@ -6,7 +6,7 @@ import { compileOperationTemplates } from "./atlas/operationTemplates.ts";
 import {
 	openapiDocumentHash,
 	type OperationsArtifact,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "@uk-data-atlas/artifacts";
 import {
 	apiRootOf,
 	artifactDirectory,

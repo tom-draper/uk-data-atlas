@@ -1,6 +1,6 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { ValidatedValue } from "@uk-data-atlas/atlas-runtime/loader";
-import { envelope, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, type ApiResponse } from "./runtime/index.ts";
 
 type MatchResult = {
 	likely?: {

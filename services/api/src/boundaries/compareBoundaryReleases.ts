@@ -1,7 +1,4 @@
-import type {
-	RouteRequestFor,
-	ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor, ApiResponse } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
@@ -9,7 +6,7 @@ import {
 	requireGeography,
 	areaNotFound,
 	readWholeNumber,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const COMPARE = QUERY_RULES["GET /boundary-releases:compare"];

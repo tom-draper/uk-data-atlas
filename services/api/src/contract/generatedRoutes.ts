@@ -30,7 +30,7 @@ import { measureMetadata } from "../catalogue/measureMetadata";
 import { datasetsMetadata } from "../catalogue/datasetsMetadata";
 import { measuresMetadata } from "../catalogue/measuresMetadata";
 import swagger from "@fastify/swagger";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "../runtime/index.ts";
 import { atlasRelease } from "./atlasRelease";
 import { atlasReleaseRoutes } from "./atlasReleaseRoutes";
 import { documentation } from "./documentation";

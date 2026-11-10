@@ -1,17 +1,11 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
+import { areaNotFound } from "../runtime/index.ts";
 import { MAX_BATCH_VALUES } from "@uk-data-atlas/atlas-runtime/loader";
 import { matchManifest, matchReportResponse } from "../matchReport";
 import { readPostedRows } from "../requestRows";
-import {
-	invalidQuery,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { choices, readChoice } from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const VALIDATE = QUERY_RULES["GET /areas:validate"];

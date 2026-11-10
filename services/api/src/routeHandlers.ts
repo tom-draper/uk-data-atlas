@@ -1,5 +1,5 @@
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequest } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "./runtime/index.ts";
+import type { RouteRequest } from "./runtime/index.ts";
 import { validateContractResponse } from "./contract/validateResponse";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleDocumentRoutes } from "./documentRoutes";
@@ -28,7 +28,7 @@ import {
 } from "./places/postcodeRoutes";
 import { handleDataTransformRoutes } from "./data/dataTransformRoutes";
 import { handleDataConversionRoutes } from "./data/dataConversionRoutes";
-import { handleAnalysisGeographyRoutes } from "@uk-data-atlas/atlas-runtime/api";
+import { handleAnalysisGeographyRoutes } from "./runtime/index.ts";
 import { handleAreaSearchRoutes } from "./areas/areaSearchRoutes";
 import {
 	handleAreaContainsBatchRoutes,
@@ -54,8 +54,8 @@ import {
 	handleCrosswalkConversionRoutes,
 } from "./crosswalks/crosswalkConversionRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
-import { handleGovernanceRoutes } from "@uk-data-atlas/atlas-runtime/api";
-import { handleSyncRoutes } from "@uk-data-atlas/atlas-runtime/api";
+import { handleGovernanceRoutes } from "./runtime/index.ts";
+import { handleSyncRoutes } from "./runtime/index.ts";
 import { releaseInPath, withReleaseHeaders } from "./releaseDeprecation";
 import {
 	handleReleaseJoinRoutes,

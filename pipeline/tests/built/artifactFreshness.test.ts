@@ -12,7 +12,7 @@ import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "@uk-data-atlas/catalogue/node";
-import { openapiDocumentHash } from "@uk-data-atlas/atlas-runtime/api";
+import { openapiDocumentHash } from "@uk-data-atlas/artifacts";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
 	readMeasureTotals,

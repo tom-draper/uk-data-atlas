@@ -6,7 +6,7 @@ import {
 	boundaries,
 } from "../boundaries/boundaryContract";
 import { publicJson } from "@uk-data-atlas/atlas-db";
-import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { ApiResponse } from "../runtime/index.ts";
 import type { z } from "zod";
 import { atlasRelease } from "./atlasRelease";
 import {

@@ -5,7 +5,7 @@ import {
 	type ObservationPlan,
 	type Resolution,
 } from "./observationResolution/observationPlan";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "./runtime/index.ts";
 
 type SourceQuery = {
 	period?: string | null;

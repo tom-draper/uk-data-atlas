@@ -1,6 +1,6 @@
 import { analysisConversion } from "@uk-data-atlas/relationships";
 import { unsupported } from "@uk-data-atlas/areas";
-import { coveragePlan } from "../loader/coveragePlan.ts";
+import { coveragePlan } from "@uk-data-atlas/atlas-runtime/loader";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {

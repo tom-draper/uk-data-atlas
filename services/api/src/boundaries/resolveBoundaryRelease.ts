@@ -1,14 +1,11 @@
-import type {
-	RouteRequestFor,
-	ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor, ApiResponse } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	choices,
 	readChoice,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { parseSelectionDate } from "@uk-data-atlas/areas";
 import { withReleaseHeaders } from "../releaseDeprecation";
 import { QUERY_RULES } from "../queryRules";

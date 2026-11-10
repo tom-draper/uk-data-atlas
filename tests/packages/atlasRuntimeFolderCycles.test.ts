@@ -55,9 +55,8 @@ it("has no import cycles between atlas-runtime folders beyond the known ones", (
 
 it("keeps loader at the top, imported by no other atlas-runtime folder", () => {
 	const importers = [...folderImports()]
-		.filter(([from, targets]) => targets.has("loader") && from !== "api")
+		.filter(([from, targets]) => targets.has("loader"))
 		.map(([from]) => from);
-	// `api` is the one consumer, it moves to services/api in task 14.
 	expect(importers, "folders importing loader").toEqual([]);
 });
 

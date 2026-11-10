@@ -6,11 +6,7 @@ import {
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
 import type { NamedLocation } from "@uk-data-atlas/places";
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
 
 export type AggregateTargetMembers = {
 	byLocation?: ReturnType<typeof aggregateLocationMembers>;

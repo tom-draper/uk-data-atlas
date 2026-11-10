@@ -1,12 +1,12 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	requirementDetail,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/places";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import { areaKey } from "@uk-data-atlas/geography";

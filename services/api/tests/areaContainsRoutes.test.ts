@@ -9,7 +9,7 @@ import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 
 // A country of two squares a hundredth of a degree across, England below
 // Wales, each divided into areas. The sea lies anywhere else.

@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../src/runtime/index.ts";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";

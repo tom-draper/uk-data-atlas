@@ -1,9 +1,5 @@
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	problem,
-	type ApiResponse,
-	type Envelope,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { problem, type ApiResponse, type Envelope } from "../runtime/index.ts";
 import { readWeightedSource } from "../weightedSource";
 import { calculateWeightedAggregate } from "../weightedAggregation";
 import {

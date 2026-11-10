@@ -1,4 +1,4 @@
-import { readApiCatalogues as readRuntimeApiCatalogues } from "@uk-data-atlas/atlas-runtime/api";
+import { readApiCatalogues as readRuntimeApiCatalogues } from "./runtime/index.ts";
 import {
 	assertMeasureDimensions,
 	type MeasureDimensionsConfig,

@@ -1,6 +1,6 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { deprecationFields } from "@uk-data-atlas/atlas-runtime/api";
-import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { deprecationFields } from "./runtime/index.ts";
+import type { ApiResponse } from "./runtime/index.ts";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
 

@@ -1,10 +1,10 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { areaMetrics } from "../areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/loader";
 import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "../runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 
 /**
  * Travels with every measurement, so a figure taken from one response can be

@@ -16,7 +16,7 @@ import type {
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/loader";
 import { route } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	postcodeAreaIndexFor,
 	postcodeIndexFor,

@@ -3,7 +3,7 @@ import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";
 import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
@@ -14,7 +14,7 @@ import {
 } from "@uk-data-atlas/places";
 import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
-import { createOperationMatcher } from "@uk-data-atlas/atlas-runtime/api";
+import { createOperationMatcher } from "../src/runtime/index.ts";
 import { parse } from "yaml";
 import {
 	areaLookup,
@@ -28,7 +28,7 @@ import {
 	registry,
 	testContext as pipelineTestContext,
 	type TestContextInputs,
-} from "../../../pipeline/tests/contextFixtures";
+} from "./contextFixtures";
 
 export const testContext = (
 	inputs: TestContextInputs = {},
@@ -57,7 +57,7 @@ export {
 	populationObservations,
 	registry,
 	type TestContextInputs,
-} from "../../../pipeline/tests/contextFixtures";
+} from "./contextFixtures";
 
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts

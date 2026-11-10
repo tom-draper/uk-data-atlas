@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { gzipSync, gunzipSync } from "node:zlib";
 import Fastify from "fastify";
-import { envelope } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope } from "../src/runtime/index.ts";
 import { sendFastifyResponse } from "../src/fastifyResponse";
 import { httpResponse } from "../src/httpResponse";
 

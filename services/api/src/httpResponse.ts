@@ -3,10 +3,7 @@ import { publicJson } from "@uk-data-atlas/atlas-db";
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
 import type { CachedAnswer } from "./responseCache";
-import {
-	isStoredFile,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { isStoredFile, type ApiResponse } from "./runtime/index.ts";
 
 export type HttpResponse = {
 	status: number;

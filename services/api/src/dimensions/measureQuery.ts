@@ -1,4 +1,4 @@
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 import {
 	dimensionCatalogue,
 	identityDimensions,

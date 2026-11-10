@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import {
 	CAPABILITY_STATUSES,
 	notBuilt,
@@ -7,9 +7,9 @@ import {
 } from "@uk-data-atlas/areas";
 import { measureCapability } from "@uk-data-atlas/atlas-runtime/loader";
 import type { AreaIdentity } from "@uk-data-atlas/atlas-runtime/loader";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "../runtime/index.ts";
 import { releaseMonth } from "@uk-data-atlas/areas";
-import { requirementDetail } from "@uk-data-atlas/atlas-runtime/api";
+import { requirementDetail } from "../runtime/index.ts";
 
 /**
  * What the API can answer for one area, as `include=capabilities` expands it:

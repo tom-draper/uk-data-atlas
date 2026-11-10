@@ -1,6 +1,9 @@
-import type { OperationTemplate } from "./operations.ts";
-export { openapiDocumentHash } from "./operations.ts";
-export type { OperationTemplate, OperationsArtifact } from "./operations.ts";
+import type { OperationTemplate } from "@uk-data-atlas/artifacts";
+export { openapiDocumentHash } from "@uk-data-atlas/artifacts";
+export type {
+	OperationTemplate,
+	OperationsArtifact,
+} from "@uk-data-atlas/artifacts";
 
 export type MatchedOperation = {
 	/** The template with its `/v1` prefix, or `unmatched`. */

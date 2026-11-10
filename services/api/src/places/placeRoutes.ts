@@ -1,18 +1,11 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { describeCandidate } from "../placeResponses";
 import { resolveAreaQuery } from "../areas/areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
-import {
-	envelope,
-	invalidQuery,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
-import { readWholeNumber } from "@uk-data-atlas/atlas-runtime/api";
+import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
+import { readWholeNumber } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const LIMIT = QUERY_RULES["GET /places"].limit;
