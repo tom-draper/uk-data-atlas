@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets/data/nhs-waiting/icbToGss";
+import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets";
 import { expect, it } from "vitest";
 
 it("maps every ICB in the compiled waiting-times dataset one to one", () => {

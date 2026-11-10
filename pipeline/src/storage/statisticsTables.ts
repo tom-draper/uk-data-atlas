@@ -8,7 +8,7 @@ import {
 	CANDIDACY_COLUMNS,
 } from "@uk-data-atlas/measures";
 import { type StatisticsInput } from "@uk-data-atlas/measures";
-import { DATASET_MODULES } from "@uk-data-atlas/datasets/declaration/modules";
+import { DATASET_MODULES } from "@uk-data-atlas/datasets";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";

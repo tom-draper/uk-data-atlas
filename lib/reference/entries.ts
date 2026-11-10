@@ -3,7 +3,7 @@ import {
 	ATLAS_MAPS,
 	atlasLocationsFor,
 } from "@/lib/atlas/pages";
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { datasetSlug } from "@/lib/datasets";
 import {
 	type Catalogue,

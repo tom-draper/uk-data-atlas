@@ -1,6 +1,6 @@
 import { join } from "path";
 import { Gazetteer } from "@uk-data-atlas/places";
-import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets";
 import { loadRoadSafety } from "./roadSafetyLoader.ts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import { fileStamp, isReleasedSource, sameFileStamp } from "./cache.mts";

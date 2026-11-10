@@ -2,8 +2,8 @@ import {
 	PARTIES,
 	PARTY_INFO,
 } from "@uk-data-atlas/datasets/data/election/parties";
-import { historicalConstituencyCode } from "@uk-data-atlas/datasets/data/historical-general-election/constituencies";
-import { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
+import { historicalConstituencyCode } from "@uk-data-atlas/datasets";
+import { calculateTurnout } from "@uk-data-atlas/datasets";
 import {
 	type DeclaredDataset,
 	type DeclaredDimension,

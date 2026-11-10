@@ -1,4 +1,4 @@
-import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
+import type { BoundaryType } from "@uk-data-atlas/datasets";
 import { parseCsv } from "@uk-data-atlas/datasets/helpers/parseCsv";
 import type { Gazetteer } from "@uk-data-atlas/places";
 

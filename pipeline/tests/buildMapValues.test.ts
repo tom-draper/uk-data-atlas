@@ -9,10 +9,7 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "vitest";
-import {
-	BOUNDARY_CATALOG,
-	propertiesAsset,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+import { BOUNDARY_CATALOG, propertiesAsset } from "@uk-data-atlas/datasets";
 import { codeListId, readMapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import { buildMapValues } from "../src/build-map-values.mts";

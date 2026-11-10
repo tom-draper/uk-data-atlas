@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { loadPlanningApplications } from "@uk-data-atlas/datasets/data/new-datasets/loader";
+import { loadPlanningApplications } from "@uk-data-atlas/datasets";
 import {
 	planningValue,
 	sumPlanningRecords,

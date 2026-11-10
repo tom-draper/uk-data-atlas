@@ -2,10 +2,10 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
-import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets";
 import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 import { parseMatchIndexLevel } from "@/lib/data/areaBank";
-import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets";
 import { readAtlasLookup } from "@/scripts/atlas-lookups";
 
 /**

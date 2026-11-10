@@ -1,25 +1,25 @@
 import type { EthnicityCategory, Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type { EthnicityDataset } from "@uk-data-atlas/datasets/types/ethnicity";
+import type { EthnicityDataset } from "@uk-data-atlas/datasets";
 import type {
 	AggregatedLifeExpectancyData,
 	LifeExpectancyDataset,
-} from "@uk-data-atlas/datasets/types/lifeExpectancy";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedQualificationData,
 	QualificationBreakdown,
 	QualificationDataset,
-} from "@uk-data-atlas/datasets/types/qualification";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedCarAvailabilityData,
 	CarAvailabilityBreakdown,
 	CarAvailabilityDataset,
-} from "@uk-data-atlas/datasets/types/carAvailability";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedTravelToWorkData,
 	TravelToWorkBreakdown,
 	TravelToWorkDataset,
-} from "@uk-data-atlas/datasets/types/travelToWork";
+} from "@uk-data-atlas/datasets";
 
 export function aggregateEthnicity(
 	features: Features,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadChildPoverty } from "@uk-data-atlas/datasets/data/child-poverty/loader";
+import { loadChildPoverty } from "@uk-data-atlas/datasets";
 
 describe("loadChildPoverty", () => {
 	it("aggregates rows as they are read from the ODS table", async () => {

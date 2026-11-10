@@ -3,7 +3,7 @@ import { crimeAggregation } from "@/lib/helpers/datasetAggregation/specification
 import type {
 	AggregatedCrimeData,
 	CrimeDataset,
-} from "@uk-data-atlas/datasets/types/crime";
+} from "@uk-data-atlas/datasets";
 import { formatCount } from "@/lib/helpers/formatCount";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";

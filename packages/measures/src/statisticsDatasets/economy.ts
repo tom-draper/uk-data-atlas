@@ -1,5 +1,5 @@
-import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
+import type { DatasetModule } from "@uk-data-atlas/datasets";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 import type { StatisticsPeriod } from "../atlasStatistics.ts";
 import {
 	type DeclaredDataset,

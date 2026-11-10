@@ -16,7 +16,7 @@ import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
 	HomelessnessLADData,
-} from "@uk-data-atlas/datasets/types/homelessness";
+} from "@uk-data-atlas/datasets";
 
 export default function HomelessnessChart({
 	activeDataset,

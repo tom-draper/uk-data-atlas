@@ -28,7 +28,7 @@ import {
 	aggregateNIMDM,
 	aggregateSIMD,
 	aggregateWIMD,
-} from "@uk-data-atlas/datasets/helpers/datasetAggregation/deprivation";
+} from "@uk-data-atlas/datasets";
 import {
 	aggregateEthnicity,
 	aggregateLifeExpectancy,

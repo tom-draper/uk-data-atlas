@@ -9,7 +9,7 @@ import type {
 	AggregatedEnergyConsumptionData,
 	ElectricityConsumptionDataset,
 	EnergyConsumptionMetrics,
-} from "@uk-data-atlas/datasets/types/energyConsumption";
+} from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";
 

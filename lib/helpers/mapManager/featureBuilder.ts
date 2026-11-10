@@ -9,12 +9,12 @@ import {
 import {
 	LocalElectionDataset,
 	GeneralElectionDataset,
-} from "@uk-data-atlas/datasets/types/elections";
-import { EthnicityDataset } from "@uk-data-atlas/datasets/types/ethnicity";
+} from "@uk-data-atlas/datasets";
+import { EthnicityDataset } from "@uk-data-atlas/datasets";
 import {
 	BrexitLADDataset,
 	BrexitConstituencyDataset,
-} from "@uk-data-atlas/datasets/types/referendum";
+} from "@uk-data-atlas/datasets";
 import { MapOptions } from "@lib/types/mapOptions";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { getColorForBrexitLeave } from "../colorScale/datasetColors";

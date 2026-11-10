@@ -1,5 +1,5 @@
 import type { ChartKey } from "@/lib/context/ChartVisibilityContext";
-import type { BoundaryType } from "@uk-data-atlas/datasets/types/boundaries";
+import type { BoundaryType } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS } from "./generated";
 import { getChartDefinitions } from "./types";
 

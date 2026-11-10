@@ -1,4 +1,4 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { AtlasDatasetInput } from "./catalog/input.ts";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

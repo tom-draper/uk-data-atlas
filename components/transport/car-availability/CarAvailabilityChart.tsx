@@ -9,7 +9,7 @@ import {
 	CAR_AVAILABILITY_COLORS,
 	CAR_AVAILABILITY_LEVELS,
 	type CarAvailabilityKey,
-} from "@uk-data-atlas/datasets/types/carAvailability";
+} from "@uk-data-atlas/datasets";
 
 const config: BreakdownChartConfig<CarAvailabilityKey> = {
 	datasetType: "carAvailability",

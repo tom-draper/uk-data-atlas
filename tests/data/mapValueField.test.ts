@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 
 const declared = CATALOGUE_DATASET_DEFINITIONS.filter(

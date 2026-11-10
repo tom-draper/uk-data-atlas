@@ -3,7 +3,7 @@ import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
 	CatalogueDatasetType,
-} from "@uk-data-atlas/datasets/data/catalog/generated";
+} from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { DECLARED_CHART_DEFINITIONS } from "./declared";
 import { adultSocialCareActivityDefinition } from "./adultSocialCareActivity";

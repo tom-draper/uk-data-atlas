@@ -19,7 +19,7 @@ import { compileLifeExpectancy } from "./lifeExpectancy.ts";
 import { compileDeprivationIndices } from "./deprivation.ts";
 import { compilePopulationDensity } from "./populationDensity.ts";
 import { mergeMeasurePartitions } from "./indicators.ts";
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import {
 	compileDeclaredIndicators,
 	compileYearlyIndicators,

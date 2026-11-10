@@ -1,9 +1,9 @@
-import { PartyVotes } from "@uk-data-atlas/datasets/types/common";
+import { PartyVotes } from "@uk-data-atlas/datasets";
 import {
 	AggregatedLocalElectionData,
 	LocalElectionDataset,
 	ProcessedPartyData,
-} from "@uk-data-atlas/datasets/types/elections";
+} from "@uk-data-atlas/datasets";
 import type { SelectedArea } from "../types/areas";
 import { calculateTurnout, processPartyVotes } from "./generalElection";
 import { cacheKey } from "./cacheKey";

@@ -7,7 +7,7 @@ import {
 	type DeclaredRecords,
 	type DeclaredRelease,
 	type Json,
-} from "@uk-data-atlas/datasets/declaration/statistics";
+} from "@uk-data-atlas/datasets";
 
 import type {
 	AreaIndex,
@@ -24,7 +24,7 @@ import type {
 	StatusSlug,
 } from "./atlasStatistics.ts";
 
-export * from "@uk-data-atlas/datasets/declaration/statistics";
+export * from "@uk-data-atlas/datasets";
 
 /**
  * A compiled dataset JSON described as configuration and read into statistics

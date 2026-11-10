@@ -12,8 +12,8 @@ import {
 } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { gzipSync } from "node:zlib";
-import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
-import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { parseDatasetMeta } from "@uk-data-atlas/datasets";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets";
 import { compilePolygonArchive } from "@uk-data-atlas/map-tiles";
 import { compileTileset, NonCoverageError } from "@uk-data-atlas/map-tiles";
 import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles";

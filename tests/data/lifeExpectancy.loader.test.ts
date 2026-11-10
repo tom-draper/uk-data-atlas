@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { loadLE } from "@uk-data-atlas/datasets/data/life-expectancy/loader";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
+import { loadLE } from "@uk-data-atlas/datasets";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 
 const PREDECESSORS = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
 	({ predecessors }) => predecessors as readonly string[],

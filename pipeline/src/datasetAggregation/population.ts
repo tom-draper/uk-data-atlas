@@ -4,7 +4,7 @@ import type {
 	AgeGroups,
 	PopulationAgeSexRecord,
 	PopulationStats,
-} from "@uk-data-atlas/datasets/types/population";
+} from "@uk-data-atlas/datasets";
 import {
 	calculateTotal,
 	polygonAreaSqKm,

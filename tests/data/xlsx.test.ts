@@ -8,7 +8,7 @@ import {
 	sheetRow,
 	selectedSheetRow,
 	sheetRows,
-} from "@uk-data-atlas/datasets/data/spreadsheet/xlsx";
+} from "@uk-data-atlas/datasets";
 
 describe("columnIndex", () => {
 	it("maps spreadsheet column letters to zero-based indexes", () => {

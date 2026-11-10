@@ -1,7 +1,7 @@
 import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
 	SERVED_WARD_CODES_UNTIL,
-} from "@uk-data-atlas/datasets/data/election/local-election/servedWardCodes";
+} from "@uk-data-atlas/datasets";
 import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	SourceGeography,

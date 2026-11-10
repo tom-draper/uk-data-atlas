@@ -2,7 +2,7 @@
  * How each kind of choropleth is coloured. Pure descriptions of a fill: no map,
  * no layers, so the colour rules can be read and tested on their own.
  */
-import { Party, PartyCode } from "@uk-data-atlas/datasets/types/common";
+import { Party, PartyCode } from "@uk-data-atlas/datasets";
 import { MapOptions } from "@lib/types/mapOptions";
 import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";

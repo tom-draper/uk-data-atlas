@@ -7,7 +7,7 @@ import {
 	type DerivedContext,
 	type Json,
 } from "./declaredStatistics.ts";
-import { yearParts } from "@uk-data-atlas/datasets/declaration/yearParts";
+import { yearParts } from "@uk-data-atlas/datasets";
 
 export { yearParts };
 

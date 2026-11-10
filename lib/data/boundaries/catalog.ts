@@ -9,11 +9,11 @@ export {
 	boundaryTypeForCodeKey,
 	nameKeyForCodeKey,
 	boundaryYearForCodeKey,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+} from "@uk-data-atlas/datasets";
 import {
 	BOUNDARY_CATALOG as catalogue,
 	BOUNDARY_TYPES,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+} from "@uk-data-atlas/datasets";
 import { withCDN } from "../../helpers/cdn.ts";
 const mapAsset = (asset: string) =>
 	withCDN(asset.replace(/\.topojson$/, ".pmtiles"));

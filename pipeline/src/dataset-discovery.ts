@@ -5,10 +5,7 @@
  */
 import { readdir, readFile } from "fs/promises";
 import { basename, join, relative, sep } from "path";
-import {
-	parseDatasetMeta,
-	type DatasetMeta,
-} from "@uk-data-atlas/datasets/data/catalog/meta";
+import { parseDatasetMeta, type DatasetMeta } from "@uk-data-atlas/datasets";
 
 export interface DiscoveredDataset {
 	/** Folder path relative to `data/`, e.g. "politics/elections/local-elections/2025". */

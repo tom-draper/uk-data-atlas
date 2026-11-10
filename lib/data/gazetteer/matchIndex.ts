@@ -18,7 +18,7 @@ import {
 	BOUNDARY_TYPES,
 	propertiesAsset,
 } from "../boundaries/catalog.ts";
-import { localDataPath } from "@uk-data-atlas/datasets/data/boundaries/dataPath";
+import { localDataPath } from "@uk-data-atlas/datasets";
 import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
 
 export type CompactMatchIndex = Record<string, CompactMatchIndexLevel>;

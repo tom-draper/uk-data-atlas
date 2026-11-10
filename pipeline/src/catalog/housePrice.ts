@@ -1,4 +1,4 @@
-import { HOUSE_PRICE_SERVED_WARD_CODES } from "@uk-data-atlas/datasets/data/house-price/wardCodes";
+import { HOUSE_PRICE_SERVED_WARD_CODES } from "@uk-data-atlas/datasets";
 import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	Measure,

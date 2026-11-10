@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
+import { decodeBoundaryData } from "@uk-data-atlas/datasets";
 import {
 	applyGridOffset,
 	substituteFeatures,
