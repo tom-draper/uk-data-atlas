@@ -6,9 +6,23 @@ import {
 	type MeasureSource,
 } from "./dataCatalog.ts";
 import { periodRecordLookup } from "./periodRecordLookup.ts";
+import { measureSeriesKeySourceKey } from "./measureDimensions.ts";
 
 export type ObservationArtifacts = {
 	measureObservations?: AnyMeasureObservationArtifact[];
+	seriesKey?: string;
+};
+
+const seriesObservations = new WeakMap<
+	AnyMeasureObservationArtifact[],
+	ReadonlyMap<string, AnyMeasureObservationArtifact>
+>();
+
+export const registerSeriesObservations = (
+	artifacts: AnyMeasureObservationArtifact[],
+	bySeriesSource: ReadonlyMap<string, AnyMeasureObservationArtifact>,
+): void => {
+	seriesObservations.set(artifacts, bySeriesSource);
 };
 
 /**
@@ -27,11 +41,14 @@ export const observationsFor = (
 			recordFor(areaCode: string): MeasureObservation | undefined;
 	  })
 	| undefined => {
-	const artifact = findMeasureObservations(
-		artifacts.measureObservations ?? [],
-		measureId,
-		source,
-	);
+	const all = artifacts.measureObservations ?? [];
+	const indexed = seriesObservations.get(all);
+	const artifact =
+		artifacts.seriesKey && indexed
+			? indexed.get(
+					measureSeriesKeySourceKey(artifacts.seriesKey, source),
+				)
+			: findMeasureObservations(all, measureId, source);
 	const held = artifact?.periods.find(
 		(candidate) => candidate.period === period,
 	);

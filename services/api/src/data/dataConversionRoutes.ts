@@ -180,6 +180,7 @@ export const handleDataConversionRoutes = ({
 	}
 	const observations = observationsFor(measureId, source, period as string, {
 		measureObservations,
+		seriesKey: selectedSeries?.id,
 	});
 	if (!observations)
 		return problem(
