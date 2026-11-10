@@ -11,4 +11,3 @@ export * from "./boundaryLoader.ts";
 export * from "./postcodeAreaReleases.ts";
 export * from "./resolver/areas.ts";
 export * from "./resolver/catalogue.ts";
-export * from "./resolver/locations.ts";

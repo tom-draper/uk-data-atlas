@@ -32,7 +32,7 @@ import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
 } from "@uk-data-atlas/relationships";
-import { LocationsResolver } from "./resolver/locations.ts";
+import { LocationsResolver } from "@uk-data-atlas/places";
 import { PostcodeResolver } from "@uk-data-atlas/postcodes";
 import {
 	SpatialResolver,
