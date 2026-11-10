@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import { createFileHashCache, hashFile } from "../src/fileHashCache";
+import { createFileHashCache, hashFile } from "../src/lib/fileHashCache";
 
 const sha = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;

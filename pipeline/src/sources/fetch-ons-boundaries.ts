@@ -13,7 +13,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { hashFile } from "../fileHashCache.ts";
+import { hashFile } from "../lib/fileHashCache.ts";
 import {
 	ONS_BOUNDARY_SOURCES,
 	type OnsBoundarySource,

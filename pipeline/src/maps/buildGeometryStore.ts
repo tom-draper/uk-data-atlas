@@ -27,7 +27,7 @@ import {
 	formatBytes,
 	formatDuration,
 } from "@uk-data-atlas/atlas-db";
-import { hashFile } from "../fileHashCache.ts";
+import { hashFile } from "../lib/fileHashCache.ts";
 import { recordOutputHash } from "../storage/outputManifest.ts";
 import { readJsonSync } from "../lib/json.ts";
 
