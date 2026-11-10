@@ -20,27 +20,32 @@ The website fetches these over HTTP and shares browser-safe code through
 
 ## Layout
 
-```
-/                       the atlas (Next.js): app/, components/, lib/
-packages/geography/     shared geography code: lineage, containment file
-                        formats, geometry substitutions, grid offsets
-packages/catalogue/     shared catalogue code: the register of corrections
-packages/datasets/      browser-safe dataset definitions and compilers
-packages/geometry/      geometry storage, loaders and spatial queries
-packages/areas/         area inventories, lookup, search and boundaries
-packages/relationships/ crosswalks and translation between areas
-packages/atlas-loader/ server-only atlas release composition
-packages/artifacts/     artifact storage, hashing and file formats
-packages/map-tiles/     the boundary tiler: shared-arc generalisation and
-                        PMTiles archives, for the API and the website data build
-services/api/           the API: src/, scripts/, config/, openapi.yaml
-services/mcp/           the MCP server: a read-only HTTP client of the public API
-scripts/                build orchestration and file readers for both products
-data/
-  source/               raw source files, restored from the data release
-  build/                shared generated datasets, atlas.sqlite and website-assets.sqlite
-public/data/            the atlas's compiled data, served by the website
-```
+The atlas (Next.js) lives in `app/`, `components/` and `lib/`. Shared packages
+export TypeScript source and are imported by their `@uk-data-atlas/` names.
+
+| Package         | Description                                                            | Entries                                                                                                                                                                                                      |
+| --------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `areas`         | Looks up, resolves, searches and loads boundaries for areas.           | `.`, `./inventory`, `./boundary-resources`                                                                                                                                                                   |
+| `artifacts`     | Content hashing and CSV, Parquet and SQLite file formats.              | `.`                                                                                                                                                                                                          |
+| `atlas-db`      | Opens atlas.sqlite and resolves data file locations.                   | `.`                                                                                                                                                                                                          |
+| `atlas-loader`  | Loads a complete atlas release by wiring the domain packages together. | `.`                                                                                                                                                                                                          |
+| `catalogue`     | The catalogue of boundaries, units, corrections and place facts.       | `.`, `./place-facts`, `./compactPayload`, `./place-profile`, `./node`                                                                                                                                        |
+| `datasets`      | Declares datasets and compiles their contents.                         | `.`, `./data/boundaries/capabilities`, `./data/boundaries/properties`, `./data/election/parties`, `./data/public-health/loader`, `./helpers/parseCsv`, `./helpers/population`, `./types`, `./types/geometry` |
+| `geography`     | Area codes, kinds, coordinates and geometry primitives.                | `.`                                                                                                                                                                                                          |
+| `geometry`      | Stores, loads and queries area geometry.                               | `.`                                                                                                                                                                                                          |
+| `map-tiles`     | Builds and reads boundary vector tiles and map value arrays.           | `.`, `./node`, `./featureIds`, `./mapValues`                                                                                                                                                                 |
+| `measures`      | Measure definitions, quality, reconciliation and unit conversion.      | `.`                                                                                                                                                                                                          |
+| `places`        | Named places, the gazetteer and place membership.                      | `.`, `./gazetteer`                                                                                                                                                                                           |
+| `postcodes`     | Postcode indexes, areas and counts.                                    | `.`                                                                                                                                                                                                          |
+| `relationships` | Crosswalks between areas and translation of values across them.        | `.`                                                                                                                                                                                                          |
+| `search-index`  | Sorted, packed indexes and the lookups that search them.               | `.`, `./node`                                                                                                                                                                                                |
+| `shapefile`     | Reads shapefile geometry and DBF records.                              | `.`                                                                                                                                                                                                          |
+| `terrain`       | Terrain height sources and providers.                                  | `.`                                                                                                                                                                                                          |
+
+`services/api/` contains the API, `services/mcp/` its HTTP client,
+`pipeline/` the data build, and `scripts/` shared orchestration and readers.
+Raw data lives in `data/source/`, generated data in `data/build/`, and
+website data in `public/data/`.
 
 ## Where the data lives
 
@@ -139,31 +144,27 @@ parameters and what they return.
 
 ## Which way code may depend
 
-```text
-pipeline/ ──────────┐
-website ────────────┼──► packages/*
-services/api ───────┘
-```
+The package manifests define this dependency order, from lower layers upwards:
 
-- The pipeline imports shared code and declared dependencies. It cannot import
-  API project code, root scripts or the website's `lib/`. Neither product's
-  runtime imports the pipeline. `tests/packages/packageImports.test.ts` checks
-  these boundaries. Existing root and API data builders will move in later PRs;
-  see [the inventory and move order](docs/data-pipeline-move.md).
-- `services/mcp` is a client of the public API. It reaches the API over HTTP
-  only and imports no repository code, so it never joins the diagram above.
-  `tests/packages/packageImports.test.ts` checks this.
-- The website reads `services/api/openapi.yaml` for its API reference. Pages
-  and lookups come from the shared release, without reading API build output.
-- Other generated API files remain under `data/build/artifacts/` for now. They
-  sit beside `atlas.sqlite` so the pipeline writes only under `data/build/`, and
-  `packages/atlas-db/src/dataLayout.ts` resolves their locations
-  from the repository root. The API directory remains the home of its config
-  and `openapi.yaml`.
-- Browser-safe packages keep Node imports out of their browser entry points.
-  `packages/atlas-loader`, `packages/geometry`, `packages/relationships`, `packages/artifacts` and `packages/shapefile` are
-  Node packages and may read files. Package boundary tests check that imports
-  stay within each package or its declared dependencies.
+- `artifacts`, `geography`, `datasets` and `shapefile` have no workspace dependencies. `search-index` uses `geography`, and `terrain` uses `artifacts`.
+- `atlas-db` uses `artifacts`, `geography` and `search-index`. `map-tiles` uses `atlas-db`, `artifacts` and `geography`.
+- `geometry` builds on `map-tiles`, `atlas-db`, `artifacts`, `geography` and `shapefile`. `areas` also uses `datasets` and `search-index`.
+- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets`, and `catalogue` builds on `measures` and `relationships`.
+- `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers. `postcodes` depends on `atlas-db`, `artifacts`, `geography` and `search-index`.
+- `atlas-loader` composes the domains, including `places`, `postcodes` and `terrain`. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
+
+`tests/packages/packageImports.test.ts` enforces acyclic package dependencies,
+one-line manifest descriptions, explicit exports without `./*`, and the
+composition boundary: only `atlas-loader` depends on every atlas domain. Domain
+packages may use `atlas-db` but cannot import `node:sqlite` directly. The same
+test checks browser-safe main entries and Node-only code behind `./node` where
+needed, as well as pipeline, API and MCP boundaries. The browser contract is
+also checked by `tests/packages/surfaceFingerprint.test.ts`.
+
+The website reads `services/api/openapi.yaml` for its API reference. Generated
+API files live under `data/build/artifacts/`, with locations resolved by
+`packages/atlas-db/src/dataLayout.ts`. API configuration and `openapi.yaml`
+remain in the API directory.
 
 Import a package by name (`@uk-data-atlas/geography`), never by a relative
 path. Packages ship TypeScript source: Turbopack and `tsx` both compile it, so
