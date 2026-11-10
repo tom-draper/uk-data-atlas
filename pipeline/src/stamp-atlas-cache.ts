@@ -6,7 +6,7 @@ import {
 	cacheGeneration,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-db";
-import { hashFile } from "./fileHashCache.ts";
+import { hashFile } from "./lib/fileHashCache.ts";
 import {
 	latestAtlasCachePath,
 	publishAtlasCacheWork,

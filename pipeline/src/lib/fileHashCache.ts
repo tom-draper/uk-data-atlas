@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import { sha256FileHexSync } from "./lib/hash.ts";
-import { readJsonSync } from "./lib/json.ts";
+import { sha256FileHexSync } from "./hash.ts";
+import { readJsonSync } from "./json.ts";
 
 type Entry = { size: number; mtimeNs: string; ino: number; hash: string };
 
