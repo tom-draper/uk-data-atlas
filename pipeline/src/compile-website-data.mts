@@ -1,7 +1,7 @@
 import { assembleAtlas } from "./atlas/assembleAtlas.ts";
 import { buildAtlasAssets } from "./atlas/buildAtlasAssets.ts";
 import { buildAtlasSqlite } from "./atlas/buildAtlasSqlite.ts";
-import { buildDataCatalog } from "./build-data-catalog.ts";
+import { buildDataCatalog } from "./catalog/buildDataCatalog.ts";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
  * chunks, using the catalogue intermediates in data/build/datasets.

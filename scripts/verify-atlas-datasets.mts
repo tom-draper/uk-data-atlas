@@ -8,7 +8,7 @@ import {
 	generatedFromRows,
 	readAtlasPayload,
 } from "@uk-data-atlas/catalogue/node";
-import { datasetCatalogInputs } from "../pipeline/src/build-data-catalog";
+import { datasetCatalogInputs } from "../pipeline/src/catalog/buildDataCatalog";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
