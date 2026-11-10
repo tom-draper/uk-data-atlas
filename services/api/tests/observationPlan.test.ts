@@ -9,7 +9,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { resolveObservations } from "../src/observationResolution/observationPlan";
 import { seriesCompatibility } from "../src/seriesCompatibility";
-import { identityDimensions } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { identityDimensions } from "@uk-data-atlas/measures";
 import { readWeightedSource } from "../src/weightedSource";
 
 test("plans the selected series without looking it up by catalogue id", () => {

@@ -13,7 +13,7 @@ import { route } from "../src/routes";
 import { handleMeasureExport } from "../src/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
-import { dimensionCatalogue } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { dimensionCatalogue } from "@uk-data-atlas/measures";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import {
 	areaLookup,

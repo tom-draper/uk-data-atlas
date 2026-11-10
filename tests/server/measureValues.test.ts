@@ -17,7 +17,7 @@ import {
 	identityDimensions,
 	measureSeriesSourceKey,
 	registerSeriesObservations,
-} from "@uk-data-atlas/atlas-runtime/catalogue";
+} from "@uk-data-atlas/measures";
 
 let fixture: ReturnType<typeof createMeasureFixture>;
 
