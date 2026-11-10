@@ -611,7 +611,7 @@ export async function runBuild({
 		}
 		if (undeclaredStages.length)
 			log(
-				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Add their paths to stageWrites in pipeline/build-data-graph.mjs.`,
+				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Declare their writes in the stage definition.`,
 			);
 		if (mismatchedStages.length)
 			log(

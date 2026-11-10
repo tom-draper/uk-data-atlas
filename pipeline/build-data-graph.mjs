@@ -455,57 +455,6 @@ const websiteDatasetInputs = (root) => {
 	}
 };
 
-const defaultRawInputs = {
-	operations: [],
-	datasets: datasetInputs,
-	"terrain-catalogue": [],
-	"atlas-sqlite": censusSmallAreaInputs,
-	"api-datasets": apiDatasetInputs,
-	"boundary-registry": boundaryRegistryInputs,
-	"derived-boundaries": derivedBoundaryInputs,
-	"area-inventory": areaInventoryInputs,
-	"geometry-source-registry": geometrySourceRegistryInputs,
-	"geometry-store": geometryStoreInputs,
-	"named-locations": [
-		"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.shp",
-		"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.dbf",
-		"geography/historic-counties/source/Boundary-line-historic-counties_region.shp",
-		"geography/historic-counties/source/Boundary-line-historic-counties_region.dbf",
-	],
-	"postcode-index": postcodeInputs,
-	"statistics-vocabulary": [],
-	"data-catalog": censusSmallAreaInputs,
-	"assemble-atlas": [],
-	"weight-atoms": crosswalkWeightInputs,
-	"crosswalk-weights": crosswalkWeightInputs,
-	"measure-compatibility": [],
-	"statistics-read-path": [],
-	"export-manifest": [],
-	"postcode-areas": [],
-	"crosswalk-inventory": crosswalkInputs,
-	"relationship-paths": [],
-	"analysis-geographies": [],
-	"analysis-geography-validation": [],
-	"geography-catalogues": [],
-	"location-projections": [],
-	"relationship-candidates": areaInventoryInputs,
-	"geography-inventory": sourceMetadataInputs,
-	"lookup-manifest": [],
-	"map-resource": geometryStoreInputs,
-	"validation-report": [],
-	"atlas-release-initial": [],
-	documents: boundaryOffsetInputs,
-	"atlas-lookups": [],
-	"atlas-release": [],
-	"atlas-pages": boundaryOffsetInputs,
-	boundaries: websiteBoundaryInputs,
-	"boundary-tiles": websiteBoundaryInputs,
-	"website-tiles": [],
-	"website-lookups": [],
-	"website-datasets": websiteDatasetInputs,
-	"website-map-values": [],
-};
-
 const stage = (
 	name,
 	dependencies = [],
@@ -535,7 +484,7 @@ const stage = (
 	outputs,
 	requiredOutputs,
 	codeInputs,
-	rawInputs: rawInputs ?? defaultRawInputs[name],
+	rawInputs,
 	shared,
 	scratch,
 	finishedBy,
@@ -583,6 +532,12 @@ const checkStage = (name, dependencies, options = {}) =>
 		check: true,
 	});
 
+const artifacts = "data/build/artifacts";
+const atlasAssets = "data/build/atlas-assets";
+const geography = "data/build/geography";
+
+// Declare paths changed beyond outputs and requiredOutputs. Stages sharing a
+// path do not run together; stages without declared paths run alone.
 const apiStages = [
 	// Always runs, as a download can change any raw file and needs the network.
 	// It is skipped when data/source already matches the pinned release.
@@ -591,6 +546,8 @@ const apiStages = [
 		isCurrent: () => sourcesMatchRelease(),
 	}),
 	stage("operations", [], ["pipeline/src/stages/build-operations.ts"], {
+		rawInputs: [],
+		writes: [`${artifacts}/operations.json`],
 		codeInputs: [
 			"services/api/openapi.yaml",
 			"pipeline/package.json",
@@ -625,6 +582,7 @@ const apiStages = [
 			"pipeline/src/stages/compile-datasets.mts",
 		],
 		{
+			writes: ["data/build/datasets"],
 			outputs: ["data/build/datasets"],
 			rawInputs: datasetInputs,
 			codeInputs: [
@@ -638,7 +596,11 @@ const apiStages = [
 		"terrain-catalogue",
 		[],
 		["pipeline/src/stages/build-terrain-catalogue.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/terrain-catalogue.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"atlas-sqlite",
@@ -652,6 +614,12 @@ const apiStages = [
 		],
 		["pipeline/src/stages/build-atlas-sqlite.ts"],
 		{
+			writes: [
+				"data/build/atlas-base.sqlite",
+				atlasCache,
+				ATLAS_CACHE_WORK,
+				...CACHE_STAGES.map(stampOf),
+			],
 			rawInputs: censusSmallAreaInputs,
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
@@ -672,31 +640,51 @@ const apiStages = [
 			"--max-old-space-size=3072",
 			"pipeline/src/stages/build-api-datasets.mts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: apiDatasetInputs,
+			writes: [`${artifacts}/source-data`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"boundary-registry",
 		["sources"],
 		["pipeline/src/stages/build-boundary-registry.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: boundaryRegistryInputs,
+			writes: [`${geography}/boundary-releases.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"derived-boundaries",
 		["sources"],
 		["pipeline/src/stages/build-derived-boundaries.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: derivedBoundaryInputs,
+			writes: [`${artifacts}/boundaries`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"area-inventory",
 		["boundary-registry", "derived-boundaries"],
 		["pipeline/src/stages/build-area-inventory.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: areaInventoryInputs,
+			writes: [`${artifacts}/areas`, `${artifacts}/area-inventory.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"geometry-source-registry",
 		["area-inventory"],
 		["pipeline/src/stages/build-geometry-source-registry.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: geometrySourceRegistryInputs,
+			writes: [`${artifacts}/geometry-sources.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"geometry-store",
@@ -705,13 +693,30 @@ const apiStages = [
 			"--max-old-space-size=3072",
 			"pipeline/src/stages/build-geometry-store.ts",
 		],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: geometryStoreInputs,
+			writes: [`${artifacts}/geometry-store`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"named-locations",
 		["area-inventory", "geometry-store", "api-datasets"],
 		["pipeline/src/stages/build-named-locations.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [
+				"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.shp",
+				"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.dbf",
+				"geography/historic-counties/source/Boundary-line-historic-counties_region.shp",
+				"geography/historic-counties/source/Boundary-line-historic-counties_region.dbf",
+			],
+			writes: [
+				`${artifacts}/location-geometries`,
+				`${artifacts}/named-locations.json`,
+				`${artifacts}/named-locations-metadata.json`,
+			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"place-index",
@@ -747,6 +752,7 @@ const apiStages = [
 		["sources"],
 		["pipeline/src/stages/build-postcode-index.ts"],
 		{
+			writes: ["data/build/postcode-index.sqlite"],
 			requiredOutputs: ["data/build/postcode-index.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			rawInputs: postcodeInputs,
@@ -757,6 +763,7 @@ const apiStages = [
 		["atlas-sqlite"],
 		["pipeline/src/stages/build-statistics-vocabulary.ts"],
 		{
+			writes: ["data/build/statistics-vocabulary.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-vocabulary.json"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -767,6 +774,11 @@ const apiStages = [
 		["datasets", "statistics-vocabulary"],
 		["pipeline/src/stages/build-data-catalog.ts"],
 		{
+			writes: [
+				`${artifacts}/data-catalog.json`,
+				"data/build/compiled-observations",
+				"data/build/measure-statistics-fields.json",
+			],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
 				"data/build/compiled-observations",
@@ -786,6 +798,8 @@ const apiStages = [
 			"pipeline/src/stages/build-crosswalk-weights.ts",
 		],
 		{
+			rawInputs: crosswalkWeightInputs,
+			writes: ["data/build/crosswalk-weights"],
 			outputs: ["data/build/crosswalk-weights"],
 			requiredOutputs: [
 				"data/build/crosswalk-weights/crosswalk-weights.sqlite",
@@ -805,6 +819,7 @@ const apiStages = [
 		],
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{
+			writes: ["data/build/atlas.sqlite"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/atlas.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -819,13 +834,18 @@ const apiStages = [
 			"statistics-read-path",
 		],
 		["pipeline/src/stages/build-measure-compatibility.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/measure-compatibility.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"statistics-read-path",
 		["atlas-sqlite", "data-catalog", "statistics-vocabulary"],
 		["pipeline/src/stages/build-statistics-read-path.ts"],
 		{
+			writes: ["data/build/statistics-read-path.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-read-path.json"],
 			codeInputs: [
@@ -840,6 +860,10 @@ const apiStages = [
 		["data-catalog", "atlas-sqlite", "statistics-read-path"],
 		["pipeline/src/stages/build-export-manifest.ts"],
 		{
+			writes: [
+				`${artifacts}/exports`,
+				`${artifacts}/export-manifest.json`,
+			],
 			rawInputs: [],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -859,6 +883,7 @@ const apiStages = [
 			"pipeline/src/stages/build-postcode-areas.ts",
 		],
 		{
+			writes: ["data/build/postcode-areas-component"],
 			rawInputs: [],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/postcode-areas-component"],
@@ -901,6 +926,8 @@ const apiStages = [
 			"pipeline/src/stages/build-weight-atoms.ts",
 		],
 		{
+			rawInputs: crosswalkWeightInputs,
+			writes: ["data/build/weight-atoms"],
 			outputs: ["data/build/weight-atoms"],
 			requiredOutputs: ["data/build/weight-atoms/atoms.json"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -914,6 +941,10 @@ const apiStages = [
 			"pipeline/src/stages/build-crosswalk-inventory.ts",
 		],
 		{
+			writes: [
+				`${artifacts}/crosswalks`,
+				`${artifacts}/crosswalk-inventory.json`,
+			],
 			rawInputs: crosswalkInputs,
 			codeInputs: [
 				"pipeline/src/relationships/crosswalk-worker.ts",
@@ -927,13 +958,21 @@ const apiStages = [
 		// Reads each crosswalk's shape from the edges in atlas-base.sqlite.
 		["crosswalk-inventory", "atlas-sqlite"],
 		["pipeline/src/stages/build-relationship-paths.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${geography}/relationship-paths.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"analysis-geographies",
 		["data-catalog", "crosswalk-inventory", "relationship-paths"],
 		["pipeline/src/stages/build-analysis-geographies.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${geography}/analysis-geographies.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"analysis-geography-validation",
@@ -944,7 +983,11 @@ const apiStages = [
 			"statistics-read-path",
 		],
 		["pipeline/src/stages/build-analysis-geography-validation.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${geography}/analysis-geography-validation.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"geography-catalogues",
@@ -957,6 +1000,7 @@ const apiStages = [
 		],
 		["pipeline/src/stages/build-geography-catalogues.ts"],
 		{
+			writes: ["data/build/geography-payloads.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/geography-payloads.json"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -966,13 +1010,21 @@ const apiStages = [
 		"location-projections",
 		["named-locations", "crosswalk-inventory", "area-inventory"],
 		["pipeline/src/stages/build-location-projections.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: ["data/build/location-projections"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"relationship-candidates",
 		["area-inventory", "crosswalk-inventory"],
 		["pipeline/src/stages/build-relationship-candidates.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: areaInventoryInputs,
+			writes: [`${artifacts}/relationship-candidates.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"geography-inventory",
@@ -983,13 +1035,21 @@ const apiStages = [
 			"crosswalk-inventory",
 		],
 		["pipeline/src/stages/build-geography-inventory.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: sourceMetadataInputs,
+			writes: [`${geography}/geography-inventory.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"lookup-manifest",
 		["area-inventory", "crosswalk-inventory", "named-locations"],
 		["pipeline/src/stages/build-lookup-manifest.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/lookup-manifest.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"map-resource",
@@ -999,6 +1059,10 @@ const apiStages = [
 			"pipeline/src/stages/build-map-resource.ts",
 		],
 		{
+			writes: [
+				"data/build/map-resources",
+				`${artifacts}/map-resources.json`,
+			],
 			outputs: ["data/build/map-resources"],
 			rawInputs: geometryStoreInputs,
 			codeInputs: [
@@ -1020,7 +1084,11 @@ const apiStages = [
 			"export-manifest",
 		],
 		["pipeline/src/stages/build-validation-report.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/validation-report.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"atlas-release-initial",
@@ -1054,7 +1122,11 @@ const apiStages = [
 			"terrain-catalogue",
 		],
 		["pipeline/src/stages/build-atlas-release.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/atlas-release.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	stage(
 		"documents",
@@ -1069,6 +1141,10 @@ const apiStages = [
 			"pipeline/src/stages/build-evidence-documents.ts",
 		],
 		{
+			writes: [
+				`${artifacts}/documents`,
+				`${artifacts}/evidence-documents.json`,
+			],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			rawInputs: boundaryOffsetInputs,
 		},
@@ -1087,6 +1163,10 @@ const apiStages = [
 			"pipeline/src/stages/build-atlas-lookups.ts",
 		],
 		{
+			writes: [
+				`${atlasAssets}/atlas-lookups`,
+				`${atlasAssets}/atlas-lookups.json`,
+			],
 			rawInputs: [],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-lookups"],
@@ -1103,6 +1183,7 @@ const apiStages = [
 		],
 		["pipeline/src/stages/stamp-atlas-cache.ts"],
 		{
+			writes: [atlasCache],
 			rawInputs: [],
 			// Publishes the working copy, so it owns the file and notices any
 			// change to it.
@@ -1121,7 +1202,11 @@ const apiStages = [
 			"atlas-cache-stamp",
 		],
 		["pipeline/src/stages/build-atlas-release.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
+		{
+			rawInputs: [],
+			writes: [`${artifacts}/atlas-release.json`],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
 	),
 	// Place pages read areas, crosswalks, geometry and named locations; the
 	// docs catalogue reads the API's catalogue and map resource manifests.
@@ -1146,6 +1231,10 @@ const apiStages = [
 			"pipeline/src/stages/build-atlas-pages.ts",
 		],
 		{
+			writes: [
+				`${atlasAssets}/atlas-pages`,
+				`${atlasAssets}/atlas-pages.json`,
+			],
 			rawInputs: boundaryOffsetInputs,
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-pages"],
@@ -1160,6 +1249,8 @@ const websiteStages = [
 		["sources"],
 		["pipeline/src/stages/compile-boundaries.mts"],
 		{
+			rawInputs: websiteBoundaryInputs,
+			writes: ["data/build/website-boundaries"],
 			outputs: ["data/build/website-boundaries"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
@@ -1172,6 +1263,7 @@ const websiteStages = [
 			"pipeline/src/stages/compile-boundary-tiles.mts",
 		],
 		{
+			writes: ["data/build/boundaries"],
 			outputs: ["data/build/boundaries"],
 			rawInputs: websiteBoundaryInputs,
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -1183,6 +1275,7 @@ const websiteStages = [
 		["boundary-tiles"],
 		["scripts/link-boundary-tiles.mts"],
 		{
+			writes: ["public/data/boundaries"],
 			outputs: ["public/data/boundaries"],
 			rawInputs: [],
 			codeInputs: ["packages/areas/src/boundaryResources.ts"],
@@ -1196,6 +1289,7 @@ const websiteStages = [
 		["atlas-lookups", "atlas-pages"],
 		["pipeline/src/stages/build-atlas-assets.ts"],
 		{
+			writes: ["data/build/website-assets.sqlite"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/website-assets.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -1211,6 +1305,7 @@ const websiteStages = [
 			"pipeline/src/stages/compile-website-data.mts",
 		],
 		{
+			writes: ["public/data/datasets"],
 			outputs: ["public/data/datasets"],
 			rawInputs: websiteDatasetInputs,
 			codeInputs: [
@@ -1236,6 +1331,7 @@ const websiteStages = [
 		["website-datasets"],
 		["--import", "tsx", "pipeline/src/stages/build-map-values.mts"],
 		{
+			writes: ["public/data/map-values"],
 			outputs: ["public/data/map-values"],
 			rawInputs: [],
 			codeInputs: [
@@ -1265,114 +1361,4 @@ const websiteStages = [
 	),
 ];
 
-const artifacts = "data/build/artifacts";
-const atlasAssets = "data/build/atlas-assets";
-const geography = "data/build/geography";
-
-/**
- * What each stage changes under data/build and public/data, beyond the
- * `outputs` and `requiredOutputs` it declares. Stages that share a path never
- * run at once, and each stage's outputs are found within its own paths. A
- * stage with no paths writes elsewhere or somewhere unknown, so it runs alone:
- * `sources` and the two registries rewrite data/source or checked-in code.
- */
-const stageWrites = {
-	operations: [`${artifacts}/operations.json`],
-	"terrain-catalogue": [`${artifacts}/terrain-catalogue.json`],
-	datasets: ["data/build/datasets"],
-	// Creates both databases, then adds the projection and dataset caches in
-	// one copy of the cache. It clears the stamps of the stages that add to the
-	// cache after it, and any working copy they started.
-	"atlas-sqlite": [
-		"data/build/atlas-base.sqlite",
-		atlasCache,
-		ATLAS_CACHE_WORK,
-		...CACHE_STAGES.map(stampOf),
-	],
-	"api-datasets": [`${artifacts}/source-data`],
-	"boundary-registry": [`${geography}/boundary-releases.json`],
-	"derived-boundaries": [`${artifacts}/boundaries`],
-	"area-inventory": [
-		`${artifacts}/areas`,
-		`${artifacts}/area-inventory.json`,
-	],
-	"geometry-source-registry": [`${artifacts}/geometry-sources.json`],
-	"geometry-store": [`${artifacts}/geometry-store`],
-	"named-locations": [
-		`${artifacts}/location-geometries`,
-		`${artifacts}/named-locations.json`,
-		`${artifacts}/named-locations-metadata.json`,
-	],
-	// The three before it add to the cache's working copy, so they declare the
-	// cache as `shared`. This one renames the copy over the cache.
-	"atlas-cache-stamp": [atlasCache],
-	"postcode-index": ["data/build/postcode-index.sqlite"],
-	"statistics-vocabulary": ["data/build/statistics-vocabulary.json"],
-	"data-catalog": [
-		`${artifacts}/data-catalog.json`,
-		"data/build/compiled-observations",
-		"data/build/measure-statistics-fields.json",
-	],
-	"assemble-atlas": ["data/build/atlas.sqlite"],
-	"weight-atoms": ["data/build/weight-atoms"],
-	"crosswalk-weights": ["data/build/crosswalk-weights"],
-	"measure-compatibility": [`${artifacts}/measure-compatibility.json`],
-	"statistics-read-path": ["data/build/statistics-read-path.json"],
-	"export-manifest": [
-		`${artifacts}/exports`,
-		`${artifacts}/export-manifest.json`,
-	],
-	"postcode-areas": ["data/build/postcode-areas-component"],
-	"crosswalk-inventory": [
-		`${artifacts}/crosswalks`,
-		`${artifacts}/crosswalk-inventory.json`,
-	],
-	"relationship-paths": [`${geography}/relationship-paths.json`],
-	"analysis-geographies": [`${geography}/analysis-geographies.json`],
-	"analysis-geography-validation": [
-		`${geography}/analysis-geography-validation.json`,
-	],
-	"geography-catalogues": ["data/build/geography-payloads.json"],
-	"location-projections": ["data/build/location-projections"],
-	"relationship-candidates": [`${artifacts}/relationship-candidates.json`],
-	"geography-inventory": [`${geography}/geography-inventory.json`],
-	"lookup-manifest": [`${artifacts}/lookup-manifest.json`],
-	"map-resource": [
-		"data/build/map-resources",
-		`${artifacts}/map-resources.json`,
-	],
-	"validation-report": [`${artifacts}/validation-report.json`],
-	// Both run the release builder and write the one release file.
-	"atlas-release-initial": [`${artifacts}/atlas-release.json`],
-	"atlas-release": [`${artifacts}/atlas-release.json`],
-	documents: [
-		`${artifacts}/documents`,
-		`${artifacts}/evidence-documents.json`,
-	],
-	"atlas-lookups": [
-		`${atlasAssets}/atlas-lookups`,
-		`${atlasAssets}/atlas-lookups.json`,
-	],
-	"atlas-pages": [
-		`${atlasAssets}/atlas-pages`,
-		`${atlasAssets}/atlas-pages.json`,
-	],
-	boundaries: ["data/build/website-boundaries"],
-	"boundary-tiles": ["data/build/boundaries"],
-	"website-tiles": ["public/data/boundaries"],
-	"website-lookups": ["data/build/website-assets.sqlite"],
-	"website-datasets": ["public/data/datasets"],
-	"website-map-values": ["public/data/map-values"],
-};
-
-const allStages = [...apiStages, ...websiteStages];
-for (const name of Object.keys(stageWrites))
-	if (!allStages.some((stage) => stage.name === name))
-		throw new Error(`Writes declared for an unknown stage: ${name}`);
-
-const withWrites = (stage) => {
-	const writes = stageWrites[stage.name];
-	return writes ? { ...stage, writes } : stage;
-};
-
-export const buildDataStages = allStages.map(withWrites);
+export const buildDataStages = [...apiStages, ...websiteStages];
