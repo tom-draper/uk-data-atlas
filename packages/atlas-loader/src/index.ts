@@ -1,4 +1,3 @@
-export * from "./fullDetailDownloads.ts";
 export * from "./geographyResolver.ts";
 export * from "./coveragePlan.ts";
 export * from "./measureCapability.ts";
