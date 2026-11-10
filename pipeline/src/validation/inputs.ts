@@ -10,7 +10,7 @@ import type {
 	PopulationObservation,
 } from "@uk-data-atlas/catalogue/node";
 
-import type { GeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {

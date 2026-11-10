@@ -12,8 +12,8 @@ import {
 	type RelationshipPrerequisite,
 	type ResolvedRelationshipCapability,
 	type ResolvedRelationshipPath,
-} from "@uk-data-atlas/atlas-runtime/loader";
-import { compareReleaseEvidence as compareBoundaryReleases } from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/relationships";
+import { compareReleaseEvidence as compareBoundaryReleases } from "@uk-data-atlas/relationships";
 
 type Candidate = Omit<ResolvedRelationshipPath, "rank">;
 type Coverage = Candidate["coverage"]["status"];
