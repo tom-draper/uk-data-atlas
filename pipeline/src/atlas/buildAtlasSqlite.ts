@@ -1,3 +1,4 @@
+import { licenceTables } from "../storage/licenceTables.ts";
 import { type StatisticsInput } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics } from "@uk-data-atlas/measures";
@@ -309,6 +310,7 @@ export const buildAtlasSqlite = (
 				],
 				ids,
 			),
+			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
 		},
 	);
 	const written = new DatabaseSync(path, { readOnly: true });
