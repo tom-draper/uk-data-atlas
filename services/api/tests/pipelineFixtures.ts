@@ -16,6 +16,6 @@ export { compileMeasureCompatibility } from "../../../pipeline/src/statistics/me
 export type { PostcodeSourceRow } from "../../../pipeline/src/postcodes/postcodeIndex";
 export { compileRelationshipPaths } from "../../../pipeline/src/relationships/relationshipPaths";
 export { storePostcodeIndex } from "../../../pipeline/src/postcodes/storePostcodeIndex";
-export { createTerrainCatalogue } from "../../../pipeline/src/terrainCatalogue";
+export { createTerrainCatalogue } from "../../../pipeline/src/catalog/terrainCatalogue";
 
 export * from "../../../pipeline/src/storage";
