@@ -14,3 +14,4 @@ export * from "./locationProjections.ts";
 export * from "./namedLocationGeometry.ts";
 export * from "./namedLocationsCompiler.ts";
 export * from "./placeIndexCompiler.ts";
+export * from "./locationsResolver.ts";
