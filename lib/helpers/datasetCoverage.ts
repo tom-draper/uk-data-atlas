@@ -1,8 +1,5 @@
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
-import {
-	getProp,
-	countryPrefixForBoundaryCode,
-} from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { getProp, countryPrefixForBoundaryCode } from "@uk-data-atlas/datasets";
 import type {
 	BoundaryGeojson,
 	BoundaryType,

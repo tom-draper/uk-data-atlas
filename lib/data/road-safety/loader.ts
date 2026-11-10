@@ -3,7 +3,7 @@ import {
 	type CustomPoint,
 	type PointSummary,
 } from "../../types/custom.ts";
-import { parseCsv } from "@uk-data-atlas/datasets/helpers/parseCsv";
+import { parseCsv } from "@uk-data-atlas/datasets";
 import type { Gazetteer } from "../gazetteer/gazetteer.ts";
 
 const YEAR = 2025;

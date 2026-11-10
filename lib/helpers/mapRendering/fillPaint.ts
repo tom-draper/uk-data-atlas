@@ -4,7 +4,7 @@
  */
 import { Party, PartyCode } from "@uk-data-atlas/datasets";
 import { MapOptions } from "@lib/types/mapOptions";
-import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets";
 import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import {

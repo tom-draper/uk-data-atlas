@@ -9,7 +9,7 @@ import {
 } from "@uk-data-atlas/geography";
 import { readAtlasLookup } from "./atlasLookups.ts";
 import { BOUNDARY_CATALOG } from "@uk-data-atlas/datasets";
-import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { getProp } from "@uk-data-atlas/datasets";
 import {
 	codeKeyedFieldsFor,
 	type DatasetPayloadLayout,

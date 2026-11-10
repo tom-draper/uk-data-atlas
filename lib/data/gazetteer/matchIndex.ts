@@ -19,7 +19,7 @@ import {
 	propertiesAsset,
 } from "../boundaries/catalog.ts";
 import { localDataPath } from "@uk-data-atlas/datasets";
-import { getProp } from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { getProp } from "@uk-data-atlas/datasets";
 
 export type CompactMatchIndex = Record<string, CompactMatchIndexLevel>;
 

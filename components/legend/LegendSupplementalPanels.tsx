@@ -7,7 +7,7 @@ import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
-import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets/data/public-health/loader";
+import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets";
 import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
 import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
 import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";

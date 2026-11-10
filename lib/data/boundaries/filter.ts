@@ -3,11 +3,8 @@ import { gazetteer } from "@lib/data/gazetteer/static";
 import type { Crosswalk } from "@uk-data-atlas/datasets";
 import { featureExtent } from "./derived";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
-import { boundaryCapabilityFor } from "@uk-data-atlas/datasets/data/boundaries/capabilities";
-import {
-	getProp,
-	countryPrefixForBoundaryCode,
-} from "@uk-data-atlas/datasets/data/boundaries/properties";
+import { boundaryCapabilityFor } from "@uk-data-atlas/datasets";
+import { getProp, countryPrefixForBoundaryCode } from "@uk-data-atlas/datasets";
 
 // ONS LAD25 → CTYUA25 lookup (April 2025, UK, v2).
 import localAuthorityCounty from "./localAuthorityCounty.json";
