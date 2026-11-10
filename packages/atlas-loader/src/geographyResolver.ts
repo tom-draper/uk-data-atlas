@@ -40,7 +40,7 @@ import { PostcodeResolver } from "./resolver/postcodes.ts";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
-} from "./resolver/spatial.ts";
+} from "@uk-data-atlas/areas";
 import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -58,17 +58,6 @@ export type GeographyRequirement =
 	| "location-projections"
 	| "crosswalks";
 
-export type {
-	ResolvedContainingArea,
-	ResolvedNearbyArea,
-	ResolvedNearbyAreas,
-	ResolvedAreaGeometry,
-	ResolvedGeometry,
-	ResolvedIntersectingArea,
-	ResolvedIntersectingAreas,
-	ResolvedAreaNeighbour,
-	ResolvedAreaNeighbours,
-} from "./resolver/spatial.ts";
 export type {
 	TraversedRelationship,
 	ResolvedAreaHistory,

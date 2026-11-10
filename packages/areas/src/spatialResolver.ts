@@ -1,4 +1,4 @@
-import type { AreaRecord } from "@uk-data-atlas/areas";
+import type { AreaRecord } from "./areaInventory.ts";
 import type {
 	AreaGeometryCache,
 	GeoJsonGeometry,
@@ -11,7 +11,7 @@ import type {
 	PointContainment,
 } from "@uk-data-atlas/geography";
 import type { GeometryProvenance } from "@uk-data-atlas/geography";
-import { areaId } from "@uk-data-atlas/areas";
+import { areaId } from "./resolvedAreas.ts";
 import { type AreaIdentity } from "@uk-data-atlas/geography";
 
 export type ResolvedContainingArea = AreaRecord & {
