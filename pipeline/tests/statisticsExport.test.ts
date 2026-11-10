@@ -29,7 +29,7 @@ test("binds a census measure only when every source partition is complete", () =
 		db.exec(`
 			CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
-			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
 			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
@@ -38,7 +38,7 @@ test("binds a census measure only when every source partition is complete", () =
 			CREATE TABLE period (id INTEGER, label TEXT);
 			INSERT INTO dataset VALUES (1, 'census-2021-ts007a');
 			INSERT INTO measure VALUES (1, 'usual-residents');
-			INSERT INTO series VALUES (1, 1, 1, 1), (2, 1, 1, 2), (3, 1, 1, 1);
+			INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 1), (2, 1, 1, 2), (3, 1, 1, 1);
 			INSERT INTO area_releases VALUES (1, 'lsoa', 'lsoa-2021'), (2, 'msoa', 'msoa-2021');
 			INSERT INTO dimension VALUES (1, 'age-band');
 			INSERT INTO dimension_member VALUES (1, '0-to-4');
@@ -101,7 +101,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 	try {
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
-			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
 			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
@@ -110,7 +110,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 			CREATE TABLE period (id INTEGER, label TEXT);
 			INSERT INTO dataset VALUES (1, 'population');
 			INSERT INTO measure VALUES (1, 'population');
-			INSERT INTO series VALUES (1, 1, 1, 1);
+			INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 1);
 			INSERT INTO area_releases VALUES (1, 'ward', 'ward-2021');
 			INSERT INTO dimension VALUES (1, 'sex'), (2, 'age');
 			INSERT INTO dimension_member VALUES (1, 'all'), (2, '0');
@@ -165,7 +165,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 	try {
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT, unit TEXT);
-			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT, method TEXT NOT NULL DEFAULT 'published');
 			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE area (id INTEGER, code TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER);
@@ -181,7 +181,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 			INSERT INTO area_releases VALUES (1, 'ward', '2021-12-uk-bgc'), (2, 'ward', '2020-12-uk-bgc');
 			INSERT INTO area VALUES (1, 'E-new'), (2, 'E-old');
 			INSERT INTO area_version VALUES (1, 1, 1), (2, 2, 2);
-			INSERT INTO series VALUES (1, 1, 1, 1, 'prices');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (1, 1, 1, 1, 'prices');
 			INSERT INTO period VALUES (1, '2022');
 			INSERT INTO status VALUES (1, 'observed');
 			INSERT INTO observation VALUES (1, 1, 1, 150000, NULL, NULL, NULL, 1);
@@ -223,7 +223,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		db.exec(`
 			CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT, unit TEXT);
-			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT);
+			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT, method TEXT NOT NULL DEFAULT 'published');
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
@@ -237,7 +237,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO measure VALUES (1, 'households', 'households');
 			INSERT INTO dimension VALUES (1, 'tenure');
 			INSERT INTO dimension_member VALUES (1, 'rented'), (2, 'owned'), (100, 'LAB');
-			INSERT INTO series VALUES (1, 1, 1, 1, 'rented'), (2, 1, 1, 1, 'owned');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (1, 1, 1, 1, 'rented'), (2, 1, 1, 1, 'owned');
 			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 2);
 			INSERT INTO area_releases VALUES (1, 'ward', '2021');
 			INSERT INTO area VALUES (1, 'E01'), (2, 'E02');
@@ -279,7 +279,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		db.exec(`
 			INSERT INTO dataset VALUES (2, 'unemployment');
 			INSERT INTO measure VALUES (2, 'unemployment-rate', 'percent'), (3, 'unemployment-rate-interval', 'percentage points');
-			INSERT INTO series VALUES (3, 2, 2, 1, 'rate'), (4, 2, 3, 1, 'interval');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (3, 2, 2, 1, 'rate'), (4, 2, 3, 1, 'interval');
 			INSERT INTO observation VALUES (3, 1, 1, 10.2, NULL, NULL, NULL, 1), (4, 1, 1, 1.1, NULL, NULL, NULL, 1), (3, 2, 1, 4.3, NULL, NULL, NULL, 1);
 		`);
 		assert.equal(
@@ -313,7 +313,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			DELETE FROM dataset WHERE id = 2;`);
 		db.exec(`INSERT INTO dataset VALUES (2, 'population-uk');
 			INSERT INTO measure VALUES (2, 'population', 'people');
-			INSERT INTO series VALUES (3, 2, 2, 1, 'age-0'), (4, 2, 2, 1, 'age-1');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (3, 2, 2, 1, 'age-0'), (4, 2, 2, 1, 'age-1');
 			INSERT INTO observation VALUES (3, 1, 1, 10, NULL, NULL, NULL, 1), (4, 1, 1, 12, NULL, NULL, NULL, 1), (3, 2, 1, 3, NULL, NULL, NULL, 1), (4, 2, 1, 4, NULL, NULL, NULL, 1);`);
 		assert.equal(exportStatisticsMeasure(db, "population", paths), 2);
 		const population = Papa.parse<Record<string, unknown>>(
@@ -336,7 +336,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		);
 		db.exec(`INSERT INTO dataset VALUES (3, 'land-area');
 			INSERT INTO measure VALUES (3, 'area', 'hectares');
-			INSERT INTO series VALUES (5, 3, 3, 1, 'land');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (5, 3, 3, 1, 'land');
 			INSERT INTO dimension VALUES (2, 'surface');
 			INSERT INTO dimension_member VALUES (3, 'land');
 			INSERT INTO series_member VALUES (5, 2, 3);
@@ -392,7 +392,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO measure VALUES (2, 'valid-votes', 'votes'), (3, 'party-votes', 'votes'), (4, 'electorate', 'electors'), (5, 'rejected-ballots', 'ballots');
 			INSERT INTO dimension VALUES (2, 'party');
 			INSERT INTO dimension_member VALUES (3, 'con'), (4, 'lab');
-			INSERT INTO series VALUES (3, 2, 2, 1, 'valid'), (4, 2, 3, 1, 'con'), (5, 2, 4, 1, 'electorate'), (6, 2, 5, 1, 'rejected'), (7, 3, 3, 1, 'local-con'), (8, 3, 3, 1, 'local-lab');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (3, 2, 2, 1, 'valid'), (4, 2, 3, 1, 'con'), (5, 2, 4, 1, 'electorate'), (6, 2, 5, 1, 'rejected'), (7, 3, 3, 1, 'local-con'), (8, 3, 3, 1, 'local-lab');
 			INSERT INTO series_member VALUES (4, 2, 3), (7, 2, 3), (8, 2, 4);
 			INSERT INTO observation VALUES (3, 1, 1, 100, NULL, NULL, NULL, 1), (3, 2, 1, 200, NULL, NULL, NULL, 1), (4, 1, 1, 10, NULL, NULL, NULL, 1), (5, 1, 1, 125, NULL, NULL, NULL, 1), (5, 2, 1, 250, NULL, NULL, NULL, 1), (6, 1, 1, 5, NULL, NULL, NULL, 1), (6, 2, 1, 10, NULL, NULL, NULL, 1), (7, 1, 1, 10, NULL, NULL, NULL, 1), (8, 1, 1, 20, NULL, NULL, NULL, 1), (8, 2, 1, 30, NULL, NULL, NULL, 1);`);
 		for (const [id, values] of [
@@ -792,7 +792,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 		db.exec(`
 			INSERT INTO area_releases VALUES (2, 'ward', '2022');
 			INSERT INTO period VALUES (2, '2022');
-			INSERT INTO series VALUES (3, 1, 1, 2, 'rented-2022');
+			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (3, 1, 1, 2, 'rented-2022');
 			INSERT INTO series_member VALUES (3, 1, 1), (3, 2, 3);
 			INSERT INTO observation VALUES (3, 1, 2, 11, NULL, NULL, NULL, 1);
 		`);

@@ -128,14 +128,14 @@ test("refuses winning party rows that differ from the contests' winners", () => 
 		const database = (winner: number | null) => {
 			const db = new DatabaseSync(":memory:");
 			db.exec(`
-				CREATE TABLE series (id INTEGER, key TEXT, dataset_id INTEGER);
+				CREATE TABLE series (id INTEGER, key TEXT, dataset_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
 				CREATE TABLE dimension_member (id INTEGER, code TEXT);
 				CREATE TABLE period (id INTEGER, label TEXT);
 				CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, category_id INTEGER);
 				CREATE TABLE election (id INTEGER, dataset_id INTEGER, date TEXT);
 				CREATE TABLE contest (id INTEGER, election_id INTEGER, area_version_id INTEGER, winner_party_id INTEGER);
 				CREATE TABLE party (id INTEGER, key TEXT);
-				INSERT INTO series VALUES (1, '${key}', 1);
+				INSERT INTO series (id, key, dataset_id) VALUES (1, '${key}', 1);
 				INSERT INTO dimension_member VALUES (1, 'LAB');
 				INSERT INTO period VALUES (1, '2024-07-04');
 				INSERT INTO observation VALUES (1, 1, 1, 1);
