@@ -3,7 +3,7 @@ import {
 	parseNumInt,
 	parsePct,
 	parseNullableInt,
-} from "@uk-data-atlas/datasets/helpers/parseNumber";
+} from "@uk-data-atlas/datasets";
 
 describe("parseNum", () => {
 	it("parses integers", () => {

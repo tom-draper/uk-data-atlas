@@ -1,15 +1,12 @@
 import { existsSync, readFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
-import {
-	BOUNDARY_CATALOG,
-	BOUNDARY_TYPES,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "@uk-data-atlas/datasets";
 import {
 	parseGridOffset,
 	reversedOffsetsFor,
 	substitutionsFor,
 } from "@uk-data-atlas/geography";
-import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
+import { parseDatasetMeta } from "@uk-data-atlas/datasets";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 export const PROPERTIES_FILENAME = "properties.json";

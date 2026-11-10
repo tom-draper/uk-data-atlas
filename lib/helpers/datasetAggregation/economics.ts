@@ -11,11 +11,11 @@ import type {
 	PropertyKeys,
 } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type { IncomeDataset } from "@uk-data-atlas/datasets/types/income";
+import type { IncomeDataset } from "@uk-data-atlas/datasets";
 import type {
 	AggregatedUnemploymentData,
 	UnemploymentDataset,
-} from "@uk-data-atlas/datasets/types/unemployment";
+} from "@uk-data-atlas/datasets";
 
 /**
  * Each year's rate over the selected authorities, weighted by their

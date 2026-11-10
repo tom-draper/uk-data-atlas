@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { loadCarAvailability } from "@uk-data-atlas/datasets/data/car-availability/loader";
+import { loadCarAvailability } from "@uk-data-atlas/datasets";
 import { aggregateCarAvailability } from "@/lib/helpers/datasetAggregation/demographics";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets/data/localAuthority/reorganisations";
+import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 
 const HEADER =
 	"Lower tier local authorities Code,Lower tier local authorities,Car or van availability (5 categories) Code,Car or van availability (5 categories),Observation";

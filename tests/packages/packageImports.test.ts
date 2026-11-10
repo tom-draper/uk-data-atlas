@@ -113,6 +113,21 @@ describe("shared packages", () => {
 
 	it.each([
 		["geography", ["."]],
+		["map-tiles", [".", "./node", "./featureIds", "./mapValues"]],
+		[
+			"datasets",
+			[
+				".",
+				"./data/boundaries/capabilities",
+				"./data/boundaries/properties",
+				"./data/election/parties",
+				"./data/public-health/loader",
+				"./helpers/parseCsv",
+				"./helpers/population",
+				"./types",
+				"./types/geometry",
+			],
+		],
 		[
 			"catalogue",
 			[
@@ -137,6 +152,17 @@ describe("shared packages", () => {
 		},
 	);
 
+	it.each(packages)("%s has no wildcard export", (name) => {
+		const manifest = JSON.parse(
+			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+		);
+		expect(
+			Object.keys(manifest.exports ?? {}).filter((key) =>
+				key.includes("*"),
+			),
+		).toEqual([]);
+	});
+
 	it.each(packages)("%s has a one-line description", (name) => {
 		const { description } = JSON.parse(
 			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
@@ -146,7 +172,7 @@ describe("shared packages", () => {
 		expect(description).not.toContain("\n");
 	});
 
-	it.each(["geography", "catalogue", "map-tiles"])(
+	it.each(["geography", "catalogue", "datasets", "map-tiles"])(
 		"keeps the %s main entry browser safe",
 		(name) => {
 			const pending = [join(PACKAGES, name, "src/index.ts")];
@@ -175,6 +201,9 @@ describe("shared packages", () => {
 							"@uk-data-atlas/geography",
 							"@noble/hashes",
 							"polygon-clipping",
+							"papaparse",
+							"topojson-client",
+							"topojson-specification",
 							"proj4",
 							"geojson",
 						].includes(packageName(specifier))

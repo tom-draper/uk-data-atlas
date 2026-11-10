@@ -1,7 +1,7 @@
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { BOUNDARY_CATALOG } from "../boundaries/catalog";
 import { GEOGRAPHIES } from "../../docs/content/geographies";
-import type { DatasetSource } from "@uk-data-atlas/datasets/data/catalog/types";
+import type { DatasetSource } from "@uk-data-atlas/datasets";
 
 /** The shared source list for the app’s Sources page and the GitHub README. */
 export const DATASET_SOURCES: readonly DatasetSource[] = [

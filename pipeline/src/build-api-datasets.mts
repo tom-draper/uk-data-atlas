@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
+import { loadGazetteerCore } from "@uk-data-atlas/datasets";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { artifactDirectory, buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 

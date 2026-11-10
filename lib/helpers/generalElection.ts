@@ -1,14 +1,10 @@
-import {
-	PartyVotes,
-	PartyCode,
-	Party,
-} from "@uk-data-atlas/datasets/types/common";
+import { PartyVotes, PartyCode, Party } from "@uk-data-atlas/datasets";
 import {
 	AggregatedGeneralElectionData,
 	GeneralElectionConstituencyData,
 	GeneralElectionDataset,
 	ProcessedPartyData,
-} from "@uk-data-atlas/datasets/types/elections";
+} from "@uk-data-atlas/datasets";
 import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
 import type { SelectedArea } from "../types/areas";
 import {
@@ -32,8 +28,8 @@ export const getWinningParty = (
 	return winningParty;
 };
 
-export { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
-import { calculateTurnout } from "@uk-data-atlas/datasets/helpers/turnout";
+export { calculateTurnout } from "@uk-data-atlas/datasets";
+import { calculateTurnout } from "@uk-data-atlas/datasets";
 
 export const processPartyVotes = (
 	rawPartyVotes: PartyVotes,

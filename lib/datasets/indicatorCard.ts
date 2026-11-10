@@ -1,4 +1,4 @@
-import type { IndicatorDataset } from "@uk-data-atlas/datasets/types/indicator";
+import type { IndicatorDataset } from "@uk-data-atlas/datasets";
 import { defineValueCard, type ValueCardConfig } from "./valueCard";
 
 type IndicatorCardDisplay = Omit<

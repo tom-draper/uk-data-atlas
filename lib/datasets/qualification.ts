@@ -1,6 +1,6 @@
 import { qualificationDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { qualificationAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import type { QualificationDataset } from "@uk-data-atlas/datasets/types/qualification";
+import type { QualificationDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 
 export const qualificationDefinition: ChartDatasetDefinition<QualificationDataset> =

@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { loadHousingTenure } from "@uk-data-atlas/datasets/data/housing-tenure/loader";
+import { loadHousingTenure } from "@uk-data-atlas/datasets";
 import { sumHousingTenure } from "@/lib/datasets/housingTenure";
 it("loads census counts and recomputes regional percentages", async () => {
 	const values = {

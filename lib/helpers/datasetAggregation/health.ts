@@ -3,7 +3,7 @@ import { getFeatureProp } from "@/lib/types";
 import type {
 	AggregatedNHSWaitingData,
 	NHSWaitingDataset,
-} from "@uk-data-atlas/datasets/types/nhsWaiting";
+} from "@uk-data-atlas/datasets";
 
 /** Aggregates distinct ICB waiting-list records reached by the selected LADs. */
 export function aggregateNHSWaiting(

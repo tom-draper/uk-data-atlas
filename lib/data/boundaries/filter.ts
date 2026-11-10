@@ -1,6 +1,6 @@
 import type { BoundaryGeojson } from "@lib/types";
 import { gazetteer } from "@lib/data/gazetteer/static";
-import type { Crosswalk } from "@uk-data-atlas/datasets/data/gazetteer/types";
+import type { Crosswalk } from "@uk-data-atlas/datasets";
 import { featureExtent } from "./derived";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 import { boundaryCapabilityFor } from "@uk-data-atlas/datasets/data/boundaries/capabilities";

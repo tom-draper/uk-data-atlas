@@ -4,7 +4,7 @@ import { aggregateFuelPovertyByLad } from "@/lib/helpers/fuelPoverty";
 import type {
 	AggregatedFuelPovertyData,
 	FuelPovertyDataset,
-} from "@uk-data-atlas/datasets/types/fuelPoverty";
+} from "@uk-data-atlas/datasets";
 
 const dataset: FuelPovertyDataset = {
 	id: "fuel-poverty-2024",

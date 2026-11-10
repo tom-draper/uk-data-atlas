@@ -1,7 +1,7 @@
 import {
 	codeKeyedFieldsFor,
 	type DatasetPayloadLayout,
-} from "@uk-data-atlas/datasets/data/catalog/types";
+} from "@uk-data-atlas/datasets";
 
 type DatasetPayload = Record<string, unknown>;
 

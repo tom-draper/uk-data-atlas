@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ActiveViz, BoundaryType, CustomDataset } from "@/lib/types";
-import { BoundaryData } from "@uk-data-atlas/datasets/types/boundaries";
+import { BoundaryData } from "@uk-data-atlas/datasets";
 import { getCustomDatasetDisplayValue } from "@/lib/data/custom/displayValue";
 import type { SelectedCustomArea } from "./types";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";

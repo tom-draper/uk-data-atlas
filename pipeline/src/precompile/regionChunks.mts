@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
-import type { GazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/types";
+import type { GazetteerCore } from "@uk-data-atlas/datasets";
 import { writeDatasetRegionChunks } from "../dataset-region-chunks.mts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import {

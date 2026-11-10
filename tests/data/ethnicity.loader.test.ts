@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	addMergedEthnicityAuthorities,
 	ETHNICITY_LAD_PREDECESSORS,
-} from "@uk-data-atlas/datasets/data/ethnicity/loader";
+} from "@uk-data-atlas/datasets";
 
 describe("addMergedEthnicityAuthorities", () => {
 	const sourceData = () =>

@@ -3,7 +3,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { expect, it } from "vitest";
 import { writeDatasetRegionChunks } from "../../pipeline/src/dataset-region-chunks.mjs";
-import type { DatasetPayloadLayout } from "@uk-data-atlas/datasets/data/catalog/types";
+import type { DatasetPayloadLayout } from "@uk-data-atlas/datasets";
 
 it("loads regional payloads only when writing their chunks", async () => {
 	const root = await mkdtemp(join(tmpdir(), "precompile-chunks-"));

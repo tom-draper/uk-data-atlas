@@ -1,7 +1,7 @@
 import type {
 	DatasetDeclaration,
 	IndicatorDeclaration,
-} from "@uk-data-atlas/datasets/declaration/dataset";
+} from "@uk-data-atlas/datasets";
 import type {
 	Measure,
 	MeasureAggregation,

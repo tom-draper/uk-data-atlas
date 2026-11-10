@@ -7,7 +7,7 @@ import type {
 	GazetteerEntry,
 	Level,
 	NamedLocation,
-} from "@uk-data-atlas/datasets/data/gazetteer/types";
+} from "@uk-data-atlas/datasets";
 
 const key = (from: Level, to: Level) => `${from}->${to}`;
 

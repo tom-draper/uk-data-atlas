@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "@uk-data-atlas/atlas-db";
-import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
+import type { DatasetModule } from "@uk-data-atlas/datasets";
 import type {
 	AreaRelationship,
 	CandidacyColumn,
@@ -11,9 +11,9 @@ import type {
 	StatisticsSource,
 	StatusSlug,
 	SeriesMethod,
-} from "@uk-data-atlas/datasets/declaration/vocabulary";
+} from "@uk-data-atlas/datasets";
 
-export * from "@uk-data-atlas/datasets/declaration/vocabulary";
+export * from "@uk-data-atlas/datasets";
 
 /**
  * The canonical statistics tables (layer 4 of docs/sqlite-schema-design.md):

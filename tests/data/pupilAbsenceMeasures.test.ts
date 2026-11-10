@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { loadPupilAbsence } from "@uk-data-atlas/datasets/data/pupil-absence/loader";
+import { loadPupilAbsence } from "@uk-data-atlas/datasets";
 import { absenceRate, sumAbsence } from "@/lib/datasets/pupilAbsence";
 it("filters the full-year total and uses sessions or enrolments as appropriate", async () => {
 	const row = {

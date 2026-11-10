@@ -2,7 +2,7 @@ import { workplaceIncomeDatasetDefinition } from "@/lib/data/catalog/definitions
 import type {
 	WorkplaceIncomeDataset,
 	IncomeLADData,
-} from "@uk-data-atlas/datasets/types/income";
+} from "@uk-data-atlas/datasets";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import {

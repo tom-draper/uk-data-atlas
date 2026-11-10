@@ -15,10 +15,10 @@ import {
 	BOUNDARY_CATALOG,
 	propertiesAsset,
 	type BoundaryType,
-} from "@uk-data-atlas/datasets/data/boundaries/catalog";
+} from "@uk-data-atlas/datasets";
 import { buildLog } from "@uk-data-atlas/atlas-db";
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets/data/catalog/registry";
-import type { DatasetDefinition } from "@uk-data-atlas/datasets/data/catalog/types";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
+import type { DatasetDefinition } from "@uk-data-atlas/datasets";
 import {
 	MAP_VALUES_SCHEMA_VERSION,
 	codeListId,

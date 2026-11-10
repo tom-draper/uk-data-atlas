@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { loadJobs } from "@uk-data-atlas/datasets/data/jobs/loader";
-import type { PopulationUkDataset } from "@uk-data-atlas/datasets/types/population";
+import { loadJobs } from "@uk-data-atlas/datasets";
+import type { PopulationUkDataset } from "@uk-data-atlas/datasets";
 
 // The shape NOMIS returns: quoted headers and names, an empty value with
 // status Q where a figure is not published.

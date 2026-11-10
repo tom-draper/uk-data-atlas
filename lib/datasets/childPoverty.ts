@@ -3,7 +3,7 @@ import { childPovertyAggregation } from "@/lib/helpers/datasetAggregation/specif
 import type {
 	AggregatedChildPovertyData,
 	ChildPovertyDataset,
-} from "@uk-data-atlas/datasets/types/childPoverty";
+} from "@uk-data-atlas/datasets";
 import { formatCompactCount } from "@/lib/helpers/formatCount";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";

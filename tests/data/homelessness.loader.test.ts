@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { loadHomelessness } from "@uk-data-atlas/datasets/data/homelessness/loader";
-import { odsTableRows } from "@uk-data-atlas/datasets/data/spreadsheet/ods";
+import { loadHomelessness } from "@uk-data-atlas/datasets";
+import { odsTableRows } from "@uk-data-atlas/datasets";
 
 const worksheet = `
 <table:table table:name="TA1">

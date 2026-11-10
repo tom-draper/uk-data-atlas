@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import { declaredDisplay } from "@/lib/datasets/declared";
-import type { MobileCoverageDataset } from "@uk-data-atlas/datasets/types/mobileCoverage";
+import type { MobileCoverageDataset } from "@uk-data-atlas/datasets";
 const dataset: MobileCoverageDataset = {
 	id: "mobile2025",
 	type: "mobile-coverage",

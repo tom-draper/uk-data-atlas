@@ -1,4 +1,4 @@
-import type { DatasetModule } from "@uk-data-atlas/datasets/declaration/modules";
+import type { DatasetModule } from "@uk-data-atlas/datasets";
 import type { StatisticsMeasure } from "../atlasStatistics.ts";
 import {
 	type DeclaredDataset,
@@ -10,7 +10,7 @@ import {
 } from "../declaredStatistics.ts";
 import { yearParts } from "../declaredPayload.ts";
 import type { DeclaredPayload } from "../declaredStatistics.ts";
-import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets/data/nhs-waiting/icbToGss";
+import { ICB_ODS_TO_GSS } from "@uk-data-atlas/datasets";
 import { measure } from "./measures.ts";
 
 /** Crime, safety, housing need, care, planning, health and schools. */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { aggregateBroadband } from "@uk-data-atlas/datasets/data/broadband/aggregate";
-import { aggregateMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/aggregate";
-import { aggregateClaimantCount } from "@uk-data-atlas/datasets/data/claimant-count/aggregate";
+import { aggregateBroadband } from "@uk-data-atlas/datasets";
+import { aggregateMobileCoverage } from "@uk-data-atlas/datasets";
+import { aggregateClaimantCount } from "@uk-data-atlas/datasets";
 import {
 	aggregateAirQuality,
 	aggregateChildPoverty,

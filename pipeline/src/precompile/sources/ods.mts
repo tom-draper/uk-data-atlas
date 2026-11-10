@@ -1,10 +1,7 @@
 import { execSync, spawn } from "child_process";
 import { stat } from "fs/promises";
 import { join } from "path";
-import {
-	odsTableRow,
-	type OdsTableOptions,
-} from "@uk-data-atlas/datasets/data/spreadsheet/ods";
+import { odsTableRow, type OdsTableOptions } from "@uk-data-atlas/datasets";
 import { SOURCE_DATA } from "../paths.mts";
 
 // ODS source files are never exposed by the application. The child-poverty

@@ -3,7 +3,7 @@ import { homelessnessAggregation } from "@/lib/helpers/datasetAggregation/specif
 import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
-} from "@uk-data-atlas/datasets/types/homelessness";
+} from "@uk-data-atlas/datasets";
 import { formatCompactCount } from "@/lib/helpers/formatCount";
 import type { ChartDatasetDefinition } from "./types";
 import { defineValueCard } from "./valueCard";

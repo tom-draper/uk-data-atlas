@@ -1,5 +1,5 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets/data/declarations";
-import { statisticsOf } from "@uk-data-atlas/datasets/declaration/dataset";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
 import {
 	GENERAL_ELECTION,

@@ -5,9 +5,9 @@ import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
-import { loadGazetteerCore } from "@uk-data-atlas/datasets/data/gazetteer/loader";
+import { loadGazetteerCore } from "@uk-data-atlas/datasets";
 import { loadMatchIndex } from "../gazetteer/matchIndex.ts";
-import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets/data/gazetteer/places";
+import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import {
 	fileSnapshots,

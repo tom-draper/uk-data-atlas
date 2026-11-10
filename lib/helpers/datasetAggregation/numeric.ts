@@ -3,43 +3,40 @@ import { getFeatureProp } from "@/lib/types";
 import type {
 	AggregatedAirQualityData,
 	AirQualityDataset,
-} from "@uk-data-atlas/datasets/types/airQuality";
-import {
-	denominator,
-	weightedMean,
-} from "@uk-data-atlas/datasets/helpers/rates";
+} from "@uk-data-atlas/datasets";
+import { denominator, weightedMean } from "@uk-data-atlas/datasets";
 
 export { weightedMean };
 import type {
 	AggregatedChildPovertyData,
 	ChildPovertyDataset,
-} from "@uk-data-atlas/datasets/types/childPoverty";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
-} from "@uk-data-atlas/datasets/types/homelessness";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedFuelPovertyData,
 	FuelPovertyDataset,
-} from "@uk-data-atlas/datasets/types/fuelPoverty";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedGhgEmissionsData,
 	GhgEmissionsDataset,
-} from "@uk-data-atlas/datasets/types/ghgEmissions";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedSchoolPerformanceData,
 	AggregatedSchoolPerformanceGapData,
 	SchoolPerformanceGapMeasures,
 	SchoolPerformanceMeasures,
-} from "@uk-data-atlas/datasets/types/schoolPerformance";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedEnergyConsumptionData,
 	EnergyConsumptionLADData,
-} from "@uk-data-atlas/datasets/types/energyConsumption";
+} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedRegionalGdpData,
 	RegionalGdpAreaData,
-} from "@uk-data-atlas/datasets/types/regionalGdp";
+} from "@uk-data-atlas/datasets";
 
 /** Collects the numeric dataset records represented by the active boundaries. */
 export function collectBoundaryRecords<T>(

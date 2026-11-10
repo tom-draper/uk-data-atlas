@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { loadMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/loader";
-import { aggregateMobileCoverage } from "@uk-data-atlas/datasets/data/mobile-coverage/aggregate";
+import { loadMobileCoverage } from "@uk-data-atlas/datasets";
+import { aggregateMobileCoverage } from "@uk-data-atlas/datasets";
 
 // The published columns are percentages of premises, or of landmass, reached by
 // exactly that many operators; each family sums to 100.

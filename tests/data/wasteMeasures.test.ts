@@ -5,7 +5,7 @@ import { aggregateWaste, wasteValue } from "@/lib/helpers/waste";
 import type {
 	IndicatorDataset,
 	IndicatorRecord,
-} from "@uk-data-atlas/datasets/types/indicator";
+} from "@uk-data-atlas/datasets";
 import type { WasteOptions } from "@/lib/types/mapOptions";
 
 const records: IndicatorRecord[] = [

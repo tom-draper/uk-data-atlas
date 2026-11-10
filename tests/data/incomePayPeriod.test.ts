@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { incomeDefinition } from "@/lib/datasets/income";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import type { IncomeDataset } from "@uk-data-atlas/datasets/types/income";
+import type { IncomeDataset } from "@uk-data-atlas/datasets";
 describe("pay period", () => {
 	it("selects hourly pay and preserves suppressed data", () => {
 		const dataset = {

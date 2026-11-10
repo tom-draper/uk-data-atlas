@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { housePriceDefinition } from "@/lib/datasets/housePrice";
-import type { HousePriceDataset } from "@uk-data-atlas/datasets/types/housePrice";
+import type { HousePriceDataset } from "@uk-data-atlas/datasets";
 
 const dataset: HousePriceDataset = {
 	id: "housePrice2023",

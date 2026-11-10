@@ -1,8 +1,5 @@
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles";
-import {
-	inBox,
-	pointInGeom,
-} from "@uk-data-atlas/datasets/data/gazetteer/geometry";
+import { inBox, pointInGeom } from "@uk-data-atlas/datasets";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readPlaceResolver } from "./placeResolver.ts";
