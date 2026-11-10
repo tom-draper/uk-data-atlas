@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { randomUUID } from "node:crypto";
 import { copyFileSync, existsSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -143,7 +144,7 @@ export function assembleAtlas(
 }
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath)
+if (isMainModule(import.meta.url))
 	console.log(
 		`Assembled atlas components into ${assembleAtlas(resolve(dirname(scriptPath), "../.."))}`,
 	);

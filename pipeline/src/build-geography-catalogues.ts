@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -25,7 +26,7 @@ export const buildGeographyCatalogues = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath)
+if (isMainModule(import.meta.url))
 	buildLog.info(
 		`Stored geography catalogues in ${repoPath(buildGeographyCatalogues(resolve(dirname(scriptPath), "../..")))}`,
 	);

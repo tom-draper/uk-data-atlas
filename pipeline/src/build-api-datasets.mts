@@ -1,6 +1,6 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { artifactDirectory, buildLog, repoPath } from "@uk-data-atlas/atlas-db";
@@ -29,10 +29,7 @@ export async function buildDatasets(repositoryRoot: string) {
 	return { directory };
 }
 
-if (
-	process.argv[1] &&
-	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-) {
+if (isMainModule(import.meta.url)) {
 	const result = await buildDatasets(resolve(import.meta.dirname, "../.."));
 	buildLog.info(
 		`Wrote boundary assets and gazetteer core to ${repoPath(result.directory)}`,

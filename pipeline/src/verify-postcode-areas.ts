@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +10,7 @@ import { writeStageStamp } from "./storage/stageStamp.ts";
  * placements, and every postcode in several areas, match a live lookup.
  */
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const root = resolve(dirname(scriptPath), "../..");
 	const { releases, checked } = verifyPostcodeAreas(root);
 	writeStageStamp(root, "verify-postcode-areas", {

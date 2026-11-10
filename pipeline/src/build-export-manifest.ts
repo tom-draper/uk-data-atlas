@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
 import {
@@ -71,7 +72,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = await buildExportManifest(repositoryRoot);
 	console.log(

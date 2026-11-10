@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,7 +44,7 @@ export const buildGeometrySourceRegistry = (root: string) => {
 	return { path, count: registry.releases.length };
 };
 const path = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === path) {
+if (isMainModule(import.meta.url)) {
 	const result = buildGeometrySourceRegistry(resolve(dirname(path), "../.."));
 	buildLog.info(
 		`Wrote ${formatCount(result.count)} geometry sources to ${repoPath(result.path)}`,

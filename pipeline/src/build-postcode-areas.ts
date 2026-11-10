@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { parseScriptArgs } from "./lib/args.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
@@ -316,11 +317,7 @@ export const buildPostcodeAreas = async (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (
-	isMainThread &&
-	process.argv[1] &&
-	resolve(process.argv[1]) === scriptPath
-) {
+if (isMainThread && isMainModule(import.meta.url)) {
 	const flags = parseScriptArgs({
 		rebuild: { type: "boolean" },
 		workers: { type: "string" },

@@ -3,8 +3,10 @@ import { createHash } from "node:crypto";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, test } from "vitest";
 import { parseScriptArgs } from "../src/lib/args.ts";
+import { isMainModule } from "../src/lib/entrypoint.ts";
 import {
 	sha256FileHex,
 	sha256FileHexSync,
@@ -67,4 +69,18 @@ test("parseScriptArgs reads flags and positionals and keeps unknown ones", () =>
 	assert.deepEqual(values.from, ["ward", "lsoa"]);
 	assert.deepEqual(positionals, ["id"]);
 	assert.deepEqual(Object.keys(parseScriptArgs(options, []).values), []);
+});
+
+test("isMainModule is true only for the script node was started with", () => {
+	const original = process.argv[1];
+	try {
+		process.argv[1] = fileURLToPath(import.meta.url);
+		assert.equal(isMainModule(import.meta.url), true);
+		process.argv[1] = join(tmpdir(), "another-script.ts");
+		assert.equal(isMainModule(import.meta.url), false);
+		process.argv.length = 1;
+		assert.equal(isMainModule(import.meta.url), false);
+	} finally {
+		process.argv[1] = original!;
+	}
 });

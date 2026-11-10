@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -47,7 +48,7 @@ export const buildAreaInventory = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildAreaInventory(repositoryRoot);
 	buildLog.info(

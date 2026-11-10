@@ -1,3 +1,4 @@
+import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -237,7 +238,7 @@ export const fetchScottishLookup = async (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
 	// Directories named on the command line limit the download to those
 	// sources, so adding one does not refresh the others' snapshots.

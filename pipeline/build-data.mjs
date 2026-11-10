@@ -1,5 +1,5 @@
+import { isMainModule } from "./src/lib/entrypoint.ts";
 import { spawn } from "node:child_process";
-import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createStageCache } from "./build-data-cache.mjs";
 import {
@@ -702,10 +702,7 @@ function executeStage(
 	});
 }
 
-if (
-	process.argv[1] &&
-	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-) {
+if (isMainModule(import.meta.url)) {
 	try {
 		process.exitCode = await runBuild({
 			argv: process.argv.slice(2),

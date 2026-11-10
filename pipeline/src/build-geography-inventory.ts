@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { mkdirSync, existsSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -57,7 +58,7 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildGeographyInventory(repositoryRoot);
 	buildLog.info(

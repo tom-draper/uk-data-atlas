@@ -1,3 +1,4 @@
+import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import { toWgs84Point } from "@uk-data-atlas/geography";
@@ -373,7 +374,7 @@ export const fetchWeightSources = async (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const root = resolve(dirname(scriptPath), "../../..");
 	if (
 		!existsSync(
