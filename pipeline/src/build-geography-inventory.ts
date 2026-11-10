@@ -3,7 +3,7 @@ import { buildArtifactPath } from "@uk-data-atlas/areas";
 import { mkdirSync, existsSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createBoundaryRegistry } from "./build-boundary-registry.ts";
+import { createBoundaryRegistry } from "./geographies/buildBoundaryRegistry.ts";
 import { createGeographyInventory } from "./geographies/geographyInventory.ts";
 import { createSourceInventory } from "./geographies/sourceInventory.ts";
 import type { AreaInventory } from "@uk-data-atlas/areas";

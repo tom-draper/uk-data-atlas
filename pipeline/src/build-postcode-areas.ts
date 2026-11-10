@@ -29,7 +29,7 @@ import {
 	readAreaLookup,
 	readSqliteAreaInventory as readAreaInventory,
 } from "@uk-data-atlas/areas";
-import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
+import { readBuildBoundaryRegistry } from "./geographies/buildBoundaryRegistry.ts";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { AreasResolver } from "@uk-data-atlas/atlas-loader";
