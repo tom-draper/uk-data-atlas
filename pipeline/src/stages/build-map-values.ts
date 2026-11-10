@@ -2,10 +2,12 @@ import { join } from "node:path";
 import { buildLog } from "@uk-data-atlas/atlas-db";
 import { buildMapValues } from "../maps/buildMapValues.ts";
 import { ROOT } from "../precompile/paths.ts";
+import { readBaseDatasetInput } from "../catalog/baseDatasetInput.ts";
 
 if (import.meta.url === `file://${process.argv[1]}`) {
 	const manifest = await buildMapValues({
-		datasetsDir: join(ROOT, "data/build/datasets"),
+		readDataset: async (output) =>
+			JSON.parse(readBaseDatasetInput(ROOT, output)),
 		boundariesDir: join(ROOT, "public/data/boundaries"),
 		outDir: join(ROOT, "public/data/map-values"),
 	});

@@ -90,8 +90,8 @@ export const websiteStages = [
 			],
 		},
 	),
-	// The arrays the map colours areas from. They read the compiled datasets and
-	// the boundary sidecars, and nothing reads them back, so they run alone.
+	// The arrays the map colours areas from use database-backed datasets and
+	// boundary sidecars.
 	stage(
 		"website-map-values",
 		["website-datasets"],

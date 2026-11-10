@@ -25,12 +25,16 @@ function fixture(context: { onTestFinished: (run: () => void) => void }) {
 	context.onTestFinished(() =>
 		rmSync(root, { recursive: true, force: true }),
 	);
+	const datasetsDir = join(root, "datasets");
 	const paths = {
-		datasetsDir: join(root, "datasets"),
+		readDataset: async (output: string) =>
+			JSON.parse(
+				readFileSync(join(datasetsDir, `${output}.json`), "utf8"),
+			),
 		boundariesDir: join(root, "boundaries"),
 		outDir: join(root, "out"),
 	};
-	mkdirSync(paths.datasetsDir, { recursive: true });
+	mkdirSync(datasetsDir, { recursive: true });
 	const sidecar = join(
 		paths.boundariesDir,
 		propertiesAsset(asset).replace(/^\/?data\/boundaries\//, ""),
@@ -46,7 +50,7 @@ function fixture(context: { onTestFinished: (run: () => void) => void }) {
 		}),
 	);
 	writeFileSync(
-		join(paths.datasetsDir, "council-tax.json"),
+		join(datasetsDir, "council-tax.json"),
 		JSON.stringify({
 			"2025": {
 				type: "councilTax",
