@@ -9,10 +9,7 @@ import {
 	databaseGeneration,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
-import {
-	measureSeriesSourceKey,
-	observationArtifactName,
-} from "./index.ts";
+import { measureSeriesSourceKey, observationArtifactName } from "./index.ts";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
