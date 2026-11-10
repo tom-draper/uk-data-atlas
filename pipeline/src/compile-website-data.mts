@@ -1,4 +1,4 @@
-import { assembleAtlas } from "./assemble-atlas.ts";
+import { assembleAtlas } from "./atlas/assembleAtlas.ts";
 import { buildAtlasAssets } from "./build-atlas-assets.ts";
 import { buildAtlasSqlite } from "./atlas/buildAtlasSqlite.ts";
 import { buildDataCatalog } from "./build-data-catalog.ts";

@@ -23,7 +23,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
-import { assembleAtlas } from "../src/assemble-atlas";
+import { assembleAtlas } from "../src/atlas/assembleAtlas";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { storePostcodeAreas as writePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
