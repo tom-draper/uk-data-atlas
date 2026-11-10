@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { createInterface } from "node:readline";
 import { createGunzip } from "node:zlib";
 import { csvFields, csvRecords } from "@uk-data-atlas/artifacts";
-import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Point } from "@uk-data-atlas/geography";
 
 /**
  * The atoms crosswalk weights are summed over: live, small-user postcodes with

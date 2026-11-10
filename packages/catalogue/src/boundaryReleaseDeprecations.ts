@@ -1,1 +1,1 @@
-export * from "@uk-data-atlas/geography/boundaryReleaseDeprecations";
+export * from "@uk-data-atlas/geography";

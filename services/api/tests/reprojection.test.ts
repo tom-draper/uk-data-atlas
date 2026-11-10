@@ -6,8 +6,8 @@ import {
 	geometryProvenance,
 	toWgs84Geometry,
 	toWgs84Packed,
-} from "@uk-data-atlas/geography/coordinates";
-import { packGeometry } from "@uk-data-atlas/geography/packed-geometry";
+} from "@uk-data-atlas/geography";
+import { packGeometry } from "@uk-data-atlas/geography";
 
 // Reference values from PROJ's cct running EPSG:1314 (OSGB36 to WGS 84 (6))
 // as an explicit pipeline: inverse British National Grid, then the Helmert

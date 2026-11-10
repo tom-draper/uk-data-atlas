@@ -13,7 +13,7 @@ import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
-import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Point } from "@uk-data-atlas/geography";
 import { postcodeAreaReleases } from "@uk-data-atlas/atlas-loader";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";

@@ -1,5 +1,5 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 /** Whether a manifest can be served. Undefined when it can. */
 export const postcodeIndexMismatch = (

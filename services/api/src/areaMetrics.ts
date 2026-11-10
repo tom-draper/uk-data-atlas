@@ -11,7 +11,7 @@ import {
 	geometryBounds,
 	type Coordinate,
 	type GeometryBounds,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+} from "@uk-data-atlas/geography";
 
 /**
  * How a label point was chosen. The centroid of a crescent or a split island

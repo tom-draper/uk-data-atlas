@@ -22,7 +22,7 @@ import {
 	artifactDirectory,
 	roundGeometry,
 } from "@uk-data-atlas/atlas-db";
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);

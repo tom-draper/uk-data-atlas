@@ -10,7 +10,7 @@ import {
 	toWgs84Geometry,
 	toWgs84Packed,
 	type GeometryProvenance,
-} from "@uk-data-atlas/geography/coordinates";
+} from "@uk-data-atlas/geography";
 import {
 	appliesTo,
 	offsetGeometry,
@@ -24,7 +24,7 @@ import {
 	roundPacked,
 	unpackGeometry,
 	type PackedGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+} from "@uk-data-atlas/geography";
 import {
 	applyReversedOffsets,
 	loadSubstitutions,
@@ -33,10 +33,7 @@ import {
 } from "./geometrySubstitution.ts";
 import { readGeometryStore } from "./geometryStore.ts";
 import type { GeometryValidityReport } from "@uk-data-atlas/geography";
-import {
-	spatialCellKey,
-	spatialCells,
-} from "@uk-data-atlas/geography/geometry-spatial-index";
+import { spatialCellKey, spatialCells } from "@uk-data-atlas/geography";
 import type { Neighbour } from "./borders.ts";
 import {
 	SpatialQueries,
@@ -49,13 +46,10 @@ export type {
 	NearbyArea,
 	IntersectingArea,
 } from "./spatialQueries.ts";
-import {
-	type Coordinate,
-	type GeometryBounds,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+import { type Coordinate, type GeometryBounds } from "@uk-data-atlas/geography";
 
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-export type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
+export type { GeoJsonGeometry } from "@uk-data-atlas/geography";
 export type GeometrySource = {
 	input: string;
 	/** SHA-256 of the whole source file, when the registry records it. */

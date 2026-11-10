@@ -1,6 +1,6 @@
 import type { PostcodeIndex } from "./postcodeIndex.ts";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
-import type { PointContainment } from "@uk-data-atlas/geography/geometry-point-containment";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
+import type { PointContainment } from "@uk-data-atlas/geography";
 import { findSorted } from "@uk-data-atlas/search-index";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
@@ -10,19 +10,15 @@ import {
 	releaseKey,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
-export {
-	NONE,
-	SEVERAL,
-	releaseKey,
-} from "@uk-data-atlas/geography/postcode-area-types";
+} from "@uk-data-atlas/geography";
+export { NONE, SEVERAL, releaseKey } from "@uk-data-atlas/geography";
 export type {
 	PostcodeAreasArtifact,
 	PostcodeAreaRelease,
 	PostcodeAreaColumn,
 	PostcodeAreasShard,
 	PostcodeAreaPurpose,
-} from "@uk-data-atlas/geography/postcode-area-types";
+} from "@uk-data-atlas/geography";
 
 export type PostcodeAreaMatch = {
 	code: string;

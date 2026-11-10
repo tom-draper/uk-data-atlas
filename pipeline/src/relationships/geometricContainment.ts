@@ -1,4 +1,4 @@
-import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
+import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
@@ -7,10 +7,10 @@ import type { AreaLookup } from "@uk-data-atlas/areas";
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
-	boundsIntersect,
-} from "@uk-data-atlas/geography/area-geometry-pieces";
+	areaBoundsIntersect as boundsIntersect,
+} from "@uk-data-atlas/geography";
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
-import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
+import { CLIPPING_VERSION } from "@uk-data-atlas/geography";
 import { readGeometries } from "@uk-data-atlas/areas";
 import {
 	multiPolygonAreaM2,

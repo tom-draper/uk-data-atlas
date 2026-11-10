@@ -11,7 +11,7 @@ import {
 import { dirname, join } from "node:path";
 import { gzipSync, gunzipSync } from "node:zlib";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 
 export const postcodeAreasDirectory = (root: string) =>
 	join(root, "data/build/postcode-areas-component");

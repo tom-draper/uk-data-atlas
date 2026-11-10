@@ -17,8 +17,8 @@ import {
 	SEVERAL,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
+} from "@uk-data-atlas/geography";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 

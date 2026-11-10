@@ -14,9 +14,9 @@ import {
 	geometryBounds,
 	pointInBounds,
 	type Coordinate,
-} from "@uk-data-atlas/geography/geometry-point-containment";
+} from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
-import { NONE, SEVERAL } from "@uk-data-atlas/geography/postcode-area-types";
+import { NONE, SEVERAL } from "@uk-data-atlas/geography";
 import type { Placement } from "./weigh.ts";
 
 /**

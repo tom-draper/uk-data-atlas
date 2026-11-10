@@ -9,7 +9,7 @@ import { dirname, join, resolve } from "node:path";
 import { isMainThread } from "node:worker_threads";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { releaseKey } from "@uk-data-atlas/geography/postcode-area-types";
+import { releaseKey } from "@uk-data-atlas/geography";
 import { MEASURES } from "./crosswalk-weights/atoms.ts";
 import { crosswalkSetHash } from "./crosswalk-weights/crosswalkSetHash.ts";
 import {

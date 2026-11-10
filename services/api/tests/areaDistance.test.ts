@@ -6,7 +6,7 @@ import {
 	distanceToBoundsM,
 	distanceToGeometryM,
 	metresPerDegree,
-} from "@uk-data-atlas/geography/area-distance";
+} from "@uk-data-atlas/geography";
 
 const square = {
 	type: "Polygon",

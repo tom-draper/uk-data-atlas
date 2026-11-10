@@ -1,5 +1,5 @@
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-import type { PackedGeometry } from "@uk-data-atlas/geography/packed-geometry";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
+import type { PackedGeometry } from "@uk-data-atlas/geography";
 
 /** Geometry access needed to build map downloads. */
 export type MapGeometryCache = {

@@ -127,7 +127,7 @@ describe("shared packages", () => {
 		expect(description).not.toContain("\n");
 	});
 
-	it.each(["catalogue", "map-tiles"])(
+	it.each(["geography", "catalogue", "map-tiles"])(
 		"keeps the %s main entry browser safe",
 		(name) => {
 			const pending = [join(PACKAGES, name, "src/index.ts")];
@@ -156,6 +156,8 @@ describe("shared packages", () => {
 							"@uk-data-atlas/geography",
 							"@noble/hashes",
 							"polygon-clipping",
+							"proj4",
+							"geojson",
 						].includes(packageName(specifier))
 					)
 						invalid.push(`${relative(ROOT, file)}: ${specifier}`);

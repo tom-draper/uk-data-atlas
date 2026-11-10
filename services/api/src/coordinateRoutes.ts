@@ -7,7 +7,7 @@ import {
 	parseLookupCrs,
 	parseStatedAccuracy,
 } from "./pointLookup";
-import { fromWgs84Point } from "@uk-data-atlas/geography/coordinates";
+import { fromWgs84Point } from "@uk-data-atlas/geography";
 import {
 	envelope,
 	invalidQuery,

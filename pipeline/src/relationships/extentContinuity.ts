@@ -9,11 +9,11 @@ import {
 import {
 	type AreaGeometry,
 	areaMultiPolygon,
-	boundsIntersect,
+	areaBoundsIntersect as boundsIntersect,
 	roundedMultiPolygon,
-} from "@uk-data-atlas/geography/area-geometry-pieces";
+} from "@uk-data-atlas/geography";
 import { labelsFor, round } from "../geographies/areaOverlap.ts";
-import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
+import { CLIPPING_VERSION } from "@uk-data-atlas/geography";
 import { readGeometries } from "@uk-data-atlas/areas";
 import {
 	multiPolygonAreaM2,

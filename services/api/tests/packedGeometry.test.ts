@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
-import { geometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import { geometryBounds } from "@uk-data-atlas/geography";
 import {
 	packedBounds,
 	packGeometry,
 	roundPacked,
 	unpackGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+} from "@uk-data-atlas/geography";
 
 const geometries: GeoJsonGeometry[] = [
 	{ type: "Point", coordinates: [-0.1283539, 51.5039908] },

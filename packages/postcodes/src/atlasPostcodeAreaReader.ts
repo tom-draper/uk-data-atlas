@@ -3,7 +3,7 @@ import {
 	readPostcodeAreaShard,
 	requirePostcodeAreaLayout,
 } from "./atlasPostcodeAreaShard.ts";
-import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import { unpackText } from "@uk-data-atlas/atlas-db";

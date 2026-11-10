@@ -6,7 +6,7 @@ import {
 	type GeometrySubstitution,
 	type GridOffset,
 } from "@uk-data-atlas/geography";
-import { applyReversedGridOffset } from "@uk-data-atlas/geography/reverse-grid-offset";
+import { applyReversedGridOffset } from "@uk-data-atlas/geography";
 import type { SubstitutionSource } from "./boundaryReleaseSources.ts";
 
 /**
