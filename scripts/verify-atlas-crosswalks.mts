@@ -26,12 +26,15 @@ import { readApprovedRelationshipPaths } from "../pipeline/src/relationships/rel
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "@uk-data-atlas/atlas-db";
+import { apiRootOf, artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const root = resolve(import.meta.dirname, "..");
 const apiRoot = apiRootOf(root);
 const before: CrosswalkInventory = JSON.parse(
-	readFileSync(join(apiRoot, "public/crosswalk-inventory.json"), "utf8"),
+	readFileSync(
+		join(artifactDirectory(root), "crosswalk-inventory.json"),
+		"utf8",
+	),
 );
 const after = readCrosswalkInventory(root);
 assert.ok(before.crosswalks.length > 0);
@@ -63,7 +66,7 @@ const withCanonicalLabels = (
 };
 for (const entry of before.crosswalks) {
 	const json: CrosswalkArtifact = JSON.parse(
-		readStoredText(join(apiRoot, "public", entry.artifact)),
+		readStoredText(join(artifactDirectory(root), entry.artifact)),
 	);
 	const loaded = sqlite.get(entry.id)!;
 	const expectedArtifact = withCanonicalLabels(json, loaded);
@@ -139,7 +142,7 @@ const readJson = (id: string) => {
 	}
 	const entry = before.crosswalks.find((entry) => entry.id === id);
 	if (!entry) return undefined;
-	const text = readStoredText(join(apiRoot, "public", entry.artifact));
+	const text = readStoredText(join(artifactDirectory(root), entry.artifact));
 	const original: CrosswalkArtifact = JSON.parse(text);
 	const artifact = withCanonicalLabels(original, sqlite.get(id)!);
 	const bytes = Buffer.byteLength(text);
