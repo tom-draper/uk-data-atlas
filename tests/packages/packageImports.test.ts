@@ -111,6 +111,25 @@ describe("shared packages", () => {
 		expect(packages).toContain("geography");
 	});
 
+	it.each([
+		["geography", ["."]],
+		[
+			"catalogue",
+			[
+				".",
+				"./place-facts",
+				"./compactPayload",
+				"./place-profile",
+				"./node",
+			],
+		],
+	])("keeps the %s package entry points intentional", (name, entries) => {
+		const manifest = JSON.parse(
+			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+		);
+		expect(Object.keys(manifest.exports)).toEqual(entries);
+	});
+
 	it.each(packages)(
 		"%s imports only its own files and declared dependencies",
 		(name) => {

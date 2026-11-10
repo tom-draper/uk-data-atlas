@@ -10,11 +10,7 @@
 		".": "./src/index.ts",
 		"./place-facts": "./src/placeFacts.ts",
 		"./compactPayload": "./src/compactPayload.ts",
-		"./ageArrays": "./src/ageArrays.ts",
-		"./yearArrays": "./src/yearArrays.ts",
 		"./place-profile": "./src/placeProfile.ts",
-		"./surface-fingerprint": "./src/surfaceFingerprint.ts",
-		"./unit-registry": "./src/unitRegistry.ts",
 		"./node": "./src/node/index.ts"
 	},
 	"scripts": {

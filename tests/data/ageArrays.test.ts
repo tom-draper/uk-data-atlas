@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-	decodeAgeArrays,
-	encodeAgeArrays,
-} from "@uk-data-atlas/catalogue/ageArrays";
+import { decodeAgeArrays, encodeAgeArrays } from "@uk-data-atlas/catalogue";
 
 const population = (area: Record<string, unknown>, type = "population") => ({
 	"2022": {

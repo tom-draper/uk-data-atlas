@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CHANGELOG } from "@/lib/docs/content/changelog";
-import { surfaceFingerprint } from "@uk-data-atlas/catalogue/surface-fingerprint";
+import { surfaceFingerprint } from "@uk-data-atlas/catalogue";
 
 const surfacePath = resolve(
 	__dirname,

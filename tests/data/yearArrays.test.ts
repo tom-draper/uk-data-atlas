@@ -3,10 +3,7 @@ import {
 	decodeCompactPayload,
 	encodeCompactPayload,
 } from "@uk-data-atlas/catalogue/compactPayload";
-import {
-	decodeYearArrays,
-	encodeYearArrays,
-} from "@uk-data-atlas/catalogue/yearArrays";
+import { decodeYearArrays, encodeYearArrays } from "@uk-data-atlas/catalogue";
 
 const edition = (
 	data: Record<string, unknown>,

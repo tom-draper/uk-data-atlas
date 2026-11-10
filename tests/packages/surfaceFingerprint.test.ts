@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { surfaceFingerprint } from "@uk-data-atlas/catalogue/surface-fingerprint";
+import { surfaceFingerprint } from "@uk-data-atlas/catalogue";
 
 describe("browser-safe contract fingerprint", () => {
 	it.each(["", "hello", "a\r\nb", "Welsh: Cymru, 日本語"])(
