@@ -1,3 +1,4 @@
+import { planWaves } from "./build-data-scheduler.mjs";
 import {
 	formatBytes,
 	formatCount,
@@ -157,4 +158,113 @@ export function createBuildReport({
 		}
 	};
 	return { timings, recordTiming, reportSummary };
+}
+
+/**
+ * The opening lines: how many stages run, the parity check notes and the
+ * job limit.
+ *
+ * @param {{
+ *   log: (line: string) => void,
+ *   adopt: boolean,
+ *   plan: boolean,
+ *   selected: { name: string }[],
+ *   toRun: Set<string>,
+ *   skippedChecks: string[],
+ *   checks: { run: boolean, reason?: string },
+ *   isCheck: (stage: any) => boolean,
+ *   jobs: number,
+ *   memoryMb: number,
+ * }} options
+ */
+export function logBuildHeader({
+	log,
+	adopt,
+	plan,
+	selected,
+	toRun,
+	skippedChecks,
+	checks,
+	isCheck,
+	jobs,
+	memoryMb,
+}) {
+	log(
+		adopt
+			? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
+			: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
+	);
+	if (skippedChecks.length)
+		log(
+			`Parity checks not run (${formatCount(skippedChecks.length)}): ${skippedChecks.join(", ")}. Run them with pnpm data:verify or pnpm data:build --verify.`,
+		);
+	else if (!adopt && checks.run && selected.some(isCheck))
+		log(
+			`Parity checks on (${checks.reason}); each reruns only when its inputs or code changed.`,
+		);
+	if (jobs > 1 && !adopt && !plan)
+		log(
+			`Running up to ${formatCount(jobs)} stages at once within ${formatCount(Math.round(memoryMb))} MB`,
+		);
+	log("");
+}
+
+/** Notes the stages that wrote outside their declarations or recorded a wrong hash. */
+export function logRunProblems({ log, undeclaredStages, mismatchedStages }) {
+	if (undeclaredStages.length)
+		log(
+			`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Declare their writes in the stage definition.`,
+		);
+	if (mismatchedStages.length)
+		log(
+			`Wrong output hashes in ${plural(mismatchedStages.length, "stage")}: ${mismatchedStages.join(", ")}. Each recorded a hash its file does not have, so the build would have trusted it.`,
+		);
+}
+
+/**
+ * The end of a plan: the estimated time and the parallel schedule. Other
+ * builds log nothing here.
+ *
+ * @param {{
+ *   log: (line: string) => void,
+ *   plan: boolean,
+ *   adopt: boolean,
+ *   selected: any[],
+ *   toRun: Set<string>,
+ *   jobs: number,
+ *   memoryMb: number,
+ *   estimated: number,
+ *   knownEstimates: number,
+ *   weightOf: (stage: any) => number,
+ * }} options
+ */
+export function logPlanForecast({
+	log,
+	plan,
+	adopt,
+	selected,
+	toRun,
+	jobs,
+	memoryMb,
+	estimated,
+	knownEstimates,
+	weightOf,
+}) {
+	if (plan && knownEstimates)
+		log(
+			`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
+		);
+	if (plan && !adopt && toRun.size > 0) {
+		const schedule = planWaves(selected, { runs: toRun, weightOf });
+		log("");
+		log(
+			`Parallel schedule (stages in a wave can run together; up to ${formatCount(jobs)} at once within ${formatCount(Math.round(memoryMb))} MB):`,
+		);
+		schedule.waves.forEach((names, index) =>
+			log(`  ${index + 1}. ${names.join(", ")}`),
+		);
+		log(
+			`Critical path: ${schedule.criticalPath.join(" > ")}${knownEstimates === toRun.size ? ` (${formatDuration(schedule.criticalMs)} of ${formatDuration(schedule.totalMs)} in all)` : ""}`,
+		);
+	}
 }

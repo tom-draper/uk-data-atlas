@@ -5,6 +5,9 @@ import { parseBuildArgs } from "./build-data-args.mjs";
 import {
 	createBuildReport,
 	formatAssetTree,
+	logBuildHeader,
+	logPlanForecast,
+	logRunProblems,
 	plural,
 } from "./build-data-report.mjs";
 import {
@@ -125,24 +128,18 @@ export async function runBuild({
 		const { digests, dependencyDigests, reusableDigest, stagesToRun } =
 			createDigestTracker({ stages, selected, cache, reuse, current });
 		const toRun = adopt ? new Set() : stagesToRun();
-		log(
-			adopt
-				? `Data build: adopting existing outputs for ${plural(selected.length, "stage")}`
-				: `Data build${plan ? " plan" : ""}: ${plural(selected.length, "stage")}, ${formatCount(toRun.size)} to run, ${formatCount(selected.length - toRun.size)} unchanged`,
-		);
-		if (skippedChecks.length)
-			log(
-				`Parity checks not run (${formatCount(skippedChecks.length)}): ${skippedChecks.join(", ")}. Run them with pnpm data:verify or pnpm data:build --verify.`,
-			);
-		else if (!adopt && checks.run && selected.some(isCheck))
-			log(
-				`Parity checks on (${checks.reason}); each reruns only when its inputs or code changed.`,
-			);
-		if (jobs > 1 && !adopt && !plan)
-			log(
-				`Running up to ${formatCount(jobs)} stages at once within ${formatCount(Math.round(limits.memoryMb))} MB`,
-			);
-		log("");
+		logBuildHeader({
+			log,
+			adopt,
+			plan,
+			selected,
+			toRun,
+			skippedChecks,
+			checks,
+			isCheck,
+			jobs,
+			memoryMb: limits.memoryMb,
+		});
 		let started = 0;
 		let estimated = 0;
 		let knownEstimates = 0;
@@ -314,14 +311,7 @@ export async function runBuild({
 				order: jobs > 1 ? priorityOrder(selected, weightOf) : selected,
 			});
 		}
-		if (undeclaredStages.length)
-			log(
-				`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Declare their writes in the stage definition.`,
-			);
-		if (mismatchedStages.length)
-			log(
-				`Wrong output hashes in ${plural(mismatchedStages.length, "stage")}: ${mismatchedStages.join(", ")}. Each recorded a hash its file does not have, so the build would have trusted it.`,
-			);
+		logRunProblems({ log, undeclaredStages, mismatchedStages });
 		if (failureStatus !== null) {
 			discardWork();
 			return failureStatus;
@@ -331,23 +321,18 @@ export async function runBuild({
 			logError("Output verification failed.");
 			return 1;
 		}
-		if (plan && knownEstimates)
-			log(
-				`Estimated total: ${formatDuration(estimated)} for ${knownEstimates} of ${toRun.size} stages to run`,
-			);
-		if (plan && !adopt && toRun.size > 0) {
-			const schedule = planWaves(selected, { runs: toRun, weightOf });
-			log("");
-			log(
-				`Parallel schedule (stages in a wave can run together; up to ${formatCount(jobs)} at once within ${formatCount(Math.round(limits.memoryMb))} MB):`,
-			);
-			schedule.waves.forEach((names, index) =>
-				log(`  ${index + 1}. ${names.join(", ")}`),
-			);
-			log(
-				`Critical path: ${schedule.criticalPath.join(" > ")}${knownEstimates === toRun.size ? ` (${formatDuration(schedule.criticalMs)} of ${formatDuration(schedule.totalMs)} in all)` : ""}`,
-			);
-		}
+		logPlanForecast({
+			log,
+			plan,
+			adopt,
+			selected,
+			toRun,
+			jobs,
+			memoryMb: limits.memoryMb,
+			estimated,
+			knownEstimates,
+			weightOf,
+		});
 		return 0;
 	} catch (error) {
 		failed = true;
