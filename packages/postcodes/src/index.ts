@@ -9,3 +9,4 @@ export * from "./atlasPostcodeDerived.ts";
 export * from "./atlasPostcodeIndexReader.ts";
 export * from "./atlasPostcodeShard.ts";
 export * from "./atlasPostcodesReader.ts";
+export * from "./postcodeResolver.ts";

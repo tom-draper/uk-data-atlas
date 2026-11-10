@@ -33,7 +33,7 @@ import {
 	type BoundaryReleaseComparison,
 } from "@uk-data-atlas/relationships";
 import { LocationsResolver } from "./resolver/locations.ts";
-import { PostcodeResolver } from "./resolver/postcodes.ts";
+import { PostcodeResolver } from "@uk-data-atlas/postcodes";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,
@@ -125,7 +125,9 @@ export class GeographyResolver {
 	private readonly catalogue: CatalogueResolver;
 	private readonly locations: LocationsResolver;
 	private readonly spatial: SpatialResolver;
-	private readonly postcodes: PostcodeResolver;
+	private readonly postcodes: PostcodeResolver<
+		ResolvedContainingArea[] | undefined
+	>;
 	private readonly lineage: LineageResolver;
 	private readonly translator: CrosswalkTranslator;
 	private readonly capability: CapabilityResolver;
