@@ -6,6 +6,11 @@ Declares datasets and compiles their contents.
 metadata and browser-safe transformations shared by the website and API.
 It exports TypeScript source, with no package build step.
 
+The main entry (`@uk-data-atlas/datasets`) provides the full browser-safe API;
+its `sideEffects: false` declaration allows bundlers to remove unused modules. The
+`@uk-data-atlas/datasets/types` entry preserves the narrower types barrel used
+by the website, including its geometry helpers.
+
 `compileDatasetContents(definition, reader)` compiles a definition using a
 caller-supplied `DatasetReader`. The caller reads files and passes their
 contents through that reader. The package does not import Node APIs or read
