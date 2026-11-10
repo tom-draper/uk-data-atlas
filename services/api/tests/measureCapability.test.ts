@@ -5,7 +5,7 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
-import { measureCapability } from "@uk-data-atlas/atlas-loader";
+import { measureCapability } from "@uk-data-atlas/measures";
 import {
 	containmentCrosswalk,
 	dataCatalog,
