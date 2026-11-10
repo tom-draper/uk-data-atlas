@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 import {
 	isMeasureTable,
+	measureSeriesSourceKey,
 	observationArtifactName,
 	totalMember,
 	type DataCatalog,
@@ -21,7 +22,6 @@ import {
 import {
 	readMeasureDimensionsConfig,
 	rebuildStatisticsObservationText,
-	indexStatisticsSeries,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 	type StatisticsTableSelector,
@@ -51,9 +51,6 @@ const catalog = JSON.parse(
 	),
 ) as DataCatalog;
 const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
-const catalogueSeries = new Map(
-	catalog.measures.map((measure) => [measure.id, measure.series]),
-);
 const censusSeries = new Map<
 	string,
 	{ measure: string; dimensions: Record<string, string> }
@@ -308,15 +305,27 @@ const difference = (stored: Artifact, rebuilt: Artifact) => {
 };
 
 const plan: StatisticsReadPath & {
-	statistics: NonNullable<StatisticsReadPath["statistics"]>;
+	series: NonNullable<StatisticsReadPath["series"]>;
 } = {
 	schemaVersion: 1,
 	dataCatalogHash: catalog.contentHash,
-	statistics: {},
+	series: {},
 	observations: {},
 };
+const tables = new Map<string, StatisticsTableSelector | string>();
+const keys = new Set<string>();
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
+		const identity =
+			measure.series ??
+			config.ids[measure.id] ??
+			censusSeries.get(measure.id);
+		if (!identity)
+			throw new Error(`Missing series identity for ${measure.id}.`);
+		const key = measureSeriesSourceKey(identity, source);
+		if (keys.has(key))
+			throw new Error(`Duplicate statistics series source: ${key}.`);
+		keys.add(key);
 		const name = observationArtifactName(measure.id, source);
 		const storedText = readFileSync(
 			compiledObservationPath(repositoryRoot, name),
@@ -324,8 +333,13 @@ for (const measure of catalog.measures)
 		);
 		const stored = JSON.parse(storedText) as Artifact;
 		if (isMeasureTable(stored)) {
-			// One table serves several measures; plan it once.
-			if (name in plan.statistics || name in plan.observations) continue;
+			const existing = tables.get(name);
+			if (existing !== undefined) {
+				if (typeof existing === "string")
+					plan.observations[key] = existing;
+				else plan.series[key] = existing;
+				continue;
+			}
 			const table: StatisticsTableSelector = {
 				kind: "measure-table",
 				id: stored.id,
@@ -351,23 +365,28 @@ for (const measure of catalog.measures)
 						storedText,
 					)
 				)
-					plan.statistics[name] = table;
+					tables.set(name, table);
 				else
-					plan.observations[name] =
-						"The statistics rows do not rebuild this census table by value.";
+					tables.set(
+						name,
+						"The statistics rows do not rebuild this census table by value.",
+					);
 			} catch (error) {
-				plan.observations[name] = (error as Error).message;
+				tables.set(name, (error as Error).message);
 			}
+			const result = tables.get(name)!;
+			if (typeof result === "string") plan.observations[key] = result;
+			else plan.series[key] = result;
 			continue;
 		}
 		const selector = selectorFor(
-			measure.series ?? config.ids[measure.id]!,
+			identity,
 			source.datasetId,
 			source.sourceGeography.type,
 			source.sourceGeography.boundaryYear,
 		);
 		if (typeof selector === "string") {
-			plan.observations[name] = selector;
+			plan.observations[key] = selector;
 			continue;
 		}
 		const rebuild = (candidate: StatisticsSelector) =>
@@ -380,7 +399,7 @@ for (const measure of catalog.measures)
 		try {
 			rebuiltText = rebuild(selector);
 		} catch (error) {
-			plan.observations[name] = (error as Error).message;
+			plan.observations[key] = (error as Error).message;
 			continue;
 		}
 		// A census source on a later code year lists only the codes that
@@ -398,14 +417,14 @@ for (const measure of catalog.measures)
 		) {
 			const narrowedText = rebuild(narrowed);
 			if (observationValuesEqual(narrowedText, storedText)) {
-				plan.statistics[name] = narrowed;
+				plan.series[key] = narrowed;
 				continue;
 			}
 		}
 		if (observationValuesEqual(rebuiltText, storedText))
-			plan.statistics[name] = selector;
+			plan.series[key] = selector;
 		else
-			plan.observations[name] = difference(
+			plan.observations[key] = difference(
 				stored,
 				JSON.parse(rebuiltText) as Artifact,
 			);
@@ -433,16 +452,7 @@ writeFileSync(
 		{
 			schemaVersion: 1,
 			dataCatalogHash: plan.dataCatalogHash,
-			series: sorted(
-				indexStatisticsSeries(
-					catalog,
-					plan,
-					(id) =>
-						catalogueSeries.get(id) ??
-						config.ids[id] ??
-						censusSeries.get(id),
-				),
-			),
+			series: sorted(plan.series),
 			observations: sorted(plan.observations),
 		},
 		null,
@@ -450,5 +460,5 @@ writeFileSync(
 	)}\n`,
 );
 console.log(
-	`${Object.keys(plan.statistics).length} artifacts read from statistics rows. Wrote ${file}`,
+	`${Object.keys(plan.series).length} series read from statistics rows. Wrote ${file}`,
 );
