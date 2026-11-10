@@ -36,7 +36,7 @@ export function bindStatisticsField(
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
 		WHERE d.slug = ? AND m.slug = ? AND m.unit IN (SELECT value FROM json_each(?)) AND r.geography = ?
-		AND p.label = ?
+		AND s.method = 'published' AND p.label = ?
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
 		AND NOT EXISTS (
 			SELECT 1 FROM json_each(?) expected WHERE NOT EXISTS (

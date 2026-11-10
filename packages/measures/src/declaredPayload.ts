@@ -169,7 +169,7 @@ export function rebuildFromDeclaration(
 
 	const series: Series[] = [];
 	const seriesQuery = database.prepare(
-		`SELECT s.id, m.slug AS measure, r.geography FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE s.dataset_id = ? ORDER BY s.id`,
+		`SELECT s.id, m.slug AS measure, r.geography FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE s.dataset_id = ? AND s.method = 'published' ORDER BY s.id`,
 	);
 	const memberQuery = database.prepare(
 		`SELECT d.slug AS dimension, dm.code, dm.label, pm.label AS parent
@@ -212,7 +212,7 @@ export function rebuildFromDeclaration(
 			JOIN status st ON st.id = o.status_id
 			LEFT JOIN dataset_area_name n ON n.dataset_id = s.dataset_id AND n.area_version_id = v.id
 			LEFT JOIN dataset_area_key k ON k.dataset_id = s.dataset_id AND k.area_version_id = v.id
-			WHERE s.dataset_id = ? ORDER BY a.code`,
+			WHERE s.dataset_id = ? AND s.method = 'published' ORDER BY a.code`,
 		)
 		.all(dataset)) {
 		const list = observed.get(Number(row.series)) ?? [];

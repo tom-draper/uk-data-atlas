@@ -689,12 +689,12 @@ SELECT *, 100.0 * party_votes / valid_votes AS party_vote_share FROM (
      JOIN series_member sm ON sm.series_id = s.id
      JOIN dimension dim ON dim.id = sm.dimension_id AND dim.slug = 'party'
      JOIN dimension_member dm ON dm.id = sm.member_id AND dm.code = lower(p.key)
-     WHERE s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
+     WHERE s.method = 'published' AND s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
        AND o.period_id = (SELECT id FROM period WHERE label = c.polling_day)) AS party_votes,
     (SELECT o.value FROM observation o
      JOIN series s ON s.id = o.series_id
      JOIN measure m ON m.id = s.measure_id AND m.slug = 'valid-votes'
-     WHERE s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
+     WHERE s.method = 'published' AND s.dataset_id = c.dataset_id AND o.area_version_id = c.area_version_id
        AND o.period_id = (SELECT id FROM period WHERE label = c.polling_day)) AS valid_votes
   FROM candidacy k
   JOIN v_contest c ON c.contest_id = k.contest_id

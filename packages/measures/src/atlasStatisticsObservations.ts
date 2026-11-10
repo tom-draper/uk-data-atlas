@@ -149,7 +149,7 @@ const selectedSeries = (
 ) => {
 	const series = database
 		.prepare(
-			"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+			"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? AND s.method = 'published' ORDER BY s.id",
 		)
 		.all(selector.datasetId, selector.measure, selector.geography)
 		.map((row) => Number(row.id));
@@ -245,7 +245,7 @@ const periodRows = (
 	const series = any
 		? database
 				.prepare(
-					"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? ORDER BY s.id",
+					"SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id WHERE d.slug = ? AND m.slug = ? AND r.geography = ? AND s.method = 'published' ORDER BY s.id",
 				)
 				.all(selector.datasetId, selector.measure, selector.geography)
 				.map((row) => Number(row.id))

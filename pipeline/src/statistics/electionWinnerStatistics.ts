@@ -179,7 +179,7 @@ export function electionWinnerStatistics(
 			const keys = added.map((series) => seriesKey(base.slug, series));
 			const actual = database
 				.prepare(
-					"SELECT count(*) AS n FROM observation o JOIN series s ON s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
+					"SELECT count(*) AS n FROM observation o JOIN series s ON s.method = 'published' AND s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
 				)
 				.get(JSON.stringify(keys));
 			if (!expected || Number(actual?.n) !== expected)
@@ -190,7 +190,7 @@ export function electionWinnerStatistics(
 			const differing = database
 				.prepare(
 					`SELECT count(*) AS n FROM observation o
-					JOIN series s ON s.id = o.series_id
+					JOIN series s ON s.method = 'published' AND s.id = o.series_id
 					JOIN dimension_member dm ON dm.id = o.category_id
 					JOIN period p ON p.id = o.period_id
 					LEFT JOIN election e ON e.dataset_id = s.dataset_id AND e.date = p.label

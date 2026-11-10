@@ -23,7 +23,7 @@ export function electionStatisticsExport(
 			party: Boolean(party),
 			sql: `SELECT d.slug, ?, 'votes', r.geography, r.release, a.code, p.label,
 			${value}, NULL, NULL, NULL, ${status}${party ? `, '${party}'` : ""}
-			FROM dataset d JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+			FROM dataset d JOIN series s ON s.method='published' AND s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
 			JOIN series_member sm ON sm.series_id=s.id JOIN dimension dim ON dim.id=sm.dimension_id AND dim.slug='party'
 			JOIN dimension_member dm ON dm.id=sm.member_id JOIN observation o ON o.series_id=s.id
 			JOIN area_version av ON av.id=o.area_version_id JOIN area a ON a.id=av.area_id
@@ -33,7 +33,7 @@ export function electionStatisticsExport(
 		};
 	}
 	const partyJoin = party
-		? `LEFT JOIN series ps ON ps.dataset_id=s.dataset_id AND ps.release_id=s.release_id
+		? `LEFT JOIN series ps ON ps.method='published' AND ps.dataset_id=s.dataset_id AND ps.release_id=s.release_id
 		AND ps.measure_id=(SELECT id FROM measure WHERE slug='party-votes') AND EXISTS (
 			SELECT 1 FROM series_member sm JOIN dimension di ON di.id=sm.dimension_id JOIN dimension_member dm ON dm.id=sm.member_id
 			WHERE sm.series_id=ps.id AND di.slug='party' AND dm.code='${party}')
@@ -41,9 +41,9 @@ export function electionStatisticsExport(
 		LEFT JOIN status pst ON pst.id=po.status_id`
 		: "";
 	const turnoutJoins = turnout
-		? `LEFT JOIN series es ON es.dataset_id=s.dataset_id AND es.release_id=s.release_id AND es.measure_id=(SELECT id FROM measure WHERE slug='electorate')
+		? `LEFT JOIN series es ON es.method='published' AND es.dataset_id=s.dataset_id AND es.release_id=s.release_id AND es.measure_id=(SELECT id FROM measure WHERE slug='electorate')
 		LEFT JOIN observation eo ON eo.series_id=es.id AND eo.area_version_id=o.area_version_id AND eo.period_id=o.period_id
-		LEFT JOIN series ins ON ins.dataset_id=s.dataset_id AND ins.release_id=s.release_id AND ins.measure_id=(SELECT id FROM measure WHERE slug='rejected-ballots')
+		LEFT JOIN series ins ON ins.method='published' AND ins.dataset_id=s.dataset_id AND ins.release_id=s.release_id AND ins.measure_id=(SELECT id FROM measure WHERE slug='rejected-ballots')
 		LEFT JOIN observation ino ON ino.series_id=ins.id AND ino.area_version_id=o.area_version_id AND ino.period_id=o.period_id`
 		: "";
 	const votes = "CASE WHEN po.series_id IS NULL THEN 0 ELSE po.value END";
@@ -56,7 +56,7 @@ export function electionStatisticsExport(
 		party: Boolean(party),
 		sql: `SELECT d.slug, ?, '${turnout || match?.[3] === "vote-share" ? "percent" : "votes"}', r.geography, r.release, a.code, p.label,
 		${value}, NULL, NULL, NULL, ${party ? "coalesce(pst.slug, st.slug)" : "st.slug"}${party ? `, '${party}'` : ""}
-		FROM dataset d JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+		FROM dataset d JOIN series s ON s.method='published' AND s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
 		JOIN observation o ON o.series_id=s.id JOIN area_version av ON av.id=o.area_version_id JOIN area a ON a.id=av.area_id
 		JOIN area_releases r ON r.id=s.release_id JOIN period p ON p.id=o.period_id JOIN status st ON st.id=o.status_id
 		${partyJoin} ${turnoutJoins}

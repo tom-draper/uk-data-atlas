@@ -34,7 +34,7 @@ export function measureStatisticsSelections(
 		const rows = database
 			.prepare(
 				`SELECT r.geography, r.release AS release, p.label AS period FROM dataset d
-            JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+            JOIN series s ON s.method='published' AND s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
             JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
             JOIN period p ON p.id=o.period_id WHERE d.slug=? AND m.slug='source-winning-party'
             GROUP BY r.geography,r.release,p.label`,
@@ -64,7 +64,7 @@ export function measureStatisticsSelections(
 		const rows = database
 			.prepare(
 				`SELECT r.release AS release, p.label AS period FROM dataset d
-			JOIN series s ON s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
+			JOIN series s ON s.method='published' AND s.dataset_id=d.id JOIN measure m ON m.id=s.measure_id
 			JOIN area_releases r ON r.id=s.release_id JOIN observation o ON o.series_id=s.id
 			JOIN period p ON p.id=o.period_id WHERE d.slug='house-price' AND m.slug='house-price-median'
 			AND r.geography='ward' AND p.label <= '2022' GROUP BY r.release,p.label`,

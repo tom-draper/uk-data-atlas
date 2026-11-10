@@ -43,7 +43,7 @@ export function bindCensusStatistics(
 			const rows = database
 				.prepare(
 					`SELECT r.release AS release, p.label AS period, count(*) AS count
-				FROM dataset d JOIN series s ON s.dataset_id = d.id
+				FROM dataset d JOIN series s ON s.method = 'published' AND s.dataset_id = d.id
 				JOIN measure m ON m.id = s.measure_id
 				JOIN area_releases r ON r.id = s.release_id
 				JOIN observation o ON o.series_id = s.id
