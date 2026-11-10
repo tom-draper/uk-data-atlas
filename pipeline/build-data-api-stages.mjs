@@ -314,6 +314,23 @@ export const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Converts figures whose answer is published elsewhere and measures the
+	// error, which is what the bounds of every converted value come from.
+	stage(
+		"conversion-backtest",
+		["atlas-sqlite", "crosswalk-weights"],
+		["pipeline/src/stages/build-conversion-backtest.ts"],
+		{
+			rawInputs: [],
+			writes: ["data/build/conversion-backtest"],
+			outputs: ["data/build/conversion-backtest"],
+			requiredOutputs: [
+				"data/build/conversion-backtest/conversion-backtest.sqlite",
+				"data/build/conversion-backtest/backtest-tables.md",
+			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"assemble-atlas",
 		[
