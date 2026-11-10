@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogueMetadata } from "../../pipeline/src/build-catalogue-registry";
+import { catalogueMetadata } from "../../pipeline/src/catalog/buildCatalogueRegistry";
 import {
 	chartDefinitionFiles,
 	chartMetadata,
