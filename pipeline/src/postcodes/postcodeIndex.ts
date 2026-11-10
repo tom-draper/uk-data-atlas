@@ -10,7 +10,7 @@ import type {
 	PostcodeIndexArtifact,
 	PostcodeSource,
 	PostcodeShard,
-} from "@uk-data-atlas/geography/postcode-index-types";
+} from "@uk-data-atlas/geography";
 
 /** The fields of one directory row the index is compiled from. */
 export type PostcodeSourceRow = {

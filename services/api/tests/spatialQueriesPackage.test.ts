@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { SpatialQueries } from "@uk-data-atlas/geometry";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-import type { GeometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
+import type { GeometryBounds } from "@uk-data-atlas/geography";
 
 const bounds = new Map<string, GeometryBounds>([
 	["A", [0, 0, 1, 1]],

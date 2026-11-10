@@ -8,7 +8,7 @@ import {
 	type GeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
 import { offsetPosition, readGridOffset } from "@uk-data-atlas/geometry";
-import { toWgs84Geometry } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Geometry } from "@uk-data-atlas/geography";
 
 const SUBSTITUTION = "northern-ireland-constituencies-2016";
 

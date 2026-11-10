@@ -16,10 +16,7 @@ import {
 	readGeometryStore,
 } from "@uk-data-atlas/geometry";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
-import {
-	packGeometry,
-	unpackGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+import { packGeometry, unpackGeometry } from "@uk-data-atlas/geography";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const square = (west: number, south: number, size: number) => [

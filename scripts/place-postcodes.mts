@@ -23,8 +23,8 @@ import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
 } from "@uk-data-atlas/postcodes";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
-import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
+import { toWgs84Point } from "@uk-data-atlas/geography";
 
 export const PLACE_POSTCODES_PATH = join(
 	process.cwd(),

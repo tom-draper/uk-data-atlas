@@ -1,15 +1,15 @@
 import { type PostcodeAreasArtifact, releaseKey } from "./postcodeAreas.ts";
-import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography/postcode-index-types";
+import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 import type {
 	PostcodeCounts,
 	PostcodeCountsArtifact,
-} from "@uk-data-atlas/geography/postcode-count-types";
+} from "@uk-data-atlas/geography";
 export type {
 	PostcodeCounts,
 	PostcodeCountsArtifact,
-} from "@uk-data-atlas/geography/postcode-count-types";
+} from "@uk-data-atlas/geography";
 
 export const postcodeCountsMismatch = (
 	artifact: PostcodeCountsArtifact,

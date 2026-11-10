@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography/crosswalk-spatial-index";
+import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography";
 import {
-	boundsIntersect,
+	areaBoundsIntersect as boundsIntersect,
 	type Bounds,
-} from "@uk-data-atlas/geography/area-geometry-pieces";
+} from "@uk-data-atlas/geography";
 
 test("finds touching and multi-cell candidates once, in input order", () => {
 	const index = new CrosswalkSpatialIndex([

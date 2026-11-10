@@ -1,17 +1,17 @@
 import { closeSync, fstatSync, openSync, readSync } from "node:fs";
-import type { GeometryBounds } from "@uk-data-atlas/geography/geometry-point-containment";
+import type { GeometryBounds } from "@uk-data-atlas/geography";
 import type { GeoJsonGeometry, GeometrySource } from "./areaGeometry.ts";
 import {
 	compareSpatialCells,
 	spatialCells,
 	type SpatialCell,
-} from "@uk-data-atlas/geography/geometry-spatial-index";
+} from "@uk-data-atlas/geography";
 import {
 	DEGREE_SCALE,
 	packedBounds,
 	roundDegrees,
 	type PackedGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+} from "@uk-data-atlas/geography";
 import {
 	GEOMETRY_VALIDITY_METHOD,
 	uncompiledGeometryValidity,

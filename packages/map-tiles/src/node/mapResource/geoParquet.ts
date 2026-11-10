@@ -1,6 +1,6 @@
-import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-import type { PackedGeometry } from "@uk-data-atlas/geography/packed-geometry";
+import type { Coordinate } from "@uk-data-atlas/geography";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
+import type { PackedGeometry } from "@uk-data-atlas/geography";
 import { writeParquet, type ParquetTable } from "@uk-data-atlas/artifacts";
 import type { TileBox } from "../../tileGrid.ts";
 import { boundsOf } from "../../tileset.ts";

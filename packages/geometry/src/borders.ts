@@ -1,7 +1,7 @@
 import type { Pair } from "polygon-clipping";
 import { edgeLengthM } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import type { GeoJsonGeometry } from "@uk-data-atlas/geography/geometry-types";
-import type { Coordinate } from "@uk-data-atlas/geography/geometry-point-containment";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geography";
+import type { Coordinate } from "@uk-data-atlas/geography";
 
 /**
  * How two areas meet. `edge` is a shared boundary with length; `point` is a

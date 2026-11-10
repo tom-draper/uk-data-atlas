@@ -9,7 +9,7 @@ import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { NORTHERN_IRELAND_EXCLUSION } from "@uk-data-atlas/geography";
-import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
+import { toWgs84Point } from "@uk-data-atlas/geography";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {

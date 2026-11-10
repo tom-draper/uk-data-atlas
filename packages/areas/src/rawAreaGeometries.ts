@@ -6,7 +6,7 @@ import {
 	indexPieces,
 	toPolygons,
 	type AreaGeometry,
-} from "@uk-data-atlas/geography/area-geometry-pieces";
+} from "@uk-data-atlas/geography";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { multiPolygonAreaM2 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
 import type { GeographyKind } from "@uk-data-atlas/geography";
@@ -26,7 +26,7 @@ import {
 	canServeAsWgs84,
 	geometryProvenance,
 	toWgs84Geometry,
-} from "@uk-data-atlas/geography/coordinates";
+} from "@uk-data-atlas/geography";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
 import {
 	parseGeoJsonFeatures,

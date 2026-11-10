@@ -15,10 +15,7 @@ import {
 	reverseOffsetGeometry,
 	type GridOffset,
 } from "./gridOffset.ts";
-import {
-	fromWgs84Geometry,
-	toWgs84Geometry,
-} from "@uk-data-atlas/geography/coordinates";
+import { fromWgs84Geometry, toWgs84Geometry } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 export type { GeometrySubstitution };

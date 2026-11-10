@@ -1,6 +1,6 @@
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ProblemCode } from "./problemCodes.ts";
-import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
+import type { GeometryProvenance } from "@uk-data-atlas/geography";
 
 export type Envelope<T> = {
 	apiVersion: "v1";

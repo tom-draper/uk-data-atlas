@@ -4,13 +4,13 @@ import type {
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "@uk-data-atlas/geometry";
-import { distanceToBoundaryM } from "@uk-data-atlas/geography/area-distance";
+import { distanceToBoundaryM } from "@uk-data-atlas/geography";
 import type { Neighbour } from "@uk-data-atlas/geometry";
 import type {
 	GeometryBounds,
 	PointContainment,
-} from "@uk-data-atlas/geography/geometry-point-containment";
-import type { GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
+} from "@uk-data-atlas/geography";
+import type { GeometryProvenance } from "@uk-data-atlas/geography";
 import { areaId } from "./areas.ts";
 import { type AreaIdentity } from "@uk-data-atlas/geography";
 

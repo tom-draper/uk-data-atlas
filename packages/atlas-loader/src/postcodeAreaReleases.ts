@@ -1,12 +1,9 @@
 import type { AreasResolver } from "./resolver/areas.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { countryRelease } from "./countryRelease.ts";
-import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";
 import { rankReleases } from "@uk-data-atlas/measures";
-import {
-	releaseKey,
-	type PostcodeAreaPurpose,
-} from "@uk-data-atlas/geography/postcode-area-types";
+import { releaseKey, type PostcodeAreaPurpose } from "@uk-data-atlas/geography";
 import { compareCodeUnits } from "@uk-data-atlas/search-index";
 
 /**

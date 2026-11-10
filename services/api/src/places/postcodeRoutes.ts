@@ -12,7 +12,7 @@ import {
 	postcodeLookupPoint,
 	type PostcodeRecord,
 } from "@uk-data-atlas/postcodes";
-import type { PostcodeSource } from "@uk-data-atlas/geography/postcode-index-types";
+import type { PostcodeSource } from "@uk-data-atlas/geography";
 import {
 	envelope,
 	invalidQuery,
@@ -28,8 +28,8 @@ import type {
 import { choices, readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
-export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
-import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
+export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";
 
 export const POSTCODE_NOTE =
 	"A postcode is placed by the single centroid the ONS Postcode Directory gives it. Its addresses can fall on both sides of a boundary, so an area containing the centroid need not contain every address in the postcode.";

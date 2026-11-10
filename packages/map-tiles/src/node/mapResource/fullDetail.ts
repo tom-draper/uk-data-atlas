@@ -3,10 +3,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import type { GeometryTier } from "../../simplifyGeometry.ts";
 import { featureIds } from "../../featureIds.ts";
-import {
-	packedBounds,
-	type PackedGeometry,
-} from "@uk-data-atlas/geography/packed-geometry";
+import { packedBounds, type PackedGeometry } from "@uk-data-atlas/geography";
 import {
 	writeParquet,
 	writeParquetAsync,

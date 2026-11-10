@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { DISTANCE_METHOD } from "@uk-data-atlas/geography/area-distance";
+import { DISTANCE_METHOD } from "@uk-data-atlas/geography";
 import {
 	MAX_STATED_ACCURACY_M,
 	describeLookupRelease,

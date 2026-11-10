@@ -6,7 +6,7 @@ import {
 	parseSelectionDate,
 	type ReleaseReference,
 } from "@uk-data-atlas/areas";
-import { type GeometryProvenance } from "@uk-data-atlas/geography/coordinates";
+import { type GeometryProvenance } from "@uk-data-atlas/geography";
 import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
 import type { RouteContext, RouteContextFor } from "./runtime/index.ts";
 import { readChoice } from "./runtime/index.ts";
@@ -24,8 +24,8 @@ import {
 	MAX_STATED_ACCURACY_M,
 	type LookupPoint,
 	type LookupInputCrs,
-} from "@uk-data-atlas/geography/coordinates";
-export * from "@uk-data-atlas/geography/coordinates";
+} from "@uk-data-atlas/geography";
+export * from "@uk-data-atlas/geography";
 
 // Every point endpoint states the same `crs`, which a test holds them to.
 const CRS = QUERY_RULES["GET /areas:contains"].crs;

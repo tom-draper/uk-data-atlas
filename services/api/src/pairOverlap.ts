@@ -1,14 +1,14 @@
 import polygonClipping from "polygon-clipping";
 import {
-	boundsIntersect,
+	areaBoundsIntersect as boundsIntersect,
 	boundsOf,
 	toPolygons,
-} from "@uk-data-atlas/geography/area-geometry-pieces";
+} from "@uk-data-atlas/geography";
 import {
 	multiPolygonAreaM2,
 	polygonWidthM,
 } from "@uk-data-atlas/map-tiles/equalAreaProjection";
-import { CLIPPING_VERSION } from "@uk-data-atlas/geography/piece-intersection";
+import { CLIPPING_VERSION } from "@uk-data-atlas/geography";
 
 /**
  * The thresholds the published area-overlap crosswalks are compiled with, and

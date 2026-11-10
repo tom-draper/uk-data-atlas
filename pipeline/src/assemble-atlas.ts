@@ -12,7 +12,7 @@ import {
 import { publishVacuumed, writePostcodeAreas } from "./storage/index.ts";
 import { crosswalkSetHash } from "./crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "./crosswalk-weights/paths.ts";
-import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography/postcode-area-types";
+import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 import {
 	postcodeAreasDirectory,
 	readPostcodeAreaComponent,

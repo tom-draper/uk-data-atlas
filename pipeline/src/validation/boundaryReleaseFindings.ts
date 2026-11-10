@@ -1,8 +1,5 @@
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import {
-	canServeAsWgs84,
-	geometryProvenance,
-} from "@uk-data-atlas/geography/coordinates";
+import { canServeAsWgs84, geometryProvenance } from "@uk-data-atlas/geography";
 import { type Finding, listed, check } from "./findings.ts";
 import type { ValidationInputs } from "./inputs.ts";
 import { releaseKey } from "@uk-data-atlas/geography";

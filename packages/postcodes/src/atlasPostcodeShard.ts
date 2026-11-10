@@ -2,7 +2,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeIndexArtifact,
 	PostcodeShard,
-} from "@uk-data-atlas/geography/postcode-index-types";
+} from "@uk-data-atlas/geography";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 

@@ -2,7 +2,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import type {
 	PostcodeAreasArtifact,
 	PostcodeAreasShard,
-} from "@uk-data-atlas/geography/postcode-area-types";
+} from "@uk-data-atlas/geography";
 
 /**
  * For each release, the earlier release whose distance most often equals its
