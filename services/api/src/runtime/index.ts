@@ -3,7 +3,6 @@ export * from "./areaNotFound.ts";
 export * from "./analysisGeographyRoutes.ts";
 export * from "./governanceRoutes.ts";
 export * from "./operationTemplates.ts";
-export * from "./operations.ts";
 export * from "./problemCodes.ts";
 export * from "./queryParameters.ts";
 export * from "./queryRuleCompiler.ts";

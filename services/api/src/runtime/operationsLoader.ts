@@ -1,4 +1,7 @@
-import { openapiDocumentHash, type OperationsArtifact } from "./operations.ts";
+import {
+	openapiDocumentHash,
+	type OperationsArtifact,
+} from "@uk-data-atlas/artifacts";
 import { publicPath, readPublicManifest } from "@uk-data-atlas/atlas-db";
 
 /**

@@ -1,4 +1,4 @@
-import { compileOperationTemplates } from "../src/atlas/operationTemplates";
+import { compileOperationTemplates } from "../../../pipeline/src/atlas/operationTemplates";
 import assert from "node:assert/strict";
 import {
 	mkdirSync,
@@ -11,16 +11,19 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
 import { parse } from "yaml";
-import { buildOperations, compileOperations } from "../src/build-operations";
+import {
+	buildOperations,
+	compileOperations,
+} from "../../../pipeline/src/build-operations";
 import {
 	createOperationMatcher,
 	deprecationHeaders,
 	openapiDocumentHash,
 	unexpectedQueryParameter,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../src/runtime/index.ts";
 
 const openapiDocument = readFileSync(
-	new URL("../../services/api/openapi.yaml", import.meta.url),
+	new URL("../openapi.yaml", import.meta.url),
 	"utf8",
 );
 const templates = compileOperations(openapiDocument).operations;

@@ -1,5 +1,5 @@
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
-import { mediaType, type RequestBody } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "./runtime/index.ts";
+import { mediaType, type RequestBody } from "./runtime/index.ts";
 
 /** Read one named array of strings from a JSON batch request body. */
 export const readBatchInput = (

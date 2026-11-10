@@ -1,5 +1,5 @@
 import type { AreaRelationship } from "@uk-data-atlas/relationships";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "./runtime/index.ts";
 import { releaseMonth } from "@uk-data-atlas/areas";
 
 type ChildSelection =

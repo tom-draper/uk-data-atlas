@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { isCountryCode } from "../aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure } from "@uk-data-atlas/measures";
@@ -18,16 +18,13 @@ import {
 } from "../postcodeValue";
 import { valueForPlace } from "../placeValue";
 import { describeAttempt, describeCandidate } from "../placeResponses";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 
 /** A measure's value for one named place, reporting each candidate meaning that was tried. */
 export const handleDataValueRoutes = ({

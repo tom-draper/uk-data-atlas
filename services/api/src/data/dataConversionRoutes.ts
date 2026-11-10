@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
@@ -15,13 +15,13 @@ import {
 } from "@uk-data-atlas/measures";
 import { sourceExactProvenance } from "@uk-data-atlas/atlas-runtime/loader";
 import { paginate } from "../pagination";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 
 const crosswalkSummary = (artifact: CrosswalkArtifact) => ({
 	id: artifact.id,

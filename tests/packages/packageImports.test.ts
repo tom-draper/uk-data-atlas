@@ -13,7 +13,11 @@ const PACKAGES = join(process.cwd(), "packages");
 
 it("does not add API re-export shims", () => {
 	const apiSource = join(process.cwd(), "services/api/src");
-	const entryPoints = new Set(["catalogueLoader.ts", "server.ts"]);
+	const entryPoints = new Set([
+		"catalogueLoader.ts",
+		"server.ts",
+		"runtime/index.ts",
+	]);
 	const shims = sourceFiles(apiSource).filter((file) => {
 		if (entryPoints.has(relative(apiSource, file))) return false;
 		const source = readFileSync(file, "utf8")
@@ -247,7 +251,7 @@ const pipelineImportAllowed = (
 	);
 };
 
-const ATLAS_API = join(PACKAGES, "atlas-runtime/src/api");
+const ATLAS_API = join(ROOT, "services/api/src");
 
 const importsAtlasApi = (file: string, specifier: string) =>
 	specifier === "@uk-data-atlas/atlas-runtime/api" ||
@@ -315,7 +319,12 @@ describe("atlas domain boundaries", () => {
 
 	it("recognises API imports through relative paths and package exports", () => {
 		const file = join(PACKAGES, "atlas-runtime/src/loader/example.ts");
-		expect(importsAtlasApi(file, "../api/routing")).toBe(true);
+		expect(
+			importsAtlasApi(
+				file,
+				"../../../../services/api/src/runtime/routing",
+			),
+		).toBe(true);
 		expect(importsAtlasApi(file, "@uk-data-atlas/atlas-runtime/api")).toBe(
 			true,
 		);
@@ -326,9 +335,29 @@ describe("atlas domain boundaries", () => {
 });
 
 describe("pipeline boundaries", () => {
-	it("limits API test imports of pipeline code to shared fixtures", () => {
+	it("limits API test imports of pipeline code to shared fixtures and moved integration tests", () => {
 		const apiTests = join(ROOT, "services/api/tests");
 		const allowed = new Map([
+			[
+				"coveragePlan.test.ts",
+				"Tests pipeline evidence alongside API contexts.",
+			],
+			[
+				"geographyHealthRoutes.test.ts",
+				"Tests pipeline reports alongside API contexts.",
+			],
+			[
+				"geographyResolver.test.ts",
+				"Tests the resolver alongside API responses.",
+			],
+			[
+				"measureReconciliation.test.ts",
+				"Tests pipeline evidence alongside API contexts.",
+			],
+			[
+				"operationTemplates.test.ts",
+				"Tests compilation alongside API matching.",
+			],
 			[
 				"atlasComponentFixtures.ts",
 				"Shares empty atlas components with pipeline tests.",

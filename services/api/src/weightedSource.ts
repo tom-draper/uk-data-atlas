@@ -4,8 +4,8 @@ import {
 	type NumericObservationSuccess,
 } from "./numericObservations";
 import { resolveObservations } from "./observationResolution/observationPlan";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "./runtime/index.ts";
+import { problem, type ApiResponse } from "./runtime/index.ts";
 
 export type WeightedSource = {
 	measure: DataCatalog["measures"][number];

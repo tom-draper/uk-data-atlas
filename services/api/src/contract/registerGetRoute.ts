@@ -1,13 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import {
-	problem,
-	unexpectedQueryParameter,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	ApiResponse,
-	RouteContextFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { problem, unexpectedQueryParameter } from "../runtime/index.ts";
+import type { ApiResponse, RouteContextFor } from "../runtime/index.ts";
 import { httpResponse } from "../httpResponse";
 import { sendFastifyResponse } from "../fastifyResponse";
 import { validateResponse } from "./validateResponse";

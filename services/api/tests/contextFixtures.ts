@@ -5,7 +5,7 @@ import {
 	createGeographyServices,
 	type GeographyResolverInputs,
 } from "@uk-data-atlas/atlas-runtime/loader";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type {
 	CrosswalkArtifact,

@@ -1,4 +1,4 @@
-import { problem } from "@uk-data-atlas/atlas-runtime/api";
+import { problem } from "../runtime/index.ts";
 import type { DimensionalMeasure, Series } from "@uk-data-atlas/measures";
 
 /** Explain how to replace a retired public series id. */

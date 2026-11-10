@@ -1,13 +1,6 @@
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
-import type {
-	RouteContext,
-	RouteRequestFor,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "../runtime/index.ts";
+import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
+import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
 import { areaDossier } from "./areaDossierRoutes";
 import { areaCapabilities } from "./areaCapabilityRoutes";

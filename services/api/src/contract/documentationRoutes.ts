@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "../runtime/index.ts";
 import { handleOpenapiRoutes } from "../openapiRoutes";
 import { documentation } from "./documentation";
 import { openapiDescription } from "./openapiDescription";

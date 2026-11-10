@@ -1,8 +1,4 @@
-import {
-	invalidQuery,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, problem, type ApiResponse } from "../runtime/index.ts";
 import {
 	dimensionCatalogue,
 	type DimensionalMeasure,

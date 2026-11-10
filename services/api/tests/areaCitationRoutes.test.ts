@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	registry,

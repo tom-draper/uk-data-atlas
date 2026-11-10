@@ -1,7 +1,4 @@
-import {
-	invalidQuery,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { invalidQuery, type ApiResponse } from "./runtime/index.ts";
 
 /** Limits and cursors shared by every paginated resource. */
 export const DEFAULT_PAGE_SIZE = 100;

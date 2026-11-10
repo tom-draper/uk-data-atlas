@@ -11,7 +11,7 @@ import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
 import { NORTHERN_IRELAND_EXCLUSION } from "@uk-data-atlas/geography";
 import { toWgs84Point } from "@uk-data-atlas/geography/coordinates";
 import { route } from "../src/routes";
-import type { RouteContext } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	postcodeAreaIndexFor,
 	postcodeIndexFor,

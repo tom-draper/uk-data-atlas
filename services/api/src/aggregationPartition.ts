@@ -7,8 +7,8 @@ import { resolveAggregationTarget } from "./aggregationTarget";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
 import type { MeasureSource } from "@uk-data-atlas/measures";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
-import { type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "./runtime/index.ts";
+import { type ApiResponse } from "./runtime/index.ts";
 
 export type AggregationPartition = {
 	source: MeasureSource;

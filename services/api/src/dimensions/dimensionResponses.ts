@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import type { ApiResponse } from "../runtime/index.ts";
 import {
 	describeMembers,
 	type DimensionalMeasure,

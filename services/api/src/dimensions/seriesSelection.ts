@@ -3,7 +3,7 @@ import {
 	problem,
 	type ApiResponse,
 	type RouteDispatchContext,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 import { measureSlug } from "@uk-data-atlas/catalogue";
 import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {

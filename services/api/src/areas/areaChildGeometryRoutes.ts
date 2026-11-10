@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import {
 	GeometryBudget,
 	MAX_GEOMETRY_FEATURES,
@@ -9,16 +9,12 @@ import {
 	GEOMETRY_TIERS,
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "../areaChildren";
-import { readChoice } from "@uk-data-atlas/atlas-runtime/api";
+import { readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
 const TIER =

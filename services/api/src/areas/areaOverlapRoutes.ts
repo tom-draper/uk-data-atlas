@@ -1,14 +1,14 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../runtime/index.ts";
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "../pairOverlap";
-import { areaNotFound } from "@uk-data-atlas/atlas-runtime/api";
+import { areaNotFound } from "../runtime/index.ts";
 import { latestPublishedBoundaryRelease } from "../pointLookup";
-import type { RouteRequestFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "@uk-data-atlas/atlas-runtime/api";
+} from "../runtime/index.ts";
 
 /** Travels with an overlap, so the relation reported can be read against the rule that decided it. */
 const PAIR_OVERLAP_METHOD = {

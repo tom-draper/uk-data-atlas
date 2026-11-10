@@ -1,4 +1,4 @@
-import { requireGeography } from "@uk-data-atlas/atlas-runtime/api";
+import { requireGeography } from "../src/runtime/index.ts";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { compileAreaSearchIndex } from "@uk-data-atlas/areas";
@@ -16,14 +16,14 @@ import {
 	LocationProjectionStore,
 } from "@uk-data-atlas/places";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
-import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
+import { compileRelationshipPaths } from "../../../pipeline/src/relationships/relationshipPaths";
 import {
 	areaLookup,
 	containmentCrosswalk,
 	crosswalkInventory,
 	namedLocationInventory,
 	namedLocationLookup,
-} from "./geographyFixtures";
+} from "../../../pipeline/tests/geographyFixtures";
 
 const releaseRegistry: BoundaryRegistry = {
 	schemaVersion: 1,

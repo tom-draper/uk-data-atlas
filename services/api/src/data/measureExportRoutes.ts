@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import type { RouteContextFor } from "@uk-data-atlas/atlas-runtime/api";
+import type { RouteContextFor } from "../runtime/index.ts";
 import { handleMeasureExport } from "../bulkRoutes";
 import { resolveDimensionRequest } from "../dimensions/dimensionRequests";
 import { seriesResponse } from "../dimensions/dimensionResponses";

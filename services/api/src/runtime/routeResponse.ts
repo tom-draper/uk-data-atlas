@@ -127,10 +127,10 @@ export const requirementDetail = (response: ApiResponse | undefined) =>
 
 export const requireGeography = (
 	resolver: Pick<
-		import("../loader/geographyResolver").GeographyResolver,
+		import("@uk-data-atlas/atlas-runtime/loader").GeographyResolver,
 		"missingRequirement"
 	>,
-	requirement: import("../loader/geographyResolver").GeographyRequirement,
+	requirement: import("@uk-data-atlas/atlas-runtime/loader").GeographyRequirement,
 ) => {
 	const detail = resolver.missingRequirement(requirement);
 	return detail === undefined

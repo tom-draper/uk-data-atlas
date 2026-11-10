@@ -3,7 +3,7 @@ import {
 	aggregationRule,
 	type AvailableWeightedAggregation,
 } from "@uk-data-atlas/measures";
-import { problem, type ApiResponse } from "@uk-data-atlas/atlas-runtime/api";
+import { problem, type ApiResponse } from "./runtime/index.ts";
 
 export type { AvailableWeightedAggregation };
 
