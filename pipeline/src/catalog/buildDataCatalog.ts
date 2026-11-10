@@ -20,7 +20,11 @@ export const datasetCatalogInputs = (
 	repositoryRoot: string,
 ): DataCatalogInputs => {
 	const precompiled = (file: string) =>
-		new AtlasDatasetInput(repositoryRoot, file.replace(/\.json$/, ""));
+		new AtlasDatasetInput(
+			repositoryRoot,
+			file.replace(/\.json$/, ""),
+			"rows",
+		);
 	const inputs: DataCatalogInputs = {
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),

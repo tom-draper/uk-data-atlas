@@ -7,7 +7,7 @@ gzipped and the API decompresses them when it needs the JSON. Deploy both
 databases from the same build; the API checks the cache stamp and the payload
 columns at startup.
 
-The `data-catalog` stage writes the catalogue. The
+The `data-catalog` stage reads dataset inputs from the base database and writes the catalogue. The
 `statistics-read-path` stage derives a selector for every catalogue artifact
 from the statistics registry and declared selection rules. Selectors include
 the catalogue hash, which readers validate before serving data.
