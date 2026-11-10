@@ -10,7 +10,6 @@ export * from "./measureValuesContext.ts";
 export * from "./boundaryLoader.ts";
 
 export * from "./areaAbsence.ts";
-export * from "./countryRelease.ts";
 export * from "./postcodeAreaReleases.ts";
 export * from "./resolver/areas.ts";
 export * from "./resolver/capability.ts";
