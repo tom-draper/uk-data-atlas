@@ -1,10 +1,9 @@
 import type { AreaInventory, AreaLookup } from "@uk-data-atlas/areas";
-import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { releaseKey } from "@uk-data-atlas/geography";
+import { releaseKey, type BoundaryRegistry } from "@uk-data-atlas/geography";
 import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
-} from "@uk-data-atlas/relationships";
+} from "./memberReconciliation.ts";
 
 /**
  * Why an area identity resolves to nothing, as explicitly as the compiled
