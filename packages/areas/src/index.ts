@@ -24,3 +24,4 @@ export * from "./rawAreaGeometries.ts";
 export * from "./releaseForDate.ts";
 export * from "./resolvedAreas.ts";
 export * from "./countryRelease.ts";
+export * from "./spatialResolver.ts";

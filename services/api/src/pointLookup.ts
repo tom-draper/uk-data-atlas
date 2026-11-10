@@ -1,6 +1,6 @@
 import { areaNotFound } from "./runtime/index.ts";
 import type { BoundaryRelease } from "@uk-data-atlas/catalogue";
-import type { ResolvedContainingArea } from "@uk-data-atlas/atlas-loader";
+import type { ResolvedContainingArea } from "@uk-data-atlas/areas";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import {
 	parseSelectionDate,
