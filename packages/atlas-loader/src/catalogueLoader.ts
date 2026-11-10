@@ -1,7 +1,7 @@
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { FullDetailDownloads } from "./fullDetailDownloads.ts";
+import { FullDetailDownloads } from "@uk-data-atlas/geometry";
 import type { EvidenceManifest } from "@uk-data-atlas/catalogue/node";
 import { lazyValue } from "@uk-data-atlas/atlas-db";
 import { readAtlasPages } from "@uk-data-atlas/atlas-db";

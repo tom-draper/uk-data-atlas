@@ -3,14 +3,29 @@ import {
 	buildSimplifiedDownload,
 	type SimplifiedDownload,
 } from "@uk-data-atlas/map-tiles/node";
-import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import type { GeographyResolver } from "./geographyResolver.ts";
+import type { AreaGeometryCache } from "./areaGeometry.ts";
 import {
 	buildFullDetailParquet,
 	buildFullDetailParquetAsync,
 	type FullDetailDownload,
 	type FullDetailRelease,
 } from "@uk-data-atlas/map-tiles/node";
+
+/**
+ * What a download needs to know about a release: its publisher and licence for
+ * the attribution, and the names of its areas. The loader's geography resolver
+ * satisfies it.
+ */
+export type FullDetailReleaseSource = {
+	boundaryRelease(
+		geography: string,
+		id: string,
+	): { source: { publisher: string; licence: { name: string } } } | undefined;
+	releaseAreas(
+		geography: string,
+		boundaryRelease: string,
+	): Map<string, { code: string; name: string }> | undefined;
+};
 
 /** Bytes of built downloads kept for the next request. */
 export const DEFAULT_FULL_DETAIL_CACHE_BYTES = 64 * 1024 * 1024;
@@ -53,14 +68,11 @@ export class FullDetailDownloads implements FullDetailSource {
 	private queue: Promise<void> = Promise.resolve();
 
 	private readonly cache: AreaGeometryCache;
-	private readonly resolver: Pick<
-		GeographyResolver,
-		"releaseAreas" | "boundaryRelease"
-	>;
+	private readonly resolver: FullDetailReleaseSource;
 	private readonly maxBytes: typeof DEFAULT_FULL_DETAIL_CACHE_BYTES;
 	constructor(
 		cache: AreaGeometryCache,
-		resolver: Pick<GeographyResolver, "releaseAreas" | "boundaryRelease">,
+		resolver: FullDetailReleaseSource,
 		maxBytes = DEFAULT_FULL_DETAIL_CACHE_BYTES,
 	) {
 		this.cache = cache;
