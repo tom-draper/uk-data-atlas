@@ -102,7 +102,7 @@ export const dimensionCatalogue = (
 	if (cached) return cached;
 	const grouped = new Map<string, Series[]>();
 	for (const measure of catalog.measures) {
-		const mapping = config.ids[measure.id];
+		const mapping = measure.series ?? config.ids[measure.id];
 		if (!mapping) continue;
 		const series: Series = {
 			id: measureSeriesKey(mapping),
