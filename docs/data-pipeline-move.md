@@ -7,7 +7,7 @@ entry points and dependencies are listed in [the architecture](../ARCHITECTURE.m
 
 `pnpm data:build --plan` lists the stages in dependency order. Dataset
 compilers write `data/build/datasets/`, and `atlas-sqlite` writes statistics
-rows to `atlas-base.sqlite`. The data catalogue stage writes the catalogue.
+rows to `atlas-base.sqlite`. The data catalogue stage reads those rows and writes the catalogue.
 
 The `statistics-read-path` stage derives selectors from the statistics registry
 and declared rules. Export, compatibility and analysis geography validation

@@ -1,21 +1,24 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
+import { readBaseDatasetInput } from "./baseDatasetInput.ts";
 
 export class AtlasDatasetInput {
 	readonly repositoryRoot: string;
 	readonly output: string;
-	readonly source: "datasets" | "atlas";
+	readonly source: "datasets" | "atlas" | "rows";
 	constructor(
 		repositoryRoot: string,
 		output: string,
-		source: "datasets" | "atlas" = "datasets",
+		source: "datasets" | "atlas" | "rows" = "datasets",
 	) {
 		this.repositoryRoot = repositoryRoot;
 		this.output = output;
 		this.source = source;
 	}
 	read() {
+		if (this.source === "rows")
+			return readBaseDatasetInput(this.repositoryRoot, this.output);
 		if (this.source === "atlas")
 			return readAtlasPayload(
 				this.repositoryRoot,
@@ -33,6 +36,8 @@ export class AtlasDatasetInput {
 		);
 	}
 	toString() {
+		if (this.source === "rows")
+			return `data/build/atlas-base.sqlite:${this.output}`;
 		return this.source === "atlas"
 			? `data/build/atlas.sqlite:${this.output}`
 			: `data/build/datasets/${this.output}.json`;
