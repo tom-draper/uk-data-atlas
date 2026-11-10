@@ -22,3 +22,4 @@ export * from "./geographyBuildPath.ts";
 export * from "./lookupExports.ts";
 export * from "./rawAreaGeometries.ts";
 export * from "./releaseForDate.ts";
+export * from "./resolvedAreas.ts";

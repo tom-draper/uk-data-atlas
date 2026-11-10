@@ -58,7 +58,6 @@ export type GeographyRequirement =
 	| "location-projections"
 	| "crosswalks";
 
-export type { ResolvedSameCodeArea } from "./resolver/areas.ts";
 export type {
 	ResolvedContainingArea,
 	ResolvedNearbyArea,

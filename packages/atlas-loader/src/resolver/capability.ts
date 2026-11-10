@@ -21,7 +21,7 @@ import {
 } from "@uk-data-atlas/relationships";
 import type { CrosswalkTranslator } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { areaId } from "./areas.ts";
+import { areaId } from "@uk-data-atlas/areas";
 
 export type ResolvedRelationshipCoverage = {
 	areaCount: number;
