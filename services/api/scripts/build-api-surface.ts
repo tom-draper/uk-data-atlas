@@ -1,5 +1,5 @@
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
-import { surfaceFingerprint } from "@uk-data-atlas/catalogue/surface-fingerprint";
+import { surfaceFingerprint } from "@uk-data-atlas/catalogue";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
