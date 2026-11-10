@@ -9,9 +9,8 @@ export type CatalogueDefinition =
 
 /**
  * How to get the compiled payloads that region chunk generation reads, by
- * output file. A payload from this run is already in memory. One reused from an
- * earlier run stays on disk until chunks are actually cut from it, which they
- * are not when the chunks themselves can be reused.
+ * output file. A payload from this run is already in memory; a published
+ * payload can be loaded lazily from the database when chunks are rebuilt.
  */
 export type CompiledDatasets = Map<
 	string,
