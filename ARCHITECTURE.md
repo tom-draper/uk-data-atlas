@@ -261,11 +261,9 @@ published files. The parity checks read build intermediates that the website
 server may not hold, and a failed check is no reason to regenerate data.
 
 `--verify` is not `--verify-outputs`: the latter audits what each stage writes.
-`statistics-read-path` still rebuilds every observation artifact from statistics
-rows as it runs. That comparison chooses each artifact's selector (a census
-source is narrowed to its code year's releases only because the unnarrowed
-rebuild differs), so it is how the stage works, not a check on a finished
-output, and it stays in the stage.
+`statistics-read-path` derives selectors from declared rules and the
+statistics registry. In particular, datasets partitioned by code year name
+that rule explicitly; fixture tests cover it.
 
 When a stage fails, no new stage starts. Stages already running finish, so
 their outputs are complete and recorded in the cache, and the build exits with
@@ -450,9 +448,9 @@ projections live in the local `atlas-cache.sqlite`. The API reads these
 directly. Their JSON outputs remain build and release intermediates. Named
 locations compile from area JSON before the shared SQLite database is written.
 The statistics vocabulary and read-path stages write JSON under `data/build/`.
-The read-path stage compares statistics rows with independently compiled
-observation values before assembly. The API reads both files from the deployed build. Other API
-loaders still read their JSON outputs.
+The read-path stage derives selectors from declarations and the statistics
+registry. Assembly stores the vocabulary and selectors in the database for API
+readers. Other API loaders still read their JSON outputs.
 Stages after `atlas-sqlite` read the tables they need from `atlas-base.sqlite`
 where that is cheaper than the JSON (`relationship-paths` reads each
 crosswalk's shape from the edges), and read a crosswalk's JSON one file at a

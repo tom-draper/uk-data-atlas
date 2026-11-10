@@ -283,14 +283,10 @@ export const apiStages = [
 		{
 			writes: [
 				`${artifacts}/data-catalog.json`,
-				"data/build/compiled-observations",
 				"data/build/measure-statistics-fields.json",
 			],
 			rawInputs: censusSmallAreaInputs,
-			requiredOutputs: [
-				"data/build/compiled-observations",
-				"data/build/measure-statistics-fields.json",
-			],
+			requiredOutputs: ["data/build/measure-statistics-fields.json"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),

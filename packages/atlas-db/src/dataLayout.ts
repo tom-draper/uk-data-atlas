@@ -21,9 +21,6 @@ export const buildDirectory = (repositoryRoot: string) =>
 export const compiledObservationDirectory = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "compiled-observations");
 
-export const compiledObservationPath = (repositoryRoot: string, name: string) =>
-	join(compiledObservationDirectory(repositoryRoot), `${name}.json`);
-
 /** The release SQLite database, given the repository root. */
 export const atlasDatabasePath = (repositoryRoot: string) =>
 	join(buildDirectory(repositoryRoot), "atlas.sqlite");

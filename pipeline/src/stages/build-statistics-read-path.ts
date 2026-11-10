@@ -2,9 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
-import { isDeepStrictEqual } from "node:util";
 import {
-	isMeasureTable,
 	observationArtifactName,
 	totalMember,
 	type DataCatalog,
@@ -19,23 +17,23 @@ import {
 } from "@uk-data-atlas/datasets";
 import {
 	readMeasureDimensionsConfig,
-	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
 	type StatisticsSelector,
-	type StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,
 	buildDirectory,
-	compiledObservationPath,
-	observationValuesEqual,
 } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
+import {
+	censusTableSelector,
+	partitionByCodeYear,
+} from "../statistics/selectorPlans.ts";
 
 /**
- * Select statistics rows for every artifact and check their values against
- * the independently compiled artifacts.
+ * Select statistics rows for every catalogue artifact from declarations and
+ * the statistics registry.
  */
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
@@ -227,62 +225,6 @@ const releasesIn = (geography: string, year: number) =>
 		.all(geography, `${year}-%`)
 		.map((row) => String(row.release));
 
-type StoredRecord = {
-	areaCode: string;
-	value?: number | null;
-	status?: string;
-	category?: string;
-	sourceAreaCode?: string;
-	confidenceInterval?: unknown;
-};
-type Artifact = { periods: Array<{ period: string; records: StoredRecord[] }> };
-
-/** What differs between the stored artifact and its rebuild, in a sentence. */
-const difference = (stored: Artifact, rebuilt: Artifact) => {
-	const index = (artifact: Artifact) =>
-		new Map(
-			artifact.periods.flatMap(({ period, records }) =>
-				records.map(
-					(record) =>
-						[`${period} ${record.areaCode}`, record] as const,
-				),
-			),
-		);
-	const before = index(stored);
-	const after = index(rebuilt);
-	let missing = 0;
-	let missingZero = 0;
-	let extra = 0;
-	let values = 0;
-	let other = 0;
-	let example: string | undefined;
-	for (const [key, record] of before) {
-		const held = after.get(key);
-		if (!held) {
-			missing++;
-			if (record.value === 0) missingZero++;
-			example ??= `${key} is missing`;
-		} else if (record.value !== held.value) {
-			values++;
-			example ??= `${key} is ${String(record.value)}, rebuilt as ${String(held.value)}`;
-		} else if (!isDeepStrictEqual(record, held)) {
-			other++;
-			example ??= `${key} is ${JSON.stringify(record)}, rebuilt as ${JSON.stringify(held)}`;
-		}
-	}
-	for (const key of after.keys()) if (!before.has(key)) extra++;
-	const parts = [
-		missing &&
-			`${missing} of ${before.size} records are missing${missingZero ? ` (${missingZero} of them zero)` : ""}`,
-		values && `${values} values differ`,
-		other && `${other} records differ in status, interval or source code`,
-		extra && `${extra} records are extra`,
-	].filter(Boolean);
-	return parts.length
-		? `The statistics rows do not rebuild it: ${parts.join(", ")}. For example, ${example}.`
-		: "The statistics rows rebuild the same records in a different layout.";
-};
-
 const plan: StatisticsReadPath = {
 	schemaVersion: 1,
 	dataCatalogHash: catalog.contentHash,
@@ -292,44 +234,30 @@ const plan: StatisticsReadPath = {
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
 		const name = observationArtifactName(measure.id, source);
-		const storedText = readFileSync(
-			compiledObservationPath(repositoryRoot, name),
-			"utf8",
+		const table = censusTableSelector(
+			name,
+			source.datasetId,
+			source.sourceGeography.type,
+			source.sourceGeography.boundaryYear,
+			source.periods[0]!,
+			config.ids,
 		);
-		const stored = JSON.parse(storedText) as Artifact;
-		if (isMeasureTable(stored)) {
-			// One table serves several measures; plan it once.
-			if (name in plan.statistics || name in plan.observations) continue;
-			const table: StatisticsTableSelector = {
-				kind: "measure-table",
-				id: stored.id,
-				datasetId: stored.datasetId,
-				geography: stored.sourceGeography.type,
-				boundaryYear: stored.sourceGeography.boundaryYear,
-				period: stored.period,
-				measures: stored.measures,
-				columns: stored.measures.map((id) => ({
-					measure: config.ids[id]!.measure,
-					dimensions: config.ids[id]!.dimensions ?? {},
-				})),
-			};
-			try {
-				if (
-					observationValuesEqual(
-						rebuildStatisticsObservationText(database, table, {
-							measureId: measure.id,
-							sourceGeography: source.sourceGeography,
-							periods: source.periods,
-						}),
-						storedText,
+		if (table) {
+			if (source.periods.length !== 1)
+				throw new Error(`Census table ${name} must have one period`);
+			if (!(name in plan.statistics)) {
+				for (const column of table.columns)
+					if (
+						!seriesDimensions(
+							table.datasetId,
+							column.measure,
+							table.geography,
+						).length
 					)
-				)
-					plan.statistics[name] = table;
-				else
-					plan.observations[name] =
-						"The statistics rows do not rebuild this census table by value.";
-			} catch (error) {
-				plan.observations[name] = (error as Error).message;
+						throw new Error(
+							`Census table ${name} has no ${column.measure} series`,
+						);
+				plan.statistics[name] = table;
 			}
 			continue;
 		}
@@ -343,45 +271,14 @@ for (const measure of catalog.measures)
 			plan.observations[name] = selector;
 			continue;
 		}
-		const rebuild = (candidate: StatisticsSelector) =>
-			rebuildStatisticsObservationText(database, candidate, {
-				measureId: measure.id,
-				sourceGeography: source.sourceGeography,
-				periods: source.periods,
-			});
-		let rebuiltText: string;
-		try {
-			rebuiltText = rebuild(selector);
-		} catch (error) {
-			plan.observations[name] = (error as Error).message;
-			continue;
-		}
-		// A census source on a later code year lists only the codes that
-		// year's releases still use.
-		const narrowed = {
-			...selector,
-			areasIn: releasesIn(
+		plan.statistics[name] = partitionByCodeYear(
+			selector,
+			source.datasetId,
+			releasesIn(
 				source.sourceGeography.type,
 				source.sourceGeography.boundaryYear,
 			),
-		};
-		if (
-			!observationValuesEqual(rebuiltText, storedText) &&
-			narrowed.areasIn.length > 0
-		) {
-			const narrowedText = rebuild(narrowed);
-			if (observationValuesEqual(narrowedText, storedText)) {
-				plan.statistics[name] = narrowed;
-				continue;
-			}
-		}
-		if (observationValuesEqual(rebuiltText, storedText))
-			plan.statistics[name] = selector;
-		else
-			plan.observations[name] = difference(
-				stored,
-				JSON.parse(rebuiltText) as Artifact,
-			);
+		);
 	}
 database.close();
 if (Object.keys(plan.observations).length)

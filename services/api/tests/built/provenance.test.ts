@@ -1,7 +1,5 @@
 import {
-	compiledObservationPath,
 	atlasDatabasePath,
-	observationValuesEqual,
 	statisticsReadPathPath,
 } from "@uk-data-atlas/atlas-db";
 import {
@@ -103,10 +101,6 @@ test("names an artifact that exists and hashes to what it says", () => {
 		if (recomputed === undefined) {
 			// The same rule the validation report applies at build time: the
 			// artifact without its hash must hash to its hash.
-			const compiled = readFileSync(
-				compiledObservationPath(repositoryRoot, observations.artifact),
-				"utf8",
-			);
 			const selector = readPath.statistics[observations.artifact];
 			assert.ok(
 				selector,
@@ -120,10 +114,6 @@ test("names an artifact that exists and hashes to what it says", () => {
 					sourceGeography: partition.geography,
 					periods: partition.periods,
 				},
-			);
-			assert.ok(
-				observationValuesEqual(compiled, rebuilt),
-				`${observations.artifact} differs from its compiled values`,
 			);
 			const { contentHash, ...content } = JSON.parse(rebuilt) as {
 				contentHash: string;

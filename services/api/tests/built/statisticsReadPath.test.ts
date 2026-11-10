@@ -2,22 +2,12 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
+import { observationArtifactName } from "@uk-data-atlas/catalogue/node";
 import {
-	observationArtifactName,
-	isMeasureTable,
-	type AnyMeasureObservationArtifact,
-} from "@uk-data-atlas/catalogue/node";
-import {
-	tableMeasureObservations,
-	readStatisticsObservationText,
 	readAtlasStatisticsReadPath,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
-import {
-	atlasDatabasePath,
-	compiledObservationPath,
-	observationValuesEqual,
-} from "@uk-data-atlas/atlas-db";
+import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
@@ -25,10 +15,8 @@ import { readFileSync } from "node:fs";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
 
 /**
- * The statistics read path. An artifact is read from the statistics tables
- * only when its rows rebuild the stored artifact, so every value, status,
- * interval, period and area a route serves is unchanged; the routes
- * are compared too, old read path against new, for a sample of places.
+ * The statistics read path names every catalogue partition and serves
+ * sampled places from the canonical statistics tables.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const repositoryRoot = resolve(apiRoot, "../..");
@@ -58,29 +46,6 @@ test("names every catalogue artifact once as statistics", () => {
 	assert.equal(new Set(planned).size, planned.length);
 	assert.deepEqual(new Set(planned), names);
 	assert.deepEqual(readPath.observations, {});
-});
-
-test("rebuilds every moved artifact by value from statistics rows", () => {
-	for (const measure of catalog.measures)
-		for (const source of measure.sources) {
-			const name = observationArtifactName(measure.id, source);
-			const selector = readPath.statistics[name];
-			assert.ok(selector, `Missing selector for ${name}`);
-			assert.ok(
-				observationValuesEqual(
-					readStatisticsObservationText(databasePath, selector, {
-						measureId: measure.id,
-						sourceGeography: source.sourceGeography,
-						periods: source.periods,
-					}),
-					readFileSync(
-						compiledObservationPath(repositoryRoot, name),
-						"utf8",
-					),
-				),
-				`${name} rebuilt from statistics rows differs from the stored artifact`,
-			);
-		}
 });
 
 /** Every place in a moved source, sampled evenly, with its first and last periods. */
@@ -144,59 +109,13 @@ const samples = () => {
 	return picked;
 };
 
-test("serves the same answers from statistics rows as from compiled artifacts", () => {
-	let activeKey = "";
-	let activeArtifact: AnyMeasureObservationArtifact;
-	const legacy = {
-		...catalogues,
-		measureObservations: catalog.measures.flatMap((measure) =>
-			measure.sources.map((source) => {
-				const name = observationArtifactName(measure.id, source);
-				const key = `${name}:${measure.id}`;
-				const load = () => {
-					if (activeKey !== key) {
-						const artifact: unknown = JSON.parse(
-							readFileSync(
-								compiledObservationPath(repositoryRoot, name),
-								"utf8",
-							),
-						);
-						activeArtifact = isMeasureTable(artifact)
-							? tableMeasureObservations(artifact, measure.id)
-							: (artifact as AnyMeasureObservationArtifact);
-						activeKey = key;
-					}
-					return activeArtifact;
-				};
-				return {
-					schemaVersion: 1,
-					measureId: measure.id,
-					sourceGeography: source.sourceGeography,
-					get contentHash() {
-						return load().contentHash;
-					},
-					get periods() {
-						return load().periods;
-					},
-				} as AnyMeasureObservationArtifact;
-			}),
-		),
-	};
+test("serves sampled catalogue partitions from statistics rows", () => {
 	const checked = samples();
 	assert.ok(checked.length > 300, `only ${checked.length} samples`);
 	let answered = 0;
 	const refusals: string[] = [];
 	for (const { url } of checked) {
-		const before = route("GET", url, legacy);
 		const after = route("GET", url, catalogues);
-		assert.equal(after.status, before.status, url);
-		assert.ok(
-			observationValuesEqual(
-				JSON.stringify(after.body),
-				JSON.stringify(before.body),
-			),
-			url,
-		);
 		if (after.status === 200) answered++;
 		else if (refusals.length < 12) {
 			const body = after.body as { code?: string; detail?: string };
@@ -205,7 +124,7 @@ test("serves the same answers from statistics rows as from compiled artifacts", 
 			);
 		}
 	}
-	// A pair of matching refusals proves little, so most samples must answer.
+	// Most sampled routes must return a value, not just a refusal.
 	assert.ok(
 		answered > checked.length * 0.95,
 		`${answered} of ${checked.length} samples answered; first refusals: ${refusals.join("; ")}`,

@@ -339,12 +339,11 @@ in them. `UNSTORED_DATASETS` (`packages/catalogue/src/node/statisticsDatasets/`)
 lists any exception with its reason, and is empty. The API reads its observations
 from these same statistics rows. The base database schema version is 3.
 
-`data-catalog` writes independently compiled observation artifacts under
-`compiled-observations/`. `statistics-read-path` compares their values, statuses,
-intervals, periods and areas with statistics-backed artifacts and records the
-selectors in `statistics-read-path.json`, then assembly stores them in the
-`statistics_selector` tables. The JSON is a build intermediate. The build fails if an artifact cannot
-be reconstructed. These compiler outputs are build inputs, not API storage.
+`statistics-read-path` derives selectors from the catalogue, statistics
+registry and declared code-year and census-table rules. It records them in
+`statistics-read-path.json`, then assembly stores them in the
+`statistics_selector` tables. The JSON is a build intermediate; fixture tests
+cover the selection rules.
 
 All tables are `STRICT` with integer keys. Writer: `packages/measures/src/atlasStatistics.ts`.
 
