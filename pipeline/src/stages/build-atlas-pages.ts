@@ -4,8 +4,8 @@ import {
 	AGE_DATASETS,
 } from "@uk-data-atlas/catalogue/place-facts";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { readBaseDatasetInput } from "../catalog/baseDatasetInput.ts";
+import { resolve } from "node:path";
 import { buildDocsCatalogue } from "../atlas/buildDocsCatalogue.ts";
 import { writeAtlasPages } from "../atlas/writeAtlasPages.ts";
 import { buildPlaceProfiles } from "../places/buildPlaceProfiles.ts";
@@ -16,8 +16,7 @@ import type {
 import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
-const readDataset = (output: string) =>
-	readFileSync(join(ROOT, "data/build/datasets", `${output}.json`), "utf8");
+const readDataset = (output: string) => readBaseDatasetInput(ROOT, output);
 const { outputs, index } = buildPlaceProfiles(ROOT);
 
 const contentHash = createHash("sha256");

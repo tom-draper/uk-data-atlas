@@ -1,6 +1,7 @@
 import { simplifyGeometry } from "@uk-data-atlas/map-tiles";
 import { inBox, pointInGeom } from "@uk-data-atlas/datasets";
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { readBaseDatasetInput } from "../catalog/baseDatasetInput.ts";
 import { join } from "node:path";
 import { readPlaceResolver } from "./placeResolver.ts";
 import { boundsOf, centreOf } from "./placeProfileGeometry.ts";
@@ -41,11 +42,7 @@ import {
 import { readJsonSync } from "../lib/json.ts";
 
 export function buildPlaceProfiles(ROOT: string) {
-	const readDataset = (output: string) =>
-		readFileSync(
-			join(ROOT, "data/build/datasets", `${output}.json`),
-			"utf8",
-		);
+	const readDataset = (output: string) => readBaseDatasetInput(ROOT, output);
 	const BOUNDARIES = join(
 		artifactDirectory(ROOT),
 		"source-data",
