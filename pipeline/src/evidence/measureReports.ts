@@ -4,7 +4,7 @@ import {
 	type Measure,
 	type ReconciliationRouteRequest,
 } from "@uk-data-atlas/catalogue/node";
-import { coveragePlan } from "@uk-data-atlas/atlas-loader";
+import { coveragePlan } from "@uk-data-atlas/catalogue/node";
 import { type MeasureContext } from "@uk-data-atlas/measures";
 
 export const reconciliationEvidence = (

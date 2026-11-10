@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import { coveragePlanEvidence } from "../../../pipeline/src/evidence/measureReports";
-import { coveragePlan } from "@uk-data-atlas/atlas-loader";
+import { coveragePlan } from "@uk-data-atlas/catalogue/node";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
