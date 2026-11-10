@@ -6,7 +6,7 @@ import type {
 } from "@uk-data-atlas/areas";
 
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import type { GeographyInventory } from "./geographyInventory.ts";
+import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
@@ -34,7 +34,7 @@ import { LineageResolver } from "./resolver/lineage.ts";
 import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
-} from "./resolver/releaseComparison.ts";
+} from "@uk-data-atlas/relationships";
 import { LocationsResolver } from "./resolver/locations.ts";
 import { PostcodeResolver } from "./resolver/postcodes.ts";
 import {
@@ -72,7 +72,7 @@ export type {
 	BoundaryExtentChange,
 	BoundaryReleaseComparison,
 	PublishedRelationshipMapping,
-} from "./resolver/releaseComparison.ts";
+} from "@uk-data-atlas/relationships";
 export type {
 	AreaIdentity,
 	GeographyEndpoint,

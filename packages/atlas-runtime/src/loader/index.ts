@@ -11,9 +11,9 @@ export * from "./boundaryLoader.ts";
 
 export * from "./areaAbsence.ts";
 export * from "./areaResources.ts";
-export * from "./batchValidation.ts";
+export * from "@uk-data-atlas/relationships";
 export * from "./countryRelease.ts";
-export * from "./geographyInventory.ts";
+export * from "@uk-data-atlas/relationships";
 export * from "./postcodeAreaReleases.ts";
 export * from "./rankCompatibilityReleases.ts";
 export {
@@ -28,17 +28,17 @@ export * from "./sourceExactProvenance.ts";
 export * from "./resolver/areas.ts";
 export * from "./resolver/capability.ts";
 export * from "./resolver/catalogue.ts";
-export * from "./resolver/conversionCapability.ts";
+export * from "@uk-data-atlas/relationships";
 export * from "./resolver/lineage.ts";
 export * from "./resolver/locations.ts";
-export { compareBoundaryReleases as compareReleaseEvidence } from "./resolver/releaseComparison.ts";
+export { compareReleaseEvidence } from "@uk-data-atlas/relationships";
 export type {
 	BoundaryExtentChange,
 	RecodedArea,
 	PublishedRelationshipMapping,
 	BoundaryReleaseComparison,
 	ReleaseComparisonSources,
-} from "./resolver/releaseComparison.ts";
+} from "@uk-data-atlas/relationships";
 export * from "./resolver/spatial.ts";
 export * from "./resolver/postcodes.ts";
 
