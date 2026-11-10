@@ -9,10 +9,7 @@ import {
 	getGenderColorExpression,
 	getSequentialColorExpression,
 } from "@/lib/helpers/colorScale/datasetColors";
-import {
-	calculateMedianAge,
-	calculateTotal,
-} from "@uk-data-atlas/datasets/helpers/population";
+import { calculateMedianAge, calculateTotal } from "@uk-data-atlas/datasets";
 import type { MapExpression } from "../mapManager/expressions";
 import { valueGeojson, type MapRenderContext } from "./context";
 

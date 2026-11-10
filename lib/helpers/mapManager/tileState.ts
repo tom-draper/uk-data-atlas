@@ -1,5 +1,5 @@
-import { getFeatureProp } from "@uk-data-atlas/datasets/types/geometry";
-import type { BoundaryGeojson } from "@uk-data-atlas/datasets/types/geometry";
+import { getFeatureProp } from "@uk-data-atlas/datasets";
+import type { BoundaryGeojson } from "@uk-data-atlas/datasets";
 import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import type { BoundaryTiles } from "@/lib/data/boundaries/tiles";
 

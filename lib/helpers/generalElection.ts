@@ -5,7 +5,7 @@ import {
 	GeneralElectionDataset,
 	ProcessedPartyData,
 } from "@uk-data-atlas/datasets";
-import { PARTIES } from "@uk-data-atlas/datasets/data/election/parties";
+import { PARTIES } from "@uk-data-atlas/datasets";
 import type { SelectedArea } from "../types/areas";
 import {
 	selectedAreaConstituencyRecord,
