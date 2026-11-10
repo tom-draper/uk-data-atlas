@@ -14,13 +14,10 @@ import { basename, dirname, join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets/data/catalog/meta";
 import { decodeBoundaryData } from "@uk-data-atlas/datasets/data/boundaries/decode";
-import { compilePolygonArchive } from "@uk-data-atlas/map-tiles/compileArchive";
-import {
-	compileTileset,
-	NonCoverageError,
-} from "@uk-data-atlas/map-tiles/compileTileset";
-import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles/tileset";
-import type { GeoJsonGeometry } from "@uk-data-atlas/map-tiles/types";
+import { compilePolygonArchive } from "@uk-data-atlas/map-tiles";
+import { compileTileset, NonCoverageError } from "@uk-data-atlas/map-tiles";
+import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles";
+import type { GeoJsonGeometry } from "@uk-data-atlas/map-tiles";
 import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,

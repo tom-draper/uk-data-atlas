@@ -5,15 +5,11 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles/mapResources";
-import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles/pmtiles";
-import {
-	MAX_ZOOM,
-	MIN_ZOOM,
-	ZOOM_TIERS,
-} from "@uk-data-atlas/map-tiles/tileset";
+import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import { tileId, TILE_TYPE_MVT } from "@uk-data-atlas/map-tiles";
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_TIERS } from "@uk-data-atlas/map-tiles";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles/simplifyGeometry";
+import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles";
 import { GEOJSON_TIERS } from "@uk-data-atlas/map-tiles/node";
 import { readParquet } from "../parquetFixtures";
 import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";

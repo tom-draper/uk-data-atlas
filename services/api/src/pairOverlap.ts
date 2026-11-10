@@ -4,10 +4,7 @@ import {
 	boundsOf,
 	toPolygons,
 } from "@uk-data-atlas/geography";
-import {
-	multiPolygonAreaM2,
-	polygonWidthM,
-} from "@uk-data-atlas/map-tiles/equalAreaProjection";
+import { multiPolygonAreaM2, polygonWidthM } from "@uk-data-atlas/map-tiles";
 import { CLIPPING_VERSION } from "@uk-data-atlas/geography";
 
 /**

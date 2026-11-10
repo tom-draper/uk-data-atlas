@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { gzipSync } from "node:zlib";
-import { compileTileset } from "@uk-data-atlas/map-tiles/compileTileset";
+import { compileTileset } from "@uk-data-atlas/map-tiles";
 import { readHeader, readMetadata } from "./pmtilesFixtures";
 
 const square = (west: number, south: number, size: number) => ({
@@ -76,8 +76,7 @@ test("refuses a release with no areas", () => {
 });
 
 test("compiled polygon archives retain overlapping areas while strict compilation rejects them", async () => {
-	const { compilePolygonArchive } =
-		await import("@uk-data-atlas/map-tiles/compileArchive");
+	const { compilePolygonArchive } = await import("@uk-data-atlas/map-tiles");
 	const { readTile } = await import("./pmtilesFixtures");
 	const { decodeTile } = await import("./vectorTileFixtures");
 	const areas = new Map([

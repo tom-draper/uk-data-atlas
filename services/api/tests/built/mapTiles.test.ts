@@ -7,15 +7,15 @@ import {
 	type GeoJsonGeometry,
 } from "@uk-data-atlas/geometry";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { simplifyGeometry } from "@uk-data-atlas/map-tiles/simplifyGeometry";
-import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
-import { compileTiers } from "@uk-data-atlas/map-tiles/topologyTiers";
+import { simplifyGeometry } from "@uk-data-atlas/map-tiles";
+import { decomposeArcs } from "@uk-data-atlas/map-tiles";
+import { compileTiers } from "@uk-data-atlas/map-tiles";
 import {
 	tileBounds,
 	tilesCovering,
 	type TileAddress,
 	type TileBox,
-} from "@uk-data-atlas/map-tiles/tileGrid";
+} from "@uk-data-atlas/map-tiles";
 import {
 	boundsOf,
 	buildTile,
@@ -24,7 +24,7 @@ import {
 	tierForZoom,
 	ZOOM_TIERS,
 	type MapFeature,
-} from "@uk-data-atlas/map-tiles/tileset";
+} from "@uk-data-atlas/map-tiles";
 import { decodeTile } from "../vectorTileFixtures";
 
 /**

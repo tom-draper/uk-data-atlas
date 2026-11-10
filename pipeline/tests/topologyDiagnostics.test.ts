@@ -7,7 +7,7 @@ import {
 	AreaGeometryCache,
 	type GeoJsonGeometry,
 } from "@uk-data-atlas/geometry";
-import { decomposeArcs } from "@uk-data-atlas/map-tiles/arcs";
+import { decomposeArcs } from "@uk-data-atlas/map-tiles";
 import { compileMapResource } from "../src/maps/compileMapResource";
 
 const left: GeoJsonGeometry = {
