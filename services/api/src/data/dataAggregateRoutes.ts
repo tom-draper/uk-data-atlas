@@ -102,6 +102,7 @@ export const aggregateValue = ({
 		period: period as string,
 		artifacts: {
 			measureObservations,
+			seriesKey: series?.id,
 		},
 	});
 	if ("status" in numericObservationResult) return numericObservationResult;

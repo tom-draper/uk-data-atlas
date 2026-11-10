@@ -11,6 +11,8 @@ import {
 	indexStatisticsSeries,
 	measureSeriesSourceKey,
 	type StatisticsReadPath,
+	measureSeriesKey,
+	observationsFor,
 } from "@uk-data-atlas/measures";
 
 test("indexes each shared table column by its series and source", () => {
@@ -160,12 +162,20 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		},
 		series: { [key]: readPath.statistics!["count-observations"]! },
 	};
-	const [canonical] = readMeasureObservations(
+	const canonicalArtifacts = readMeasureObservations(
 		root,
 		catalog,
 		0,
 		canonicalReadPath,
 		{ count: identity },
+	);
+	const [canonical] = canonicalArtifacts;
+	assert.deepEqual(
+		observationsFor("unused", source, "2024", {
+			measureObservations: canonicalArtifacts,
+			seriesKey: measureSeriesKey(identity),
+		})?.recordFor("E1"),
+		{ areaCode: "E1", value: 42, status: "observed" },
 	);
 	const cache = new ObservationCache();
 	const databasePath = join(root, "data/build/atlas.sqlite");

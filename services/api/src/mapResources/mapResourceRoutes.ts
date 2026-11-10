@@ -382,12 +382,10 @@ export const handleMapResourceRoutes = ({
 		});
 		if (resolved.kind === "refusal") return refused(resolved.refusal);
 		const { plan } = resolved;
-		const observations = observationsFor(
-			measureId,
-			plan.source,
-			period,
-			context,
-		);
+		const observations = observationsFor(measureId, plan.source, period, {
+			...context,
+			seriesKey: series?.id,
+		});
 		if (!observations)
 			return problem(
 				503,

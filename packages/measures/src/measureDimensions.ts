@@ -122,9 +122,14 @@ export const measureSeriesKey = (mapping: MeasureSeriesIdentity) =>
 export const measureSeriesSourceKey = (
 	series: MeasureSeriesIdentity,
 	source: Pick<MeasureSource, "datasetId" | "sourceGeography">,
+) => measureSeriesKeySourceKey(measureSeriesKey(series), source);
+
+export const measureSeriesKeySourceKey = (
+	seriesKey: string,
+	source: Pick<MeasureSource, "datasetId" | "sourceGeography">,
 ) =>
 	JSON.stringify([
-		measureSeriesKey(series),
+		seriesKey,
 		source.datasetId,
 		source.sourceGeography.type,
 		source.sourceGeography.boundaryYear,
