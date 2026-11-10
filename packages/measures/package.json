@@ -13,6 +13,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
+		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
 		"@uk-data-atlas/atlas-db": "workspace:*",

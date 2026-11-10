@@ -10,12 +10,23 @@ export * from "./measureValuesContext.ts";
 export * from "./boundaryLoader.ts";
 
 export * from "./areaAbsence.ts";
-export * from "./areaResources.ts";
-export * from "@uk-data-atlas/relationships";
+export { findArea, areaMeasureSources } from "@uk-data-atlas/measures";
+export {
+	MAX_BATCH_VALUES,
+	validateBatch,
+	summariseBatch,
+	type AreaRef,
+	type ParentMatch,
+	type ValidatedValue,
+} from "@uk-data-atlas/relationships";
 export * from "./countryRelease.ts";
-export * from "@uk-data-atlas/relationships";
+export type {
+	GeographyRelationship,
+	GeographyReleaseInventory,
+	GeographyInventory,
+} from "@uk-data-atlas/relationships";
 export * from "./postcodeAreaReleases.ts";
-export * from "@uk-data-atlas/measures";
+export { rankReleases } from "@uk-data-atlas/measures";
 export {
 	relatedCodesOf,
 	addRelatedCodes,
@@ -27,7 +38,23 @@ export type { CrosswalkLookup } from "@uk-data-atlas/relationships";
 export * from "./resolver/areas.ts";
 export * from "./resolver/capability.ts";
 export * from "./resolver/catalogue.ts";
-export * from "@uk-data-atlas/relationships";
+export {
+	RELATIONSHIP_OPERATIONS,
+	assessPathTrust,
+	rankResolvedPaths,
+	capabilityStatus,
+	planConversion,
+	buildConversionReach,
+	ConversionCapabilities,
+	type RelationshipPathStepCoverage,
+	type ResolvedRelationshipPath,
+	type RelationshipOperation,
+	type RelationshipPrerequisite,
+	type ResolvedRelationshipCapability,
+	type ResolvedConversionPlan,
+	type GeographyReach,
+	type ConversionCapabilityInputs,
+} from "@uk-data-atlas/relationships";
 export * from "./resolver/lineage.ts";
 export * from "./resolver/locations.ts";
 export { compareReleaseEvidence } from "@uk-data-atlas/relationships";
