@@ -1,4 +1,5 @@
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { sha256Hex } from "./lib/hash.ts";
 import { readFileSync, renameSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -70,7 +71,7 @@ export function buildAtlasAssets(root: string) {
 				throw new Error(`Invalid atlas ${kind} entry`);
 			const gzip = readFileSync(join(publicDirectory, entry.artifact));
 			const json = gunzipSync(gzip);
-			const sha256 = createHash("sha256").update(json).digest("hex");
+			const sha256 = sha256Hex(json);
 			if (
 				`sha256:${sha256}` !== entry.contentHash ||
 				json.length !== entry.bytes ||

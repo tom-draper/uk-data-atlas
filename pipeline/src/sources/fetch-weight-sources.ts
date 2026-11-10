@@ -1,7 +1,7 @@
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import { readDbfRecords } from "@uk-data-atlas/shapefile";
 import { toWgs84Point } from "@uk-data-atlas/geography";
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { execFileSync } from "node:child_process";
 import {
 	existsSync,
@@ -65,9 +65,6 @@ export const WEIGHT_SOURCE_FILES = {
 	postcodeOutputAreas: "postcodes/onspd/<edition>/onspd-output-areas.csv.gz",
 } as const;
 
-const sha256 = (content: string | Buffer) =>
-	createHash("sha256").update(content).digest("hex");
-
 const download = async (url: string) => {
 	const response = await fetch(url, {
 		headers: { "User-Agent": "Mozilla/5.0" },
@@ -94,7 +91,7 @@ const write = (root: string, path: string, content: string | Buffer) => {
 	const target = join(root, "data/source", path);
 	mkdirSync(dirname(target), { recursive: true });
 	writeFileSync(target, content);
-	return sha256(content);
+	return sha256Hex(content);
 };
 
 const writeMeta = (root: string, directory: string, meta: object) =>

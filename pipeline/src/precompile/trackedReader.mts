@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { join } from "path";
 import type { DatasetReader, SourceArtifact } from "@uk-data-atlas/datasets";
 import type { OdsTableOptions } from "@uk-data-atlas/datasets";
@@ -13,9 +13,6 @@ import {
 	visitXlsxSheetRows,
 	visitXlsxSheetSelectedRows,
 } from "./sources/xlsx.mts";
-
-const sha256 = (content: string | Uint8Array) =>
-	createHash("sha256").update(content).digest("hex");
 
 const sizeOf = (content: string | Uint8Array) =>
 	typeof content === "string"
@@ -51,7 +48,7 @@ export const createTrackedReader = () => {
 			kind,
 			path,
 			bytes: sizeOf(content),
-			sha256: sha256(content),
+			sha256: sha256Hex(content),
 			input: await fileStamp(inputPath),
 		});
 	};

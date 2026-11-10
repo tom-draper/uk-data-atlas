@@ -37,7 +37,7 @@ import {
 	CENSUS_SMALL_AREA_TABLES,
 	type CensusTable,
 } from "../catalog/censusSmallArea.ts";
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import {
 	existsSync,
 	mkdirSync,
@@ -242,8 +242,7 @@ export const buildAtlasSqlite = (
 			);
 			if (
 				Buffer.byteLength(content) !== entry.compiled.bytes ||
-				createHash("sha256").update(content).digest("hex") !==
-					entry.compiled.sha256
+				sha256Hex(content) !== entry.compiled.sha256
 			)
 				throw new Error(
 					`Compiled dataset ${entry.output} does not match its manifest`,

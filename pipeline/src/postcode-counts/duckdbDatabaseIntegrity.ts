@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { sha256FileHex } from "../lib/hash.ts";
 
 export type Seal = {
 	schemaVersion: 1;
@@ -32,8 +32,7 @@ export async function fingerprint(path: string): Promise<string> {
 	};
 	checkJournals();
 	const before = statSync(path, { bigint: true });
-	const hash = createHash("sha256");
-	for await (const chunk of createReadStream(path)) hash.update(chunk);
+	const digest = await sha256FileHex(path);
 	const after = statSync(path, { bigint: true });
 	checkJournals();
 	if (
@@ -44,7 +43,7 @@ export async function fingerprint(path: string): Promise<string> {
 		before.ctimeNs !== after.ctimeNs
 	)
 		throw new Error("Database changed while hashing");
-	return hash.digest("hex");
+	return digest;
 }
 
 export async function verifyFingerprint(

@@ -1,14 +1,11 @@
 import { buildArtifactPath } from "@uk-data-atlas/areas";
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 
 type ApiArtifact<T> = { path: string; sha256: string; data: T };
-
-const sha256 = (contents: string) =>
-	`sha256:${createHash("sha256").update(contents).digest("hex")}`;
 
 function readArtifact<T>(path: string): ApiArtifact<T> {
 	const contents = readFileSync(

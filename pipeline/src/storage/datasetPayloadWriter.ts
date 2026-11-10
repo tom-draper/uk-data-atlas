@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
@@ -8,9 +8,6 @@ import {
 	removeDeprecatedObject,
 } from "./deprecatedViews.ts";
 import { publishAtlasCacheSteps, type CacheStep } from "./atlasCacheWriter.ts";
-
-const digest = (text: string) =>
-	createHash("sha256").update(text).digest("hex");
 
 /**
  * Rebuild every dataset served from rows into the cache, gzipped. Level 9
@@ -46,7 +43,7 @@ export const datasetPayloadStep = (root: string): CacheStep => ({
 				insert.run(
 					output,
 					row.sha256,
-					digest(payload),
+					sha256Hex(payload),
 					Buffer.byteLength(payload),
 					gzipSync(payload, { level: 9 }),
 				);

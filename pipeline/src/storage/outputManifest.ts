@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { appendFileSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { sha256Hex } from "../lib/hash.ts";
 
 /**
  * The data build sets this to a file for each stage it runs. A stage that
@@ -10,9 +10,6 @@ import { dirname, resolve } from "node:path";
  * manifest and these functions only write.
  */
 export const OUTPUT_MANIFEST_ENV = "DATA_BUILD_OUTPUT_MANIFEST";
-
-export const sha256Hex = (content: string | Uint8Array) =>
-	createHash("sha256").update(content).digest("hex");
 
 /**
  * Notes the SHA-256 of a finished file. Call it after the file is in its final

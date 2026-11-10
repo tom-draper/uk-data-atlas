@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import type { TerrainCatalogue, TerrainProduct } from "@uk-data-atlas/terrain";
 
 /**
@@ -127,7 +127,7 @@ export const createTerrainCatalogue = (): TerrainCatalogue => {
 	});
 	return {
 		schemaVersion: 1,
-		contentHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+		contentHash: sha256(content),
 		publicationRequirements: terrainPublicationRequirements,
 		products,
 	};

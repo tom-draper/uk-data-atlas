@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256Hex } from "../lib/hash.ts";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
@@ -11,7 +11,7 @@ export const packNamedLocations = (
 	const locations = inventory.locations.map(({ geometry, ...metadata }) => {
 		if (!geometry) return metadata;
 		const content = JSON.stringify(geometry);
-		const hash = createHash("sha256").update(content).digest("hex");
+		const hash = sha256Hex(content);
 		const geometryArtifact = `location-geometries/${hash}.json`;
 		writeFileSync(join(directory, geometryArtifact), content);
 		return { ...metadata, geometryArtifact };

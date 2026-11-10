@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { join, resolve } from "node:path";
@@ -42,7 +42,7 @@ for (const [name, json] of [...lookups].sort(([a], [b]) =>
 		artifact: `${ATLAS_LOOKUPS_DIRECTORY}/${id}.json.gz`,
 		bytes: Buffer.byteLength(json),
 		gzipBytes: gzipped.length,
-		contentHash: `sha256:${createHash("sha256").update(json).digest("hex")}`,
+		contentHash: sha256(json),
 	});
 	buildLog.detail(`Wrote ${ATLAS_LOOKUPS_DIRECTORY}/${id}.json.gz`);
 }

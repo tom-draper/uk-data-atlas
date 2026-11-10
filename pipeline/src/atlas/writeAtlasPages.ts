@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { gzipSync } from "node:zlib";
@@ -26,7 +26,7 @@ export function writeAtlasPages(
 			artifact,
 			bytes: Buffer.byteLength(json),
 			gzipBytes: gzip.length,
-			contentHash: `sha256:${createHash("sha256").update(json).digest("hex")}`,
+			contentHash: sha256(json),
 		});
 	}
 	writeFileSync(

@@ -7,7 +7,7 @@
  * below. Preprocessing runs this automatically when a source is newer than
  * its generated TopoJSON asset.
  */
-import { createHash } from "crypto";
+import { sha256Hex } from "./lib/hash.ts";
 import { copyFile, mkdir, readFile, stat } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -368,10 +368,7 @@ export async function compileBoundaryAssets(
 		await writeAtomically(outputPath, output);
 		await writeAtomically(propertiesPath, properties);
 		const outputBytes = Buffer.byteLength(output, "utf8");
-		const hash = createHash("sha256")
-			.update(output)
-			.digest("hex")
-			.slice(0, 12);
+		const hash = sha256Hex(output).slice(0, 12);
 		buildLog.artifact("boundary", label, {
 			status: "compiled",
 			bytes: outputBytes,
