@@ -1,3 +1,4 @@
+import { crosswalkInputSourceTables } from "../storage/crosswalkInputSources.ts";
 import { licenceTables } from "../storage/licenceTables.ts";
 import { type StatisticsInput } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
@@ -311,6 +312,7 @@ export const buildAtlasSqlite = (
 				ids,
 			),
 			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
+			...crosswalkInputSourceTables(repositoryRoot, ids),
 		},
 	);
 	const written = new DatabaseSync(path, { readOnly: true });

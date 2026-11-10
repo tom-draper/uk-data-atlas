@@ -153,6 +153,29 @@ export function licenceTables(
 					const provenance = JSON.parse(
 						String(row.header),
 					).provenance;
+					// Postcode-overlap records its geometry by release and hash,
+					// rather than by a boundary file path.
+					for (const item of provenance?.inputs ?? []) {
+						if (
+							typeof item.geography !== "string" ||
+							typeof item.boundaryRelease !== "string" ||
+							typeof item.geometryInput !== "string"
+						)
+							continue;
+						const source = find.get(
+							item.geography,
+							item.boundaryRelease,
+						);
+						if (!source)
+							throw new Error(
+								`Missing boundary source ${item.geography}/${item.boundaryRelease}`,
+							);
+						yield [
+							row.id as number,
+							source.source_id as number,
+							`geometry:${item.geography}/${item.boundaryRelease}:${item.geometryInput}`,
+						];
+					}
 					const inputs = [
 						provenance?.input,
 						...(provenance?.inputs ?? []).map(
