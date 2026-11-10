@@ -10,7 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { stampAtlasCache } from "../src/stamp-atlas-cache";
+import { stampAtlasCache } from "../src/storage/stampAtlasCache";
 import { stageStampPath } from "../src/storage";
 
 test("stamps the cache with the canonical database content hash", () => {

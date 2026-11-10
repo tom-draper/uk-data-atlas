@@ -27,7 +27,7 @@ import {
 import {
 	checkStagedComponents,
 	stampAtlasCache,
-} from "../src/stamp-atlas-cache";
+} from "../src/storage/stampAtlasCache";
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));

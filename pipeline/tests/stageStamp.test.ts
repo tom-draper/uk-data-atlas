@@ -18,7 +18,7 @@ import {
 	stageStampPath,
 	stampCacheStage,
 } from "../src/storage";
-import { checkStagedComponents } from "../src/stamp-atlas-cache";
+import { checkStagedComponents } from "../src/storage/stampAtlasCache";
 
 function memory(...statements: string[]) {
 	const database = new DatabaseSync(":memory:");
