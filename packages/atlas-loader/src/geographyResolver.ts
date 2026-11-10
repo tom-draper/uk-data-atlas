@@ -29,7 +29,6 @@ import {
 } from "@uk-data-atlas/geography";
 import { AreaValidation } from "./resolver/areaValidation.ts";
 import { CatalogueResolver } from "./resolver/catalogue.ts";
-import { CapabilityResolver } from "./resolver/capability.ts";
 import {
 	compareBoundaryReleases,
 	type BoundaryReleaseComparison,
@@ -41,6 +40,7 @@ import {
 	type ResolvedContainingArea,
 } from "@uk-data-atlas/areas";
 import {
+	CapabilityResolver,
 	LineageResolver,
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -57,12 +57,6 @@ export type GeographyRequirement =
 	| "named-locations"
 	| "location-projections"
 	| "crosswalks";
-
-export type {
-	ResolvedRelationshipCoverage,
-	GeographyHealth,
-	RelationshipRepair,
-} from "./resolver/capability.ts";
 
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
