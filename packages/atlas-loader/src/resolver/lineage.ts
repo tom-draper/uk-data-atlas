@@ -6,7 +6,7 @@ import {
 	type AreaRelation,
 	type AreaRelationship,
 } from "@uk-data-atlas/relationships";
-import { areaId, type ResolvedSameCodeArea } from "./areas.ts";
+import { areaId, type ResolvedSameCodeArea } from "@uk-data-atlas/areas";
 import { type AreaIdentity } from "@uk-data-atlas/geography";
 
 /** A published graph edge, reported once at its shortest distance from origin. */

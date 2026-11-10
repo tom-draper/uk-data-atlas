@@ -11,7 +11,7 @@ import type {
 	PointContainment,
 } from "@uk-data-atlas/geography";
 import type { GeometryProvenance } from "@uk-data-atlas/geography";
-import { areaId } from "./areas.ts";
+import { areaId } from "@uk-data-atlas/areas";
 import { type AreaIdentity } from "@uk-data-atlas/geography";
 
 export type ResolvedContainingArea = AreaRecord & {
