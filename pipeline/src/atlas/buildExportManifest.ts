@@ -13,7 +13,7 @@ import { compileMeasureDownloads } from "../statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { statisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
 import { readJsonSync } from "../lib/json.ts";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/atlas-runtime/catalogue";
+import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);

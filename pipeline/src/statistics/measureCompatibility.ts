@@ -7,7 +7,10 @@ import {
 	type AnyMeasureObservationArtifact,
 	type MeasureSource,
 } from "@uk-data-atlas/catalogue/node";
-import { measureSeriesKey, type MeasureSeriesIdentity } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	type MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationPartitionKey,
