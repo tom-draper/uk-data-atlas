@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "./lib/args.ts";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildLog,
@@ -320,14 +321,23 @@ if (
 	process.argv[1] &&
 	resolve(process.argv[1]) === scriptPath
 ) {
-	const workers = process.argv.indexOf("--workers");
+	const flags = parseScriptArgs({
+		rebuild: { type: "boolean" },
+		workers: { type: "string" },
+	}).values;
 	const { outputPath, artifact } = await buildPostcodeAreas(
 		resolve(dirname(scriptPath), "../.."),
 		{
-			rebuild: process.argv.includes("--rebuild"),
-			...(workers === -1
+			rebuild: flags.rebuild === true,
+			...(flags.workers === undefined
 				? {}
-				: { workers: Number(process.argv[workers + 1]) }),
+				: {
+						workers: Number(
+							typeof flags.workers === "string"
+								? flags.workers
+								: undefined,
+						),
+					}),
 		},
 	);
 	buildLog.info(

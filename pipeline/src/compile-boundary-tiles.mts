@@ -1,4 +1,5 @@
 /** Compile every website release to PMTiles, including releases with overlapping polygons. */
+import { parseScriptArgs } from "./lib/args.ts";
 import { randomUUID } from "node:crypto";
 import { existsSync, readdirSync } from "node:fs";
 import {
@@ -63,7 +64,8 @@ async function writeAtomically(path: string, contents: string | Uint8Array) {
 }
 
 async function isStale(inputs: string[], output: string) {
-	if (process.argv.includes("--force")) return true;
+	if (parseScriptArgs({ force: { type: "boolean" } }).values.force === true)
+		return true;
 	const built = await stat(output).catch(() => undefined);
 	if (!built) return true;
 	for (const input of inputs)
@@ -112,9 +114,8 @@ const areasByCode = (
 
 export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 	const startedAt = performance.now();
-	const only = process.argv
-		.find((arg) => arg.startsWith("--only="))
-		?.slice(7);
+	const flag = parseScriptArgs({ only: { type: "string" } }).values.only;
+	const only = typeof flag === "string" ? flag : undefined;
 	const manifestPath = join(ROOT, "data/build", TILES_MANIFEST);
 	const manifest: BoundaryResources = only
 		? parseBoundaryResources(await readJson(manifestPath))

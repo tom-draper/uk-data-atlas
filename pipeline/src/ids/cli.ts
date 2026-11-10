@@ -1,3 +1,4 @@
+import { parseScriptArgs } from "../lib/args.ts";
 import { buildLog } from "@uk-data-atlas/atlas-db";
 import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
@@ -124,13 +125,15 @@ const check = (ref: string) => {
 	else buildLog.info(`Id registries are valid and extend ${ref}`);
 };
 
-const [command, ...args] = process.argv.slice(2);
+const {
+	positionals: [command, ...args],
+	values: flags,
+} = parseScriptArgs({ base: { type: "string" } });
 try {
 	if (command === "seed") seed(args[0]);
 	else if (command === "verify") verify(args[0]);
 	else if (command === "check") {
-		const at = args.indexOf("--base");
-		check(at === -1 ? "HEAD" : (args[at + 1] ?? "HEAD"));
+		check(typeof flags.base === "string" ? flags.base : "HEAD");
 	} else throw new Error(USAGE);
 } catch (error) {
 	console.error(error instanceof Error ? error.message : error);

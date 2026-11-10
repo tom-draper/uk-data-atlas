@@ -1,4 +1,5 @@
 /** Force selected compiles into a temporary directory and check existing hashes. */
+import { parseScriptArgs } from "./lib/args.ts";
 import { configDirectory, artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -19,12 +20,14 @@ import {
 } from "./relationships/crosswalkWorkers.ts";
 
 const root = resolve(import.meta.dirname, "../..");
-const args = process.argv.slice(2);
-const workerFlag = args.find((arg) => arg.startsWith("--workers="));
+const { values: flags, positionals: ids } = parseScriptArgs({
+	workers: { type: "string" },
+});
 const workers = crosswalkWorkerCount(
-	workerFlag?.slice("--workers=".length) ?? process.env.CROSSWALK_WORKERS,
+	typeof flags.workers === "string"
+		? flags.workers
+		: process.env.CROSSWALK_WORKERS,
 );
-const ids = args.filter((arg) => arg !== workerFlag);
 if (!ids.length)
 	throw new Error(
 		"Usage: pnpm exec tsx pipeline/src/profile-crosswalks.ts [--workers=1] <crosswalk-id> [...]",
