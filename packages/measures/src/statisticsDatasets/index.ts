@@ -1,4 +1,7 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import {
+	DATASET_DECLARATIONS,
+	type DatasetModule,
+} from "@uk-data-atlas/datasets";
 import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
 import {
@@ -135,4 +138,6 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [
  * Manifest types not yet stored as statistics rows, and why. The build
  * refuses a type that is in neither list.
  */
-export const UNSTORED_DATASETS: Readonly<Record<string, string>> = {};
+export const UNSTORED_DATASETS: Readonly<
+	Record<string, { reason: string; module: DatasetModule }>
+> = {};

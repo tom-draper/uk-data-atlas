@@ -25,7 +25,7 @@ export const datasetPayloadStep = (root: string): CacheStep => ({
 		try {
 			for (const row of database
 				.prepare(
-					"SELECT type, output, sha256 FROM dataset_catalogue WHERE payload_id IS NULL ORDER BY output",
+					"SELECT compiled_type AS type, slug AS output, compiled_sha256 AS sha256 FROM dataset WHERE compiled_type IS NOT NULL AND payload_id IS NULL ORDER BY slug",
 				)
 				.all()) {
 				const output = String(row.output);

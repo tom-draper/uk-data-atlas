@@ -31,6 +31,15 @@ const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 export function statisticsTables(
 	inputs: readonly StatisticsInput[],
 	ids: IdRegistries = IdRegistries.memory(),
+	outputs: ReadonlyMap<
+		string,
+		{
+			type: string;
+			sha256: string;
+			bytes: number;
+			payloadId: string | null;
+		}
+	> = new Map(),
 ): Record<string, SqliteTable> {
 	const { releasePosition, area, areaIndex, namedArea } =
 		createStatisticsAreaLookup();
@@ -130,10 +139,23 @@ export function statisticsTables(
 				"source_id INTEGER NOT NULL REFERENCES source(id)",
 				"released TEXT",
 				"fingerprint TEXT NOT NULL",
+				"compiled_type TEXT UNIQUE",
+				"compiled_sha256 TEXT",
+				"compiled_bytes INTEGER",
+				"payload_id TEXT REFERENCES payloads(id)",
 			],
 			key: ["id"],
-			rows: rows(({ datasets, datasetIds, sources }) =>
-				datasets.map((dataset, index) => [
+			constraints: [
+				"CHECK ((compiled_type IS NULL AND compiled_sha256 IS NULL AND compiled_bytes IS NULL AND payload_id IS NULL) OR (compiled_type IS NOT NULL AND compiled_sha256 IS NOT NULL AND compiled_bytes IS NOT NULL))",
+			],
+			rows: rows(({ datasets, datasetIds, sources }) => {
+				const slugs = new Set(datasets.map((dataset) => dataset.slug));
+				for (const output of outputs.keys())
+					if (!slugs.has(output))
+						throw new Error(
+							`Compiled dataset ${output} has no dataset row`,
+						);
+				return datasets.map((dataset, index) => [
 					datasetIds[index]!,
 					dataset.slug,
 					dataset.module,
@@ -142,8 +164,12 @@ export function statisticsTables(
 					sources.id(sourceKey(dataset.source), dataset.slug),
 					dataset.released ?? null,
 					dataset.fingerprint,
-				]),
-			),
+					outputs.get(dataset.slug)?.type ?? null,
+					outputs.get(dataset.slug)?.sha256 ?? null,
+					outputs.get(dataset.slug)?.bytes ?? null,
+					outputs.get(dataset.slug)?.payloadId ?? null,
+				]);
+			}),
 		},
 		measure: {
 			strict: true,

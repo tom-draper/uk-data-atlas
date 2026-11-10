@@ -16,7 +16,7 @@ test("validates the cache against the canonical database", (context) => {
 	mkdirSync(directory, { recursive: true });
 	const canonical = new DatabaseSync(join(directory, "atlas.sqlite"));
 	canonical.exec(
-		"CREATE TABLE dataset_catalogue (output TEXT, sha256 TEXT, payload_id TEXT); INSERT INTO dataset_catalogue VALUES ('test', 'hash', NULL)",
+		"CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT); INSERT INTO dataset VALUES ('test', 'test', 'hash', NULL)",
 	);
 	canonical.close();
 	assert.throws(
@@ -56,9 +56,7 @@ test("validates the cache against the canonical database", (context) => {
 		(error: Error) => String(error.cause).includes("no such column: gzip"),
 	);
 	const changed = new DatabaseSync(join(directory, "atlas.sqlite"));
-	changed.exec(
-		"INSERT INTO dataset_catalogue VALUES ('other', 'hash', NULL)",
-	);
+	changed.exec("INSERT INTO dataset VALUES ('other', 'other', 'hash', NULL)");
 	changed.close();
 	assert.throws(
 		() => validateCacheRelease(root),

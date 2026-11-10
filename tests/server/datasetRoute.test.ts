@@ -36,7 +36,7 @@ function cacheSample() {
 		join(root, "data/build/atlas-base.sqlite"),
 	);
 	database.exec(
-		"UPDATE dataset_catalogue SET sha256 = 'source', payload_id = NULL WHERE output = 'sample'",
+		"UPDATE dataset SET compiled_sha256 = 'source', payload_id = NULL WHERE slug = 'sample'",
 	);
 	database.close();
 	const cache = new DatabaseSync(atlasCachePath(root));
@@ -63,7 +63,7 @@ beforeEach(() => {
 				{
 					type: "sample",
 					output: "sample",
-					source: {},
+					source: { source: "Publisher", licence: "Fixture licence" },
 					contract: {},
 					summary: {},
 					fingerprint: "v1",
@@ -141,7 +141,12 @@ beforeEach(() => {
 		}),
 	);
 	buildAtlasSqlite(root, {
-		unstored: { sample: "A fixture kept as a payload." },
+		unstored: {
+			sample: {
+				reason: "A fixture kept as a payload.",
+				module: "economy",
+			},
+		},
 		censusTables: [],
 	});
 	symlinkSync("atlas-base.sqlite", join(root, "data/build/atlas.sqlite"));

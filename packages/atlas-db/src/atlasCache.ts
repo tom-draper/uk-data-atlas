@@ -32,7 +32,7 @@ const dependencies: Record<CacheComponent, string[]> = {
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
 	datasets: [
-		"query:SELECT output, sha256 FROM dataset_catalogue ORDER BY output",
+		"query:SELECT slug, compiled_sha256 FROM dataset WHERE compiled_type IS NOT NULL ORDER BY slug",
 	],
 };
 

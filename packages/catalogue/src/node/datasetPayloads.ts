@@ -65,7 +65,7 @@ export function rebuildDatasetPayload(
 			if (!found) {
 				const type = database
 					.prepare(
-						"SELECT type FROM dataset_catalogue WHERE output = ?",
+						"SELECT compiled_type AS type FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
 					)
 					.get(other)?.type;
 				if (typeof type !== "string")
@@ -136,7 +136,7 @@ export function readStoredDatasetPayload(
 	try {
 		const row = database
 			.prepare(
-				"SELECT sha256, payload_id AS payloadId FROM dataset_catalogue WHERE output = ?",
+				"SELECT compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
 			)
 			.get(output);
 		if (!row || typeof row.payloadId === "string") return undefined;
@@ -172,7 +172,7 @@ export function readDatasetPayloadWithHash(
 	try {
 		const row = database
 			.prepare(
-				"SELECT type, sha256, payload_id AS payloadId FROM dataset_catalogue WHERE output = ?",
+				"SELECT compiled_type AS type, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
 			)
 			.get(output);
 		if (!row) return undefined;

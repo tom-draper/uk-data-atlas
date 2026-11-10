@@ -270,7 +270,11 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const entry = {
 		type: "sample",
 		output: "sample",
-		source: { name: "Sample" },
+		source: {
+			name: "Sample",
+			source: "Publisher",
+			licence: "Fixture licence",
+		},
 		contract: { version: 1 },
 		summary: { datasetCount: 1 },
 		fingerprint: "compiler-v1",
@@ -283,7 +287,12 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	writeFileSync(join(directory, "sample.json"), content);
 	const manifest = JSON.stringify({ version: 1, datasets: [entry] });
 	writeFileSync(join(directory, "dataset-manifest.json"), manifest);
-	const unstored = { sample: "A fixture kept as a payload." };
+	const unstored = {
+		sample: {
+			reason: "A fixture kept as a payload.",
+			module: "economy" as const,
+		},
+	};
 	const path = buildAtlasSqlite(root, { unstored, censusTables: [] });
 	assert.equal(readAtlasPayload(root, "dataset:sample"), content);
 	assert.equal(readAtlasPayload(root, "dataset-manifest"), manifest);
@@ -295,18 +304,27 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 				.get("datasets"),
 			undefined,
 		);
-		const row = database.prepare("SELECT * FROM dataset_catalogue").get()!;
+		assert.equal(
+			database
+				.prepare(
+					"SELECT name FROM sqlite_schema WHERE name = 'dataset_catalogue'",
+				)
+				.get(),
+			undefined,
+		);
+		const row = database
+			.prepare(
+				"SELECT compiled_type, slug, fingerprint, compiled_sha256, compiled_bytes, payload_id FROM dataset",
+			)
+			.get()!;
 		assert.deepEqual(
 			{ ...row },
 			{
-				type: entry.type,
-				output: entry.output,
-				source: JSON.stringify(entry.source),
-				contract: JSON.stringify(entry.contract),
-				summary: JSON.stringify(entry.summary),
+				compiled_type: entry.type,
+				slug: entry.output,
 				fingerprint: entry.fingerprint,
-				sha256: entry.compiled.sha256,
-				bytes: entry.compiled.bytes,
+				compiled_sha256: entry.compiled.sha256,
+				compiled_bytes: entry.compiled.bytes,
 				payload_id: "dataset:sample",
 			},
 		);

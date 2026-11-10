@@ -55,7 +55,7 @@ export function readAtlasDatasetUrls(
 		return Object.fromEntries(
 			database
 				.prepare(
-					"SELECT output, sha256, payload_id AS payloadId FROM dataset_catalogue",
+					"SELECT slug AS output, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE compiled_type IS NOT NULL",
 				)
 				.all()
 				.map((row) => {
