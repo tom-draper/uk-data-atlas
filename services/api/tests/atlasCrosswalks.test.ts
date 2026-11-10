@@ -381,6 +381,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	assert.throws(rebuild, /Missing crosswalk area release/);
 	writeFileSync(areaInventoryPath, JSON.stringify(areaInventory));
 	refuse({ ...artifact, contentHash: "stale" }, /Invalid crosswalk artifact/);
+	refuse({ ...artifact, quality: "derived" }, /inconsistent quality/);
 	rmSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
 		recursive: true,
 	});
