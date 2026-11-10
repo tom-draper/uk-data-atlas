@@ -3519,7 +3519,7 @@ beside it. A pair sharing fewer than half its codes is skipped, which
 leaves the 2024 constituency redistribution and the 2011 move to GSS local
 authority codes to methods that can describe them. A release whose
 geometry file holds no shapes is also skipped.
-`pnpm --dir pipeline exec tsx src/propose-extent-continuity.ts --write` regenerates
+`pnpm --dir pipeline exec tsx src/stages/propose-extent-continuity.ts --write` regenerates
 the adapters when a release is added.
 
 Chaining the releases makes an area's history long, and every crosswalk
@@ -3622,7 +3622,7 @@ to place each ward in a local authority where the ward release names none,
 and in a constituency of each code set, and each LSOA in the newest local
 authorities.
 
-`pnpm --dir ../.. exec tsx pipeline/src/propose-geometric-containment.ts` searches for these
+`pnpm --dir ../.. exec tsx pipeline/src/stages/propose-geometric-containment.ts` searches for these
 hierarchies. It asks only pairs that could nest, where one release has more
 areas than the other, its countries are inside theirs, their vintages are
 within three years, nothing already relates them, and one of the two is a

@@ -8,23 +8,29 @@ const require = createRequire(
 const { buildSync } = require("esbuild");
 
 const runtimeConfig = {
-	"pipeline/src/build-atlas-sqlite.ts": ["measure-dimensions.json"],
-	"pipeline/src/build-data-catalog.ts": ["measure-dimensions.json"],
-	"pipeline/src/build-export-manifest.ts": ["measure-dimensions.json"],
-	"pipeline/src/build-derived-boundaries.ts": ["area-source-adapters.json"],
-	"pipeline/src/build-area-inventory.ts": [
+	"pipeline/src/stages/build-atlas-sqlite.ts": ["measure-dimensions.json"],
+	"pipeline/src/stages/build-data-catalog.ts": ["measure-dimensions.json"],
+	"pipeline/src/stages/build-export-manifest.ts": ["measure-dimensions.json"],
+	"pipeline/src/stages/build-derived-boundaries.ts": [
+		"area-source-adapters.json",
+	],
+	"pipeline/src/stages/build-area-inventory.ts": [
 		"area-source-adapters.json",
 		"area-property-adapters.json",
 	],
 	"pipeline/src/relationships/buildCrosswalkInventory.ts": [
 		"crosswalk-adapters.json",
 	],
-	"pipeline/src/build-relationship-candidates.ts": [
+	"pipeline/src/stages/build-relationship-candidates.ts": [
 		"crosswalk-adapters.json",
 	],
-	"pipeline/src/build-relationship-paths.ts": ["relationship-paths.json"],
-	"pipeline/src/build-analysis-geographies.ts": ["analysis-geographies.json"],
-	"pipeline/src/build-validation-report.ts": [
+	"pipeline/src/stages/build-relationship-paths.ts": [
+		"relationship-paths.json",
+	],
+	"pipeline/src/stages/build-analysis-geographies.ts": [
+		"analysis-geographies.json",
+	],
+	"pipeline/src/stages/build-validation-report.ts": [
 		"measure-totals.json",
 		"validation-waivers.json",
 	],
