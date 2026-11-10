@@ -2,7 +2,7 @@ import type { AreasResolver } from "./resolver/areas.ts";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import { countryRelease } from "./countryRelease.ts";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography/postcode-defaults";
-import { rankReleases } from "./rankCompatibilityReleases.ts";
+import { rankReleases } from "@uk-data-atlas/measures";
 import {
 	releaseKey,
 	type PostcodeAreaPurpose,

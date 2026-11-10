@@ -28,3 +28,5 @@ export * from "./seriesMatching.ts";
 export * from "./aggregationRule.ts";
 export * from "./sourceSelection.ts";
 export * from "./measureValues.ts";
+
+export * from "./rankCompatibilityReleases.ts";
