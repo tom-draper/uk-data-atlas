@@ -3,9 +3,8 @@
  * under public/data/map-values, and a manifest naming each array's file and
  * the code list it was ordered by. See `@uk-data-atlas/map-tiles/mapValues`.
  *
- * Reads the compiled datasets in data/build/datasets and the boundary
- * properties sidecars in public/data/boundaries, so it runs after the
- * website-datasets stage. Run it alone with:
+ * Reads datasets from the base database and boundary properties sidecars in
+ * public/data/boundaries, so it runs after the website-datasets stage. Run it alone with:
  *   pnpm exec tsx pipeline/src/stages/build-map-values.ts
  */
 import { sha256Hex } from "../lib/hash.ts";
@@ -44,8 +43,8 @@ type Definition = Pick<
 >;
 
 export type BuildMapValuesPaths = {
-	/** Folder of compiled datasets, one `<precompiledFile>.json` each. */
-	datasetsDir: string;
+	/** Reads the dataset's editions from the canonical store. */
+	readDataset: (output: string) => Promise<Record<string, CompiledDataset>>;
 	/** Folder holding `<geography>/<release>/properties.json`. */
 	boundariesDir: string;
 	outDir: string;
@@ -80,9 +79,7 @@ export async function buildMapValues(
 	for (const definition of definitions) {
 		const field = definition.mapValueField;
 		if (!field) continue;
-		const byYear = await readJson<Record<string, CompiledDataset>>(
-			join(paths.datasetsDir, `${definition.precompiledFile}.json`),
-		);
+		const byYear = await paths.readDataset(definition.precompiledFile);
 		for (const dataset of Object.values(byYear)) {
 			if (dataset.boundaryType !== definition.boundaryType)
 				throw new Error(
