@@ -1,7 +1,10 @@
-import type { GeographyResolver } from "./geographyResolver.ts";
+/** What the report needs from a resolver: the repairs it has evidence for. */
+export type RelationshipRepairSource<Repair extends { action: string }> = {
+	relationshipRepairs(): Repair[];
+};
 
-export const relationshipRepairsReport = (
-	resolver: Pick<GeographyResolver, "relationshipRepairs">,
+export const relationshipRepairsReport = <Repair extends { action: string }>(
+	resolver: RelationshipRepairSource<Repair>,
 ) => {
 	const repairs = resolver.relationshipRepairs();
 	return {
