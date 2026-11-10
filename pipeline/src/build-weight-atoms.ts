@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { parseScriptArgs } from "./lib/args.ts";
 import {
 	buildLog,
@@ -91,11 +92,7 @@ export const buildWeightAtomsStage = async (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (
-	isMainThread &&
-	process.argv[1] &&
-	resolve(process.argv[1]) === scriptPath
-) {
+if (isMainThread && isMainModule(import.meta.url)) {
 	const result = await buildWeightAtomsStage(
 		resolve(dirname(scriptPath), "../.."),
 		{

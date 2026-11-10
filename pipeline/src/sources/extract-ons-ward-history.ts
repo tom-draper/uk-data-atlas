@@ -1,3 +1,4 @@
+import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -114,7 +115,7 @@ export const extractOnsWardHistory = (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const [archive] = process.argv.slice(2);
 	if (!archive)
 		throw new Error(

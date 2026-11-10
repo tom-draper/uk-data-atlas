@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { parseScriptArgs } from "./lib/args.ts";
 import { artifactDirectory, configDirectory } from "@uk-data-atlas/atlas-db";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
@@ -191,7 +192,7 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { adapters, skipped } = proposeExtentContinuity(repositoryRoot);
 	for (const reason of skipped) console.log(`Skipped ${reason}`);

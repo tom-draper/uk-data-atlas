@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import type { PostcodeSource } from "@uk-data-atlas/geography";
 import { existsSync, readdirSync } from "node:fs";
@@ -66,7 +67,7 @@ export const buildPostcodeIndex = async (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const { outputPath, artifact } = await buildPostcodeIndex(
 		resolve(dirname(scriptPath), "../.."),
 	);

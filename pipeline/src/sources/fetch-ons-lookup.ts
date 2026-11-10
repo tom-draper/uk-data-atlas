@@ -1,3 +1,4 @@
+import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -179,7 +180,7 @@ const writeLookup = (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const [sourcesPath] = process.argv.slice(2);
 	if (!sourcesPath)
 		throw new Error(

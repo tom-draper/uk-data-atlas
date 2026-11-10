@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { AtlasDatasetInput } from "./catalog/input.ts";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -222,7 +223,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDataCatalog(repositoryRoot);
 	console.log(

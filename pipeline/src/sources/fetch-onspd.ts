@@ -1,3 +1,4 @@
+import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 import {
 	createWriteStream,
@@ -275,7 +276,7 @@ export const fetchOnspd = async (
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const { directory, edition } = await fetchOnspd(
 		resolve(dirname(scriptPath), "../../.."),
 	);

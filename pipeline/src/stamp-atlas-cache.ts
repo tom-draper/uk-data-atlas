@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
@@ -77,10 +78,7 @@ export function stampAtlasCache(root: string) {
 	return hash;
 }
 
-if (
-	process.argv[1] &&
-	resolve(process.argv[1]) === resolve(import.meta.filename)
-) {
+if (isMainModule(import.meta.url)) {
 	const root = resolve(import.meta.dirname, "../..");
 	checkStagedComponents(root);
 	buildLog.info(

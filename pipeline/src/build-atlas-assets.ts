@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { randomUUID } from "node:crypto";
 import { sha256Hex } from "./lib/hash.ts";
 import { readFileSync, renameSync, rmSync } from "node:fs";
@@ -115,10 +116,7 @@ export function buildAtlasAssets(root: string) {
 	return path;
 }
 
-if (
-	process.argv[1] &&
-	resolve(process.argv[1]) === resolve(import.meta.filename)
-) {
+if (isMainModule(import.meta.url)) {
 	buildAtlasAssets(resolve(import.meta.dirname, "../.."));
 	buildLog.info(
 		"Wrote website pages and lookups to data/build/website-assets.sqlite",

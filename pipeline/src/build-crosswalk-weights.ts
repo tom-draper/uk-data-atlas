@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { parseScriptArgs } from "./lib/args.ts";
 import {
 	buildLog,
@@ -276,11 +277,7 @@ const readdirSyncSafe = (path: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (
-	isMainThread &&
-	process.argv[1] &&
-	resolve(process.argv[1]) === scriptPath
-) {
+if (isMainThread && isMainModule(import.meta.url)) {
 	const { output, summary, skipped, atoms, seconds } =
 		await buildCrosswalkWeights(resolve(dirname(scriptPath), "../.."), {
 			rebuild:

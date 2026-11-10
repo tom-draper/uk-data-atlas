@@ -8,9 +8,9 @@
  * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
  * type or output file, and keeps the rest of the manifest as it was.
  */
+import { isMainModule } from "./lib/entrypoint.ts";
 import { mkdir } from "fs/promises";
-import { join, relative, resolve } from "path";
-import { fileURLToPath } from "url";
+import { join, relative } from "path";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import {
 	mergeManifestEntries,
@@ -87,8 +87,5 @@ export async function compileCatalogueDatasets(
 	return datasets;
 }
 
-if (
-	process.argv[1] &&
-	resolve(process.argv[1]) === fileURLToPath(import.meta.url)
-)
+if (isMainModule(import.meta.url))
 	await compileCatalogueDatasets(parseOnlyArgument(process.argv.slice(2)));

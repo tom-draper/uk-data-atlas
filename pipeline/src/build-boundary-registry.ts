@@ -1,3 +1,4 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
 	existsSync,
@@ -203,7 +204,7 @@ export const buildBoundaryRegistry = (repositoryRoot: string) => {
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const { outputPath, releaseCount } = buildBoundaryRegistry(repositoryRoot);
 	buildLog.info(

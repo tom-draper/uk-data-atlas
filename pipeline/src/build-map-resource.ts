@@ -1,10 +1,11 @@
+import { isMainModule } from "./lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildMapResources } from "./buildMapResource.ts";
 
 const path = fileURLToPath(import.meta.url);
-if (process.argv[1] && resolve(process.argv[1]) === path) {
+if (isMainModule(import.meta.url)) {
 	const result = buildMapResources(resolve(dirname(path), "../.."), (line) =>
 		buildLog.detail(line),
 	);
