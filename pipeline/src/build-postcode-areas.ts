@@ -30,8 +30,8 @@ import {
 import { readBuildBoundaryRegistry } from "./buildBoundaryRegistry.ts";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import { AreasResolver } from "@uk-data-atlas/atlas-runtime/loader";
-import { postcodeAreaReleases } from "@uk-data-atlas/atlas-runtime/loader";
+import { AreasResolver } from "@uk-data-atlas/atlas-loader";
+import { postcodeAreaReleases } from "@uk-data-atlas/atlas-loader";
 import {
 	createAreaGeometryCache,
 	readGeometrySourceLookup,

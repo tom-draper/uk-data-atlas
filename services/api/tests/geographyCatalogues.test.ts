@@ -19,13 +19,13 @@ import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
 import { buildArtifactPath, geographyCatalogues } from "@uk-data-atlas/areas";
 import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
-import { readGeographyInventory } from "@uk-data-atlas/atlas-runtime/loader";
+import { readGeographyInventory } from "@uk-data-atlas/atlas-loader";
 import { readRelationshipPathInventory } from "@uk-data-atlas/relationships";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import { route } from "../src/routes";
 import { testContext } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";

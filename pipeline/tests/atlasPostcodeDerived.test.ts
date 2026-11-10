@@ -37,7 +37,7 @@ import {
 	readPostcodeCounts,
 	readPostcodeAreaIndex,
 	readPostcodeIndex,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 

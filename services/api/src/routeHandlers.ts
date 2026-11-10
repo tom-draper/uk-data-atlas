@@ -10,7 +10,7 @@ import {
 import type {
 	FullDetailResult,
 	FullDetailSource,
-} from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";

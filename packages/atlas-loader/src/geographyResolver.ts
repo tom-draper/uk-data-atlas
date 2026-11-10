@@ -22,11 +22,11 @@ import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
+import { AreasResolver } from "./resolver/areas.ts";
 import {
-	AreasResolver,
 	type AreaIdentity,
 	type GeographyEndpoint,
-} from "./resolver/areas.ts";
+} from "@uk-data-atlas/geography";
 import { AreaValidation } from "./resolver/areaValidation.ts";
 import { CatalogueResolver } from "./resolver/catalogue.ts";
 import { CapabilityResolver } from "./resolver/capability.ts";
@@ -58,30 +58,7 @@ export type GeographyRequirement =
 	| "location-projections"
 	| "crosswalks";
 
-export {
-	RELATIONSHIP_OPERATIONS,
-	type GeographyReach,
-	type RelationshipOperation,
-	type RelationshipPathStepCoverage,
-	type RelationshipPrerequisite,
-	type ResolvedConversionPlan,
-	type ResolvedRelationshipCapability,
-	type ResolvedRelationshipPath,
-} from "./resolver/capability.ts";
-export type {
-	BoundaryExtentChange,
-	BoundaryReleaseComparison,
-	PublishedRelationshipMapping,
-} from "@uk-data-atlas/relationships";
-export type {
-	AreaIdentity,
-	GeographyEndpoint,
-	ResolvedSameCodeArea,
-} from "./resolver/areas.ts";
-export type {
-	CrosswalkLookup,
-	ResolvedAreaTranslation,
-} from "@uk-data-atlas/relationships";
+export type { ResolvedSameCodeArea } from "./resolver/areas.ts";
 export type {
 	ResolvedContainingArea,
 	ResolvedNearbyArea,

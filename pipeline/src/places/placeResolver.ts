@@ -5,8 +5,8 @@ import {
 	AreasResolver,
 	SpatialResolver,
 	LineageResolver,
-} from "@uk-data-atlas/atlas-runtime/loader";
-import { type GeographyResolverInputs } from "@uk-data-atlas/atlas-runtime/loader";
+} from "@uk-data-atlas/atlas-loader";
+import { type GeographyResolverInputs } from "@uk-data-atlas/atlas-loader";
 import { readBuildBoundaryRegistry } from "../buildBoundaryRegistry.ts";
 import {
 	readCrosswalkInventory,

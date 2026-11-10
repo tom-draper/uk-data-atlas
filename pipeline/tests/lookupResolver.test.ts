@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createLookupResolver } from "../src/atlas/lookupResolver";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 
 test("lookup compilation uses only area and crosswalk inputs", () => {

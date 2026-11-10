@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { parsePostcode } from "@uk-data-atlas/geography";
-import { PostcodeResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { PostcodeResolver } from "@uk-data-atlas/atlas-loader";
 import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 
 test("looks up a postcode without area, geometry or relationship inputs", () => {

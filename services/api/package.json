@@ -41,7 +41,7 @@
 		"@fastify/swagger": "^9.9.2",
 		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/artifacts": "workspace:*",
-		"@uk-data-atlas/atlas-runtime": "workspace:*",
+		"@uk-data-atlas/atlas-loader": "workspace:*",
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",

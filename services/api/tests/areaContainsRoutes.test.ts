@@ -1,4 +1,4 @@
-import { createGeographyServices } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyServices } from "@uk-data-atlas/atlas-loader";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -7,7 +7,7 @@ import { test, afterAll } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { createGeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 

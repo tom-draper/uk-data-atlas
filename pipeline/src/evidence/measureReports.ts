@@ -1,13 +1,10 @@
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import {
 	reconcileMeasure,
 	type Measure,
 	type ReconciliationRouteRequest,
 } from "@uk-data-atlas/catalogue/node";
-import {
-	coveragePlan,
-	type MeasureContext,
-} from "@uk-data-atlas/atlas-runtime/loader";
+import { coveragePlan, type MeasureContext } from "@uk-data-atlas/atlas-loader";
 
 export const reconciliationEvidence = (
 	context: MeasureContext,

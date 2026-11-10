@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { AreasResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import { AreasResolver } from "@uk-data-atlas/atlas-loader";
 
 const areaLookup = createAreaLookup([
 	{

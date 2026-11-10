@@ -8,7 +8,7 @@ import {
 	defaultSource,
 	namedAreaRefusal,
 } from "../src/dataDefaults";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 
 const source = (

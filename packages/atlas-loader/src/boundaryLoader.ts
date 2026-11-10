@@ -32,8 +32,6 @@ import { publicPath } from "@uk-data-atlas/atlas-db";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
-export { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
-
 export const readGeographyInventory = (
 	repositoryRoot: string,
 ): GeographyInventory =>

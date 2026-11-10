@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { relationshipRepairsReport } from "@uk-data-atlas/atlas-runtime/loader";
+import { relationshipRepairsReport } from "@uk-data-atlas/atlas-loader";
 import { relationshipCandidateInventory, testContext } from "./routeFixtures";
 
 test("turns unpublished relationship candidates into a governed repair queue", () => {

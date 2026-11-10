@@ -1,5 +1,5 @@
 import { requireGeography } from "./runtime/index.ts";
-import type { GeographyResolver } from "@uk-data-atlas/atlas-runtime/loader";
+import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { reconcileMembersForYear } from "@uk-data-atlas/relationships";
 import type { NamedLocation } from "@uk-data-atlas/places";
 import { problem, type ApiResponse } from "./runtime/index.ts";
