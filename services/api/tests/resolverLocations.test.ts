@@ -8,7 +8,7 @@ import type {
 	NamedLocationInventory,
 } from "@uk-data-atlas/places";
 import { CatalogueResolver } from "@uk-data-atlas/atlas-loader";
-import { LocationsResolver } from "@uk-data-atlas/atlas-loader";
+import { LocationsResolver } from "@uk-data-atlas/places";
 
 const location = (
 	id: string,
