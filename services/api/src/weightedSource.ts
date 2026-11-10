@@ -1,4 +1,5 @@
 import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
+import { dimensionCatalogue } from "@uk-data-atlas/measures";
 import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
@@ -32,11 +33,21 @@ export const readWeightedSource = ({
 	source: MeasureSource;
 	artifacts: Parameters<typeof numericObservationsFor>[3];
 }): WeightedSource | ApiResponse => {
-	const weightMeasure = dataCatalog.measures.find(
-		(candidate) => candidate.id === weightMeasureId,
-	);
+	const weightSeries = context.measureDimensions
+		? dimensionCatalogue(
+				dataCatalog,
+				context.measureDimensions,
+			).catalogueSeries(weightMeasureId)?.series
+		: undefined;
+	const weightMeasure =
+		weightSeries?.catalogueMeasure ??
+		dataCatalog.measures.find(
+			(candidate) => candidate.id === weightMeasureId,
+		);
 	const weightPlan = resolveObservations(context, {
 		measureId: weightMeasureId,
+		measure: weightMeasure,
+		seriesKey: weightSeries?.id,
 		periods: [period],
 		geography: source.sourceGeography.type,
 		boundaryYear: String(source.sourceGeography.boundaryYear),
@@ -54,7 +65,7 @@ export const readWeightedSource = ({
 		weightMeasureId,
 		weightSource,
 		period,
-		artifacts,
+		{ ...artifacts, seriesKey: weightSeries?.id },
 	);
 	if (result.kind === "missing") {
 		return problem(

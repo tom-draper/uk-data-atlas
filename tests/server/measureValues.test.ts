@@ -12,6 +12,12 @@ import {
 } from "@uk-data-atlas/measures";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { createMeasureFixture } from "../helpers/measureFixture";
+import {
+	dimensionCatalogue,
+	identityDimensions,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/atlas-runtime/catalogue";
 
 let fixture: ReturnType<typeof createMeasureFixture>;
 
@@ -273,6 +279,61 @@ describe("measure values combined over areas", () => {
 		// (50 * 110 + 100 * 290) / 400
 		expect(column(result, "2023").values[0]).toBeCloseTo(86.25, 10);
 		expect(result.combined?.operation).toBe("weighted-mean");
+	});
+
+	it("reads weighted values by their selected series", () => {
+		const { dataCatalog, measureObservations } = fixture.context;
+		const dimensions = identityDimensions(dataCatalog);
+		const catalogue = dimensionCatalogue(dataCatalog, dimensions);
+		const population = measureObservations.find(
+			(artifact) => artifact.measureId === "population",
+		)!;
+		const misleading = {
+			...population,
+			periods: population.periods.map((entry) => ({
+				...entry,
+				records: entry.records
+					.filter(isNumericObservation)
+					.map((record) => ({ ...record, value: 1 })),
+			})),
+		};
+		const observations = [misleading, ...measureObservations];
+		const index = new Map();
+		for (const measure of dataCatalog.measures) {
+			const series = catalogue.catalogueSeries(measure.id)?.series;
+			if (!series) continue;
+			for (const source of measure.sources) {
+				const artifact = measureObservations.find(
+					(entry) =>
+						entry.measureId === measure.id &&
+						entry.sourceGeography.type ===
+							source.sourceGeography.type &&
+						entry.sourceGeography.boundaryYear ===
+							source.sourceGeography.boundaryYear,
+				);
+				if (artifact)
+					index.set(
+						measureSeriesSourceKey({ measure: measure.id }, source),
+						artifact,
+					);
+			}
+		}
+		registerSeriesObservations(observations, index);
+		const result = queryMeasureValues(
+			{
+				dataCatalog,
+				measureDimensions: dimensions,
+				measureObservations: observations,
+			},
+			{
+				measure: "access-rate",
+				parents: [
+					{ code: "P1", memberCodes: ["E06000001", "E06000002"] },
+				],
+			},
+		);
+		if (!result.ok) throw new Error(result.detail);
+		expect(column(result, "2023").values[0]).toBeCloseTo(86.25, 10);
 	});
 
 	it("takes no mean where an area has a value but no weight", () => {

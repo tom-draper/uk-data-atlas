@@ -385,9 +385,15 @@ const readWeights = (
 	period: string,
 ): Map<string, number> | undefined => {
 	if (!weightMeasureId) return undefined;
-	const weight = context.dataCatalog.measures.find(
-		(candidate) => candidate.id === weightMeasureId,
-	);
+	const weightSeries = dimensionCatalogue(
+		context.dataCatalog,
+		context.measureDimensions ?? identityDimensions(context.dataCatalog),
+	).catalogueSeries(weightMeasureId)?.series;
+	const weight =
+		weightSeries?.catalogueMeasure ??
+		context.dataCatalog.measures.find(
+			(candidate) => candidate.id === weightMeasureId,
+		);
 	const weightSource = weight?.sources.find(
 		(candidate) =>
 			candidate.sourceGeography.type === source.sourceGeography.type &&
@@ -396,7 +402,13 @@ const readWeights = (
 			candidate.periods.includes(period),
 	);
 	if (!weight || !weightSource) return undefined;
-	const read = readPeriod(context, weight.id, weightSource, period);
+	const read = readPeriod(
+		context,
+		weight.id,
+		weightSource,
+		period,
+		weightSeries?.id,
+	);
 	if (!read?.records.numeric) return undefined;
 	return new Map(
 		[...read.records.byCode].flatMap(([code, record]) =>
