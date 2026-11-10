@@ -1,4 +1,4 @@
-import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
+import type { CompatibilityCandidate } from "./index.ts";
 
 const STATUS_RANK: Record<CompatibilityCandidate["status"], number> = {
 	"exact-code-set": 0,
