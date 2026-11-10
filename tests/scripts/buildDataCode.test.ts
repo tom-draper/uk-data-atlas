@@ -12,7 +12,10 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { onTestFinished, test } from "vitest";
-import { stageCodeFiles } from "@/pipeline/build-data-code.mjs";
+import {
+	stageCodeFiles,
+	stageCodeInputs,
+} from "@/pipeline/build-data-code.mjs";
 import { createStageCache } from "@/pipeline/build-data-cache.mjs";
 import { runBuild } from "@/pipeline/build-data.mjs";
 
@@ -197,6 +200,25 @@ test("builder discovery does not execute scripts or include generated JSON", asy
 	const inputs = stageCodeFiles(root, stages[0], files());
 	assert.ok(inputs.includes("scripts/alpha.ts"));
 	assert.ok(!inputs.some((path: string) => path.startsWith("public/data/")));
+});
+
+test("package folders without a manifest do not change or break the code inputs", async () => {
+	const { root, write, stages, files } = fixture();
+	write(
+		"packages/real/package.json",
+		JSON.stringify({
+			name: "@uk-data-atlas/real",
+			exports: "./src/index.ts",
+		}),
+	);
+	write("packages/real/src/index.ts", "export const real = 1;");
+	const before = stageCodeInputs(root, stages[0], files());
+	// A deleted package whose gitignored node_modules survived a pull.
+	write("packages/leftover/node_modules/dep/index.js", "module.exports = 1;");
+	mkdirSync(join(root, "packages/empty"));
+	const after = stageCodeInputs(root, stages[0], files());
+	assert.deepEqual(after, before);
+	assert.ok(before.files.includes("scripts/alpha.ts"));
 });
 
 test("atlas assembly depends on each declared component output", async () => {

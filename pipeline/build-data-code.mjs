@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { builtinModules, createRequire } from "node:module";
 import { dirname, join, relative, resolve } from "node:path";
 
@@ -50,6 +50,8 @@ export function stageCodeInputs(root, stage, files) {
 	})) {
 		if (!directory.isDirectory()) continue;
 		const path = join(root, "packages", directory.name);
+		// Untracked leftovers such as a gitignored node_modules are not packages.
+		if (!existsSync(join(path, "package.json"))) continue;
 		const manifest = JSON.parse(
 			readFileSync(join(path, "package.json"), "utf8"),
 		);
