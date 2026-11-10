@@ -97,6 +97,7 @@ export type MeasureAggregation =
 export type Measure = {
 	id: string;
 	series?: import("./measureDimensions.ts").MeasureSeriesIdentity;
+	weightSeries?: import("./measureDimensions.ts").MeasureSeriesIdentity;
 	label: string;
 	valueKind:
 		"count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";

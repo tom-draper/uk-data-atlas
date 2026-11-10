@@ -12,7 +12,16 @@ export const catalogueWithSeries = (
 		const series = identities[measure.id];
 		if (!series)
 			throw new Error(`Missing series identity for ${measure.id}.`);
-		return { ...measure, series };
+		const weightId =
+			measure.aggregation?.kind === "intensive"
+				? measure.aggregation.weight.measureId
+				: undefined;
+		const weightSeries = weightId ? identities[weightId] : undefined;
+		return {
+			...measure,
+			series,
+			...(weightSeries ? { weightSeries } : {}),
+		};
 	});
 	const content = {
 		schemaVersion: catalog.schemaVersion,
