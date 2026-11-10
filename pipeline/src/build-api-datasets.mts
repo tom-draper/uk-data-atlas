@@ -2,7 +2,7 @@ import { isMainModule } from "./lib/entrypoint.ts";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets";
-import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { compileBoundaryAssets } from "./precompile/compileBoundaries.mts";
 import { artifactDirectory, buildLog, repoPath } from "@uk-data-atlas/atlas-db";
 
 /** Build boundary assets and gazetteer core from raw data. */
