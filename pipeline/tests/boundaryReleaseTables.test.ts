@@ -18,6 +18,15 @@ test("stores boundary source metadata and country coverage as queryable rows", (
 						geography: "ward",
 						title: "Wards",
 						temporalCoverage: "2024",
+						validity: [
+							{
+								purpose: "election_poll",
+								validFrom: "2024-07-04",
+								validTo: "2024-07-04",
+								sourceUrl: "https://example.org/evidence",
+								note: "Election day",
+							},
+						],
 						coverage: { countries: ["GB-ENG", "GB-WLS"] },
 						source: {
 							publisher: "ONS",
@@ -45,6 +54,16 @@ test("stores boundary source metadata and country coverage as queryable rows", (
 			licence: "OGL",
 			replaced_by: "new",
 		});
+		const valid = db.prepare(
+			"SELECT release FROM boundary_release_validity WHERE geography = ? AND purpose = ? AND ? BETWEEN valid_from AND valid_to",
+		);
+		expect(valid.all("ward", "election_poll", "2024-07-04")).toHaveLength(
+			1,
+		);
+		expect(valid.all("ward", "election_poll", "2024-07-05")).toHaveLength(
+			0,
+		);
+		expect(valid.all("ward", "other", "2024-07-04")).toHaveLength(0);
 		expect(
 			db
 				.prepare(
