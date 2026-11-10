@@ -14,7 +14,7 @@ The API applies that correction to its source inventory and excludes the
 table from its boundary registry. The original metadata hash stays available.
 
 The main entry is safe to bundle into the browser. Node readers are exported
-through `@uk-data-atlas/catalogue/node`. `tests/packages/packageImports.test.ts`
+through `@uk-data-atlas/catalogue/node`, including the coverage plan. `tests/packages/packageImports.test.ts`
 checks the browser entry and declared package dependencies.
 
 The package also exports the place profile format, place fact calculations,
