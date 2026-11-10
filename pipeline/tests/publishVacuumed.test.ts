@@ -30,7 +30,8 @@ function bloated(path: string) {
 			"CREATE TABLE t (id INTEGER PRIMARY KEY, body BLOB NOT NULL); BEGIN",
 		);
 		const insert = database.prepare("INSERT INTO t VALUES (?, ?)");
-		for (let id = 1; id <= 400; id++) insert.run(id, Buffer.alloc(4000, id));
+		for (let id = 1; id <= 400; id++)
+			insert.run(id, Buffer.alloc(4000, id));
 		database.exec("COMMIT; DELETE FROM t WHERE id % 2 = 0");
 	} finally {
 		database.close();
@@ -89,12 +90,19 @@ test("replaces an earlier published file and runs the hooks around the rename", 
 		},
 		beforeReplace: () => {
 			events.push("beforeReplace");
-			assert.equal(readdirSync(root).includes("published.sqlite.tmp"), true);
+			assert.equal(
+				readdirSync(root).includes("published.sqlite.tmp"),
+				true,
+			);
 		},
 	});
 	assert.deepEqual(events, ["finish", "beforeReplace"]);
 	assert.equal(count(published), 50);
-	assert.equal(count(work), 200, "the finish step does not touch the working file");
+	assert.equal(
+		count(work),
+		200,
+		"the finish step does not touch the working file",
+	);
 });
 
 test("removes a stale temporary file left by a build that stopped", () => {
@@ -120,9 +128,15 @@ test("a failure part way leaves the published file untouched and no temporary fi
 
 	const failures: Array<() => void> = [
 		() =>
-			publishVacuumed(join(root, "missing-dir", "work.sqlite"), published),
+			publishVacuumed(
+				join(root, "missing-dir", "work.sqlite"),
+				published,
+			),
 		() => {
-			writeFileSync(join(root, "not-a-database.sqlite"), "not sqlite ".repeat(50));
+			writeFileSync(
+				join(root, "not-a-database.sqlite"),
+				"not sqlite ".repeat(50),
+			);
 			publishVacuumed(join(root, "not-a-database.sqlite"), published);
 		},
 		() =>
