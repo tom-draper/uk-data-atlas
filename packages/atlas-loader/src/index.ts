@@ -14,7 +14,6 @@ export * from "./postcodeAreaReleases.ts";
 export * from "./resolver/areas.ts";
 export * from "./resolver/capability.ts";
 export * from "./resolver/catalogue.ts";
-export * from "./resolver/lineage.ts";
 export * from "./resolver/locations.ts";
 export * from "./resolver/postcodes.ts";
 

@@ -30,3 +30,4 @@ export type {
 	BoundaryReleaseComparison,
 	ReleaseComparisonSources,
 } from "./releaseComparison.ts";
+export * from "./lineageResolver.ts";
