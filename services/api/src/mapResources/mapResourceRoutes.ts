@@ -376,6 +376,7 @@ export const handleMapResourceRoutes = ({
 		const resolved = resolveObservations(context, {
 			measureId,
 			measure: series?.catalogueMeasure,
+			seriesKey: series?.id,
 			periods: [period],
 			geography: parsedUrl.searchParams.get("geography"),
 			boundaryYear: parsedUrl.searchParams.get("codeYear"),

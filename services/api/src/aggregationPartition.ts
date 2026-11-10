@@ -21,6 +21,7 @@ export const resolveAggregationPartition = ({
 	context,
 	measureId,
 	measure,
+	seriesKey,
 	period,
 	geography,
 	boundaryYear,
@@ -35,6 +36,7 @@ export const resolveAggregationPartition = ({
 	>;
 	measureId: string;
 	measure?: Measure;
+	seriesKey?: string;
 	period: string;
 	geography: string;
 	boundaryYear: string;
@@ -47,6 +49,7 @@ export const resolveAggregationPartition = ({
 	const resolved = resolveObservations(context, {
 		measureId,
 		measure,
+		seriesKey,
 		periods: [period],
 		geography,
 		boundaryYear,
@@ -56,6 +59,8 @@ export const resolveAggregationPartition = ({
 	const compatibleReleases = compatibleReleasesForAggregation({
 		measureCompatibilityInventory: context.measureCompatibilityInventory,
 		measureId,
+		seriesKey,
+		measureDimensions: context.measureDimensions,
 		source,
 		period,
 	});
