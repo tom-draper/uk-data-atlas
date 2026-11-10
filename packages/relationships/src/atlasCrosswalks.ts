@@ -12,8 +12,8 @@ import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
  * from the area's name and aliases.
  *
  * Order is not stored: records are in source code order and targets in target
- * code order, and the build refuses input that is not. Each crosswalk keeps
- * the order of its endpoint fields, so artifacts rebuild byte for byte.
+ * code order, and the build refuses input that is not. JSON endpoint fields
+ * are derived from the stored facts, with a consistent field order.
  */
 
 type Values = Record<string, SQLOutputValue>;
@@ -159,15 +159,38 @@ export const readSqliteCrosswalk = (
 	try {
 		const row = database
 			.prepare(
-				"SELECT id, header, content_hash, bytes, basis_id, source_fields, target_fields FROM crosswalk WHERE slug = ?",
+				"SELECT id, header, content_hash, bytes, basis_id FROM crosswalk WHERE slug = ?",
 			)
 			.get(expected.id);
 		if (!row || row.content_hash !== expected.contentHash)
 			throw new Error(`Invalid crosswalk artifact ${expected.id}`);
 		const id = row.id as number;
 		const basis = row.basis_id as string | null;
-		const sourceOrder: string[] = JSON.parse(row.source_fields as string);
-		const targetOrder: string[] = JSON.parse(row.target_fields as string);
+		const sourceOrder = [
+			"code",
+			"labels",
+			...(basis === "area"
+				? ["areaM2", "coverage"]
+				: basis === "population"
+					? ["population", "coverage"]
+					: []),
+		];
+		const targetOrder = [
+			"code",
+			"labels",
+			"weight",
+			"population",
+			"overlapAreaM2",
+			"sourceShare",
+			"targetShare",
+			"change",
+			"relation",
+			"containedShare",
+			"outsideWidthM",
+			"match",
+			"widestDifferenceM",
+			"claimedDifferenceM",
+		];
 		const targets = new Map<number, object[]>();
 		for (const target of database
 			.prepare(

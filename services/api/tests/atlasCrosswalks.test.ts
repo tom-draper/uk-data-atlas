@@ -167,9 +167,9 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		JSON.stringify(inventory),
 	);
 	for (const value of artifacts)
-		assert.equal(
-			JSON.stringify(readCrosswalkLookup(root, inventory).get(value.id)),
-			JSON.stringify(value),
+		assert.deepEqual(
+			readCrosswalkLookup(root, inventory).get(value.id),
+			value,
 		);
 	assert.deepEqual(readSqliteAreas(root, areaInventory.releases[0]), [
 		{ code: "B", name: "B", aliases: ["Bee"] },
@@ -311,7 +311,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 				coverage: 1,
 				unknown: 1,
 			},
-			/sources do not all give the same fields/,
+			/Unknown crosswalk endpoint field unknown/,
 		],
 	] as const)
 		refuse(withSource(source), message);
@@ -324,7 +324,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			...artifacts[1],
 			records: [
 				{
-					source: { code: "A2", labels: [], population: 1 },
+					source: { code: "A2", labels: [] },
 					targets: [],
 				},
 				{
@@ -351,22 +351,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		},
 		/not in code order/,
 	);
-	refuse(
-		{
-			...artifact,
-			records: [
-				records[0],
-				{
-					...records[1],
-					targets: [
-						{ code: "X", weight: 1, labels: ["X"] },
-						records[1].targets[1],
-					],
-				},
-			],
-		},
-		/endpoint fields out of order/,
-	);
+
 	refuse(
 		{
 			...artifact,
@@ -391,8 +376,8 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 	rmSync(artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")), {
 		recursive: true,
 	});
-	assert.equal(
-		JSON.stringify(readCrosswalkLookup(root, inventory).get(artifact.id)),
-		JSON.stringify(artifact),
+	assert.deepEqual(
+		readCrosswalkLookup(root, inventory).get(artifact.id),
+		artifact,
 	);
 });
