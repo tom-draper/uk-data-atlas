@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { DataCatalog, Measure } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	type DataCatalog,
+	type Measure,
+	type MeasureCompatibilityInventory,
+	type MeasureDimensionsConfig,
+} from "@uk-data-atlas/measures";
 import { resolveObservations } from "../src/observationResolution/observationPlan";
+import { seriesCompatibility } from "../src/seriesCompatibility";
 
 test("plans the selected series without looking it up by catalogue id", () => {
 	const source = {
@@ -29,4 +36,41 @@ test("plans the selected series without looking it up by catalogue id", () => {
 		assert.equal(result.plan.measure, measure);
 		assert.equal(result.plan.source, source);
 	}
+});
+
+test("selects compatibility by canonical series instead of the supplied old id", () => {
+	const first = { measureId: "legacy-owned", sources: [] };
+	const second = { measureId: "legacy-rented", sources: [] };
+	const inventory = {
+		measures: [first, second],
+	} as unknown as MeasureCompatibilityInventory;
+	const config = {
+		ids: {
+			"legacy-owned": {
+				measure: "households",
+				dimensions: { tenure: "owned" },
+			},
+			"legacy-rented": {
+				measure: "households",
+				dimensions: { tenure: "rented" },
+			},
+		},
+	} as unknown as MeasureDimensionsConfig;
+	const key = measureSeriesKey({
+		measure: "households",
+		dimensions: { tenure: "rented" },
+	});
+	assert.equal(
+		seriesCompatibility(inventory, config, key, "legacy-owned"),
+		second,
+	);
+	assert.equal(
+		seriesCompatibility(
+			inventory,
+			config,
+			measureSeriesKey({ measure: "missing" }),
+			"legacy-owned",
+		),
+		undefined,
+	);
 });
