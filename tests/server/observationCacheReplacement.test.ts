@@ -23,7 +23,7 @@ const writeDatabase = (target: string, votes: number) => {
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
-		CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER);
+		CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
 		CREATE TABLE dimension (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, code TEXT);
 		CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
@@ -37,7 +37,7 @@ const writeDatabase = (target: string, votes: number) => {
 		INSERT INTO area_releases VALUES (0, 'ward', '2019-12-uk-bgc');
 		INSERT INTO dimension VALUES (1, 'party');
 		INSERT INTO dimension_member VALUES (1, 'lab');
-		INSERT INTO series VALUES (1, 1, 1, 0);
+		INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 0);
 		INSERT INTO series_member VALUES (1, 1, 1);
 		INSERT INTO area VALUES (1, 'E05000001');
 		INSERT INTO area_version VALUES (1, 1, 0);
