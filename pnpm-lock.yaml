@@ -561,6 +561,9 @@ importers:
 
   packages/measures:
     dependencies:
+      '@uk-data-atlas/areas':
+        specifier: workspace:*
+        version: link:../areas
       '@uk-data-atlas/artifacts':
         specifier: workspace:*
         version: link:../artifacts

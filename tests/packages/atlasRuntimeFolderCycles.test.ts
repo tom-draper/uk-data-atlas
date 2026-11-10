@@ -63,6 +63,8 @@ it("keeps loader at the top, imported by no other atlas-runtime folder", () => {
 it("keeps extracted domains out of runtime folder imports", () => {
 	const edges = folderImports();
 	for (const name of [
+		"areas",
+		"relationships",
 		"places",
 		"postcodes",
 		"measures",

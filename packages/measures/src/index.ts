@@ -30,3 +30,5 @@ export * from "./sourceSelection.ts";
 export * from "./measureValues.ts";
 
 export * from "./rankCompatibilityReleases.ts";
+
+export * from "./areaResources.ts";
