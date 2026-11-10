@@ -14,7 +14,7 @@ import { parse } from "yaml";
 import {
 	buildOperations,
 	compileOperations,
-} from "../../../pipeline/src/build-operations";
+} from "../../../pipeline/src/atlas/buildOperations";
 import {
 	createOperationMatcher,
 	deprecationHeaders,
