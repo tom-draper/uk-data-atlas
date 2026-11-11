@@ -17,15 +17,10 @@ import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { namedLocationMembersTable } from "@uk-data-atlas/areas";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import {
-	apiRootOf,
-	artifactDirectory,
-	roundGeometry,
-} from "@uk-data-atlas/atlas-db";
+import { artifactDirectory, roundGeometry } from "@uk-data-atlas/atlas-db";
 import { geometryBounds } from "@uk-data-atlas/geography";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
 const digest = (value: unknown) =>
 	createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const before: NamedLocationInventory = JSON.parse(
@@ -56,7 +51,7 @@ for (const [
 				...location,
 				geometry: JSON.parse(
 					readFileSync(
-						join(apiRoot, "public", geometryArtifact),
+						join(artifactDirectory(root), geometryArtifact),
 						"utf8",
 					),
 				),

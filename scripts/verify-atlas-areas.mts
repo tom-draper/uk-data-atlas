@@ -15,12 +15,12 @@ import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
-import { apiRootOf } from "@uk-data-atlas/atlas-db";
+import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const root = resolve(import.meta.dirname, "..");
-const apiRoot = apiRootOf(root);
+const artifactRoot = artifactDirectory(root);
 const before: AreaInventory = JSON.parse(
-	readFileSync(join(apiRoot, "public/area-inventory.json"), "utf8"),
+	readFileSync(join(artifactRoot, "area-inventory.json"), "utf8"),
 );
 const after = readAreaInventory(root);
 assert.ok(before.releases.length > 0);
@@ -29,10 +29,7 @@ const artifacts = before.releases.flatMap((release) =>
 	release.status === "available"
 		? [
 				JSON.parse(
-					readFileSync(
-						join(apiRoot, "public", release.artifact),
-						"utf8",
-					),
+					readFileSync(join(artifactRoot, release.artifact), "utf8"),
 				) as AreaReleaseArtifact,
 			]
 		: [],
