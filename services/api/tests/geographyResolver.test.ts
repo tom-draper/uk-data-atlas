@@ -23,7 +23,7 @@ import {
 	crosswalkInventory,
 	namedLocationInventory,
 	namedLocationLookup,
-} from "../../../pipeline/tests/geographyFixtures";
+} from "../../../pipeline/tests/fixtures/geographyFixtures";
 
 const releaseRegistry: BoundaryRegistry = {
 	schemaVersion: 1,

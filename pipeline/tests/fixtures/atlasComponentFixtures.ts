@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { compilePostcodeAreas } from "../src/postcodes/postcodeAreaCompiler";
-import { storePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
+import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
+import { storePostcodeAreas } from "../../src/postcodes/storePostcodeAreas";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 export function writeEmptyPostcodeComponent(root: string) {

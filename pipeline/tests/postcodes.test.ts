@@ -15,7 +15,7 @@ import {
 	postcodeIndexFor,
 	postcodeRow,
 	postcodeSource,
-} from "./postcodeFixtures";
+} from "./fixtures/postcodeFixtures";
 
 const unit = (text: string) =>
 	parsePostcode(text) as Extract<ParsedPostcode, { kind: "unit" }>;

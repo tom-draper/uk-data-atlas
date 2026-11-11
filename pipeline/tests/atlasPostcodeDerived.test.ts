@@ -24,7 +24,7 @@ import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../src/atlas/assembleAtlas";
-import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
+import { writeEmptyPostcodeAreas } from "./fixtures/atlasComponentFixtures";
 import { storePostcodeAreas as writePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
 import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
 import { validateShards } from "../src/postcode-counts/validatePostcodeCountInputs";
@@ -39,7 +39,7 @@ import {
 	readPostcodeIndex,
 } from "@uk-data-atlas/atlas-loader";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
-import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+import { postcodeIndexFor, postcodeRow } from "./fixtures/postcodeFixtures";
 
 /**
  * The fixture's base database is written by hand, so its ids are registered

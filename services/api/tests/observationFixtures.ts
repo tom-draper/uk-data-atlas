@@ -1,1 +1,1 @@
-export * from "../../../pipeline/tests/observationFixtures";
+export * from "../../../pipeline/tests/fixtures/observationFixtures";

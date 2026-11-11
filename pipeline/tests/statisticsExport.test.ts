@@ -10,7 +10,7 @@ import {
 	expandStatisticsSelection,
 	hashStatisticsSelection,
 } from "../src/statistics/statisticsExport";
-import { readParquet } from "./parquetFixtures";
+import { readParquet } from "./fixtures/parquetFixtures";
 import { bindStatisticsField } from "../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../src/statistics/bindReviewedStatistics";
