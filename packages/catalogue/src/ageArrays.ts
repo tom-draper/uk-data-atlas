@@ -9,7 +9,7 @@
 /** Dataset types whose records hold age maps. */
 const AGE_DATASET_TYPES: ReadonlySet<unknown> = new Set([
 	"population",
-	"populationUk",
+	"population-uk",
 ]);
 
 /** The fields of a record that map an age to a count. */

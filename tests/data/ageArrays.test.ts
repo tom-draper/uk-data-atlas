@@ -71,8 +71,8 @@ describe("age arrays", () => {
 
 	it("handles both population datasets and ignores non-objects", () => {
 		expect(
-			encodeAgeArrays(population({ total: { "0": 1 } }, "populationUk")),
-		).toEqual(population({ total: [1] }, "populationUk"));
+			encodeAgeArrays(population({ total: { "0": 1 } }, "population-uk")),
+		).toEqual(population({ total: [1] }, "population-uk"));
 		expect(encodeAgeArrays(null)).toBeNull();
 		expect(decodeAgeArrays([1, 2])).toEqual([1, 2]);
 	});

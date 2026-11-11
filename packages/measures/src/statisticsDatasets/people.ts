@@ -1,3 +1,4 @@
+import { AGE, byAge } from "@uk-data-atlas/datasets";
 import {
 	type DeclaredDataset,
 	type DeclaredDimension,
@@ -22,27 +23,6 @@ import {
 
 /** Population, life expectancy, deprivation and the EU referendum. */
 
-/** Single years of age, with 90 meaning 90 and over. */
-const AGE: DeclaredDimension = {
-	slug: "age",
-	label: "Age",
-	members: Array.from({ length: 91 }, (_, age) => ({
-		key: String(age),
-		code: age === 90 ? "90-plus" : String(age),
-		label: age === 90 ? "Aged 90 and over" : `Aged ${age}`,
-	})),
-};
-
-const byAge = [
-	{ path: "total.{age}", measure: "population", members: { sex: "all" } },
-	{ path: "males.{age}", measure: "population", members: { sex: "male" } },
-	{
-		path: "females.{age}",
-		measure: "population",
-		members: { sex: "female" },
-	},
-];
-
 export const POPULATION_WARDS: DeclaredDataset = {
 	type: "population",
 	module: "population",
@@ -60,19 +40,6 @@ export const POPULATION_WARDS: DeclaredDataset = {
 			release: { geography: "localAuthority", year: 2023 },
 		},
 	],
-	measures: [POPULATION],
-	dimensions: [SEX, AGE],
-	fields: byAge,
-};
-
-export const POPULATION_UK: DeclaredDataset = {
-	type: "populationUk",
-	module: "population",
-	name: "ladName",
-	payload: {
-		parts: yearParts("populationUk", "localAuthority", 2023),
-		arrays: ["total", "males", "females"],
-	},
 	measures: [POPULATION],
 	dimensions: [SEX, AGE],
 	fields: byAge,

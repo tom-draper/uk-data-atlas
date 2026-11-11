@@ -52,7 +52,7 @@ export interface PopulationLocalAuthorityData extends PopulationAgeSexRecord {
  */
 export interface PopulationUkDataset {
 	id: string;
-	type: "populationUk";
+	type: "population-uk";
 	year: number;
 	boundaryYear: LocalAuthorityYear;
 	boundaryType: "localAuthority";

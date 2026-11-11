@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` (population),
+Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -188,7 +188,7 @@ website chart definition):
   historical-general-election, local-election
 - environment: air-quality, ghg-emissions, electricity-consumption,
   gas-consumption, waste
-- population: population, population-uk, ethnicity
+- population: population, ethnicity
 - deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
 - transport: car-availability, travel-to-work, road-collisions,
   electric-vehicle-chargers

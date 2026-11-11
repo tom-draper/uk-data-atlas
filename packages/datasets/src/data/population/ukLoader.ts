@@ -80,8 +80,8 @@ export async function loadPopulationUk(
 	for (const [year, yearData] of byYear) {
 		if (Object.keys(yearData).length === 0) continue;
 		datasets[year] = {
-			id: `populationUk${year}`,
-			type: "populationUk",
+			id: `population-uk${year}`,
+			type: "population-uk",
 			year,
 			// MYEB1 is published on the April 2023 local authority boundaries.
 			boundaryYear: 2023,

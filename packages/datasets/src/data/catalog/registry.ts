@@ -35,7 +35,6 @@ import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
 import { populationDatasetDefinition } from "./definitions/population.ts";
-import { populationUkDatasetDefinition } from "./definitions/populationUk.ts";
 import { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
 import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
@@ -91,7 +90,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	nimdmDatasetDefinition,
 	planningApplicationsDatasetDefinition,
 	populationDatasetDefinition,
-	populationUkDatasetDefinition,
 	publicHealthDatasetDefinition,
 	pupilAbsenceDatasetDefinition,
 	qualificationDatasetDefinition,
