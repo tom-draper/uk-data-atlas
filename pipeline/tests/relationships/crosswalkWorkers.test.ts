@@ -5,14 +5,14 @@ import { test } from "vitest";
 import {
 	compileCrosswalksInWorkers,
 	crosswalkWorkerCount,
-} from "../src/relationships/crosswalkWorkers";
+} from "../../src/relationships/crosswalkWorkers";
 import {
 	compileCrosswalks,
 	type CrosswalkArtifact,
-} from "../src/relationships/crosswalkCompiler";
+} from "../../src/relationships/crosswalkCompiler";
 import { readStoredText } from "@uk-data-atlas/artifacts";
-import { writeCrosswalkArtifact } from "../src/relationships/crosswalkArtifact";
-import { crosswalkWorkerFixture } from "./helpers/crosswalkWorkerFixture";
+import { writeCrosswalkArtifact } from "../../src/relationships/crosswalkArtifact";
+import { crosswalkWorkerFixture } from "../helpers/crosswalkWorkerFixture";
 
 const GIB = 1024 ** 3;
 test("selects workers within CPU and available-memory budgets", () => {

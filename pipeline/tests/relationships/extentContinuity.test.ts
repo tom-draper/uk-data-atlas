@@ -11,15 +11,15 @@ import {
 	readCrosswalkAdapters,
 	type ExtentContinuityCrosswalkAdapter,
 } from "@uk-data-atlas/relationships";
-import { compileCrosswalks } from "./helpers/compileCrosswalks";
+import { compileCrosswalks } from "../helpers/compileCrosswalks";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
-import { crosswalkShape } from "../src/relationships/relationshipPaths";
-import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
+import { crosswalkShape } from "../../src/relationships/relationshipPaths";
+import { compileRelationshipPaths } from "../../src/relationships/relationshipPaths";
 import {
 	compileExtentContinuityCrosswalk,
 	MINIMUM_NOISE_SAMPLE,
-} from "../src/relationships/extentContinuity";
+} from "../../src/relationships/extentContinuity";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;

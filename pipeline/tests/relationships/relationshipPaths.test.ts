@@ -5,8 +5,8 @@ import {
 	createRelationshipPathIndex,
 	type CrosswalkShape,
 } from "@uk-data-atlas/relationships";
-import { compileRelationshipPaths } from "../src/relationships/relationshipPaths";
-import { crosswalkInventory } from "./fixtures/geographyFixtures";
+import { compileRelationshipPaths } from "../../src/relationships/relationshipPaths";
+import { crosswalkInventory } from "../fixtures/geographyFixtures";
 
 test("publishes only explicit, directional paths with their valid purpose", () => {
 	const inventory = compileRelationshipPaths(crosswalkInventory);

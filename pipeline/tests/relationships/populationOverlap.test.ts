@@ -11,7 +11,7 @@ import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
 } from "@uk-data-atlas/relationships";
-import { compileCrosswalks } from "./helpers/compileCrosswalks";
+import { compileCrosswalks } from "../helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;
