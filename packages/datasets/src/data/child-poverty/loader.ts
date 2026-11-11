@@ -56,7 +56,7 @@ export async function loadChildPoverty(
 		YEARS.map((year) => [
 			year,
 			{
-				id: `childPoverty${year}`,
+				id: `child-poverty${year}`,
 				type: "child-poverty" as const,
 				year,
 				measure: "relativeLowIncomeBeforeHousingCosts" as const,
