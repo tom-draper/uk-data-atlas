@@ -126,6 +126,21 @@ test("a weighted mean is rebuilt over an additive weight it names, or refused", 
 	}
 });
 
+test("a refusal names what is not held where the measure has a specific reason", () => {
+	const rules = rulesOf([
+		measure(1, "claimant-rate", { valueKind: "rate", aggregation: "none" }),
+		measure(2, "band-d-council-tax", {
+			valueKind: "mean",
+			aggregation: "weighted_mean",
+		}),
+	]);
+	assert.match(rules.get("claimant-rate")!.reason, /16 to 64 population/);
+	assert.match(
+		rules.get("band-d-council-tax")!.reason,
+		/no weight series is linked.*number of properties/,
+	);
+});
+
 test("everything that is not additive or a rebuildable ratio is refused with a reason", () => {
 	const refused = [
 		measure(1, "median-age", { valueKind: "median", aggregation: "none" }),
