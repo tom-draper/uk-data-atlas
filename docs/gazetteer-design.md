@@ -66,9 +66,9 @@ shared dataset package. The data build writes lookup artifacts under
 
 | Artifact                         | Built by                   | Loaded                                  | Size (raw / gz) |
 | -------------------------------- | -------------------------- | --------------------------------------- | --------------- |
-| `gazetteer.core.json`            | `compile-website-data.mts` | **bundled** (`gazetteer/static.ts`)     | unknown / 53 KB |
+| `gazetteer.core.json`            | `compile-website-data.ts` | **bundled** (`gazetteer/static.ts`)     | unknown / 53 KB |
 | `constituency-lad-overlaps.json` | `build-atlas-lookups.ts`   | on demand, constituency location filter | 305 KB / 44 KB  |
-| `gazetteer.matchindex.json`      | `compile-website-data.mts` | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
+| `gazetteer.matchindex.json`      | `compile-website-data.ts` | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
 | `boundary-mappings.json`         | `build-atlas-lookups.ts`   | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
 | `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts`   | on demand, LSOA location filter         | small           |
 
@@ -278,7 +278,7 @@ it covers.
 
 The match index used to be built by a standalone script and went stale that
 way: 22 catalogue releases (LSOA 2021, LAD 2026 among them) were unmatchable
-until 2026-09-27. It is now built by `compile-website-data.mts`
+until 2026-09-27. It is now built by `compile-website-data.ts`
 (`lib/data/gazetteer/matchIndex.ts`), straight after the boundary mappings it
 takes ward parents from.
 
@@ -316,7 +316,7 @@ straddling ward under every constituency it touches, which would double-count.
 ### 9.4 Density from precompiled area (not worth doing)
 
 The premise was wrong. Charts already read `areaSqKm` from each release's
-properties sidecar, which `pipeline/src/stages/compile-boundaries.mts` computes from the
+properties sidecar, which `pipeline/src/stages/compile-boundaries.ts` computes from the
 finished topology, and composite density already sums populations and areas
 separately (`helpers/populationDensity.ts`). Only the map's density layer
 measures rings in the browser, for the one release it draws: 30-100 ms once,
