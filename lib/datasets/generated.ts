@@ -32,7 +32,6 @@ import { incomeDefinition } from "./income";
 import { jobsDefinition } from "./jobs";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
-import { localGovernmentFinanceDefinition } from "./localGovernmentFinance";
 import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
 import { planningApplicationsDefinition } from "./planningApplications";
@@ -82,7 +81,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		jobsDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
-		localGovernmentFinanceDefinition,
 		nhsWaitingDefinition,
 		nimdmDefinition,
 		planningApplicationsDefinition,

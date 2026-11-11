@@ -41,7 +41,7 @@ export function formatDisplay(format: DisplayFormat, value: number): string {
 		case "decimal":
 			return `${format.prefix ?? ""}${value.toFixed(format.digits)}${format.suffix ?? ""}`;
 		case "count":
-			return `${format.locale ? value.toLocaleString(format.locale) : formatCount(value)}${format.suffix ?? ""}`;
+			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(value)}${format.suffix ?? ""}`;
 		case "compact":
 			return formatCompactCount(value);
 	}

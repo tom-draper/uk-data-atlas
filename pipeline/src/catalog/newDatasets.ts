@@ -59,17 +59,6 @@ export const NEW_DATASET_MEASURES = (
 		note: "The primary value sums the published broad-industry counts for each local authority.",
 	},
 
-	{
-		datasetId: "local-government-finance",
-		path: paths.localGovernmentFinance!,
-		boundaryYear: 2026,
-		period: "2026-27",
-		label: "Education services revenue budget",
-		unit: "£ thousand",
-		valueKind: "quantity",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		note: "The Atlas primary measure is the published total education-services budget line.",
-	},
 
 	{
 		datasetId: "waste",

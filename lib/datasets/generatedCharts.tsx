@@ -238,7 +238,6 @@ export const CHART_PRESENTATIONS = {
 	"localElection-2018": Chart14Presentation,
 	"localElection-2017": Chart14Presentation,
 	"localElection-2016": Chart14Presentation,
-	"economics-localGovernmentFinance": Chart0Presentation,
 	"health-nhsWaiting": Chart0Presentation,
 	"deprivation-nimdm": Chart15Presentation,
 	"economics-planningApplications": Chart0Presentation,
@@ -260,6 +259,7 @@ export const CHART_PRESENTATIONS = {
 	"telecoms-broadband": Chart26Presentation,
 	"economics-claimant-count": Chart0Presentation,
 	"economics-council-tax": Chart0Presentation,
+	"economics-local-government-finance": Chart0Presentation,
 	"telecoms-mobile-coverage": Chart27Presentation,
 	"economics-net-additional-dwellings": Chart0Presentation,
 } satisfies ChartPresentationRegistry;

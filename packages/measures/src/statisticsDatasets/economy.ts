@@ -421,28 +421,6 @@ const single = (
 	fields: [{ path: "value", measure: declared[0] }],
 });
 
-export const LOCAL_GOVERNMENT_FINANCE = single(
-	"localGovernmentFinance",
-	"economy",
-	() => periods.financialYear(2026),
-	{
-		parts: yearParts(
-			"localGovernmentFinance",
-			"localAuthority",
-			2026,
-			{ coverageCountries: ["GB-ENG"] },
-			["2026"],
-		),
-		code: "code",
-	},
-	"education-services-budget",
-	"Education services revenue budget",
-	"gbp thousand",
-	"amount",
-	"sum",
-	"Budgeted net revenue expenditure on education services.",
-);
-
 export const HOUSING_AFFORDABILITY = single(
 	"housingAffordability",
 	"housing",

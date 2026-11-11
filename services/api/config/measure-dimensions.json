@@ -988,9 +988,6 @@
 			"measure": "winning-party",
 			"datasetId": "local-election"
 		},
-		"local-government-finance": {
-			"measure": "education-services-budget"
-		},
 		"median-annual-pay": {
 			"measure": "gross-annual-pay",
 			"dimensions": {
