@@ -33,9 +33,18 @@ export type DisplayMeasureCard = {
 	digits?: number;
 	/** The value that fills the card's bar. */
 	maximum: number;
+	/** Replaces the card's heading for this measure. */
+	heading?: string;
+	/** Replaces the card's period for this measure. */
+	period?: string;
+	/** A fixed note under the headline for this measure. */
+	note?: string;
 	/** Treat a value of zero as missing, where the source writes zero for "not attributed". */
 	zeroIsMissing?: true;
 };
+
+/** A record field's path, or `of` as a percentage of `over`. */
+export type DisplayField = string | { share: { of: string; over: string } };
 
 /** One way to read the dataset, shown as a choice when there is more than one. */
 export type DisplayMeasure = {
@@ -43,8 +52,11 @@ export type DisplayMeasure = {
 	id: string;
 	/** The choice's label. */
 	label: string;
-	/** Path of the record field holding the value. */
-	field: string;
+	/**
+	 * Where the value comes from: the path of a record field, or a share of
+	 * one field over another, as a percentage.
+	 */
+	field: DisplayField;
 	/** The colour range the map starts with. */
 	colorRange: { min: number; max: number };
 	/** The legend's full range and the text of its labels. */
@@ -68,6 +80,8 @@ export type DisplayCard = {
 	secondary?: { field: string; format: DisplayFormat; versus?: string };
 	/** A fixed note beside the value. */
 	secondaryText?: string;
+	/** Leave out the fixed note when this record field is true, as on an average. */
+	secondaryHiddenWhen?: string;
 	/** Use a hovered map record when no matching area record is available. */
 	hoverRecord?: boolean;
 	/** Keep the card on this measure when the map switches measures. */

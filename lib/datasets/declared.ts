@@ -3,6 +3,7 @@ import type { DeclaredDatasetId } from "@uk-data-atlas/datasets";
 import { definitionOf, type DatasetDeclaration } from "@uk-data-atlas/datasets";
 import type {
 	DatasetDisplay,
+	DisplayField,
 	DisplayFormat,
 	DisplayMeasure,
 } from "@uk-data-atlas/datasets";
@@ -56,6 +57,24 @@ const read = (record: unknown, path: string): number | null => {
 		current = (current as Record<string, unknown>)[key];
 	}
 	return typeof current === "number" ? current : null;
+};
+
+/** A measure's value in a record: a field, or one field as a percentage of another. */
+const valueOf = (record: unknown, field: DisplayField): number | null => {
+	if (typeof field === "string") return read(record, field);
+	const of = read(record, field.share.of);
+	const over = read(record, field.share.over);
+	return of === null || !over ? null : (of / over) * 100;
+};
+
+/** A dotted path into a record, whatever its type. */
+const flag = (record: unknown, path: string): unknown => {
+	let current: unknown = record;
+	for (const key of path.split(".")) {
+		if (current === null || typeof current !== "object") return undefined;
+		current = (current as Record<string, unknown>)[key];
+	}
+	return current;
 };
 
 const declarationFor = (type: string) =>
@@ -115,8 +134,10 @@ const cardFor = (
 		{ data: Record<string, Record<string, unknown>> },
 		Record<string, unknown>
 	>({
-		heading: card.heading,
-		...(card.period ? { period: card.period } : {}),
+		heading: measure.card.heading ?? card.heading,
+		...((measure.card.period ?? card.period)
+			? { period: (measure.card.period ?? card.period)! }
+			: {}),
 		source: card.source,
 		...(card.coverage ? { coverage: card.coverage } : {}),
 		unit: measure.card.unit,
@@ -145,7 +166,7 @@ const cardFor = (
 				}
 			: {}),
 		value: (record) => {
-			const value = read(record, measure.field);
+			const value = valueOf(record, measure.field);
 			return measure.card?.zeroIsMissing && value === 0 ? null : value;
 		},
 		...(secondary
@@ -161,8 +182,14 @@ const cardFor = (
 							: `${formatDisplay(secondary.format, value)} vs ${formatDisplay(secondary.format, other)}`;
 					},
 				}
-			: card.secondaryText
-				? { secondary: () => card.secondaryText }
+			: (measure.card.note ?? card.secondaryText)
+				? {
+						secondary: (record) =>
+							card.secondaryHiddenWhen &&
+							flag(record, card.secondaryHiddenWhen) === true
+								? undefined
+								: (measure.card!.note ?? card.secondaryText),
+					}
 				: {}),
 	});
 };
@@ -252,7 +279,7 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 		},
 		map: {
 			...(declaration.publishMapValues
-				? { valueKey: first.field }
+				? { valueKey: first.field as string }
 				: {
 						valueFor: (dataset, code, options) => {
 							const key = recordKey(
@@ -262,7 +289,7 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 							);
 							return key === undefined
 								? null
-								: read(
+								: valueOf(
 										(
 											dataset.data as Record<
 												string,
