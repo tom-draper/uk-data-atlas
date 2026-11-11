@@ -69,6 +69,10 @@ that need the text, such as the API, gunzip the row. The cache is stamped with t
 SHA-256 hash of the final canonical database. The API opens both files read-only
 and fails readiness if the cache is missing, stale, lacks required payloads or
 predates the gzip column.
+The cache records the version of the cache compiler in its `meta` table as
+`cacheVersion`. A build that finds a cache with another version, or none,
+does not copy it: it starts from an empty file and rebuilds every component,
+and the API rejects such a cache as stale.
 `verify-dataset-payloads` reads these rows back and compares each with the
 compiler's JSON by value, so the build computes the generated payload once.
 The stages that fill it (`place-index`, `area-search-index`, `postcode-counts`,
@@ -1014,27 +1018,20 @@ shard and a direct postcode lookup. Each timed read opens its own connection.
 Deprecated read-only compatibility views preserve the earlier names and column
 spellings. New queries should use the stored tables:
 
-| Deprecated view                               | Stored table                        |
-| --------------------------------------------- | ----------------------------------- |
-| `datasets`                                    | `dataset_catalogue`                 |
-| `website_assets` (in `website-assets.sqlite`) | `website_asset`                     |
-| `area_inventory`                              | `area_inventory_metadata`           |
-| `crosswalk_inventory`                         | `crosswalk_inventory_metadata`      |
-| `crosswalk_coverage`                          | `crosswalk_coverage_entry`          |
-| `named_locations`                             | `named_location`                    |
-| `named_location_inventory`                    | `named_location_inventory_metadata` |
-| `named_location_members`                      | `named_location_member`             |
-| `named_location_assertions`                   | `named_location_assertion`          |
-| `named_location_partial_members`              | `named_location_partial_member`     |
-| `named_location_geometries`                   | `named_location_geometry`           |
-| `cache_generations`                           | `cache_generation`                  |
-| `dataset_payloads`                            | `dataset_payload`                   |
-| `location_projection_members`                 | `location_projection_member`        |
-| `location_projection_parents`                 | `location_projection_parent`        |
-| `location_projection_dictionaries`            | `location_projection_dictionary`    |
-| `place_index_places`                          | `place_index_place`                 |
-| `place_index_names`                           | `place_index_name`                  |
-| `place_index_codes`                           | `place_index_code`                  |
-| `area_search_codes`                           | `area_search_code`                  |
-| `area_search_terms`                           | `area_search_term`                  |
-| `area_search_title_terms`                     | `area_search_title_term`            |
+| Deprecated view                               | Stored table                    |
+| --------------------------------------------- | ------------------------------- |
+| `datasets`                                    | `dataset_catalogue`             |
+| `website_assets` (in `website-assets.sqlite`) | `website_asset`                 |
+| `area_inventory`                              | `area_inventory_metadata`       |
+| `crosswalk_inventory`                         | `crosswalk_inventory_metadata`  |
+| `crosswalk_coverage`                          | `crosswalk_coverage_entry`      |
+| `named_location_partial_members`              | `named_location_partial_member` |
+| `named_location_geometries`                   | `named_location_geometry`       |
+
+The views for `named_locations`, `named_location_members`,
+`named_location_assertions`, `named_location_inventory`, `cache_generations`,
+`dataset_payloads`, `location_projection_members`, `location_projection_parents`,
+`location_projection_dictionaries`, `place_index_places`, `place_index_names`,
+`place_index_codes`, `area_search_codes`, `area_search_terms` and
+`area_search_title_terms` are no longer written. Read the stored table of the
+same name in the singular (`named_location`, `place_index_place` and so on).
