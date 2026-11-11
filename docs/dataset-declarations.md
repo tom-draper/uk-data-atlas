@@ -164,7 +164,8 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count` (economy), `land-area` (environment), `life-expectancy-series` (health), `broadband` and `mobile-coverage`
+Declared: `claimant-count` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` (population),
+`broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
 Not yet declared, by module (each still has a definition in
@@ -187,7 +188,7 @@ website chart definition):
   historical-general-election, local-election
 - environment: air-quality, ghg-emissions, electricity-consumption,
   gas-consumption, waste
-- population: population, population-uk, population-constituency, ethnicity
+- population: population, population-uk, ethnicity
 - deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
 - transport: car-availability, travel-to-work, road-collisions,
   electric-vehicle-chargers

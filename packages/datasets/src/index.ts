@@ -48,7 +48,7 @@ export * from "./data/catalog/definitions/nhsWaiting.ts";
 export * from "./data/catalog/definitions/nimdm.ts";
 export * from "./data/catalog/definitions/planningApplications.ts";
 export * from "./data/catalog/definitions/population.ts";
-export * from "./data/catalog/definitions/populationConstituency.ts";
+export * from "./data/population-constituency/dataset.ts";
 export * from "./data/catalog/definitions/populationUk.ts";
 export * from "./data/catalog/definitions/publicHealth.ts";
 export * from "./data/catalog/definitions/pupilAbsence.ts";

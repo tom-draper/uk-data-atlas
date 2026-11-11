@@ -33,7 +33,6 @@ export { nhsWaitingDatasetDefinition } from "./nhsWaiting.ts";
 export { nimdmDatasetDefinition } from "./nimdm.ts";
 export { planningApplicationsDatasetDefinition } from "./planningApplications.ts";
 export { populationDatasetDefinition } from "./population.ts";
-export { populationConstituencyDatasetDefinition } from "./populationConstituency.ts";
 export { populationUkDatasetDefinition } from "./populationUk.ts";
 export { publicHealthDatasetDefinition } from "./publicHealth.ts";
 export { pupilAbsenceDatasetDefinition } from "./pupilAbsence.ts";

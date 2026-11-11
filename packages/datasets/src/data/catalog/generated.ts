@@ -33,7 +33,6 @@ import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import type { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
 import type { populationDatasetDefinition } from "./definitions/population.ts";
-import type { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency.ts";
 import type { populationUkDatasetDefinition } from "./definitions/populationUk.ts";
 import type { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
 import type { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
@@ -56,6 +55,7 @@ import type { claimantCount } from "../claimant-count/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
+import type { populationConstituency } from "../population-constituency/dataset.ts";
 
 export type CatalogueDataset =
 	| Awaited<
@@ -151,11 +151,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
 	| Awaited<
-			ReturnType<
-				typeof populationConstituencyDatasetDefinition.precompile
-			>
-	  >[string]
-	| Awaited<
 			ReturnType<typeof populationUkDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
@@ -208,7 +203,8 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof claimantCount.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
-	| Awaited<ReturnType<typeof mobileCoverage.load>>[string];
+	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
+	| Awaited<ReturnType<typeof populationConstituency.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
 export type DeclaredDatasetRecords = {
@@ -219,6 +215,9 @@ export type DeclaredDatasetRecords = {
 		ReturnType<typeof lifeExpectancySeries.load>
 	>;
 	"mobile-coverage": Awaited<ReturnType<typeof mobileCoverage.load>>;
+	"population-constituency": Awaited<
+		ReturnType<typeof populationConstituency.load>
+	>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	adultSocialCareActivity: Awaited<
@@ -310,9 +309,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	population: Awaited<
 		ReturnType<typeof populationDatasetDefinition.precompile>
-	>;
-	populationConstituency: Awaited<
-		ReturnType<typeof populationConstituencyDatasetDefinition.precompile>
 	>;
 	populationUk: Awaited<
 		ReturnType<typeof populationUkDatasetDefinition.precompile>

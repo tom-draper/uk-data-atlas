@@ -8,6 +8,7 @@ import { claimantCount } from "./claimant-count/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
+import { populationConstituency } from "./population-constituency/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -16,6 +17,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	landArea,
 	lifeExpectancySeries,
 	mobileCoverage,
+	populationConstituency,
 ];
 
 /** The manifest definition of each declaration. */
@@ -28,4 +30,5 @@ export type DeclaredDatasetId =
 	| "claimant-count"
 	| "land-area"
 	| "life-expectancy-series"
-	| "mobile-coverage";
+	| "mobile-coverage"
+	| "population-constituency";

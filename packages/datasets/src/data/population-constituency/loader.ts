@@ -40,8 +40,8 @@ export async function loadPopulationConstituencyYear(
 		};
 	}
 	return {
-		id: `populationConstituency${year}`,
-		type: "populationConstituency",
+		id: `population-constituency${year}`,
+		type: "population-constituency",
 		year,
 		boundaryType: "constituency",
 		boundaryYear: 2024,

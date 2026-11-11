@@ -78,20 +78,6 @@ export const POPULATION_UK: DeclaredDataset = {
 	fields: byAge,
 };
 
-export const POPULATION_CONSTITUENCY: DeclaredDataset = {
-	type: "populationConstituency",
-	module: "population",
-	name: "constituencyName",
-	payload: {
-		parts: yearParts("populationConstituency", "constituency", 2024, {
-			coverageCountries: ["GB-ENG", "GB-WLS"],
-		}),
-		code: "constituencyCode",
-	},
-	measures: [POPULATION],
-	fields: [{ path: "total", measure: "population" }],
-};
-
 /** `2022-2024`, with a hyphen or an en dash. */
 const yearRange = (text: unknown) => {
 	const match = /^(\d{4})[-–](\d{4})$/.exec(String(text));
