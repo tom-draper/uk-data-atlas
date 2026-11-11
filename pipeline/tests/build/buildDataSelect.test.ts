@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { selectStages } from "../build-data-select.mjs";
+import { selectStages } from "../../build-data-select.mjs";
 
 const stage = (name: string, dependencies: string[] = [], check = false) => ({
 	name,

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createBuildReport } from "../build-data-report.mjs";
-import { createDigestTracker } from "../build-data-digests.mjs";
-import { createRunState, createStageRunner } from "../build-data-stage-run.mjs";
+import { createBuildReport } from "../../build-data-report.mjs";
+import { createDigestTracker } from "../../build-data-digests.mjs";
+import { createRunState, createStageRunner } from "../../build-data-stage-run.mjs";
 
 const stage = (name: string, extra = {}) => ({
 	name,
