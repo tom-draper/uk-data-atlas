@@ -10,7 +10,6 @@ export { gasConsumptionDatasetDefinition } from "./gasConsumption.ts";
 export { generalElectionDatasetDefinition } from "./generalElection.ts";
 export { generalHealthDatasetDefinition } from "./generalHealth.ts";
 export { ghgEmissionsDatasetDefinition } from "./ghgEmissions.ts";
-export { homelessnessDatasetDefinition } from "./homelessness.ts";
 export { housePriceDatasetDefinition } from "./housePrice.ts";
 export { housingTenureDatasetDefinition } from "./housingTenure.ts";
 export { imdDatasetDefinition } from "./imd.ts";

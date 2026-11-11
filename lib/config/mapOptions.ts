@@ -52,7 +52,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "publicHealth"
 				? { measure: "smoking" }
 				: {}),
-			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
 			...(definition.type === "schoolPerformance"
 				? { measure: "grade4" }
 				: {}),

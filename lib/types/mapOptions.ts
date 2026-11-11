@@ -54,10 +54,6 @@ export interface UnemploymentOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
-export interface HomelessnessOptions extends ColorRangeOption {
-	measure: "rate" | "count";
-}
-
 export interface SchoolPerformanceOptions extends ColorRangeOption {
 	measure: "grade4" | "grade5" | "attainment8" | "progress8";
 }
@@ -170,7 +166,6 @@ export type ChartMapOptions = Omit<
 	| "airQuality"
 	| "ghgEmissions"
 	| "unemployment"
-	| "homelessness"
 	| "schoolPerformance"
 > &
 	Record<DeclaredDatasetId, DeclaredMapOptions> & {
@@ -191,7 +186,6 @@ export type ChartMapOptions = Omit<
 		airQuality: AirQualityOptions;
 		ghgEmissions: GhgEmissionsOptions;
 		unemployment: UnemploymentOptions;
-		homelessness: HomelessnessOptions;
 		schoolPerformance: SchoolPerformanceOptions;
 		lifeExpectancy: LifeExpectancyOptions;
 	};

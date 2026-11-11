@@ -112,20 +112,6 @@ export default function LegendContent({
 							: `${value.toFixed(1)}%`,
 				}
 			: null;
-		const homelessnessMeasure =
-			activeDataset.type === "homelessness"
-				? displayOptions.homelessness.measure
-				: null;
-		const homelessnessLegend = homelessnessMeasure
-			? {
-					min: 0,
-					max: homelessnessMeasure === "count" ? 8000 : 20,
-					format: (value: number) =>
-						homelessnessMeasure === "count"
-							? `${value.toLocaleString()} households in TA`
-							: `${value.toFixed(1)} per 1k households`,
-				}
-			: null;
 		const schoolPerformanceMeasure =
 			activeDataset.type === "schoolPerformance"
 				? displayOptions.schoolPerformance.measure
@@ -166,7 +152,6 @@ export default function LegendContent({
 				}
 			: (wasteLegend ??
 				schoolPerformanceLegend ??
-				homelessnessLegend ??
 				unemploymentLegend ??
 				legend);
 		const dynamicRange = getColorRange?.(
@@ -199,7 +184,6 @@ export default function LegendContent({
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
 				formatLabel={
-					homelessnessLegend?.format ??
 					schoolPerformanceLegend?.format ??
 					unemploymentLegend?.format ??
 					((value) => measureLegend.format(value, displayOptions))

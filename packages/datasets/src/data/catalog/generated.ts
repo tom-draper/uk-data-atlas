@@ -10,7 +10,6 @@ import type { gasConsumptionDatasetDefinition } from "./definitions/gasConsumpti
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import type { generalHealthDatasetDefinition } from "./definitions/generalHealth.ts";
 import type { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions.ts";
-import type { homelessnessDatasetDefinition } from "./definitions/homelessness.ts";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import type { housingTenureDatasetDefinition } from "./definitions/housingTenure.ts";
 import type { imdDatasetDefinition } from "./definitions/imd.ts";
@@ -41,6 +40,7 @@ import type { councilTax } from "../council-tax/dataset.ts";
 import type { crime } from "../crime/dataset.ts";
 import type { electricVehicleChargers } from "../electric-vehicle-chargers/dataset.ts";
 import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
+import type { homelessness } from "../homelessness/dataset.ts";
 import type { housingAffordability } from "../housing-affordability/dataset.ts";
 import type { jobs } from "../jobs/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
@@ -86,9 +86,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof homelessnessDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
 	| Awaited<
@@ -144,6 +141,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof crime.load>>[string]
 	| Awaited<ReturnType<typeof electricVehicleChargers.load>>[string]
 	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
+	| Awaited<ReturnType<typeof homelessness.load>>[string]
 	| Awaited<ReturnType<typeof housingAffordability.load>>[string]
 	| Awaited<ReturnType<typeof jobs.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
@@ -180,6 +178,7 @@ export type DeclaredDatasetRecords = {
 	"historical-general-election": Awaited<
 		ReturnType<typeof historicalGeneralElection.load>
 	>;
+	homelessness: Awaited<ReturnType<typeof homelessness.load>>;
 	"housing-affordability": Awaited<
 		ReturnType<typeof housingAffordability.load>
 	>;
@@ -241,9 +240,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	ghgEmissions: Awaited<
 		ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
-	>;
-	homelessness: Awaited<
-		ReturnType<typeof homelessnessDatasetDefinition.precompile>
 	>;
 	housePrice: Awaited<
 		ReturnType<typeof housePriceDatasetDefinition.precompile>

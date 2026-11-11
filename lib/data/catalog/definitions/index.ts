@@ -9,7 +9,6 @@ export { fuelPovertyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { gasConsumptionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { generalElectionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { ghgEmissionsDatasetDefinition } from "@uk-data-atlas/datasets";
-export { homelessnessDatasetDefinition } from "@uk-data-atlas/datasets";
 export { housePriceDatasetDefinition } from "@uk-data-atlas/datasets";
 export { imdDatasetDefinition } from "@uk-data-atlas/datasets";
 export { incomeDatasetDefinition } from "@uk-data-atlas/datasets";
