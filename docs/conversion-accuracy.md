@@ -3,8 +3,8 @@
 How well a figure published for one set of areas can be moved onto another, what
 the atlas does with the answer, and what it refuses to do.
 
-Every number here comes from two stage runs on 2026-11-10, against the atlas
-base built on 2026-11-09: `conversion-backtest` (tables in
+Every number here comes from two stage runs on 2026-11-11, against the atlas
+base built the same day: `conversion-backtest` (tables in
 `data/build/conversion-backtest/backtest-tables.md`) and `converted-series`
 (tables in `data/build/converted-series/converted-series.md`). The tables below
 are copied from those files. Run `pnpm data:build` to make them again.
@@ -32,8 +32,8 @@ are copied from those files. Run `pnpm data:build` to make them again.
 - **The bounds are honest and wide.** They held the published figure on all but
   one of 3,134 checked values, 802 of them held out from the fit. They are
   much wider than the typical error.
-- The atlas now holds 318 converted series: 1,216,154 regrouped values and 566
-  estimated ones. 48 of 96 measures are refused outright, each with its reason.
+- The atlas now holds 328 converted series: 1,230,046 regrouped values and no
+  estimated one. 43 of 96 measures are refused outright, each with its reason.
 
 ## Method
 
@@ -74,7 +74,11 @@ nothing else, and the result is stored in `measure_conversion`.
 
 - **sum**: an additive count or amount. Parts are added.
 - **rebuild**: a ratio whose numerator and denominator measures are named. Each
-  is converted and the ratio is taken again. A ratio is never averaged.
+  is converted and the ratio is taken again. A ratio is never averaged. A
+  weighted mean that names the count it is weighted by is rebuilt the same way:
+  mean times weight, and the weight, are each converted and divided again. Only
+  an exact regrouping is kept, and a target reached by a mean without its
+  weight, or a weight without its mean, is a `missing-input` gap.
 - **refuse**: nothing defensible can be done with what is held. The reason is
   stored.
 
@@ -102,7 +106,7 @@ way is refused.
 | Table                                                                                                                       | Holds                                                                           |
 | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | `series`                                                                                                                    | The converted series: `method = 'converted'`, `derived_from_id` set.            |
-| `series_input`                                                                                                              | Every input series and its role (value, numerator, denominator).                |
+| `series_input`                                                                                                              | Every input series and its role (value, numerator, denominator, weight).        |
 | `series_conversion`                                                                                                         | The rule, the weight basis, whether every value is an exact regrouping, a note. |
 | `series_crosswalk`                                                                                                          | The crosswalks of the route, in order, and their direction.                     |
 | `series_gap`                                                                                                                | Each area and period with no value, and why.                                    |
@@ -111,10 +115,10 @@ way is refused.
 
 A regrouped value has status `derived` and no bounds. A split value has status
 `estimated` and both bounds. No converted value has status `observed`: the copy
-into the atlas fails if one does. In the built atlas, the 318 converted series
-hold 1,216,154 derived values, none with bounds, 566 estimated values, all with
-bounds, and no observed value. The 1,643 published series are unchanged, with
-9,234,255 observed values.
+into the atlas fails if one does. In the built atlas, the 328 converted series
+hold 1,230,046 derived values, none with bounds, no estimated value and no
+observed value. The 1,643 published series are unchanged, with 9,234,255
+observed values.
 
 Every query in the codebase that reads `series` names the method it wants, and a
 test fails on one that does not
@@ -140,7 +144,7 @@ floor: no conversion of census counts can do better.
 | noise-census-2021-ts066               | population | regrouped | 10     | 1       | 72,640   | 40.9%  | 0.056%       | 2.632%    | 37.50%    | 22           |
 | regroup-census-lsoa-la-2023           | population | regrouped | 19     | 1       | 6,042    | 13.4%  | 0.281%       | 2.617%    | 13.33%    | 32           |
 | regroup-census-lsoa-msoa-la-2023      | population | regrouped | 19     | 1       | 6,042    | 13.4%  | 0.281%       | 2.617%    | 13.33%    | 32           |
-| regroup-census-lsoa-la-2026           | population | regrouped | 19     | 1       | 5,966    | 13.4%  | 0.279%       | 2.609%    | 13.33%    | 32           |
+| regroup-census-lsoa-la-2026           | population | regrouped | 19     | 1       | 6,023    | 13.4%  | 0.280%       | 2.621%    | 13.33%    | 32           |
 | regroup-la-2021-2023-ethnicity        | population | regrouped | 19     | 1       | 76       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
 | regroup-la-2021-2023-car-availability | population | regrouped | 5      | 1       | 20       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
 | regroup-la-2021-2023-qualification    | population | regrouped | 8      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
@@ -155,7 +159,7 @@ very small cells (largest absolute difference 23). Regrouping authorities from
 | Case                              | Basis      | Values    | Series | Periods | Compared | Exact  | Median error | p95 error | Max error | Max absolute |
 | --------------------------------- | ---------- | --------- | ------ | ------- | -------- | ------ | ------------ | --------- | --------- | ------------ |
 | regroup-ward-la-2023              | population | regrouped | 273    | 1       | 86,268   | 11.7%  | 0.295%       | 1.607%    | 16.47%    | 728          |
-| regroup-ward-la-2026              | population | regrouped | 273    | 1       | 84,903   | 11.7%  | 0.296%       | 1.609%    | 16.47%    | 728          |
+| regroup-ward-la-2026              | population | regrouped | 273    | 1       | 85,722   | 11.7%  | 0.295%       | 1.605%    | 16.47%    | 728          |
 | regroup-la-2022-2024-claimants    | population | regrouped | 2      | 1       | 8        | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
 | regroup-la-2019-2024-unemployment | population | regrouped | 1      | 26      | 88       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
 | regroup-lsoa-la-2024-collisions   | population | regrouped | 4      | 1       | 4        | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
@@ -287,8 +291,8 @@ The three worst values of each case and basis.
 | regroup-ward-la-2023              | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
 | regroup-ward-la-2023              | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
 | regroup-ward-la-2026              | population | regrouped | Runnymede (E07000212)                        | age=24/sex=female, 2022 | 416.0     | 498       | 16.47%  |
+| regroup-ward-la-2026              | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
 | regroup-ward-la-2026              | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
-| regroup-ward-la-2026              | population | regrouped | Runnymede (E07000212)                        | age=24/sex=all, 2022    | 885.0     | 1,005     | 11.94%  |
 | split-ward-constituency-overlap   | population | split     | Birmingham Selly Oak (E14001099)             | all ages, 2022          | 111,349.1 | 109,874   | 1.34%   |
 | split-ward-constituency-overlap   | population | split     | Liverpool Wavertree (E14001340)              | all ages, 2022          | 106,438.1 | 105,388   | 1.00%   |
 | split-ward-constituency-overlap   | population | split     | Reading Central (E14001438)                  | all ages, 2022          | 117,980.3 | 116,859   | 0.96%   |
@@ -336,32 +340,46 @@ The three worst values of each case and basis.
 
 | Series                                            | From                             | Onto                          | Series | Periods | Regrouped values | Estimated values | Gaps                                       |
 | ------------------------------------------------- | -------------------------------- | ----------------------------- | ------ | ------- | ---------------- | ---------------- | ------------------------------------------ |
-| population-uk / population                        | localAuthority:2023-12-uk-bgc    | localAuthority:2026-05-uk-bgc | 91     | 14      | 456,092          | 0                | not-carried 3,822                          |
-| jobs / total-jobs                                 | localAuthority:2023-12-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 14      | 4,891            | 0                | not-carried 42                             |
-| ghg-emissions / ghg-emissions                     | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 10     | 20      | 71,600           | 0                | not-carried 600                            |
-| ghg-emissions / ghg-population                    | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 20      | 7,160            | 0                | not-carried 60                             |
-| electricity-consumption / electricity-consumption | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 3      | 10      | 10,410           | 0                | not-carried 90                             |
-| electricity-consumption / electricity-meters      | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 10      | 3,470            | 0                | not-carried 30                             |
-| gas-consumption / gas-consumption                 | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 3      | 10      | 10,401           | 0                | not-carried 90                             |
-| gas-consumption / gas-meters                      | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 10      | 3,467            | 0                | not-carried 30                             |
-| unemployment / unemployed-people                  | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 26      | 8,774            | 0                | not-carried 78                             |
-| child-poverty / children-in-relative-low-income   | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 4       | 1,432            | 0                | not-carried 12                             |
-| school-performance / key-stage-4-pupils           | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 7       | 2,033            | 0                | not-carried 13                             |
-| census-2021-ts001 / usual-residents               | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 3      | 1       | 945              | 0                | not-carried 9                              |
-| census-2021-ts003 / households                    | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 15     | 1       | 4,725            | 0                | not-carried 45                             |
-| fuel-poverty / fuel-poor-households               | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 293              | 0                | not-carried 3                              |
-| fuel-poverty / households                         | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 293              | 0                | not-carried 3                              |
-| fuel-poverty / fuel-poverty-rate                  | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 293              | 0                | not-carried 3                              |
+| population-uk / population                        | localAuthority:2023-12-uk-bgc    | localAuthority:2026-05-uk-bgc | 91     | 14      | 459,914          | 0                |                                            |
+| jobs / total-jobs                                 | localAuthority:2023-12-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 14      | 4,933            | 0                |                                            |
+| ghg-emissions / ghg-emissions                     | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 10     | 20      | 72,200           | 0                |                                            |
+| ghg-emissions / ghg-population                    | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 20      | 7,220            | 0                |                                            |
+| electricity-consumption / electricity-consumption | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 3      | 10      | 10,500           | 0                |                                            |
+| electricity-consumption / electricity-meters      | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 10      | 3,500            | 0                |                                            |
+| gas-consumption / gas-consumption                 | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 3      | 10      | 10,491           | 0                |                                            |
+| gas-consumption / gas-meters                      | localAuthority:2025-05-uk-bgc-v2 | localAuthority:2026-05-uk-bgc | 1      | 10      | 3,497            | 0                |                                            |
+| unemployment / unemployed-people                  | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 26      | 8,852            | 0                |                                            |
+| child-poverty / children-in-relative-low-income   | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 4       | 1,444            | 0                |                                            |
+| school-performance / key-stage-4-pupils           | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 7       | 2,046            | 0                |                                            |
+| school-performance / gcse-english-maths-grade-4   | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 7       | 2,046            | 0                |                                            |
+| school-performance / gcse-english-maths-grade-5   | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 7       | 2,046            | 0                |                                            |
+| school-performance / attainment-8                 | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 1      | 7       | 2,046            | 0                |                                            |
+| broadband / broadband-availability                | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 4      | 1       | 1,444            | 0                |                                            |
+| mobile-coverage / mobile-premises-coverage        | localAuthority:2024-05-uk-bgc    | localAuthority:2026-05-uk-bgc | 4      | 1       | 1,444            | 0                |                                            |
+| census-2021-ts001 / usual-residents               | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 3      | 1       | 954              | 0                |                                            |
+| census-2021-ts003 / households                    | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 15     | 1       | 4,770            | 0                |                                            |
+| fuel-poverty / fuel-poor-households               | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 296              | 0                |                                            |
+| fuel-poverty / households                         | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 296              | 0                |                                            |
+| fuel-poverty / fuel-poverty-rate                  | lsoa:2021-12-ew-bgc-v5           | localAuthority:2026-05-uk-bgc | 1      | 1       | 296              | 0                |                                            |
 | population / population                           | ward:2023-12-uk-bgc              | constituency:2024-07-uk-bgc   | 91     | 1       | 25,116           | 0                | missing-input 182, unmeasured-split 27,027 |
 | population / population                           | ward:2023-12-uk-bgc              | ward:2026-05-uk-bgc           | 91     | 1       | 604,695          | 0                | not-carried 87,633                         |
-| population-constituency / population              | constituency:2024-07-uk-bgc      | localAuthority:2026-05-uk-bgc | 1      | 2       | 64               | 566              | not-carried 6                              |
 
-Every value above is an exact regrouping except the last row.
+Every value above is an exact regrouping. No series in the plan asks for an
+estimate.
 
 - **Local authority series onto the 2026 authorities.** Population by age and
   sex, jobs, greenhouse gas emissions and the population beside them,
   electricity and gas consumption and meters, unemployed people, children in
-  relative low income, and key stage 4 pupils. Every value is a whole authority carried or added.
+  relative low income, and key stage 4 pupils. Every value is a whole authority
+  carried or added, and no authority is left out.
+- **Weighted means onto the 2026 authorities.** Three school measures (grade 4
+  and grade 5 in English and maths, attainment 8) over key stage 4 pupils, and
+  broadband availability and mobile premises coverage over premises. Each is
+  rebuilt as the sum of mean times weight over the sum of the weights. On the
+  8,968 values whose authority code is the same on both releases, the rebuilt
+  mean equals the published one to within floating point (largest difference
+  1.4e-14). No authority that merged has a published mean on both sides, so the
+  rebuild across a merge has not been checked against a published figure.
 - **Census 2021 usual residents and households, LSOA to authority.** Exact
   sums, subject to the noise floor above.
 - **Fuel poverty, LSOA to authority.** The two counts are summed and the rate is
@@ -371,29 +389,24 @@ Every value above is an exact regrouping except the last row.
   whole wards have a value: 25,116 values. 27,027 are refused as `unmeasured-split`. All 91 series are single years of age, which are never split. The ward source holds no all ages series, so the total the backtest measured (largest error 1.34%) is not among them.
 - **Ward population onto 2026 wards.** Only wards whose boundary has not
   changed.
-- **Constituency population onto 2026 authorities.** The one estimated series.
-  64 values are regrouped and 566 are estimated with bounds. It is kept to show
-  an estimate beside its bounds. The published authority population is the
-  better figure wherever it is held.
 
-### Bounds of the estimated values
-
-| Series                                | Estimated values | Median half width | p95 half width | Widest |
-| ------------------------------------- | ---------------- | ----------------- | -------------- | ------ |
-| population-constituency/population>la | 566              | 5.909%            | 18.302%        | 36.15% |
+The plan no longer holds an estimated series. Constituency population onto 2026
+authorities was built in an earlier run to show an estimate beside its bounds.
+It duplicated the published authority population, which is the better figure,
+so it was dropped. Its key stays in the id registry.
 
 ## What is refused
 
 | Rule    | Measures |
 | ------- | -------- |
 | sum     | 45       |
-| rebuild | 3        |
-| refuse  | 48       |
+| rebuild | 8        |
+| refuse  | 43       |
 
 | Refused because                                                                                                                                                    | Measures                                                                                                                                                                                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A score, decile or ratio computed by its publisher for the areas it was published on. Its inputs are not held, so it cannot be computed again for other areas.     | 9: social-care-quality-of-life, house-price-to-earnings-ratio, imd-score, imd-decile, imd-domain-score, simd-quintile, simd-decile, wimd-score, wimd-decile                                                                                                                                                                                                                   |
-| A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.                                          | 12: background-concentration, pm25-population-weighted, pm25-population-weighted-anthropogenic, turnout, broadband-availability, band-d-council-tax, mobile-premises-coverage, mobile-area-coverage, gcse-english-maths-grade-4, gcse-english-maths-grade-5, attainment-8, progress-8                                                                                         |
+| A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.                                          | 7: background-concentration, pm25-population-weighted, pm25-population-weighted-anthropogenic, turnout, band-d-council-tax, mobile-area-coverage, progress-8                                                                                                                                                                                                                  |
 | A rate or share must be rebuilt from its numerator and denominator, and the measure names neither. Averaging it would weight a small area the same as a large one. | 14: children-in-relative-low-income-rate, claimant-rate, households-in-temporary-accommodation-rate, gross-annual-pay-change, gross-hourly-pay-change, reception-excess-weight, year-6-excess-weight, adult-excess-weight, physically-active-adults, smoking-prevalence, preventable-mortality, gcse-english-maths-grade-4-gap, unemployment-rate, unemployment-rate-interval |
 | The measure is declared as not additive (count, aggregation none), and no other method is held for it.                                                             | 2: majority, unemployed-people-interval                                                                                                                                                                                                                                                                                                                                       |
 | A category cannot be added or averaged, and the largest part of an area need not decide the whole.                                                                 | 1: source-winning-party                                                                                                                                                                                                                                                                                                                                                       |
@@ -423,22 +436,26 @@ Beyond whole measures, a conversion is refused value by value when:
   untested on Scottish areas.
 - **Scottish dwellings.** There is no dwelling count for Scotland, so the
   `dwellings` basis covers England and Wales only. No converted series uses it.
-- **Three authorities are never carried.** The crosswalk
-  `local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-extent-continuity` has no
-  edge for Cumberland (E06000063), Westmorland and Furness (E06000064) or
-  Lancaster (E07000121), so every authority series loses them on the 2026
-  release. Each is recorded as `not-carried` in `series_gap`. The crosswalk has
-  not been repaired.
+- **Three authorities are carried by a second crosswalk.** Between the
+  `2025-05-uk-bgc-v2` and `2025-12-uk-bgc` releases the extents of Cumberland
+  (E06000063), Westmorland and Furness (E06000064) and Lancaster (E07000121)
+  moved, so the extent continuity crosswalk rightly has no edge for them. No
+  postcode changed authority, so a postcode overlap crosswalk on the same hop
+  carries each whole. An earlier run left them out of every authority series.
+- **A rebuilt weighted mean has no backtest.** No school, broadband or mobile
+  mean is published on two sets of authorities that differ by a merge, so
+  nothing measures the rebuild where it does more than carry a value. It is
+  exact arithmetic on the published means and weights, and a published mean is
+  itself rounded.
 - **963 wards are not carried onto the 2026 wards**, because their boundary
   changed and a ward series by age cannot be split.
 - **One fit per method.** Each error factor comes from one case, and is the
   largest error seen in it, not a percentile. One extreme value sets the width
   for every value. The fit and the first check use the same values. Only the
   2019 chain and the 2022 authority case are held out.
-- **The bounds are wide.** On the estimated series the median half width is
-  5.909% and the widest is 36.15%, against a measured median error of 0.171%.
-  On the held-out 2019 chain the median half width is 23.69% against a median
-  error of 0.165%.
+- **The bounds are wide.** On the held-out 2019 chain the median half width is
+  23.69% against a median error of 0.165%. No series in the atlas now carries
+  bounds, so the bounds are exercised by the backtest alone.
 - **The bounds are not a confidence interval.** They are a largest seen error,
   scaled. One held-out value in 286 fell outside them.
 - **The weights are from one moment.** Residents and households are from the
@@ -452,8 +469,4 @@ Beyond whole measures, a conversion is refused value by value when:
 - **Fuel poverty is itself modelled** by its publisher, and covers England
   only. The converted series is an exact regrouping of a modelled figure.
 - **Size.** The converted series add about 1.2 million observations. The built
-  atlas was 704 MB.
-- **Not yet through a full build.** The converted series were built and
-  assembled onto a base database copied from another checkout. The `v_candidacy`
-  view now names the published method, and that change reaches a database only
-  when the base is built again.
+  atlas is 704.5 MB.
