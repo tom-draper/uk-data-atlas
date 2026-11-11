@@ -24,6 +24,23 @@ CREATE TABLE measure_conversion (
 	reason TEXT NOT NULL) STRICT;
 `;
 
+/**
+ * Why a published series was not converted onto a standard release. One row
+ * for each dataset, measure, source release, target release and reason, with
+ * the number of series it covers. A measure refused outright has its reason
+ * in `measure_conversion` and a row here for each target it was offered.
+ */
+const conversionSkip = (release = "", dataset = "", measure = "") => `
+CREATE TABLE conversion_skip (
+	dataset_id INTEGER NOT NULL${dataset},
+	measure_id INTEGER NOT NULL${measure},
+	source_release_id INTEGER NOT NULL${release},
+	target_release_id INTEGER NOT NULL${release},
+	reason TEXT NOT NULL CHECK (reason IN ('refused-measure','no-route','published-on-target','missing-component','no-values')),
+	series INTEGER NOT NULL CHECK (series > 0),
+	PRIMARY KEY (dataset_id, measure_id, source_release_id, target_release_id, reason)) WITHOUT ROWID, STRICT;
+`;
+
 export const CONVERTED_COMPONENT_SCHEMA = `
 CREATE TABLE converted_series (
 	n INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, plan_id TEXT NOT NULL,
@@ -49,6 +66,7 @@ CREATE TABLE converted_gap (
 	reason TEXT NOT NULL,
 	PRIMARY KEY (n, area_version_id, period_id)) WITHOUT ROWID, STRICT;
 ${measureConversion()}
+${conversionSkip()}
 ${BACKTEST_SCHEMA}
 `;
 
@@ -68,6 +86,8 @@ ${BACKTEST_SCHEMA}
  *   it is the source area whose value no crosswalk carried.
  * - `measure_conversion`: the rule of every measure, with the reason a
  *   refused one is refused.
+ * - `conversion_skip`: the published series left out of a standard release,
+ *   and why.
  */
 export const ATLAS_CONVERSION_SCHEMA = `
 CREATE TABLE series_input (
@@ -96,6 +116,7 @@ CREATE TABLE series_gap (
 	reason TEXT NOT NULL,
 	PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID, STRICT;
 ${measureConversion(" REFERENCES measure(id)", " REFERENCES weight_basis(id)")}
+${conversionSkip(" REFERENCES area_releases(id)", " REFERENCES dataset(id)", " REFERENCES measure(id)")}
 ${BACKTEST_SCHEMA}
 `;
 
@@ -114,6 +135,33 @@ export const writeMeasureConversions = (
 			rule.rule,
 			rule.rule === "sum" ? rule.splitBasis : null,
 			rule.reason,
+		);
+};
+
+export type SkipRow = {
+	datasetId: number;
+	measureId: number;
+	sourceReleaseId: number;
+	targetReleaseId: number;
+	reason: string;
+	series: number;
+};
+
+export const writeSkips = (
+	database: DatabaseSync,
+	skips: readonly SkipRow[],
+) => {
+	const insert = database.prepare(
+		"INSERT INTO conversion_skip VALUES (?,?,?,?,?,?)",
+	);
+	for (const skip of skips)
+		insert.run(
+			skip.datasetId,
+			skip.measureId,
+			skip.sourceReleaseId,
+			skip.targetReleaseId,
+			skip.reason,
+			skip.series,
 		);
 };
 
@@ -300,7 +348,11 @@ export const copyConvertedSeries = (
 		insertGaps.run(id, row.n);
 		series += 1;
 	}
-	for (const table of ["measure_conversion", ...BACKTEST_TABLES])
+	for (const table of [
+		"measure_conversion",
+		"conversion_skip",
+		...BACKTEST_TABLES,
+	])
 		database.exec(
 			`INSERT INTO main.${table} SELECT * FROM converted_component.${table}`,
 		);

@@ -9,6 +9,7 @@ import {
 	assertNothingPassesAsPublished,
 	copyConvertedSeries,
 	openConvertedWriter,
+	writeSkips,
 } from "../../src/conversion/storeConverted.ts";
 import type { IdRegistries } from "../../src/ids/idRegistries.ts";
 
@@ -35,6 +36,8 @@ CREATE TABLE weight_basis (id TEXT PRIMARY KEY);
 CREATE TABLE area_version (id INTEGER PRIMARY KEY);
 CREATE TABLE period (id INTEGER PRIMARY KEY);
 CREATE TABLE measure (id INTEGER PRIMARY KEY);
+CREATE TABLE dataset (id INTEGER PRIMARY KEY);
+CREATE TABLE area_releases (id INTEGER PRIMARY KEY);
 INSERT INTO series VALUES (1, 3, 4, 5, 'published', NULL, 'population/ward');
 INSERT INTO series_member VALUES (1, 8, 9);
 INSERT INTO observation VALUES (1, 100, 2, 40, 1, NULL, NULL, NULL);
@@ -273,4 +276,31 @@ test("an observed value on a series that is not published fails the check", () =
 			"INSERT INTO series VALUES (3, 3, 4, 6, 'converted', NULL, 'orphan')",
 		),
 	);
+});
+
+test("a skip names its reason and only a known reason is kept", () => {
+	const directory = mkdtempSync(join(tmpdir(), "skips-"));
+	directories.push(directory);
+	const writer = openConvertedWriter(join(directory, "c.sqlite"));
+	const row = {
+		datasetId: 1,
+		measureId: 2,
+		sourceReleaseId: 3,
+		targetReleaseId: 4,
+		series: 5,
+	};
+	writeSkips(writer.database, [{ ...row, reason: "no-route" }]);
+	assert.deepEqual(
+		writer.database
+			.prepare(
+				"SELECT reason || ':' || series AS text FROM conversion_skip",
+			)
+			.all()
+			.map((r) => r.text),
+		["no-route:5"],
+	);
+	assert.throws(() =>
+		writeSkips(writer.database, [{ ...row, reason: "because" }]),
+	);
+	writer.abandon();
 });
