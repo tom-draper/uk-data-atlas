@@ -90,7 +90,6 @@ export default function LegendContent({
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
 		const populationMetric =
 			(activeDataset.type === "businessActivity" ||
-				activeDataset.type === "electricVehicleChargers" ||
 				activeDataset.type === "jobs") &&
 			displayOptions[activeDataset.type].measure === "perPopulation";
 		const airQualityMeasure =

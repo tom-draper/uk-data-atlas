@@ -6,7 +6,6 @@ export { businessActivityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { childPovertyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { crimeDatasetDefinition } from "@uk-data-atlas/datasets";
-export { electricVehicleChargersDatasetDefinition } from "@uk-data-atlas/datasets";
 export { electricityConsumptionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { ethnicityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { fuelPovertyDatasetDefinition } from "@uk-data-atlas/datasets";

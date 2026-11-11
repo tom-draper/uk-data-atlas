@@ -8,7 +8,6 @@ import { businessActivityDatasetDefinition } from "./definitions/businessActivit
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
 import { crimeDatasetDefinition } from "./definitions/crime.ts";
-import { electricVehicleChargersDatasetDefinition } from "./definitions/electricVehicleChargers.ts";
 import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
@@ -54,7 +53,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	carAvailabilityDatasetDefinition,
 	childPovertyDatasetDefinition,
 	crimeDatasetDefinition,
-	electricVehicleChargersDatasetDefinition,
 	electricityConsumptionDatasetDefinition,
 	ethnicityDatasetDefinition,
 	fuelPovertyDatasetDefinition,

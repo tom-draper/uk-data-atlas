@@ -83,7 +83,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	businessActivity?: Input;
 	waste?: Input;
 	planningApplications?: Input;
-	electricVehicleChargers?: Input;
 	/** The compiled file of each declared dataset that publishes measures, by id. */
 	declared?: Record<string, Input>;
 	/**
@@ -134,7 +133,6 @@ export const compileDataCatalog = ({
 	businessActivity: businessActivityPath,
 	waste: wastePath,
 	planningApplications: planningApplicationsPath,
-	electricVehicleChargers: electricVehicleChargersPath,
 	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -273,7 +271,6 @@ export const compileDataCatalog = ({
 		businessActivity: businessActivityPath,
 		waste: wastePath,
 		planningApplications: planningApplicationsPath,
-		electricVehicleChargers: electricVehicleChargersPath,
 	};
 	if (Object.values(newDatasetPaths).every((path): path is string => !!path))
 		indicatorObservations.push(

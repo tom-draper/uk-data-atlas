@@ -183,6 +183,16 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 		throw new Error(
 			`Dataset ${declaration.id} must have one map-values measure`,
 		);
+	const fixedMeasure = declaration.display?.card?.fixedMeasure;
+	if (
+		fixedMeasure &&
+		!declaration.display?.measures.some(
+			(measure) => measure.id === fixedMeasure && measure.card,
+		)
+	)
+		throw new Error(
+			`Dataset ${declaration.id} needs a card for fixed measure ${fixedMeasure}`,
+		);
 	return declaration;
 }
 

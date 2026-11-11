@@ -17,7 +17,7 @@ type IndicatorType =
 	| "adult-social-care-activity"
 	| "adult-social-care-outcomes"
 	| "planningApplications"
-	| "electricVehicleChargers"
+	| "electric-vehicle-chargers"
 	| "housing-affordability";
 
 const source = (path: string) => path;
@@ -365,7 +365,7 @@ export async function loadElectricVehicleChargers(
 	}
 	await addPopulationMetrics(records, readPopulation);
 	return dataset(
-		"electricVehicleChargers",
+		"electric-vehicle-chargers",
 		2026,
 		"localAuthority",
 		2026,

@@ -63,6 +63,8 @@ export type DisplayCard = {
 	secondaryText?: string;
 	/** Use a hovered map record when no matching area record is available. */
 	hoverRecord?: boolean;
+	/** Keep the card on this measure when the map switches measures. */
+	fixedMeasure?: string;
 };
 
 /** Combining records over the areas a place is made of. */
