@@ -6,8 +6,9 @@ import type { ConversionBasis } from "./crosswalkSteps.ts";
  * areas, decided from what the measure table says about it and nothing else.
  *
  * - `sum`: an additive quantity. The parts of a target are added up.
- * - `rebuild`: a ratio. Its numerator and denominator are each converted and
- *   the ratio is taken again. A ratio is never averaged.
+ * - `rebuild`: a ratio, or a mean whose weight is named. The two parts are each
+ *   converted and the ratio is taken again. For a mean the parts are the value
+ *   times its weight, and the weight. Neither is ever averaged unweighted.
  * - `refuse`: nothing defensible can be done with what is held. The reason is
  *   stored beside the measure.
  */
@@ -20,6 +21,8 @@ export type MeasureRow = {
 	aggregation: string;
 	numerator: string | null;
 	denominator: string | null;
+	/** The count a weighted mean was taken over. */
+	weight: string | null;
 };
 
 export type ConversionRule =
@@ -39,6 +42,12 @@ export type ConversionRule =
 			denominator: string;
 			/** What the ratio is multiplied by to give the measure's unit. */
 			scale: number;
+			reason: string;
+	  }
+	| {
+			rule: "rebuild";
+			/** The count the mean is weighted by, area by area. */
+			weight: string;
 			reason: string;
 	  }
 	| { rule: "refuse"; reason: string };
@@ -108,11 +117,24 @@ export const conversionRule = (
 			reason: `Rebuilt as ${numerator.slug} over ${denominator.slug}, each converted first. Never averaged.`,
 		};
 	}
-	if (measure.aggregation === "weighted_mean")
+	if (measure.aggregation === "weighted_mean") {
+		const weight = measure.weight && bySlug.get(measure.weight);
+		if (!weight)
+			return {
+				rule: "refuse",
+				reason: "A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.",
+			};
+		if (!summable(weight))
+			return {
+				rule: "refuse",
+				reason: `A weighted mean must be recombined with an additive weight, and ${weight.slug} is not additive.`,
+			};
 		return {
-			rule: "refuse",
-			reason: "A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.",
+			rule: "rebuild",
+			weight: weight.slug,
+			reason: `Rebuilt as the mean over ${weight.slug}: each area's value is weighted by its ${weight.slug}, and both are converted first. Never averaged unweighted.`,
 		};
+	}
 	const byKind = REFUSALS[measure.valueKind];
 	if (byKind) return { rule: "refuse", reason: byKind };
 	if (measure.valueKind === "rate" || measure.valueKind === "share")
