@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { buildAreaTimeline } from "../src/places/placeProfileTimeline";
+import { buildAreaTimeline } from "../../src/places/placeProfileTimeline";
 
 it("records renames and material boundary changes across releases", () => {
 	const releases = ["2020-01-01", "2022-01-01"];
