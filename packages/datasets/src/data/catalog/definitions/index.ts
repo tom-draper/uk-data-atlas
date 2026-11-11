@@ -25,7 +25,6 @@ export { incomeDatasetDefinition } from "./income.ts";
 export { jobsDatasetDefinition } from "./jobs.ts";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
 export { localElectionDatasetDefinition } from "./localElection.ts";
-export { localGovernmentFinanceDatasetDefinition } from "./localGovernmentFinance.ts";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting.ts";
 export { nimdmDatasetDefinition } from "./nimdm.ts";
 export { planningApplicationsDatasetDefinition } from "./planningApplications.ts";

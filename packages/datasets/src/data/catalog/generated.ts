@@ -25,7 +25,6 @@ import type { incomeDatasetDefinition } from "./definitions/income.ts";
 import type { jobsDatasetDefinition } from "./definitions/jobs.ts";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import type { localElectionDatasetDefinition } from "./definitions/localElection.ts";
-import type { localGovernmentFinanceDatasetDefinition } from "./definitions/localGovernmentFinance.ts";
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import type { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
@@ -48,6 +47,7 @@ import type { councilTax } from "../council-tax/dataset.ts";
 import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
+import type { localGovernmentFinance } from "../local-government-finance/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 import type { netAdditionalDwellings } from "../net-additional-dwellings/dataset.ts";
 import type { populationConstituency } from "../population-constituency/dataset.ts";
@@ -128,11 +128,6 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof localElectionDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<
-			ReturnType<
-				typeof localGovernmentFinanceDatasetDefinition.precompile
-			>
-	  >[string]
 	| Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
 	| Awaited<
@@ -177,6 +172,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
+	| Awaited<ReturnType<typeof localGovernmentFinance.load>>[string]
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
 	| Awaited<ReturnType<typeof netAdditionalDwellings.load>>[string]
 	| Awaited<ReturnType<typeof populationConstituency.load>>[string]
@@ -197,6 +193,9 @@ export type DeclaredDatasetRecords = {
 	"land-area": Awaited<ReturnType<typeof landArea.load>>;
 	"life-expectancy-series": Awaited<
 		ReturnType<typeof lifeExpectancySeries.load>
+	>;
+	"local-government-finance": Awaited<
+		ReturnType<typeof localGovernmentFinance.load>
 	>;
 	"mobile-coverage": Awaited<ReturnType<typeof mobileCoverage.load>>;
 	"net-additional-dwellings": Awaited<
@@ -281,9 +280,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	localElection: Awaited<
 		ReturnType<typeof localElectionDatasetDefinition.precompile>
-	>;
-	localGovernmentFinance: Awaited<
-		ReturnType<typeof localGovernmentFinanceDatasetDefinition.precompile>
 	>;
 	nhsWaiting: Awaited<
 		ReturnType<typeof nhsWaitingDatasetDefinition.precompile>

@@ -336,6 +336,17 @@ describe("resolveValueCardStats", () => {
 		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
 		expect(chart.mapValueField).toBe("value");
 	});
+	it("formats declared education budgets as thousands of pounds", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "local-government-finance",
+		)!;
+		expect(chart.chart.defaultVisible).toBe(false);
+		expect(chart.chart.card?.prefix).toBe("£");
+		expect(chart.map?.legend?.format?.(12345, {} as never)).toBe(
+			"£12,345k",
+		);
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "council-tax",

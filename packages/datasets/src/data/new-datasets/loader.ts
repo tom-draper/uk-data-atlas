@@ -11,7 +11,7 @@ import type { BoundaryType } from "../boundaries/catalog.ts";
 type IndicatorType =
 	| "businessActivity"
 	| "net-additional-dwellings"
-	| "localGovernmentFinance"
+	| "local-government-finance"
 	| "council-tax"
 	| "waste"
 	| "adultSocialCareActivity"
@@ -155,7 +155,7 @@ export async function loadLocalGovernmentFinance(
 		records[code] = { code, name: row[2]?.trim() || code, value };
 	}
 	return dataset(
-		"localGovernmentFinance",
+		"local-government-finance",
 		2026,
 		"localAuthority",
 		2026,

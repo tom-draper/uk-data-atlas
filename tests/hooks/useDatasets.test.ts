@@ -39,7 +39,7 @@ describe("datasetIsNeeded", () => {
 			"brexitConstituency",
 			"generalHealth",
 			"housingTenure",
-			"localGovernmentFinance",
+			"local-government-finance",
 			"net-additional-dwellings",
 			"nimdm",
 			"publicHealth",

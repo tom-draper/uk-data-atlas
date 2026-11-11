@@ -26,7 +26,7 @@ describe("chart visibility store", () => {
 			expect(DEFAULT_VISIBILITY["health-adultSocialCareOutcomes"]).toBe(
 				false,
 			);
-			expect(DEFAULT_VISIBILITY["economics-localGovernmentFinance"]).toBe(
+			expect(DEFAULT_VISIBILITY["economics-local-government-finance"]).toBe(
 				false,
 			);
 		},
