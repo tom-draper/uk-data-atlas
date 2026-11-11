@@ -212,6 +212,7 @@ const writeSources = (
 	const councilTax = join(directory, "council-tax.json");
 	const netDwellings = join(directory, "net-additional-dwellings.json");
 	const finance = join(directory, "local-government-finance.json");
+	const careActivity = join(directory, "adult-social-care-activity.json");
 	const homelessness = join(directory, "homelessness.json");
 	const roadCollisions = join(directory, "road-collisions.json");
 	const income = join(directory, "income.json");
@@ -236,6 +237,7 @@ const writeSources = (
 				dataset("council-tax", 1, 1, 2026),
 				dataset("net-additional-dwellings", 1, 1, 2025),
 				dataset("local-government-finance", 1, 1, 2026),
+				dataset("adult-social-care-activity", 1, 1, 2025),
 				dataset("homelessness", 1, 1, 2025),
 				dataset("road-collisions", 2, 1, 2024),
 				dataset("income", 2, 1, 2025),
@@ -395,6 +397,23 @@ const writeSources = (
 						],
 					),
 				),
+			},
+		}),
+	);
+	writeFileSync(
+		careActivity,
+		JSON.stringify({
+			2025: {
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				data: {
+					E06000001: {
+						code: "E06000001",
+						name: "Hartlepool",
+						value: 1234,
+					},
+				},
 			},
 		}),
 	);
@@ -1032,6 +1051,7 @@ const writeSources = (
 			"council-tax": councilTax,
 			"net-additional-dwellings": netDwellings,
 			"local-government-finance": finance,
+			"adult-social-care-activity": careActivity,
 			"mobile-coverage": mobileCoverage,
 			broadband,
 		},
@@ -1068,7 +1088,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 35);
+		assert.equal(result.catalog.datasets.length, 36);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

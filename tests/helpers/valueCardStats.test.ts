@@ -347,6 +347,14 @@ describe("resolveValueCardStats", () => {
 		);
 		expect(chart.mapValueField).toBe("value");
 	});
+	it("formats declared long-term support client counts", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "adult-social-care-activity",
+		)!;
+		expect(chart.chart.defaultVisible).toBe(true);
+		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "council-tax",

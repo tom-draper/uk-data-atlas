@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax` and `net-additional-dwellings` (housing), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
+Declared: `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -180,7 +180,6 @@ website chart definition):
   school-performance-disadvantage,
   qualification
 - health: general-health, public-health, nhs-waiting, life-expectancy,
-  adult-social-care-activity,
   adult-social-care-outcomes
 - crime: crime
 - politics: brexit, brexit-constituency, general-election,

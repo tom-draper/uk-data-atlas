@@ -200,7 +200,6 @@ const Chart27Presentation = {
 } satisfies ChartPresentation;
 
 export const CHART_PRESENTATIONS = {
-	"health-adultSocialCareActivity": Chart0Presentation,
 	"health-adultSocialCareOutcomes": Chart0Presentation,
 	"environment-airQuality": Chart1Presentation,
 	"brexit-electoral": Chart2Presentation,
@@ -256,6 +255,7 @@ export const CHART_PRESENTATIONS = {
 	"environment-waste": Chart24Presentation,
 	"deprivation-wimd": Chart25Presentation,
 	"economics-workplaceIncome": Chart0Presentation,
+	"health-adult-social-care-activity": Chart0Presentation,
 	"telecoms-broadband": Chart26Presentation,
 	"economics-claimant-count": Chart0Presentation,
 	"economics-council-tax": Chart0Presentation,

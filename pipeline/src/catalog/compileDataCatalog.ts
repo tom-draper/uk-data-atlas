@@ -82,7 +82,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	gasConsumption: Input;
 	businessActivity?: Input;
 	waste?: Input;
-	adultSocialCareActivity?: Input;
 	adultSocialCareOutcomes?: Input;
 	planningApplications?: Input;
 	electricVehicleChargers?: Input;
@@ -135,7 +134,6 @@ export const compileDataCatalog = ({
 	gasConsumption: gasConsumptionPath,
 	businessActivity: businessActivityPath,
 	waste: wastePath,
-	adultSocialCareActivity: adultSocialCareActivityPath,
 	adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 	planningApplications: planningApplicationsPath,
 	electricVehicleChargers: electricVehicleChargersPath,
@@ -276,7 +274,6 @@ export const compileDataCatalog = ({
 	const newDatasetPaths = {
 		businessActivity: businessActivityPath,
 		waste: wastePath,
-		adultSocialCareActivity: adultSocialCareActivityPath,
 		adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 		planningApplications: planningApplicationsPath,
 		electricVehicleChargers: electricVehicleChargersPath,
