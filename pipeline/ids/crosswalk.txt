@@ -207,3 +207,4 @@ ward-2025-05-uk-bgc-v2-to-constituency-2022-12-uk-bgc-postcode-overlap
 ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc-postcode-overlap
 ward-2026-05-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap
 ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap
+local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-postcode-overlap

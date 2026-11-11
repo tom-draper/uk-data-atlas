@@ -1961,3 +1961,14 @@ population/population/ward:2023-12-uk-bgc/age=88/sex=all~converted:ward:2026-05-
 population/population/ward:2023-12-uk-bgc/age=89/sex=all~converted:ward:2026-05-uk-bgc
 population/population/ward:2023-12-uk-bgc/age=90-plus/sex=all~converted:ward:2026-05-uk-bgc
 population-constituency/population/constituency:2024-07-uk-bgc~converted:localAuthority:2026-05-uk-bgc
+school-performance/gcse-english-maths-grade-4/localAuthority:2024-05-uk-bgc~converted:localAuthority:2026-05-uk-bgc
+school-performance/gcse-english-maths-grade-5/localAuthority:2024-05-uk-bgc~converted:localAuthority:2026-05-uk-bgc
+school-performance/attainment-8/localAuthority:2024-05-uk-bgc~converted:localAuthority:2026-05-uk-bgc
+broadband/broadband-availability/localAuthority:2024-05-uk-bgc/broadband-speed=superfast~converted:localAuthority:2026-05-uk-bgc
+broadband/broadband-availability/localAuthority:2024-05-uk-bgc/broadband-speed=ultrafast~converted:localAuthority:2026-05-uk-bgc
+broadband/broadband-availability/localAuthority:2024-05-uk-bgc/broadband-speed=full-fibre~converted:localAuthority:2026-05-uk-bgc
+broadband/broadband-availability/localAuthority:2024-05-uk-bgc/broadband-speed=gigabit~converted:localAuthority:2026-05-uk-bgc
+mobile-coverage/mobile-premises-coverage/localAuthority:2024-05-uk-bgc/coverage-location=indoor/mobile-operators=all/mobile-technology=4g~converted:localAuthority:2026-05-uk-bgc
+mobile-coverage/mobile-premises-coverage/localAuthority:2024-05-uk-bgc/coverage-location=indoor/mobile-operators=any/mobile-technology=4g~converted:localAuthority:2026-05-uk-bgc
+mobile-coverage/mobile-premises-coverage/localAuthority:2024-05-uk-bgc/coverage-location=outdoor/mobile-operators=all/mobile-technology=5g~converted:localAuthority:2026-05-uk-bgc
+mobile-coverage/mobile-premises-coverage/localAuthority:2024-05-uk-bgc/coverage-location=outdoor/mobile-operators=any/mobile-technology=5g~converted:localAuthority:2026-05-uk-bgc
