@@ -207,6 +207,87 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores constituency population for each published year", () => {
+		const declaration = DATASET_DECLARATIONS.find(
+			({ id }) => id === "population-constituency",
+		)!;
+		const config = STATISTICS_DATASETS.find(
+			({ type }) => type === declaration.id,
+		)!;
+		const compiled = Object.fromEntries(
+			[2021, 2022].map((year) => [
+				String(year),
+				{
+					id: `population-constituency${year}`,
+					type: "population-constituency",
+					year,
+					boundaryType: "constituency",
+					boundaryYear: 2024,
+					coverageCountries: ["GB-ENG", "GB-WLS"],
+					data: {
+						E14001063: {
+							constituencyCode: "E14001063",
+							constituencyName: "Example",
+							total: year * 30,
+						},
+					},
+				},
+			]),
+		);
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "constituency", "2024-07-uk-bgc", "available"],
+					],
+				},
+				geography: {
+					...areas.geography,
+					rows: [...areas.geography.rows, [2, "constituency"]],
+				},
+				area: {
+					...areas.area,
+					rows: [...areas.area.rows, [3, 2, "E14001063"]],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 3, 2, "Example"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: declaration.id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(
+				JSON.parse(
+					rebuildDatasetPayload(
+						database,
+						declaration.id,
+						declaration.id,
+					),
+				),
+			).toEqual(compiled);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores life-expectancy periods and confidence intervals as rows", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "life-expectancy-series",

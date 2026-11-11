@@ -31,7 +31,6 @@ export { nhsWaitingDatasetDefinition } from "@uk-data-atlas/datasets";
 export { nimdmDatasetDefinition } from "@uk-data-atlas/datasets";
 export { planningApplicationsDatasetDefinition } from "@uk-data-atlas/datasets";
 export { populationDatasetDefinition } from "@uk-data-atlas/datasets";
-export { populationConstituencyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { populationUkDatasetDefinition } from "@uk-data-atlas/datasets";
 export { qualificationDatasetDefinition } from "@uk-data-atlas/datasets";
 export { regionalGdpItl1DatasetDefinition } from "@uk-data-atlas/datasets";

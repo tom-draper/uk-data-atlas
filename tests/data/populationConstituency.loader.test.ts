@@ -23,7 +23,7 @@ describe("loadPopulationConstituencyYear", () => {
 		);
 
 		expect(dataset).toMatchObject({
-			type: "populationConstituency",
+			type: "population-constituency",
 			year: 2022,
 			boundaryType: "constituency",
 			boundaryYear: 2024,
