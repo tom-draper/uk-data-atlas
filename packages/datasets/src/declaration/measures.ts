@@ -153,4 +153,5 @@ export const TURNOUT = measure(
 	"share",
 	"weighted_mean",
 	"Ballots cast as a percentage of the electorate.",
+	{ weight: "electorate" },
 );
