@@ -4,13 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, test } from "vitest";
-import type { ConvertedSeries } from "../src/conversion/convertSeries.ts";
+import type { ConvertedSeries } from "../../src/conversion/convertSeries.ts";
 import {
 	assertNothingPassesAsPublished,
 	copyConvertedSeries,
 	openConvertedWriter,
-} from "../src/conversion/storeConverted.ts";
-import type { IdRegistries } from "../src/ids/idRegistries.ts";
+} from "../../src/conversion/storeConverted.ts";
+import type { IdRegistries } from "../../src/ids/idRegistries.ts";
 
 const directories: string[] = [];
 afterEach(() => {
