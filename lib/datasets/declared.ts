@@ -68,6 +68,14 @@ const read = (record: unknown, path: string): number | null => {
 /** A measure's value in a record: a field, or one field as a percentage of another. */
 const valueOf = (record: unknown, field: DisplayField): number | null => {
 	if (typeof field === "string") return read(record, field);
+	if ("apportion" in field) {
+		const { amount, part, whole } = field.apportion;
+		const total = read(record, amount);
+		const portion = read(record, part);
+		const all = read(record, whole);
+		if (total === null || portion === null || all === null) return null;
+		return all > 0 ? (total * portion) / all : portion === 0 ? 0 : null;
+	}
 	const of = read(record, field.share.of);
 	const over = read(record, field.share.over);
 	return of === null || !over ? null : (of / over) * 100;
@@ -179,7 +187,7 @@ const cardFor = (
 				}
 			: {}),
 		value: (record) => {
-			const value = valueOf(record, measure.field);
+			const value = valueOf(record, measure.card?.field ?? measure.field);
 			return measure.card?.zeroIsMissing && value === 0 ? null : value;
 		},
 		...(secondary
