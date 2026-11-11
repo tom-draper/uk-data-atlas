@@ -16,7 +16,6 @@ export { generalHealthDatasetDefinition } from "./generalHealth.ts";
 export { ghgEmissionsDatasetDefinition } from "./ghgEmissions.ts";
 export { homelessnessDatasetDefinition } from "./homelessness.ts";
 export { housePriceDatasetDefinition } from "./housePrice.ts";
-export { housingAffordabilityDatasetDefinition } from "./housingAffordability.ts";
 export { housingTenureDatasetDefinition } from "./housingTenure.ts";
 export { imdDatasetDefinition } from "./imd.ts";
 export { incomeDatasetDefinition } from "./income.ts";

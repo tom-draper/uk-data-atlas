@@ -870,6 +870,69 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores housing affordability on the 2025 authority release", () => {
+		const id = "housing-affordability";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const compiled = {
+			2025: {
+				id: `${id}2025`,
+				type: id,
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				coverageCountries: ["GB-ENG", "GB-WLS"],
+				data: {
+					E06000001: {
+						code: "E06000001",
+						name: "Hartlepool",
+						value: 8.7,
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
+					],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 1, 2, "Hartlepool"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores council tax on the 2026 authority release", () => {
 		const id = "council-tax";
 		const declaration = DATASET_DECLARATIONS.find(

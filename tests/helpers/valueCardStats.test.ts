@@ -363,6 +363,14 @@ describe("resolveValueCardStats", () => {
 		expect(chart.map?.legend?.format?.(18.3, {} as never)).toBe("18.3");
 		expect(chart.mapValueField).toBe("value");
 	});
+	it("formats declared housing affordability as an earnings ratio", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "housing-affordability",
+		)!;
+		expect(chart.chart.defaultVisible).toBe(true);
+		expect(chart.map?.legend?.format?.(9, {} as never)).toBe("9×");
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "council-tax",

@@ -18,7 +18,7 @@ type IndicatorType =
 	| "adult-social-care-outcomes"
 	| "planningApplications"
 	| "electricVehicleChargers"
-	| "housingAffordability";
+	| "housing-affordability";
 
 const source = (path: string) => path;
 const numeric = (value: unknown) => parseNullableNum(value) ?? null;
@@ -410,7 +410,7 @@ export async function loadHousingAffordability(
 		records[code] = { code, name: row[3]?.trim() || code, value };
 	}
 	return dataset(
-		"housingAffordability",
+		"housing-affordability",
 		year,
 		"localAuthority",
 		year,
