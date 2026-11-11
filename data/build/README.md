@@ -454,7 +454,22 @@ coverage, source, licence and deprecation metadata, keyed by `(geography,
 release)`. `boundary_release_country` holds its country codes. Join these to
 `area_releases` on geography and release; the registry may also contain releases
 without an area inventory. Temporal coverage is the source’s description, not
-an effective-date interval.
+an effective-date interval. `reference_year` and `reference_month` give the edition
+a release is named for, read from its id (`2023-12-uk-bgc` is December 2023) and
+checked against the month in its title; the month is null for yearly and census
+editions. The `boundary_release_edition` view turns these into intervals: a release
+is the latest held snapshot from `edition_from` until `edition_until` (exclusive,
+null for the newest) in its geography. It orders the held snapshots only and is not a
+legal effective-date interval. Variants of one edition (such as `v2` reissues, or GB
+and UK coverage) share an interval. For example, the snapshots current on a date:
+
+```sql
+SELECT geography, release
+FROM boundary_release_edition
+WHERE geography = 'localAuthority'
+  AND '2023-06-15' >= edition_from
+  AND (edition_until IS NULL OR '2023-06-15' < edition_until);
+```
 
 `boundary_release_validity` records evidence-backed inclusive intervals for a
 specified purpose. `election_poll` means the release was used for that election's
