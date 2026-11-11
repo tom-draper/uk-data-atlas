@@ -12,7 +12,7 @@ import { isMainModule } from "../lib/entrypoint.ts";
 const scriptPath = fileURLToPath(import.meta.url);
 if (isMainModule(import.meta.url)) {
 	const started = performance.now();
-	const { summaries, output } = buildConvertedSeries(
+	const { summaries, skips, output } = buildConvertedSeries(
 		resolve(dirname(scriptPath), "../../.."),
 		(summary, milliseconds) => {
 			const gaps = Object.values(summary.gaps).reduce((a, b) => a + b, 0);
@@ -21,6 +21,11 @@ if (isMainModule(import.meta.url)) {
 			);
 		},
 	);
+	const left = new Map<string, number>();
+	for (const skip of skips)
+		left.set(skip.reason, (left.get(skip.reason) ?? 0) + skip.series);
+	for (const [reason, series] of left)
+		buildLog.info(`Left out as ${reason}: ${formatCount(series)} series`);
 	buildLog.info(
 		`Converted ${formatCount(summaries.reduce((sum, s) => sum + s.series, 0))} series in ${formatDuration(performance.now() - started)}, to ${repoPath(output)}`,
 	);

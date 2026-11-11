@@ -7,22 +7,26 @@ import {
 	readErrorFactors,
 	STATUS_ESTIMATED,
 	type ConvertedSeries,
+	type SkipReason,
 } from "./convertSeries.ts";
-import { CONVERTED_PLAN, type PlanEntry } from "./convertedPlan.ts";
+import type { PlanEntry } from "./convertedPlan.ts";
 import {
 	conversionBacktestPath,
 	convertedSeriesPath,
 	convertedSeriesSummaryPath,
 } from "./paths.ts";
-import { createResolver } from "./pinnedRoutes.ts";
+import { createResolver, type Resolver } from "./pinnedRoutes.ts";
 import { conversionRules, readMeasures } from "./rules.ts";
 import { openConversionSource } from "./runConversionBacktest.ts";
-import { areaNamer } from "./seriesValues.ts";
+import { planStandardReleases, type PlanSkip } from "./standardPlan.ts";
+import { areaNamer, type SeriesRow } from "./seriesValues.ts";
 import { BACKTEST_TABLES, number, percent, table } from "./storeBacktest.ts";
 import {
 	openConvertedWriter,
 	writeMeasureConversions,
+	writeSkips,
 	type RuledMeasure,
+	type SkipRow,
 } from "./storeConverted.ts";
 
 /** What one plan entry came to, for the summary the accuracy report quotes. */
@@ -38,6 +42,19 @@ export type EntrySummary = {
 	/** Source areas whose value no crosswalk carried. */
 	notCarried: Set<number>;
 	sourceCheck?: { compared: number; maxDifference: number };
+	/** The exact share and coverage of each series stored. */
+	exactShares: number[];
+	coverages: number[];
+};
+
+/** A published series left out of the standard releases, and the plan entry's target. */
+export type Skip = {
+	dataset: string;
+	measure: string;
+	source: string;
+	target: string;
+	reason: PlanSkip["reason"] | SkipReason;
+	series: number;
 };
 
 const summarise = (
@@ -45,6 +62,8 @@ const summarise = (
 	converted: ConvertedSeries,
 ): EntrySummary => {
 	summary.series += 1;
+	summary.exactShares.push(converted.quality.exactShare);
+	summary.coverages.push(converted.quality.coverage);
 	summary.periods = Math.max(summary.periods, converted.periods);
 	for (const o of converted.observations)
 		if (o.status === STATUS_ESTIMATED) {
@@ -73,10 +92,45 @@ const summarise = (
 /** The most area names a row of the summary lists. */
 const NAMES_SHOWN = 6;
 
+const SHARE_BANDS: readonly [string, (value: number) => boolean][] = [
+	["1 (every value regrouped whole)", (v) => v >= 1],
+	["0.99 to under 1", (v) => v >= 0.99],
+	["0.9 to under 0.99", (v) => v >= 0.9],
+	["0.5 to under 0.9", (v) => v >= 0.5],
+	["under 0.5", () => true],
+];
+
+const COVERAGE_BANDS: readonly [string, (value: number) => boolean][] = [
+	["1 (every target holds a value)", (v) => v >= 1],
+	["0.9 to under 1", (v) => v >= 0.9],
+	["0.5 to under 0.9", (v) => v >= 0.5],
+	["under 0.5", () => true],
+];
+
+/** How many of the values fall in each band, the first band that holds taking it. */
+const bandCounts = (
+	values: readonly number[],
+	bands: readonly [string, (value: number) => boolean][],
+) => {
+	const counts = bands.map(() => 0);
+	for (const value of values)
+		counts[bands.findIndex(([, in_]) => in_(value))]! += 1;
+	return bands.map(([label], index) => [label, number(counts[index]!)]);
+};
+
+/** The skips of one reason, summed over datasets and measures. */
+const skipTotals = (skips: readonly Skip[]) => {
+	const totals = new Map<string, number>();
+	for (const skip of skips)
+		totals.set(skip.reason, (totals.get(skip.reason) ?? 0) + skip.series);
+	return [...totals].sort(([a], [b]) => a.localeCompare(b));
+};
+
 export const convertedMarkdown = (
 	summaries: readonly EntrySummary[],
 	rules: readonly RuledMeasure[],
 	nameOf: (area: number) => string,
+	skips: readonly Skip[] = [],
 ) => {
 	const gapsOf = (summary: EntrySummary) =>
 		Object.entries(summary.gaps)
@@ -118,6 +172,34 @@ export const convertedMarkdown = (
 				number(summary.regrouped),
 				number(summary.estimated),
 				gapsOf(summary),
+			]),
+		),
+		"",
+		"## Quality of the converted series",
+		"",
+		table(
+			["Exact share", "Series"],
+			bandCounts(
+				summaries.flatMap((summary) => summary.exactShares),
+				SHARE_BANDS,
+			),
+		),
+		"",
+		table(
+			["Coverage", "Series"],
+			bandCounts(
+				summaries.flatMap((summary) => summary.coverages),
+				COVERAGE_BANDS,
+			),
+		),
+		"",
+		"## Published series left out",
+		"",
+		table(
+			["Reason", "Series"],
+			skipTotals(skips).map(([reason, series]) => [
+				reason,
+				number(series),
 			]),
 		),
 		"",
@@ -191,6 +273,27 @@ export const convertedMarkdown = (
 	].join("\n");
 };
 
+const skipRows = (
+	database: DatabaseSync,
+	resolver: Resolver,
+	skips: readonly Skip[],
+): SkipRow[] => {
+	const dataset = database.prepare("SELECT id FROM dataset WHERE slug = ?");
+	const measure = database.prepare("SELECT id FROM measure WHERE slug = ?");
+	const idOf = (
+		statement: ReturnType<DatabaseSync["prepare"]>,
+		slug: string,
+	) => (statement.get(slug) as { id: number }).id;
+	return skips.map((skip) => ({
+		datasetId: idOf(dataset, skip.dataset),
+		measureId: idOf(measure, skip.measure),
+		sourceReleaseId: resolver.releaseId(skip.source),
+		targetReleaseId: resolver.releaseId(skip.target),
+		reason: skip.reason,
+		series: skip.series,
+	}));
+};
+
 export const buildConvertedSeries = (
 	root: string,
 	onEntry?: (summary: EntrySummary, milliseconds: number) => void,
@@ -203,16 +306,42 @@ export const buildConvertedSeries = (
 	const writer = openConvertedWriter(output);
 	try {
 		const rules = conversionRules(readMeasures(database));
+		const resolver = createResolver(database);
+		const { entries, skips: planSkips } = planStandardReleases(
+			database,
+			resolver,
+			new Map(rules.map((ruled) => [ruled.measure.slug, ruled])),
+		);
+		const skipped = new Map<string, Skip>();
+		const addSkip = (skip: Omit<Skip, "series">, series = 1) => {
+			const key = JSON.stringify(skip);
+			const known = skipped.get(key);
+			if (known) known.series += series;
+			else skipped.set(key, { ...skip, series });
+		};
+		for (const { series, ...skip } of planSkips) addSkip(skip, series);
 		const context = {
 			database,
-			resolver: createResolver(database),
+			resolver,
 			rules: new Map(
 				rules.map(({ measure, rule }) => [measure.slug, rule]),
 			),
 			factors: readErrorFactors(backtest),
+			skipped: (
+				entry: PlanEntry,
+				source: SeriesRow,
+				reason: SkipReason,
+			) =>
+				addSkip({
+					dataset: source.dataset,
+					measure: source.measure,
+					source: entry.source.release,
+					target: entry.target,
+					reason,
+				}),
 		};
 		const summaries: EntrySummary[] = [];
-		for (const entry of CONVERTED_PLAN) {
+		for (const entry of entries) {
 			const started = performance.now();
 			const summary: EntrySummary = {
 				entry,
@@ -223,6 +352,8 @@ export const buildConvertedSeries = (
 				gaps: {},
 				halfWidths: [],
 				notCarried: new Set(),
+				exactShares: [],
+				coverages: [],
 			};
 			for (const converted of convertEntry(context, entry)) {
 				writer.add(converted);
@@ -232,6 +363,10 @@ export const buildConvertedSeries = (
 			onEntry?.(summary, performance.now() - started);
 		}
 		writeMeasureConversions(writer.database, rules);
+		writeSkips(
+			writer.database,
+			skipRows(database, resolver, [...skipped.values()]),
+		);
 		// The backtest the bounds came from travels with the series.
 		writer.database.exec("COMMIT");
 		writer.database
@@ -249,12 +384,17 @@ export const buildConvertedSeries = (
 		mkdirSync(dirname(summaryPath), { recursive: true });
 		writeFileSync(
 			summaryPath,
-			convertedMarkdown(summaries, rules, (area) => {
-				const { code, name } = namer(area);
-				return `${name} (${code})`;
-			}),
+			convertedMarkdown(
+				summaries,
+				rules,
+				(area) => {
+					const { code, name } = namer(area);
+					return `${name} (${code})`;
+				},
+				[...skipped.values()],
+			),
 		);
-		return { summaries, output };
+		return { summaries, skips: [...skipped.values()], output };
 	} catch (error) {
 		writer.abandon();
 		throw error;
