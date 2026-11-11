@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { correctedSource } from "../src/geographies/correctBoundarySource";
+import { correctedSource } from "../../src/geographies/correctBoundarySource";
 
 it("decodes an uncorrected boundary source and rejects invalid input", async () => {
 	const correction = {
