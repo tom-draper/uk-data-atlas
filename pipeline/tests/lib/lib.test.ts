@@ -5,14 +5,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, test } from "vitest";
-import { parseScriptArgs } from "../src/lib/args.ts";
-import { isMainModule } from "../src/lib/entrypoint.ts";
+import { parseScriptArgs } from "../../src/lib/args.ts";
+import { isMainModule } from "../../src/lib/entrypoint.ts";
 import {
 	sha256FileHex,
 	sha256FileHexSync,
 	sha256Hex,
-} from "../src/lib/hash.ts";
-import { readJson, readJsonSync } from "../src/lib/json.ts";
+} from "../../src/lib/hash.ts";
+import { readJson, readJsonSync } from "../../src/lib/json.ts";
 
 let directory = "";
 beforeAll(() => {
