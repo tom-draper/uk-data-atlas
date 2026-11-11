@@ -60,9 +60,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				? { measure: "median", period: "annual" }
 				: {}),
 			...(definition.type === "waste" ? { metric: "collected" } : {}),
-			...(definition.type === "ghgEmissions"
-				? { measure: "perPerson" }
-				: {}),
 			...(["electricityConsumption", "gasConsumption"].includes(
 				definition.type,
 			)
@@ -71,7 +68,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(hasPopulationMetric(definition.type)
 				? { measure: "total" }
 				: {}),
-			...(definition.type === "airQuality" ? { measure: "no2" } : {}),
 			...(definition.type === "unemployment" ? { measure: "rate" } : {}),
 			...(definition.type === "lifeExpectancy"
 				? { measure: "average" }

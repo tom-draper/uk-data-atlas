@@ -5,7 +5,6 @@ import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
-import { GHG_EMISSIONS_MEASURES } from "@/lib/helpers/ghgEmissionsMeasures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
 import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets";
 import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
@@ -451,51 +450,6 @@ export function IncomePeriodPanel({
 	);
 }
 
-const AIR_QUALITY_MEASURES = [
-	["no2", "NO₂"],
-	["pm25", "PM2.5"],
-	["pm10", "PM10"],
-] as const;
-
-export function AirQualityMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "no2" | "pm25" | "pm10";
-	onChange: (measure: "no2" | "pm25" | "pm10") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={AIR_QUALITY_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
-const GHG_EMISSIONS_SEGMENTS = GHG_EMISSIONS_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type GhgEmissionsMeasure = (typeof GHG_EMISSIONS_MEASURES)[number]["value"];
-
-export function GhgEmissionsMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: GhgEmissionsMeasure;
-	onChange: (measure: GhgEmissionsMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={GHG_EMISSIONS_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
 const UNEMPLOYMENT_MEASURES = [
 	["rate", "Rate"],
 	["count", "Count"],
@@ -532,6 +486,8 @@ export function DeclaredMeasurePanel({
 			measure={measure}
 			measures={measures.map(({ id, label }) => [id, label] as const)}
 			onChange={onChange}
+			// A long list of choices reads better stacked.
+			vertical={measures.length > 4}
 		/>
 	);
 }

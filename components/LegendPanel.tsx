@@ -31,12 +31,10 @@ import {
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
-	AirQualityMeasurePanel,
 	DeclaredMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
 	EnergySectorPanel,
-	GhgEmissionsMeasurePanel,
 	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
 	HousingTenureMeasurePanel,
@@ -279,22 +277,6 @@ export default function LegendPanel({
 					}
 				/>
 			)}
-			{activeDataset?.type === "ghgEmissions" && (
-				<GhgEmissionsMeasurePanel
-					measure={controls.displayOptions.ghgEmissions.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("ghgEmissions", {
-							measure,
-							colorRange:
-								measure === "perPerson"
-									? { min: 3, max: 12 }
-									: measure === "landUse"
-										? { min: -500, max: 500 }
-										: { min: 0, max: 2500 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "generalHealth" && (
 				<GeneralHealthMeasurePanel
 					measure={controls.displayOptions.generalHealth.measure}
@@ -366,23 +348,6 @@ export default function LegendPanel({
 					measure={controls.displayOptions.income.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("income", { measure })
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "airQuality" && (
-				<AirQualityMeasurePanel
-					measure={controls.displayOptions.airQuality.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("airQuality", {
-							measure,
-							colorRange:
-								measure === "pm25"
-									? { min: 4, max: 12 }
-									: measure === "pm10"
-										? { min: 8, max: 25 }
-										: { min: 2, max: 20 },
-						})
 					}
 				/>
 			)}

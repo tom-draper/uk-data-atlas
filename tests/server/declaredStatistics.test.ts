@@ -242,15 +242,15 @@ describe("declared statistics", () => {
 
 	it("generates air quality from observations, with null where one area lacks a value", () => {
 		const config = STATISTICS_DATASETS.find(
-			(dataset) => dataset.type === "airQuality",
+			(dataset) => dataset.type === "air-quality",
 		);
 		expect(config).toBeDefined();
 		if (!config) throw new Error("Missing air quality declaration");
 		const expected = {
 			"2024": {
-				id: "airQuality2024",
+				id: "air-quality2024",
 				year: 2024,
-				type: "airQuality",
+				type: "air-quality",
 				boundaryType: "localAuthority",
 				boundaryYear: 2024,
 				data: {
@@ -295,7 +295,7 @@ describe("declared statistics", () => {
 				JSON.parse(
 					rebuildDatasetPayload(
 						database,
-						"airQuality",
+						"air-quality",
 						"air-quality",
 					),
 				),

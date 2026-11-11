@@ -6,7 +6,6 @@ import type {
 } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { DECLARED_CHART_DEFINITIONS } from "./declared";
-import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { carAvailabilityDefinition } from "./carAvailability";
@@ -16,7 +15,6 @@ import { fuelPovertyDefinition } from "./fuelPoverty";
 import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
 import { generalHealthDefinition } from "./generalHealth";
-import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { housePriceDefinition } from "./housePrice";
 import { housingTenureDefinition } from "./housingTenure";
 import { imdDefinition } from "./imd";
@@ -44,7 +42,6 @@ export type ChartDatasetRecords = CatalogueDatasetRecords;
 
 export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDataset>[] =
 	[
-		airQualityDefinition,
 		brexitDefinition,
 		brexitConstituencyDefinition,
 		carAvailabilityDefinition,
@@ -54,7 +51,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		gasConsumptionDefinition,
 		generalElectionDefinition,
 		generalHealthDefinition,
-		ghgEmissionsDefinition,
 		housePriceDefinition,
 		housingTenureDefinition,
 		imdDefinition,

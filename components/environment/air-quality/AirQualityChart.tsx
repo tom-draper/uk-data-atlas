@@ -49,7 +49,8 @@ export default function AirQualityChart({
 	setActiveViz,
 }: AirQualityChartProps) {
 	const isDark = useIsDark();
-	const measure = useCurrentMapOptions().airQuality.measure;
+	const measure = useCurrentMapOptions()["air-quality"]
+		.measure as keyof typeof MEASURES;
 	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
@@ -68,7 +69,7 @@ export default function AirQualityChart({
 		: null;
 
 	const isActive =
-		activeDataset?.type === "airQuality" &&
+		activeDataset?.type === "air-quality" &&
 		activeDataset.id === dataset?.id;
 
 	if (!dataset) return null;

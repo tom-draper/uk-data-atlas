@@ -88,16 +88,6 @@ export default function LegendContent({
 	}
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
-		const airQualityMeasure =
-			activeDataset.type === "airQuality"
-				? displayOptions.airQuality.measure
-				: null;
-		const airQualityLabel =
-			airQualityMeasure === "pm25"
-				? "PM2.5"
-				: airQualityMeasure === "pm10"
-					? "PM10"
-					: "NO₂";
 		const unemploymentMeasure =
 			activeDataset.type === "unemployment"
 				? displayOptions.unemployment.measure
@@ -143,17 +133,11 @@ export default function LegendContent({
 								: 500_000,
 					}
 				: null;
-		const measureLegend = airQualityMeasure
-			? {
-					min: 0,
-					max: airQualityMeasure === "pm25" ? 20 : 35,
-					format: (value: number) =>
-						`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
-				}
-			: (wasteLegend ??
-				schoolPerformanceLegend ??
-				unemploymentLegend ??
-				legend);
+		const measureLegend =
+			wasteLegend ??
+			schoolPerformanceLegend ??
+			unemploymentLegend ??
+			legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,

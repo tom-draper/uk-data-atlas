@@ -21,7 +21,7 @@ describe("loadAirQuality", () => {
 		const datasets = await loadAirQuality(reader(populationWeighted));
 
 		expect(datasets[2024]).toMatchObject({
-			id: "airQuality2024",
+			id: "air-quality2024",
 			boundaryYear: 2024,
 		});
 		expect(datasets[2024].data.S12000017).toEqual({
