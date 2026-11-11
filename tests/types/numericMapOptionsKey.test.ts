@@ -5,7 +5,7 @@ import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
 // dataset may only take that path if its option group actually has one. These
 // assignments are checked by `pnpm typecheck`, not at runtime.
 const numeric: NumericMapOptionsKey[] = [
-	"childPoverty",
+	"child-poverty",
 	"housePrice",
 	"unemployment",
 	// Categorical datasets keep a colour range alongside their category
@@ -22,7 +22,7 @@ const nonsense: NumericMapOptionsKey = "theme";
 
 describe("NumericMapOptionsKey", () => {
 	it("admits the dataset types whose options carry a colour range", () => {
-		expect(numeric).toContain("childPoverty");
+		expect(numeric).toContain("child-poverty");
 		// The two rejected assignments above are the real assertions; referencing
 		// them here keeps the compiler from treating them as unused.
 		expect([network, nonsense]).toHaveLength(2);

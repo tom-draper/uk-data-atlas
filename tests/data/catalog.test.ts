@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-	childPovertyDatasetDefinition,
-	populationDatasetDefinition,
-} from "@/lib/data/catalog/definitions";
+import { populationDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
@@ -70,7 +67,9 @@ describe("dataset catalogue", () => {
 	it("keeps dataset core free of chart presentation", () => {
 		for (const dataset of [
 			populationDatasetDefinition,
-			childPovertyDatasetDefinition,
+			...CATALOGUE_DATASET_DEFINITIONS.filter(
+				({ type }) => type === "child-poverty",
+			),
 		]) {
 			expect(dataset).not.toHaveProperty("chart");
 			expect(dataset).not.toHaveProperty("map");

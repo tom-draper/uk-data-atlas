@@ -5,7 +5,6 @@ import { airQualityDatasetDefinition } from "./definitions/airQuality.ts";
 import { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
-import { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
 import { crimeDatasetDefinition } from "./definitions/crime.ts";
 import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
@@ -49,7 +48,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	brexitDatasetDefinition,
 	brexitConstituencyDatasetDefinition,
 	carAvailabilityDatasetDefinition,
-	childPovertyDatasetDefinition,
 	crimeDatasetDefinition,
 	electricityConsumptionDatasetDefinition,
 	ethnicityDatasetDefinition,

@@ -48,7 +48,7 @@ describe("ChartCards registry selection", () => {
 				"economics-planningApplications": true,
 				"economics-council-tax": true,
 				"economics-unemployment": true,
-				"economics-childPoverty": true,
+				"economics-child-poverty": true,
 				"economics-fuelPoverty": true,
 				"economics-business-activity": true,
 			}),
@@ -62,7 +62,7 @@ describe("ChartCards registry selection", () => {
 			"economics-planningApplications",
 			"economics-council-tax",
 			"economics-unemployment",
-			"economics-childPoverty",
+			"economics-child-poverty",
 			"economics-fuelPoverty",
 			"economics-business-activity",
 		]);

@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { housePriceDefinition } from "@/lib/datasets/housePrice";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import {
 	renderLocalElection,
 	renderNumericDataset,
 } from "@/lib/helpers/mapRendering";
+
+const childPovertyDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "child-poverty",
+)!;
 
 function createMap() {
 	const sources = new Map<string, { setData: ReturnType<typeof vi.fn> }>();
@@ -133,7 +137,7 @@ describe("MapManager election updates", () => {
 		});
 		const dataset = {
 			id: "child-poverty-2025",
-			type: "childPoverty" as const,
+			type: "child-poverty" as const,
 			year: 2025,
 			measure: "relativeLowIncomeBeforeHousingCosts" as const,
 			boundaryType: "localAuthority" as const,
@@ -189,7 +193,10 @@ describe("MapManager election updates", () => {
 			dataset,
 			{
 				...DEFAULT_MAP_OPTIONS,
-				childPoverty: { colorRange: { min: 10, max: 30 } },
+				"child-poverty": {
+					measure: "rate",
+					colorRange: { min: 10, max: 30 },
+				},
 			},
 			childPovertyDefinition.map!,
 		);

@@ -8,8 +8,12 @@ import {
 	type MapRenderContext,
 } from "@/lib/helpers/mapRendering";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
-import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { lifeExpectancyDefinition } from "@/lib/datasets/lifeExpectancy";
+
+const childPovertyDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "child-poverty",
+)!;
 
 // The recipes only need a MapRenderContext, so they can be exercised without a
 // MapLibre map behind them.
@@ -175,7 +179,7 @@ describe("renderNumericDataset", () => {
 	it("reads the configured value key and skips uncovered areas", () => {
 		const { ctx, featureBuilder } = fakeContext();
 		const dataset = {
-			type: "childPoverty",
+			type: "child-poverty",
 			boundaryType: "localAuthority",
 			data: { E06000001: { childPovertyRate: 25 } },
 		} as never;
@@ -197,7 +201,7 @@ describe("renderNumericDataset", () => {
 	it("uses a data-derived range until a legend adjustment is configured", () => {
 		const { ctx, layerManager } = fakeContext();
 		const dataset = {
-			type: "childPoverty",
+			type: "child-poverty",
 			boundaryType: "localAuthority",
 			data: { E06000001: { value: 25 } },
 		} as never;
@@ -208,7 +212,10 @@ describe("renderNumericDataset", () => {
 		};
 		const initialOptions = {
 			...DEFAULT_MAP_OPTIONS,
-			childPoverty: { colorRange: { min: 20, max: 80 } },
+			"child-poverty": {
+				measure: "rate",
+				colorRange: { min: 20, max: 80 },
+			},
 		};
 
 		renderNumericDataset(ctx, geojson, dataset, initialOptions, map);
@@ -222,7 +229,10 @@ describe("renderNumericDataset", () => {
 			dataset,
 			{
 				...initialOptions,
-				childPoverty: { colorRange: { min: 45, max: 55 } },
+				"child-poverty": {
+					measure: "rate",
+					colorRange: { min: 45, max: 55 },
+				},
 			},
 			map,
 		);

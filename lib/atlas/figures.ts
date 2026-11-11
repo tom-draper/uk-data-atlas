@@ -46,7 +46,7 @@ export type FigureInputs = {
 	crime: Record<string, CrimeDataset>;
 	lifeExpectancy: Record<string, LifeExpectancyDataset>;
 	income: Record<string, IncomeDataset>;
-	childPoverty: Editions<{
+	"child-poverty": Editions<{
 		ladName: string;
 		childCount: number;
 		childrenPopulation: number;
@@ -312,7 +312,7 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"child-poverty": {
-		compute({ childPoverty }, location, period) {
+		compute({ "child-poverty": childPoverty }, location, period) {
 			const { data } = childPoverty[String(period)];
 			const rows = everyValue(
 				districtsOf(location, Object.keys(data)),

@@ -22,7 +22,7 @@ export type DisplayFormat =
 			prefix?: string;
 			suffix?: string;
 	  }
-	| { kind: "compact" };
+	| { kind: "compact"; suffix?: string };
 
 /** How a measure's headline value is drawn on the shared chart card. */
 export type DisplayMeasureCard = {

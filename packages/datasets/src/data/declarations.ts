@@ -7,6 +7,7 @@ import { adultSocialCareActivity } from "./adult-social-care-activity/dataset.ts
 import { adultSocialCareOutcomes } from "./adult-social-care-outcomes/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { businessActivity } from "./business-activity/dataset.ts";
+import { childPoverty } from "./child-poverty/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
@@ -30,6 +31,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	adultSocialCareOutcomes,
 	broadband,
 	businessActivity,
+	childPoverty,
 	claimantCount,
 	councilTax,
 	electricVehicleChargers,
@@ -58,6 +60,7 @@ export type DeclaredDatasetId =
 	| "adult-social-care-outcomes"
 	| "broadband"
 	| "business-activity"
+	| "child-poverty"
 	| "claimant-count"
 	| "council-tax"
 	| "electric-vehicle-chargers"

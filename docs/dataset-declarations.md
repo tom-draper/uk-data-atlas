@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
+Declared: `business-activity`, `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `historical-general-election` (politics), `school-performance-constituency` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -186,7 +186,7 @@ website chart definition):
 - environment: air-quality, ghg-emissions, electricity-consumption,
   gas-consumption, waste
 - population: population, ethnicity
-- deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
+- deprivation: fuel-poverty, imd, wimd, simd, nimdm
 - transport: car-availability, travel-to-work
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the

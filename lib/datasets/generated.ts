@@ -10,7 +10,6 @@ import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { carAvailabilityDefinition } from "./carAvailability";
-import { childPovertyDefinition } from "./childPoverty";
 import { crimeDefinition } from "./crime";
 import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
@@ -54,7 +53,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		brexitDefinition,
 		brexitConstituencyDefinition,
 		carAvailabilityDefinition,
-		childPovertyDefinition,
 		crimeDefinition,
 		electricityConsumptionDefinition,
 		ethnicityDefinition,
