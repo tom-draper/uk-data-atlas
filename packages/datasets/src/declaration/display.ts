@@ -44,6 +44,12 @@ export type DisplayMeasureCard = {
 	digits?: number;
 	/** Writes the headline value, replacing `prefix` and `digits`. */
 	format?: DisplayFormat;
+	/**
+	 * Where the headline value comes from, when it is not the measure's own
+	 * field. A card also draws an aggregate, which may hold fewer fields than a
+	 * record does.
+	 */
+	field?: DisplayField;
 	/** The value that fills the card's bar. */
 	maximum: number;
 	/** Replaces the card's heading for this measure. */
@@ -56,8 +62,17 @@ export type DisplayMeasureCard = {
 	zeroIsMissing?: true;
 };
 
-/** A record field's path, or `of` as a percentage of `over`. */
-export type DisplayField = string | { share: { of: string; over: string } };
+/**
+ * Where a measure's value comes from in a record: a field's path, `of` as a
+ * percentage of `over`, or `amount` apportioned to the share `part` is of
+ * `whole` (`amount × part ÷ whole`), such as a rate for the whole area applied
+ * to one part of it. An apportioned part of nothing is zero when the part is
+ * zero, and missing otherwise.
+ */
+export type DisplayField =
+	| string
+	| { share: { of: string; over: string } }
+	| { apportion: { amount: string; part: string; whole: string } };
 
 /** One way to read the dataset, shown as a choice when there is more than one. */
 export type DisplayMeasure = {
