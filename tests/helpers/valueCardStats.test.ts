@@ -4,7 +4,6 @@ import { getChartDefinitions } from "@/lib/datasets/types";
 import { crimeDefinition } from "@/lib/datasets/crime";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
-import { jobsDefinition } from "@/lib/datasets/jobs";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
 import { regionalGdpItl3Definition } from "@/lib/datasets/regionalGdpItl3";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
@@ -181,7 +180,9 @@ describe("resolveValueCardStats", () => {
 				},
 			},
 		};
-		const card = jobsDefinition.chart.card!;
+		const card = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "jobs",
+		)!.chart.card!;
 
 		expect(
 			resolveValueCardStats(

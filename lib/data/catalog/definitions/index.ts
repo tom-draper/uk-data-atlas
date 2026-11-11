@@ -14,7 +14,6 @@ export { homelessnessDatasetDefinition } from "@uk-data-atlas/datasets";
 export { housePriceDatasetDefinition } from "@uk-data-atlas/datasets";
 export { imdDatasetDefinition } from "@uk-data-atlas/datasets";
 export { incomeDatasetDefinition } from "@uk-data-atlas/datasets";
-export { jobsDatasetDefinition } from "@uk-data-atlas/datasets";
 export { lifeExpectancyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { localElectionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { nhsWaitingDatasetDefinition } from "@uk-data-atlas/datasets";

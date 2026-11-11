@@ -23,7 +23,6 @@ import { housePriceDefinition } from "./housePrice";
 import { housingTenureDefinition } from "./housingTenure";
 import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
-import { jobsDefinition } from "./jobs";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { nhsWaitingDefinition } from "./nhsWaiting";
@@ -66,7 +65,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		housingTenureDefinition,
 		imdDefinition,
 		incomeDefinition,
-		jobsDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
 		nhsWaitingDefinition,

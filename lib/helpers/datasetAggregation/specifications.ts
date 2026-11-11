@@ -19,7 +19,6 @@ import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
-	aggregateJobs,
 	aggregateUnemployment,
 } from "./economics";
 import {
@@ -103,11 +102,6 @@ export const incomeAggregation = boundaryAggregation(
 	"income",
 	"localAuthority",
 	aggregateIncome,
-);
-export const jobsAggregation = numericAggregation(
-	"jobs",
-	"localAuthority",
-	aggregateJobs,
 );
 export const brexitAggregation = boundaryAggregation(
 	"brexit",

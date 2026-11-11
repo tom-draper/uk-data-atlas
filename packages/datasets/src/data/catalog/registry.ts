@@ -18,7 +18,6 @@ import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import { housingTenureDatasetDefinition } from "./definitions/housingTenure.ts";
 import { imdDatasetDefinition } from "./definitions/imd.ts";
 import { incomeDatasetDefinition } from "./definitions/income.ts";
-import { jobsDatasetDefinition } from "./definitions/jobs.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
@@ -61,7 +60,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	housingTenureDatasetDefinition,
 	imdDatasetDefinition,
 	incomeDatasetDefinition,
-	jobsDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
 	localElectionDatasetDefinition,
 	nhsWaitingDatasetDefinition,

@@ -4,9 +4,9 @@ import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
-	aggregateJobs,
 	aggregateUnemployment,
 } from "@/lib/helpers/datasetAggregation/economics";
+import { aggregateJobs } from "@uk-data-atlas/datasets";
 import { CODE_KEY, features } from "./fixtures";
 
 describe("aggregateUnemployment", () => {

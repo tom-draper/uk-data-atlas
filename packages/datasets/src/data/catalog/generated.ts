@@ -16,7 +16,6 @@ import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import type { housingTenureDatasetDefinition } from "./definitions/housingTenure.ts";
 import type { imdDatasetDefinition } from "./definitions/imd.ts";
 import type { incomeDatasetDefinition } from "./definitions/income.ts";
-import type { jobsDatasetDefinition } from "./definitions/jobs.ts";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import type { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
@@ -45,6 +44,7 @@ import type { councilTax } from "../council-tax/dataset.ts";
 import type { electricVehicleChargers } from "../electric-vehicle-chargers/dataset.ts";
 import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
 import type { housingAffordability } from "../housing-affordability/dataset.ts";
+import type { jobs } from "../jobs/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
 import type { localGovernmentFinance } from "../local-government-finance/dataset.ts";
@@ -97,7 +97,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
-	| Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
 	  >[string]
@@ -152,6 +151,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof electricVehicleChargers.load>>[string]
 	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
 	| Awaited<ReturnType<typeof housingAffordability.load>>[string]
+	| Awaited<ReturnType<typeof jobs.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
 	| Awaited<ReturnType<typeof localGovernmentFinance.load>>[string]
@@ -186,6 +186,7 @@ export type DeclaredDatasetRecords = {
 	"housing-affordability": Awaited<
 		ReturnType<typeof housingAffordability.load>
 	>;
+	jobs: Awaited<ReturnType<typeof jobs.load>>;
 	"land-area": Awaited<ReturnType<typeof landArea.load>>;
 	"life-expectancy-series": Awaited<
 		ReturnType<typeof lifeExpectancySeries.load>
@@ -252,7 +253,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
 	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
-	jobs: Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
 	>;
