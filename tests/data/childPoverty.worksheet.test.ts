@@ -35,7 +35,7 @@ describe("loadChildPoverty", () => {
 			18544,
 		);
 		expect(datasets[2025]).toMatchObject({
-			id: "childPoverty2025",
+			id: "child-poverty2025",
 			type: "child-poverty",
 			boundaryType: "localAuthority",
 			boundaryYear: 2024,
