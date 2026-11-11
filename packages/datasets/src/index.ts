@@ -49,7 +49,7 @@ export * from "./data/catalog/definitions/nimdm.ts";
 export * from "./data/catalog/definitions/planningApplications.ts";
 export * from "./data/catalog/definitions/population.ts";
 export * from "./data/population-constituency/dataset.ts";
-export * from "./data/catalog/definitions/populationUk.ts";
+export * from "./data/population-uk/dataset.ts";
 export * from "./data/catalog/definitions/publicHealth.ts";
 export * from "./data/catalog/definitions/pupilAbsence.ts";
 export * from "./data/catalog/definitions/qualification.ts";
@@ -175,3 +175,5 @@ export { outerRings } from "./types/geometry.ts";
 export { outerRings as gazetteerOuterRings } from "./data/gazetteer/geometry.ts";
 
 export * from "./data/regional-gdp/statistics.ts";
+
+export * from "./data/population/statistics.ts";

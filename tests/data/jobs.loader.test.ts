@@ -16,8 +16,8 @@ const read = async () => csv;
 /** A population table holding one district at a 500,000 total in each year. */
 const population = (year: number, code: string, total: number) =>
 	({
-		id: `populationUk${year}`,
-		type: "populationUk",
+		id: `population-uk${year}`,
+		type: "population-uk",
 		year,
 		boundaryYear: 2023,
 		boundaryType: "localAuthority",

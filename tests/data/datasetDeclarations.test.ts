@@ -285,6 +285,71 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores local-authority population by age and sex", () => {
+		const id = "population-uk";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const males = Array.from({ length: 91 }, (_, age) => age + 1);
+		const females = Array.from({ length: 91 }, (_, age) => age + 2);
+		const compiled = {
+			2024: {
+				id: `${id}2024`,
+				type: id,
+				year: 2024,
+				boundaryType: "localAuthority",
+				boundaryYear: 2023,
+				data: {
+					E06000001: {
+						ladName: "Hartlepool",
+						total: males.map((value, age) => value + females[age]!),
+						males,
+						females,
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "localAuthority", "2023-12-uk-bgc", "available"],
+					],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 1, 2, "Hartlepool"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores constituency population for each published year", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "population-constituency",

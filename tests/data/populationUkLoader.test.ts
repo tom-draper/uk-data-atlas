@@ -23,7 +23,7 @@ describe("loadPopulationUk", () => {
 
 		expect(Object.keys(datasets)).toEqual(["2011", "2012"]);
 		const dataset = datasets["2011"];
-		expect(dataset.id).toBe("populationUk2011");
+		expect(dataset.id).toBe("population-uk2011");
 		expect(dataset.year).toBe(2011);
 		expect(dataset.boundaryYear).toBe(2023);
 		expect(dataset.boundaryType).toBe("localAuthority");

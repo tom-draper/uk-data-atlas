@@ -33,7 +33,6 @@ import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import type { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
 import type { populationDatasetDefinition } from "./definitions/population.ts";
-import type { populationUkDatasetDefinition } from "./definitions/populationUk.ts";
 import type { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
 import type { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import type { qualificationDatasetDefinition } from "./definitions/qualification.ts";
@@ -54,6 +53,7 @@ import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 import type { populationConstituency } from "../population-constituency/dataset.ts";
+import type { populationUk } from "../population-uk/dataset.ts";
 import type { regionalGdpItl1 } from "../regional-gdp-itl1/dataset.ts";
 import type { regionalGdpItl2 } from "../regional-gdp-itl2/dataset.ts";
 
@@ -151,9 +151,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
 	| Awaited<
-			ReturnType<typeof populationUkDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
 			ReturnType<typeof publicHealthDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
@@ -199,6 +196,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
 	| Awaited<ReturnType<typeof populationConstituency.load>>[string]
+	| Awaited<ReturnType<typeof populationUk.load>>[string]
 	| Awaited<ReturnType<typeof regionalGdpItl1.load>>[string]
 	| Awaited<ReturnType<typeof regionalGdpItl2.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
@@ -214,6 +212,7 @@ export type DeclaredDatasetRecords = {
 	"population-constituency": Awaited<
 		ReturnType<typeof populationConstituency.load>
 	>;
+	"population-uk": Awaited<ReturnType<typeof populationUk.load>>;
 	"regional-gdp-itl1": Awaited<ReturnType<typeof regionalGdpItl1.load>>;
 	"regional-gdp-itl2": Awaited<ReturnType<typeof regionalGdpItl2.load>>;
 };
@@ -307,9 +306,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	population: Awaited<
 		ReturnType<typeof populationDatasetDefinition.precompile>
-	>;
-	populationUk: Awaited<
-		ReturnType<typeof populationUkDatasetDefinition.precompile>
 	>;
 	publicHealth: Awaited<
 		ReturnType<typeof publicHealthDatasetDefinition.precompile>
