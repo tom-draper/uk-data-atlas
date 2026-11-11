@@ -260,6 +260,15 @@ describe("fuel poverty on the statistics model", () => {
 						.all()
 						.map((row) => row.name),
 				).toEqual(["series_dataset", "series_member_member"]);
+				// What contains an area is found without the dataset first.
+				expect(
+					database
+						.prepare(
+							"SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'area_relationship' AND name NOT LIKE 'sqlite_autoindex%'",
+						)
+						.all()
+						.map((row) => row.name),
+				).toEqual(["area_relationship_parent"]);
 				expect(
 					database.prepare("PRAGMA foreign_key_check").all(),
 				).toEqual([]);

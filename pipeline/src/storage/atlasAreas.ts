@@ -277,6 +277,9 @@ export const areaTables = (
 				"UNIQUE (release_id, area_id)",
 				"CHECK ((inventory_position IS NOT NULL) = (in_inventory = 1))",
 			],
+			// The unique index above leads with the release, so an area's
+			// versions need their own.
+			indexes: [{ name: "area_version_area", columns: ["area_id"] }],
 			views: { v_area_version: AREA_VERSION_VIEW },
 		},
 	};

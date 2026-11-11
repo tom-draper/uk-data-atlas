@@ -439,3 +439,23 @@ test("bases beside a crosswalk's own do not change the artifact its edges rebuil
 		before,
 	);
 });
+
+test("lookups by area alone use an index instead of scanning", (context) => {
+	const { path } = fixture(context);
+	const database = new DatabaseSync(path);
+	context.onTestFinished(() => {
+		if (database.isOpen) database.close();
+	});
+	const plan = (sql: string) =>
+		all(database, `EXPLAIN QUERY PLAN ${sql}`)
+			.map((row) => String(row[3]))
+			.join(" ");
+	expect(plan("SELECT id FROM area_version WHERE area_id = 1")).toContain(
+		"INDEX area_version_area",
+	);
+	expect(
+		plan(
+			"SELECT crosswalk_id FROM crosswalk_edge WHERE from_version_id = 1",
+		),
+	).toContain("INDEX crosswalk_edge_from");
+});
