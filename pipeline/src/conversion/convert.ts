@@ -22,6 +22,13 @@ export type CarriedValue = {
 	 * high by about this much.
 	 */
 	pruned: number;
+	/**
+	 * How much of the value was carried by an edge that is not an exact
+	 * regrouping, a split or a pruned pair, at any step. Unlike `atRisk` it is
+	 * the whole mass that took such an edge, not the part of it that could be
+	 * wrong, so `1 - estimated / value` is the share regrouped exactly.
+	 */
+	estimated: number;
 	/** The crosswalks whose splits the value passed through. */
 	splits: ReadonlySet<number>;
 	/** How many source areas contributed. */
@@ -53,6 +60,7 @@ export const startValues = (
 			value,
 			atRisk: 0,
 			pruned: 0,
+			estimated: 0,
 			splits: NO_SPLITS,
 			inputs: 1,
 		});
@@ -88,6 +96,7 @@ const throughStep = (
 		let value = 0;
 		let atRisk = 0;
 		let pruned = 0;
+		let estimated = 0;
 		let inputs = 0;
 		let splits: Set<number> | undefined;
 		let missing = false;
@@ -104,9 +113,12 @@ const throughStep = (
 					carried.atRisk * edge.weight + carried.value * edge.risk;
 				pruned +=
 					carried.pruned * edge.weight + carried.value * edge.pruned;
+				const inexact = edge.risk > 0 || edge.pruned > 0;
+				estimated +=
+					carried.estimated * edge.weight +
+					(inexact ? carried.value * edge.weight : 0);
 				inputs += carried.inputs;
-				if (edge.risk > 0 || edge.pruned > 0)
-					(splits ??= new Set()).add(edge.crosswalk);
+				if (inexact) (splits ??= new Set()).add(edge.crosswalk);
 				if (carried.splits.size > 0)
 					for (const id of carried.splits)
 						(splits ??= new Set()).add(id);
@@ -118,6 +130,7 @@ const throughStep = (
 				value,
 				atRisk,
 				pruned,
+				estimated,
 				splits: splits ?? NO_SPLITS,
 				inputs,
 			});
