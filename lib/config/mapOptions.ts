@@ -2,19 +2,6 @@ import { CHART_DATASET_DEFINITIONS } from "../datasets";
 import { declaredDefaultOptions } from "../datasets/declared";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
-export const POPULATION_METRIC_RANGES = {
-	waste: {
-		total: { min: 0, max: 200_000 },
-		perPopulation: { min: 0, max: 60_000 },
-	},
-};
-
-export function hasPopulationMetric(
-	type: string,
-): type is keyof typeof POPULATION_METRIC_RANGES {
-	return Object.hasOwn(POPULATION_METRIC_RANGES, type);
-}
-
 const chartMapOptions: ChartMapOptions = Object.fromEntries(
 	CHART_DATASET_DEFINITIONS.map((definition) => [
 		definition.type,
@@ -29,10 +16,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
 			...(definition.type === "income"
 				? { measure: "median", period: "annual" }
-				: {}),
-			...(definition.type === "waste" ? { metric: "collected" } : {}),
-			...(hasPopulationMetric(definition.type)
-				? { measure: "total" }
 				: {}),
 			...(definition.type === "unemployment" ? { measure: "rate" } : {}),
 			...(definition.type === "lifeExpectancy"

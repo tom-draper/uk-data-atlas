@@ -91,24 +91,22 @@ describe("waste legend", () => {
 		boundaryYear: 2025,
 		data: {},
 	};
-	it("shows waste measures alongside the population toggle", () => {
+	it("lists every waste measure in one choice", () => {
 		const html = renderLegend(waste);
 		expect(html).toContain("Collected");
+		expect(html).toContain("Collected per 100k");
 		expect(html).toContain("Recycled");
+		expect(html).toContain("Recycled per 100k");
 		expect(html).toContain("Recycling %");
-		expect(html).toContain("Per pop.");
 	});
-	it("uses a percentage legend and hides population scaling for recycling share", () => {
+	it("uses a percentage legend for recycling share", () => {
 		const html = renderLegend(waste, {
 			...DEFAULT_MAP_OPTIONS,
 			waste: {
-				...DEFAULT_MAP_OPTIONS.waste,
-				metric: "recyclingShare",
+				measure: "recycling-share",
 				colorRange: { min: 0, max: 100 },
 			},
 		});
 		expect(html).toContain("100.0% recycled");
-		expect(html).not.toContain("Per pop.");
-		expect(html).not.toContain("per 100k");
 	});
 });

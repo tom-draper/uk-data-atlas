@@ -19,7 +19,6 @@ import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerforma
 import { simdDatasetDefinition } from "./definitions/simd.ts";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
 import { unemploymentDatasetDefinition } from "./definitions/unemployment.ts";
-import { wasteDatasetDefinition } from "./definitions/waste.ts";
 import { wimdDatasetDefinition } from "./definitions/wimd.ts";
 
 /**
@@ -46,7 +45,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	simdDatasetDefinition,
 	travelToWorkDatasetDefinition,
 	unemploymentDatasetDefinition,
-	wasteDatasetDefinition,
 	wimdDatasetDefinition,
 ];
 

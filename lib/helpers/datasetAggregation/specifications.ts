@@ -4,7 +4,6 @@ import {
 	aggregateSchoolPerformance,
 	collectBoundaryRecords,
 } from "./numeric";
-import { aggregateWaste } from "../waste";
 import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import {
@@ -160,10 +159,4 @@ export const averageIndicatorAggregation = numericAggregation(
 	"average-indicator",
 	"any",
 	averageIndicator,
-);
-
-export const wasteAggregation = numericAggregation(
-	"waste",
-	"localAuthority",
-	aggregateWaste,
 );

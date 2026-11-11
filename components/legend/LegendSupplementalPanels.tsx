@@ -1,6 +1,5 @@
 "use client";
 
-import type { WasteOptions } from "@/lib/types/mapOptions";
 import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
@@ -318,27 +317,6 @@ export function SchoolPerformanceMeasurePanel({
 	);
 }
 
-const COUNT_METRICS = [
-	["total", "Total"],
-	["perPopulation", "Per pop."],
-] as const;
-
-export function CountMetricPanel({
-	measure,
-	onChange,
-}: {
-	measure: "total" | "perPopulation";
-	onChange: (measure: "total" | "perPopulation") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={COUNT_METRICS}
-			onChange={onChange}
-		/>
-	);
-}
-
 const LIFE_EXPECTANCY_MEASURES = [
 	["average", "Average"],
 	["male", "Male"],
@@ -356,28 +334,6 @@ export function LifeExpectancyMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={LIFE_EXPECTANCY_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
-const WASTE_METRICS = [
-	["collected", "Collected"],
-	["recycled", "Recycled"],
-	["recyclingShare", "Recycling %"],
-] as const;
-
-export function WasteMetricPanel({
-	metric,
-	onChange,
-}: {
-	metric: WasteOptions["metric"];
-	onChange: (metric: WasteOptions["metric"]) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={metric}
-			measures={WASTE_METRICS}
 			onChange={onChange}
 		/>
 	);

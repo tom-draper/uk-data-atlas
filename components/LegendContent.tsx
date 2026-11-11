@@ -123,21 +123,8 @@ export default function LegendContent({
 								: `${value.toFixed(0)}% grade ${schoolPerformanceMeasure === "grade5" ? "5+" : "4+"}`,
 				}
 			: null;
-		const wasteLegend =
-			activeDataset.type === "waste"
-				? {
-						...legend,
-						max:
-							displayOptions.waste.metric === "recyclingShare"
-								? 100
-								: 500_000,
-					}
-				: null;
 		const measureLegend =
-			wasteLegend ??
-			schoolPerformanceLegend ??
-			unemploymentLegend ??
-			legend;
+			schoolPerformanceLegend ?? unemploymentLegend ?? legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
