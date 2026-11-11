@@ -4,10 +4,7 @@ import {
 } from "@uk-data-atlas/datasets";
 import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
-import {
-	GENERAL_ELECTION,
-	LOCAL_ELECTION,
-} from "./elections.ts";
+import { GENERAL_ELECTION, LOCAL_ELECTION } from "./elections.ts";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
