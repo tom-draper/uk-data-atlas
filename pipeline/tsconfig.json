@@ -16,5 +16,5 @@
 			"@lib/*": ["../lib/*"]
 		}
 	},
-	"include": ["src/**/*.ts", "src/**/*.mts"]
+	"include": ["src/**/*.ts"]
 }

@@ -437,10 +437,10 @@ test("--only builds a stage and its prerequisites without unrelated or downstrea
 	]);
 	assert.deepEqual(build.commands(), [
 		...((await sourcesMatchRelease()) ? [] : [["data:download"]]),
-		["pipeline/src/stages/compile-boundaries.mts"],
+		["pipeline/src/stages/compile-boundaries.ts"],
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/stages/compile-boundary-tiles.mts",
+			"pipeline/src/stages/compile-boundary-tiles.ts",
 		],
 	]);
 });

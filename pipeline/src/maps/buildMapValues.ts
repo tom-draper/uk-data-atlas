@@ -6,7 +6,7 @@
  * Reads the compiled datasets in data/build/datasets and the boundary
  * properties sidecars in public/data/boundaries, so it runs after the
  * website-datasets stage. Run it alone with:
- *   pnpm exec tsx pipeline/src/stages/build-map-values.mts
+ *   pnpm exec tsx pipeline/src/stages/build-map-values.ts
  */
 import { sha256Hex } from "../lib/hash.ts";
 import { readJson } from "../lib/json.ts";
