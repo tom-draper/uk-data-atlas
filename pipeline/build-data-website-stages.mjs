@@ -13,7 +13,7 @@ export const websiteStages = [
 	stage(
 		"boundaries",
 		["sources"],
-		["pipeline/src/stages/compile-boundaries.mts"],
+		["pipeline/src/stages/compile-boundaries.ts"],
 		{
 			rawInputs: websiteBoundaryInputs,
 			writes: ["data/build/website-boundaries"],
@@ -26,7 +26,7 @@ export const websiteStages = [
 		["boundaries"],
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/stages/compile-boundary-tiles.mts",
+			"pipeline/src/stages/compile-boundary-tiles.ts",
 		],
 		{
 			writes: ["data/build/boundaries"],
@@ -68,7 +68,7 @@ export const websiteStages = [
 			"--import",
 			"tsx",
 			"--max-old-space-size=3072",
-			"pipeline/src/stages/compile-website-data.mts",
+			"pipeline/src/stages/compile-website-data.ts",
 		],
 		{
 			writes: ["public/data/datasets"],
@@ -79,13 +79,13 @@ export const websiteStages = [
 				"packages/geography",
 				"packages/map-tiles",
 				"pipeline/src/precompile",
-				"pipeline/src/stages/compile-boundaries.mts",
+				"pipeline/src/stages/compile-boundaries.ts",
 				"pipeline/src/geographies/boundaryReleaseSources.ts",
 				"pipeline/src/geographies/boundaryBuildFiles.ts",
 				"pipeline/src/geographies/correctBoundarySource.ts",
 				"packages/geography/src/reverseGridOffset.ts",
 				"packages/atlas-db/src/buildTiming.ts",
-				"pipeline/src/stages/compile-boundary-tiles.mts",
+				"pipeline/src/stages/compile-boundary-tiles.ts",
 				"scripts/generate-dataset-registry.ts",
 			],
 		},
@@ -95,7 +95,7 @@ export const websiteStages = [
 	stage(
 		"website-map-values",
 		["website-datasets"],
-		["--import", "tsx", "pipeline/src/stages/build-map-values.mts"],
+		["--import", "tsx", "pipeline/src/stages/build-map-values.ts"],
 		{
 			writes: ["public/data/map-values"],
 			outputs: ["public/data/map-values"],

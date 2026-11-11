@@ -404,7 +404,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("website-datasets")!
-			.includes("pipeline/src/stages/compile-boundaries.mts"),
+			.includes("pipeline/src/stages/compile-boundaries.ts"),
 	);
 	for (const name of [
 		"boundaryReleaseSources",

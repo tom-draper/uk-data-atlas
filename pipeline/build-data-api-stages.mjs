@@ -83,7 +83,7 @@ export const apiStages = [
 		["catalogue-registry"],
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/stages/compile-datasets.mts",
+			"pipeline/src/stages/compile-datasets.ts",
 		],
 		{
 			writes: ["data/build/datasets"],
@@ -145,7 +145,7 @@ export const apiStages = [
 		["sources"],
 		[
 			"--max-old-space-size=3072",
-			"pipeline/src/stages/build-api-datasets.mts",
+			"pipeline/src/stages/build-api-datasets.ts",
 		],
 		{
 			rawInputs: apiDatasetInputs,
