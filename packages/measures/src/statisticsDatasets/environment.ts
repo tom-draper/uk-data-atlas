@@ -14,6 +14,14 @@ export const AIR_QUALITY: DeclaredDataset = {
 	name: "ladName",
 	measures: [
 		measure(
+			"air-quality-grid-cells",
+			"Air quality grid cells",
+			"grid cells",
+			"count",
+			"sum",
+			"1 km grid cells of the background pollution maps averaged for the area.",
+		),
+		measure(
 			"background-concentration",
 			"Background concentration",
 			"micrograms per cubic metre",
@@ -21,14 +29,6 @@ export const AIR_QUALITY: DeclaredDataset = {
 			"weighted_mean",
 			"Modelled annual mean background concentration, averaged over the area's 1 km grid cells.",
 			{ weight: "air-quality-grid-cells" },
-		),
-		measure(
-			"air-quality-grid-cells",
-			"Air quality grid cells",
-			"grid cells",
-			"count",
-			"sum",
-			"1 km grid cells of the background pollution maps averaged for the area.",
 		),
 		measure(
 			"pm25-population-weighted",
