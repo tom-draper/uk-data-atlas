@@ -14,6 +14,7 @@ import { populationUk } from "./population-uk/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
+import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -28,6 +29,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	regionalGdpItl1,
 	regionalGdpItl2,
 	roadCollisions,
+	schoolPerformanceConstituency,
 ];
 
 /** The manifest definition of each declaration. */
@@ -46,4 +48,5 @@ export type DeclaredDatasetId =
 	| "population-uk"
 	| "regional-gdp-itl1"
 	| "regional-gdp-itl2"
-	| "road-collisions";
+	| "road-collisions"
+	| "school-performance-constituency";

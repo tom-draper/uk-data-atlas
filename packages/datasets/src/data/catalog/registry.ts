@@ -39,7 +39,6 @@ import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
-import { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency.ts";
 import { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage.ts";
 import { simdDatasetDefinition } from "./definitions/simd.ts";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
@@ -92,7 +91,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	qualificationDatasetDefinition,
 	regionalGdpItl3DatasetDefinition,
 	schoolPerformanceDatasetDefinition,
-	schoolPerformanceConstituencyDatasetDefinition,
 	schoolPerformanceDisadvantageDatasetDefinition,
 	simdDatasetDefinition,
 	travelToWorkDatasetDefinition,

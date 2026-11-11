@@ -33,7 +33,6 @@ export { populationDatasetDefinition } from "@uk-data-atlas/datasets";
 export { qualificationDatasetDefinition } from "@uk-data-atlas/datasets";
 export { regionalGdpItl3DatasetDefinition } from "@uk-data-atlas/datasets";
 export { schoolPerformanceDatasetDefinition } from "@uk-data-atlas/datasets";
-export { schoolPerformanceConstituencyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { schoolPerformanceDisadvantageDatasetDefinition } from "@uk-data-atlas/datasets";
 export { simdDatasetDefinition } from "@uk-data-atlas/datasets";
 export { travelToWorkDatasetDefinition } from "@uk-data-atlas/datasets";

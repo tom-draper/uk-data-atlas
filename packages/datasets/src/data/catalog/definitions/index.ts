@@ -37,7 +37,6 @@ export { pupilAbsenceDatasetDefinition } from "./pupilAbsence.ts";
 export { qualificationDatasetDefinition } from "./qualification.ts";
 export { regionalGdpItl3DatasetDefinition } from "./regionalGdpItl3.ts";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance.ts";
-export { schoolPerformanceConstituencyDatasetDefinition } from "./schoolPerformanceConstituency.ts";
 export { schoolPerformanceDisadvantageDatasetDefinition } from "./schoolPerformanceDisadvantage.ts";
 export { simdDatasetDefinition } from "./simd.ts";
 export { travelToWorkDatasetDefinition } from "./travelToWork.ts";

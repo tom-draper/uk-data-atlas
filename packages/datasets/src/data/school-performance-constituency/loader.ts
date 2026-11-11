@@ -71,8 +71,8 @@ export async function loadSchoolPerformanceConstituency(
 
 	return {
 		[latest]: {
-			id: `schoolPerformanceConstituency${latest}`,
-			type: "schoolPerformanceConstituency",
+			id: `school-performance-constituency${latest}`,
+			type: "school-performance-constituency",
 			year: latest,
 			boundaryType: "constituency",
 			boundaryYear: 2024,
