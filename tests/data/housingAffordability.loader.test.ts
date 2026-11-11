@@ -46,8 +46,8 @@ describe("loadHousingAffordability", () => {
 
 		expect(Object.keys(datasets)).toEqual(["2025"]);
 		expect(datasets[2025]).toMatchObject({
-			id: "housingAffordability2025",
-			type: "housingAffordability",
+			id: "housing-affordability2025",
+			type: "housing-affordability",
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
 		});

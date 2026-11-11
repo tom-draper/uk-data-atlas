@@ -23,7 +23,6 @@ import { generalHealthDefinition } from "./generalHealth";
 import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
-import { housingAffordabilityDefinition } from "./housingAffordability";
 import { housingTenureDefinition } from "./housingTenure";
 import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
@@ -70,7 +69,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		ghgEmissionsDefinition,
 		homelessnessDefinition,
 		housePriceDefinition,
-		housingAffordabilityDefinition,
 		housingTenureDefinition,
 		imdDefinition,
 		incomeDefinition,

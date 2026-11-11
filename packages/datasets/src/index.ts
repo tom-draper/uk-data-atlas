@@ -33,7 +33,7 @@ export * from "./data/catalog/definitions/ghgEmissions.ts";
 export * from "./data/historical-general-election/dataset.ts";
 export * from "./data/catalog/definitions/homelessness.ts";
 export * from "./data/catalog/definitions/housePrice.ts";
-export * from "./data/catalog/definitions/housingAffordability.ts";
+export * from "./data/housing-affordability/dataset.ts";
 export * from "./data/catalog/definitions/housingTenure.ts";
 export * from "./data/catalog/definitions/imd.ts";
 export * from "./data/catalog/definitions/income.ts";

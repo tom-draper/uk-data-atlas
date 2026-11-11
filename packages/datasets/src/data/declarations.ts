@@ -9,6 +9,7 @@ import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
+import { housingAffordability } from "./housing-affordability/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
@@ -29,6 +30,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	claimantCount,
 	councilTax,
 	historicalGeneralElection,
+	housingAffordability,
 	landArea,
 	lifeExpectancySeries,
 	localGovernmentFinance,
@@ -54,6 +56,7 @@ export type DeclaredDatasetId =
 	| "claimant-count"
 	| "council-tax"
 	| "historical-general-election"
+	| "housing-affordability"
 	| "land-area"
 	| "life-expectancy-series"
 	| "local-government-finance"

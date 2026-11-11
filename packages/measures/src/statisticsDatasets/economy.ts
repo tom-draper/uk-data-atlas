@@ -421,28 +421,6 @@ const single = (
 	fields: [{ path: "value", measure: declared[0] }],
 });
 
-export const HOUSING_AFFORDABILITY = single(
-	"housingAffordability",
-	"housing",
-	() => periods.year(2025),
-	{
-		parts: yearParts(
-			"housingAffordability",
-			"localAuthority",
-			2025,
-			{ coverageCountries: ["GB-ENG", "GB-WLS"] },
-			["2025"],
-		),
-		code: "code",
-	},
-	"house-price-to-earnings-ratio",
-	"House price to earnings ratio",
-	"ratio",
-	"index",
-	"none",
-	"Median price of existing dwellings divided by median gross annual residence-based earnings.",
-);
-
 export const HOUSE_PRICE: DeclaredDataset = {
 	type: "housePrice",
 	module: "housing",
