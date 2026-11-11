@@ -12,17 +12,17 @@ import { test } from "vitest";
 import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import type { PostcodeOverlapCrosswalkAdapter } from "@uk-data-atlas/relationships";
-import { compilePostcodeOverlapCrosswalk } from "../src/relationships/postcodeOverlap";
-import { crosswalkFindings } from "../src/validation/crosswalkFindings";
-import { MEASURES, type WeightAtoms } from "../src/crosswalk-weights/atoms";
+import { compilePostcodeOverlapCrosswalk } from "../../src/relationships/postcodeOverlap";
+import { crosswalkFindings } from "../../src/validation/crosswalkFindings";
+import { MEASURES, type WeightAtoms } from "../../src/crosswalk-weights/atoms";
 import {
 	placementFile,
 	placementKey,
-} from "../src/crosswalk-weights/placements";
+} from "../../src/crosswalk-weights/placements";
 import {
 	weightAtomsDirectory,
 	writeStoredAtoms,
-} from "../src/crosswalk-weights/storedAtoms";
+} from "../../src/crosswalk-weights/storedAtoms";
 
 const adapter = (minimumShare: number): PostcodeOverlapCrosswalkAdapter => ({
 	id: "ward-to-constituency-postcode-overlap",

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
-import { placeAtoms } from "../src/crosswalk-weights/placement";
+import { placeAtoms } from "../../src/crosswalk-weights/placement";
 
 const square = (west: number, south: number, east: number, north: number) =>
 	({
