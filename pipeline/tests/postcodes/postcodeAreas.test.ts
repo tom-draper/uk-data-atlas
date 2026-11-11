@@ -2,7 +2,7 @@ import {
 	compilePostcodeAreas,
 	placementsFromShards,
 	placePoints,
-} from "../src/postcodes/postcodeAreaCompiler";
+} from "../../src/postcodes/postcodeAreaCompiler";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
@@ -18,7 +18,7 @@ import {
 	SEVERAL,
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/postcodes";
-import { postcodeIndexFor, postcodeRow } from "./fixtures/postcodeFixtures";
+import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
 
 const square = (
 	west: number,

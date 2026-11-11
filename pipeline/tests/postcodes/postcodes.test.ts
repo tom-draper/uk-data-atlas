@@ -1,4 +1,4 @@
-import { compilePostcodeIndex } from "../src/postcodes/postcodeIndex";
+import { compilePostcodeIndex } from "../../src/postcodes/postcodeIndex";
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
@@ -15,7 +15,7 @@ import {
 	postcodeIndexFor,
 	postcodeRow,
 	postcodeSource,
-} from "./fixtures/postcodeFixtures";
+} from "../fixtures/postcodeFixtures";
 
 const unit = (text: string) =>
 	parsePostcode(text) as Extract<ParsedPostcode, { kind: "unit" }>;
