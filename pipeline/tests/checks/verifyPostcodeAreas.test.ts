@@ -6,8 +6,8 @@ import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import {
 	placePoints,
 	toCentimetres,
-} from "../src/postcodes/postcodeAreaCompiler";
-import { checkPlacements } from "../src/checks/verifyPostcodeAreas";
+} from "../../src/postcodes/postcodeAreaCompiler";
+import { checkPlacements } from "../../src/checks/verifyPostcodeAreas";
 
 const square = (
 	west: number,
