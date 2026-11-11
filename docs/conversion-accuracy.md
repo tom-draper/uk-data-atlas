@@ -122,7 +122,7 @@ observed values.
 
 Every query in the codebase that reads `series` names the method it wants, and a
 test fails on one that does not
-(`pipeline/tests/seriesReadersNamePublished.test.ts`). No reader that existed
+(`pipeline/tests/storage/seriesReadersNamePublished.test.ts`). No reader that existed
 before this work returns a converted value.
 
 ## Backtest results

@@ -170,8 +170,9 @@ Import a package by name (`@uk-data-atlas/geography`), never by a relative
 path. Packages ship TypeScript source: Turbopack and `tsx` both compile it, so
 there is no build step.
 
-Pipeline unit tests and shared pipeline test fixtures live under
-`pipeline/tests/`. API tests may import pipeline code only through the fixture
+Pipeline unit tests live under `pipeline/tests/`, in one folder per
+`pipeline/src/` folder they cover (`build/` covers the `build-data*.mjs`
+orchestrator). Shared fixtures live in `pipeline/tests/fixtures/`. API tests may import pipeline code only through the fixture
 modules explicitly listed in `tests/packages/packageImports.test.ts`. The
 pipeline and API suites also use Vitest; `pnpm check` runs each unbuilt suite
 once. Pipeline tests that require built data live in `pipeline/tests/built/` and
