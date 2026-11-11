@@ -13,6 +13,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { onTestFinished, test, vi } from "vitest";
+import { CACHE_VERSION } from "@uk-data-atlas/atlas-db";
 import {
 	ATLAS_CACHE_WORK_ENV,
 	atlasCacheWorkPath,
@@ -295,6 +296,104 @@ test("one copy takes several components and publishes them together", () => {
 		[],
 		"no temporary file is left behind",
 	);
+});
+
+/** A published cache written under another version, or by code that stored none. */
+const oldCaches = [
+	[
+		"an older version",
+		`INSERT INTO meta VALUES ('cacheVersion', '${CACHE_VERSION - 1}')`,
+	],
+	["no version", "SELECT 1"],
+] as const;
+
+for (const [label, version] of oldCaches) {
+	test(`a cache stored with ${label} is rebuilt from an empty file`, () => {
+		const { published, work, place, search, tablesIn } = fixture();
+		const old = new DatabaseSync(published);
+		old.exec(
+			[
+				"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
+				version,
+				// Tables and a table under a name that is a view today.
+				"CREATE TABLE area_search_codes (code TEXT)",
+				"CREATE TABLE place_index_places (name TEXT)",
+				"CREATE TABLE cache_generations (component TEXT, generation TEXT)",
+			].join(";"),
+		);
+		old.close();
+		place();
+		assert.deepEqual(tablesIn(published), ["place_names"]);
+		const cache = new DatabaseSync(published, { readOnly: true });
+		try {
+			assert.deepEqual(
+				cache
+					.prepare("SELECT key, value FROM meta ORDER BY key")
+					.all()
+					.map((row) => [row.key, row.value]),
+				[["cacheVersion", String(CACHE_VERSION)]],
+			);
+			assert.deepEqual(
+				cache
+					.prepare(
+						"SELECT name, type FROM sqlite_schema WHERE name LIKE 'cache_generation%' ORDER BY name",
+					)
+					.all()
+					.map((row) => [row.name, row.type]),
+				[
+					["cache_generation", "table"],
+					["cache_generations", "view"],
+				],
+			);
+		} finally {
+			cache.close();
+		}
+		// The build's working copy starts from an empty file the same way.
+		rmSync(published);
+		const stale = new DatabaseSync(published);
+		stale.exec(
+			[
+				"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
+				version,
+				"CREATE TABLE leftover (code TEXT)",
+			].join(";"),
+		);
+		stale.close();
+		vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
+		search();
+		const copy = new DatabaseSync(work, { readOnly: true });
+		try {
+			assert.equal(
+				copy
+					.prepare(
+						"SELECT count(*) AS n FROM sqlite_schema WHERE name = 'leftover'",
+					)
+					.get()?.n,
+				0,
+			);
+		} finally {
+			copy.close();
+		}
+		assert.deepEqual(tablesIn(work), ["area_search_codes"]);
+	});
+}
+
+test("a cache stored with the current version keeps its other components", () => {
+	const { published, place, search, tablesIn } = fixture();
+	place();
+	search();
+	const cache = new DatabaseSync(published, { readOnly: true });
+	try {
+		assert.equal(
+			cache
+				.prepare("SELECT value FROM meta WHERE key = 'cacheVersion'")
+				.get()?.value,
+			String(CACHE_VERSION),
+		);
+	} finally {
+		cache.close();
+	}
+	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
 });
 
 const temporaryFiles = (directory: string) =>

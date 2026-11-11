@@ -12,7 +12,12 @@ export type CacheComponent =
 	| "postcode-counts"
 	| "datasets";
 
-const CACHE_VERSION = 2;
+/**
+ * The cache compiler's version. It is part of every generation, so readers
+ * reject a cache built under another version, and the pipeline starts a cache
+ * stored under another version from an empty file.
+ */
+export const CACHE_VERSION = 3;
 const dependencies: Record<CacheComponent, string[]> = {
 	"area-search": ["query:SELECT content_hash FROM area_inventory_metadata"],
 	"place-index": [
