@@ -19,10 +19,21 @@ export type DisplayFormat =
 			/** A whole number with thousands separators. */
 			kind: "count";
 			locale?: string;
+			/** Round to a whole number first. */
+			round?: true;
 			prefix?: string;
 			suffix?: string;
 	  }
-	| { kind: "compact"; suffix?: string };
+	| { kind: "compact"; suffix?: string }
+	| {
+			/**
+			 * A sum of money in millions, written as `£1.2bn` from a thousand
+			 * million up and `£340m` below.
+			 */
+			kind: "millions";
+			prefix?: string;
+			suffix?: string;
+	  };
 
 /** How a measure's headline value is drawn on the shared chart card. */
 export type DisplayMeasureCard = {
@@ -31,6 +42,8 @@ export type DisplayMeasureCard = {
 	prefix?: string;
 	/** Decimal places of the headline value. */
 	digits?: number;
+	/** Writes the headline value, replacing `prefix` and `digits`. */
+	format?: DisplayFormat;
 	/** The value that fills the card's bar. */
 	maximum: number;
 	/** Replaces the card's heading for this measure. */
@@ -86,6 +99,15 @@ export type DisplayCard = {
 	hoverRecord?: boolean;
 	/** Keep the card on this measure when the map switches measures. */
 	fixedMeasure?: string;
+	/** How the card looks, where it differs from the standard card. */
+	appearance?: {
+		/** The decorative background the income chart also uses. */
+		background?: "income";
+		/** Centres the headline value without a bar or note. */
+		layout?: "centered";
+		/** A fixed highlight colour, instead of the map's colour scale. */
+		accent?: string;
+	};
 };
 
 /** Combining records over the areas a place is made of. */
