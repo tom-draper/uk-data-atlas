@@ -29,11 +29,11 @@ test("records boundary provenance and isolates historical local election licence
 		db.exec(`PRAGMA foreign_keys = ON;
 		CREATE TABLE source (id INTEGER PRIMARY KEY, publisher TEXT NOT NULL, url TEXT, licence TEXT NOT NULL, licence_url TEXT, citation TEXT);
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT NOT NULL);
-		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), date TEXT NOT NULL);
+		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, date TEXT NOT NULL);
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, provenance TEXT NOT NULL);
 		INSERT INTO source VALUES (1, 'mixed', 'https://example.org/mixed', 'Open Parliament Licence (2021–2025); CC BY-SA 3.0 (2016–2019)', NULL, NULL);
 		INSERT INTO dataset VALUES (1, 'local-election');
-		INSERT INTO election VALUES (1, 1, '2019-05-02'), (2, 1, '2024-05-02');`);
+		INSERT INTO election VALUES (1, 1, '2019', '2019-05-02'), (2, 1, '2024', '2024-05-02');`);
 		db.prepare("INSERT INTO crosswalk VALUES (?, ?)").run(
 			1,
 			JSON.stringify({
@@ -76,6 +76,29 @@ test("records boundary provenance and isolates historical local election licence
 				)
 				.all(),
 		).toEqual([expect.objectContaining({ share_alike: 0 })]);
+		expect(
+			db
+				.prepare(
+					"SELECT date, share_alike FROM v_election_terms ORDER BY date",
+				)
+				.all(),
+		).toEqual([
+			expect.objectContaining({ date: "2019-05-02", share_alike: 1 }),
+			expect.objectContaining({ date: "2024-05-02", share_alike: 0 }),
+		]);
+		expect(
+			db
+				.prepare(
+					"SELECT licences, commercial_use, share_alike FROM v_source_terms WHERE source_id = 1",
+				)
+				.get(),
+		).toEqual(
+			expect.objectContaining({
+				licences: "cc-by-sa-3.0, open-parliament",
+				commercial_use: 1,
+				share_alike: 1,
+			}),
+		);
 		expect(db.prepare("PRAGMA foreign_key_check").all()).toEqual([]);
 	} finally {
 		db.close();
