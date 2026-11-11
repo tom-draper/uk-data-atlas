@@ -23,7 +23,10 @@ export default defineConfig({
 				{
 					name: "pipeline",
 					include: ["pipeline/tests/**/*.test.ts"],
-					exclude: [...configDefaults.exclude, "pipeline/tests/built/**"],
+					exclude: [
+						...configDefaults.exclude,
+						"pipeline/tests/built/**",
+					],
 				},
 				{
 					name: "pipeline-built",
