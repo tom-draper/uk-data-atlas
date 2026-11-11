@@ -69,7 +69,7 @@ export interface SchoolPerformanceGapData extends SchoolPerformanceGapMeasures {
 
 export interface SchoolPerformanceGapDataset {
 	id: string;
-	type: "schoolPerformanceGap";
+	type: "school-performance-disadvantage";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

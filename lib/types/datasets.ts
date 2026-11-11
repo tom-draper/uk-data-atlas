@@ -4,10 +4,6 @@ import {
 	type AggregatedHousePriceData,
 } from "@uk-data-atlas/datasets";
 import {
-	type AggregatedCrimeData,
-	type CrimeDataset,
-} from "@uk-data-atlas/datasets";
-import {
 	type AggregatedIncomeData,
 	type IncomeDataset,
 	type WorkplaceIncomeDataset,
@@ -23,10 +19,6 @@ import {
 	type SchoolPerformanceDataset,
 } from "@uk-data-atlas/datasets";
 import {
-	type AggregatedNHSWaitingData,
-	type NHSWaitingDataset,
-} from "@uk-data-atlas/datasets";
-import {
 	type AggregatedUnemploymentData,
 	type UnemploymentDataset,
 } from "@uk-data-atlas/datasets";
@@ -38,14 +30,12 @@ import type { DatasetCoverage } from "@uk-data-atlas/datasets";
 
 type DatasetValue =
 	| HousePriceDataset
-	| CrimeDataset
 	| IncomeDataset
 	| WorkplaceIncomeDataset
 	| CustomDataset
 	| NetworkDataset
 	| AirQualityDataset
 	| SchoolPerformanceDataset
-	| NHSWaitingDataset
 	| UnemploymentDataset
 	| CatalogueDataset;
 
@@ -54,12 +44,10 @@ export type Dataset = DatasetValue & DatasetCoverage;
 
 export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;
-	crime: Record<string, CrimeDataset>;
 	income: Record<string, IncomeDataset>;
 	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
 	airQuality: Record<string, AirQualityDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
-	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
 } & CatalogueDatasetRecords;
 

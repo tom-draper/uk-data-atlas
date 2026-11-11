@@ -10,7 +10,6 @@ import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { carAvailabilityDefinition } from "./carAvailability";
-import { crimeDefinition } from "./crime";
 import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
@@ -25,7 +24,6 @@ import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
-import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
 import { planningApplicationsDefinition } from "./planningApplications";
 import { populationDefinition } from "./population";
@@ -34,7 +32,6 @@ import { pupilAbsenceDefinition } from "./pupilAbsence";
 import { qualificationDefinition } from "./qualification";
 import { regionalGdpItl3Definition } from "./regionalGdpItl3";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
-import { schoolPerformanceDisadvantageDefinition } from "./schoolPerformanceDisadvantage";
 import { simdDefinition } from "./simd";
 import { travelToWorkDefinition } from "./travelToWork";
 import { unemploymentDefinition } from "./unemployment";
@@ -52,7 +49,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		brexitDefinition,
 		brexitConstituencyDefinition,
 		carAvailabilityDefinition,
-		crimeDefinition,
 		electricityConsumptionDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
@@ -67,7 +63,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		incomeDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
-		nhsWaitingDefinition,
 		nimdmDefinition,
 		planningApplicationsDefinition,
 		populationDefinition,
@@ -76,7 +71,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		qualificationDefinition,
 		regionalGdpItl3Definition,
 		schoolPerformanceDefinition,
-		schoolPerformanceDisadvantageDefinition,
 		simdDefinition,
 		travelToWorkDefinition,
 		unemploymentDefinition,

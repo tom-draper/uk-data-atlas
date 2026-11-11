@@ -93,5 +93,6 @@ export interface CrimeDataset {
 }
 
 export interface AggregatedCrimeData {
-	averageRecordedCrime: number;
+	/** The mean authority total, which the card shows when no area is selected. */
+	totalRecordedCrime: number;
 }

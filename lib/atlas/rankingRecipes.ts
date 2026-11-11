@@ -753,7 +753,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 			column("Grade 5 or above", "percent", field("ptL2basics95")),
 		],
 	},
-	"school-performance-gap": {
+	"school-performance-disadvantage": {
 		columns: [
 			changeOnYearBefore("points", (record, year) =>
 				field("series", String(year), "att8Gap")(record),

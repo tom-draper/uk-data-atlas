@@ -26,13 +26,13 @@ describe("ChartCards registry selection", () => {
 		expect(
 			hasVisibleChart(
 				"Health",
-				visibility({ "health-nhsWaiting": true }),
+				visibility({ "health-nhs-waiting": true }),
 			),
 		).toBe(true);
 		expect(
 			hasVisibleChart(
 				"Health",
-				visibility({ "health-nhsWaiting": false }),
+				visibility({ "health-nhs-waiting": false }),
 			),
 		).toBe(false);
 	});

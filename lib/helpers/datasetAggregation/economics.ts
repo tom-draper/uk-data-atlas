@@ -139,25 +139,6 @@ export function aggregateHousePrices(
 	};
 }
 
-export function aggregateCrime(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: CrimeDataset["data"],
-): AggregatedCrimeData {
-	let totalRecordedCrime = 0,
-		count = 0;
-	for (const feature of features) {
-		const crime =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
-				?.totalRecordedCrime;
-		if (crime != null) {
-			totalRecordedCrime += crime;
-			count++;
-		}
-	}
-	return { averageRecordedCrime: count > 0 ? totalRecordedCrime / count : 0 };
-}
-
 export function aggregateIncome(
 	features: Features,
 	codeProperty: PropertyKeys,

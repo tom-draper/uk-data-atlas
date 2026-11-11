@@ -5,7 +5,6 @@ import { airQualityDatasetDefinition } from "./definitions/airQuality.ts";
 import { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
-import { crimeDatasetDefinition } from "./definitions/crime.ts";
 import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
@@ -20,7 +19,6 @@ import { imdDatasetDefinition } from "./definitions/imd.ts";
 import { incomeDatasetDefinition } from "./definitions/income.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
-import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
 import { populationDatasetDefinition } from "./definitions/population.ts";
@@ -29,7 +27,6 @@ import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
-import { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage.ts";
 import { simdDatasetDefinition } from "./definitions/simd.ts";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
 import { unemploymentDatasetDefinition } from "./definitions/unemployment.ts";
@@ -47,7 +44,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	brexitDatasetDefinition,
 	brexitConstituencyDatasetDefinition,
 	carAvailabilityDatasetDefinition,
-	crimeDatasetDefinition,
 	electricityConsumptionDatasetDefinition,
 	ethnicityDatasetDefinition,
 	fuelPovertyDatasetDefinition,
@@ -62,7 +58,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	incomeDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
 	localElectionDatasetDefinition,
-	nhsWaitingDatasetDefinition,
 	nimdmDatasetDefinition,
 	planningApplicationsDatasetDefinition,
 	populationDatasetDefinition,
@@ -71,7 +66,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	qualificationDatasetDefinition,
 	regionalGdpItl3DatasetDefinition,
 	schoolPerformanceDatasetDefinition,
-	schoolPerformanceDisadvantageDatasetDefinition,
 	simdDatasetDefinition,
 	travelToWorkDatasetDefinition,
 	unemploymentDatasetDefinition,

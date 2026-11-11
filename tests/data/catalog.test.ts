@@ -58,7 +58,7 @@ describe("dataset catalogue", () => {
 		expect(definitionFor("housePrice")?.payload?.regionChunks).toEqual({
 			kind: "regional",
 		});
-		expect(definitionFor("nhsWaiting")?.payload?.locationScope).toEqual({
+		expect(definitionFor("nhs-waiting")?.payload?.locationScope).toEqual({
 			kind: "mapped",
 			mappingField: "ladToIcb",
 		});

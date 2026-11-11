@@ -7,15 +7,12 @@ import {
 	aggregateHomelessness,
 	aggregateRegionalGdp,
 	aggregateSchoolPerformance,
-	aggregateSchoolPerformanceGap,
 	collectBoundaryRecords,
 } from "./numeric";
-import { aggregateNHSWaiting } from "./health";
 import { aggregateWaste } from "../waste";
 import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import {
-	aggregateCrime,
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
@@ -92,11 +89,6 @@ export const housePriceAggregation = boundaryAggregation(
 	"house-price",
 	"ward",
 	aggregateHousePrices,
-);
-export const crimeAggregation = boundaryAggregation(
-	"crime",
-	"localAuthority",
-	aggregateCrime,
 );
 export const incomeAggregation = boundaryAggregation(
 	"income",
@@ -188,16 +180,6 @@ export const schoolPerformanceAggregation = numericAggregation(
 	"schoolPerformance",
 	"localAuthority",
 	aggregateSchoolPerformance,
-);
-export const schoolPerformanceGapAggregation = numericAggregation(
-	"schoolPerformanceGap",
-	"localAuthority",
-	aggregateSchoolPerformanceGap,
-);
-export const nhsWaitingAggregation = boundaryAggregation(
-	"nhsWaiting",
-	"localAuthority",
-	aggregateNHSWaiting,
 );
 export const unemploymentAggregation = boundaryAggregation(
 	"unemployment",
