@@ -17,7 +17,6 @@ import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
 import { generalHealthDefinition } from "./generalHealth";
 import { ghgEmissionsDefinition } from "./ghgEmissions";
-import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
 import { housingTenureDefinition } from "./housingTenure";
 import { imdDefinition } from "./imd";
@@ -56,7 +55,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		generalElectionDefinition,
 		generalHealthDefinition,
 		ghgEmissionsDefinition,
-		homelessnessDefinition,
 		housePriceDefinition,
 		housingTenureDefinition,
 		imdDefinition,

@@ -536,27 +536,6 @@ export function DeclaredMeasurePanel({
 	);
 }
 
-const HOMELESSNESS_MEASURES = [
-	["rate", "Rate"],
-	["count", "Count"],
-] as const;
-
-export function HomelessnessMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "rate" | "count";
-	onChange: (measure: "rate" | "count") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={HOMELESSNESS_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
 const SCHOOL_PERFORMANCE_MEASURES = [
 	["grade4", "Grade 4+"],
 	["grade5", "Grade 5+"],

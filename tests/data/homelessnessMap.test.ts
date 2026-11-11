@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { homelessnessDefinition } from "@/lib/datasets/homelessness";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import type { HomelessnessDataset } from "@uk-data-atlas/datasets";
 
 const dataset: HomelessnessDataset = {
@@ -22,12 +22,16 @@ const dataset: HomelessnessDataset = {
 	},
 };
 
+const homelessnessDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "homelessness",
+)!;
+
 describe("homelessness map metric", () => {
 	it("uses the selected rate or count", () => {
 		const valueFor = homelessnessDefinition.map?.valueFor;
-		expect(valueFor?.(dataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(8);
+		expect(valueFor?.(dataset as never, "E1", DEFAULT_MAP_OPTIONS)).toBe(8);
 		expect(
-			valueFor?.(dataset, "E1", {
+			valueFor?.(dataset as never, "E1", {
 				...DEFAULT_MAP_OPTIONS,
 				homelessness: {
 					...DEFAULT_MAP_OPTIONS.homelessness,

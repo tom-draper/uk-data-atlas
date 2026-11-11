@@ -38,7 +38,6 @@ import {
 	EnergySectorPanel,
 	GhgEmissionsMeasurePanel,
 	FuelPovertyMeasurePanel,
-	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	HousingTenureMeasurePanel,
 	GeneralHealthMeasurePanel,
@@ -419,21 +418,6 @@ export default function LegendPanel({
 								},
 							},
 						)
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "homelessness" && (
-				<HomelessnessMeasurePanel
-					measure={controls.displayOptions.homelessness.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("homelessness", {
-							measure,
-							colorRange:
-								measure === "count"
-									? { min: 10, max: 2500 }
-									: { min: 1, max: 12 },
-						})
 					}
 				/>
 			)}

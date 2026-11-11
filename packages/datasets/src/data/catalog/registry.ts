@@ -12,7 +12,6 @@ import { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption.ts
 import { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import { generalHealthDatasetDefinition } from "./definitions/generalHealth.ts";
 import { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions.ts";
-import { homelessnessDatasetDefinition } from "./definitions/homelessness.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import { housingTenureDatasetDefinition } from "./definitions/housingTenure.ts";
 import { imdDatasetDefinition } from "./definitions/imd.ts";
@@ -51,7 +50,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	generalElectionDatasetDefinition,
 	generalHealthDatasetDefinition,
 	ghgEmissionsDatasetDefinition,
-	homelessnessDatasetDefinition,
 	housePriceDatasetDefinition,
 	housingTenureDatasetDefinition,
 	imdDatasetDefinition,
