@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { onTestFinished, test } from "vitest";
-import { publishVacuumed } from "../src/storage";
+import { publishVacuumed } from "../../src/storage";
 
 function directory() {
 	const path = mkdtempSync(join(tmpdir(), "publish-vacuumed-"));

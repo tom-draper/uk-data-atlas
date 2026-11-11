@@ -10,8 +10,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { stampAtlasCache } from "../src/storage/stampAtlasCache";
-import { stageStampPath } from "../src/storage";
+import { stampAtlasCache } from "../../src/storage/stampAtlasCache";
+import { stageStampPath } from "../../src/storage";
 
 test("stamps the cache with the canonical database content hash", () => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-stamp-"));

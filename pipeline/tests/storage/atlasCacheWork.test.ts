@@ -24,11 +24,11 @@ import {
 	publishCacheTables,
 	stageStampPath,
 	stampCacheStage,
-} from "../src/storage";
+} from "../../src/storage";
 import {
 	checkStagedComponents,
 	stampAtlasCache,
-} from "../src/storage/stampAtlasCache";
+} from "../../src/storage/stampAtlasCache";
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));

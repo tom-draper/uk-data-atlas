@@ -18,7 +18,7 @@ import {
 	readCrosswalks,
 	readNamedLocations,
 	writeSqliteIndex,
-} from "../src/storage/index";
+} from "../../src/storage/index";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 
 const release = (id: string, recordCount: number) => ({
