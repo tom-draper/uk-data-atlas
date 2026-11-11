@@ -1,11 +1,14 @@
 import { expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { regionalGdpItl3Definition as definition } from "@/lib/datasets/regionalGdpItl3";
-import { aggregateRegionalGdp } from "@/lib/helpers/datasetAggregation/numeric";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { aggregateRegionalGdp } from "@uk-data-atlas/datasets";
 import type { RegionalGdpItl3Dataset } from "@uk-data-atlas/datasets";
+const definition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "regional-gdp-itl3",
+)!;
 const dataset: RegionalGdpItl3Dataset = {
 	id: "gdp2023",
-	type: "regionalGdpItl3",
+	type: "regional-gdp-itl3",
 	year: 2023,
 	boundaryType: "itl3",
 	boundaryYear: 2025,
@@ -21,8 +24,8 @@ const dataset: RegionalGdpItl3Dataset = {
 it("switches the map, card and legend together and preserves missing areas", () => {
 	const options = {
 		...DEFAULT_MAP_OPTIONS,
-		regionalGdpItl3: {
-			...DEFAULT_MAP_OPTIONS.regionalGdpItl3,
+		"regional-gdp-itl3": {
+			...DEFAULT_MAP_OPTIONS["regional-gdp-itl3"],
 			measure: "gva" as const,
 		},
 	};
@@ -45,8 +48,8 @@ it("sums GVA rather than averaging monetary totals", () => {
 	expect(
 		definition.chart.cardForOptions!({
 			...DEFAULT_MAP_OPTIONS,
-			regionalGdpItl3: {
-				...DEFAULT_MAP_OPTIONS.regionalGdpItl3,
+			"regional-gdp-itl3": {
+				...DEFAULT_MAP_OPTIONS["regional-gdp-itl3"],
 				measure: "gva",
 			},
 		}).fromAggregate(total)?.value,

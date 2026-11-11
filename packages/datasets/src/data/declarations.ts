@@ -26,15 +26,18 @@ import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
 import { nhsWaiting } from "./nhs-waiting/dataset.ts";
+import { planningApplications } from "./planning-applications/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
 import { publicHealth } from "./public-health/dataset.ts";
 import { pupilAbsence } from "./pupil-absence/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
+import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
+import { workplaceIncome } from "./workplace-income/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -61,15 +64,18 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	mobileCoverage,
 	netAdditionalDwellings,
 	nhsWaiting,
+	planningApplications,
 	populationConstituency,
 	populationUk,
 	publicHealth,
 	pupilAbsence,
 	regionalGdpItl1,
 	regionalGdpItl2,
+	regionalGdpItl3,
 	roadCollisions,
 	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
+	workplaceIncome,
 ];
 
 /** The manifest definition of each declaration. */
@@ -101,12 +107,15 @@ export type DeclaredDatasetId =
 	| "mobile-coverage"
 	| "net-additional-dwellings"
 	| "nhs-waiting"
+	| "planning-applications"
 	| "population-constituency"
 	| "population-uk"
 	| "public-health"
 	| "pupil-absence"
 	| "regional-gdp-itl1"
 	| "regional-gdp-itl2"
+	| "regional-gdp-itl3"
 	| "road-collisions"
 	| "school-performance-constituency"
-	| "school-performance-disadvantage";
+	| "school-performance-disadvantage"
+	| "workplace-income";

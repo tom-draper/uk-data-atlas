@@ -43,10 +43,6 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
-export interface RegionalGdpItl3Options extends ColorRangeOption {
-	measure: "gdp" | "gva";
-}
-
 export interface FuelPovertyOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
@@ -61,14 +57,6 @@ export interface ImdOptions extends ColorRangeOption {
 		| "crimeScore"
 		| "housingScore"
 		| "livingEnvironmentScore";
-}
-
-export interface PlanningApplicationsOptions extends ColorRangeOption {
-	measure: "received" | "decided" | "withdrawn";
-}
-
-export interface WorkplaceIncomeOptions extends ColorRangeOption {
-	measure: "annualMedian" | "annualMean" | "hourlyMedian" | "hourlyMean";
 }
 
 export interface CustomOptions extends ColorRangeOption {
@@ -99,11 +87,8 @@ export interface DeclaredMapOptions extends ColorRangeOption {
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
 	| DeclaredDatasetId
-	| "regionalGdpItl3"
 	| "fuelPoverty"
 	| "imd"
-	| "planningApplications"
-	| "workplaceIncome"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -114,11 +99,8 @@ export type ChartMapOptions = Omit<
 	| "schoolPerformance"
 > &
 	Record<DeclaredDatasetId, DeclaredMapOptions> & {
-		regionalGdpItl3: RegionalGdpItl3Options;
 		fuelPoverty: FuelPovertyOptions;
 		imd: ImdOptions;
-		planningApplications: PlanningApplicationsOptions;
-		workplaceIncome: WorkplaceIncomeOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
 		electricityConsumption: EnergyConsumptionOptions;

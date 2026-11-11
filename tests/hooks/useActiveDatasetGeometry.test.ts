@@ -75,8 +75,8 @@ describe("active dataset geometry preparation", () => {
 			})),
 		} satisfies BoundaryGeojson;
 		const gdpDataset = {
-			id: "regionalGdpItl32023",
-			type: "regionalGdpItl3",
+			id: "regional-gdp-itl32023",
+			type: "regional-gdp-itl3",
 			year: 2023,
 			boundaryType: "itl3",
 			boundaryYear: 2025,

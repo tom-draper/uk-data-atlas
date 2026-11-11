@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { aggregateBroadband } from "@uk-data-atlas/datasets";
+import {
+	aggregateBroadband,
+	aggregateRegionalGdp,
+} from "@uk-data-atlas/datasets";
 import {
 	aggregateAirQuality,
 	aggregateChildPoverty,
@@ -11,7 +14,6 @@ import { aggregateClaimantCount } from "@uk-data-atlas/datasets";
 import {
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
-	aggregateRegionalGdp,
 	aggregateSchoolPerformance,
 	collectBoundaryRecords,
 } from "@/lib/helpers/datasetAggregation/numeric";

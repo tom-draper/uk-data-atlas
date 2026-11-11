@@ -1,9 +1,8 @@
 import { it, expect } from "vitest";
-import { loadPlanningApplications } from "@uk-data-atlas/datasets";
 import {
-	planningValue,
+	loadPlanningApplications,
 	sumPlanningRecords,
-} from "@/lib/helpers/planningApplicationsMeasures";
+} from "@uk-data-atlas/datasets";
 it("collects planning counts and preserves suppressed values", async () => {
 	const result = await loadPlanningApplications(
 		async (_path, _options, visit) => {
@@ -19,13 +18,12 @@ it("collects planning counts and preserves suppressed values", async () => {
 		},
 	);
 	const record = result[2026].data.E09000001;
-	expect(planningValue(record, "decided")).toBe(80);
-	expect(planningValue(record, "withdrawn")).toBeNull();
-	expect(
-		planningValue(
-			sumPlanningRecords([record, record]) ?? undefined,
-			"decided",
-		),
-	).toBe(160);
+	expect(record.metrics?.decided).toBe(80);
+	expect(record.metrics?.withdrawn).toBeUndefined();
+	const total = sumPlanningRecords([record, record]);
+	expect(total?.value).toBe(200);
+	expect(total?.metrics.decided).toBe(160);
+	// A stage one authority does not report is left out, not summed as zero.
+	expect(total?.metrics.withdrawn).toBeUndefined();
 	expect(sumPlanningRecords([])).toBeNull();
 });

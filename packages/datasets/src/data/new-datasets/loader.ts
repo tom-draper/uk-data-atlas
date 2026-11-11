@@ -16,7 +16,7 @@ type IndicatorType =
 	| "waste"
 	| "adult-social-care-activity"
 	| "adult-social-care-outcomes"
-	| "planningApplications"
+	| "planning-applications"
 	| "electric-vehicle-chargers"
 	| "housing-affordability";
 
@@ -335,7 +335,7 @@ export async function loadPlanningApplications(
 		},
 	);
 	return dataset(
-		"planningApplications",
+		"planning-applications",
 		2026,
 		"localAuthority",
 		2025,

@@ -4,9 +4,7 @@ import type { WasteOptions } from "@/lib/types/mapOptions";
 import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
-import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
@@ -105,39 +103,6 @@ function GlassSegmentedMeasurePanel<Value extends string>({
 	);
 }
 
-type WorkplacePayMeasure = (typeof WORKPLACE_PAY_MEASURES)[number]["value"];
-
-export function WorkplacePayMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: WorkplacePayMeasure;
-	onChange: (measure: WorkplacePayMeasure) => void;
-}) {
-	const period = measure.startsWith("hourly") ? "hourly" : "annual";
-	const statistic = measure.endsWith("Mean") ? "mean" : "median";
-	return (
-		<>
-			<IncomePeriodPanel
-				period={period}
-				onChange={(nextPeriod) =>
-					onChange(
-						`${nextPeriod}${statistic === "mean" ? "Mean" : "Median"}`,
-					)
-				}
-			/>
-			<IncomeMeasurePanel
-				measure={statistic}
-				onChange={(nextStatistic) =>
-					onChange(
-						`${period}${nextStatistic === "mean" ? "Mean" : "Median"}`,
-					)
-				}
-			/>
-		</>
-	);
-}
-
 const LIFE_EXPECTANCY_KINDS = [
 	["le", "Life expectancy"],
 	["hle", "Healthy life expectancy"],
@@ -156,30 +121,6 @@ export function LifeExpectancyKindPanel({
 			measures={LIFE_EXPECTANCY_KINDS}
 			onChange={onChange}
 			vertical
-		/>
-	);
-}
-
-const PLANNING_SEGMENTS = [
-	["received", "Received"],
-	["decided", "Decided"],
-	["withdrawn", "Withdrawn"],
-] as const;
-
-type PlanningMeasure = (typeof PLANNING_SEGMENTS)[number][0];
-
-export function PlanningMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: PlanningMeasure;
-	onChange: (measure: PlanningMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={PLANNING_SEGMENTS}
-			onChange={onChange}
 		/>
 	);
 }
@@ -245,26 +186,6 @@ export function EnergySectorPanel({
 		<GlassSegmentedMeasurePanel
 			measure={sector}
 			measures={ENERGY_SECTOR_SEGMENTS}
-			onChange={onChange}
-		/>
-	);
-}
-
-const REGIONAL_OUTPUT_SEGMENTS = REGIONAL_OUTPUT_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-export function RegionalOutputMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "gdp" | "gva";
-	onChange: (measure: "gdp" | "gva") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={REGIONAL_OUTPUT_SEGMENTS}
 			onChange={onChange}
 		/>
 	);

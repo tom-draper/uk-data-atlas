@@ -48,7 +48,7 @@ describe("datasetIsNeeded", () => {
 			"simd",
 			"unemployment",
 			"wimd",
-			"workplaceIncome",
+			"workplace-income",
 		]);
 
 		for (const definition of hiddenByDefault) {

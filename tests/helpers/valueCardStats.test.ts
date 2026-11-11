@@ -3,7 +3,6 @@ import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
-import { regionalGdpItl3Definition } from "@/lib/datasets/regionalGdpItl3";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
 
@@ -314,7 +313,7 @@ describe("resolveValueCardStats", () => {
 				},
 			},
 		};
-		const card = regionalGdpItl3Definition.chart.card!;
+		const card = cardOf("regional-gdp-itl3");
 
 		expect(
 			resolveValueCardStats(
@@ -326,7 +325,7 @@ describe("resolveValueCardStats", () => {
 				false,
 			),
 		).toEqual({
-			stats: { value: 5_500, secondary: "£5.0bn GVA" },
+			stats: { value: 5_500 },
 			viaLocalAuthority: false,
 		});
 	});

@@ -40,12 +40,9 @@ import {
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
 	ImdMeasurePanel,
-	PlanningMeasurePanel,
-	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
-	RegionalOutputMeasurePanel,
 	SchoolPerformanceMeasurePanel,
 	UnemploymentMeasurePanel,
 	WasteMetricPanel,
@@ -172,43 +169,6 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "regionalGdpItl3" && (
-				<RegionalOutputMeasurePanel
-					measure={controls.displayOptions.regionalGdpItl3.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("regionalGdpItl3", {
-							measure,
-							colorRange: { min: 0, max: 50_000 },
-						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "workplaceIncome" && (
-				<WorkplacePayMeasurePanel
-					measure={controls.displayOptions.workplaceIncome.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("workplaceIncome", {
-							measure,
-							colorRange: measure.startsWith("hourly")
-								? { min: 10, max: 30 }
-								: { min: 25000, max: 45000 },
-						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "planningApplications" && (
-				<PlanningMeasurePanel
-					measure={
-						controls.displayOptions.planningApplications.measure
-					}
-					onChange={(measure) =>
-						onMapOptionsChange("planningApplications", {
-							measure,
-							colorRange: { min: 0, max: 1500 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "imd" && (
 				<ImdMeasurePanel
 					measure={controls.displayOptions.imd.measure}
