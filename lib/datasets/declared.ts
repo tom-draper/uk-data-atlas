@@ -43,9 +43,15 @@ export function formatDisplay(format: DisplayFormat, value: number): string {
 		case "decimal":
 			return `${format.prefix ?? ""}${value.toFixed(format.digits)}${format.suffix ?? ""}`;
 		case "count":
-			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(value)}${format.suffix ?? ""}`;
+			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(format.round ? Math.round(value) : value)}${format.suffix ?? ""}`;
 		case "compact":
 			return `${formatCompactCount(value)}${format.suffix ?? ""}`;
+		case "millions":
+			return `${format.prefix ?? ""}${
+				value >= 1_000
+					? `${(value / 1_000).toFixed(1)}bn`
+					: `${value.toFixed(0)}m`
+			}${format.suffix ?? ""}`;
 	}
 }
 
@@ -140,12 +146,19 @@ const cardFor = (
 			: {}),
 		source: card.source,
 		...(card.coverage ? { coverage: card.coverage } : {}),
+		...card.appearance,
 		unit: measure.card.unit,
 		...(measure.card.prefix ? { prefix: measure.card.prefix } : {}),
 		...(card.hoverRecord ? { hoverRecord: true } : {}),
 		...(measure.card.digits === undefined
 			? {}
 			: { digits: measure.card.digits }),
+		...(measure.card.format
+			? {
+					format: (value: number) =>
+						formatDisplay(measure.card!.format!, value),
+				}
+			: {}),
 		maximum: measure.card.maximum,
 		...(recordsVia
 			? {
