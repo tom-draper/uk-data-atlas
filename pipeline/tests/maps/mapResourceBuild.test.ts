@@ -11,12 +11,12 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "vitest";
-import { buildMapResources } from "../src/maps/buildMapResource";
+import { buildMapResources } from "../../src/maps/buildMapResource";
 
 test("map builds retain tiles, remove obsolete variants and reuse completed releases", (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-map-build-"));
 	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
-	const repository = resolve(import.meta.dirname, "../..");
+	const repository = resolve(import.meta.dirname, "../../..");
 	symlinkSync(join(repository, "packages"), join(root, "packages"));
 	symlinkSync(join(repository, "pipeline"), join(root, "pipeline"));
 	const json = (path: string, value: unknown) =>
