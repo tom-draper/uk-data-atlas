@@ -64,13 +64,13 @@ shared dataset package. The data build writes lookup artifacts under
 `data/build/atlas.sqlite`; the website serves those rows at
 `/data/atlas-lookups/{id}.json`. Sizes as of 2026-09-27.
 
-| Artifact                         | Built by                   | Loaded                                  | Size (raw / gz) |
-| -------------------------------- | -------------------------- | --------------------------------------- | --------------- |
+| Artifact                         | Built by                  | Loaded                                  | Size (raw / gz) |
+| -------------------------------- | ------------------------- | --------------------------------------- | --------------- |
 | `gazetteer.core.json`            | `compile-website-data.ts` | **bundled** (`gazetteer/static.ts`)     | unknown / 53 KB |
-| `constituency-lad-overlaps.json` | `build-atlas-lookups.ts`   | on demand, constituency location filter | 305 KB / 44 KB  |
+| `constituency-lad-overlaps.json` | `build-atlas-lookups.ts`  | on demand, constituency location filter | 305 KB / 44 KB  |
 | `gazetteer.matchindex.json`      | `compile-website-data.ts` | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
-| `boundary-mappings.json`         | `build-atlas-lookups.ts`   | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
-| `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts`   | on demand, LSOA location filter         | small           |
+| `boundary-mappings.json`         | `build-atlas-lookups.ts`  | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
+| `lsoa-lad-mappings-<year>.json`  | `build-atlas-lookups.ts`  | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
 named locations still reference, 650 constituencies (2024), the 9 English
