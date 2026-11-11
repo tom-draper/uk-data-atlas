@@ -71,17 +71,7 @@ export const NEW_DATASET_MEASURES = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		note: "Collection authorities only, avoiding double counting between collection and disposal authorities.",
 	},
-	{
-		datasetId: "adult-social-care-activity",
-		path: paths.adultSocialCareActivity!,
-		boundaryYear: 2025,
-		period: "2024-25",
-		label: "Clients receiving long-term support",
-		unit: "clients",
-		valueKind: "count",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		note: "Clients receiving long-term support during the year, across both published age bands.",
-	},
+
 	{
 		datasetId: "adult-social-care-outcomes",
 		path: paths.adultSocialCareOutcomes!,

@@ -357,30 +357,6 @@ const single = (
 	fields: [{ path: "value", measure: declared.slug }],
 });
 
-export const ADULT_SOCIAL_CARE_ACTIVITY = single(
-	"adultSocialCareActivity",
-	"health",
-	periods.financialYear(2024),
-	measure(
-		"long-term-support-clients",
-		"Clients receiving long-term support",
-		"clients",
-		"count",
-		"sum",
-		"Adult social care clients receiving long-term support during the year.",
-	),
-	{
-		parts: yearParts(
-			"adultSocialCareActivity",
-			"localAuthority",
-			2025,
-			{ coverageCountries: ["GB-ENG"] },
-			["2025"],
-		),
-		code: "code",
-	},
-);
-
 export const ADULT_SOCIAL_CARE_OUTCOMES = single(
 	"adultSocialCareOutcomes",
 	"health",

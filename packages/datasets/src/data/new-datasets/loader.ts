@@ -14,7 +14,7 @@ type IndicatorType =
 	| "local-government-finance"
 	| "council-tax"
 	| "waste"
-	| "adultSocialCareActivity"
+	| "adult-social-care-activity"
 	| "adultSocialCareOutcomes"
 	| "planningApplications"
 	| "electricVehicleChargers"
@@ -252,7 +252,7 @@ export async function loadAdultSocialCareActivity(
 		};
 	}
 	return dataset(
-		"adultSocialCareActivity",
+		"adult-social-care-activity",
 		2025,
 		"localAuthority",
 		2025,

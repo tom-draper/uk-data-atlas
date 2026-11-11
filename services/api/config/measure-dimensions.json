@@ -31,9 +31,6 @@
 		}
 	},
 	"ids": {
-		"adult-social-care-activity": {
-			"measure": "long-term-support-clients"
-		},
 		"adult-social-care-outcomes": {
 			"measure": "social-care-quality-of-life"
 		},

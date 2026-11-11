@@ -3,6 +3,7 @@ import {
 	definitionOf,
 	type DatasetDeclaration,
 } from "../declaration/dataset.ts";
+import { adultSocialCareActivity } from "./adult-social-care-activity/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
@@ -21,6 +22,7 @@ import { schoolPerformanceConstituency } from "./school-performance-constituency
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
+	adultSocialCareActivity,
 	broadband,
 	claimantCount,
 	councilTax,
@@ -44,6 +46,7 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 );
 
 export type DeclaredDatasetId =
+	| "adult-social-care-activity"
 	| "broadband"
 	| "claimant-count"
 	| "council-tax"

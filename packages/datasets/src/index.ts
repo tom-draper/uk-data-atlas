@@ -12,7 +12,7 @@ export * from "./data/boundaries/properties.ts";
 export * from "./data/brexit-constituency/loader.ts";
 export * from "./data/broadband/aggregate.ts";
 export * from "./data/car-availability/loader.ts";
-export * from "./data/catalog/definitions/adultSocialCareActivity.ts";
+export * from "./data/adult-social-care-activity/dataset.ts";
 export * from "./data/catalog/definitions/adultSocialCareOutcomes.ts";
 export * from "./data/catalog/definitions/airQuality.ts";
 export * from "./data/catalog/definitions/brexit.ts";
