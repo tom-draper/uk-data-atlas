@@ -37,8 +37,6 @@ import type { populationUkDatasetDefinition } from "./definitions/populationUk.t
 import type { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
 import type { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import type { qualificationDatasetDefinition } from "./definitions/qualification.ts";
-import type { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1.ts";
-import type { regionalGdpItl2DatasetDefinition } from "./definitions/regionalGdpItl2.ts";
 import type { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3.ts";
 import type { roadCollisionsDatasetDefinition } from "./definitions/roadCollisions.ts";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
@@ -56,6 +54,8 @@ import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 import type { populationConstituency } from "../population-constituency/dataset.ts";
+import type { regionalGdpItl1 } from "../regional-gdp-itl1/dataset.ts";
+import type { regionalGdpItl2 } from "../regional-gdp-itl2/dataset.ts";
 
 export type CatalogueDataset =
 	| Awaited<
@@ -163,12 +163,6 @@ export type CatalogueDataset =
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
-			ReturnType<typeof regionalGdpItl1DatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof regionalGdpItl2DatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
 			ReturnType<typeof regionalGdpItl3DatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
@@ -204,7 +198,9 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
-	| Awaited<ReturnType<typeof populationConstituency.load>>[string];
+	| Awaited<ReturnType<typeof populationConstituency.load>>[string]
+	| Awaited<ReturnType<typeof regionalGdpItl1.load>>[string]
+	| Awaited<ReturnType<typeof regionalGdpItl2.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
 export type DeclaredDatasetRecords = {
@@ -218,6 +214,8 @@ export type DeclaredDatasetRecords = {
 	"population-constituency": Awaited<
 		ReturnType<typeof populationConstituency.load>
 	>;
+	"regional-gdp-itl1": Awaited<ReturnType<typeof regionalGdpItl1.load>>;
+	"regional-gdp-itl2": Awaited<ReturnType<typeof regionalGdpItl2.load>>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	adultSocialCareActivity: Awaited<
@@ -321,12 +319,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	qualification: Awaited<
 		ReturnType<typeof qualificationDatasetDefinition.precompile>
-	>;
-	regionalGdpItl1: Awaited<
-		ReturnType<typeof regionalGdpItl1DatasetDefinition.precompile>
-	>;
-	regionalGdpItl2: Awaited<
-		ReturnType<typeof regionalGdpItl2DatasetDefinition.precompile>
 	>;
 	regionalGdpItl3: Awaited<
 		ReturnType<typeof regionalGdpItl3DatasetDefinition.precompile>

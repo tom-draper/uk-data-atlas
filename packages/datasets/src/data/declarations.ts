@@ -9,6 +9,8 @@ import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
+import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
+import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -18,6 +20,8 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	lifeExpectancySeries,
 	mobileCoverage,
 	populationConstituency,
+	regionalGdpItl1,
+	regionalGdpItl2,
 ];
 
 /** The manifest definition of each declaration. */
@@ -31,4 +35,6 @@ export type DeclaredDatasetId =
 	| "land-area"
 	| "life-expectancy-series"
 	| "mobile-coverage"
-	| "population-constituency";
+	| "population-constituency"
+	| "regional-gdp-itl1"
+	| "regional-gdp-itl2";

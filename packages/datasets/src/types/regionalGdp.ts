@@ -41,11 +41,11 @@ interface RegionalGdpDataset<Type extends string, Boundary extends string> {
 }
 
 export type RegionalGdpItl1Dataset = RegionalGdpDataset<
-	"regionalGdpItl1",
+	"regional-gdp-itl1",
 	"itl1"
 >;
 export type RegionalGdpItl2Dataset = RegionalGdpDataset<
-	"regionalGdpItl2",
+	"regional-gdp-itl2",
 	"itl2"
 >;
 export type RegionalGdpItl3Dataset = RegionalGdpDataset<

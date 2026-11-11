@@ -19,7 +19,7 @@ const BOUNDARY_YEAR = 2025;
 
 type Tier = {
 	file: string;
-	type: "regionalGdpItl1" | "regionalGdpItl2" | "regionalGdpItl3";
+	type: "regional-gdp-itl1" | "regional-gdp-itl2" | "regionalGdpItl3";
 	boundaryType: "itl1" | "itl2" | "itl3";
 };
 
@@ -67,14 +67,14 @@ const load = async (
 export const loadRegionalGdpItl1 = (read: (path: string) => Promise<string>) =>
 	load(read, {
 		file: "gdp-itl1-1998-2023.csv",
-		type: "regionalGdpItl1",
+		type: "regional-gdp-itl1",
 		boundaryType: "itl1",
 	}) as Promise<Record<string, RegionalGdpItl1Dataset>>;
 
 export const loadRegionalGdpItl2 = (read: (path: string) => Promise<string>) =>
 	load(read, {
 		file: "gdp-itl2-1998-2023.csv",
-		type: "regionalGdpItl2",
+		type: "regional-gdp-itl2",
 		boundaryType: "itl2",
 	}) as Promise<Record<string, RegionalGdpItl2Dataset>>;
 

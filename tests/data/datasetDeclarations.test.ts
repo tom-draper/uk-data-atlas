@@ -207,6 +207,84 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it.each([
+		["itl1", "TLC", "North East (England)"],
+		["itl2", "TLC3", "Tees Valley"],
+	])("stores GDP and GVA for %s across years", (tier, code, name) => {
+		const id = `regional-gdp-${tier}`;
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const compiled = Object.fromEntries(
+			[2022, 2023].map((year) => [
+				String(year),
+				{
+					id: `${id}${year}`,
+					type: id,
+					year,
+					boundaryType: tier,
+					boundaryYear: 2025,
+					coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+					data: {
+						[code]: {
+							itlCode: code,
+							itlName: name,
+							gvaMillionGbp: year + 0.5,
+							gdpMillionGbp: year + 1.5,
+						},
+					},
+				},
+			]),
+		);
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, tier, "2025-01-uk-bgc", "available"],
+					],
+				},
+				geography: {
+					...areas.geography,
+					rows: [...areas.geography.rows, [2, tier]],
+				},
+				area: {
+					...areas.area,
+					rows: [...areas.area.rows, [3, 2, code]],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 3, 2, name]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores constituency population for each published year", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "population-constituency",

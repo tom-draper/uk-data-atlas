@@ -39,8 +39,6 @@ import { populationUkDatasetDefinition } from "./definitions/populationUk.ts";
 import { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
 import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
-import { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1.ts";
-import { regionalGdpItl2DatasetDefinition } from "./definitions/regionalGdpItl2.ts";
 import { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3.ts";
 import { roadCollisionsDatasetDefinition } from "./definitions/roadCollisions.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
@@ -97,8 +95,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	publicHealthDatasetDefinition,
 	pupilAbsenceDatasetDefinition,
 	qualificationDatasetDefinition,
-	regionalGdpItl1DatasetDefinition,
-	regionalGdpItl2DatasetDefinition,
 	regionalGdpItl3DatasetDefinition,
 	roadCollisionsDatasetDefinition,
 	schoolPerformanceDatasetDefinition,

@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` (population),
+Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` (population),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -173,7 +173,7 @@ Not yet declared, by module (each still has a definition in
 website chart definition):
 
 - economy: business-activity, income, workplace-income, jobs, unemployment,
-  regional-gdp-itl1, regional-gdp-itl2, regional-gdp-itl3,
+  regional-gdp-itl3,
   local-government-finance
 - housing: house-price, housing-affordability, housing-tenure, homelessness,
   net-additional-dwellings, planning-applications, council-tax
