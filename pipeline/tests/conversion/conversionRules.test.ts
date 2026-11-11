@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { conversionRules, type MeasureRow } from "../../src/conversion/rules.ts";
+import {
+	conversionRules,
+	type MeasureRow,
+} from "../../src/conversion/rules.ts";
 
 const measure = (
 	id: number,

@@ -33,7 +33,9 @@ vi.mock("@uk-data-atlas/datasets", async (importOriginal) => ({
 vi.mock("../../src/gazetteer/matchIndex.ts", () => ({
 	loadMatchIndex: async () => ({}),
 }));
-vi.mock("../../src/atlas/atlasLookups", () => ({ readAtlasLookup: () => "{}" }));
+vi.mock("../../src/atlas/atlasLookups", () => ({
+	readAtlasLookup: () => "{}",
+}));
 vi.mock("../../src/precompile/websiteOutput.ts", async () => {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	const { join } = await import("node:path");
