@@ -179,7 +179,7 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			}
 			const after = statSync(path).size;
 			database.exec(
-				`DROP VIEW v_observation; ${statisticsTableNames
+				`PRAGMA foreign_keys = OFF; DROP VIEW v_observation; ${statisticsTableNames
 					.map((table) => `DROP TABLE ${table};`)
 					.join(" ")} VACUUM;`,
 			);
