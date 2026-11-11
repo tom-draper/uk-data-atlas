@@ -316,59 +316,6 @@ export const UNEMPLOYMENT: DeclaredDataset = {
 	})),
 };
 
-export const CHILD_POVERTY: DeclaredDataset = {
-	type: "childPoverty",
-	module: "deprivation",
-	payload: {
-		parts: yearParts(
-			"childPoverty",
-			"localAuthority",
-			2024,
-			{
-				measure: "relativeLowIncomeBeforeHousingCosts",
-			},
-			["2022", "2023", "2024", "2025"],
-		),
-		code: "ladCode",
-	},
-	name: "ladName",
-	/** Keys are the financial year's end. */
-	period: (key) => periods.financialYear(Number(key) - 1),
-	measures: [
-		measure(
-			"children-in-relative-low-income",
-			"Children in relative low income families",
-			"children",
-			"count",
-			"sum",
-			"Children under 16 in families with below 60% of median income before housing costs.",
-		),
-		measure(
-			"children-in-relative-low-income-rate",
-			"Children in relative low income families, rate",
-			"percent",
-			"rate",
-			"none",
-			"Children in relative low income families before housing costs as a percentage of children under 16.",
-		),
-	],
-	fields: [
-		{ path: "childCount", measure: "children-in-relative-low-income" },
-		{
-			path: "childPovertyRate",
-			measure: "children-in-relative-low-income-rate",
-		},
-	],
-	derived: {
-		childrenPopulation: "Computed by the compiler from the count and rate.",
-	},
-	computed: {
-		childrenPopulation: (record) =>
-			(record.childCount as number) /
-			((record.childPovertyRate as number) / 100),
-	},
-};
-
 export const REGIONAL_GDP_ITL3: DeclaredDataset = {
 	type: "regionalGdpItl3",
 	module: "economy",

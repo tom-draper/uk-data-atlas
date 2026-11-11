@@ -43,7 +43,7 @@ const GROUP_START_CHARTS: Partial<Record<string, string[]>> = {
 		"economics-planningApplications",
 		"economics-council-tax",
 		"economics-unemployment",
-		"economics-childPoverty",
+		"economics-child-poverty",
 		"economics-fuelPoverty",
 	],
 };

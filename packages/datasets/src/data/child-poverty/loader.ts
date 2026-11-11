@@ -57,7 +57,7 @@ export async function loadChildPoverty(
 			year,
 			{
 				id: `childPoverty${year}`,
-				type: "childPoverty" as const,
+				type: "child-poverty" as const,
 				year,
 				measure: "relativeLowIncomeBeforeHousingCosts" as const,
 				boundaryType: "localAuthority" as const,

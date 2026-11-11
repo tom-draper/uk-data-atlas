@@ -8,10 +8,6 @@ import { denominator, weightedMean } from "@uk-data-atlas/datasets";
 
 export { weightedMean };
 import type {
-	AggregatedChildPovertyData,
-	ChildPovertyDataset,
-} from "@uk-data-atlas/datasets";
-import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
 } from "@uk-data-atlas/datasets";
@@ -113,25 +109,6 @@ export function aggregateRegionalGdp(
 		}),
 		{ gvaMillionGbp: 0, gdpMillionGbp: 0 },
 	);
-}
-
-export function aggregateChildPoverty(
-	records: ChildPovertyDataset["data"][string][],
-): AggregatedChildPovertyData | null {
-	let childCount = 0,
-		childrenPopulation = 0,
-		count = 0;
-	for (const record of records) {
-		childCount += record.childCount;
-		childrenPopulation += record.childrenPopulation;
-		count++;
-	}
-	return count === 0 || childrenPopulation === 0
-		? null
-		: {
-				childCount,
-				childPovertyRate: (childCount / childrenPopulation) * 100,
-			};
 }
 
 /**

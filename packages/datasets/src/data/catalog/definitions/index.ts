@@ -3,7 +3,6 @@ export { airQualityDatasetDefinition } from "./airQuality.ts";
 export { brexitDatasetDefinition } from "./brexit.ts";
 export { brexitConstituencyDatasetDefinition } from "./brexitConstituency.ts";
 export { carAvailabilityDatasetDefinition } from "./carAvailability.ts";
-export { childPovertyDatasetDefinition } from "./childPoverty.ts";
 export { crimeDatasetDefinition } from "./crime.ts";
 export { electricityConsumptionDatasetDefinition } from "./electricityConsumption.ts";
 export { ethnicityDatasetDefinition } from "./ethnicity.ts";

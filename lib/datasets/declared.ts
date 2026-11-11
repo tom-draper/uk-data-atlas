@@ -43,7 +43,7 @@ export function formatDisplay(format: DisplayFormat, value: number): string {
 		case "count":
 			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(value)}${format.suffix ?? ""}`;
 		case "compact":
-			return formatCompactCount(value);
+			return `${formatCompactCount(value)}${format.suffix ?? ""}`;
 	}
 }
 

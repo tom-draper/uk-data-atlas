@@ -8,7 +8,7 @@ export interface ChildPovertyLADData {
 
 export interface ChildPovertyDataset {
 	id: string;
-	type: "childPoverty";
+	type: "child-poverty";
 	year: number;
 	measure: "relativeLowIncomeBeforeHousingCosts";
 	boundaryType: "localAuthority";

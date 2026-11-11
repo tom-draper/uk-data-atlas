@@ -14,7 +14,6 @@ import {
 	TRAVEL_TO_WORK,
 } from "./census.ts";
 import {
-	CHILD_POVERTY,
 	HOUSE_PRICE,
 	INCOME,
 	JOBS,
@@ -63,7 +62,6 @@ const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	WORKPLACE_INCOME,
 	JOBS,
 	UNEMPLOYMENT,
-	CHILD_POVERTY,
 	REGIONAL_GDP_ITL3,
 	HOUSE_PRICE,
 	AIR_QUALITY,

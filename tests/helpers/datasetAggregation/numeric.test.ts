@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { aggregateBroadband } from "@uk-data-atlas/datasets";
+import { aggregateChildPoverty } from "@uk-data-atlas/datasets";
 import { aggregateMobileCoverage } from "@uk-data-atlas/datasets";
 import { aggregateClaimantCount } from "@uk-data-atlas/datasets";
 import {
 	aggregateAirQuality,
-	aggregateChildPoverty,
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateHomelessness,

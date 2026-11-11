@@ -3,7 +3,6 @@ export { airQualityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { brexitDatasetDefinition } from "@uk-data-atlas/datasets";
 export { brexitConstituencyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets";
-export { childPovertyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { crimeDatasetDefinition } from "@uk-data-atlas/datasets";
 export { electricityConsumptionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { ethnicityDatasetDefinition } from "@uk-data-atlas/datasets";
