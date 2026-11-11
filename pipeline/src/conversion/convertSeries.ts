@@ -159,16 +159,41 @@ export const readErrorFactors = (backtest: DatabaseSync): ErrorFactors => {
 	return (method, basis) => factors.get(`${method}|${basis}`);
 };
 
+/** Why a published series was not converted onto the plan entry's target. */
+export type SkipReason =
+	/** The target release already holds a published series for the same measure and members. */
+	| "published-on-target"
+	/** A rebuilt ratio or mean lacks a published numerator, denominator or weight to be rebuilt from. */
+	| "missing-component"
+	/** The route reached no value: every target was a gap. */
+	| "no-values";
+
 export type ConversionContext = {
 	database: DatabaseSync;
 	resolver: Resolver;
 	/** The rule of each measure, by slug. */
 	rules: ReadonlyMap<string, ConversionRule>;
 	factors: ErrorFactors;
+	/** Told of every published series the entry left out, and why. */
+	skipped?: (entry: PlanEntry, source: SeriesRow, reason: SkipReason) => void;
 };
 
 export const convertedKey = (sourceKey: string, target: string) =>
 	`${sourceKey}~converted:${target}`;
+
+/** The members of the published series a release holds for a dataset's measure. */
+const membersPublished = (
+	database: DatabaseSync,
+	entry: PlanEntry,
+	release: number,
+) =>
+	new Set(
+		publishedSeries(database, {
+			dataset: entry.source.dataset,
+			measure: entry.source.measure,
+			release,
+		}).map((series) => series.members),
+	);
 
 /** Only observed values are converted. A flagged or empty one is a missing input. */
 const observedValues = (
@@ -229,7 +254,22 @@ const collectGaps = (
 	return seen;
 };
 
+/**
+ * The converted series of a plan entry. Where the context listens for skips,
+ * a source that reached no value is skipped, not stored empty.
+ */
 export function* convertEntry(
+	context: ConversionContext,
+	entry: PlanEntry,
+): Generator<ConvertedSeries> {
+	for (const converted of convertSources(context, entry)) {
+		if (context.skipped && converted.observations.length === 0)
+			context.skipped(entry, converted.inputs[0]!.series, "no-values");
+		else yield converted;
+	}
+}
+
+function* convertSources(
 	context: ConversionContext,
 	entry: PlanEntry,
 ): Generator<ConvertedSeries> {
@@ -255,10 +295,16 @@ export function* convertEntry(
 			measure,
 			release: from,
 		});
-	const sources = seriesOf(entry.source.measure).filter(
-		(series) => !entry.members || entry.members.test(series.members),
-	);
-	if (sources.length === 0)
+	const onTarget = membersPublished(database, entry, to);
+	const skip = (source: SeriesRow, reason: SkipReason) =>
+		context.skipped?.(entry, source, reason);
+	const sources = seriesOf(entry.source.measure).filter((series) => {
+		if (entry.members && !entry.members.test(series.members)) return false;
+		if (!onTarget.has(series.members)) return true;
+		skip(series, "published-on-target");
+		return false;
+	});
+	if (sources.length === 0 && !context.skipped)
 		throw new Error(`${entry.id}: no published series to convert`);
 	const methodOf = (crosswalk: number) =>
 		resolver.router.crosswalk(crosswalk).method;
@@ -356,10 +402,14 @@ export function* convertEntry(
 				(weights!.length === 1 && weights![0]!.members === ""
 					? weights![0]
 					: undefined);
-			if (!weight)
-				throw new Error(
-					`${entry.id}: ${source.key} has no published ${rule.weight} to be weighted by`,
-				);
+			if (!weight) {
+				if (!context.skipped)
+					throw new Error(
+						`${entry.id}: ${source.key} has no published ${rule.weight} to be weighted by`,
+					);
+				skip(source, "missing-component");
+				continue;
+			}
 			for (const period of periods) {
 				const rebuilt = convertWeightedMeans(
 					steps,
@@ -402,10 +452,14 @@ export function* convertEntry(
 		const denominator = parts!.denominator.find(
 			(series) => series.members === source.members,
 		);
-		if (!numerator || !denominator)
-			throw new Error(
-				`${entry.id}: ${source.key} has no published ${numerator ? rule.denominator : rule.numerator} to be rebuilt from`,
-			);
+		if (!numerator || !denominator) {
+			if (!context.skipped)
+				throw new Error(
+					`${entry.id}: ${source.key} has no published ${numerator ? rule.denominator : rule.numerator} to be rebuilt from`,
+				);
+			skip(source, "missing-component");
+			continue;
+		}
 		const check = { compared: 0, maxDifference: 0 };
 		for (const period of periods) {
 			const top = observedValues(database, numerator.id, period.id);
