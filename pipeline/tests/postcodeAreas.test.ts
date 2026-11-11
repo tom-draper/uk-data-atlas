@@ -18,7 +18,7 @@ import {
 	SEVERAL,
 	type PostcodeAreasShard,
 } from "@uk-data-atlas/postcodes";
-import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+import { postcodeIndexFor, postcodeRow } from "./fixtures/postcodeFixtures";
 
 const square = (
 	west: number,

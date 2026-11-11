@@ -7,7 +7,7 @@ import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { compileFlatDownloads } from "../src/atlas/flatDownloads";
 import { FullDetailDownloads } from "@uk-data-atlas/geometry";
-import { readParquet } from "./parquetFixtures";
+import { readParquet } from "./fixtures/parquetFixtures";
 
 const square = (west: number, south: number) => [
 	[
