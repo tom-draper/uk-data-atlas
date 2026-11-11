@@ -178,7 +178,8 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 		);
 	if (
 		declaration.publishMapValues &&
-		declaration.display!.measures.length !== 1
+		(declaration.display!.measures.length !== 1 ||
+			typeof declaration.display!.measures[0].field !== "string")
 	)
 		throw new Error(
 			`Dataset ${declaration.id} must have one map-values measure`,
@@ -222,7 +223,7 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		...(declaration.layout ? { payload: declaration.layout } : {}),
 		...(declaration.chartPending ? { chartPending: true } : {}),
 		...(declaration.publishMapValues && declaration.display
-			? { mapValueField: declaration.display.measures[0].field }
+			? { mapValueField: declaration.display.measures[0].field as string }
 			: {}),
 		precompile: declaration.load,
 	};
