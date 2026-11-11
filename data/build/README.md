@@ -652,17 +652,21 @@ A converted series is a `series` row with `method = 'converted'` and
 `~converted:<geography>:<release>`, and its id comes from
 `pipeline/ids/series.txt` like any other. A value that regrouped whole areas has
 status `derived` and no bounds. A value that passed through a split has status
-`estimated` and `lower` and `upper`. No converted value is `observed`, and the
+`estimated` and `lower` and `upper`. The plan holds no split series at present. No converted value is `observed`, and the
 copy fails if one is.
 
 | Table                                                                                                                       | Holds                                                                  |
 | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `series_input`                                                                                                              | Each input series of a converted series, and its role                  |
+| `series_input`                                                                                                              | Each input series and its role (value, numerator, denominator, weight) |
 | `series_conversion`                                                                                                         | Rule, weight basis, whether every value is an exact regrouping, a note |
 | `series_crosswalk`                                                                                                          | The crosswalks of the route, in order, and their direction             |
 | `series_gap`                                                                                                                | Each area and period with no value, and the reason                     |
 | `measure_conversion`                                                                                                        | The rule of every measure (`sum`, `rebuild`, `refuse`) and its reason  |
 | `conversion_backtest`, `conversion_backtest_gap`, `conversion_backtest_worst`, `conversion_error`, `conversion_error_check` | The backtest results                                                   |
+
+A `rebuild` is a ratio taken again from its converted numerator and denominator,
+or a weighted mean taken again from its converted values and the count the
+measure names as its weight.
 
 A query that reads `series` must name the method it wants.
 `pipeline/tests/seriesReadersNamePublished.test.ts` fails on one that does not.
