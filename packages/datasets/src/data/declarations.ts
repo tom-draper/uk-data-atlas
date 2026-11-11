@@ -5,12 +5,14 @@ import {
 } from "../declaration/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
+import { landArea } from "./land-area/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	broadband,
 	claimantCount,
+	landArea,
 	mobileCoverage,
 ];
 
@@ -20,4 +22,4 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 );
 
 export type DeclaredDatasetId =
-	"broadband" | "claimant-count" | "mobile-coverage";
+	"broadband" | "claimant-count" | "land-area" | "mobile-coverage";

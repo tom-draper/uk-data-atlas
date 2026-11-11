@@ -38,7 +38,7 @@ export * from "./data/catalog/definitions/housingTenure.ts";
 export * from "./data/catalog/definitions/imd.ts";
 export * from "./data/catalog/definitions/income.ts";
 export * from "./data/catalog/definitions/jobs.ts";
-export * from "./data/catalog/definitions/landArea.ts";
+export * from "./data/land-area/dataset.ts";
 export * from "./data/catalog/definitions/lifeExpectancy.ts";
 export * from "./data/catalog/definitions/lifeExpectancySeries.ts";
 export * from "./data/catalog/definitions/localElection.ts";

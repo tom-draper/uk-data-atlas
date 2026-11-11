@@ -11,7 +11,7 @@ export interface LandAreaLADData {
 
 export interface LandAreaDataset {
 	id: string;
-	type: "landArea";
+	type: "land-area";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;
