@@ -56,7 +56,7 @@ export * from "./data/catalog/definitions/qualification.ts";
 export * from "./data/regional-gdp-itl1/dataset.ts";
 export * from "./data/regional-gdp-itl2/dataset.ts";
 export * from "./data/catalog/definitions/regionalGdpItl3.ts";
-export * from "./data/catalog/definitions/roadCollisions.ts";
+export * from "./data/road-collisions/dataset.ts";
 export * from "./data/catalog/definitions/schoolPerformance.ts";
 export * from "./data/catalog/definitions/schoolPerformanceConstituency.ts";
 export * from "./data/catalog/definitions/schoolPerformanceDisadvantage.ts";

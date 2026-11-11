@@ -135,7 +135,7 @@ export async function compileStaleDataset(
 								(input) =>
 									compileDatasetContents(definition, input),
 							)
-						: definition.type === "roadCollisions"
+						: definition.type === "road-collisions"
 							? await compileDatasetContents(
 									{
 										...definition,

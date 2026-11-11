@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population),
+Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -190,7 +190,7 @@ website chart definition):
   gas-consumption, waste
 - population: population, ethnicity
 - deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
-- transport: car-availability, travel-to-work, road-collisions,
+- transport: car-availability, travel-to-work,
   electric-vehicle-chargers
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the

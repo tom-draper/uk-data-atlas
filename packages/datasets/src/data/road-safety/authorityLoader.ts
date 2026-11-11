@@ -117,8 +117,8 @@ const compileRoadCollisions = async (
 		throw new Error(`${source}: the months covered are not consecutive`);
 	}
 	return {
-		id: `roadCollisions${year}`,
-		type: "roadCollisions",
+		id: `road-collisions${year}`,
+		type: "road-collisions",
 		year,
 		period: `${ROAD_COLLISION_MONTHS[first - 1]} to ${ROAD_COLLISION_MONTHS[last - 1]} ${year}`,
 		boundaryType: "localAuthority",

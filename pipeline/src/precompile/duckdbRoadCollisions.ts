@@ -103,8 +103,8 @@ export async function compileDuckdbRoadCollisions(
 				...trackedSource,
 			});
 			datasets[String(year)] = {
-				id: `roadCollisions${year}`,
-				type: "roadCollisions",
+				id: `road-collisions${year}`,
+				type: "road-collisions",
 				year,
 				period: `${ROAD_COLLISION_MONTHS[first - 1]} to ${ROAD_COLLISION_MONTHS[last - 1]} ${year}`,
 				boundaryType: "localAuthority",
