@@ -248,66 +248,6 @@ export const CRIME: DeclaredDataset = {
 	fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 };
 
-export const ROAD_COLLISIONS: DeclaredDataset = {
-	type: "roadCollisions",
-	module: "transport",
-	payload: {
-		parts: (labels) =>
-			labels
-				.filter((label) => /^\d{4}$/.test(label))
-				.sort()
-				.map((key) => ({
-					key,
-					header: {
-						id: `roadCollisions${key}`,
-						type: "roadCollisions",
-						year: Number(key),
-						period: `January to December ${key}`,
-						boundaryType: "localAuthority",
-						boundaryYear: Number(key),
-						lsoaBoundaryYear: 2021,
-						coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
-					},
-				})),
-		code: { data: "ladCode", lsoas: "lsoaCode" },
-		/** Collisions with no area to sit on: the excluded Heathrow code and those with no LSOA. */
-		dropped: ["excluded", "withoutLsoa"],
-	},
-	measures: [
-		measure(
-			"road-collisions",
-			"Reported road collisions",
-			"collisions",
-			"count",
-			"sum",
-			"Road collisions involving personal injury reported to the police.",
-		),
-	],
-	dimensions: [
-		{
-			slug: "collision-severity",
-			label: "Collision severity",
-			members: [
-				{ key: "collisions", code: "all", label: "All severities" },
-				{ key: "fatal", label: "Fatal", parent: "collisions" },
-				{ key: "serious", label: "Serious", parent: "collisions" },
-				{ key: "slight", label: "Slight", parent: "collisions" },
-			],
-		},
-	],
-	records: [
-		{ from: "data" },
-		{
-			from: "lsoas",
-			release: (header) => ({
-				geography: "lsoa",
-				year: Number(header.lsoaBoundaryYear),
-			}),
-		},
-	],
-	fields: [{ path: "{collision-severity}", measure: "road-collisions" }],
-};
-
 export const HOMELESSNESS: DeclaredDataset = {
 	type: "homelessness",
 	module: "housing",

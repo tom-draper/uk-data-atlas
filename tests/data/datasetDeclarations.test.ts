@@ -1,6 +1,9 @@
 import { DatabaseSync } from "node:sqlite";
 import { describe, expect, it } from "vitest";
-import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
+import {
+	rebuildDatasetPayload,
+	comparableCompiled,
+} from "@uk-data-atlas/catalogue/node";
 import {
 	declaredStatistics,
 	STATISTICS_DATASETS,
@@ -345,6 +348,92 @@ describe("declared dataset rows", () => {
 			});
 			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
 				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
+	it("stores collision severities for authorities and small areas", () => {
+		const id = "road-collisions";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const compiled = {
+			2024: {
+				id: `${id}2024`,
+				type: id,
+				year: 2024,
+				period: "January to December 2024",
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				lsoaBoundaryYear: 2021,
+				coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
+				data: {
+					E06000001: {
+						ladCode: "E06000001",
+						collisions: 12,
+						fatal: 1,
+						serious: 3,
+						slight: 8,
+					},
+				},
+				lsoas: {
+					E01012194: {
+						lsoaCode: "E01012194",
+						collisions: 4,
+						fatal: 0,
+						serious: 1,
+						slight: 3,
+					},
+				},
+				excluded: [],
+				withoutLsoa: {},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "lsoa", "2021-12-ew-bgc-v5", "available"],
+					],
+				},
+				geography: {
+					...areas.geography,
+					rows: [...areas.geography.rows, [2, "lsoa"]],
+				},
+				area: {
+					...areas.area,
+					rows: [...areas.area.rows, [3, 2, "E01012194"]],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 3, 2, "Example"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				comparableCompiled(id, compiled),
 			);
 		} finally {
 			database.close();

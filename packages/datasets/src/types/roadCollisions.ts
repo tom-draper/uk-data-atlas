@@ -17,7 +17,7 @@ export interface RoadCollisionsLSOAData extends RoadCollisionCounts {
 
 export interface RoadCollisionsDataset {
 	id: string;
-	type: "roadCollisions";
+	type: "road-collisions";
 	year: number;
 	/** The months the DfT edition covers, such as "January to December 2025". */
 	period: string;
