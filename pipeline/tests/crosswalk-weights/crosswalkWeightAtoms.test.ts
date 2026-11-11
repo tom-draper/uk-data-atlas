@@ -8,8 +8,8 @@ import {
 	readColumn,
 	type OutputAreaCounts,
 	type PostcodeRow,
-} from "../src/crosswalk-weights/atoms";
-import { readScottishHouseholds } from "../src/crosswalk-weights/inputs";
+} from "../../src/crosswalk-weights/atoms";
+import { readScottishHouseholds } from "../../src/crosswalk-weights/inputs";
 
 const row = (
 	outputArea: string,

@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { MEASURES, type Measure } from "../src/crosswalk-weights/atoms";
+import { MEASURES, type Measure } from "../../src/crosswalk-weights/atoms";
 import {
 	weighEdges,
 	type Placement,
 	type WeighedEdge,
-} from "../src/crosswalk-weights/weigh";
+} from "../../src/crosswalk-weights/weigh";
 
 const measures = (population: number[]): Record<Measure, Float64Array> =>
 	Object.fromEntries(
