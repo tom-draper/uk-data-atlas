@@ -214,14 +214,9 @@ test("the final stamp stage accepts a current cache and drops the stamp of a sta
 	assert.equal(existsSync(stageStampPath(root, "area-search-index")), true);
 });
 
-test("rebuilding a renamed cache table replaces its old table with a view", () => {
+test("rebuilding a cache table replaces its compatibility view", () => {
 	const { root } = cacheFixture();
 	const path = join(root, "data/build/atlas-cache.sqlite");
-	const old = new DatabaseSync(path);
-	old.exec(
-		"CREATE TABLE place_index_places (position INTEGER PRIMARY KEY, name TEXT); INSERT INTO place_index_places VALUES (0, 'old')",
-	);
-	old.close();
 	const tables = {
 		place_index_place: {
 			columns: ["name TEXT"],
@@ -244,30 +239,6 @@ test("rebuilding a renamed cache table replaces its old table with a view", () =
 		assert.equal(
 			cache.prepare("SELECT name FROM place_index_places").get()?.name,
 			"new",
-		);
-	} finally {
-		cache.close();
-	}
-});
-
-test("preserves cache generations when migrating the legacy table", () => {
-	const { root, place } = cacheFixture();
-	const path = join(root, "data/build/atlas-cache.sqlite");
-	const old = new DatabaseSync(path);
-	old.exec(
-		"CREATE TABLE cache_generations (component TEXT PRIMARY KEY, generation TEXT NOT NULL); INSERT INTO cache_generations VALUES ('other', 'old')",
-	);
-	old.close();
-	place([["Leeds"]]);
-	const cache = new DatabaseSync(path, { readOnly: true });
-	try {
-		assert.equal(
-			cache
-				.prepare(
-					"SELECT generation FROM cache_generations WHERE component = 'other'",
-				)
-				.get()?.generation,
-			"old",
 		);
 	} finally {
 		cache.close();

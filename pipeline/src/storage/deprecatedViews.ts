@@ -44,14 +44,3 @@ export function createDeprecatedViews(database: DatabaseSync) {
 		"CREATE VIEW website_assets AS SELECT kind, id, sha256, gzip FROM website_asset",
 	);
 }
-
-/** Remove an old table or view before rebuilding its replacement in a cache copy. */
-export function removeDeprecatedObject(database: DatabaseSync, name: string) {
-	const row = database
-		.prepare(
-			"SELECT type FROM sqlite_schema WHERE name = ? AND type IN ('table', 'view')",
-		)
-		.get(name);
-	if (row?.type === "table") database.exec(`DROP TABLE "${name}"`);
-	else if (row?.type === "view") database.exec(`DROP VIEW "${name}"`);
-}

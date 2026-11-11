@@ -14,10 +14,7 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-db";
-import {
-	CACHE_GENERATIONS_VIEW,
-	removeDeprecatedObject,
-} from "./deprecatedViews.ts";
+import { CACHE_GENERATIONS_VIEW } from "./deprecatedViews.ts";
 import {
 	atlasCacheWorkPath,
 	defersCachePublish,
@@ -46,17 +43,9 @@ function applyStep(
 		database
 			.prepare("INSERT OR IGNORE INTO meta VALUES (?, ?)")
 			.run(WORK_SESSION_KEY, session);
-	const legacy = database
-		.prepare(
-			"SELECT type FROM sqlite_schema WHERE name = 'cache_generations'",
-		)
-		.get();
-	if (legacy?.type === "table")
-		database.exec(
-			"INSERT OR IGNORE INTO cache_generation SELECT component, generation FROM cache_generations",
-		);
-	removeDeprecatedObject(database, "cache_generations");
-	database.exec(`CREATE VIEW cache_generations AS ${CACHE_GENERATIONS_VIEW}`);
+	database.exec(
+		`CREATE VIEW IF NOT EXISTS cache_generations AS ${CACHE_GENERATIONS_VIEW}`,
+	);
 	write(database);
 	database
 		.prepare("INSERT OR REPLACE INTO cache_generation VALUES (?, ?)")
@@ -226,13 +215,24 @@ export function publishCacheTables(
 	tables: Record<string, SqliteTable>,
 ) {
 	return publishAtlasCache(root, component, (database) => {
-		for (const [name, table] of Object.entries(tables)) {
-			for (const oldName of Object.keys(table.views ?? {}))
-				removeDeprecatedObject(database, oldName);
-			database.exec(`DROP TABLE IF EXISTS ${name}`);
-		}
+		dropCacheTables(database, tables);
 		writeSqliteTables(database, tables);
 	});
+}
+
+/**
+ * Drop the tables a stage is about to rebuild, with the compatibility views
+ * over them, which `writeSqliteTables` creates again.
+ */
+export function dropCacheTables(
+	database: DatabaseSync,
+	tables: Record<string, { views?: Record<string, string> }>,
+) {
+	for (const [name, table] of Object.entries(tables)) {
+		for (const view of Object.keys(table.views ?? {}))
+			database.exec(`DROP VIEW IF EXISTS ${view}`);
+		database.exec(`DROP TABLE IF EXISTS ${name}`);
+	}
 }
 
 /**

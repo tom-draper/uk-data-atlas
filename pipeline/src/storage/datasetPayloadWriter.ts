@@ -3,10 +3,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
-import {
-	DATASET_PAYLOADS_VIEW,
-	removeDeprecatedObject,
-} from "./deprecatedViews.ts";
+import { DATASET_PAYLOADS_VIEW } from "./deprecatedViews.ts";
 import { publishAtlasCacheSteps, type CacheStep } from "./atlasCacheWriter.ts";
 
 /**
@@ -16,9 +13,8 @@ import { publishAtlasCacheSteps, type CacheStep } from "./atlasCacheWriter.ts";
 export const datasetPayloadStep = (root: string): CacheStep => ({
 	component: "datasets",
 	write: (cache) => {
-		removeDeprecatedObject(cache, "dataset_payloads");
 		cache.exec(
-			"DROP TABLE IF EXISTS dataset_payload; CREATE TABLE dataset_payload (output TEXT NOT NULL PRIMARY KEY, source_sha256 TEXT NOT NULL, sha256 TEXT NOT NULL, bytes INTEGER NOT NULL, gzip BLOB NOT NULL) STRICT, WITHOUT ROWID",
+			"DROP VIEW IF EXISTS dataset_payloads; DROP TABLE IF EXISTS dataset_payload; CREATE TABLE dataset_payload (output TEXT NOT NULL PRIMARY KEY, source_sha256 TEXT NOT NULL, sha256 TEXT NOT NULL, bytes INTEGER NOT NULL, gzip BLOB NOT NULL) STRICT, WITHOUT ROWID",
 		);
 		cache.exec(`CREATE VIEW dataset_payloads AS ${DATASET_PAYLOADS_VIEW}`);
 		const insert = cache.prepare(
