@@ -143,3 +143,90 @@ test("the skips name an allowed reason, and no series is both converted and skip
 		"a series is skipped as published on a release it is not published on",
 	);
 });
+
+test("a summed series that scores full coverage keeps the total of its source", (context) => {
+	const database = open();
+	if (!database) return context.skip();
+	context.onTestFinished(() => database.close());
+
+	const rows = database
+		.prepare(
+			`SELECT s.id, s.key,
+				(SELECT sum(value) FROM observation WHERE series_id = s.id) AS converted,
+				(SELECT sum(value) FROM observation WHERE series_id = s.derived_from_id) AS source
+			FROM series s JOIN series_conversion c ON c.series_id = s.id
+			WHERE s.method = 'converted' AND c.rule = 'sum' AND c.coverage = 1`,
+		)
+		.all() as { key: string; converted: number; source: number }[];
+	assert.ok(rows.length > 0);
+	const lost = rows.filter(
+		(row) =>
+			Math.abs(row.converted - row.source) >
+			1e-6 * Math.max(1, Math.abs(row.source)),
+	);
+	assert.deepEqual(
+		lost.map((row) => row.key),
+		[],
+		"a series scores full coverage yet drops some of its source's total",
+	);
+});
+
+/** The value of a series in the area with a code, or undefined. */
+const valueAt = (database: DatabaseSync, key: string, code: string) =>
+	(
+		database
+			.prepare(
+				`SELECT o.value AS value FROM observation o
+				JOIN series s ON s.id = o.series_id
+				JOIN area_version av ON av.id = o.area_version_id
+				JOIN area a ON a.id = av.area_id
+				WHERE s.key = ? AND a.code = ?`,
+			)
+			.get(key, code) as { value: number } | undefined
+	)?.value;
+
+const CONVERTED_TO_LA = "~converted:localAuthority:2026-05-uk-bgc";
+
+test("fuel poverty across the Cumbria merge is the sum of its parts over the sum of its households", (context) => {
+	const database = open();
+	if (!database) return context.skip();
+	context.onTestFinished(() => database.close());
+
+	const stem = "fuel-poverty/%s/lsoa:2021-12-ew-bgc-v5" + CONVERTED_TO_LA;
+	const at = (measure: string, code: string) =>
+		valueAt(database, stem.replace("%s", measure), code);
+	const poor = at("fuel-poor-households", "E06000063");
+	const households = at("households", "E06000063");
+	const rate = at("fuel-poverty-rate", "E06000063");
+	if (poor === undefined || households === undefined || rate === undefined)
+		return context.skip();
+
+	// Rebuilt from the converted numerator and denominator, a percentage.
+	assert.ok(Math.abs(rate - (100 * poor) / households) < 1e-9);
+
+	// Allerdale, Carlisle and Copeland sum to Cumberland, and the rate is not
+	// the mean of the published small-area rates.
+	const published = (measure: string) => {
+		const id = (
+			database
+				.prepare("SELECT id FROM series WHERE key = ?")
+				.get(`fuel-poverty/${measure}/lsoa:2021-12-ew-bgc-v5`) as {
+				id: number;
+			}
+		).id;
+		return database
+			.prepare(
+				`SELECT o.value AS value FROM observation o
+				JOIN area_version av ON av.id = o.area_version_id
+				WHERE o.series_id = ?
+					AND (av.name LIKE 'Allerdale %' OR av.name LIKE 'Carlisle %' OR av.name LIKE 'Copeland %')`,
+			)
+			.all(id)
+			.map((row) => (row as { value: number }).value);
+	};
+	const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
+	const rates = published("fuel-poverty-rate");
+	assert.equal(poor, sum(published("fuel-poor-households")));
+	assert.equal(households, sum(published("households")));
+	assert.ok(Math.abs(rate - sum(rates) / rates.length) > 1e-3);
+});
