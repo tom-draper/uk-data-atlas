@@ -6,7 +6,7 @@ import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/measures";
-import { publishAtlasCacheSteps } from "../storage/index.ts";
+import { dropCacheTables, publishAtlasCacheSteps } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
 import {
 	CACHE_STAGES,
@@ -24,10 +24,7 @@ import { locationProjectionTables } from "../storage/index.ts";
 import { readStoredText } from "@uk-data-atlas/artifacts";
 import { namedLocationTables } from "../storage/index.ts";
 import { crosswalkTables } from "../storage/index.ts";
-import {
-	DATASETS_VIEW,
-	removeDeprecatedObject,
-} from "../storage/deprecatedViews.ts";
+import { DATASETS_VIEW } from "../storage/deprecatedViews.ts";
 import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
 import { loadIdRegistries } from "../ids/idRegistries.ts";
@@ -336,13 +333,7 @@ export const buildAtlasSqlite = (
 							artifacts,
 							parentArtifacts,
 						});
-						for (const [name, table] of Object.entries(tables)) {
-							for (const oldName of Object.keys(
-								"views" in table ? table.views : {},
-							))
-								removeDeprecatedObject(database, oldName);
-							database.exec(`DROP TABLE IF EXISTS ${name}`);
-						}
+						dropCacheTables(database, tables);
 						writeSqliteTables(database, tables);
 						database
 							.prepare(
