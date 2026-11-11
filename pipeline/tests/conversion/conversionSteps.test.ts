@@ -5,14 +5,14 @@ import {
 	convertWeightedMeans,
 	isRegrouped,
 	startValues,
-} from "../src/conversion/convert.ts";
+} from "../../src/conversion/convert.ts";
 import {
 	carrySource,
 	type BlockReason,
 	type Step,
 	type StepEdge,
-} from "../src/conversion/crosswalkSteps.ts";
-import { boundsOf } from "../src/conversion/errorModel.ts";
+} from "../../src/conversion/crosswalkSteps.ts";
+import { boundsOf } from "../../src/conversion/errorModel.ts";
 
 const row = (
 	t: number,
