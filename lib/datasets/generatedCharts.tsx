@@ -239,7 +239,6 @@ export const CHART_PRESENTATIONS = {
 	"localElection-2017": Chart14Presentation,
 	"localElection-2016": Chart14Presentation,
 	"economics-localGovernmentFinance": Chart0Presentation,
-	"economics-netAdditionalDwellings": Chart0Presentation,
 	"health-nhsWaiting": Chart0Presentation,
 	"deprivation-nimdm": Chart15Presentation,
 	"economics-planningApplications": Chart0Presentation,
@@ -262,6 +261,7 @@ export const CHART_PRESENTATIONS = {
 	"economics-claimant-count": Chart0Presentation,
 	"economics-council-tax": Chart0Presentation,
 	"telecoms-mobile-coverage": Chart27Presentation,
+	"economics-net-additional-dwellings": Chart0Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;

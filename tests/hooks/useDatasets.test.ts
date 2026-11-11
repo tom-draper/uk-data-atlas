@@ -40,7 +40,7 @@ describe("datasetIsNeeded", () => {
 			"generalHealth",
 			"housingTenure",
 			"localGovernmentFinance",
-			"netAdditionalDwellings",
+			"net-additional-dwellings",
 			"nimdm",
 			"publicHealth",
 			"pupilAbsence",

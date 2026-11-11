@@ -18,6 +18,7 @@ export type DisplayFormat =
 	| {
 			/** A whole number with thousands separators. */
 			kind: "count";
+			locale?: string;
 			suffix?: string;
 	  }
 	| { kind: "compact" };

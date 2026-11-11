@@ -405,30 +405,6 @@ export const ADULT_SOCIAL_CARE_OUTCOMES = single(
 	},
 );
 
-export const NET_ADDITIONAL_DWELLINGS = single(
-	"netAdditionalDwellings",
-	"housing",
-	periods.financialYear(2024),
-	measure(
-		"net-additional-dwellings",
-		"Net additional dwellings",
-		"dwellings",
-		"count",
-		"sum",
-		"New dwellings and conversions less demolitions over the year.",
-	),
-	{
-		parts: yearParts(
-			"netAdditionalDwellings",
-			"localAuthority",
-			2025,
-			{ coverageCountries: ["GB-ENG"] },
-			["2025"],
-		),
-		code: "code",
-	},
-);
-
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
 	module: "housing",

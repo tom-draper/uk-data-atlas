@@ -28,7 +28,6 @@ import { jobsDatasetDefinition } from "./definitions/jobs.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import { localGovernmentFinanceDatasetDefinition } from "./definitions/localGovernmentFinance.ts";
-import { netAdditionalDwellingsDatasetDefinition } from "./definitions/netAdditionalDwellings.ts";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting.ts";
 import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
@@ -79,7 +78,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	lifeExpectancyDatasetDefinition,
 	localElectionDatasetDefinition,
 	localGovernmentFinanceDatasetDefinition,
-	netAdditionalDwellingsDatasetDefinition,
 	nhsWaitingDatasetDefinition,
 	nimdmDatasetDefinition,
 	planningApplicationsDatasetDefinition,

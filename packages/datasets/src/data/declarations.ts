@@ -10,6 +10,7 @@ import { historicalGeneralElection } from "./historical-general-election/dataset
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
+import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
@@ -26,6 +27,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	landArea,
 	lifeExpectancySeries,
 	mobileCoverage,
+	netAdditionalDwellings,
 	populationConstituency,
 	populationUk,
 	regionalGdpItl1,
@@ -47,6 +49,7 @@ export type DeclaredDatasetId =
 	| "land-area"
 	| "life-expectancy-series"
 	| "mobile-coverage"
+	| "net-additional-dwellings"
 	| "population-constituency"
 	| "population-uk"
 	| "regional-gdp-itl1"

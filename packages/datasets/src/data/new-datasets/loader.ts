@@ -10,7 +10,7 @@ import type { BoundaryType } from "../boundaries/catalog.ts";
 
 type IndicatorType =
 	| "businessActivity"
-	| "netAdditionalDwellings"
+	| "net-additional-dwellings"
 	| "localGovernmentFinance"
 	| "council-tax"
 	| "waste"
@@ -125,7 +125,7 @@ export async function loadNetAdditionalDwellings(
 		records[code] = { code, name: row[3]?.trim() || code, value };
 	}
 	return dataset(
-		"netAdditionalDwellings",
+		"net-additional-dwellings",
 		2025,
 		"localAuthority",
 		2025,

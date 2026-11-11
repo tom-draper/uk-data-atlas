@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax` (housing), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
+Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax` and `net-additional-dwellings` (housing), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -176,7 +176,7 @@ website chart definition):
   regional-gdp-itl3,
   local-government-finance
 - housing: house-price, housing-affordability, housing-tenure, homelessness,
-  net-additional-dwellings, planning-applications
+  planning-applications
 - education: pupil-absence, school-performance,
   school-performance-disadvantage,
   qualification
