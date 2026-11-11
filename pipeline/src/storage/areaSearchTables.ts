@@ -1,8 +1,3 @@
-import {
-	AREA_SEARCH_CODES_VIEW,
-	AREA_SEARCH_TERMS_VIEW,
-	AREA_SEARCH_TITLE_TERMS_VIEW,
-} from "./deprecatedViews.ts";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packPositions } from "@uk-data-atlas/search-index";
 import type { AreaSearchIndexArtifact } from "@uk-data-atlas/areas";
@@ -29,14 +24,12 @@ export const areaSearchIndexTables = (
 		}),
 	},
 	area_search_code: {
-		views: { area_search_codes: AREA_SEARCH_CODES_VIEW },
 		columns: ["code TEXT"],
 		rows: index.releases.flatMap((release) =>
 			release.codes.map((code) => [code]),
 		),
 	},
 	area_search_term: {
-		views: { area_search_terms: AREA_SEARCH_TERMS_VIEW },
 		columns: ["term TEXT", "areas BLOB"],
 		rows: index.terms.map((term, at) => [
 			term,
@@ -44,7 +37,6 @@ export const areaSearchIndexTables = (
 		]),
 	},
 	area_search_title_term: {
-		views: { area_search_title_terms: AREA_SEARCH_TITLE_TERMS_VIEW },
 		columns: ["term TEXT", "areas BLOB"],
 		rows: index.titleTerms.map((term, at) => [
 			term,

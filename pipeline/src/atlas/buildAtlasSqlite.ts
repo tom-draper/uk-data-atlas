@@ -6,7 +6,7 @@ import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/measures";
-import { dropCacheTables, publishAtlasCacheSteps } from "../storage/index.ts";
+import { publishAtlasCacheSteps } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
 import {
 	CACHE_STAGES,
@@ -333,7 +333,8 @@ export const buildAtlasSqlite = (
 							artifacts,
 							parentArtifacts,
 						});
-						dropCacheTables(database, tables);
+						for (const name of Object.keys(tables))
+							database.exec(`DROP TABLE IF EXISTS ${name}`);
 						writeSqliteTables(database, tables);
 						database
 							.prepare(

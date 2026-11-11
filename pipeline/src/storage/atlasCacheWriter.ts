@@ -15,7 +15,6 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-db";
-import { CACHE_GENERATIONS_VIEW } from "./deprecatedViews.ts";
 import {
 	atlasCacheWorkPath,
 	defersCachePublish,
@@ -73,9 +72,6 @@ function applyStep(
 		database
 			.prepare("INSERT OR IGNORE INTO meta VALUES (?, ?)")
 			.run(WORK_SESSION_KEY, session);
-	database.exec(
-		`CREATE VIEW IF NOT EXISTS cache_generations AS ${CACHE_GENERATIONS_VIEW}`,
-	);
 	write(database);
 	database
 		.prepare("INSERT OR REPLACE INTO cache_generation VALUES (?, ?)")
@@ -243,24 +239,10 @@ export function publishCacheTables(
 	tables: Record<string, SqliteTable>,
 ) {
 	return publishAtlasCache(root, component, (database) => {
-		dropCacheTables(database, tables);
+		for (const name of Object.keys(tables))
+			database.exec(`DROP TABLE IF EXISTS ${name}`);
 		writeSqliteTables(database, tables);
 	});
-}
-
-/**
- * Drop the tables a stage is about to rebuild, with the compatibility views
- * over them, which `writeSqliteTables` creates again.
- */
-export function dropCacheTables(
-	database: DatabaseSync,
-	tables: Record<string, { views?: Record<string, string> }>,
-) {
-	for (const [name, table] of Object.entries(tables)) {
-		for (const view of Object.keys(table.views ?? {}))
-			database.exec(`DROP VIEW IF EXISTS ${view}`);
-		database.exec(`DROP TABLE IF EXISTS ${name}`);
-	}
 }
 
 /**
