@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `historical-general-election` (politics), `school-performance-constituency` (education),
+Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -177,10 +177,8 @@ website chart definition):
 - housing: house-price, housing-tenure, homelessness,
   planning-applications
 - education: pupil-absence, school-performance,
-  school-performance-disadvantage,
   qualification
-- health: general-health, public-health, nhs-waiting, life-expectancy
-- crime: crime
+- health: general-health, public-health, life-expectancy
 - politics: brexit, brexit-constituency, general-election,
   local-election
 - environment: air-quality, ghg-emissions, electricity-consumption,
