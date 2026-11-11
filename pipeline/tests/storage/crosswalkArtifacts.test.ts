@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
-import { createCrosswalkArtifacts } from "../src/storage/crosswalkArtifacts";
+import { createCrosswalkArtifacts } from "../../src/storage/crosswalkArtifacts";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { createStatisticsAreaLookup } from "../src/storage/statisticsAreaLookup";
+import { createStatisticsAreaLookup } from "../../src/storage/statisticsAreaLookup";
 
 const database = () => {
 	const db = new DatabaseSync(":memory:");

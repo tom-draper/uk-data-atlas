@@ -11,7 +11,7 @@ import { test } from "vitest";
  * method, or is listed here with why it reads them all.
  */
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
+const root = fileURLToPath(new URL("../../../", import.meta.url));
 
 /** Files whose queries read every series on purpose, and how many do. */
 const READS_EVERY_SERIES: Readonly<
