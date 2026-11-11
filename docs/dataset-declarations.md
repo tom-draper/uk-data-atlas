@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `ghg-emissions` and `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
+Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions` and `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -179,8 +179,7 @@ website chart definition):
 - health: life-expectancy
 - politics: brexit, brexit-constituency, general-election,
   local-election
-- environment: electricity-consumption,
-  gas-consumption, waste
+- environment: waste
 - population: population, ethnicity
 - deprivation: fuel-poverty, imd, wimd, simd, nimdm
 - transport: car-availability, travel-to-work
