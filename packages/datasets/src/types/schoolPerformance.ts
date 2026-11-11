@@ -36,7 +36,7 @@ export interface SchoolPerformanceConstituencyData extends SchoolPerformanceMeas
 
 export interface SchoolPerformanceConstituencyDataset {
 	id: string;
-	type: "schoolPerformanceConstituency";
+	type: "school-performance-constituency";
 	year: number;
 	boundaryType: "constituency";
 	boundaryYear: number;

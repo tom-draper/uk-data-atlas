@@ -182,7 +182,7 @@ export async function compileStaleDataset(
 											  definition.type ===
 													"schoolPerformanceGap" ||
 											  definition.type ===
-													"schoolPerformanceConstituency"
+													"school-performance-constituency"
 											? await withDuckdbSchoolPerformance(
 													reader,
 													artifacts,

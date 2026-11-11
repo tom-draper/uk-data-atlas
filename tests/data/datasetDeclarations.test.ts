@@ -527,6 +527,97 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores school results by academic year and preserves suppressed progress", () => {
+		const id = "school-performance-constituency";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const latest = {
+			ptL2basics94: 70.8,
+			ptL2basics95: 53.7,
+			avgAtt8: 50.3,
+			avgP8score: null,
+			pupils: 1272,
+		};
+		const compiled = {
+			2025: {
+				id: `${id}2025`,
+				type: id,
+				year: 2025,
+				boundaryType: "constituency",
+				boundaryYear: 2024,
+				coverageCountries: ["GB-ENG"],
+				data: {
+					E14001502: {
+						pconCode: "E14001502",
+						pconName: "Southend West and Leigh",
+						...latest,
+						series: {
+							2024: {
+								ptL2basics94: 72,
+								ptL2basics95: 53.1,
+								avgAtt8: 49.8,
+								avgP8score: 0.04,
+								pupils: 1241,
+							},
+							2025: latest,
+						},
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "constituency", "2024-07-uk-bgc", "available"],
+					],
+				},
+				geography: {
+					...areas.geography,
+					rows: [...areas.geography.rows, [2, "constituency"]],
+				},
+				area: {
+					...areas.area,
+					rows: [...areas.area.rows, [3, 2, "E14001502"]],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [
+						...areas.area_version.rows,
+						[3, 3, 2, "Southend West and Leigh"],
+					],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores constituency population for each published year", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "population-constituency",
