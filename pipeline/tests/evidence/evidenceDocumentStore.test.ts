@@ -6,8 +6,8 @@ import { test } from "vitest";
 import {
 	cachedEvidenceMeasure,
 	writeEvidenceDocument,
-} from "../src/evidence/evidenceDocumentStore";
-import { buildEvidenceMeasure } from "../src/evidence/buildEvidenceMeasure";
+} from "../../src/evidence/evidenceDocumentStore";
+import { buildEvidenceMeasure } from "../../src/evidence/buildEvidenceMeasure";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
 test("writes published evidence and reuses only matching cached inputs", () => {
