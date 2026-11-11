@@ -230,3 +230,68 @@ test("fuel poverty across the Cumbria merge is the sum of its parts over the sum
 	assert.equal(households, sum(published("households")));
 	assert.ok(Math.abs(rate - sum(rates) / rates.length) > 1e-3);
 });
+
+test("a split population is estimated within bounds that hold the published figure", (context) => {
+	const database = open();
+	if (!database) return context.skip();
+	context.onTestFinished(() => database.close());
+
+	const key = `population-constituency/population/constituency:2024-07-uk-bgc${CONVERTED_TO_LA}`;
+	const series = database
+		.prepare(
+			`SELECT s.id, c.exact, c.exact_share AS share FROM series s
+			JOIN series_conversion c ON c.series_id = s.id WHERE s.key = ?`,
+		)
+		.get(key) as { id: number; exact: number; share: number } | undefined;
+	if (!series) return context.skip();
+
+	// A split makes the series inexact, and its split values carry bounds.
+	assert.equal(series.exact, 0);
+	assert.ok(series.share < 1);
+	const estimated = database
+		.prepare(
+			`SELECT o.value, o.lower, o.upper, o.period_id AS period, a.code
+			FROM observation o
+			JOIN area_version av ON av.id = o.area_version_id
+			JOIN area a ON a.id = av.area_id
+			WHERE o.series_id = ? AND o.status_id = 2`,
+		)
+		.all(series.id) as {
+		value: number;
+		lower: number;
+		upper: number;
+		period: number;
+		code: string;
+	}[];
+	assert.ok(estimated.length > 0);
+	for (const row of estimated)
+		assert.ok(row.lower <= row.value && row.value <= row.upper);
+
+	// The authority estimates the population series publishes, summed over ages.
+	const published = database
+		.prepare(
+			`SELECT a.code, o.period_id AS period, sum(o.value) AS value
+			FROM series s
+			JOIN observation o ON o.series_id = s.id
+			JOIN area_version av ON av.id = o.area_version_id
+			JOIN area a ON a.id = av.area_id
+			WHERE s.key LIKE 'population-uk/population/%sex=all${CONVERTED_TO_LA}'
+			GROUP BY a.code, o.period_id`,
+		)
+		.all() as { code: string; period: number; value: number }[];
+	const truth = new Map(
+		published.map((row) => [`${row.code}|${row.period}`, row.value]),
+	);
+	const compared = estimated.filter((row) =>
+		truth.has(`${row.code}|${row.period}`),
+	);
+	assert.ok(compared.length > 0);
+	const held = compared.filter((row) => {
+		const value = truth.get(`${row.code}|${row.period}`)!;
+		return row.lower <= value && value <= row.upper;
+	});
+	assert.ok(
+		held.length / compared.length >= 0.99,
+		`bounds held ${held.length} of ${compared.length} published figures`,
+	);
+});
