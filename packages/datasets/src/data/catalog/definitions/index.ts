@@ -17,7 +17,6 @@ export { gasConsumptionDatasetDefinition } from "./gasConsumption.ts";
 export { generalElectionDatasetDefinition } from "./generalElection.ts";
 export { generalHealthDatasetDefinition } from "./generalHealth.ts";
 export { ghgEmissionsDatasetDefinition } from "./ghgEmissions.ts";
-export { historicalGeneralElectionDatasetDefinition } from "./historicalGeneralElection.ts";
 export { homelessnessDatasetDefinition } from "./homelessness.ts";
 export { housePriceDatasetDefinition } from "./housePrice.ts";
 export { housingAffordabilityDatasetDefinition } from "./housingAffordability.ts";

@@ -30,7 +30,7 @@ export * from "./data/catalog/definitions/gasConsumption.ts";
 export * from "./data/catalog/definitions/generalElection.ts";
 export * from "./data/catalog/definitions/generalHealth.ts";
 export * from "./data/catalog/definitions/ghgEmissions.ts";
-export * from "./data/catalog/definitions/historicalGeneralElection.ts";
+export * from "./data/historical-general-election/dataset.ts";
 export * from "./data/catalog/definitions/homelessness.ts";
 export * from "./data/catalog/definitions/housePrice.ts";
 export * from "./data/catalog/definitions/housingAffordability.ts";

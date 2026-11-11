@@ -155,3 +155,12 @@ export const TURNOUT = measure(
 	"Ballots cast as a percentage of the electorate.",
 	{ weight: "electorate" },
 );
+
+export const PARTY_VOTES = measure(
+	"party-votes",
+	"Party votes",
+	"votes",
+	"count",
+	"sum",
+	"Votes for a party's candidates. Where a ward elects several councillors, the votes of the party's highest-polling candidate, so each voter counts once.",
+);

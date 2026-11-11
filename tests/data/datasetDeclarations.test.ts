@@ -439,6 +439,94 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores historical election dates and constituency vote totals", () => {
+		const id = "historical-general-election";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const compiled = {
+			2019: {
+				id: `${id}-2019`,
+				type: id,
+				election: "2019",
+				year: 2019,
+				boundaryType: "constituency",
+				boundaryYear: 2019,
+				boundarySet: "2010-2019",
+				data: {
+					W07000049: {
+						constituencyId: "W07000049",
+						constituencyName: "Aberavon",
+						region: "Wales",
+						seats: 1,
+						electorate: 50750,
+						votes: { CON: 6518, LAB: 17008 },
+						voteShare: { CON: 20.6, LAB: 53.8 },
+						totalVotes: 31598,
+						turnoutPercent: 62.3,
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "constituency", "2019-12-uk-bgc", "available"],
+					],
+				},
+				geography: {
+					...areas.geography,
+					rows: [...areas.geography.rows, [2, "constituency"]],
+				},
+				area: {
+					...areas.area,
+					rows: [...areas.area.rows, [3, 2, "W07000049"]],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 3, 2, "Aberavon"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(
+				database.prepare("SELECT label, date FROM election").get(),
+			).toMatchObject({ label: "2019", date: "2019-12-12" });
+			expect(
+				database.prepare("SELECT area_name FROM contest").get(),
+			).toMatchObject({ area_name: "Aberavon" });
+			expect(
+				database
+					.prepare(
+						"SELECT sum(o.value) AS votes FROM observation o JOIN series s ON s.id = o.series_id JOIN measure m ON m.id = s.measure_id WHERE m.slug = 'party-votes'",
+					)
+					.get(),
+			).toMatchObject({ votes: 23526 });
+		} finally {
+			database.close();
+		}
+	});
 	it("stores constituency population for each published year", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "population-constituency",

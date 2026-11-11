@@ -6,7 +6,6 @@ import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
 import {
 	GENERAL_ELECTION,
-	HISTORICAL_GENERAL_ELECTION,
 	LOCAL_ELECTION,
 } from "./elections.ts";
 import {
@@ -111,7 +110,6 @@ const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	BREXIT_CONSTITUENCY,
 	LOCAL_ELECTION,
 	GENERAL_ELECTION,
-	HISTORICAL_GENERAL_ELECTION,
 ];
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */

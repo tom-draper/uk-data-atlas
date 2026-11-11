@@ -17,7 +17,6 @@ import type { gasConsumptionDatasetDefinition } from "./definitions/gasConsumpti
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import type { generalHealthDatasetDefinition } from "./definitions/generalHealth.ts";
 import type { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions.ts";
-import type { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection.ts";
 import type { homelessnessDatasetDefinition } from "./definitions/homelessness.ts";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import type { housingAffordabilityDatasetDefinition } from "./definitions/housingAffordability.ts";
@@ -48,6 +47,7 @@ import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome.ts";
 import type { broadband } from "../broadband/dataset.ts";
 import type { claimantCount } from "../claimant-count/dataset.ts";
+import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
@@ -109,11 +109,6 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<
-				typeof historicalGeneralElectionDatasetDefinition.precompile
-			>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof homelessnessDatasetDefinition.precompile>
@@ -189,6 +184,7 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof broadband.load>>[string]
 	| Awaited<ReturnType<typeof claimantCount.load>>[string]
+	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
@@ -202,6 +198,9 @@ export type CatalogueDatasetType = CatalogueDataset["type"];
 export type DeclaredDatasetRecords = {
 	broadband: Awaited<ReturnType<typeof broadband.load>>;
 	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
+	"historical-general-election": Awaited<
+		ReturnType<typeof historicalGeneralElection.load>
+	>;
 	"land-area": Awaited<ReturnType<typeof landArea.load>>;
 	"life-expectancy-series": Awaited<
 		ReturnType<typeof lifeExpectancySeries.load>
@@ -265,9 +264,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	ghgEmissions: Awaited<
 		ReturnType<typeof ghgEmissionsDatasetDefinition.precompile>
-	>;
-	historicalGeneralElection: Awaited<
-		ReturnType<typeof historicalGeneralElectionDatasetDefinition.precompile>
 	>;
 	homelessness: Awaited<
 		ReturnType<typeof homelessnessDatasetDefinition.precompile>

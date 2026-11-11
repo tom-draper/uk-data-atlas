@@ -49,8 +49,8 @@ export const parseHistoricalGeneralElectionCsv = (
 		if (!election) continue;
 
 		const dataset = (datasets[election] ??= {
-			id: `historicalGeneralElection-${election}`,
-			type: "historicalGeneralElection",
+			id: `historical-general-election-${election}`,
+			type: "historical-general-election",
 			election,
 			year: electionYear(election),
 			boundaryType: "constituency",
