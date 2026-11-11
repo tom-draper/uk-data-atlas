@@ -18,7 +18,7 @@ export const measure = (
 	valueKind: ValueKind,
 	aggregation: Aggregation,
 	description: string,
-	ratio?: { numerator: string; denominator: string },
+	parts?: { numerator: string; denominator: string } | { weight: string },
 ): StatisticsMeasure => ({
 	slug,
 	label,
@@ -26,7 +26,7 @@ export const measure = (
 	unit,
 	valueKind,
 	aggregation,
-	...ratio,
+	...parts,
 });
 
 export const HOUSEHOLDS = measure(

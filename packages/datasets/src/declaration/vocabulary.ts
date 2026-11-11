@@ -56,6 +56,12 @@ export type StatisticsMeasure = {
 	/** Slugs of measures declared earlier, for `ratio` measures. */
 	numerator?: string;
 	denominator?: string;
+	/**
+	 * Slug of the count a `weighted_mean` measure is a mean or share over,
+	 * declared earlier. Set only where the datasets that publish the measure
+	 * publish that count beside it.
+	 */
+	weight?: string;
 };
 
 export type StatisticsDimension = {

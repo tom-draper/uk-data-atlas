@@ -158,10 +158,12 @@ export function statisticsTables(
 				"aggregation TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none'))",
 				"numerator_id INTEGER REFERENCES measure(id)",
 				"denominator_id INTEGER REFERENCES measure(id)",
+				"weight_id INTEGER REFERENCES measure(id)",
 			],
 			key: ["id"],
 			constraints: [
 				"CHECK ((aggregation = 'ratio') = (numerator_id IS NOT NULL AND denominator_id IS NOT NULL))",
+				"CHECK (weight_id IS NULL OR aggregation = 'weighted_mean')",
 			],
 			rows: rows(({ measures }) =>
 				measures.entries.map(({ id, item: measure }) => [
@@ -178,6 +180,9 @@ export function statisticsTables(
 					measure.denominator === undefined
 						? null
 						: measures.id(measure.denominator, measure.slug),
+					measure.weight === undefined
+						? null
+						: measures.id(measure.weight, measure.slug),
 				]),
 			),
 		},
