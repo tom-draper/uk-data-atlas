@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { compilePostcodeAreas } from "../src/postcodes/postcodeAreaCompiler";
+import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
@@ -16,18 +16,18 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { AREAS_VIEW } from "../src/storage";
-import { IdRegistries, idDirectory } from "../src/ids/idRegistries";
-import { seedIdRegistries } from "../src/ids/seedIds";
+import { AREAS_VIEW } from "../../src/storage";
+import { IdRegistries, idDirectory } from "../../src/ids/idRegistries";
+import { seedIdRegistries } from "../../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
-import { storePostcodeIndex } from "../src/postcodes/storePostcodeIndex";
-import { assembleAtlas } from "../src/atlas/assembleAtlas";
-import { writeEmptyPostcodeAreas } from "./fixtures/atlasComponentFixtures";
-import { storePostcodeAreas as writePostcodeAreas } from "../src/postcodes/storePostcodeAreas";
-import { buildDuckdbPostcodeCounts } from "../src/postcode-counts/buildDuckdbPostcodeCounts";
-import { validateShards } from "../src/postcode-counts/validatePostcodeCountInputs";
+import { storePostcodeIndex } from "../../src/postcodes/storePostcodeIndex";
+import { assembleAtlas } from "../../src/atlas/assembleAtlas";
+import { writeEmptyPostcodeAreas } from "../fixtures/atlasComponentFixtures";
+import { storePostcodeAreas as writePostcodeAreas } from "../../src/postcodes/storePostcodeAreas";
+import { buildDuckdbPostcodeCounts } from "../../src/postcode-counts/buildDuckdbPostcodeCounts";
+import { validateShards } from "../../src/postcode-counts/validatePostcodeCountInputs";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -39,7 +39,7 @@ import {
 	readPostcodeIndex,
 } from "@uk-data-atlas/atlas-loader";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
-import { postcodeIndexFor, postcodeRow } from "./fixtures/postcodeFixtures";
+import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
 
 /**
  * The fixture's base database is written by hand, so its ids are registered
