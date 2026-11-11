@@ -26,7 +26,6 @@ export { imdDatasetDefinition } from "./imd.ts";
 export { incomeDatasetDefinition } from "./income.ts";
 export { jobsDatasetDefinition } from "./jobs.ts";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
-export { lifeExpectancySeriesDatasetDefinition } from "./lifeExpectancySeries.ts";
 export { localElectionDatasetDefinition } from "./localElection.ts";
 export { localGovernmentFinanceDatasetDefinition } from "./localGovernmentFinance.ts";
 export { netAdditionalDwellingsDatasetDefinition } from "./netAdditionalDwellings.ts";

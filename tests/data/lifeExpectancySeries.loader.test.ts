@@ -98,7 +98,7 @@ describe("loadLifeExpectancySeries", () => {
 
 		expect(Object.keys(datasets)).toEqual(["2003", "2022"]);
 		expect(datasets[2022]).toMatchObject({
-			type: "lifeExpectancySeries",
+			type: "life-expectancy-series",
 			period: "2020-2022",
 			boundaryYear: 2025,
 		});

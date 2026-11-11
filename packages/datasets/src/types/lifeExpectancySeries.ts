@@ -19,7 +19,7 @@ export interface LifeExpectancySeriesLADData {
  */
 export interface LifeExpectancySeriesDataset {
 	id: string;
-	type: "lifeExpectancySeries";
+	type: "life-expectancy-series";
 	year: number;
 	/** The span the estimate covers, e.g. "2022-2024". */
 	period: string;
