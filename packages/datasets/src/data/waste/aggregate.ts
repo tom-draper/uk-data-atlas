@@ -1,29 +1,13 @@
-import type { IndicatorRecord } from "@uk-data-atlas/datasets";
-import type { WasteOptions } from "@/lib/types/mapOptions";
+import type { IndicatorRecord } from "../../types/indicator.ts";
 
 export type WasteStats = Pick<IndicatorRecord, "value" | "metrics">;
 
-export function wasteValue(
-	record: WasteStats | undefined,
-	options: WasteOptions,
-): number | null {
-	if (!record) return null;
-	if (options.metric === "collected") {
-		return options.measure === "perPopulation"
-			? (record.metrics?.per100kPopulation ?? null)
-			: record.value;
-	}
-	const recycled = record.metrics?.recycledTonnes;
-	if (recycled === undefined) return null;
-	if (options.metric === "recyclingShare")
-		return record.value > 0 ? (recycled / record.value) * 100 : null;
-	if (options.measure === "total") return recycled;
-	const perPopulation = record.metrics?.per100kPopulation;
-	return perPopulation !== undefined && record.value > 0
-		? (recycled / record.value) * perPopulation
-		: null;
-}
-
+/**
+ * Collected and recycled tonnes add across authorities, and a figure is kept
+ * only when every authority has it. The rate per 100,000 residents is rebuilt
+ * from the summed population each authority's rate implies, rather than
+ * averaged.
+ */
 export function aggregateWaste(records: IndicatorRecord[]): WasteStats | null {
 	if (!records.length) return null;
 	const value = records.reduce((sum, record) => sum + record.value, 0);

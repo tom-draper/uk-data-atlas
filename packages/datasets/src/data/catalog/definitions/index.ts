@@ -17,5 +17,4 @@ export { schoolPerformanceDatasetDefinition } from "./schoolPerformance.ts";
 export { simdDatasetDefinition } from "./simd.ts";
 export { travelToWorkDatasetDefinition } from "./travelToWork.ts";
 export { unemploymentDatasetDefinition } from "./unemployment.ts";
-export { wasteDatasetDefinition } from "./waste.ts";
 export { wimdDatasetDefinition } from "./wimd.ts";

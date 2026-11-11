@@ -7,10 +7,7 @@ import {
 	declaredDisplay as displayOf,
 	declaredMeasure as measureOf,
 } from "@/lib/datasets/declared";
-import {
-	hasPopulationMetric,
-	POPULATION_METRIC_RANGES,
-} from "@/lib/config/mapOptions";
+import {} from "@/lib/config/mapOptions";
 import type {
 	ActiveViz,
 	Dataset,
@@ -32,7 +29,6 @@ import {
 } from "./legend/legendData";
 import {
 	DeclaredMeasurePanel,
-	CountMetricPanel,
 	ElectionMetricPanel,
 	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
@@ -44,7 +40,6 @@ import {
 	PercentageRangePanel,
 	SchoolPerformanceMeasurePanel,
 	UnemploymentMeasurePanel,
-	WasteMetricPanel,
 } from "./legend/LegendSupplementalPanels";
 import type { MapOptionsChangeHandler } from "./legend/types";
 import { useLegendControls } from "./legend/useLegendControls";
@@ -107,10 +102,6 @@ export default function LegendPanel({
 		Object.values(activeDataset.data).some(
 			({ turnoutPercent }) => turnoutPercent > 0,
 		);
-	const countMetricDataset =
-		activeDataset && hasPopulationMetric(activeDataset.type)
-			? activeDataset.type
-			: null;
 
 	if (
 		!activeDataset ||
@@ -293,46 +284,6 @@ export default function LegendPanel({
 					}
 				/>
 			)}
-
-			{activeDataset?.type === "waste" && (
-				<WasteMetricPanel
-					metric={controls.displayOptions.waste.metric}
-					onChange={(metric) =>
-						onMapOptionsChange("waste", {
-							metric,
-							colorRange:
-								metric === "recyclingShare"
-									? { min: 0, max: 100 }
-									: POPULATION_METRIC_RANGES.waste[
-											controls.displayOptions.waste
-												.measure
-										],
-						})
-					}
-				/>
-			)}
-
-			{countMetricDataset &&
-				!(
-					countMetricDataset === "waste" &&
-					controls.displayOptions.waste.metric === "recyclingShare"
-				) && (
-					<CountMetricPanel
-						measure={
-							controls.displayOptions[countMetricDataset].measure
-						}
-						onChange={(measure) => {
-							const colorRange =
-								POPULATION_METRIC_RANGES[countMetricDataset][
-									measure
-								];
-							onMapOptionsChange(countMetricDataset, {
-								measure,
-								colorRange,
-							});
-						}}
-					/>
-				)}
 
 			{activeDataset?.type === "lifeExpectancy" && (
 				<LifeExpectancyMeasurePanel

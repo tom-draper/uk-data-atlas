@@ -22,14 +22,13 @@ import Chart16 from "@/components/education/SchoolPerformanceChart";
 import Chart17 from "@/components/deprivation/simd/SIMDChart";
 import Chart18 from "@/components/transport/travel-to-work/TravelToWorkChart";
 import Chart19 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart20 from "@/components/environment/waste/WasteChart";
-import Chart21 from "@/components/deprivation/wimd/WIMDChart";
-import Chart22 from "@/components/ValueCard";
-import Chart23 from "@/components/environment/air-quality/AirQualityChart";
-import Chart24 from "@/components/telecoms/broadband/BroadbandChart";
-import Chart25 from "@/components/environment/ghg-emissions/GHGEmissionsChart";
-import Chart26 from "@/components/economics/homelessness/HomelessnessChart";
-import Chart27 from "@/components/telecoms/mobile/MobileCoverageChart";
+import Chart20 from "@/components/deprivation/wimd/WIMDChart";
+import Chart21 from "@/components/ValueCard";
+import Chart22 from "@/components/environment/air-quality/AirQualityChart";
+import Chart23 from "@/components/telecoms/broadband/BroadbandChart";
+import Chart24 from "@/components/environment/ghg-emissions/GHGEmissionsChart";
+import Chart25 from "@/components/economics/homelessness/HomelessnessChart";
+import Chart26 from "@/components/telecoms/mobile/MobileCoverageChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -193,12 +192,6 @@ const Chart26Presentation = {
 	),
 } satisfies ChartPresentation;
 
-const Chart27Presentation = {
-	component: (props) => (
-		<Chart27 {...(props as ComponentProps<typeof Chart27>)} />
-	),
-} satisfies ChartPresentation;
-
 export const CHART_PRESENTATIONS = {
 	"brexit-electoral": Chart0Presentation,
 	"brexit-hanretty": Chart1Presentation,
@@ -232,36 +225,36 @@ export const CHART_PRESENTATIONS = {
 	"deprivation-simd": Chart17Presentation,
 	"transport-travelToWork": Chart18Presentation,
 	"economics-unemployment": Chart19Presentation,
-	"environment-waste": Chart20Presentation,
-	"deprivation-wimd": Chart21Presentation,
-	"health-adult-social-care-activity": Chart22Presentation,
-	"health-adult-social-care-outcomes": Chart22Presentation,
-	"environment-air-quality": Chart23Presentation,
-	"telecoms-broadband": Chart24Presentation,
-	"economics-business-activity": Chart22Presentation,
-	"economics-child-poverty": Chart22Presentation,
-	"economics-claimant-count": Chart22Presentation,
-	"economics-council-tax": Chart22Presentation,
-	"economics-crime": Chart22Presentation,
-	"transport-electric-vehicle-chargers": Chart22Presentation,
-	"environment-electricity-consumption": Chart22Presentation,
-	"environment-gas-consumption": Chart22Presentation,
-	"health-general-health": Chart22Presentation,
-	"environment-ghg-emissions": Chart25Presentation,
-	"economics-homelessness": Chart26Presentation,
-	"economics-housing-affordability": Chart22Presentation,
-	"economics-housing-tenure": Chart22Presentation,
-	"economics-jobs": Chart22Presentation,
-	"economics-local-government-finance": Chart22Presentation,
-	"telecoms-mobile-coverage": Chart27Presentation,
-	"economics-net-additional-dwellings": Chart22Presentation,
-	"health-nhs-waiting": Chart22Presentation,
-	"economics-planning-applications": Chart22Presentation,
-	"health-public-health": Chart22Presentation,
-	"education-pupil-absence": Chart22Presentation,
-	"economics-regional-gdp-itl3": Chart22Presentation,
-	"education-school-performance-disadvantage": Chart22Presentation,
-	"economics-workplace-income": Chart22Presentation,
+	"deprivation-wimd": Chart20Presentation,
+	"health-adult-social-care-activity": Chart21Presentation,
+	"health-adult-social-care-outcomes": Chart21Presentation,
+	"environment-air-quality": Chart22Presentation,
+	"telecoms-broadband": Chart23Presentation,
+	"economics-business-activity": Chart21Presentation,
+	"economics-child-poverty": Chart21Presentation,
+	"economics-claimant-count": Chart21Presentation,
+	"economics-council-tax": Chart21Presentation,
+	"economics-crime": Chart21Presentation,
+	"transport-electric-vehicle-chargers": Chart21Presentation,
+	"environment-electricity-consumption": Chart21Presentation,
+	"environment-gas-consumption": Chart21Presentation,
+	"health-general-health": Chart21Presentation,
+	"environment-ghg-emissions": Chart24Presentation,
+	"economics-homelessness": Chart25Presentation,
+	"economics-housing-affordability": Chart21Presentation,
+	"economics-housing-tenure": Chart21Presentation,
+	"economics-jobs": Chart21Presentation,
+	"economics-local-government-finance": Chart21Presentation,
+	"telecoms-mobile-coverage": Chart26Presentation,
+	"economics-net-additional-dwellings": Chart21Presentation,
+	"health-nhs-waiting": Chart21Presentation,
+	"economics-planning-applications": Chart21Presentation,
+	"health-public-health": Chart21Presentation,
+	"education-pupil-absence": Chart21Presentation,
+	"economics-regional-gdp-itl3": Chart21Presentation,
+	"education-school-performance-disadvantage": Chart21Presentation,
+	"environment-waste": Chart21Presentation,
+	"economics-workplace-income": Chart21Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;

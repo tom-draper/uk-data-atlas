@@ -19,14 +19,6 @@ export interface IncomeOptions extends ColorRangeOption {
 	measure: "median" | "mean";
 }
 
-export interface CountMetricOptions extends ColorRangeOption {
-	measure: "total" | "perPopulation";
-}
-
-export interface WasteOptions extends CountMetricOptions {
-	metric: "collected" | "recycled" | "recyclingShare";
-}
-
 export interface UnemploymentOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
@@ -88,7 +80,6 @@ export type ChartMapOptions = Omit<
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
-	| "waste"
 	| "unemployment"
 	| "schoolPerformance"
 > &
@@ -97,7 +88,6 @@ export type ChartMapOptions = Omit<
 		imd: ImdOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
-		waste: WasteOptions;
 		unemployment: UnemploymentOptions;
 		schoolPerformance: SchoolPerformanceOptions;
 		lifeExpectancy: LifeExpectancyOptions;
