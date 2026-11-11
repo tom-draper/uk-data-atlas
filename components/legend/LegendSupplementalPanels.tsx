@@ -5,7 +5,6 @@ import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
-import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
 
 export function PercentageRangePanel({
@@ -164,28 +163,6 @@ export function FuelPovertyMeasurePanel({
 		<GlassSegmentedMeasurePanel
 			measure={measure}
 			measures={FUEL_POVERTY_SEGMENTS}
-			onChange={onChange}
-		/>
-	);
-}
-
-const ENERGY_SECTOR_SEGMENTS = [
-	["allMetersGwh", "All"],
-	["domesticGwh", "Domestic"],
-	["nonDomesticGwh", "Non-domestic"],
-] as const;
-
-export function EnergySectorPanel({
-	sector,
-	onChange,
-}: {
-	sector: EnergySector;
-	onChange: (sector: EnergySector) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={sector}
-			measures={ENERGY_SECTOR_SEGMENTS}
 			onChange={onChange}
 		/>
 	);

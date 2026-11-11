@@ -34,7 +34,6 @@ import {
 	DeclaredMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
-	EnergySectorPanel,
 	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
@@ -205,24 +204,6 @@ export default function LegendPanel({
 									? { min: 5, max: 15 }
 									: { min: 0, max: 300 },
 						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "electricityConsumption" && (
-				<EnergySectorPanel
-					sector={
-						controls.displayOptions.electricityConsumption.sector
-					}
-					onChange={(sector) =>
-						onMapOptionsChange("electricityConsumption", { sector })
-					}
-				/>
-			)}
-			{activeDataset?.type === "gasConsumption" && (
-				<EnergySectorPanel
-					sector={controls.displayOptions.gasConsumption.sector}
-					onChange={(sector) =>
-						onMapOptionsChange("gasConsumption", { sector })
 					}
 				/>
 			)}

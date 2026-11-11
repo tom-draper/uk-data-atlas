@@ -1,6 +1,5 @@
 import type { BoundaryAggregationSpec } from "./ports";
 import {
-	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateSchoolPerformance,
 	collectBoundaryRecords,
@@ -136,16 +135,6 @@ export const travelToWorkAggregation = boundaryAggregation(
 	"travelToWork",
 	"localAuthority",
 	aggregateTravelToWork,
-);
-export const electricityConsumptionAggregation = numericAggregation(
-	"electricity-consumption",
-	"localAuthority",
-	aggregateEnergyConsumption,
-);
-export const gasConsumptionAggregation = numericAggregation(
-	"gas-consumption",
-	"localAuthority",
-	aggregateEnergyConsumption,
 );
 export const fuelPovertyAggregation = numericAggregation(
 	"fuelPoverty",

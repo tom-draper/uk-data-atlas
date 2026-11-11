@@ -45,5 +45,5 @@ interface EnergyConsumptionDataset<Type extends string> {
 }
 
 export type ElectricityConsumptionDataset =
-	EnergyConsumptionDataset<"electricityConsumption">;
-export type GasConsumptionDataset = EnergyConsumptionDataset<"gasConsumption">;
+	EnergyConsumptionDataset<"electricity-consumption">;
+export type GasConsumptionDataset = EnergyConsumptionDataset<"gas-consumption">;

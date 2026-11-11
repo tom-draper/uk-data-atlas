@@ -2,10 +2,8 @@
 export { brexitDatasetDefinition } from "./brexit.ts";
 export { brexitConstituencyDatasetDefinition } from "./brexitConstituency.ts";
 export { carAvailabilityDatasetDefinition } from "./carAvailability.ts";
-export { electricityConsumptionDatasetDefinition } from "./electricityConsumption.ts";
 export { ethnicityDatasetDefinition } from "./ethnicity.ts";
 export { fuelPovertyDatasetDefinition } from "./fuelPoverty.ts";
-export { gasConsumptionDatasetDefinition } from "./gasConsumption.ts";
 export { generalElectionDatasetDefinition } from "./generalElection.ts";
 export { housePriceDatasetDefinition } from "./housePrice.ts";
 export { imdDatasetDefinition } from "./imd.ts";

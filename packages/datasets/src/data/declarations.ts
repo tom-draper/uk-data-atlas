@@ -13,6 +13,8 @@ import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
 import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
+import { electricityConsumption } from "./electricity-consumption/dataset.ts";
+import { gasConsumption } from "./gas-consumption/dataset.ts";
 import { generalHealth } from "./general-health/dataset.ts";
 import { ghgEmissions } from "./ghg-emissions/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
@@ -51,6 +53,8 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	councilTax,
 	crime,
 	electricVehicleChargers,
+	electricityConsumption,
+	gasConsumption,
 	generalHealth,
 	ghgEmissions,
 	historicalGeneralElection,
@@ -94,6 +98,8 @@ export type DeclaredDatasetId =
 	| "council-tax"
 	| "crime"
 	| "electric-vehicle-chargers"
+	| "electricity-consumption"
+	| "gas-consumption"
 	| "general-health"
 	| "ghg-emissions"
 	| "historical-general-election"

@@ -9,10 +9,8 @@ import { DECLARED_CHART_DEFINITIONS } from "./declared";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { carAvailabilityDefinition } from "./carAvailability";
-import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
-import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
 import { housePriceDefinition } from "./housePrice";
 import { imdDefinition } from "./imd";
@@ -38,10 +36,8 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		brexitDefinition,
 		brexitConstituencyDefinition,
 		carAvailabilityDefinition,
-		electricityConsumptionDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
-		gasConsumptionDefinition,
 		generalElectionDefinition,
 		housePriceDefinition,
 		imdDefinition,
