@@ -426,6 +426,14 @@ export function statisticsTables(
 				"child_version_id",
 				"parent_version_id",
 			],
+			// What contains an area, across datasets: the key leads with the
+			// dataset.
+			indexes: [
+				{
+					name: "area_relationship_parent",
+					columns: ["parent_version_id"],
+				},
+			],
 			rows: rows(function* ({ datasets, datasetIds }, database) {
 				for (const [index, dataset] of datasets.entries())
 					for (const {

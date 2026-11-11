@@ -459,6 +459,9 @@ export const crosswalkTables = (
 					name: "crosswalk_edge_to",
 					columns: ["crosswalk_id", "to_version_id"],
 				},
+				// An area's edges across every crosswalk: the key leads with the
+				// crosswalk.
+				{ name: "crosswalk_edge_from", columns: ["from_version_id"] },
 			],
 		},
 		crosswalk_weight: {
