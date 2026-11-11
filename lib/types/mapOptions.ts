@@ -19,10 +19,6 @@ export interface IncomeOptions extends ColorRangeOption {
 	measure: "median" | "mean";
 }
 
-export interface UnemploymentOptions extends ColorRangeOption {
-	measure: "rate" | "count";
-}
-
 export interface SchoolPerformanceOptions extends ColorRangeOption {
 	measure: "grade4" | "grade5" | "attainment8" | "progress8";
 }
@@ -80,7 +76,6 @@ export type ChartMapOptions = Omit<
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
-	| "unemployment"
 	| "schoolPerformance"
 > &
 	Record<DeclaredDatasetId, DeclaredMapOptions> & {
@@ -88,7 +83,6 @@ export type ChartMapOptions = Omit<
 		imd: ImdOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
-		unemployment: UnemploymentOptions;
 		schoolPerformance: SchoolPerformanceOptions;
 		lifeExpectancy: LifeExpectancyOptions;
 	};

@@ -16,7 +16,6 @@ import type { qualificationDatasetDefinition } from "./definitions/qualification
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
 import type { simdDatasetDefinition } from "./definitions/simd.ts";
 import type { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
-import type { unemploymentDatasetDefinition } from "./definitions/unemployment.ts";
 import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { adultSocialCareActivity } from "../adult-social-care-activity/dataset.ts";
 import type { adultSocialCareOutcomes } from "../adult-social-care-outcomes/dataset.ts";
@@ -54,6 +53,7 @@ import type { regionalGdpItl3 } from "../regional-gdp-itl3/dataset.ts";
 import type { roadCollisions } from "../road-collisions/dataset.ts";
 import type { schoolPerformanceConstituency } from "../school-performance-constituency/dataset.ts";
 import type { schoolPerformanceDisadvantage } from "../school-performance-disadvantage/dataset.ts";
+import type { unemployment } from "../unemployment/dataset.ts";
 import type { waste } from "../waste/dataset.ts";
 import type { workplaceIncome } from "../workplace-income/dataset.ts";
 
@@ -93,9 +93,6 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof travelToWorkDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<
-			ReturnType<typeof unemploymentDatasetDefinition.precompile>
-	  >[string]
 	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareActivity.load>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareOutcomes.load>>[string]
@@ -133,6 +130,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof roadCollisions.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceConstituency.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceDisadvantage.load>>[string]
+	| Awaited<ReturnType<typeof unemployment.load>>[string]
 	| Awaited<ReturnType<typeof waste.load>>[string]
 	| Awaited<ReturnType<typeof workplaceIncome.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
@@ -200,6 +198,7 @@ export type DeclaredDatasetRecords = {
 	"school-performance-disadvantage": Awaited<
 		ReturnType<typeof schoolPerformanceDisadvantage.load>
 	>;
+	unemployment: Awaited<ReturnType<typeof unemployment.load>>;
 	waste: Awaited<ReturnType<typeof waste.load>>;
 	"workplace-income": Awaited<ReturnType<typeof workplaceIncome.load>>;
 };
@@ -244,9 +243,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	simd: Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
 	travelToWork: Awaited<
 		ReturnType<typeof travelToWorkDatasetDefinition.precompile>
-	>;
-	unemployment: Awaited<
-		ReturnType<typeof unemploymentDatasetDefinition.precompile>
 	>;
 	wimd: Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>;
 };

@@ -23,7 +23,6 @@ import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
 import { simdDefinition } from "./simd";
 import { travelToWorkDefinition } from "./travelToWork";
-import { unemploymentDefinition } from "./unemployment";
 import { wimdDefinition } from "./wimd";
 
 export type ChartDatasetType = CatalogueDatasetType;
@@ -49,7 +48,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		schoolPerformanceDefinition,
 		simdDefinition,
 		travelToWorkDefinition,
-		unemploymentDefinition,
 		wimdDefinition,
 		...DECLARED_CHART_DEFINITIONS,
 	].sort((left, right) => (left.type < right.type ? -1 : 1));

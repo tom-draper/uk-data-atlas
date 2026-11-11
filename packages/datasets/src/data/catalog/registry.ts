@@ -18,7 +18,6 @@ import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
 import { simdDatasetDefinition } from "./definitions/simd.ts";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
-import { unemploymentDatasetDefinition } from "./definitions/unemployment.ts";
 import { wimdDatasetDefinition } from "./definitions/wimd.ts";
 
 /**
@@ -44,7 +43,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	schoolPerformanceDatasetDefinition,
 	simdDatasetDefinition,
 	travelToWorkDatasetDefinition,
-	unemploymentDatasetDefinition,
 	wimdDatasetDefinition,
 ];
 

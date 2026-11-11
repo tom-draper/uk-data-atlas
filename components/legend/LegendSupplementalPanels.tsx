@@ -251,27 +251,6 @@ export function IncomePeriodPanel({
 	);
 }
 
-const UNEMPLOYMENT_MEASURES = [
-	["rate", "Rate"],
-	["count", "Count"],
-] as const;
-
-export function UnemploymentMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "rate" | "count";
-	onChange: (measure: "rate" | "count") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={UNEMPLOYMENT_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
 /** The choice of measure for a declared dataset, from its declared measures. */
 export function DeclaredMeasurePanel({
 	measure,

@@ -16,5 +16,4 @@ export { qualificationDatasetDefinition } from "./qualification.ts";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance.ts";
 export { simdDatasetDefinition } from "./simd.ts";
 export { travelToWorkDatasetDefinition } from "./travelToWork.ts";
-export { unemploymentDatasetDefinition } from "./unemployment.ts";
 export { wimdDatasetDefinition } from "./wimd.ts";
