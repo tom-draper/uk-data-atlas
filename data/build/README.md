@@ -673,7 +673,7 @@ or a weighted mean taken again from its converted values and the count the
 measure names as its weight.
 
 A query that reads `series` must name the method it wants.
-`pipeline/tests/seriesReadersNamePublished.test.ts` fails on one that does not.
+`pipeline/tests/storage/seriesReadersNamePublished.test.ts` fails on one that does not.
 
 ### Named locations
 
