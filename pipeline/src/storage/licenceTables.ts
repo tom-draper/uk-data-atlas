@@ -27,6 +27,24 @@ const LICENCES = [
 	],
 ] as const;
 
+/** Source terms in one row: licences listed, commercial use only if every licence allows it, ShareAlike if any requires it. */
+const SOURCE_TERMS_VIEW = `SELECT s.id AS source_id, s.publisher, s.url,
+  group_concat(l.id, ', ' ORDER BY l.id) AS licences,
+  min(l.commercial_use) AS commercial_use,
+  max(l.share_alike) AS share_alike
+FROM source s
+LEFT JOIN source_licence sl ON sl.source_id = s.id
+LEFT JOIN licence l ON l.id = sl.licence_id
+GROUP BY s.id`;
+
+/** The licence of each election, so ShareAlike elections can be filtered out or kept apart. */
+const ELECTION_TERMS_VIEW = `SELECT e.id AS election_id, d.slug AS dataset, e.label, e.date,
+  el.licence_id, l.commercial_use, l.share_alike
+FROM election e
+JOIN dataset d ON d.id = e.dataset_id
+JOIN election_licence el ON el.election_id = e.id
+JOIN licence l ON l.id = el.licence_id`;
+
 /** Add boundary sources and explicit licence associations after the statistics tables. */
 export function licenceTables(
 	registry: BoundaryRegistry,
@@ -87,6 +105,7 @@ export function licenceTables(
 				"licence_id TEXT NOT NULL REFERENCES licence(id)",
 			],
 			key: ["source_id", "licence_id"],
+			views: { v_source_terms: SOURCE_TERMS_VIEW },
 			rows: function* (database) {
 				for (const source of database
 					.prepare("SELECT id, licence FROM source")
@@ -109,6 +128,7 @@ export function licenceTables(
 				"licence_id TEXT NOT NULL REFERENCES licence(id)",
 			],
 			key: ["election_id", "licence_id"],
+			views: { v_election_terms: ELECTION_TERMS_VIEW },
 			rows: function* (database) {
 				for (const election of database
 					.prepare(

@@ -192,6 +192,9 @@ Top five: tasks 33, 41, 34, 36 with 37, and 45.
 
 ### Licence table coverage
 
+`v_source_terms` and `v_election_terms` give the licence flags per source and
+per election, which isolates the CC BY-SA 2016–2019 local elections.
+
 Source licence tables cover boundary releases and identify population and
 postcode atom inputs for crosswalks and added weight bases. A customer-specific
 copy can be created with `pnpm delivery:create`; its `delivery_licence` row

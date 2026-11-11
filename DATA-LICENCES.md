@@ -104,6 +104,11 @@ terms. `source_licence` associates each identified source with its licences.
 A source without an association has not been classified, rather than being
 unlicensed. The mixed local-election source has both licences: use
 `election_licence` for the licence applicable to an individual election.
+`v_source_terms` summarises each source's licences, with commercial use only
+where every licence allows it and ShareAlike where any requires it.
+`v_election_terms` lists each election with its licence and flags, so the
+CC BY-SA 2016–2019 local elections can be selected or excluded with
+`WHERE share_alike = 0`.
 
 `boundary_release_source` connects boundary releases to their source records.
 `crosswalk_provenance_source` connects crosswalks to boundary inputs.
