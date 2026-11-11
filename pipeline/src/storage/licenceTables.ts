@@ -29,12 +29,15 @@ const LICENCES = [
 
 /** Source terms in one row: licences listed, commercial use only if every licence allows it, ShareAlike if any requires it. */
 const SOURCE_TERMS_VIEW = `SELECT s.id AS source_id, s.publisher, s.url,
-  group_concat(l.id, ', ' ORDER BY l.id) AS licences,
-  min(l.commercial_use) AS commercial_use,
-  max(l.share_alike) AS share_alike
+  group_concat(t.licence_id, ', ') AS licences,
+  min(t.commercial_use) AS commercial_use,
+  max(t.share_alike) AS share_alike
 FROM source s
-LEFT JOIN source_licence sl ON sl.source_id = s.id
-LEFT JOIN licence l ON l.id = sl.licence_id
+LEFT JOIN (
+  SELECT sl.source_id, l.id AS licence_id, l.commercial_use, l.share_alike
+  FROM source_licence sl JOIN licence l ON l.id = sl.licence_id
+  ORDER BY sl.source_id, l.id
+) t ON t.source_id = s.id
 GROUP BY s.id`;
 
 /** The licence of each election, so ShareAlike elections can be filtered out or kept apart. */
