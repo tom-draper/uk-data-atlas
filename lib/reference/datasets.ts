@@ -105,7 +105,7 @@ export const DATASET_GUIDES: Record<string, DatasetGuide> = {
 		topic: "education",
 		about: "The same GCSE measures as the local authority figures, grouped instead by Westminster constituency, so results can be compared with each MP's area.",
 	},
-	"school-performance-gap": {
+	"school-performance-disadvantage": {
 		topic: "education",
 		about: "How far disadvantaged pupils in each English local authority trail their classmates at GCSE. Disadvantaged pupils are those eligible for free school meals in recent years or who have been in care.",
 	},

@@ -144,8 +144,8 @@ export async function loadSchoolPerformanceDisadvantage(
 
 	return {
 		[latest]: {
-			id: `schoolPerformanceGap${latest}`,
-			type: "schoolPerformanceGap",
+			id: `school-performance-disadvantage${latest}`,
+			type: "school-performance-disadvantage",
 			year: latest,
 			boundaryType: "localAuthority",
 			boundaryYear: 2024,

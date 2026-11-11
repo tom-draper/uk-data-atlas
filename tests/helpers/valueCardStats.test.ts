@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import { crimeDefinition } from "@/lib/datasets/crime";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
-import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
 import { regionalGdpItl3Definition } from "@/lib/datasets/regionalGdpItl3";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
@@ -14,6 +12,10 @@ const area = (
 	code: string,
 	data: unknown = null,
 ): SelectedArea => ({ type, code, name: code, data }) as SelectedArea;
+
+const cardOf = (type: string) =>
+	CHART_DATASET_DEFINITIONS.find((definition) => definition.type === type)!
+		.chart.card!;
 
 const claimantCard = CHART_DATASET_DEFINITIONS.find(
 	({ type }) => type === "claimant-count",
@@ -126,7 +128,7 @@ describe("resolveValueCardStats", () => {
 		};
 		expect(
 			resolveValueCardStats(
-				nhsWaitingDefinition.chart.card!,
+				cardOf("nhs-waiting"),
 				waiting,
 				null,
 				area("ward", "E05000001"),
@@ -145,7 +147,7 @@ describe("resolveValueCardStats", () => {
 			boundaryYear: 2023,
 			data: { E08000001: { totalRecordedCrime: 0 } },
 		};
-		const card = crimeDefinition.chart.card!;
+		const card = cardOf("crime");
 		expect(
 			resolveValueCardStats(
 				card,
@@ -160,7 +162,7 @@ describe("resolveValueCardStats", () => {
 			resolveValueCardStats(
 				card,
 				crime,
-				{ averageRecordedCrime: 12_345 },
+				{ totalRecordedCrime: 12_345 },
 				null,
 				undefined,
 				false,

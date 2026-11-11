@@ -8,7 +8,7 @@ export interface NHSWaitingICBData {
 
 export interface NHSWaitingDataset {
 	id: string;
-	type: "nhsWaiting";
+	type: "nhs-waiting";
 	year: number;
 	month: string;
 	boundaryType: "localAuthority";

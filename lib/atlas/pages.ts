@@ -82,7 +82,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	qualification: "Qualifications",
 	"regional-gdp-itl3": "Regional GDP",
 	"school-performance": "GCSE Results",
-	"school-performance-gap": "Disadvantaged Pupil Attainment Gap",
+	"school-performance-disadvantage": "Disadvantaged Pupil Attainment Gap",
 	simd: "Deprivation (SIMD)",
 	"travel-to-work": "Commuting",
 	unemployment: "Unemployment",

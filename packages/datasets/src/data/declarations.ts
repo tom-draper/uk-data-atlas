@@ -10,6 +10,7 @@ import { businessActivity } from "./business-activity/dataset.ts";
 import { childPoverty } from "./child-poverty/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
+import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
@@ -19,12 +20,14 @@ import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
+import { nhsWaiting } from "./nhs-waiting/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
+import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -35,6 +38,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	childPoverty,
 	claimantCount,
 	councilTax,
+	crime,
 	electricVehicleChargers,
 	historicalGeneralElection,
 	housingAffordability,
@@ -44,12 +48,14 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	localGovernmentFinance,
 	mobileCoverage,
 	netAdditionalDwellings,
+	nhsWaiting,
 	populationConstituency,
 	populationUk,
 	regionalGdpItl1,
 	regionalGdpItl2,
 	roadCollisions,
 	schoolPerformanceConstituency,
+	schoolPerformanceDisadvantage,
 ];
 
 /** The manifest definition of each declaration. */
@@ -65,6 +71,7 @@ export type DeclaredDatasetId =
 	| "child-poverty"
 	| "claimant-count"
 	| "council-tax"
+	| "crime"
 	| "electric-vehicle-chargers"
 	| "historical-general-election"
 	| "housing-affordability"
@@ -74,9 +81,11 @@ export type DeclaredDatasetId =
 	| "local-government-finance"
 	| "mobile-coverage"
 	| "net-additional-dwellings"
+	| "nhs-waiting"
 	| "population-constituency"
 	| "population-uk"
 	| "regional-gdp-itl1"
 	| "regional-gdp-itl2"
 	| "road-collisions"
-	| "school-performance-constituency";
+	| "school-performance-constituency"
+	| "school-performance-disadvantage";

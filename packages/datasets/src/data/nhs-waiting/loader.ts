@@ -63,8 +63,8 @@ export async function loadNHSWaiting(
 
 	return {
 		2026: {
-			id: "nhsWaiting2026",
-			type: "nhsWaiting",
+			id: "nhs-waiting2026",
+			type: "nhs-waiting",
 			year: 2026,
 			month: "March 2026",
 			boundaryType: "localAuthority",

@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
-	aggregateCrime,
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
 	aggregateUnemployment,
 } from "@/lib/helpers/datasetAggregation/economics";
-import { aggregateJobs } from "@uk-data-atlas/datasets";
+import {
+	aggregateCrime,
+	aggregateJobs,
+	aggregateNHSWaiting,
+} from "@uk-data-atlas/datasets";
 import { CODE_KEY, features } from "./fixtures";
 
 describe("aggregateUnemployment", () => {
@@ -113,25 +116,6 @@ describe("aggregateHousePrices", () => {
 	});
 });
 
-describe("aggregateCrime", () => {
-	const data = {
-		E1: { totalRecordedCrime: 100 },
-		E2: { totalRecordedCrime: 300 },
-	} as any;
-
-	it("averages recorded crime over the covered areas", () => {
-		expect(aggregateCrime(features(["E1", "E2"]), CODE_KEY, data)).toEqual({
-			averageRecordedCrime: 200,
-		});
-	});
-
-	it("reports zero when no covered area has a record", () => {
-		expect(aggregateCrime(features(["missing"]), CODE_KEY, data)).toEqual({
-			averageRecordedCrime: 0,
-		});
-	});
-});
-
 describe("aggregateIncome", () => {
 	const data = {
 		E1: {
@@ -204,5 +188,38 @@ describe("aggregateCustomDataset", () => {
 			count: 0,
 			average: 0,
 		});
+	});
+});
+
+describe("aggregateCrime", () => {
+	it("averages recorded crime over the covered areas", () => {
+		expect(
+			aggregateCrime([
+				{ totalRecordedCrime: 100 },
+				{ totalRecordedCrime: 300 },
+			] as any),
+		).toEqual({ totalRecordedCrime: 200 });
+	});
+
+	it("reports nothing when no covered area has a record", () => {
+		expect(aggregateCrime([])).toBeNull();
+	});
+});
+
+describe("aggregateNHSWaiting", () => {
+	it("sums the boards and recomputes the share from the totals", () => {
+		expect(
+			aggregateNHSWaiting([
+				{ total: 100, over18Weeks: 40 },
+				{ total: 300, over18Weeks: 60 },
+			] as any),
+		).toEqual({ total: 400, over18Weeks: 100, pctOver18Weeks: 25 });
+	});
+
+	it("reports nothing when there are no waiting pathways", () => {
+		expect(aggregateNHSWaiting([])).toBeNull();
+		expect(
+			aggregateNHSWaiting([{ total: 0, over18Weeks: 0 }] as any),
+		).toBeNull();
 	});
 });
