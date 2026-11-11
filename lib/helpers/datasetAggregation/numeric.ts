@@ -1,9 +1,6 @@
 import type { Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type {
-	AggregatedAirQualityData,
-	AirQualityDataset,
-} from "@uk-data-atlas/datasets";
+import type {} from "@uk-data-atlas/datasets";
 import { denominator, weightedMean } from "@uk-data-atlas/datasets";
 
 export { weightedMean };
@@ -12,10 +9,7 @@ import type {
 	AggregatedFuelPovertyData,
 	FuelPovertyDataset,
 } from "@uk-data-atlas/datasets";
-import type {
-	AggregatedGhgEmissionsData,
-	GhgEmissionsDataset,
-} from "@uk-data-atlas/datasets";
+import type {} from "@uk-data-atlas/datasets";
 import type {
 	AggregatedSchoolPerformanceData,
 	SchoolPerformanceGapMeasures,
@@ -43,33 +37,6 @@ export function collectBoundaryRecords<T>(
 		if (record) records.push(record);
 	}
 	return records;
-}
-
-/**
- * Each authority's concentration is a mean over its 1x1 km grid cells, so
- * weighting by cell count gives the mean over every cell in the combined area.
- */
-export function aggregateAirQuality(
-	records: AirQualityDataset["data"][string][],
-): AggregatedAirQualityData | null {
-	const cells = (record: AirQualityDataset["data"][string]) =>
-		record.gridCells;
-	const no2Mean = weightedMean(records, (record) => record.no2Mean, cells);
-	return no2Mean === null
-		? null
-		: {
-				no2Mean,
-				pm25Mean: weightedMean(
-					records,
-					(record) => record.pm25Mean,
-					cells,
-				),
-				pm10Mean: weightedMean(
-					records,
-					(record) => record.pm10Mean,
-					cells,
-				),
-			};
 }
 
 /** Metered energy use is a total, so every component adds across authorities. */
@@ -105,59 +72,6 @@ export function aggregateRegionalGdp(
 		}),
 		{ gvaMillionGbp: 0, gdpMillionGbp: 0 },
 	);
-}
-
-/**
- * Emissions are a count, so they add across authorities; the per-person figure
- * has to be recomputed from the summed population rather than averaged, or a
- * rural authority with few residents would weigh as heavily as a city.
- */
-export function aggregateGhgEmissions(
-	records: GhgEmissionsDataset["data"][string][],
-): AggregatedGhgEmissionsData | null {
-	const sectors = {
-		commercial: 0,
-		publicSector: 0,
-		agriculture: 0,
-		waste: 0,
-		landUse: 0,
-	};
-	let totalKtCO2e = 0,
-		excludingLandUseKtCO2e = 0,
-		populationThousands = 0,
-		transport = 0,
-		domestic = 0,
-		industry = 0,
-		count = 0;
-	for (const record of records) {
-		totalKtCO2e += record.totalKtCO2e;
-		sectors.commercial += record.commercial;
-		sectors.publicSector += record.publicSector;
-		sectors.agriculture += record.agriculture;
-		sectors.waste += record.waste;
-		sectors.landUse += record.landUse;
-
-		excludingLandUseKtCO2e += record.excludingLandUseKtCO2e;
-		populationThousands += record.populationThousands;
-		transport += record.transport;
-		domestic += record.domestic;
-		industry += record.industry;
-		count++;
-	}
-	return count === 0
-		? null
-		: {
-				totalKtCO2e,
-				excludingLandUseKtCO2e,
-				perPersonTCO2e:
-					populationThousands > 0
-						? totalKtCO2e / populationThousands
-						: 0,
-				transport,
-				domestic,
-				industry,
-				...sectors,
-			};
 }
 
 export function aggregateFuelPoverty(

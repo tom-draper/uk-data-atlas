@@ -85,9 +85,9 @@ export async function loadAirQuality(
 
 	return {
 		[YEAR]: {
-			id: `airQuality${YEAR}`,
+			id: `air-quality${YEAR}`,
 			year: YEAR,
-			type: "airQuality",
+			type: "air-quality",
 			boundaryType: "localAuthority",
 			boundaryYear: BOUNDARY_YEAR,
 			data: records,

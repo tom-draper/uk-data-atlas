@@ -1,8 +1,12 @@
 import { it, expect } from "vitest";
-import { ghgEmissionsDefinition } from "@/lib/datasets/ghgEmissions";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { aggregateGhgEmissions } from "@/lib/helpers/datasetAggregation/numeric";
+import { aggregateGhgEmissions } from "@uk-data-atlas/datasets";
 import type { GhgEmissionsDataset } from "@uk-data-atlas/datasets";
+const ghgEmissionsDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "ghg-emissions",
+)!;
+
 const record = {
 	ladCode: "E1",
 	ladName: "Area",
@@ -33,13 +37,24 @@ it("maps all sectors including negative land use and sums regional sectors", () 
 	] as const) {
 		const options = {
 			...DEFAULT_MAP_OPTIONS,
-			ghgEmissions: { ...DEFAULT_MAP_OPTIONS.ghgEmissions, measure },
+			"ghg-emissions": {
+				...DEFAULT_MAP_OPTIONS["ghg-emissions"],
+				measure,
+			},
 		};
 		expect(
-			ghgEmissionsDefinition.map?.valueFor?.(dataset, "E1", options),
+			ghgEmissionsDefinition.map?.valueFor?.(
+				dataset as never,
+				"E1",
+				options,
+			),
 		).toBe(record[measure]);
 		expect(
-			ghgEmissionsDefinition.map?.valueFor?.(dataset, "missing", options),
+			ghgEmissionsDefinition.map?.valueFor?.(
+				dataset as never,
+				"missing",
+				options,
+			),
 		).toBeNull();
 		expect(aggregateGhgEmissions([record, record])?.[measure]).toBe(
 			record[measure] * 2,

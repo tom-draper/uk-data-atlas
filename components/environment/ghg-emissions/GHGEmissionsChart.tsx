@@ -154,7 +154,8 @@ export default function GHGEmissionsChart({
 	setActiveViz,
 }: GHGEmissionsChartProps) {
 	const isDark = useIsDark();
-	const measure = useCurrentMapOptions().ghgEmissions.measure;
+	const measure = useCurrentMapOptions()["ghg-emissions"]
+		.measure as keyof typeof MEASURES;
 	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
@@ -181,7 +182,7 @@ export default function GHGEmissionsChart({
 		: null;
 
 	const isActive =
-		activeDataset?.type === "ghgEmissions" &&
+		activeDataset?.type === "ghg-emissions" &&
 		activeDataset.id === dataset?.id;
 
 	if (!dataset) return null;

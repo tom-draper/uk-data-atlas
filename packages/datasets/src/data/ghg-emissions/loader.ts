@@ -87,8 +87,8 @@ export async function loadGhgEmissions(
 			.map(([year, records]) => [
 				year,
 				{
-					id: `ghgEmissions${year}`,
-					type: "ghgEmissions" as const,
+					id: `ghg-emissions${year}`,
+					type: "ghg-emissions" as const,
 					year,
 					boundaryType: "localAuthority" as const,
 					boundaryYear: BOUNDARY_YEAR,

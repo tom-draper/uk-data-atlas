@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { ghgEmissionsDefinition } from "@/lib/datasets/ghgEmissions";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import type { GhgEmissionsDataset } from "@uk-data-atlas/datasets";
 
+const ghgEmissionsDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "ghg-emissions",
+)!;
+
 const dataset: GhgEmissionsDataset = {
-	id: "ghgEmissions2024",
-	type: "ghgEmissions",
+	id: "ghg-emissions2024",
+	type: "ghg-emissions",
 	year: 2024,
 	boundaryType: "localAuthority",
 	boundaryYear: 2025,
@@ -32,17 +36,17 @@ const dataset: GhgEmissionsDataset = {
 describe("GHG emissions map metric", () => {
 	it("uses the selected emissions measure", () => {
 		const valueFor = ghgEmissionsDefinition.map?.valueFor;
-		expect(valueFor?.(dataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(5);
+		expect(valueFor?.(dataset as never, "E1", DEFAULT_MAP_OPTIONS)).toBe(5);
 
 		for (const [measure, expected] of [
 			["total", 500],
 			["excludingLandUse", 550],
 		] as const) {
 			expect(
-				valueFor?.(dataset, "E1", {
+				valueFor?.(dataset as never, "E1", {
 					...DEFAULT_MAP_OPTIONS,
-					ghgEmissions: {
-						...DEFAULT_MAP_OPTIONS.ghgEmissions,
+					"ghg-emissions": {
+						...DEFAULT_MAP_OPTIONS["ghg-emissions"],
 						measure,
 					},
 				}),

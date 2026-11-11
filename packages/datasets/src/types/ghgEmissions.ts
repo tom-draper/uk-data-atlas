@@ -24,7 +24,7 @@ export interface GhgEmissionsLADData {
 
 export interface GhgEmissionsDataset {
 	id: string;
-	type: "ghgEmissions";
+	type: "ghg-emissions";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

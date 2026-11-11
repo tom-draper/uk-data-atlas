@@ -19,7 +19,7 @@ export interface AirQualityLADData {
 
 export interface AirQualityDataset {
 	id: string;
-	type: "airQuality";
+	type: "air-quality";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

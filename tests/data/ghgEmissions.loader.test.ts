@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { loadGhgEmissions } from "@uk-data-atlas/datasets";
-import { aggregateGhgEmissions } from "@/lib/helpers/datasetAggregation/numeric";
+import {
+	aggregateGhgEmissions,
+	loadGhgEmissions,
+} from "@uk-data-atlas/datasets";
 
 const csv = `ladCode,ladName,year,populationThousands,areaKm2,transport,domestic,industry,commercial,publicSector,agriculture,waste,lulucf
 E06000001,Hartlepool,2023,90.000,98.3466,200.000,100.000,50.000,25.000,10.000,5.000,10.000,-10.000
@@ -28,8 +30,8 @@ describe("loadGhgEmissions", () => {
 
 		expect(Object.keys(datasets)).toEqual(["2023", "2024"]);
 		expect(datasets[2024]).toMatchObject({
-			id: "ghgEmissions2024",
-			type: "ghgEmissions",
+			id: "ghg-emissions2024",
+			type: "ghg-emissions",
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
 		});

@@ -31,25 +31,6 @@ export interface EnergyConsumptionOptions extends CountMetricOptions {
 	sector: "allMetersGwh" | "domesticGwh" | "nonDomesticGwh";
 }
 
-export interface AirQualityOptions extends ColorRangeOption {
-	measure: "no2" | "pm25" | "pm10";
-}
-
-export interface GhgEmissionsOptions extends ColorRangeOption {
-	measure:
-		| "perPerson"
-		| "total"
-		| "excludingLandUse"
-		| "transport"
-		| "domestic"
-		| "industry"
-		| "commercial"
-		| "publicSector"
-		| "agriculture"
-		| "waste"
-		| "landUse";
-}
-
 export interface UnemploymentOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
@@ -163,8 +144,6 @@ export type ChartMapOptions = Omit<
 	| "electricityConsumption"
 	| "gasConsumption"
 	| "waste"
-	| "airQuality"
-	| "ghgEmissions"
 	| "unemployment"
 	| "schoolPerformance"
 > &
@@ -183,8 +162,6 @@ export type ChartMapOptions = Omit<
 		electricityConsumption: EnergyConsumptionOptions;
 		gasConsumption: EnergyConsumptionOptions;
 		waste: WasteOptions;
-		airQuality: AirQualityOptions;
-		ghgEmissions: GhgEmissionsOptions;
 		unemployment: UnemploymentOptions;
 		schoolPerformance: SchoolPerformanceOptions;
 		lifeExpectancy: LifeExpectancyOptions;

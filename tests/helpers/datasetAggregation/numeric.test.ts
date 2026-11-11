@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aggregateBroadband } from "@uk-data-atlas/datasets";
 import {
+	aggregateAirQuality,
 	aggregateChildPoverty,
 	aggregateHomelessness,
 	aggregateSchoolPerformanceGap,
@@ -8,7 +9,6 @@ import {
 import { aggregateMobileCoverage } from "@uk-data-atlas/datasets";
 import { aggregateClaimantCount } from "@uk-data-atlas/datasets";
 import {
-	aggregateAirQuality,
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateRegionalGdp,

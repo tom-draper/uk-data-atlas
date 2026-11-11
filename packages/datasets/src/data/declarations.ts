@@ -5,6 +5,7 @@ import {
 } from "../declaration/dataset.ts";
 import { adultSocialCareActivity } from "./adult-social-care-activity/dataset.ts";
 import { adultSocialCareOutcomes } from "./adult-social-care-outcomes/dataset.ts";
+import { airQuality } from "./air-quality/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { businessActivity } from "./business-activity/dataset.ts";
 import { childPoverty } from "./child-poverty/dataset.ts";
@@ -12,6 +13,7 @@ import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
 import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
+import { ghgEmissions } from "./ghg-emissions/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { homelessness } from "./homelessness/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
@@ -34,6 +36,7 @@ import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	adultSocialCareActivity,
 	adultSocialCareOutcomes,
+	airQuality,
 	broadband,
 	businessActivity,
 	childPoverty,
@@ -41,6 +44,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	councilTax,
 	crime,
 	electricVehicleChargers,
+	ghgEmissions,
 	historicalGeneralElection,
 	homelessness,
 	housingAffordability,
@@ -68,6 +72,7 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 export type DeclaredDatasetId =
 	| "adult-social-care-activity"
 	| "adult-social-care-outcomes"
+	| "air-quality"
 	| "broadband"
 	| "business-activity"
 	| "child-poverty"
@@ -75,6 +80,7 @@ export type DeclaredDatasetId =
 	| "council-tax"
 	| "crime"
 	| "electric-vehicle-chargers"
+	| "ghg-emissions"
 	| "historical-general-election"
 	| "homelessness"
 	| "housing-affordability"
