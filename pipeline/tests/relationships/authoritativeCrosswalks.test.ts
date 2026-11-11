@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { readCrosswalkAdapters } from "@uk-data-atlas/relationships";
-import { compileCrosswalks } from "./helpers/compileCrosswalks";
+import { compileCrosswalks } from "../helpers/compileCrosswalks";
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 
 const adapters = readCrosswalkAdapters(
 	new URL(
-		"../../services/api/config/crosswalk-adapters.json",
+		"../../../services/api/config/crosswalk-adapters.json",
 		import.meta.url,
 	).pathname,
 );

@@ -11,8 +11,8 @@ import type {
 	BestFitCrosswalkAdapter,
 	GeometricContainmentCrosswalkAdapter,
 } from "@uk-data-atlas/relationships";
-import { compileCrosswalks } from "./helpers/compileCrosswalks";
-import { measureContainment } from "../src/relationships/geometricContainment";
+import { compileCrosswalks } from "../helpers/compileCrosswalks";
+import { measureContainment } from "../../src/relationships/geometricContainment";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;
