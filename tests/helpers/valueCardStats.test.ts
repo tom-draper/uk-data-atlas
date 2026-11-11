@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
@@ -329,6 +328,14 @@ describe("resolveValueCardStats", () => {
 		});
 	});
 
+	it("formats declared council tax values as pounds", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "council-tax",
+		)!;
+		expect(chart.chart.card?.prefix).toBe("£");
+		expect(chart.map?.legend?.format?.(2208, {} as never)).toBe("£2208");
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("falls back to the map's hover record only for the active indicator", () => {
 		const councilTax = {
 			boundaryType: "localAuthority",
@@ -336,7 +343,9 @@ describe("resolveValueCardStats", () => {
 			data: {},
 		};
 		const hovered = area("ward", "E05000001", { value: 2_100 });
-		const card = councilTaxDefinition.chart.card!;
+		const card = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "council-tax",
+		)!.chart.card!;
 		expect(
 			resolveValueCardStats(
 				card,

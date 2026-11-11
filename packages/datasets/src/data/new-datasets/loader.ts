@@ -12,7 +12,7 @@ type IndicatorType =
 	| "businessActivity"
 	| "netAdditionalDwellings"
 	| "localGovernmentFinance"
-	| "councilTax"
+	| "council-tax"
 	| "waste"
 	| "adultSocialCareActivity"
 	| "adultSocialCareOutcomes"
@@ -186,7 +186,7 @@ export async function loadCouncilTax(read: (path: string) => Promise<string>) {
 		if (!mapAuthorityCode(code) || value === null) continue;
 		records[code] = { code, name: row[2]?.trim() || code, value };
 	}
-	return dataset("councilTax", 2026, "localAuthority", 2026, records);
+	return dataset("council-tax", 2026, "localAuthority", 2026, records);
 }
 
 export async function loadWaste(

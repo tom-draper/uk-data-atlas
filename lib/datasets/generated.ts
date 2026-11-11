@@ -14,7 +14,6 @@ import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { businessActivityDefinition } from "./businessActivity";
 import { carAvailabilityDefinition } from "./carAvailability";
 import { childPovertyDefinition } from "./childPoverty";
-import { councilTaxDefinition } from "./councilTax";
 import { crimeDefinition } from "./crime";
 import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
 import { electricityConsumptionDefinition } from "./electricityConsumption";
@@ -66,7 +65,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		businessActivityDefinition,
 		carAvailabilityDefinition,
 		childPovertyDefinition,
-		councilTaxDefinition,
 		crimeDefinition,
 		electricVehicleChargersDefinition,
 		electricityConsumptionDefinition,

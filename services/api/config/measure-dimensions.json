@@ -181,9 +181,6 @@
 				"cars-or-vans": "two"
 			}
 		},
-		"council-tax": {
-			"measure": "band-d-council-tax"
-		},
 		"crime-bicycle-theft": {
 			"measure": "recorded-crimes",
 			"dimensions": {

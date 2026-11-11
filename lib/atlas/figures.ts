@@ -58,7 +58,7 @@ export type FigureInputs = {
 	}>;
 	businessActivity: Editions<{ value: number }>;
 	electricVehicleChargers: Editions<{ value: number }>;
-	councilTax: Editions<{ name: string; value: number }>;
+	"council-tax": Editions<{ name: string; value: number }>;
 	"claimant-count": Editions<
 		{ totalCount: number; totalRate: number },
 		{ month: string }
@@ -406,7 +406,7 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"council-tax": {
-		compute({ councilTax }, location, period) {
+		compute({ "council-tax": councilTax }, location, period) {
 			const { data } = councilTax[String(period)];
 			const rows = everyValue(
 				districtsOf(location, Object.keys(data)),

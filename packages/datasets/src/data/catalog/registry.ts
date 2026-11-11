@@ -9,7 +9,6 @@ import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstit
 import { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
-import { councilTaxDatasetDefinition } from "./definitions/councilTax.ts";
 import { crimeDatasetDefinition } from "./definitions/crime.ts";
 import { electricVehicleChargersDatasetDefinition } from "./definitions/electricVehicleChargers.ts";
 import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
@@ -61,7 +60,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	businessActivityDatasetDefinition,
 	carAvailabilityDatasetDefinition,
 	childPovertyDatasetDefinition,
-	councilTaxDatasetDefinition,
 	crimeDatasetDefinition,
 	electricVehicleChargersDatasetDefinition,
 	electricityConsumptionDatasetDefinition,

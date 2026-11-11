@@ -11,6 +11,7 @@ export type DisplayFormat =
 	| {
 			kind: "decimal";
 			digits: number;
+			prefix?: string;
 			/** Text after the number, such as `%`. */
 			suffix?: string;
 	  }
@@ -24,7 +25,8 @@ export type DisplayFormat =
 /** How a measure's headline value is drawn on the shared chart card. */
 export type DisplayMeasureCard = {
 	/** The unit shown under the headline value. */
-	unit: string;
+	unit?: string;
+	prefix?: string;
 	/** Decimal places of the headline value. */
 	digits?: number;
 	/** The value that fills the card's bar. */
@@ -55,6 +57,10 @@ export type DisplayCard = {
 	coverage?: string;
 	/** A note under the headline, from another field of the record. */
 	secondary?: { field: string; format: DisplayFormat };
+	/** A fixed note beside the value. */
+	secondaryText?: string;
+	/** Use a hovered map record when no matching area record is available. */
+	hoverRecord?: boolean;
 };
 
 /** Combining records over the areas a place is made of. */
