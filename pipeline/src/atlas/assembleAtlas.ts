@@ -200,6 +200,9 @@ export function assembleAtlas(
 		// The build's one vacuum of atlas.sqlite: written once beside the
 		// release, then renamed over it.
 		publishVacuumed(temporary, path, {
+			// Planner statistics ship with the file, so ad-hoc queries choose
+			// indexes without the reader running ANALYZE.
+			finish: (database) => database.exec("ANALYZE; PRAGMA optimize"),
 			// Readers in this process must not keep the file about to be replaced.
 			beforeReplace: () => closeReadOnlyDatabase(path),
 		});
