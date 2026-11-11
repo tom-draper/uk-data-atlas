@@ -3027,7 +3027,7 @@ paths:
                       - 2023
                   compiled:
                     bytes: 13350128
-                    sha256: 32adfba936cd8746fac5ccceb71299b9822e0d3c04540420106e10b5272caf10
+                    sha256: c01b95f61b4e856e48331a42ed63283b961a0ff7eec2634d2769568b54f9e7d6
                 meta:
                   nextCursor: null
               schema:
@@ -8643,11 +8643,7 @@ paths:
                       "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
                       c8d0912"
                     data:
-                      - source:
-                          {
-                            code: N06000004,
-                            labels: [Belfast North, Belfast West],
-                          }
+                      - source: { code: N06000004, labels: [Belfast West] }
                         targets:
                           - { code: N05000002, labels: [Belfast North] }
                           - {
