@@ -1,6 +1,8 @@
 import { it, expect } from "vitest";
-import { loadHousingTenure } from "@uk-data-atlas/datasets";
-import { sumHousingTenure } from "@/lib/datasets/housingTenure";
+import { loadHousingTenure, sumMetrics } from "@uk-data-atlas/datasets";
+
+const sumHousingTenure = (records: Parameters<typeof sumMetrics>[0]) =>
+	sumMetrics(records, "owned", "total");
 it("loads census counts and recomputes regional percentages", async () => {
 	const values = {
 		"Tenure of household: Owned": "1",
@@ -31,7 +33,7 @@ it("loads census counts and recomputes regional percentages", async () => {
 		records[0],
 		{ ...records[0], metrics: { ...records[0].metrics, total: 300 } },
 	]);
-	expect(sum?.metrics.total).toBe(400);
+	expect(sum?.metrics?.total).toBe(400);
 	expect(sum?.value).toBeCloseTo(records[0].value / 2);
 	expect(sumHousingTenure([])).toBeNull();
 });

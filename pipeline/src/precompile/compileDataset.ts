@@ -119,12 +119,12 @@ export async function compileStaleDataset(
 	let preserved: ExistingManifestDataset | undefined;
 	try {
 		compiled =
-			definition.type === "publicHealth"
+			definition.type === "public-health"
 				? await withDuckdbPublicHealth(reader, artifacts, (input) =>
 						compileDatasetContents(definition, input),
 					)
-				: definition.type === "generalHealth" ||
-					  definition.type === "housingTenure"
+				: definition.type === "general-health" ||
+					  definition.type === "housing-tenure"
 					? await withDuckdbCensusLsoa(reader, artifacts, (input) =>
 							compileDatasetContents(definition, input),
 						)

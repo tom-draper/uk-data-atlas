@@ -71,36 +71,6 @@ export interface WorkplaceIncomeOptions extends ColorRangeOption {
 	measure: "annualMedian" | "annualMean" | "hourlyMedian" | "hourlyMean";
 }
 
-export interface HousingTenureOptions extends ColorRangeOption {
-	measure:
-		| "owned"
-		| "outright"
-		| "mortgage"
-		| "shared"
-		| "social"
-		| "private"
-		| "rentFree";
-}
-
-export interface GeneralHealthOptions extends ColorRangeOption {
-	measure: "goodHealth" | "veryGood" | "good" | "fair" | "bad" | "veryBad";
-}
-
-export interface PupilAbsenceOptions extends ColorRangeOption {
-	measure:
-		"overall" | "authorised" | "unauthorised" | "persistent" | "severe";
-}
-
-export interface PublicHealthOptions extends ColorRangeOption {
-	measure:
-		| "smoking"
-		| "adultExcessWeight"
-		| "activity"
-		| "receptionExcessWeight"
-		| "year6ExcessWeight"
-		| "preventableMortality";
-}
-
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -134,10 +104,6 @@ export type ChartMapOptions = Omit<
 	| "imd"
 	| "planningApplications"
 	| "workplaceIncome"
-	| "housingTenure"
-	| "generalHealth"
-	| "pupilAbsence"
-	| "publicHealth"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -153,10 +119,6 @@ export type ChartMapOptions = Omit<
 		imd: ImdOptions;
 		planningApplications: PlanningApplicationsOptions;
 		workplaceIncome: WorkplaceIncomeOptions;
-		housingTenure: HousingTenureOptions;
-		generalHealth: GeneralHealthOptions;
-		pupilAbsence: PupilAbsenceOptions;
-		publicHealth: PublicHealthOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
 		electricityConsumption: EnergyConsumptionOptions;

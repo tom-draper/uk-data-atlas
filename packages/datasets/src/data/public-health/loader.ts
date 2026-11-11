@@ -60,7 +60,7 @@ export interface PublicHealthRecord {
 }
 export interface PublicHealthDataset {
 	id: string;
-	type: "publicHealth";
+	type: "public-health";
 	year: number;
 	boundaryType: "countyAndUnitaryAuthority";
 	boundaryYear: number;
@@ -121,8 +121,8 @@ export async function loadPublicHealth(
 	}
 	return {
 		2025: {
-			id: "publicHealth2025",
-			type: "publicHealth",
+			id: "public-health2025",
+			type: "public-health",
 			year: 2025,
 			boundaryType: "countyAndUnitaryAuthority",
 			boundaryYear: 2025,

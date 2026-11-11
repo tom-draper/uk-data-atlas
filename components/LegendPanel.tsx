@@ -37,14 +37,10 @@ import {
 	EnergySectorPanel,
 	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
-	HousingTenureMeasurePanel,
-	GeneralHealthMeasurePanel,
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
 	ImdMeasurePanel,
 	PlanningMeasurePanel,
-	PupilAbsenceMeasurePanel,
-	PublicHealthMeasurePanel,
 	WorkplacePayMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
@@ -176,31 +172,6 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "publicHealth" && (
-				<PublicHealthMeasurePanel
-					measure={controls.displayOptions.publicHealth.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("publicHealth", {
-							measure,
-							colorRange:
-								measure === "preventableMortality"
-									? { min: 0, max: 400 }
-									: { min: 0, max: 100 },
-						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "pupilAbsence" && (
-				<PupilAbsenceMeasurePanel
-					measure={controls.displayOptions.pupilAbsence.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("pupilAbsence", {
-							measure,
-							colorRange: { min: 0, max: 30 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "regionalGdpItl3" && (
 				<RegionalOutputMeasurePanel
 					measure={controls.displayOptions.regionalGdpItl3.measure}
@@ -273,28 +244,6 @@ export default function LegendPanel({
 								measure === "rate"
 									? { min: 5, max: 15 }
 									: { min: 0, max: 300 },
-						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "generalHealth" && (
-				<GeneralHealthMeasurePanel
-					measure={controls.displayOptions.generalHealth.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("generalHealth", {
-							measure,
-							colorRange: { min: 0, max: 100 },
-						})
-					}
-				/>
-			)}
-			{activeDataset?.type === "housingTenure" && (
-				<HousingTenureMeasurePanel
-					measure={controls.displayOptions.housingTenure.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("housingTenure", {
-							measure,
-							colorRange: { min: 0, max: 100 },
 						})
 					}
 				/>

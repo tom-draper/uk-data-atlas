@@ -6,7 +6,7 @@ import type {
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
 export async function loadPupilAbsence(
 	read: DatasetReader["zipCsvRows"],
-): Promise<Record<string, IndicatorDataset<"pupilAbsence">>> {
+): Promise<Record<string, IndicatorDataset<"pupil-absence">>> {
 	const data: Record<string, IndicatorRecord> = {};
 	await read(
 		"education/pupil-attendance/2024-25-full-year-absence-data.zip",
@@ -47,8 +47,8 @@ export async function loadPupilAbsence(
 	);
 	return {
 		2025: {
-			id: "pupilAbsence2025",
-			type: "pupilAbsence",
+			id: "pupil-absence2025",
+			type: "pupil-absence",
 			year: 2025,
 			boundaryType: "countyAndUnitaryAuthority",
 			boundaryYear: 2025,

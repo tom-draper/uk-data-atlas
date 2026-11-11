@@ -14,9 +14,7 @@ import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
-import { generalHealthDefinition } from "./generalHealth";
 import { housePriceDefinition } from "./housePrice";
-import { housingTenureDefinition } from "./housingTenure";
 import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
@@ -24,8 +22,6 @@ import { localElectionDefinition } from "./localElection";
 import { nimdmDefinition } from "./nimdm";
 import { planningApplicationsDefinition } from "./planningApplications";
 import { populationDefinition } from "./population";
-import { publicHealthDefinition } from "./publicHealth";
-import { pupilAbsenceDefinition } from "./pupilAbsence";
 import { qualificationDefinition } from "./qualification";
 import { regionalGdpItl3Definition } from "./regionalGdpItl3";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
@@ -50,9 +46,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		fuelPovertyDefinition,
 		gasConsumptionDefinition,
 		generalElectionDefinition,
-		generalHealthDefinition,
 		housePriceDefinition,
-		housingTenureDefinition,
 		imdDefinition,
 		incomeDefinition,
 		lifeExpectancyDefinition,
@@ -60,8 +54,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		nimdmDefinition,
 		planningApplicationsDefinition,
 		populationDefinition,
-		publicHealthDefinition,
-		pupilAbsenceDefinition,
 		qualificationDefinition,
 		regionalGdpItl3Definition,
 		schoolPerformanceDefinition,

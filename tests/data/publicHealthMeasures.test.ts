@@ -1,6 +1,5 @@
 import { it, expect } from "vitest";
-import { loadPublicHealth } from "@uk-data-atlas/datasets";
-import { averagePublicHealth } from "@/lib/datasets/publicHealth";
+import { averagePublicHealth, loadPublicHealth } from "@uk-data-atlas/datasets";
 it("uses the latest common indicator period without falling back past suppression", async () => {
 	const row = {
 		"Indicator ID": "92443",

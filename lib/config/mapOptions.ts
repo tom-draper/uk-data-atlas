@@ -40,18 +40,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "workplaceIncome"
 				? { measure: "annualMedian" }
 				: {}),
-			...(definition.type === "housingTenure"
-				? { measure: "owned" }
-				: {}),
-			...(definition.type === "generalHealth"
-				? { measure: "goodHealth" }
-				: {}),
-			...(definition.type === "pupilAbsence"
-				? { measure: "overall" }
-				: {}),
-			...(definition.type === "publicHealth"
-				? { measure: "smoking" }
-				: {}),
 			...(definition.type === "schoolPerformance"
 				? { measure: "grade4" }
 				: {}),
