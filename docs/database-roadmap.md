@@ -35,6 +35,24 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   the registries against the base branch. Left: confirm the seed against the
   deployed file (`pnpm ids verify`), and the postcode lookup's own numbering,
   which is internal. See `docs/stable-ids.md`.
+- Task 14 progress (2026-11-11): the atlas build runs `ANALYZE` and
+  `PRAGMA optimize` on the vacuumed copy before it is renamed into place, so
+  `atlas.sqlite` ships `sqlite_stat1`. Added `area_version_area (area_id)`,
+  `crosswalk_edge_from (from_version_id)` and `area_relationship_parent
+(parent_version_id)`. Measured on a copy of the 2026-11-11 build (665.6 MB):
+  the three indexes and statistics add 46 MB (711.9 MB). A lookup by code
+  falls from 19.0 to 0.013 ms, versions by `area_id` from 15.8 to 0.008 ms,
+  edges by `from_version_id` from 35.6 to 0.008 ms, and relationships by
+  parent from 1.06 to 0.012 ms (warm cache).
+- Task 15 progress (2026-11-11): `observation_area` is gone from the writer and
+  the built file (done earlier, with the tests asserting no secondary index on
+  `observation`). Every reader filters on the primary key
+  `(series_id, area_version_id, period_id)`: place reads pass the series of the
+  area's release, release reads filter on one series. Measured on copies of the
+  build: restoring the index costs 122.8 MB (788.3 vs 665.6 MB) and does not
+  help a place read: 0.13 ms per area through the primary key against 0.14 ms
+  with the index (30 areas, 2,420 rows, warm cache, four runs each). Not
+  measured with a cold page cache.
 - Task 8 progress: the `areas` and `datasets` compatibility views have been removed; postcode and other readers query canonical area tables. Postcode area dictionaries and column-order tables are replaced by row-derived JSON and per-shard integrity hashes. Crosswalk endpoint fields and common metadata are derived by readers, labels come from area versions, and compiled output metadata is held on `dataset`.
 - Task 9 progress: selectors are derived from explicit rules and census declarations, and the build no longer writes or compares compiled observation artifacts. The catalogue, place profiles, map values and website regional chunks now read database-derived payloads; direct-to-rows ingestion and the remaining declaration migrations are still outstanding.
 - 1,643 series are `published` and 1,093 are `converted` (task 25: every convertible
@@ -50,7 +68,7 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   environment 111k, education 28k, crime 14k, infrastructure 4k.
 - 94% of observation values are whole numbers; 89% sit in near-complete
   (series, period) groups.
-- No `sqlite_stat1`: `ANALYZE` has never run on the shipped file.
+- No `sqlite_stat1` on the 2026-11-05 build (fixed: see task 14 progress).
 - SQLite's attach limit is 10 in both the `sqlite3` CLI and `node:sqlite`.
 
 ## Core data quality
@@ -78,13 +96,13 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
 
 ## Size and query performance
 
-| #   | Priority | Task                                                                                                                                                                                               | Evidence                                                                                                                                          |
-| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14  | P1       | Run `ANALYZE` (and `PRAGMA optimize`) at the end of the build. Add indexes for ad-hoc queries: `area_version(area_id)`, `crosswalk_edge(from_version_id)`, `area_relationship(parent_version_id)`. | Lookup by code scans 1M area versions; an edge lookup by area alone is a full scan (220 ms).                                                      |
-| 15  | P1       | Drop the `observation_area` index. Readers look up an area through the primary key, passing the series list of the area's release.                                                                 | Saves 115 MB. On a copy: 1.0 ms per area without the index vs 1.6 ms with it (colder cache), so about a tie.                                      |
-| 16  | P1       | Ship Parquet (zstd) alongside SQLite for data products. Keep SQLite for apps and the API, which need fast single-row lookups.                                                                      | Observations 291 → 19 MB; edges 59 → 3.5 MB; diagnostics 46 → 7.9 MB; postcodes 248 → 109 MB. Full aggregate over 9.2M rows in 17 ms with DuckDB. |
-| 17  | P2       | Move `crosswalk_edge_check` (QA diagnostics) into a QA file, and `website_assets` and `payloads` (app caches) out of the core file.                                                                | About 61 MB, and a pure-data product file.                                                                                                        |
-| 18  | P3       | Store postcode distances in metres, not centimetres.                                                                                                                                               | Probably tens of MB (not measured). Centimetres are false precision against generalised boundaries.                                               |
+| #   | Priority | Task                                                                                                                                                                                                         | Evidence                                                                                                                                          |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14  | P1       | **Done.** Run `ANALYZE` (and `PRAGMA optimize`) at the end of the build. Add indexes for ad-hoc queries: `area_version(area_id)`, `crosswalk_edge(from_version_id)`, `area_relationship(parent_version_id)`. | Lookup by code scans 1M area versions; an edge lookup by area alone is a full scan (220 ms).                                                      |
+| 15  | P1       | **Done.** Drop the `observation_area` index. Readers look up an area through the primary key, passing the series list of the area's release.                                                                 | Saves 115 MB. On a copy: 1.0 ms per area without the index vs 1.6 ms with it (colder cache), so about a tie.                                      |
+| 16  | P1       | Ship Parquet (zstd) alongside SQLite for data products. Keep SQLite for apps and the API, which need fast single-row lookups.                                                                                | Observations 291 → 19 MB; edges 59 → 3.5 MB; diagnostics 46 → 7.9 MB; postcodes 248 → 109 MB. Full aggregate over 9.2M rows in 17 ms with DuckDB. |
+| 17  | P2       | Move `crosswalk_edge_check` (QA diagnostics) into a QA file, and `website_assets` and `payloads` (app caches) out of the core file.                                                                          | About 61 MB, and a pure-data product file.                                                                                                        |
+| 18  | P3       | Store postcode distances in metres, not centimetres.                                                                                                                                                         | Probably tens of MB (not measured). Centimetres are false precision against generalised boundaries.                                               |
 
 Rejected: storing each series as a packed array per period. It was about
 20 MB and made whole-map reads 60× faster (0.09 vs 5.3 ms), but single-area
