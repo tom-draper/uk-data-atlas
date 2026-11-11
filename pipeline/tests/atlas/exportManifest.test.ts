@@ -1,7 +1,7 @@
 import {
 	fixtureObservationDatabase,
 	writeObservationFixture,
-} from "./fixtures/observationFixtures";
+} from "../fixtures/observationFixtures";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -18,9 +18,9 @@ import {
 	observationArtifactName,
 	type DataCatalog,
 } from "@uk-data-atlas/catalogue/node";
-import { compileExportManifest as compileManifest } from "../src/atlas/exportManifest";
+import { compileExportManifest as compileManifest } from "../../src/atlas/exportManifest";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { readParquet } from "./fixtures/parquetFixtures";
+import { readParquet } from "../fixtures/parquetFixtures";
 
 const compileExportManifest = (
 	directory: string,

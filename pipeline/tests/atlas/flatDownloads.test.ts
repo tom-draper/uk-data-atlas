@@ -5,9 +5,9 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import { compileFlatDownloads } from "../src/atlas/flatDownloads";
+import { compileFlatDownloads } from "../../src/atlas/flatDownloads";
 import { FullDetailDownloads } from "@uk-data-atlas/geometry";
-import { readParquet } from "./fixtures/parquetFixtures";
+import { readParquet } from "../fixtures/parquetFixtures";
 
 const square = (west: number, south: number) => [
 	[
@@ -224,7 +224,7 @@ test("builds a full-detail download off the main thread, once for callers asking
 
 test("simplified downloads match published hashes, coalesce, cache and reject stale bytes", async (t) => {
 	const { compileMapResource } =
-		await import("../src/maps/compileMapResource");
+		await import("../../src/maps/compileMapResource");
 	const root = mkdtempSync(join(tmpdir(), "atlas-simplified-"));
 	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/source"), { recursive: true });
