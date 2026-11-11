@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
-import { compileAreas } from "../src/geographies/areaInventory";
+import { compileAreas } from "../../src/geographies/areaInventory";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 
 const registry: BoundaryRegistry = {
