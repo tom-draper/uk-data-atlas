@@ -111,3 +111,14 @@ test("the estimated mass of a carried value gives the exact share of the series"
 	// Area 10 is 60 whole and 20 split, area 11 is 20 split: 40 of 100.
 	assert.equal(qualityOf(observations, []).exactShare, 0.6);
 });
+
+test("a negative value counts by its size and the share stays within 0 and 1", () => {
+	const quality = qualityOf(
+		[
+			{ area: 1, period: 1, value: -100, estimated: 100 } as never,
+			{ area: 2, period: 1, value: 300 } as never,
+		],
+		[],
+	);
+	assert.equal(quality.exactShare, 0.75);
+});

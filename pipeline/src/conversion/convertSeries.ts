@@ -87,13 +87,16 @@ export const qualityOf = (
 	let total = 0;
 	let estimated = 0;
 	for (const o of observations) {
-		total += o.value;
-		estimated += Math.min(o.estimated ?? 0, o.value);
+		// A measure can hold negative values, such as a net change, so the share
+		// is of the magnitude, and rounding never takes it outside 0 to 1.
+		total += Math.abs(o.value);
+		estimated += Math.min(o.estimated ?? 0, Math.abs(o.value));
 	}
 	const missing = gaps.filter((gap) => gap.reason !== "not-carried").length;
 	const reached = observations.length + missing;
 	return {
-		exactShare: total > 0 ? 1 - estimated / total : 1,
+		exactShare:
+			total > 0 ? Math.min(1, Math.max(0, 1 - estimated / total)) : 1,
 		coverage: reached > 0 ? observations.length / reached : 0,
 	};
 };
