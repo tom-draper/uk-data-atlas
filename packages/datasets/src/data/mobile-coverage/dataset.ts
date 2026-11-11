@@ -51,6 +51,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 		},
 		name: "ladName",
 		measures: [
+			PREMISES,
 			measure(
 				"mobile-premises-coverage",
 				"Mobile coverage of premises",
@@ -58,6 +59,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 				"share",
 				"weighted_mean",
 				"Premises with mobile coverage, as a percentage of premises.",
+				{ weight: PREMISES.slug },
 			),
 			measure(
 				"mobile-area-coverage",
@@ -67,7 +69,6 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 				"weighted_mean",
 				"Land area with outdoor mobile coverage, as a percentage of the area.",
 			),
-			PREMISES,
 		],
 		dimensions: [
 			{

@@ -733,7 +733,20 @@ export const PUPIL_ABSENCE: DeclaredDataset = {
 	},
 };
 
+/** The count the shares and the Attainment 8 average are taken over. */
+const OVER_PUPILS = { weight: "key-stage-4-pupils" };
+
+// Progress 8 names no weight. It is averaged over the pupils who have a key
+// stage 2 result, and that count is not published here.
 const SCHOOL_MEASURES = [
+	measure(
+		"key-stage-4-pupils",
+		"Key stage 4 pupils",
+		"pupils",
+		"count",
+		"sum",
+		"Pupils at the end of key stage 4.",
+	),
 	measure(
 		"gcse-english-maths-grade-4",
 		"English and maths at grade 4 or above",
@@ -741,6 +754,7 @@ const SCHOOL_MEASURES = [
 		"share",
 		"weighted_mean",
 		"Key stage 4 pupils achieving grade 4 or above in English and maths.",
+		OVER_PUPILS,
 	),
 	measure(
 		"gcse-english-maths-grade-5",
@@ -749,6 +763,7 @@ const SCHOOL_MEASURES = [
 		"share",
 		"weighted_mean",
 		"Key stage 4 pupils achieving grade 5 or above in English and maths.",
+		OVER_PUPILS,
 	),
 	measure(
 		"attainment-8",
@@ -757,6 +772,7 @@ const SCHOOL_MEASURES = [
 		"mean",
 		"weighted_mean",
 		"Average Attainment 8 score of key stage 4 pupils.",
+		OVER_PUPILS,
 	),
 	measure(
 		"progress-8",
@@ -765,14 +781,6 @@ const SCHOOL_MEASURES = [
 		"mean",
 		"weighted_mean",
 		"Average Progress 8 score of key stage 4 pupils.",
-	),
-	measure(
-		"key-stage-4-pupils",
-		"Key stage 4 pupils",
-		"pupils",
-		"count",
-		"sum",
-		"Pupils at the end of key stage 4.",
 	),
 ];
 
