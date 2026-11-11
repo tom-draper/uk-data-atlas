@@ -328,6 +328,14 @@ describe("resolveValueCardStats", () => {
 		});
 	});
 
+	it("formats declared additional dwellings with UK digit grouping", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "net-additional-dwellings",
+		)!;
+		expect(chart.chart.defaultVisible).toBe(false);
+		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "council-tax",

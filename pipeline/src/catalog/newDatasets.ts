@@ -58,17 +58,7 @@ export const NEW_DATASET_MEASURES = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		note: "The primary value sums the published broad-industry counts for each local authority.",
 	},
-	{
-		datasetId: "net-additional-dwellings",
-		path: paths.netAdditionalDwellings!,
-		boundaryYear: 2025,
-		period: "2024-25",
-		label: "Net additional dwellings",
-		unit: "dwellings",
-		valueKind: "count",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		note: "Annual net additional dwellings in English local authority districts.",
-	},
+
 	{
 		datasetId: "local-government-finance",
 		path: paths.localGovernmentFinance!,

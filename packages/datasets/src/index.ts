@@ -43,7 +43,7 @@ export * from "./data/catalog/definitions/lifeExpectancy.ts";
 export * from "./data/life-expectancy-series/dataset.ts";
 export * from "./data/catalog/definitions/localElection.ts";
 export * from "./data/catalog/definitions/localGovernmentFinance.ts";
-export * from "./data/catalog/definitions/netAdditionalDwellings.ts";
+export * from "./data/net-additional-dwellings/dataset.ts";
 export * from "./data/catalog/definitions/nhsWaiting.ts";
 export * from "./data/catalog/definitions/nimdm.ts";
 export * from "./data/catalog/definitions/planningApplications.ts";

@@ -24,7 +24,6 @@ export { jobsDatasetDefinition } from "@uk-data-atlas/datasets";
 export { lifeExpectancyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { localElectionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { localGovernmentFinanceDatasetDefinition } from "@uk-data-atlas/datasets";
-export { netAdditionalDwellingsDatasetDefinition } from "@uk-data-atlas/datasets";
 export { nhsWaitingDatasetDefinition } from "@uk-data-atlas/datasets";
 export { nimdmDatasetDefinition } from "@uk-data-atlas/datasets";
 export { planningApplicationsDatasetDefinition } from "@uk-data-atlas/datasets";

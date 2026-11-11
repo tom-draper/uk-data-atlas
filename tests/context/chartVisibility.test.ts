@@ -20,7 +20,7 @@ describe("chart visibility store", () => {
 				expect(DEFAULT_VISIBILITY[`localElection-${year}`]).toBe(false);
 			}
 			expect(DEFAULT_VISIBILITY["localElection-2021"]).toBe(true);
-			expect(DEFAULT_VISIBILITY["economics-netAdditionalDwellings"]).toBe(
+			expect(DEFAULT_VISIBILITY["economics-net-additional-dwellings"]).toBe(
 				false,
 			);
 			expect(DEFAULT_VISIBILITY["health-adultSocialCareOutcomes"]).toBe(
