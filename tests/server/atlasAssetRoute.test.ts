@@ -110,6 +110,23 @@ describe("SQLite website assets", () => {
 			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),
 		).toBe(true);
 	});
+	it("ships planner statistics with atlas.sqlite", () => {
+		const database = new DatabaseSync(
+			join(fixture.root, "data/build/atlas.sqlite"),
+			{ readOnly: true },
+		);
+		try {
+			expect(
+				database
+					.prepare(
+						"SELECT name FROM sqlite_schema WHERE name = 'sqlite_stat1'",
+					)
+					.all(),
+			).toHaveLength(1);
+		} finally {
+			database.close();
+		}
+	});
 	it("keeps the assets out of atlas.sqlite", () => {
 		const database = new DatabaseSync(
 			join(fixture.root, "data/build/atlas.sqlite"),
