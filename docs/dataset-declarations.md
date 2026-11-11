@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `school-performance-constituency` and `school-performance-disadvantage` (education),
+Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `homelessness`, `housing-affordability` and `net-additional-dwellings` (housing), `air-quality`, `ghg-emissions` and `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -174,14 +174,14 @@ website chart definition):
 
 - economy: income, workplace-income, unemployment,
   regional-gdp-itl3
-- housing: house-price, housing-tenure, homelessness,
+- housing: house-price, housing-tenure,
   planning-applications
 - education: pupil-absence, school-performance,
   qualification
 - health: general-health, public-health, life-expectancy
 - politics: brexit, brexit-constituency, general-election,
   local-election
-- environment: air-quality, ghg-emissions, electricity-consumption,
+- environment: electricity-consumption,
   gas-consumption, waste
 - population: population, ethnicity
 - deprivation: fuel-poverty, imd, wimd, simd, nimdm
