@@ -208,7 +208,6 @@ export const CHART_PRESENTATIONS = {
 	"economics-businessActivity": Chart0Presentation,
 	"transport-carAvailability": Chart4Presentation,
 	"economics-childPoverty": Chart0Presentation,
-	"economics-councilTax": Chart0Presentation,
 	"economics-crime": Chart0Presentation,
 	"transport-electricVehicleChargers": Chart0Presentation,
 	"environment-electricityConsumption": Chart0Presentation,
@@ -261,6 +260,7 @@ export const CHART_PRESENTATIONS = {
 	"economics-workplaceIncome": Chart0Presentation,
 	"telecoms-broadband": Chart26Presentation,
 	"economics-claimant-count": Chart0Presentation,
+	"economics-council-tax": Chart0Presentation,
 	"telecoms-mobile-coverage": Chart27Presentation,
 } satisfies ChartPresentationRegistry;
 

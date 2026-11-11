@@ -7,7 +7,6 @@ export { brexitConstituencyDatasetDefinition } from "./brexitConstituency.ts";
 export { businessActivityDatasetDefinition } from "./businessActivity.ts";
 export { carAvailabilityDatasetDefinition } from "./carAvailability.ts";
 export { childPovertyDatasetDefinition } from "./childPoverty.ts";
-export { councilTaxDatasetDefinition } from "./councilTax.ts";
 export { crimeDatasetDefinition } from "./crime.ts";
 export { electricVehicleChargersDatasetDefinition } from "./electricVehicleChargers.ts";
 export { electricityConsumptionDatasetDefinition } from "./electricityConsumption.ts";

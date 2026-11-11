@@ -18,7 +18,7 @@ const FILES: Record<keyof FigureInputs, string> = {
 	"mobile-coverage": "mobile-coverage.json",
 	businessActivity: "business-activity.json",
 	electricVehicleChargers: "electric-vehicle-chargers.json",
-	councilTax: "council-tax.json",
+	"council-tax": "council-tax.json",
 	"claimant-count": "claimant-count.json",
 	homelessness: "homelessness.json",
 	ghgEmissions: "ghg-emissions.json",

@@ -421,28 +421,6 @@ const single = (
 	fields: [{ path: "value", measure: declared[0] }],
 });
 
-export const COUNCIL_TAX = single(
-	"councilTax",
-	"housing",
-	() => periods.financialYear(2026),
-	{
-		parts: yearParts(
-			"councilTax",
-			"localAuthority",
-			2026,
-			{ coverageCountries: ["GB-ENG"] },
-			["2026"],
-		),
-		code: "code",
-	},
-	"band-d-council-tax",
-	"Average Band D council tax",
-	"gbp",
-	"amount",
-	"weighted_mean",
-	"Average area Band D council tax, including major precepts.",
-);
-
 export const LOCAL_GOVERNMENT_FINANCE = single(
 	"localGovernmentFinance",
 	"economy",

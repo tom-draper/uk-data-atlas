@@ -147,6 +147,8 @@ export type DatasetDeclaration<
 	layout?: DatasetPayloadLayout;
 	/** True for a dataset that is compiled but has no chart yet. */
 	chartPending?: boolean;
+	/** Publish the first display measure as a map-values dataset. */
+	publishMapValues?: boolean;
 	/** Reads the sources and writes the compiled payload, by edition. */
 	load: (reader: DatasetReader) => Promise<Record<string, T>>;
 	statistics: DeclaredStatistics;
@@ -163,6 +165,17 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 ): DatasetDeclaration<T> {
 	if (!KEBAB.test(declaration.id))
 		throw new Error(`Dataset id ${declaration.id} is not kebab-case`);
+	if (declaration.publishMapValues && !declaration.display)
+		throw new Error(
+			`Dataset ${declaration.id} needs a display measure for map values`,
+		);
+	if (
+		declaration.publishMapValues &&
+		declaration.display!.measures.length !== 1
+	)
+		throw new Error(
+			`Dataset ${declaration.id} must have one map-values measure`,
+		);
 	return declaration;
 }
 
@@ -191,6 +204,9 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		...(declaration.ingestion ? { ingestion: declaration.ingestion } : {}),
 		...(declaration.layout ? { payload: declaration.layout } : {}),
 		...(declaration.chartPending ? { chartPending: true } : {}),
+		...(declaration.publishMapValues && declaration.display
+			? { mapValueField: declaration.display.measures[0].field }
+			: {}),
 		precompile: declaration.load,
 	};
 }

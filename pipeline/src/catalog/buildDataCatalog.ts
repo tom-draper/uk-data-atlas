@@ -60,7 +60,6 @@ export const datasetCatalogInputs = (
 		businessActivity: precompiled("business-activity.json"),
 		netAdditionalDwellings: precompiled("net-additional-dwellings.json"),
 		localGovernmentFinance: precompiled("local-government-finance.json"),
-		councilTax: precompiled("council-tax.json"),
 		waste: precompiled("waste.json"),
 		adultSocialCareActivity: precompiled("adult-social-care-activity.json"),
 		adultSocialCareOutcomes: precompiled("adult-social-care-outcomes.json"),

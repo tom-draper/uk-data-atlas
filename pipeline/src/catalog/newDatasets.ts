@@ -80,25 +80,7 @@ export const NEW_DATASET_MEASURES = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		note: "The Atlas primary measure is the published total education-services budget line.",
 	},
-	{
-		datasetId: "council-tax",
-		path: paths.councilTax!,
-		boundaryYear: 2026,
-		period: "2026-27",
-		label: "Average area Band D council tax",
-		unit: "£",
-		valueKind: "currency",
-		aggregation: {
-			kind: "intensive",
-			operation: "weighted-mean",
-			weight: {
-				description: "The billing authority's council-tax base.",
-				datasetField: "tax base",
-			},
-			available: false,
-		},
-		note: "The published average area Band D charge from MHCLG Table 9, including relevant major precepts; it must not be summed or averaged flat.",
-	},
+
 	{
 		datasetId: "waste",
 		path: paths.waste!,

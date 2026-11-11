@@ -39,7 +39,7 @@ export const declaredChartKey = (declaration: Displayed) =>
 export function formatDisplay(format: DisplayFormat, value: number): string {
 	switch (format.kind) {
 		case "decimal":
-			return `${value.toFixed(format.digits)}${format.suffix ?? ""}`;
+			return `${format.prefix ?? ""}${value.toFixed(format.digits)}${format.suffix ?? ""}`;
 		case "count":
 			return `${formatCount(value)}${format.suffix ?? ""}`;
 		case "compact":
@@ -108,6 +108,8 @@ const cardFor = (
 		source: card.source,
 		...(card.coverage ? { coverage: card.coverage } : {}),
 		unit: measure.card.unit,
+		...(measure.card.prefix ? { prefix: measure.card.prefix } : {}),
+		...(card.hoverRecord ? { hoverRecord: true } : {}),
 		...(measure.card.digits === undefined
 			? {}
 			: { digits: measure.card.digits }),
@@ -122,7 +124,9 @@ const cardFor = (
 							: formatDisplay(secondary.format, value);
 					},
 				}
-			: {}),
+			: card.secondaryText
+				? { secondary: () => card.secondaryText }
+				: {}),
 	});
 };
 
@@ -170,13 +174,17 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			year: display.year,
 		},
 		map: {
-			valueFor: (dataset, code, options) =>
-				read(
-					(dataset.data as Record<string, unknown>)[code],
-					optionsOf(options).field,
-				),
-			sourceMode: (_dataset, options) =>
-				`${declaration.id}:${optionsOf(options).id}`,
+			...(declaration.publishMapValues
+				? { valueKey: first.field }
+				: {
+						valueFor: (dataset, code, options) =>
+							read(
+								(dataset.data as Record<string, unknown>)[code],
+								optionsOf(options).field,
+							),
+						sourceMode: (_dataset, options) =>
+							`${declaration.id}:${optionsOf(options).id}`,
+					}),
 			colorRange: first.colorRange,
 			legend: {
 				bounds: (options) => {

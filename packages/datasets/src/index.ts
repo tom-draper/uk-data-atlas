@@ -20,7 +20,7 @@ export * from "./data/catalog/definitions/brexitConstituency.ts";
 export * from "./data/catalog/definitions/businessActivity.ts";
 export * from "./data/catalog/definitions/carAvailability.ts";
 export * from "./data/catalog/definitions/childPoverty.ts";
-export * from "./data/catalog/definitions/councilTax.ts";
+export * from "./data/council-tax/dataset.ts";
 export * from "./data/catalog/definitions/crime.ts";
 export * from "./data/catalog/definitions/electricVehicleChargers.ts";
 export * from "./data/catalog/definitions/electricityConsumption.ts";

@@ -7,7 +7,6 @@ import type { brexitConstituencyDatasetDefinition } from "./definitions/brexitCo
 import type { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
-import type { councilTaxDatasetDefinition } from "./definitions/councilTax.ts";
 import type { crimeDatasetDefinition } from "./definitions/crime.ts";
 import type { electricVehicleChargersDatasetDefinition } from "./definitions/electricVehicleChargers.ts";
 import type { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
@@ -46,6 +45,7 @@ import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome.ts";
 import type { broadband } from "../broadband/dataset.ts";
 import type { claimantCount } from "../claimant-count/dataset.ts";
+import type { councilTax } from "../council-tax/dataset.ts";
 import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
@@ -82,7 +82,6 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof childPovertyDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof councilTaxDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<
@@ -179,6 +178,7 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof broadband.load>>[string]
 	| Awaited<ReturnType<typeof claimantCount.load>>[string]
+	| Awaited<ReturnType<typeof councilTax.load>>[string]
 	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
@@ -194,6 +194,7 @@ export type CatalogueDatasetType = CatalogueDataset["type"];
 export type DeclaredDatasetRecords = {
 	broadband: Awaited<ReturnType<typeof broadband.load>>;
 	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
+	"council-tax": Awaited<ReturnType<typeof councilTax.load>>;
 	"historical-general-election": Awaited<
 		ReturnType<typeof historicalGeneralElection.load>
 	>;
@@ -235,9 +236,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	childPoverty: Awaited<
 		ReturnType<typeof childPovertyDatasetDefinition.precompile>
-	>;
-	councilTax: Awaited<
-		ReturnType<typeof councilTaxDatasetDefinition.precompile>
 	>;
 	crime: Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>;
 	electricVehicleChargers: Awaited<
