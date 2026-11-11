@@ -40,7 +40,7 @@ export * from "./data/catalog/definitions/income.ts";
 export * from "./data/catalog/definitions/jobs.ts";
 export * from "./data/land-area/dataset.ts";
 export * from "./data/catalog/definitions/lifeExpectancy.ts";
-export * from "./data/catalog/definitions/lifeExpectancySeries.ts";
+export * from "./data/life-expectancy-series/dataset.ts";
 export * from "./data/catalog/definitions/localElection.ts";
 export * from "./data/catalog/definitions/localGovernmentFinance.ts";
 export * from "./data/catalog/definitions/netAdditionalDwellings.ts";

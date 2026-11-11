@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count` (economy), `land-area` (environment), `broadband` and `mobile-coverage`
+Declared: `claimant-count` (economy), `land-area` (environment), `life-expectancy-series` (health), `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
 Not yet declared, by module (each still has a definition in
@@ -180,7 +180,7 @@ website chart definition):
   school-performance-constituency, school-performance-disadvantage,
   qualification
 - health: general-health, public-health, nhs-waiting, life-expectancy,
-  life-expectancy-series, adult-social-care-activity,
+  adult-social-care-activity,
   adult-social-care-outcomes
 - crime: crime
 - politics: brexit, brexit-constituency, general-election,

@@ -132,8 +132,8 @@ const loadSeriesRows = async (
 			return [
 				String(year),
 				{
-					id: `lifeExpectancySeries${year}`,
-					type: "lifeExpectancySeries" as const,
+					id: `life-expectancy-series${year}`,
+					type: "life-expectancy-series" as const,
 					year,
 					period,
 					boundaryType: "localAuthority" as const,

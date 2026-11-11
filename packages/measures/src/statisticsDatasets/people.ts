@@ -99,51 +99,6 @@ const yearRange = (text: unknown) => {
 	return periods.years(Number(match[1]), Number(match[2]));
 };
 
-export const LIFE_EXPECTANCY_SERIES: DeclaredDataset = {
-	type: "lifeExpectancySeries",
-	module: "health",
-	payload: {
-		parts: (labels) =>
-			labels.flatMap((label) => {
-				const years = /^(\d{4})-(\d{4})$/.exec(label);
-				return years
-					? [
-							{
-								key: years[2],
-								header: {
-									id: `lifeExpectancySeries${years[2]}`,
-									type: "lifeExpectancySeries",
-									year: Number(years[2]),
-									period: label,
-									boundaryType: "localAuthority",
-									boundaryYear: 2025,
-									coverageCountries: [
-										"GB-ENG",
-										"GB-SCT",
-										"GB-WLS",
-										"GB-NIR",
-									],
-								},
-							},
-						]
-					: [];
-			}),
-		code: "ladCode",
-	},
-	name: "ladName",
-	period: (_key, header: DeclaredHeader) => yearRange(header.period),
-	measures: [LIFE_EXPECTANCY],
-	dimensions: [SEX],
-	fields: [
-		{
-			path: "{sex}.value",
-			lower: "{sex}.lower",
-			upper: "{sex}.upper",
-			measure: "life-expectancy",
-		},
-	],
-};
-
 const HEALTHY_LIFE_EXPECTANCY = measure(
 	"healthy-life-expectancy",
 	"Healthy life expectancy at birth",

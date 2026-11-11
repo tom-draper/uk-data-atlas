@@ -207,6 +207,78 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores life-expectancy periods and confidence intervals as rows", () => {
+		const declaration = DATASET_DECLARATIONS.find(
+			({ id }) => id === "life-expectancy-series",
+		)!;
+		const config = STATISTICS_DATASETS.find(
+			({ type }) => type === declaration.id,
+		)!;
+		const compiled = {
+			2024: {
+				id: "life-expectancy-series2024",
+				type: "life-expectancy-series",
+				year: 2024,
+				period: "2022-2024",
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
+				data: {
+					E06000001: {
+						ladCode: "E06000001",
+						ladName: "Hartlepool",
+						male: { value: 76, lower: 75, upper: 77 },
+						female: { value: 80, lower: 79, upper: 81 },
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
+					],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [...areas.area_version.rows, [3, 1, 2, "Hartlepool"]],
+				},
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: declaration.id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(
+				JSON.parse(
+					rebuildDatasetPayload(
+						database,
+						declaration.id,
+						declaration.id,
+					),
+				),
+			).toEqual(compiled);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores land-area measures and derives square kilometres from rows", () => {
 		const declaration = DATASET_DECLARATIONS.find(
 			({ id }) => id === "land-area",
