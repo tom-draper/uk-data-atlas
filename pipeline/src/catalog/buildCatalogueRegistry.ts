@@ -196,12 +196,16 @@ import { DECLARED_DEFINITIONS } from "../declarations.ts";
 import type { DatasetDefinition } from "./types.ts";
 ${imports}
 
-/** Definitions not yet moved into a declaration. */
-export const LEGACY_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [\n${values}\n];
+/**
+ * Datasets still written by hand as a \`definitions/<name>.ts\` module. A
+ * dataset moves out of this list, and into \`DECLARED_DEFINITIONS\`, when it
+ * becomes a declaration (\`data/<id>/dataset.ts\`).
+ */
+export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [\n${values}\n];
 
 /** The complete framework-neutral catalogue used by compilers and API consumers. */
 export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
-	...LEGACY_DATASET_DEFINITIONS,
+	...HAND_WRITTEN_DATASET_DEFINITIONS,
 	...DECLARED_DEFINITIONS,
 ].sort((left, right) => (left.type < right.type ? -1 : 1));
 `,
