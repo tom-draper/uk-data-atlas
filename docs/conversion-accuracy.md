@@ -396,21 +396,27 @@ Two numbers per converted series, stored in `series_conversion`:
   over the series' values, where `estimated` is the part of a value that was
   apportioned by a weight, clamped to the size of the value. It is 1 when the
   total is 0. A series that only regroups whole areas scores 1.
-- `coverage`, from 0 to 1: the converted target areas and periods over those
-  plus the ones left empty. A source value that no crosswalk carries
-  (`not-carried`) is not counted against it, because the target holds no area to
-  put it in. An empty series scores 0.
+- `coverage`, from 0 to 1: the target areas and periods that hold a value over
+  those plus every gap, including a source area that no crosswalk carries
+  (`not-carried`). It counts areas, not value, so a changed ward dropped by a
+  continuity crosswalk lowers it as an empty target does. An empty series
+  scores 0.
 
 `exact` is 1 where no value was estimated. The score describes the value, not
 its error: the bounds on an estimated value are in the section on bounds above.
 
-Every series scores 1 on `exact_share`. On `coverage`, 498 score 1, 292 score
-0.9 to under 1, 14 score 0.5 to under 0.9, and 270 score under 0.5. The low
-group holds 32,754 values and is mostly election results (a constituency or
-ward result that can be split to a new area is refused, so only whole carries
-remain) and ward population onto 2024 constituencies, where a constituency
-holds a value only if it is made of whole wards. Filter on `coverage` to leave
-them out.
+Every series scores 1 on `exact_share`. On `coverage`, 397 score 1, 3 score
+0.9 to under 1, 124 score 0.5 to under 0.9, and 550 score under 0.5. The low
+group is mostly authority series from older releases, where only the
+authorities that have not changed since carry (379 series), and constituency
+series (170), where a constituency holds a value only if it is made of whole
+wards or areas. Ward series from 2023 score 0.5 to 0.9 because the wards that
+changed since are not carried. Filter on `coverage` to leave them out.
+
+A series that scores 1 on `coverage` and is summed keeps the total of its
+source. The built-atlas test checks this for every such series, and checks that
+a rebuilt ratio across the 2023 Cumbria merger is the sum of its parts over the
+sum of its households, not the mean of its published rates.
 
 ### What is left out
 
