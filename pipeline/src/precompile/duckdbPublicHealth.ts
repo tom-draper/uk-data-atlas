@@ -3,8 +3,8 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { DuckDBInstance } from "@duckdb/node-api";
 import { PUBLIC_HEALTH_MEASURES } from "../../../packages/datasets/src/data/public-health/loader.ts";
-import { trackDuckdbSource } from "./duckdbSource.mts";
-import { SOURCE_DATA } from "./paths.mts";
+import { trackDuckdbSource } from "./duckdbSource.ts";
+import { SOURCE_DATA } from "./paths.ts";
 import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types.ts";
 
 const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
@@ -12,7 +12,7 @@ const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
 export async function withDuckdbPublicHealth<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -36,7 +36,7 @@ export async function withDuckdbPublicHealth<T>(
 export async function withDuckdbCensusLsoa<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -53,7 +53,7 @@ export async function withDuckdbCensusLsoa<T>(
 export async function withDuckdbPlanningApplications<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -72,7 +72,7 @@ export async function withDuckdbPlanningApplications<T>(
 async function withDuckdbRows<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot: string,

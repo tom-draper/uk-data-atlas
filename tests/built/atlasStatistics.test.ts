@@ -48,7 +48,7 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			"--input-type=module",
 			"-e",
 			`
-		import { compileDataset } from './pipeline/src/precompile/compileDataset.mts';
+		import { compileDataset } from './pipeline/src/precompile/compileDataset.ts';
 		import { fuelPovertyDatasetDefinition } from '@uk-data-atlas/datasets';
 		const entry = await compileDataset(fuelPovertyDatasetDefinition, new Map());
 		process.stdout.write('MANIFEST_ENTRY=' + JSON.stringify(entry));

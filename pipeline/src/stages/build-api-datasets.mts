@@ -1,7 +1,7 @@
 import { isMainModule } from "../lib/entrypoint.ts";
 import { resolve } from "node:path";
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
-import { buildDatasets } from "../precompile/buildApiDatasets.mts";
+import { buildDatasets } from "../precompile/buildApiDatasets.ts";
 
 if (isMainModule(import.meta.url)) {
 	const result = await buildDatasets(

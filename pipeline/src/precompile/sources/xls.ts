@@ -7,7 +7,7 @@ import {
 	xlsSheetRows,
 } from "@uk-data-atlas/datasets";
 import { rowsToCsv } from "@uk-data-atlas/datasets";
-import { SOURCE_DATA } from "../paths.mts";
+import { SOURCE_DATA } from "../paths.ts";
 
 /**
  * Reads a legacy .xls workbook. Some publishers ship the workbook inside a

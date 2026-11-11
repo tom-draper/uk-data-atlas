@@ -1,11 +1,11 @@
 /**
- * A worker thread that compiles the datasets datasetPool.mts hands it, one at
+ * A worker thread that compiles the datasets datasetPool.ts hands it, one at
  * a time, and posts back each manifest entry.
  */
 import { parentPort } from "worker_threads";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
-import { compileStaleDataset } from "./compileDataset.mts";
-import type { ExistingManifestDataset } from "./types.mts";
+import { compileStaleDataset } from "./compileDataset.ts";
+import type { ExistingManifestDataset } from "./types.ts";
 
 export type DatasetJob = {
 	index: number;
@@ -17,7 +17,7 @@ export type DatasetJob = {
 export type DatasetJobResult =
 	{ index: number; entry: string } | { index: number; error: unknown };
 
-if (!parentPort) throw new Error("datasetWorker.mts must run as a worker.");
+if (!parentPort) throw new Error("datasetWorker.ts must run as a worker.");
 const port = parentPort;
 
 port.on(

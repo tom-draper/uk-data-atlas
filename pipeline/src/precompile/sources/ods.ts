@@ -2,7 +2,7 @@ import { execSync, spawn } from "child_process";
 import { stat } from "fs/promises";
 import { join } from "path";
 import { odsTableRow, type OdsTableOptions } from "@uk-data-atlas/datasets";
-import { SOURCE_DATA } from "../paths.mts";
+import { SOURCE_DATA } from "../paths.ts";
 
 // ODS source files are never exposed by the application. The child-poverty
 // loader only needs its worksheet XML, which is then reduced to compact JSON.

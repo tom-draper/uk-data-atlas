@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { buildLog } from "@uk-data-atlas/atlas-db";
-import { buildMapValues } from "../maps/buildMapValues.mts";
-import { ROOT } from "../precompile/paths.mts";
+import { buildMapValues } from "../maps/buildMapValues.ts";
+import { ROOT } from "../precompile/paths.ts";
 
 if (import.meta.url === `file://${process.argv[1]}`) {
 	const manifest = await buildMapValues({

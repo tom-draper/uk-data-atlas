@@ -25,10 +25,10 @@ const baseInputs = [
 
 /** What compiles a dataset, whichever dataset it is. */
 const datasetCompilerInputs = [
-	"pipeline/src/precompile/compileDataset.mts",
-	"pipeline/src/precompile/duckdbPublicHealth.mts",
-	"pipeline/src/precompile/duckdbRoadCollisions.mts",
-	"pipeline/src/precompile/duckdbDatasetCsv.mts",
+	"pipeline/src/precompile/compileDataset.ts",
+	"pipeline/src/precompile/duckdbPublicHealth.ts",
+	"pipeline/src/precompile/duckdbRoadCollisions.ts",
+	"pipeline/src/precompile/duckdbDatasetCsv.ts",
 	"packages/datasets/src/compileDataset.ts",
 ];
 
@@ -40,7 +40,7 @@ const pipelineInputs = [
 	"packages/atlas-db/src/buildTiming.ts",
 	"pipeline/src/stages/compile-boundary-tiles.mts",
 	"pipeline/src/precompile/datasetDiscovery.ts",
-	"pipeline/src/precompile/datasetRegionChunks.mts",
+	"pipeline/src/precompile/datasetRegionChunks.ts",
 	"scripts/generate-dataset-registry.ts",
 	"pipeline/src/stages/build-catalogue-registry.ts",
 	"pipeline/src/precompile",

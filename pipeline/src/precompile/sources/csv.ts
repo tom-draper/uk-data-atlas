@@ -4,7 +4,7 @@ import { createReadStream } from "fs";
 import { stat } from "fs/promises";
 import { join } from "path";
 import Papa from "papaparse";
-import { SOURCE_DATA } from "../paths.mts";
+import { SOURCE_DATA } from "../paths.ts";
 
 /** Extracts and reads the first CSV from a ZIP in data/. */
 export const readZip = (path: string): Promise<string> => {

@@ -12,12 +12,12 @@ import { mkdir } from "fs/promises";
 import { join, relative } from "path";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
 import { mergeManifestEntries, selectDefinitions } from "./selection.ts";
-import { loadDatasetReuseContext, NO_REUSE } from "./cache.mts";
-import { compileDataset } from "./compileDataset.mts";
-import { compileDatasets } from "./datasetPool.mts";
-import { out } from "./output.mts";
-import { COMPILED_DATASETS, ROOT } from "./paths.mts";
-import type { CompiledDatasets } from "./types.mts";
+import { loadDatasetReuseContext, NO_REUSE } from "./cache.ts";
+import { compileDataset } from "./compileDataset.ts";
+import { compileDatasets } from "./datasetPool.ts";
+import { out } from "./output.ts";
+import { COMPILED_DATASETS, ROOT } from "./paths.ts";
+import type { CompiledDatasets } from "./types.ts";
 import { buildLog, elapsedSince, formatCount } from "@uk-data-atlas/atlas-db";
 import { readJson } from "../lib/json.ts";
 

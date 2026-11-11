@@ -32,14 +32,14 @@ const createRepository = async () => {
 		"packages/atlas-db/src/buildTiming.ts",
 		"pipeline/src/stages/compile-boundary-tiles.mts",
 		"pipeline/src/precompile/datasetDiscovery.ts",
-		"pipeline/src/precompile/datasetRegionChunks.mts",
+		"pipeline/src/precompile/datasetRegionChunks.ts",
 		"scripts/generate-dataset-registry.ts",
 		"pipeline/src/stages/build-catalogue-registry.ts",
 		"pipeline/src/stages/compile-website-data.mts",
 		"pipeline/src/precompile/fingerprint.mjs",
-		"pipeline/src/precompile/duckdbPublicHealth.mts",
-		"pipeline/src/precompile/duckdbRoadCollisions.mts",
-		"pipeline/src/precompile/duckdbDatasetCsv.mts",
+		"pipeline/src/precompile/duckdbPublicHealth.ts",
+		"pipeline/src/precompile/duckdbRoadCollisions.ts",
+		"pipeline/src/precompile/duckdbDatasetCsv.ts",
 		"packages/datasets/src/compileDataset.ts",
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
@@ -49,11 +49,11 @@ const createRepository = async () => {
 	])
 		await write(file, `// ${file}`);
 	await write(
-		"pipeline/src/precompile/compileDataset.mts",
+		"pipeline/src/precompile/compileDataset.ts",
 		'import { helper } from "../../../lib/helpers/shared";\nimport { validate } from "../../../packages/datasets/src/data/catalog";\n',
 	);
-	await write("pipeline/src/precompile/cache.mts", "// cache");
-	await write("pipeline/src/precompile/roadSafety.mts", "// road safety");
+	await write("pipeline/src/precompile/cache.ts", "// cache");
+	await write("pipeline/src/precompile/roadSafety.ts", "// road safety");
 	await write(
 		"packages/geography/package.json",
 		JSON.stringify({ exports: { ".": "./src/index.ts" } }),
@@ -268,7 +268,7 @@ describe("precompile fingerprints", () => {
 
 	it("changes the pipeline, not the datasets, when pipeline code changes", async () => {
 		const before = await precompileFingerprints(root);
-		await write("pipeline/src/precompile/cache.mts", "// edited");
+		await write("pipeline/src/precompile/cache.ts", "// edited");
 		const after = await precompileFingerprints(root);
 
 		expect(after.pipeline).not.toEqual(before.pipeline);

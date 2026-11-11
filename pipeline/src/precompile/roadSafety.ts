@@ -3,11 +3,11 @@ import { Gazetteer } from "@uk-data-atlas/places";
 import type { GazetteerCore } from "@uk-data-atlas/datasets";
 import { loadRoadSafety } from "./roadSafetyLoader.ts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
-import { fileStamp, isReleasedSource, sameFileStamp } from "./cache.mts";
-import { out, outputMatches } from "./websiteOutput.mts";
-import { SOURCE_DATA } from "./paths.mts";
-import { readSource } from "./sources/read.mts";
-import type { CompiledOutput, ReuseContext } from "./types.mts";
+import { fileStamp, isReleasedSource, sameFileStamp } from "./cache.ts";
+import { out, outputMatches } from "./websiteOutput.ts";
+import { SOURCE_DATA } from "./paths.ts";
+import { readSource } from "./sources/read.ts";
+import type { CompiledOutput, ReuseContext } from "./types.ts";
 
 const logRoadSafety = (
 	status: "cached" | "compiled",

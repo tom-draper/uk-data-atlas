@@ -15,7 +15,7 @@ import { buildDataCatalog } from "../catalog/buildDataCatalog.ts";
  * selection belongs to data:build; use --from datasets to refresh consumers.
  *
  * This file only sequences the run. Reading raw sources is in pipeline/src/precompile/sources,
- * the cache that lets a run skip unchanged work is pipeline/src/precompile/cache.mts, and each
+ * the cache that lets a run skip unchanged work is pipeline/src/precompile/cache.ts, and each
  * stage of the pipeline has its own module in precompile/.
  */
 import { mkdir, stat, utimes } from "fs/promises";
@@ -27,31 +27,31 @@ import {
 	discoverDatasets,
 	type DiscoveredDataset,
 } from "../precompile/datasetDiscovery.ts";
-import { writeDatasetRegionChunks } from "../precompile/datasetRegionChunks.mts";
-import { compileCatalogueDatasets } from "../precompile/compileCatalogueDatasets.mts";
+import { writeDatasetRegionChunks } from "../precompile/datasetRegionChunks.ts";
+import { compileCatalogueDatasets } from "../precompile/compileCatalogueDatasets.ts";
 import {
 	mergeManifestEntries,
 	parseOnlyArgument,
 	selectDefinitions,
 } from "../precompile/selection.ts";
-import { compileAtlasAssets } from "../precompile/atlasAssets.mts";
-import { fileSnapshots } from "../precompile/cache.mts";
+import { compileAtlasAssets } from "../precompile/atlasAssets.ts";
+import { fileSnapshots } from "../precompile/cache.ts";
 import {
 	OUT_DIR,
 	loadReuseContext,
 	out,
-} from "../precompile/websiteOutput.mts";
-import { publishDatasets } from "../precompile/publishDatasets.mts";
-import { chunksResult } from "../precompile/output.mts";
+} from "../precompile/websiteOutput.ts";
+import { publishDatasets } from "../precompile/publishDatasets.ts";
+import { chunksResult } from "../precompile/output.ts";
 import { readAtlasLookup } from "../atlas/atlasLookups.ts";
-import { ROOT, SOURCE_DATA } from "../precompile/paths.mts";
+import { ROOT, SOURCE_DATA } from "../precompile/paths.ts";
 import {
 	compileRegionChunks,
 	regionChunkLookupFingerprints,
-} from "../precompile/regionChunks.mts";
+} from "../precompile/regionChunks.ts";
 import { precompileFingerprints } from "../precompile/fingerprint.mjs";
-import { compileRoadSafety } from "../precompile/roadSafety.mts";
-import type { CompiledDatasets } from "../precompile/types.mts";
+import { compileRoadSafety } from "../precompile/roadSafety.ts";
+import type { CompiledDatasets } from "../precompile/types.ts";
 import {
 	buildLog,
 	elapsedSince,

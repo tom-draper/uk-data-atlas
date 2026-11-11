@@ -6,8 +6,8 @@ import Papa from "papaparse";
 import { afterEach, test } from "vitest";
 import { strict as assert } from "node:assert";
 import { loadPublicHealth } from "../../packages/datasets/src/data/public-health/loader";
-import { withDuckdbPublicHealth } from "../../pipeline/src/precompile/duckdbPublicHealth.mts";
-import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.mts";
+import { withDuckdbPublicHealth } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
+import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 let root = "";
 afterEach(async () => {

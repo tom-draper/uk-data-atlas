@@ -5,8 +5,8 @@ import { dirname, join } from "node:path";
 import Papa from "papaparse";
 import { expect, test } from "vitest";
 import { loadGeneralHealth } from "../../packages/datasets/src/data/general-health/loader";
-import { withDuckdbCensusLsoa } from "../../pipeline/src/precompile/duckdbPublicHealth.mts";
-import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.mts";
+import { withDuckdbCensusLsoa } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
+import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 test("DuckDB general health selection preserves loader output and source tracking", async () => {
 	const root = await mkdtemp(join(tmpdir(), "general-health-"));

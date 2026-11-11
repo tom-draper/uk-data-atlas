@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { fileStamp, sameFileStamp } from "./cache.mts";
+import { fileStamp, sameFileStamp } from "./cache.ts";
 
 export async function trackDuckdbSource(file: string) {
 	const before = await fileStamp(file);

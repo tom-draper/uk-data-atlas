@@ -2,7 +2,7 @@ import { sha256Hex } from "../lib/hash.ts";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "@uk-data-atlas/datasets";
-import { writeDatasetRegionChunks } from "./datasetRegionChunks.mts";
+import { writeDatasetRegionChunks } from "./datasetRegionChunks.ts";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import {
 	fileSnapshots,
@@ -11,17 +11,17 @@ import {
 	sameCompiledOutputs,
 	sameFileSnapshots,
 	snapshotFileContents,
-} from "./cache.mts";
-import { chunksResult } from "./output.mts";
+} from "./cache.ts";
+import { chunksResult } from "./output.ts";
 import { ATLAS_LOOKUP_NAMES, readAtlasLookup } from "../atlas/atlasLookups.ts";
-import { ROOT } from "./paths.mts";
-import { OUT_DIR } from "./websiteOutput.mts";
+import { ROOT } from "./paths.ts";
+import { OUT_DIR } from "./websiteOutput.ts";
 import type {
 	CompiledDatasets,
 	CompiledOutput,
 	FileSnapshot,
 	ReuseContext,
-} from "./types.mts";
+} from "./types.ts";
 
 type RegionChunkInputs = {
 	/** Compiled output of each regional dataset, by output file. */

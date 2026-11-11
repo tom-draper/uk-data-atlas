@@ -3,7 +3,7 @@ import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
 import { sha256FileHex, sha256Hex } from "../lib/hash.ts";
 import { datasetFingerprints, precompileFingerprints } from "./fingerprint.mjs";
-import { COMPILED_DATASETS, ROOT, SOURCE_DATA } from "./paths.mts";
+import { COMPILED_DATASETS, ROOT, SOURCE_DATA } from "./paths.ts";
 import type {
 	CatalogueDefinition,
 	CompiledOutput,
@@ -13,7 +13,7 @@ import type {
 	ReuseContext,
 	SourceFileStamp,
 	SourceRelease,
-} from "./types.mts";
+} from "./types.ts";
 import { readJson } from "../lib/json.ts";
 
 const splitSheetArtifactPath = (path: string): [string, string] => {

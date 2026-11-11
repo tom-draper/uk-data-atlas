@@ -7,7 +7,7 @@ import {
 	loadRoadCollisionsByAuthority,
 	ROAD_COLLISION_SOURCES,
 } from "../../packages/datasets/src/data/road-safety/authorityLoader";
-import { compileDuckdbRoadCollisions } from "../../pipeline/src/precompile/duckdbRoadCollisions.mts";
+import { compileDuckdbRoadCollisions } from "../../pipeline/src/precompile/duckdbRoadCollisions.ts";
 
 let root = "";
 afterEach(async () => {
