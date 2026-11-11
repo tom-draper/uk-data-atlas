@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { boundsOf, centreOf } from "../src/places/placeProfileGeometry";
+import { boundsOf, centreOf } from "../../src/places/placeProfileGeometry";
 import {
 	readDatasetCoverage,
 	readPopulations,
-} from "../src/places/placeProfileDatasets";
+} from "../../src/places/placeProfileDatasets";
 
 describe("place profile geometry", () => {
 	it("calculates rounded bounds and an area-weighted centre", () => {

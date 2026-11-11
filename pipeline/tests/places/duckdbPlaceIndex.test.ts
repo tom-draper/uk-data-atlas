@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { compileDuckdbPlaceIndex } from "../src/places/duckdbPlaceIndex";
+import { compileDuckdbPlaceIndex } from "../../src/places/duckdbPlaceIndex";
 
 const release = (
 	boundaryRelease: string,
