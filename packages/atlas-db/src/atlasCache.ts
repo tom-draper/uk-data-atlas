@@ -17,7 +17,7 @@ export type CacheComponent =
  * reject a cache built under another version, and the pipeline starts a cache
  * stored under another version from an empty file.
  */
-export const CACHE_VERSION = 3;
+export const CACHE_VERSION = 4;
 const dependencies: Record<CacheComponent, string[]> = {
 	"area-search": ["query:SELECT content_hash FROM area_inventory_metadata"],
 	"place-index": [
