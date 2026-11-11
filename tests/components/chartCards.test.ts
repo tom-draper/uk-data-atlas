@@ -43,9 +43,9 @@ describe("ChartCards registry selection", () => {
 			visibility({
 				"economics-housePrice": true,
 				"economics-income": true,
-				"economics-regionalGdpItl3": true,
+				"economics-regional-gdp-itl3": true,
 				"economics-jobs": true,
-				"economics-planningApplications": true,
+				"economics-planning-applications": true,
 				"economics-council-tax": true,
 				"economics-unemployment": true,
 				"economics-child-poverty": true,
@@ -57,9 +57,9 @@ describe("ChartCards registry selection", () => {
 		expect(charts.map(({ chart }) => chart.key)).toEqual([
 			"economics-housePrice",
 			"economics-income",
-			"economics-regionalGdpItl3",
+			"economics-regional-gdp-itl3",
 			"economics-jobs",
-			"economics-planningApplications",
+			"economics-planning-applications",
 			"economics-council-tax",
 			"economics-unemployment",
 			"economics-child-poverty",

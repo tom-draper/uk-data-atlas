@@ -69,8 +69,8 @@ export async function loadWorkplaceIncome(
 	return loadIncomeFromFiles(read, {
 		annual: "economics/income/table-7/PROV - Work Geography Table 7.7a   Annual pay - Gross 2025.xlsx",
 		hourly: "economics/income/table-7/PROV - Work Geography Table 7.5a   Hourly pay - Gross 2025.xlsx",
-		id: "workplaceIncome2025",
-		type: "workplaceIncome",
+		id: "workplace-income2025",
+		type: "workplace-income",
 	});
 }
 

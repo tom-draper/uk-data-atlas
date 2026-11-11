@@ -1,10 +1,7 @@
 import { it, expect } from "vitest";
-import {
-	workplacePay,
-	averageWorkplacePay,
-} from "@/lib/helpers/workplaceIncomeMeasures";
+import { averageWorkplacePay } from "@uk-data-atlas/datasets";
 import type { IncomeLADData } from "@uk-data-atlas/datasets";
-it("keeps resident and workplace measures separate and ignores suppressed estimates", () => {
+it("averages available authority estimates and ignores suppressed ones", () => {
 	const records = [
 		{
 			annual: { median: 30000, mean: 40000 },
@@ -13,9 +10,9 @@ it("keeps resident and workplace measures separate and ignores suppressed estima
 		{ annual: { median: 50000, mean: null }, hourly: null },
 	] as IncomeLADData[];
 	const summary = averageWorkplacePay(records);
-	expect(workplacePay(summary, "annualMedian")).toBe(40000);
-	expect(workplacePay(summary, "annualMean")).toBe(40000);
-	expect(workplacePay(summary, "hourlyMedian")).toBe(15.25);
-	expect(workplacePay(summary, "hourlyMean")).toBeNull();
-	expect(workplacePay(averageWorkplacePay([]), "annualMedian")).toBeNull();
+	expect(summary.annual.median).toBe(40000);
+	expect(summary.annual.mean).toBe(40000);
+	expect(summary.hourly.median).toBe(15.25);
+	expect(summary.hourly.mean).toBeNull();
+	expect(averageWorkplacePay([]).annual.median).toBeNull();
 });

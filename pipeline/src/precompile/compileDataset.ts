@@ -128,7 +128,7 @@ export async function compileStaleDataset(
 					? await withDuckdbCensusLsoa(reader, artifacts, (input) =>
 							compileDatasetContents(definition, input),
 						)
-					: definition.type === "planningApplications"
+					: definition.type === "planning-applications"
 						? await withDuckdbPlanningApplications(
 								reader,
 								artifacts,

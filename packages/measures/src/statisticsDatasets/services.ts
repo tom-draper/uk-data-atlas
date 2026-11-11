@@ -39,52 +39,6 @@ const single = (
 	fields: [{ path: "value", measure: declared.slug }],
 });
 
-export const PLANNING_APPLICATIONS: DeclaredDataset = {
-	type: "planningApplications",
-	module: "housing",
-	payload: {
-		parts: yearParts("planningApplications", "localAuthority", 2025, {
-			coverageCountries: ["GB-ENG"],
-		}),
-		code: "code",
-	},
-	name: "name",
-	period: () => periods.quarter(2026, 1),
-	measures: [
-		measure(
-			"planning-applications",
-			"Planning applications",
-			"applications",
-			"count",
-			"sum",
-			"Planning applications handled by the local planning authority in the quarter.",
-		),
-	],
-	dimensions: [
-		{
-			slug: "application-stage",
-			label: "Application stage",
-			members: [
-				{ key: "received", label: "Received" },
-				{ key: "decided", label: "Decided" },
-				{ key: "withdrawn", label: "Withdrawn" },
-			],
-		},
-	],
-	fields: [
-		{
-			path: "value",
-			measure: "planning-applications",
-			members: { "application-stage": "received" },
-			wins: true,
-		},
-		{
-			path: "metrics.{application-stage}",
-			measure: "planning-applications",
-		},
-	],
-};
-
 /** County and unitary tables that still use two pre-2023 metropolitan codes. */
 const countiesAndUnitaries = {
 	alsoIn: [{ geography: "localAuthority", year: 2022 }],

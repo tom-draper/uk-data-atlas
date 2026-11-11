@@ -49,6 +49,6 @@ export type RegionalGdpItl2Dataset = RegionalGdpDataset<
 	"itl2"
 >;
 export type RegionalGdpItl3Dataset = RegionalGdpDataset<
-	"regionalGdpItl3",
+	"regional-gdp-itl3",
 	"itl3"
 >;

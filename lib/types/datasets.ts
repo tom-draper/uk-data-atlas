@@ -6,7 +6,6 @@ import {
 import {
 	type AggregatedIncomeData,
 	type IncomeDataset,
-	type WorkplaceIncomeDataset,
 } from "@uk-data-atlas/datasets";
 import { type AggregatedCustomData, type CustomDataset } from "./custom.ts";
 import { type NetworkDataset } from "./network.ts";
@@ -27,7 +26,6 @@ import type { DatasetCoverage } from "@uk-data-atlas/datasets";
 type DatasetValue =
 	| HousePriceDataset
 	| IncomeDataset
-	| WorkplaceIncomeDataset
 	| CustomDataset
 	| NetworkDataset
 	| SchoolPerformanceDataset
@@ -40,7 +38,6 @@ export type Dataset = DatasetValue & DatasetCoverage;
 export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;
 	income: Record<string, IncomeDataset>;
-	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
 } & CatalogueDatasetRecords;

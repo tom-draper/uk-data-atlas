@@ -36,7 +36,7 @@ export interface IncomeDataset {
 }
 
 export interface WorkplaceIncomeDataset extends Omit<IncomeDataset, "type"> {
-	type: "workplaceIncome";
+	type: "workplace-income";
 }
 
 export interface AggregatedIncomeData {
