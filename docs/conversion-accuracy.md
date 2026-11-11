@@ -32,9 +32,9 @@ are copied from those files. Run `pnpm data:build` to make them again.
 - **The bounds are honest and wide.** They held the published figure on all but
   one of 3,134 checked values, 802 of them held out from the fit. They are
   much wider than the typical error.
-- The atlas now holds 1,074 converted series: 1,428,049 regrouped values and no
-  estimated one, each scored for the share that is exact and how many target
-  areas it fills. 43 of 96 measures are refused outright, each with its reason.
+- The atlas now holds 1,093 converted series: 1,438,388 regrouped values and 572
+  estimated ones, each scored for the share that is exact and how many target
+  areas it fills. 42 of 96 measures are refused outright, each with its reason.
 
 ## Method
 
@@ -117,8 +117,8 @@ way is refused.
 
 A regrouped value has status `derived` and no bounds. A split value has status
 `estimated` and both bounds. No converted value has status `observed`: the copy
-into the atlas fails if one does. In the built atlas, the 1,074 converted series
-hold 1,428,049 derived values with no bounds, 572 estimated values with bounds
+into the atlas fails if one does. In the built atlas, the 1,093 converted series
+hold 1,438,388 derived values with no bounds, 572 estimated values with bounds
 (one series, below), and no observed value. The 1,643 published series are unchanged, with 9,236,105
 observed values.
 
@@ -345,12 +345,12 @@ of four standard releases it is not already on:
 
 | Standard release                | Converted series | Derived values |
 | ------------------------------- | ---------------- | -------------- |
-| `localAuthority:2026-05-uk-bgc` | 774              | 748,309        |
-| `ward:2026-05-uk-bgc`           | 128              | 647,834        |
-| `constituency:2024-07-uk-bgc`   | 171              | 30,047         |
+| `localAuthority:2026-05-uk-bgc` | 782              | 748,834        |
+| `ward:2026-05-uk-bgc`           | 132              | 656,914        |
+| `constituency:2024-07-uk-bgc`   | 178              | 30,781         |
 | `lsoa:2021-12-ew-bgc-v5`        | 1                | 1,859          |
 
-That is 1,074 converted series and 1,428,049 derived values, beside the 1,643
+That is 1,093 converted series and 1,438,388 derived values, beside the 1,643
 published series. The full table of what was converted from each source is in
 `data/build/converted-series/converted-series.md`, written by the
 `converted-series` stage.
@@ -384,7 +384,7 @@ does, the one that leaves the fewest sources without a weight. Land area is the
 subject of a few measures but is never a conversion basis, because a measure is
 not spread by area, so those fall to population. A whole-area regrouping is the
 same on every basis, so for an exact series the basis is a record of what a
-split would have used. Of the 1,074 series, 986 name population, 66 households
+split would have used. Of the 1,093 series, 1,014 name population, 66 households
 and 13 dwellings.
 
 ### Quality score
@@ -406,8 +406,8 @@ Two numbers per converted series, stored in `series_conversion`:
 its error: the bounds on an estimated value are in the section on bounds above.
 
 One series scores under 1 on `exact_share`, 0.61, the constituency population
-split onto authorities; the other 1,073 score 1. On `coverage`, 397 score 1, 3 score
-0.9 to under 1, 124 score 0.5 to under 0.9, and 550 score under 0.5. The low
+split onto authorities; the other 1,092 score 1. On `coverage`, 400 score 1, 3 score
+0.9 to under 1, 128 score 0.5 to under 0.9, and 562 score under 0.5. The low
 group is mostly authority series from older releases, where only the
 authorities that have not changed since carry (379 series), and constituency
 series (170), where a constituency holds a value only if it is made of whole
@@ -435,8 +435,8 @@ the number of published series it would have been:
 
 | Reason                | Series | Meaning                                                                |
 | --------------------- | ------ | ---------------------------------------------------------------------- |
-| `no-route`            | 3,314  | No chain of at most seven crosswalks reaches the target.               |
-| `refused-measure`     | 1,322  | The measure's rule is `refuse`. `measure_conversion` gives the reason. |
+| `no-route`            | 3,375  | No chain of at most seven crosswalks reaches the target.               |
+| `refused-measure`     | 1,242  | The measure's rule is `refuse`. `measure_conversion` gives the reason. |
 | `no-values`           | 79     | The route splits every value, and a split of this measure is refused.  |
 | `published-on-target` | 53     | The target release already holds the series.                           |
 | `missing-component`   | 22     | A ratio lacks its numerator, denominator or a weighted mean's weight.  |
@@ -473,7 +473,7 @@ releases can appear under more than one reason.
 | Refused because                                                                                                                                                    | Measures                                                                                                                                                                                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A score, decile or ratio computed by its publisher for the areas it was published on. Its inputs are not held, so it cannot be computed again for other areas.     | 9: social-care-quality-of-life, house-price-to-earnings-ratio, imd-score, imd-decile, imd-domain-score, simd-quintile, simd-decile, wimd-score, wimd-decile                                                                                                                                                                                                                   |
-| A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.                                          | 7: background-concentration, pm25-population-weighted, pm25-population-weighted-anthropogenic, turnout, band-d-council-tax, mobile-area-coverage, progress-8                                                                                                                                                                                                                  |
+| A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.                                          | 6: background-concentration, pm25-population-weighted, pm25-population-weighted-anthropogenic, band-d-council-tax, mobile-area-coverage, progress-8                                                                                                                                                                                                                           |
 | A rate or share must be rebuilt from its numerator and denominator, and the measure names neither. Averaging it would weight a small area the same as a large one. | 14: children-in-relative-low-income-rate, claimant-rate, households-in-temporary-accommodation-rate, gross-annual-pay-change, gross-hourly-pay-change, reception-excess-weight, year-6-excess-weight, adult-excess-weight, physically-active-adults, smoking-prevalence, preventable-mortality, gcse-english-maths-grade-4-gap, unemployment-rate, unemployment-rate-interval |
 | The measure is declared as not additive (count, aggregation none), and no other method is held for it.                                                             | 2: majority, unemployed-people-interval                                                                                                                                                                                                                                                                                                                                       |
 | A category cannot be added or averaged, and the largest part of an area need not decide the whole.                                                                 | 1: source-winning-party                                                                                                                                                                                                                                                                                                                                                       |
@@ -535,5 +535,5 @@ Beyond whole measures, a conversion is refused value by value when:
   (`ghg-population`, the meter counts). A sum keeps the unit.
 - **Fuel poverty is itself modelled** by its publisher, and covers England
   only. The converted series is an exact regrouping of a modelled figure.
-- **Size.** The converted series add about 1.2 million observations. The built
-  atlas is 704.5 MB.
+- **Size.** The converted series add about 1.4 million observations. The built
+  atlas is 714 MB.
