@@ -20,7 +20,11 @@ export default defineConfig({
 		env: { ATLAS_SQLITE_RECHECK_MS: "0" },
 		projects: [
 			...[
-				{ name: "pipeline", include: ["pipeline/tests/*.test.ts"] },
+				{
+					name: "pipeline",
+					include: ["pipeline/tests/**/*.test.ts"],
+					exclude: [...configDefaults.exclude, "pipeline/tests/built/**"],
+				},
 				{
 					name: "pipeline-built",
 					include: ["pipeline/tests/built/*.test.ts"],
@@ -35,11 +39,12 @@ export default defineConfig({
 					name: "duckdb-fixtures",
 					include: ["tests/duckdb-fixtures/*.test.mts"],
 				},
-			].map(({ name, include }) => ({
+			].map(({ name, include, exclude }) => ({
 				extends: true as const,
 				test: {
 					name,
 					include,
+					exclude: exclude ?? configDefaults.exclude,
 					maxWorkers: 2,
 					testTimeout: 0,
 					hookTimeout: 0,
