@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
+Declared: `business-activity`, `claimant-count`, `local-government-finance`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `council-tax`, `housing-affordability` and `net-additional-dwellings` (housing), `land-area` (environment), `adult-social-care-activity`, `adult-social-care-outcomes` and `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `historical-general-election` (politics), `school-performance-constituency` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -172,7 +172,7 @@ Not yet declared, by module (each still has a definition in
 `data/catalog/definitions`, a statistics entry, a pipeline compiler and a
 website chart definition):
 
-- economy: business-activity, income, workplace-income, jobs, unemployment,
+- economy: income, workplace-income, jobs, unemployment,
   regional-gdp-itl3
 - housing: house-price, housing-tenure, homelessness,
   planning-applications

@@ -215,6 +215,7 @@ const writeSources = (
 	const careActivity = join(directory, "adult-social-care-activity.json");
 	const careOutcomes = join(directory, "adult-social-care-outcomes.json");
 	const evChargers = join(directory, "electric-vehicle-chargers.json");
+	const business = join(directory, "business-activity.json");
 	const homelessness = join(directory, "homelessness.json");
 	const roadCollisions = join(directory, "road-collisions.json");
 	const income = join(directory, "income.json");
@@ -242,6 +243,7 @@ const writeSources = (
 				dataset("adult-social-care-activity", 1, 1, 2025),
 				dataset("adult-social-care-outcomes", 1, 1, 2025),
 				dataset("electric-vehicle-chargers", 1, 1, 2026),
+				dataset("business-activity", 1, 1, 2025),
 				dataset("homelessness", 1, 1, 2025),
 				dataset("road-collisions", 2, 1, 2024),
 				dataset("income", 2, 1, 2025),
@@ -401,6 +403,23 @@ const writeSources = (
 						],
 					),
 				),
+			},
+		}),
+	);
+	writeFileSync(
+		business,
+		JSON.stringify({
+			2025: {
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				data: {
+					E06000001: {
+						code: "E06000001",
+						name: "Hartlepool",
+						value: 123,
+					},
+				},
 			},
 		}),
 	);
@@ -1092,6 +1111,7 @@ const writeSources = (
 			"adult-social-care-activity": careActivity,
 			"adult-social-care-outcomes": careOutcomes,
 			"electric-vehicle-chargers": evChargers,
+			"business-activity": business,
 			"mobile-coverage": mobileCoverage,
 			broadband,
 		},
@@ -1128,7 +1148,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 38);
+		assert.equal(result.catalog.datasets.length, 39);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

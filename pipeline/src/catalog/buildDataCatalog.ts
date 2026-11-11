@@ -57,7 +57,6 @@ export const datasetCatalogInputs = (
 		regionalGdpItl3: precompiled("regional-gdp-itl3.json"),
 		electricityConsumption: precompiled("electricity-consumption.json"),
 		gasConsumption: precompiled("gas-consumption.json"),
-		businessActivity: precompiled("business-activity.json"),
 		waste: precompiled("waste.json"),
 		planningApplications: precompiled("planning-applications.json"),
 		declared: Object.fromEntries(

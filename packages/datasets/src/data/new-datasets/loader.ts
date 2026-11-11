@@ -9,7 +9,7 @@ import type {
 import type { BoundaryType } from "../boundaries/catalog.ts";
 
 type IndicatorType =
-	| "businessActivity"
+	| "business-activity"
 	| "net-additional-dwellings"
 	| "local-government-finance"
 	| "council-tax"
@@ -100,7 +100,7 @@ export async function loadBusinessActivity(
 		records[match[1]!] = { code: match[1]!, name: match[2]!.trim(), value };
 	}
 	await addPopulationMetrics(records, readPopulation);
-	return dataset("businessActivity", 2025, "localAuthority", 2025, records);
+	return dataset("business-activity", 2025, "localAuthority", 2025, records);
 }
 
 export async function loadNetAdditionalDwellings(

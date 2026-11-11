@@ -1059,6 +1059,132 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
+	it("stores business counts and population rates on the 2025 authority release", () => {
+		const id = "business-activity";
+		const declaration = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === id,
+		)!;
+		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
+		const population = DATASET_DECLARATIONS.find(
+			(entry) => entry.id === "population-uk",
+		)!;
+		const populationConfig = STATISTICS_DATASETS.find(
+			(entry) => entry.type === population.id,
+		)!;
+		const populationCompiled = {
+			2024: {
+				id: "population-uk2024",
+				type: "population-uk",
+				year: 2024,
+				boundaryType: "localAuthority",
+				boundaryYear: 2023,
+				data: {
+					E06000001: {
+						ladName: "Hartlepool",
+						total: Array(91).fill(100),
+						males: Array(91).fill(50),
+						females: Array(91).fill(50),
+					},
+				},
+			},
+		};
+		const compiled = {
+			2025: {
+				id: `${id}2025`,
+				type: id,
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+				data: {
+					E06000001: {
+						code: "E06000001",
+						name: "Hartlepool",
+						value: 123,
+						metrics: { per100kPopulation: (123 / 9100) * 100000 },
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				area_releases: {
+					...areas.area_releases,
+					rows: [
+						...areas.area_releases.rows,
+						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
+						[3, "localAuthority", "2023-12-uk-bgc", "available"],
+					],
+				},
+				area_version: {
+					...areas.area_version,
+					rows: [
+						...areas.area_version.rows,
+						[3, 1, 2, "Hartlepool"],
+						[4, 1, 3, "Hartlepool"],
+					],
+				},
+				...statisticsTables(
+					[
+						declaredStatistics(
+							populationConfig,
+							() => JSON.stringify(populationCompiled),
+							{
+								output: population.id,
+								fingerprint: "sha256:fixture",
+								source: {
+									name: population.source.name,
+									source: population.source.publisher,
+									sourceUrl: population.source.sourceUrl,
+									licence: population.source.licence,
+									licenceUrl: population.source.licenceUrl,
+									description: population.source.description,
+								},
+							},
+						),
+						declaredStatistics(
+							config,
+							() => JSON.stringify(compiled),
+							{
+								output: id,
+								fingerprint: "sha256:fixture",
+								source: {
+									name: declaration.source.name,
+									source: declaration.source.publisher,
+									sourceUrl: declaration.source.sourceUrl,
+									licence: declaration.source.licence,
+									licenceUrl: declaration.source.licenceUrl,
+									description: declaration.source.description,
+								},
+							},
+						),
+					],
+					undefined,
+					new Map([
+						[
+							population.id,
+							{
+								type: population.id,
+								sha256: "sha256:fixture",
+								bytes: 1,
+								payloadId: null,
+							},
+						],
+					]),
+				),
+			});
+			expect(JSON.parse(rebuildDatasetPayload(database, id, id))).toEqual(
+				compiled,
+			);
+		} finally {
+			database.close();
+		}
+	});
 	it("stores council tax on the 2026 authority release", () => {
 		const id = "council-tax";
 		const declaration = DATASET_DECLARATIONS.find(

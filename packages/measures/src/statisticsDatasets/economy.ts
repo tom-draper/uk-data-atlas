@@ -190,30 +190,6 @@ export const JOBS: DeclaredDataset = {
 	...per100k((record) => record.totalJobs),
 };
 
-export const BUSINESS_ACTIVITY: DeclaredDataset = {
-	type: "businessActivity",
-	module: "economy",
-	payload: {
-		parts: yearParts("businessActivity", "localAuthority", 2025, {
-			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
-		}),
-		code: "code",
-	},
-	name: "name",
-	measures: [
-		measure(
-			"enterprises",
-			"VAT and/or PAYE based enterprises",
-			"enterprises",
-			"count",
-			"sum",
-			"Enterprises registered for VAT or PAYE, summed over the published broad industry groups.",
-		),
-	],
-	fields: [{ path: "value", measure: "enterprises" }],
-	...per100k((record) => record.value, 2024),
-};
-
 /** Years to 2003 are April to March; later ones are calendar years. */
 const unemploymentPeriod = (key: string) =>
 	Number(key) <= 2003

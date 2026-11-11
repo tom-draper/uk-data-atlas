@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { businessActivityDefinition } from "@/lib/datasets/businessActivity";
+
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import { jobsDefinition } from "@/lib/datasets/jobs";
 import type { IndicatorDataset } from "@uk-data-atlas/datasets";
 import type { JobsDataset } from "@uk-data-atlas/datasets";
 
-const dataset = <T extends "businessActivity" | "electric-vehicle-chargers">(
+const dataset = <T extends "business-activity" | "electric-vehicle-chargers">(
 	type: T,
 ): IndicatorDataset<T> => ({
 	id: `${type}2026`,
@@ -42,15 +42,16 @@ const jobsDataset: JobsDataset = {
 
 describe("count metric maps", () => {
 	it("switches businesses between total and per-population values", () => {
-		const valueFor = businessActivityDefinition.map?.valueFor;
+		const valueFor =
+			getChartDatasetDefinition("business-activity")?.map?.valueFor;
 		expect(
-			valueFor?.(dataset("businessActivity"), "E1", DEFAULT_MAP_OPTIONS),
+			valueFor?.(dataset("business-activity"), "E1", DEFAULT_MAP_OPTIONS),
 		).toBe(200);
 		expect(
-			valueFor?.(dataset("businessActivity"), "E1", {
+			valueFor?.(dataset("business-activity"), "E1", {
 				...DEFAULT_MAP_OPTIONS,
-				businessActivity: {
-					...DEFAULT_MAP_OPTIONS.businessActivity,
+				"business-activity": {
+					...DEFAULT_MAP_OPTIONS["business-activity"],
 					measure: "perPopulation",
 				},
 			}),
@@ -78,6 +79,21 @@ describe("count metric maps", () => {
 		).toBe(125);
 	});
 
+	it("keeps the business card on the total when the map uses population rates", () => {
+		const chart = getChartDatasetDefinition("business-activity")!;
+		const options = {
+			...DEFAULT_MAP_OPTIONS,
+			"business-activity": {
+				...DEFAULT_MAP_OPTIONS["business-activity"],
+				measure: "perPopulation",
+			},
+		};
+		const card = chart.chart.cardForOptions?.(options);
+		expect(card?.fromRecord(dataset("business-activity"), "E1")).toEqual({
+			value: 200,
+			secondary: undefined,
+		});
+	});
 	it("keeps the EV card on the total when the map uses population rates", () => {
 		const chart = getChartDatasetDefinition("electric-vehicle-chargers")!;
 		const options = {

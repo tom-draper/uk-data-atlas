@@ -17,7 +17,7 @@ export * from "./data/adult-social-care-outcomes/dataset.ts";
 export * from "./data/catalog/definitions/airQuality.ts";
 export * from "./data/catalog/definitions/brexit.ts";
 export * from "./data/catalog/definitions/brexitConstituency.ts";
-export * from "./data/catalog/definitions/businessActivity.ts";
+export * from "./data/business-activity/dataset.ts";
 export * from "./data/catalog/definitions/carAvailability.ts";
 export * from "./data/catalog/definitions/childPoverty.ts";
 export * from "./data/council-tax/dataset.ts";

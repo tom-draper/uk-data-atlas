@@ -47,17 +47,7 @@ export const compileNewDatasets = (
 export const NEW_DATASET_MEASURES = (
 	paths: Partial<Record<string, DatasetInput>>,
 ): NewDataset[] => [
-	{
-		datasetId: "business-activity",
-		path: paths.businessActivity!,
-		boundaryYear: 2025,
-		period: "2025",
-		label: "VAT and/or PAYE based enterprises",
-		unit: "enterprises",
-		valueKind: "count",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		note: "The primary value sums the published broad-industry counts for each local authority.",
-	},
+
 
 
 	{
