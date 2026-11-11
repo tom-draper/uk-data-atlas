@@ -42,7 +42,7 @@ const laFrom2023 = [
 	hop(la["2023-12>2024-05"]),
 	hop(la["2024-05>2024-12"]),
 	hop(la["2024-12>2025-05"]),
-	hop(la["2025-05>2025-12"]),
+	hop(la["2025-05>2025-12"], CASE_SLUGS.la2025MayToDecPostcodes),
 	hop(la["2025-12>2026-05"]),
 ];
 const laFrom2024 = laFrom2023.slice(1);
@@ -113,6 +113,12 @@ export const CONVERTED_PLAN: PlanEntry[] = [
 			["unemployment", "unemployed-people"],
 			["child-poverty", "children-in-relative-low-income"],
 			["school-performance", "key-stage-4-pupils"],
+			// Means and shares, each rebuilt over the count it names as its weight.
+			["school-performance", "gcse-english-maths-grade-4"],
+			["school-performance", "gcse-english-maths-grade-5"],
+			["school-performance", "attainment-8"],
+			["broadband", "broadband-availability"],
+			["mobile-coverage", "mobile-premises-coverage"],
 		] as const
 	).map(([dataset, measure]) =>
 		onLatestLa(dataset, measure, LA("2024-05-uk-bgc"), laFrom2024),
@@ -153,16 +159,8 @@ export const CONVERTED_PLAN: PlanEntry[] = [
 		members: PERSONS,
 		note: "Only wards whose boundary has not changed since 2023 have a value.",
 	},
-	{
-		id: "population-constituency/population>la",
-		source: {
-			dataset: "population-constituency",
-			measure: "population",
-			release: CON_2024,
-		},
-		target: LA_LATEST,
-		route: [hop(...CASE_SLUGS.con2024ToLa2024), ...laFrom2024],
-		estimates: true,
-		note: "An estimate from constituency totals, kept to show an estimated split beside its bounds. The published authority population is the better figure wherever it is held.",
-	},
+	// No entry asks for estimates. The one candidate held, constituency
+	// population split onto authorities, duplicates a published authority
+	// figure and is wider than it by the bounds the backtest reports, so it is
+	// measured there and not stored as a series.
 ];

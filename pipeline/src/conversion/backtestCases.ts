@@ -95,6 +95,11 @@ export type CaseSlugs = {
 		| "2019-04>2019-12",
 		string
 	>;
+	/**
+	 * Carries the three authorities whose extent moved between the two
+	 * releases, which the extent continuity crosswalk leaves without an edge.
+	 */
+	la2025MayToDecPostcodes: string;
 	ward2023MayToDec: string;
 	ward2023MayToLa2023Dec: string;
 	ward2023ToLa2026: string;
@@ -140,7 +145,7 @@ export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
 		hop(x.la["2023-12>2024-05"]),
 		hop(x.la["2024-05>2024-12"]),
 		hop(x.la["2024-12>2025-05"]),
-		hop(x.la["2025-05>2025-12"]),
+		hop(x.la["2025-05>2025-12"], x.la2025MayToDecPostcodes),
 		hop(x.la["2025-12>2026-05"]),
 	];
 	const population = { dataset: "population", measure: "population" };
@@ -478,6 +483,8 @@ export const CASE_SLUGS: CaseSlugs = {
 		"2025-05>2025-12": la("2025-05-uk-bgc-v2", "2025-12-uk-bgc"),
 		"2025-12>2026-05": la("2025-12-uk-bgc", "2026-05-uk-bgc"),
 	},
+	la2025MayToDecPostcodes:
+		"local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-postcode-overlap",
 	ward2023MayToDec: "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-extent-continuity",
 	ward2023MayToLa2023Dec:
 		"ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
