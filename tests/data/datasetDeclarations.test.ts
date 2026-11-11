@@ -11,7 +11,7 @@ import {
 } from "@uk-data-atlas/datasets";
 import {
 	CATALOGUE_DATASET_DEFINITIONS,
-	LEGACY_DATASET_DEFINITIONS,
+	HAND_WRITTEN_DATASET_DEFINITIONS,
 } from "@uk-data-atlas/datasets";
 import { DATASET_MODULES, isDatasetModule } from "@uk-data-atlas/datasets";
 import { UPDATE_CADENCES } from "@uk-data-atlas/datasets";
@@ -21,11 +21,17 @@ import { writeSqliteTables } from "../../pipeline/src/storage/index";
 describe("dataset declarations", () => {
 	it("gives every catalogue dataset exactly one definition", () => {
 		const declared = DECLARED_DEFINITIONS.map(({ type }) => type);
-		const legacy = LEGACY_DATASET_DEFINITIONS.map(({ type }) => type);
+		const handWritten = HAND_WRITTEN_DATASET_DEFINITIONS.map(
+			({ type }) => type,
+		);
 		const catalogue = CATALOGUE_DATASET_DEFINITIONS.map(({ type }) => type);
 		expect(new Set(catalogue).size).toBe(catalogue.length);
-		expect(declared.filter((type) => legacy.includes(type))).toEqual([]);
-		expect([...declared, ...legacy].sort()).toEqual([...catalogue].sort());
+		expect(declared.filter((type) => handWritten.includes(type))).toEqual(
+			[],
+		);
+		expect([...declared, ...handWritten].sort()).toEqual(
+			[...catalogue].sort(),
+		);
 	});
 
 	it("uses one kebab-case id for the type, the file and the declaration", () => {
