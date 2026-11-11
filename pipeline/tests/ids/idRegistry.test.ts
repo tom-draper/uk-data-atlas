@@ -10,10 +10,10 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { registryProblems } from "../src/ids/checkRegistries.ts";
-import { IdRegistries } from "../src/ids/idRegistries.ts";
-import { IdRegistry, checkAppendOnly } from "../src/ids/idRegistry.ts";
-import { loadRegistry, saveRegistry } from "../src/ids/idStore.ts";
+import { registryProblems } from "../../src/ids/checkRegistries.ts";
+import { IdRegistries } from "../../src/ids/idRegistries.ts";
+import { IdRegistry, checkAppendOnly } from "../../src/ids/idRegistry.ts";
+import { loadRegistry, saveRegistry } from "../../src/ids/idStore.ts";
 
 const directories: string[] = [];
 const temporary = () => {

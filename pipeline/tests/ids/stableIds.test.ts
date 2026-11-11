@@ -18,24 +18,24 @@ import {
 	keysOf,
 	findIdMismatches,
 	verifyStableIds,
-} from "../src/ids/databaseKeys";
+} from "../../src/ids/databaseKeys";
 import {
 	IdRegistries,
 	idDirectory,
 	idNamespaces,
 	idRegistryPath,
 	type IdNamespace,
-} from "../src/ids/idRegistries";
-import { registryProblems } from "../src/ids/checkRegistries";
-import { seedIdRegistries } from "../src/ids/seedIds";
+} from "../../src/ids/idRegistries";
+import { registryProblems } from "../../src/ids/checkRegistries";
+import { seedIdRegistries } from "../../src/ids/seedIds";
 import {
 	areaTables,
 	crosswalkTables,
 	readAreas,
 	writeSqliteIndex,
-} from "../src/storage/index";
-import { registerStatistics } from "../src/storage/statisticsRegistry";
-import { collectParties } from "../src/storage/statisticsParties";
+} from "../../src/storage/index";
+import { registerStatistics } from "../../src/storage/statisticsRegistry";
+import { collectParties } from "../../src/storage/statisticsParties";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 
 type Release = { id: string; codes: string[] };
