@@ -53,8 +53,8 @@ export * from "./data/catalog/definitions/populationUk.ts";
 export * from "./data/catalog/definitions/publicHealth.ts";
 export * from "./data/catalog/definitions/pupilAbsence.ts";
 export * from "./data/catalog/definitions/qualification.ts";
-export * from "./data/catalog/definitions/regionalGdpItl1.ts";
-export * from "./data/catalog/definitions/regionalGdpItl2.ts";
+export * from "./data/regional-gdp-itl1/dataset.ts";
+export * from "./data/regional-gdp-itl2/dataset.ts";
 export * from "./data/catalog/definitions/regionalGdpItl3.ts";
 export * from "./data/catalog/definitions/roadCollisions.ts";
 export * from "./data/catalog/definitions/schoolPerformance.ts";
@@ -173,3 +173,5 @@ export * from "./types/wimd.ts";
 export type { BoundaryType } from "./types/boundaries.ts";
 export { outerRings } from "./types/geometry.ts";
 export { outerRings as gazetteerOuterRings } from "./data/gazetteer/geometry.ts";
+
+export * from "./data/regional-gdp/statistics.ts";

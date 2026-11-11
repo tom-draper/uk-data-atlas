@@ -1,3 +1,4 @@
+import { regionalGdpStatistics } from "@uk-data-atlas/datasets";
 import type { DatasetModule } from "@uk-data-atlas/datasets";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 import type { StatisticsPeriod } from "../atlasStatistics.ts";
@@ -392,42 +393,17 @@ export const CHILD_POVERTY: DeclaredDataset = {
 	},
 };
 
-const regionalGdp = (type: string, boundaryType: string): DeclaredDataset => ({
-	type,
+export const REGIONAL_GDP_ITL3: DeclaredDataset = {
+	type: "regionalGdpItl3",
 	module: "economy",
-	name: "itlName",
+	...regionalGdpStatistics,
 	payload: {
-		parts: yearParts(type, boundaryType, 2025, {
+		...regionalGdpStatistics.payload,
+		parts: yearParts("regionalGdpItl3", "itl3", 2025, {
 			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 		}),
-		code: "itlCode",
 	},
-	measures: [
-		measure(
-			"gva",
-			"Gross value added",
-			"gbp million",
-			"amount",
-			"sum",
-			"Balanced gross value added at current basic prices.",
-		),
-		measure(
-			"gdp",
-			"Gross domestic product",
-			"gbp million",
-			"amount",
-			"sum",
-			"Gross domestic product at current market prices.",
-		),
-	],
-	fields: [
-		{ path: "gvaMillionGbp", measure: "gva" },
-		{ path: "gdpMillionGbp", measure: "gdp" },
-	],
-});
-export const REGIONAL_GDP_ITL1 = regionalGdp("regionalGdpItl1", "itl1");
-export const REGIONAL_GDP_ITL2 = regionalGdp("regionalGdpItl2", "itl2");
-export const REGIONAL_GDP_ITL3 = regionalGdp("regionalGdpItl3", "itl3");
+};
 
 const single = (
 	type: string,

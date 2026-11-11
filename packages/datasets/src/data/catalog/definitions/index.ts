@@ -37,8 +37,6 @@ export { populationUkDatasetDefinition } from "./populationUk.ts";
 export { publicHealthDatasetDefinition } from "./publicHealth.ts";
 export { pupilAbsenceDatasetDefinition } from "./pupilAbsence.ts";
 export { qualificationDatasetDefinition } from "./qualification.ts";
-export { regionalGdpItl1DatasetDefinition } from "./regionalGdpItl1.ts";
-export { regionalGdpItl2DatasetDefinition } from "./regionalGdpItl2.ts";
 export { regionalGdpItl3DatasetDefinition } from "./regionalGdpItl3.ts";
 export { roadCollisionsDatasetDefinition } from "./roadCollisions.ts";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance.ts";
