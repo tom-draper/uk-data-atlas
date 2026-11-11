@@ -315,7 +315,7 @@ for (const [label, version] of oldCaches) {
 			[
 				"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
 				version,
-				// Tables and a table under a name that is a view today.
+				// Tables under the retired names.
 				"CREATE TABLE area_search_codes (code TEXT)",
 				"CREATE TABLE place_index_places (name TEXT)",
 				"CREATE TABLE cache_generations (component TEXT, generation TEXT)",
@@ -333,17 +333,14 @@ for (const [label, version] of oldCaches) {
 					.map((row) => [row.key, row.value]),
 				[["cacheVersion", String(CACHE_VERSION)]],
 			);
-			assert.deepEqual(
+			// Compatibility views for the retired names are not written.
+			assert.equal(
 				cache
 					.prepare(
-						"SELECT name, type FROM sqlite_schema WHERE name LIKE 'cache_generation%' ORDER BY name",
+						"SELECT count(*) AS n FROM sqlite_schema WHERE type = 'view'",
 					)
-					.all()
-					.map((row) => [row.name, row.type]),
-				[
-					["cache_generation", "table"],
-					["cache_generations", "view"],
-				],
+					.get()?.n,
+				0,
 			);
 		} finally {
 			cache.close();

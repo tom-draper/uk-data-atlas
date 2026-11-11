@@ -1,10 +1,6 @@
 import {
-	NAMED_LOCATIONS_VIEW,
-	NAMED_LOCATION_MEMBERS_VIEW,
-	NAMED_LOCATION_ASSERTIONS_VIEW,
 	NAMED_LOCATION_PARTIAL_MEMBERS_VIEW,
 	NAMED_LOCATION_GEOMETRIES_VIEW,
-	NAMED_LOCATION_INVENTORY_VIEW,
 } from "./deprecatedViews.ts";
 import { join } from "node:path";
 import type {
@@ -25,7 +21,6 @@ export const namedLocationTables = (
 		throw new Error("Invalid named location inventory");
 	return {
 		named_location_inventory_metadata: {
-			views: { named_location_inventory: NAMED_LOCATION_INVENTORY_VIEW },
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",
@@ -42,7 +37,6 @@ export const namedLocationTables = (
 			],
 		},
 		named_location: {
-			views: { named_locations: NAMED_LOCATIONS_VIEW },
 			columns: [
 				"id TEXT NOT NULL",
 				"position INTEGER NOT NULL UNIQUE",
@@ -81,7 +75,6 @@ export const namedLocationTables = (
 			]),
 		},
 		named_location_member: {
-			views: { named_location_members: NAMED_LOCATION_MEMBERS_VIEW },
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
@@ -98,9 +91,6 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_assertion: {
-			views: {
-				named_location_assertions: NAMED_LOCATION_ASSERTIONS_VIEW,
-			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",

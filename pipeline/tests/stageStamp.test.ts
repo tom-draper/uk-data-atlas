@@ -213,34 +213,3 @@ test("the final stamp stage accepts a current cache and drops the stamp of a sta
 	assert.equal(existsSync(stageStampPath(root, "place-index")), false);
 	assert.equal(existsSync(stageStampPath(root, "area-search-index")), true);
 });
-
-test("rebuilding a cache table replaces its compatibility view", () => {
-	const { root } = cacheFixture();
-	const path = join(root, "data/build/atlas-cache.sqlite");
-	const tables = {
-		place_index_place: {
-			columns: ["name TEXT"],
-			rows: [["new"]],
-			views: { place_index_places: "SELECT * FROM place_index_place" },
-		},
-	};
-	publishCacheTables(root, "place-index", tables);
-	publishCacheTables(root, "place-index", tables);
-	const cache = new DatabaseSync(path, { readOnly: true });
-	try {
-		assert.equal(
-			cache
-				.prepare(
-					"SELECT type FROM sqlite_schema WHERE name = 'place_index_places'",
-				)
-				.get()?.type,
-			"view",
-		);
-		assert.equal(
-			cache.prepare("SELECT name FROM place_index_places").get()?.name,
-			"new",
-		);
-	} finally {
-		cache.close();
-	}
-});
