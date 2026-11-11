@@ -71,6 +71,62 @@ const REFUSALS: Readonly<Record<string, string>> = {
 		"A category cannot be added or averaged, and the largest part of an area need not decide the whole.",
 };
 
+/**
+ * Why a particular measure cannot be rebuilt, where the general reason for its
+ * kind would not say what is missing. Each names the part that is not held, so
+ * that holding it is the way to lift the refusal.
+ */
+const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
+	"claimant-rate":
+		"A ratio of claimants to residents aged 16 to 64. The claimants are held, but the 16 to 64 population is not held as a measure, so the rate cannot be rebuilt.",
+	"children-in-relative-low-income-rate":
+		"A ratio of children in low income families to children under 16. The numerator is held, but the count of children under 16 is not held as a measure.",
+	"households-in-temporary-accommodation-rate":
+		"Per 1,000 households on the publisher's own household estimate, which is not held. Another household count would give a different rate.",
+	"unemployment-rate":
+		"A model-based rate over the economically active aged 16 and over. The economically active count is not held, and a rate from a model is not the ratio of two held counts.",
+	"unemployment-rate-interval":
+		"The half-width of a model-based confidence interval. Intervals do not add or average across areas.",
+	"unemployed-people-interval":
+		"The half-width of a confidence interval around a count. Intervals do not add across areas.",
+	"reception-excess-weight":
+		"A percentage of the children measured. The number measured is not held.",
+	"year-6-excess-weight":
+		"A percentage of the children measured. The number measured is not held.",
+	"adult-excess-weight":
+		"A survey estimate for adults. The sample or population it was taken over is not held.",
+	"physically-active-adults":
+		"A survey estimate for adults. The sample or population it was taken over is not held.",
+	"smoking-prevalence":
+		"A survey estimate for adults. The sample or population it was taken over is not held.",
+	"preventable-mortality":
+		"An age-standardised rate. Combining areas needs deaths and population by age, which are not held.",
+	"gcse-english-maths-grade-4-gap":
+		"A difference between two pupil groups' rates. The size of each group is not held.",
+	"progress-8":
+		"Averaged over the pupils with a key stage 2 result. That count is not published here.",
+	"gross-annual-pay-change":
+		"A change between two years of a published pay figure. Both years' underlying figures and their weights are not held.",
+	"gross-hourly-pay-change":
+		"A change between two years of a published pay figure. Both years' underlying figures and their weights are not held.",
+	"band-d-council-tax":
+		"An average of the Band D charge in the area. The number of properties it was averaged over is not held.",
+	"house-price-mean":
+		"A mean over the sales in the year. The number of sales is not held.",
+	"mobile-area-coverage":
+		"A percentage of the area's land. The area it is a percentage of is not held beside it.",
+	"pm25-population-weighted":
+		"Weighted by where people live within the area. The gridded population it was weighted by is not held.",
+	"pm25-population-weighted-anthropogenic":
+		"Weighted by where people live within the area. The gridded population it was weighted by is not held.",
+	"life-expectancy":
+		"Computed from each area's mortality by age. Those rates are not held, so areas cannot be combined.",
+	"healthy-life-expectancy":
+		"Computed from each area's mortality and health by age. Those are not held, so areas cannot be combined.",
+	majority:
+		"The lead of the winning candidate over the runner-up in one contest. It has no meaning for other areas.",
+};
+
 const summable = (measure: Pick<MeasureRow, "valueKind" | "aggregation">) =>
 	measure.aggregation === "sum" &&
 	(measure.valueKind === "count" || measure.valueKind === "amount");
@@ -122,7 +178,7 @@ export const conversionRule = (
 		if (!weight)
 			return {
 				rule: "refuse",
-				reason: "A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure.",
+				reason: `A weighted mean can only be recombined with the weights it was taken over, and no weight series is linked to the measure. ${MEASURE_REFUSALS[measure.slug] ?? ""}`.trim(),
 			};
 		if (!summable(weight))
 			return {
@@ -135,6 +191,8 @@ export const conversionRule = (
 			reason: `Rebuilt as the mean over ${weight.slug}: each area's value is weighted by its ${weight.slug}, and both are converted first. Never averaged unweighted.`,
 		};
 	}
+	const specific = MEASURE_REFUSALS[measure.slug];
+	if (specific) return { rule: "refuse", reason: specific };
 	const byKind = REFUSALS[measure.valueKind];
 	if (byKind) return { rule: "refuse", reason: byKind };
 	if (measure.valueKind === "rate" || measure.valueKind === "share")
