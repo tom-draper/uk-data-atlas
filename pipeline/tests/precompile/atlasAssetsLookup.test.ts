@@ -16,7 +16,7 @@ const fixture = await vi.hoisted(async () => {
 	};
 });
 
-vi.mock("../src/precompile/paths.ts", () => ({
+vi.mock("../../src/precompile/paths.ts", () => ({
 	ROOT: fixture.root,
 	BOUNDARY_DATA: fixture.boundary,
 	SOURCE_DATA: fixture.source,
@@ -30,11 +30,11 @@ vi.mock("@uk-data-atlas/datasets", async (importOriginal) => ({
 	...(await importOriginal<typeof import("@uk-data-atlas/datasets")>()),
 	loadGazetteerCore: vi.fn(async () => ({ places: [] })),
 }));
-vi.mock("../src/gazetteer/matchIndex.ts", () => ({
+vi.mock("../../src/gazetteer/matchIndex.ts", () => ({
 	loadMatchIndex: async () => ({}),
 }));
-vi.mock("../src/atlas/atlasLookups", () => ({ readAtlasLookup: () => "{}" }));
-vi.mock("../src/precompile/websiteOutput.ts", async () => {
+vi.mock("../../src/atlas/atlasLookups", () => ({ readAtlasLookup: () => "{}" }));
+vi.mock("../../src/precompile/websiteOutput.ts", async () => {
 	const { mkdirSync, writeFileSync } = await import("node:fs");
 	const { join } = await import("node:path");
 	return {
@@ -50,7 +50,7 @@ vi.mock("../src/precompile/websiteOutput.ts", async () => {
 });
 
 import { loadGazetteerCore } from "@uk-data-atlas/datasets";
-import { compileAtlasAssets } from "../src/precompile/atlasAssets.ts";
+import { compileAtlasAssets } from "../../src/precompile/atlasAssets.ts";
 
 afterAll(() => rmSync(fixture.root, { recursive: true, force: true }));
 

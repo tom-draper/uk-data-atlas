@@ -17,10 +17,10 @@ const paths = await vi.hoisted(async () => {
 	};
 });
 
-vi.mock("../src/precompile/paths.ts", () => paths);
+vi.mock("../../src/precompile/paths.ts", () => paths);
 
-import { compileStaleDataset } from "../src/precompile/compileDataset.ts";
-import { canReuseDataset } from "../src/precompile/cache.ts";
+import { compileStaleDataset } from "../../src/precompile/compileDataset.ts";
+import { canReuseDataset } from "../../src/precompile/cache.ts";
 
 afterAll(() => rmSync(paths.ROOT, { recursive: true, force: true }));
 
