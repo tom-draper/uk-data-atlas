@@ -4,13 +4,13 @@ import {
 	compileStaleDataset,
 	readCompiledFromDisk,
 	reuseDataset,
-} from "./compileDataset.mts";
-import type { DatasetJob, DatasetJobResult } from "./datasetWorker.mts";
+} from "./compileDataset.ts";
+import type { DatasetJob, DatasetJobResult } from "./datasetWorker.ts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
 	ReuseContext,
-} from "./types.mts";
+} from "./types.ts";
 
 type ManifestEntry = NonNullable<Awaited<ReturnType<typeof reuseDataset>>>;
 
@@ -37,7 +37,7 @@ const runJobs = (jobs: readonly DatasetJob[], size: number) =>
 		};
 		for (let started = 0; started < size; started++) {
 			const worker = new Worker(
-				new URL("./datasetWorker.mts", import.meta.url),
+				new URL("./datasetWorker.ts", import.meta.url),
 				{ resourceLimits: { maxOldGenerationSizeMb: WORKER_HEAP_MB } },
 			);
 			workers.push(worker);

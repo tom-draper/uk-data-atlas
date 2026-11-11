@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { BOUNDARY_DATA, SOURCE_DATA } from "../paths.mts";
+import { BOUNDARY_DATA, SOURCE_DATA } from "../paths.ts";
 
 /**
  * Reads a file relative to data/. This is raw source data, which is not synced

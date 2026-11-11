@@ -5,8 +5,8 @@ import { dirname, join } from "node:path";
 import Papa from "papaparse";
 import { expect, test } from "vitest";
 import { loadPlanningApplications } from "../../packages/datasets/src/data/new-datasets/loader";
-import { withDuckdbPlanningApplications } from "../../pipeline/src/precompile/duckdbPublicHealth.mts";
-import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.mts";
+import { withDuckdbPlanningApplications } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
+import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 test("DuckDB planning applications matches the Node reader, including malformed UTF-8", async () => {
 	const root = await mkdtemp(join(tmpdir(), "planning-applications-"));

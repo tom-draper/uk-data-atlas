@@ -8,8 +8,8 @@ import {
 	loadElectricityConsumption,
 	loadGasConsumption,
 } from "../../packages/datasets/src/data/energy-consumption/loader";
-import { withDuckdbEnergyConsumption } from "../../pipeline/src/precompile/duckdbDatasetCsv.mts";
-import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.mts";
+import { withDuckdbEnergyConsumption } from "../../pipeline/src/precompile/duckdbDatasetCsv.ts";
+import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 for (const [name, load] of [
 	["electricity", loadElectricityConsumption],

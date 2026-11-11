@@ -3,15 +3,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DuckDBInstance } from "@duckdb/node-api";
 import type { DatasetReader } from "../../../packages/datasets/src/data/catalog/types.ts";
-import { trackDuckdbSource } from "./duckdbSource.mts";
-import { SOURCE_DATA } from "./paths.mts";
+import { trackDuckdbSource } from "./duckdbSource.ts";
+import { SOURCE_DATA } from "./paths.ts";
 
 const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
 
 export async function withDuckdbSchoolPerformance<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	topic: "Total" | "Disadvantage status" | "Constituency",
 	compile: (reader: DatasetReader) => Promise<T>,
@@ -35,7 +35,7 @@ export async function withDuckdbSchoolPerformance<T>(
 export async function withDuckdbImd<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -70,7 +70,7 @@ export async function withDuckdbImd<T>(
 export async function withDuckdbEnergyConsumption<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -96,7 +96,7 @@ export async function withDuckdbEnergyConsumption<T>(
 export async function withDuckdbLocalElection<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
@@ -115,7 +115,7 @@ export async function withDuckdbLocalElection<T>(
 export async function withDuckdbFilteredCsv<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	fields: string,
 	where: string,

@@ -13,12 +13,12 @@ import {
 	fileStamp,
 	sameFileSnapshots,
 	snapshotFileContents,
-} from "./cache.mts";
-import { OUT_DIR, out, outputMatches } from "./websiteOutput.mts";
+} from "./cache.ts";
+import { OUT_DIR, out, outputMatches } from "./websiteOutput.ts";
 import { readAtlasLookup } from "../atlas/atlasLookups.ts";
-import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.mts";
-import { readBoundaryAsset } from "./sources/read.mts";
-import type { ReuseContext } from "./types.mts";
+import { BOUNDARY_DATA, ROOT, SOURCE_DATA } from "./paths.ts";
+import { readBoundaryAsset } from "./sources/read.ts";
+import type { ReuseContext } from "./types.ts";
 import { readJson } from "../lib/json.ts";
 
 /**

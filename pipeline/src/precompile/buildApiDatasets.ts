@@ -1,7 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { loadGazetteerCore } from "@uk-data-atlas/datasets";
-import { compileBoundaryAssets } from "./compileBoundaries.mts";
+import { compileBoundaryAssets } from "./compileBoundaries.ts";
 import { artifactDirectory, buildLog } from "@uk-data-atlas/atlas-db";
 
 /** Build boundary assets and gazetteer core from raw data. */

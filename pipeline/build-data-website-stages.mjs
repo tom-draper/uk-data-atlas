@@ -104,7 +104,7 @@ export const websiteStages = [
 				"package.json",
 				"packages/datasets",
 				"packages/map-tiles",
-				"pipeline/src/precompile/paths.mts",
+				"pipeline/src/precompile/paths.ts",
 			],
 		},
 	),

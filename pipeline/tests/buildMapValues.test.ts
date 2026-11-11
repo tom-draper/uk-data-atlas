@@ -12,7 +12,7 @@ import { test } from "vitest";
 import { BOUNDARY_CATALOG, propertiesAsset } from "@uk-data-atlas/datasets";
 import { codeListId, readMapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import { buildMapValues } from "../src/maps/buildMapValues.mts";
+import { buildMapValues } from "../src/maps/buildMapValues.ts";
 
 const boundaryYear = 2025;
 const asset = BOUNDARY_CATALOG.localAuthority.vintages[boundaryYear]!;

@@ -10,7 +10,7 @@ import {
 	sheetRow,
 	sheetRows,
 } from "@uk-data-atlas/datasets";
-import { SOURCE_DATA } from "../paths.mts";
+import { SOURCE_DATA } from "../paths.ts";
 
 const MEGABYTE = 1024 * 1024;
 

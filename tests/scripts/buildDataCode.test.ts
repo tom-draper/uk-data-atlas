@@ -357,7 +357,7 @@ test("production builders resolve without UI code and include declared workers a
 	assert.ok(
 		inputs
 			.get("datasets")!
-			.includes("pipeline/src/precompile/datasetWorker.mts"),
+			.includes("pipeline/src/precompile/datasetWorker.ts"),
 	);
 	assert.ok(
 		inputs

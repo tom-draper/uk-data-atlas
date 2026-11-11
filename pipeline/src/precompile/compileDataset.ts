@@ -8,28 +8,28 @@ import {
 } from "@uk-data-atlas/catalogue/compactPayload";
 import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
-import { canReuseDataset, NO_REUSE } from "./cache.mts";
-import { out } from "./output.mts";
-import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.mts";
-import { createTrackedReader } from "./trackedReader.mts";
+import { canReuseDataset, NO_REUSE } from "./cache.ts";
+import { out } from "./output.ts";
+import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.ts";
+import { createTrackedReader } from "./trackedReader.ts";
 import {
 	withDuckdbCensusLsoa,
 	withDuckdbPlanningApplications,
 	withDuckdbPublicHealth,
-} from "./duckdbPublicHealth.mts";
-import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.mts";
+} from "./duckdbPublicHealth.ts";
+import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import {
 	withDuckdbEnergyConsumption,
 	withDuckdbImd,
 	withDuckdbLocalElection,
 	withDuckdbSchoolPerformance,
-} from "./duckdbDatasetCsv.mts";
+} from "./duckdbDatasetCsv.ts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
 	ExistingManifestDataset,
 	ReuseContext,
-} from "./types.mts";
+} from "./types.ts";
 import { readJson } from "../lib/json.ts";
 
 /**

@@ -26,7 +26,7 @@ import {
 	type BoundaryResource,
 	type BoundaryResources,
 } from "@uk-data-atlas/areas";
-import { correctedSource, releaseSources } from "./compileBoundaries.mts";
+import { correctedSource, releaseSources } from "./compileBoundaries.ts";
 import {
 	buildLog,
 	elapsedSince,

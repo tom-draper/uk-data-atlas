@@ -2,17 +2,17 @@ import { sha256Hex } from "../lib/hash.ts";
 import { join } from "path";
 import type { DatasetReader, SourceArtifact } from "@uk-data-atlas/datasets";
 import type { OdsTableOptions } from "@uk-data-atlas/datasets";
-import { fileStamp, sourceInputPath } from "./cache.mts";
-import { SOURCE_DATA } from "./paths.mts";
-import { readSource } from "./sources/read.mts";
-import { readZip, visitCsvRows, visitZipCsvRows } from "./sources/csv.mts";
-import { readOdsContent, visitOdsTableRows } from "./sources/ods.mts";
-import { readXlsSheet, visitXlsSheetRows } from "./sources/xls.mts";
+import { fileStamp, sourceInputPath } from "./cache.ts";
+import { SOURCE_DATA } from "./paths.ts";
+import { readSource } from "./sources/read.ts";
+import { readZip, visitCsvRows, visitZipCsvRows } from "./sources/csv.ts";
+import { readOdsContent, visitOdsTableRows } from "./sources/ods.ts";
+import { readXlsSheet, visitXlsSheetRows } from "./sources/xls.ts";
 import {
 	readXlsxSheet,
 	visitXlsxSheetRows,
 	visitXlsxSheetSelectedRows,
-} from "./sources/xlsx.mts";
+} from "./sources/xlsx.ts";
 
 const sizeOf = (content: string | Uint8Array) =>
 	typeof content === "string"

@@ -2,10 +2,10 @@ import { join } from "path";
 import {
 	outputMatches as outputMatchesIn,
 	loadReuseContext as loadReuseContextIn,
-} from "./cache.mts";
-import { out as outIn } from "./output.mts";
-import { ROOT } from "./paths.mts";
-import type { CompiledOutput } from "./types.mts";
+} from "./cache.ts";
+import { out as outIn } from "./output.ts";
+import { ROOT } from "./paths.ts";
+import type { CompiledOutput } from "./types.ts";
 
 // Browser-ready output is built where Next serves it from.
 export const PUBLIC_DATA = join(ROOT, "public", "data");

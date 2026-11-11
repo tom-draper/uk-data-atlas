@@ -9,12 +9,12 @@ import type {
 	RoadCollisionsLADData,
 	RoadCollisionsLSOAData,
 } from "../../../packages/datasets/src/types/roadCollisions.ts";
-import { trackDuckdbSource } from "./duckdbSource.mts";
-import { SOURCE_DATA } from "./paths.mts";
+import { trackDuckdbSource } from "./duckdbSource.ts";
+import { SOURCE_DATA } from "./paths.ts";
 
 export async function compileDuckdbRoadCollisions(
 	artifacts: ReturnType<
-		typeof import("./trackedReader.mts").createTrackedReader
+		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
 	root = SOURCE_DATA,
 ) {

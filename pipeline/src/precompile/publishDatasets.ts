@@ -1,11 +1,11 @@
 import { join } from "path";
-import { readCompiledFromDisk } from "./compileDataset.mts";
-import { COMPILED_DATASETS } from "./paths.mts";
+import { readCompiledFromDisk } from "./compileDataset.ts";
+import { COMPILED_DATASETS } from "./paths.ts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
 	ExistingManifestDataset,
-} from "./types.mts";
+} from "./types.ts";
 import { readJson } from "../lib/json.ts";
 
 const RUN_COMPILE = "Run pnpm data:build --only datasets first.";

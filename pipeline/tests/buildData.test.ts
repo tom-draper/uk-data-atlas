@@ -301,7 +301,7 @@ writeFileSync(process.argv[2], JSON.stringify({ value, cwd: process.cwd(), flag:
 
 test("starts dataset workers with Node's TypeScript support", () => {
 	const worker = pathToFileURL(
-		join(root, "pipeline/src/precompile/datasetWorker.mts"),
+		join(root, "pipeline/src/precompile/datasetWorker.ts"),
 	).href;
 	const result = spawnSync(
 		process.execPath,
