@@ -357,30 +357,6 @@ const single = (
 	fields: [{ path: "value", measure: declared.slug }],
 });
 
-export const ADULT_SOCIAL_CARE_OUTCOMES = single(
-	"adultSocialCareOutcomes",
-	"health",
-	periods.financialYear(2024),
-	measure(
-		"social-care-quality-of-life",
-		"Social care-related quality of life",
-		"score out of 24",
-		"index",
-		"none",
-		"Average social care-related quality of life score of service users (ASCOF 1A).",
-	),
-	{
-		parts: yearParts(
-			"adultSocialCareOutcomes",
-			"localAuthority",
-			2025,
-			{ coverageCountries: ["GB-ENG"] },
-			["2025"],
-		),
-		code: "code",
-	},
-);
-
 export const PLANNING_APPLICATIONS: DeclaredDataset = {
 	type: "planningApplications",
 	module: "housing",

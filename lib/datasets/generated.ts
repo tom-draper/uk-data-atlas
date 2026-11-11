@@ -6,7 +6,6 @@ import type {
 } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 import { DECLARED_CHART_DEFINITIONS } from "./declared";
-import { adultSocialCareOutcomesDefinition } from "./adultSocialCareOutcomes";
 import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
@@ -54,7 +53,6 @@ export type ChartDatasetRecords = CatalogueDatasetRecords;
 
 export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDataset>[] =
 	[
-		adultSocialCareOutcomesDefinition,
 		airQualityDefinition,
 		brexitDefinition,
 		brexitConstituencyDefinition,

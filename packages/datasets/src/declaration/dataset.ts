@@ -86,6 +86,13 @@ export type IndicatorWeightedShare = {
 	};
 };
 
+/** A published statistic that cannot be combined across areas. */
+export type IndicatorNonAggregatable = {
+	kind: "non-aggregatable";
+	statistic: "median" | "rank" | "decile" | "life-expectancy";
+	note: string;
+};
+
 /** One API catalogue measure read from a field of the compiled records. */
 export type IndicatorDeclaration = {
 	/** The measure id the API serves. */
@@ -99,7 +106,7 @@ export type IndicatorDeclaration = {
 	 * The aggregation the API offers: a plain sum over areas, or a share that
 	 * needs a mean weighted by another field, which the API does not serve.
 	 */
-	aggregation: "sum" | IndicatorWeightedShare;
+	aggregation: "sum" | IndicatorWeightedShare | IndicatorNonAggregatable;
 	notes: readonly string[];
 	/** The statistics measure this indicator is a view of. */
 	measure: string;

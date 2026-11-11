@@ -59,7 +59,6 @@ export const datasetCatalogInputs = (
 		gasConsumption: precompiled("gas-consumption.json"),
 		businessActivity: precompiled("business-activity.json"),
 		waste: precompiled("waste.json"),
-		adultSocialCareOutcomes: precompiled("adult-social-care-outcomes.json"),
 		planningApplications: precompiled("planning-applications.json"),
 		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
 		declared: Object.fromEntries(

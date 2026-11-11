@@ -31,9 +31,6 @@
 		}
 	},
 	"ids": {
-		"adult-social-care-outcomes": {
-			"measure": "social-care-quality-of-life"
-		},
 		"age-0-to-4": {
 			"measure": "usual-residents",
 			"dimensions": {
