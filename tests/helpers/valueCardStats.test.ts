@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
-import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
 
@@ -213,7 +211,7 @@ describe("resolveValueCardStats", () => {
 		});
 	});
 
-	it("shows total electricity use and the domestic share", () => {
+	it("shows total electricity use", () => {
 		const electricity = {
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
@@ -228,7 +226,7 @@ describe("resolveValueCardStats", () => {
 				},
 			},
 		};
-		const card = electricityConsumptionDefinition.chart.card!;
+		const card = cardOf("electricity-consumption");
 
 		expect(
 			resolveValueCardStats(
@@ -245,7 +243,7 @@ describe("resolveValueCardStats", () => {
 				false,
 			),
 		).toEqual({
-			stats: { value: 500, secondary: "60% domestic" },
+			stats: { value: 500, secondary: "All meters total" },
 			viaLocalAuthority: false,
 		});
 		expect(
@@ -258,12 +256,12 @@ describe("resolveValueCardStats", () => {
 				false,
 			),
 		).toEqual({
-			stats: { value: 200, secondary: "60% domestic" },
+			stats: { value: 200, secondary: "All meters total" },
 			viaLocalAuthority: false,
 		});
 	});
 
-	it("shows total gas use and the domestic share", () => {
+	it("shows total gas use", () => {
 		const gas = {
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
@@ -278,7 +276,7 @@ describe("resolveValueCardStats", () => {
 				},
 			},
 		};
-		const card = gasConsumptionDefinition.chart.card!;
+		const card = cardOf("gas-consumption");
 
 		expect(
 			resolveValueCardStats(
@@ -295,7 +293,7 @@ describe("resolveValueCardStats", () => {
 				false,
 			),
 		).toEqual({
-			stats: { value: 1_000, secondary: "80% domestic" },
+			stats: { value: 1_000, secondary: "All meters total" },
 			viaLocalAuthority: false,
 		});
 	});

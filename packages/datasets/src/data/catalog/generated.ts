@@ -2,10 +2,8 @@
 import type { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import type { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
 import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
-import type { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
 import type { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
-import type { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption.ts";
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import type { imdDatasetDefinition } from "./definitions/imd.ts";
@@ -31,6 +29,8 @@ import type { claimantCount } from "../claimant-count/dataset.ts";
 import type { councilTax } from "../council-tax/dataset.ts";
 import type { crime } from "../crime/dataset.ts";
 import type { electricVehicleChargers } from "../electric-vehicle-chargers/dataset.ts";
+import type { electricityConsumption } from "../electricity-consumption/dataset.ts";
+import type { gasConsumption } from "../gas-consumption/dataset.ts";
 import type { generalHealth } from "../general-health/dataset.ts";
 import type { ghgEmissions } from "../ghg-emissions/dataset.ts";
 import type { historicalGeneralElection } from "../historical-general-election/dataset.ts";
@@ -65,17 +65,9 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof carAvailabilityDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<
-			ReturnType<
-				typeof electricityConsumptionDatasetDefinition.precompile
-			>
-	  >[string]
 	| Awaited<ReturnType<typeof ethnicityDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof gasConsumptionDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof generalElectionDatasetDefinition.precompile>
@@ -116,6 +108,8 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof councilTax.load>>[string]
 	| Awaited<ReturnType<typeof crime.load>>[string]
 	| Awaited<ReturnType<typeof electricVehicleChargers.load>>[string]
+	| Awaited<ReturnType<typeof electricityConsumption.load>>[string]
+	| Awaited<ReturnType<typeof gasConsumption.load>>[string]
 	| Awaited<ReturnType<typeof generalHealth.load>>[string]
 	| Awaited<ReturnType<typeof ghgEmissions.load>>[string]
 	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
@@ -160,6 +154,10 @@ export type DeclaredDatasetRecords = {
 	"electric-vehicle-chargers": Awaited<
 		ReturnType<typeof electricVehicleChargers.load>
 	>;
+	"electricity-consumption": Awaited<
+		ReturnType<typeof electricityConsumption.load>
+	>;
+	"gas-consumption": Awaited<ReturnType<typeof gasConsumption.load>>;
 	"general-health": Awaited<ReturnType<typeof generalHealth.load>>;
 	"ghg-emissions": Awaited<ReturnType<typeof ghgEmissions.load>>;
 	"historical-general-election": Awaited<
@@ -212,17 +210,11 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	carAvailability: Awaited<
 		ReturnType<typeof carAvailabilityDatasetDefinition.precompile>
 	>;
-	electricityConsumption: Awaited<
-		ReturnType<typeof electricityConsumptionDatasetDefinition.precompile>
-	>;
 	ethnicity: Awaited<
 		ReturnType<typeof ethnicityDatasetDefinition.precompile>
 	>;
 	fuelPoverty: Awaited<
 		ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
-	>;
-	gasConsumption: Awaited<
-		ReturnType<typeof gasConsumptionDatasetDefinition.precompile>
 	>;
 	generalElection: Awaited<
 		ReturnType<typeof generalElectionDatasetDefinition.precompile>

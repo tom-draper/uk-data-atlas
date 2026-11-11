@@ -146,8 +146,8 @@ export async function compileStaleDataset(
 									},
 									reader,
 								)
-							: definition.type === "electricityConsumption" ||
-								  definition.type === "gasConsumption"
+							: definition.type === "electricity-consumption" ||
+								  definition.type === "gas-consumption"
 								? await withDuckdbEnergyConsumption(
 										reader,
 										artifacts,

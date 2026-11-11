@@ -2,10 +2,8 @@
 export { brexitDatasetDefinition } from "@uk-data-atlas/datasets";
 export { brexitConstituencyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { carAvailabilityDatasetDefinition } from "@uk-data-atlas/datasets";
-export { electricityConsumptionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { ethnicityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { fuelPovertyDatasetDefinition } from "@uk-data-atlas/datasets";
-export { gasConsumptionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { generalElectionDatasetDefinition } from "@uk-data-atlas/datasets";
 export { housePriceDatasetDefinition } from "@uk-data-atlas/datasets";
 export { imdDatasetDefinition } from "@uk-data-atlas/datasets";

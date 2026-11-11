@@ -27,10 +27,6 @@ export interface WasteOptions extends CountMetricOptions {
 	metric: "collected" | "recycled" | "recyclingShare";
 }
 
-export interface EnergyConsumptionOptions extends CountMetricOptions {
-	sector: "allMetersGwh" | "domesticGwh" | "nonDomesticGwh";
-}
-
 export interface UnemploymentOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
@@ -92,8 +88,6 @@ export type ChartMapOptions = Omit<
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
-	| "electricityConsumption"
-	| "gasConsumption"
 	| "waste"
 	| "unemployment"
 	| "schoolPerformance"
@@ -103,8 +97,6 @@ export type ChartMapOptions = Omit<
 		imd: ImdOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
-		electricityConsumption: EnergyConsumptionOptions;
-		gasConsumption: EnergyConsumptionOptions;
 		waste: WasteOptions;
 		unemployment: UnemploymentOptions;
 		schoolPerformance: SchoolPerformanceOptions;

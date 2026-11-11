@@ -3,14 +3,6 @@ import { declaredDefaultOptions } from "../datasets/declared";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
 export const POPULATION_METRIC_RANGES = {
-	electricityConsumption: {
-		total: { min: 0, max: 2_500 },
-		perPopulation: { min: 0, max: 1_500 },
-	},
-	gasConsumption: {
-		total: { min: 0, max: 5_000 },
-		perPopulation: { min: 0, max: 2_500 },
-	},
 	waste: {
 		total: { min: 0, max: 200_000 },
 		perPopulation: { min: 0, max: 60_000 },
@@ -39,11 +31,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				? { measure: "median", period: "annual" }
 				: {}),
 			...(definition.type === "waste" ? { metric: "collected" } : {}),
-			...(["electricityConsumption", "gasConsumption"].includes(
-				definition.type,
-			)
-				? { sector: "allMetersGwh" }
-				: {}),
 			...(hasPopulationMetric(definition.type)
 				? { measure: "total" }
 				: {}),

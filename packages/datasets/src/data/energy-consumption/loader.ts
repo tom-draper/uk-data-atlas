@@ -27,7 +27,7 @@ const BOUNDARY_YEAR = 2025;
 const load = async (
 	read: (path: string) => Promise<string>,
 	file: string,
-	type: "electricityConsumption" | "gasConsumption",
+	type: "electricity-consumption" | "gas-consumption",
 ) => {
 	const { data } = await parseCsv(
 		await read(`environment/energy-consumption/${file}`),
@@ -83,10 +83,10 @@ export const loadElectricityConsumption = (
 	load(
 		read,
 		"electricity-lad-2015-2024.csv",
-		"electricityConsumption",
+		"electricity-consumption",
 	) as Promise<Record<string, ElectricityConsumptionDataset>>;
 
 export const loadGasConsumption = (read: (path: string) => Promise<string>) =>
-	load(read, "gas-lad-2015-2024.csv", "gasConsumption") as Promise<
+	load(read, "gas-lad-2015-2024.csv", "gas-consumption") as Promise<
 		Record<string, GasConsumptionDataset>
 	>;

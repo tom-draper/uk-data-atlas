@@ -4,10 +4,8 @@ import type { DatasetDefinition } from "./types.ts";
 import { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
 import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
-import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption.ts";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
-import { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption.ts";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import { imdDatasetDefinition } from "./definitions/imd.ts";
@@ -33,10 +31,8 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	brexitDatasetDefinition,
 	brexitConstituencyDatasetDefinition,
 	carAvailabilityDatasetDefinition,
-	electricityConsumptionDatasetDefinition,
 	ethnicityDatasetDefinition,
 	fuelPovertyDatasetDefinition,
-	gasConsumptionDatasetDefinition,
 	generalElectionDatasetDefinition,
 	housePriceDatasetDefinition,
 	imdDatasetDefinition,
