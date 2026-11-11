@@ -14,6 +14,7 @@ const measure = (
 	aggregation: "sum",
 	numerator: null,
 	denominator: null,
+	weight: null,
 	...fields,
 });
 
@@ -89,6 +90,32 @@ test("a ratio is rebuilt from an additive numerator and denominator, or refused"
 		["unnamed-rate", /does not name both/],
 		["income-ratio", /median-income is not additive/],
 		["per-thousand", /No scale is known/],
+	] as const) {
+		const rule = rules.get(slug)!;
+		assert.equal(rule.rule, "refuse");
+		assert.match(rule.reason, said);
+	}
+});
+
+test("a weighted mean is rebuilt over an additive weight it names, or refused", () => {
+	const mean = { valueKind: "mean", aggregation: "weighted_mean" };
+	const rules = rulesOf([
+		measure(1, "pupils"),
+		measure(2, "median-income", {
+			valueKind: "median",
+			aggregation: "none",
+		}),
+		measure(3, "attainment", { ...mean, weight: "pupils" }),
+		measure(4, "progress", mean),
+		measure(5, "by-income", { ...mean, weight: "median-income" }),
+	]);
+	assert.deepEqual(
+		{ ...rules.get("attainment")!, reason: "" },
+		{ rule: "rebuild", weight: "pupils", reason: "" },
+	);
+	for (const [slug, said] of [
+		["progress", /no weight series is linked/],
+		["by-income", /median-income is not additive/],
 	] as const) {
 		const rule = rules.get(slug)!;
 		assert.equal(rule.rule, "refuse");

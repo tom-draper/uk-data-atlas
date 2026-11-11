@@ -2,6 +2,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { TOTAL_POPULATION } from "./backtestCases.ts";
 import {
 	convertThroughSteps,
+	convertWeightedMeans,
 	isRegrouped,
 	startValues,
 	type CarriedValue,
@@ -42,7 +43,7 @@ export type SeriesGapReason =
 	| "unmeasured-split"
 	/** A source area's value that no crosswalk on the route carries anywhere. */
 	| "not-carried"
-	/** A rebuilt ratio whose converted denominator is not above zero. */
+	/** A rebuilt ratio or mean whose converted denominator or weight is not above zero. */
 	| "no-denominator";
 
 export type ConvertedObservation = {
@@ -61,7 +62,7 @@ export type SeriesGap = {
 	reason: SeriesGapReason;
 };
 
-export type InputRole = "value" | "numerator" | "denominator";
+export type InputRole = "value" | "numerator" | "denominator" | "weight";
 
 export type ConvertedSeries = {
 	planId: string;
@@ -144,6 +145,9 @@ const observedValues = (
 		).map((row) => [row.area, row.value] as const),
 	);
 
+const plain = (values: ReadonlyMap<number, CarriedValue>) =>
+	new Map([...values].map(([area, carried]) => [area, carried.value]));
+
 const idsOfSeries = (database: DatabaseSync, series: number) =>
 	database
 		.prepare(
@@ -220,8 +224,12 @@ export function* convertEntry(
 		if (methods.size !== 1) return undefined;
 		return context.factors([...methods][0]!, basis);
 	};
+	const weights =
+		rule.rule === "rebuild" && "weight" in rule
+			? seriesOf(rule.weight)
+			: undefined;
 	const parts =
-		rule.rule === "rebuild"
+		rule.rule === "rebuild" && !("weight" in rule)
 			? {
 					numerator: seriesOf(rule.numerator),
 					denominator: seriesOf(rule.denominator),
@@ -290,6 +298,53 @@ export function* convertEntry(
 				...base,
 				rule: "sum",
 				inputs: [{ role: "value", series: source }],
+			};
+			continue;
+		}
+
+		if ("weight" in rule) {
+			// The weight broken down as the mean is, or else the one weight held
+			// with no breakdown, which then weights every breakdown of the mean.
+			const weight =
+				weights!.find((series) => series.members === source.members) ??
+				(weights!.length === 1 && weights![0]!.members === ""
+					? weights![0]
+					: undefined);
+			if (!weight)
+				throw new Error(
+					`${entry.id}: ${source.key} has no published ${rule.weight} to be weighted by`,
+				);
+			for (const period of periods) {
+				const rebuilt = convertWeightedMeans(
+					steps,
+					plain(observedValues(database, source.id, period.id)),
+					plain(observedValues(database, weight.id, period.id)),
+				);
+				for (const [area, value] of rebuilt.values)
+					observations.push({
+						area,
+						period: period.id,
+						value,
+						status: STATUS_DERIVED,
+						lower: null,
+						upper: null,
+					});
+				for (const [area, reason] of rebuilt.gaps)
+					gaps.push({ area, period: period.id, reason });
+				for (const area of rebuilt.uncarried)
+					gaps.push({
+						area,
+						period: period.id,
+						reason: "not-carried",
+					});
+			}
+			yield {
+				...base,
+				rule: "rebuild",
+				inputs: [
+					{ role: "value", series: source },
+					{ role: "weight", series: weight },
+				],
 			};
 			continue;
 		}

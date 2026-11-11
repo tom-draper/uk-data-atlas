@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
 	convertThroughSteps,
+	convertWeightedMeans,
 	isRegrouped,
 	startValues,
 } from "../src/conversion/convert.ts";
@@ -240,4 +241,57 @@ test("bounds widen with the amount at risk, and a pruned pair lowers only the lo
 		upper: 115,
 	});
 	assert.equal(boundsOf({ value: 3, atRisk: 10, pruned: 0 }, 1).lower, 0);
+});
+
+test("a weighted mean is rebuilt over its weights and never from half a pair", () => {
+	const rebuilt = convertWeightedMeans(
+		[
+			step({
+				1: [{ to: 10 }],
+				2: [{ to: 10 }],
+				// 3 holds a weight and no mean, 4 a mean and no weight.
+				3: [{ to: 11 }],
+				4: [{ to: 12 }],
+				5: [{ to: 13 }],
+				6: [{ to: 13 }],
+				7: [
+					{ to: 14, weight: 0.5, risk: 0.25 },
+					{ to: 15, weight: 0.5, risk: 0.25 },
+				],
+				8: [{ to: 16 }],
+			}),
+		],
+		new Map([
+			[1, 40],
+			[2, 60],
+			[4, 50],
+			[5, 30],
+			[7, 45],
+			[8, 20],
+			[9, 70],
+		]),
+		new Map([
+			[1, 300],
+			[2, 100],
+			[3, 80],
+			[5, 10],
+			[7, 200],
+			[8, 0],
+			[9, 5],
+		]),
+	);
+	// 45, not the unweighted 50.
+	assert.deepEqual([...rebuilt.values], [[10, 45]]);
+	assert.deepEqual(
+		[...rebuilt.gaps].sort(([a], [b]) => a - b),
+		[
+			[11, "missing-input"],
+			[12, "missing-input"],
+			[13, "missing-input"],
+			[14, "unmeasured-split"],
+			[15, "unmeasured-split"],
+			[16, "no-denominator"],
+		],
+	);
+	assert.deepEqual([...rebuilt.uncarried], [9]);
 });

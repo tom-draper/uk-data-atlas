@@ -145,3 +145,65 @@ export const convertThroughSteps = (
 	}
 	return { values: held, gaps, uncarried };
 };
+
+/** Why a target area has no rebuilt mean. */
+export type MeanGapReason =
+	| GapReason
+	/** The mean or its weight passed through a split. */
+	| "unmeasured-split"
+	/** The converted weight is not above zero. */
+	| "no-denominator";
+
+export type ConvertedMeans = {
+	values: Map<number, number>;
+	gaps: Map<number, MeanGapReason>;
+	/** Source areas holding a mean or a weight that no step carried anywhere. */
+	uncarried: Set<number>;
+};
+
+/**
+ * Rebuild a weighted mean on the last step's areas: the sum of each source
+ * area's mean times its weight, over the sum of the weights.
+ *
+ * A source area takes part only with both its mean and its weight. One that
+ * holds a single half is a missing input to every target it feeds. Only an
+ * exact regrouping gives a value, because no split of a mean is measured.
+ */
+export const convertWeightedMeans = (
+	steps: readonly Step[],
+	means: ReadonlyMap<number, number>,
+	weights: ReadonlyMap<number, number>,
+): ConvertedMeans => {
+	const paired = [...means].filter(([area]) => weights.has(area));
+	const tops = convertThroughSteps(
+		steps,
+		startValues(
+			paired.map(([area, mean]) => [area, mean * weights.get(area)!]),
+		),
+	);
+	const bottoms = convertThroughSteps(
+		steps,
+		startValues(paired.map(([area]) => [area, weights.get(area)!])),
+	);
+	const values = new Map<number, number>();
+	const gaps = new Map<number, MeanGapReason>(tops.gaps);
+	const uncarried = new Set(tops.uncarried.flat());
+	for (const [area, top] of tops.values) {
+		const bottom = bottoms.values.get(area)!;
+		if (!isRegrouped(top) || !isRegrouped(bottom))
+			gaps.set(area, "unmeasured-split");
+		else if (bottom.value <= 0) gaps.set(area, "no-denominator");
+		else values.set(area, top.value / bottom.value);
+	}
+	// Whatever an area holding one half alone reaches is left without a value.
+	for (const half of [means, weights]) {
+		const reached = convertThroughSteps(steps, startValues(half));
+		for (const area of reached.uncarried.flat()) uncarried.add(area);
+		for (const [area, reason] of reached.gaps)
+			if (!values.has(area) && !gaps.has(area)) gaps.set(area, reason);
+		for (const area of reached.values.keys())
+			if (!values.has(area) && !gaps.has(area))
+				gaps.set(area, "missing-input");
+	}
+	return { values, gaps, uncarried };
+};

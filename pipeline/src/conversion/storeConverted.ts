@@ -68,7 +68,7 @@ export const ATLAS_CONVERSION_SCHEMA = `
 CREATE TABLE series_input (
 	series_id INTEGER NOT NULL REFERENCES series(id),
 	input_series_id INTEGER NOT NULL REFERENCES series(id),
-	role TEXT NOT NULL CHECK (role IN ('value','numerator','denominator')),
+	role TEXT NOT NULL CHECK (role IN ('value','numerator','denominator','weight')),
 	PRIMARY KEY (series_id, role)) WITHOUT ROWID, STRICT;
 CREATE TABLE series_conversion (
 	series_id INTEGER PRIMARY KEY REFERENCES series(id),
