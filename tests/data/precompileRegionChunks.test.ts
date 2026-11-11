@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { expect, it } from "vitest";
-import { writeDatasetRegionChunks } from "../../pipeline/src/precompile/datasetRegionChunks.mjs";
+import { writeDatasetRegionChunks } from "../../pipeline/src/precompile/datasetRegionChunks.ts";
 import type { DatasetPayloadLayout } from "@uk-data-atlas/datasets";
 
 it("loads regional payloads only when writing their chunks", async () => {
