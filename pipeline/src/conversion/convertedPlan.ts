@@ -159,8 +159,16 @@ export const CONVERTED_PLAN: PlanEntry[] = [
 		members: PERSONS,
 		note: "Only wards whose boundary has not changed since 2023 have a value.",
 	},
-	// No entry asks for estimates. The one candidate held, constituency
-	// population split onto authorities, duplicates a published authority
-	// figure and is wider than it by the bounds the backtest reports, so it is
-	// measured there and not stored as a series.
+	{
+		id: "population-constituency/population>la",
+		source: {
+			dataset: "population-constituency",
+			measure: "population",
+			release: CON_2024,
+		},
+		target: LA_LATEST,
+		route: [hop(...CASE_SLUGS.con2024ToLa2024), ...laFrom2024],
+		estimates: true,
+		note: "Constituency population split onto authorities by residents in the overlap, the one estimated split kept. The population-uk series is the published authority figure and is the better one wherever it exists. The bounds are the backtest's.",
+	},
 ];
