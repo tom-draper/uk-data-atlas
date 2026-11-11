@@ -6,7 +6,7 @@ import {
 	logPlanForecast,
 	logRunProblems,
 	plural,
-} from "../build-data-report.mjs";
+} from "../../build-data-report.mjs";
 
 function setup(options: { plan?: boolean; adopt?: boolean } = {}) {
 	const lines: string[] = [];

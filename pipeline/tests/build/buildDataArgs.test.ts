@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { parseBuildArgs } from "../build-data-args.mjs";
+import { parseBuildArgs } from "../../build-data-args.mjs";
 
 const stages = [{ name: "a" }, { name: "b" }];
 const limits = { jobs: 3 };

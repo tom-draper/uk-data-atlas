@@ -3,9 +3,9 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, type TestContext } from "vitest";
-import { resolveChecks, runBuild } from "../build-data.mjs";
-import { createStageCache } from "../build-data-cache.mjs";
-import { buildDataStages } from "../build-data-graph.mjs";
+import { resolveChecks, runBuild } from "../../build-data.mjs";
+import { createStageCache } from "../../build-data-cache.mjs";
+import { buildDataStages } from "../../build-data-graph.mjs";
 
 test("local builds skip the checks unless something switches them on", () => {
 	const off = { run: false, reason: undefined };

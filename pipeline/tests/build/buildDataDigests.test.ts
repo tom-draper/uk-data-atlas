@@ -4,7 +4,7 @@ import {
 	ALWAYS_RUNS,
 	createDigestTracker,
 	findCurrentStages,
-} from "../build-data-digests.mjs";
+} from "../../build-data-digests.mjs";
 
 const stage = (name: string, dependencies: string[] = [], extra = {}) => ({
 	name,
