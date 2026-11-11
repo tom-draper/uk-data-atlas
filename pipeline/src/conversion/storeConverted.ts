@@ -28,7 +28,9 @@ export const CONVERTED_COMPONENT_SCHEMA = `
 CREATE TABLE converted_series (
 	n INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, plan_id TEXT NOT NULL,
 	dataset_id INTEGER NOT NULL, measure_id INTEGER NOT NULL, release_id INTEGER NOT NULL,
-	rule TEXT NOT NULL, basis_id TEXT NOT NULL, exact INTEGER NOT NULL, note TEXT,
+	rule TEXT NOT NULL, basis_id TEXT NOT NULL, exact INTEGER NOT NULL,
+	exact_share REAL NOT NULL CHECK (exact_share BETWEEN 0 AND 1),
+	coverage REAL NOT NULL CHECK (coverage BETWEEN 0 AND 1), note TEXT,
 	check_compared INTEGER, check_max_difference REAL) STRICT;
 CREATE TABLE converted_input (
 	n INTEGER NOT NULL, position INTEGER NOT NULL, role TEXT NOT NULL,
@@ -57,6 +59,9 @@ ${BACKTEST_SCHEMA}
  * - `series_input`: the published series it was computed from.
  * - `series_conversion`: its rule and weight basis. `exact` is 1 where every
  *   value is an exact regrouping and 0 where some are estimated splits.
+ *   `exact_share` is the share of the series' value that reached its area by
+ *   regrouping whole source areas, and `coverage` the share of the target
+ *   areas reached that hold a value. See `qualityOf` in `convertSeries.ts`.
  * - `series_crosswalk`: the crosswalks of its route, in order.
  * - `series_gap`: the areas it has no value for, and why. The area is one of
  *   the series' own release, except where the reason is `not-carried`, when
@@ -75,6 +80,8 @@ CREATE TABLE series_conversion (
 	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild')),
 	basis_id TEXT NOT NULL REFERENCES weight_basis(id),
 	exact INTEGER NOT NULL CHECK (exact IN (0, 1)),
+	exact_share REAL NOT NULL CHECK (exact_share BETWEEN 0 AND 1),
+	coverage REAL NOT NULL CHECK (coverage BETWEEN 0 AND 1),
 	note TEXT) STRICT;
 CREATE TABLE series_crosswalk (
 	series_id INTEGER NOT NULL REFERENCES series(id),
@@ -118,7 +125,7 @@ export const openConvertedWriter = (path: string) => {
 	const database = new DatabaseSync(temporary);
 	database.exec(`${CONVERTED_COMPONENT_SCHEMA}; BEGIN`);
 	const series = database.prepare(
-		"INSERT INTO converted_series VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+		"INSERT INTO converted_series VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 	);
 	const input = database.prepare(
 		"INSERT INTO converted_input VALUES (?,?,?,?,?)",
@@ -145,6 +152,8 @@ export const openConvertedWriter = (path: string) => {
 				converted.rule,
 				converted.basis,
 				converted.observations.every((o) => o.lower === null) ? 1 : 0,
+				converted.quality.exactShare,
+				converted.quality.coverage,
 				converted.note,
 				converted.sourceCheck?.compared ?? null,
 				converted.sourceCheck?.maxDifference ?? null,
@@ -193,6 +202,8 @@ type ComponentSeries = {
 	rule: string;
 	basis_id: string;
 	exact: number;
+	exact_share: number;
+	coverage: number;
 	note: string | null;
 };
 
@@ -237,7 +248,7 @@ export const copyConvertedSeries = (
 		"INSERT INTO series_input VALUES (?,?,?)",
 	);
 	const insertConversion = database.prepare(
-		"INSERT INTO series_conversion VALUES (?,?,?,?,?)",
+		"INSERT INTO series_conversion VALUES (?,?,?,?,?,?,?)",
 	);
 	const insertCrosswalks = database.prepare(
 		"INSERT INTO series_crosswalk SELECT ?, position, crosswalk_id, reversed FROM converted_component.converted_crosswalk WHERE n = ?",
@@ -275,7 +286,15 @@ export const copyConvertedSeries = (
 		);
 		insertMembers.run(id, from[0]!.id);
 		for (const input of from) insertInput.run(id, input.id, input.role);
-		insertConversion.run(id, row.rule, row.basis_id, row.exact, row.note);
+		insertConversion.run(
+			id,
+			row.rule,
+			row.basis_id,
+			row.exact,
+			row.exact_share,
+			row.coverage,
+			row.note,
+		);
 		insertCrosswalks.run(id, row.n);
 		observations += Number(insertObservations.run(id, row.n).changes);
 		insertGaps.run(id, row.n);
