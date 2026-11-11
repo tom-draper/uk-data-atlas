@@ -103,7 +103,11 @@ export function registerStatistics(
 		const context = `dataset ${dataset.slug}`;
 		sources.add(sourceKey(dataset.source), dataset.source);
 		for (const measure of dataset.measures) {
-			for (const reference of [measure.numerator, measure.denominator])
+			for (const reference of [
+				measure.numerator,
+				measure.denominator,
+				measure.weight,
+			])
 				if (reference !== undefined) measures.id(reference, context);
 			measures.add(measure.slug, measure);
 		}
