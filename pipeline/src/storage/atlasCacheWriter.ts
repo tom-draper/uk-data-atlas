@@ -10,6 +10,7 @@ import { DatabaseSync } from "node:sqlite";
 import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 import {
 	atlasCachePath,
+	CACHE_VERSION,
 	cacheGeneration,
 	closeReadOnlyDatabase,
 	type CacheComponent,
@@ -23,6 +24,32 @@ import {
 } from "./atlasCacheWork.ts";
 import { publishVacuumed } from "./publishVacuumed.ts";
 import { hashSqliteContent, writeStageStamp } from "./stageStamp.ts";
+
+const CACHE_VERSION_KEY = "cacheVersion";
+
+/**
+ * Copy the published cache to the file a build changes, unless an older
+ * compiler wrote it. Its tables and views may not match the current names, so
+ * the build starts from an empty file and every component is rebuilt.
+ */
+function copyCurrentCache(source: string, destination: string) {
+	if (!existsSync(source)) return;
+	let current = false;
+	try {
+		const database = new DatabaseSync(source, { readOnly: true });
+		try {
+			current =
+				database
+					.prepare("SELECT value FROM meta WHERE key = ?")
+					.get(CACHE_VERSION_KEY)?.value === String(CACHE_VERSION);
+		} finally {
+			database.close();
+		}
+	} catch {
+		// Not a cache this compiler wrote.
+	}
+	if (current) copyFileSync(source, destination, constants.COPYFILE_FICLONE);
+}
 
 export type CacheStep = {
 	component: CacheComponent;
@@ -39,6 +66,9 @@ function applyStep(
 	database.exec(
 		"BEGIN; CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL) WITHOUT ROWID;",
 	);
+	database
+		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
+		.run(CACHE_VERSION_KEY, String(CACHE_VERSION));
 	if (session)
 		database
 			.prepare("INSERT OR IGNORE INTO meta VALUES (?, ?)")
@@ -101,8 +131,7 @@ export function publishAtlasCacheSteps(
 	if (defer) return writeToWorkingCopy(root, steps);
 	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
-		if (existsSync(path))
-			copyFileSync(path, temporary, constants.COPYFILE_FICLONE);
+		copyCurrentCache(path, temporary);
 		const database = new DatabaseSync(temporary);
 		const generations = new Map<CacheComponent, string>();
 		try {
@@ -146,8 +175,7 @@ function writeToWorkingCopy(root: string, steps: readonly CacheStep[]) {
 	try {
 		if (!existsSync(work)) {
 			session = randomUUID();
-			if (existsSync(published))
-				copyFileSync(published, work, constants.COPYFILE_FICLONE);
+			copyCurrentCache(published, work);
 		}
 		const database = new DatabaseSync(work);
 		const generations = new Map<CacheComponent, string>();
