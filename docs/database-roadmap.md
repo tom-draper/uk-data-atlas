@@ -33,7 +33,10 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   the registries against the base branch. Left: confirm the seed against the
   deployed file (`pnpm ids verify`), and the postcode lookup's own numbering,
   which is internal. See `docs/stable-ids.md`.
-- 1,643 series are `published` and 318 are `converted` (task 25, first set).
+- 1,643 series are `published` and 1,074 are `converted` (task 25: every convertible
+  measure on the latest authorities, wards, constituencies and 2021 LSOAs, each
+  scored for exact share and coverage; 43 refused measures and unrouted pairs
+  are in `conversion_skip`).
   See `docs/conversion-accuracy.md`. No `aggregated` series exist.
 - 636k of 638k extent-continuity edges are same code, same area.
 - Largest objects: `postcodes` 248 MB, `observation` 176 MB plus
