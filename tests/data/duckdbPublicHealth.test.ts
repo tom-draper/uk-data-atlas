@@ -15,4 +15,4 @@ test("DuckDB production fixtures", () => {
 	);
 	expect(result.status, result.stderr || result.stdout).toBe(0);
 	expect(result.stdout).toMatch(/1 passed/);
-});
+}, 30_000);

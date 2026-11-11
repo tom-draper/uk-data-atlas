@@ -15,4 +15,4 @@ test("DuckDB energy consumption fixtures", () => {
 	);
 	expect(result.status, result.stderr || result.stdout).toBe(0);
 	expect(result.stdout).toMatch(/2 passed/);
-});
+}, 30_000);

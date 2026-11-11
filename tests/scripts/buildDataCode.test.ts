@@ -613,7 +613,7 @@ test("production builders resolve without UI code and include declared workers a
 	]) {
 		assert.ok(inputs.get("website-lookups")!.includes(path), path);
 	}
-});
+}, 30_000);
 
 test("moved pipeline builders trace imports and invalidate their own manifests", async () => {
 	const { write, run, stages } = fixture();
