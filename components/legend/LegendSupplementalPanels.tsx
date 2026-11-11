@@ -6,10 +6,6 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import { REGIONAL_OUTPUT_MEASURES } from "@/lib/helpers/regionalGdpItl3Measures";
 import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
-import { PUBLIC_HEALTH_MEASURES } from "@uk-data-atlas/datasets";
-import { ABSENCE_MEASURES } from "@/lib/helpers/pupilAbsenceMeasures";
-import { HEALTH_MEASURES } from "@/lib/helpers/generalHealthMeasures";
-import { TENURE_MEASURES } from "@/lib/helpers/housingTenureMeasures";
 import { WORKPLACE_PAY_MEASURES } from "@/lib/helpers/workplaceIncomeMeasures";
 import type { EnergySector } from "@/lib/helpers/energyConsumptionMeasures";
 import GlassOverlays from "../GlassOverlays";
@@ -139,98 +135,6 @@ export function WorkplacePayMeasurePanel({
 				}
 			/>
 		</>
-	);
-}
-
-const HOUSING_TENURE_SEGMENTS = TENURE_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type HousingTenureMeasure = (typeof TENURE_MEASURES)[number]["value"];
-
-export function HousingTenureMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: HousingTenureMeasure;
-	onChange: (measure: HousingTenureMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={HOUSING_TENURE_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
-const PUBLIC_HEALTH_SEGMENTS = PUBLIC_HEALTH_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type PublicHealthMeasure = (typeof PUBLIC_HEALTH_MEASURES)[number]["value"];
-
-export function PublicHealthMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: PublicHealthMeasure;
-	onChange: (measure: PublicHealthMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={PUBLIC_HEALTH_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
-const PUPIL_ABSENCE_SEGMENTS = ABSENCE_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type PupilAbsenceMeasure = (typeof ABSENCE_MEASURES)[number]["value"];
-
-export function PupilAbsenceMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: PupilAbsenceMeasure;
-	onChange: (measure: PupilAbsenceMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={PUPIL_ABSENCE_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
-const GENERAL_HEALTH_SEGMENTS = HEALTH_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type GeneralHealthMeasure = (typeof HEALTH_MEASURES)[number]["value"];
-
-export function GeneralHealthMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: GeneralHealthMeasure;
-	onChange: (measure: GeneralHealthMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={GENERAL_HEALTH_SEGMENTS}
-			onChange={onChange}
-			vertical
-		/>
 	);
 }
 

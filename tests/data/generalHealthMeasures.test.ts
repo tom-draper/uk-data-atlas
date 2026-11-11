@@ -1,6 +1,8 @@
 import { it, expect } from "vitest";
-import { loadGeneralHealth } from "@uk-data-atlas/datasets";
-import { sumGeneralHealth } from "@/lib/datasets/generalHealth";
+import { loadGeneralHealth, sumMetrics } from "@uk-data-atlas/datasets";
+
+const sumGeneralHealth = (records: Parameters<typeof sumMetrics>[0]) =>
+	sumMetrics(records, "goodHealth", "total");
 it("loads census counts and recomputes regional percentages", async () => {
 	const values = {
 		"General health: Very good health": "1",
@@ -29,7 +31,7 @@ it("loads census counts and recomputes regional percentages", async () => {
 		records[0],
 		{ ...records[0], metrics: { ...records[0].metrics, total: 300 } },
 	]);
-	expect(sum?.metrics.total).toBe(400);
+	expect(sum?.metrics?.total).toBe(400);
 	expect(sum?.value).toBeCloseTo(records[0].value / 2);
 	expect(sumGeneralHealth([])).toBeNull();
 });

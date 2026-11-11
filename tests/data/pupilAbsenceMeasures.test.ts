@@ -1,6 +1,19 @@
 import { it, expect } from "vitest";
 import { loadPupilAbsence } from "@uk-data-atlas/datasets";
-import { absenceRate, sumAbsence } from "@/lib/datasets/pupilAbsence";
+import { sumMetrics } from "@uk-data-atlas/datasets";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+
+const definition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "pupil-absence",
+)!;
+const absenceRate = (record: unknown, measure: string) =>
+	definition.map?.valueFor?.({ data: { A: record } } as never, "A", {
+		...DEFAULT_MAP_OPTIONS,
+		"pupil-absence": { ...DEFAULT_MAP_OPTIONS["pupil-absence"], measure },
+	});
+const sumAbsence = (records: Parameters<typeof sumMetrics>[0]) =>
+	sumMetrics(records, "overall", "sessions");
 it("filters the full-year total and uses sessions or enrolments as appropriate", async () => {
 	const row = {
 		time_period: "202425",
@@ -30,6 +43,6 @@ it("filters the full-year total and uses sessions or enrolments as appropriate",
 	expect(records).toHaveLength(1);
 	expect(absenceRate(records[0], "overall")).toBe(8);
 	expect(absenceRate(records[0], "persistent")).toBe(20);
-	expect(absenceRate(sumAbsence(records) ?? undefined, "severe")).toBe(2);
+	expect(absenceRate(sumAbsence(records), "severe")).toBe(2);
 	expect(absenceRate(undefined, "overall")).toBeNull();
 });

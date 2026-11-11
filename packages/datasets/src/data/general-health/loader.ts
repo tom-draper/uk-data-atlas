@@ -6,7 +6,7 @@ import type {
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
 export async function loadGeneralHealth(
 	read: DatasetReader["csvRows"],
-): Promise<Record<string, IndicatorDataset<"generalHealth">>> {
+): Promise<Record<string, IndicatorDataset<"general-health">>> {
 	const data: Record<string, IndicatorRecord> = {};
 	await read(
 		"demographics/census-2021-small-area/ts037/census2021-ts037-lsoa.csv",
@@ -49,8 +49,8 @@ export async function loadGeneralHealth(
 	);
 	return {
 		2021: {
-			id: "generalHealth2021",
-			type: "generalHealth",
+			id: "general-health2021",
+			type: "general-health",
 			year: 2021,
 			boundaryType: "lsoa",
 			boundaryYear: 2021,

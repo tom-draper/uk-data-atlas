@@ -13,10 +13,12 @@ import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
 import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
+import { generalHealth } from "./general-health/dataset.ts";
 import { ghgEmissions } from "./ghg-emissions/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { homelessness } from "./homelessness/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
+import { housingTenure } from "./housing-tenure/dataset.ts";
 import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
@@ -26,6 +28,8 @@ import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
 import { nhsWaiting } from "./nhs-waiting/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
+import { publicHealth } from "./public-health/dataset.ts";
+import { pupilAbsence } from "./pupil-absence/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
@@ -44,10 +48,12 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	councilTax,
 	crime,
 	electricVehicleChargers,
+	generalHealth,
 	ghgEmissions,
 	historicalGeneralElection,
 	homelessness,
 	housingAffordability,
+	housingTenure,
 	jobs,
 	landArea,
 	lifeExpectancySeries,
@@ -57,6 +63,8 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	nhsWaiting,
 	populationConstituency,
 	populationUk,
+	publicHealth,
+	pupilAbsence,
 	regionalGdpItl1,
 	regionalGdpItl2,
 	roadCollisions,
@@ -80,10 +88,12 @@ export type DeclaredDatasetId =
 	| "council-tax"
 	| "crime"
 	| "electric-vehicle-chargers"
+	| "general-health"
 	| "ghg-emissions"
 	| "historical-general-election"
 	| "homelessness"
 	| "housing-affordability"
+	| "housing-tenure"
 	| "jobs"
 	| "land-area"
 	| "life-expectancy-series"
@@ -93,6 +103,8 @@ export type DeclaredDatasetId =
 	| "nhs-waiting"
 	| "population-constituency"
 	| "population-uk"
+	| "public-health"
+	| "pupil-absence"
 	| "regional-gdp-itl1"
 	| "regional-gdp-itl2"
 	| "road-collisions"

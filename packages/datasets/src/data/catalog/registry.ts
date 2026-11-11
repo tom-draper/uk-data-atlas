@@ -9,9 +9,7 @@ import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption.ts";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
-import { generalHealthDatasetDefinition } from "./definitions/generalHealth.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
-import { housingTenureDatasetDefinition } from "./definitions/housingTenure.ts";
 import { imdDatasetDefinition } from "./definitions/imd.ts";
 import { incomeDatasetDefinition } from "./definitions/income.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
@@ -19,8 +17,6 @@ import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
 import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import { planningApplicationsDatasetDefinition } from "./definitions/planningApplications.ts";
 import { populationDatasetDefinition } from "./definitions/population.ts";
-import { publicHealthDatasetDefinition } from "./definitions/publicHealth.ts";
-import { pupilAbsenceDatasetDefinition } from "./definitions/pupilAbsence.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
@@ -45,9 +41,7 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	fuelPovertyDatasetDefinition,
 	gasConsumptionDatasetDefinition,
 	generalElectionDatasetDefinition,
-	generalHealthDatasetDefinition,
 	housePriceDatasetDefinition,
-	housingTenureDatasetDefinition,
 	imdDatasetDefinition,
 	incomeDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
@@ -55,8 +49,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	nimdmDatasetDefinition,
 	planningApplicationsDatasetDefinition,
 	populationDatasetDefinition,
-	publicHealthDatasetDefinition,
-	pupilAbsenceDatasetDefinition,
 	qualificationDatasetDefinition,
 	regionalGdpItl3DatasetDefinition,
 	schoolPerformanceDatasetDefinition,
