@@ -80,7 +80,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	regionalGdpItl3: Input;
 	electricityConsumption: Input;
 	gasConsumption: Input;
-	businessActivity?: Input;
 	waste?: Input;
 	planningApplications?: Input;
 	/** The compiled file of each declared dataset that publishes measures, by id. */
@@ -130,7 +129,6 @@ export const compileDataCatalog = ({
 	regionalGdpItl3: regionalGdpItl3Path,
 	electricityConsumption: electricityConsumptionPath,
 	gasConsumption: gasConsumptionPath,
-	businessActivity: businessActivityPath,
 	waste: wastePath,
 	planningApplications: planningApplicationsPath,
 	declared = {},
@@ -268,7 +266,6 @@ export const compileDataCatalog = ({
 		...compileAirQuality(catalogManifest, airQualityPath, populationCodes),
 	);
 	const newDatasetPaths = {
-		businessActivity: businessActivityPath,
 		waste: wastePath,
 		planningApplications: planningApplicationsPath,
 	};

@@ -142,9 +142,6 @@
 		"air-quality-grid-cells": {
 			"measure": "air-quality-grid-cells"
 		},
-		"business-activity": {
-			"measure": "enterprises"
-		},
 		"car-availability-none": {
 			"measure": "households",
 			"dimensions": {

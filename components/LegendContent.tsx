@@ -89,8 +89,7 @@ export default function LegendContent({
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
 		const populationMetric =
-			(activeDataset.type === "businessActivity" ||
-				activeDataset.type === "jobs") &&
+			activeDataset.type === "jobs" &&
 			displayOptions[activeDataset.type].measure === "perPopulation";
 		const airQualityMeasure =
 			activeDataset.type === "airQuality"
@@ -164,12 +163,7 @@ export default function LegendContent({
 		const measureLegend = populationMetric
 			? {
 					min: 0,
-					max:
-						activeDataset.type === "businessActivity"
-							? 20_000
-							: activeDataset.type === "jobs"
-								? 100_000
-								: 1_000,
+					max: 100_000,
 					format: (value: number) =>
 						`${value.toFixed(0)} per 100k residents`,
 				}

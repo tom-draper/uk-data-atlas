@@ -50,7 +50,7 @@ describe("ChartCards registry selection", () => {
 				"economics-unemployment": true,
 				"economics-childPoverty": true,
 				"economics-fuelPoverty": true,
-				"economics-businessActivity": true,
+				"economics-business-activity": true,
 			}),
 		);
 
@@ -64,7 +64,7 @@ describe("ChartCards registry selection", () => {
 			"economics-unemployment",
 			"economics-childPoverty",
 			"economics-fuelPoverty",
-			"economics-businessActivity",
+			"economics-business-activity",
 		]);
 	});
 });

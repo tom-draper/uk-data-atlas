@@ -56,7 +56,7 @@ export type FigureInputs = {
 		pct5GOutdoorAll: number;
 		premisesCount: number;
 	}>;
-	businessActivity: Editions<{ value: number }>;
+	"business-activity": Editions<{ value: number }>;
 	"electric-vehicle-chargers": Editions<{ value: number }>;
 	"council-tax": Editions<{ name: string; value: number }>;
 	"claimant-count": Editions<
@@ -369,7 +369,7 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"business-activity": {
-		compute({ businessActivity }, location, period) {
+		compute({ "business-activity": businessActivity }, location, period) {
 			const { data } = businessActivity[String(period)];
 			const counts = everyValue(
 				districtsOf(location, Object.keys(data)),

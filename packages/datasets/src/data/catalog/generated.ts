@@ -2,7 +2,6 @@
 import type { airQualityDatasetDefinition } from "./definitions/airQuality.ts";
 import type { brexitDatasetDefinition } from "./definitions/brexit.ts";
 import type { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency.ts";
-import type { businessActivityDatasetDefinition } from "./definitions/businessActivity.ts";
 import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability.ts";
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty.ts";
 import type { crimeDatasetDefinition } from "./definitions/crime.ts";
@@ -40,6 +39,7 @@ import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIn
 import type { adultSocialCareActivity } from "../adult-social-care-activity/dataset.ts";
 import type { adultSocialCareOutcomes } from "../adult-social-care-outcomes/dataset.ts";
 import type { broadband } from "../broadband/dataset.ts";
+import type { businessActivity } from "../business-activity/dataset.ts";
 import type { claimantCount } from "../claimant-count/dataset.ts";
 import type { councilTax } from "../council-tax/dataset.ts";
 import type { electricVehicleChargers } from "../electric-vehicle-chargers/dataset.ts";
@@ -62,9 +62,6 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof businessActivityDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof carAvailabilityDatasetDefinition.precompile>
@@ -151,6 +148,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof adultSocialCareActivity.load>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareOutcomes.load>>[string]
 	| Awaited<ReturnType<typeof broadband.load>>[string]
+	| Awaited<ReturnType<typeof businessActivity.load>>[string]
 	| Awaited<ReturnType<typeof claimantCount.load>>[string]
 	| Awaited<ReturnType<typeof councilTax.load>>[string]
 	| Awaited<ReturnType<typeof electricVehicleChargers.load>>[string]
@@ -177,6 +175,7 @@ export type DeclaredDatasetRecords = {
 		ReturnType<typeof adultSocialCareOutcomes.load>
 	>;
 	broadband: Awaited<ReturnType<typeof broadband.load>>;
+	"business-activity": Awaited<ReturnType<typeof businessActivity.load>>;
 	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
 	"council-tax": Awaited<ReturnType<typeof councilTax.load>>;
 	"electric-vehicle-chargers": Awaited<
@@ -217,9 +216,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	brexit: Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>;
 	brexitConstituency: Awaited<
 		ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
-	>;
-	businessActivity: Awaited<
-		ReturnType<typeof businessActivityDatasetDefinition.precompile>
 	>;
 	carAvailability: Awaited<
 		ReturnType<typeof carAvailabilityDatasetDefinition.precompile>

@@ -164,7 +164,6 @@ export type ChartMapOptions = Omit<
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
-	| "businessActivity"
 	| "electricityConsumption"
 	| "gasConsumption"
 	| "waste"
@@ -187,7 +186,6 @@ export type ChartMapOptions = Omit<
 		publicHealth: PublicHealthOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
-		businessActivity: CountMetricOptions;
 		electricityConsumption: EnergyConsumptionOptions;
 		gasConsumption: EnergyConsumptionOptions;
 		waste: WasteOptions;
