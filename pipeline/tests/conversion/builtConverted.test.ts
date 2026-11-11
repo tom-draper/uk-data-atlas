@@ -295,3 +295,60 @@ test("a split population is estimated within bounds that hold the published figu
 		`bounds held ${held.length} of ${compared.length} published figures`,
 	);
 });
+
+test("turnout is rebuilt as a mean weighted by electorate, so it stays between its sources", (context) => {
+	const database = open();
+	if (!database) return context.skip();
+	context.onTestFinished(() => database.close());
+
+	const measure = database
+		.prepare(
+			`SELECT w.slug AS weight, mc.rule FROM measure m
+			JOIN measure_conversion mc ON mc.measure_id = m.id
+			LEFT JOIN measure w ON w.id = m.weight_id
+			WHERE m.slug = 'turnout'`,
+		)
+		.get() as { weight: string | null; rule: string } | undefined;
+	if (!measure) return context.skip();
+	assert.equal(measure.weight, "electorate");
+	assert.notEqual(measure.rule, "refuse");
+
+	const converted = database
+		.prepare(
+			`SELECT s.id, s.derived_from_id AS source FROM series s
+			JOIN measure m ON m.id = s.measure_id
+			WHERE m.slug = 'turnout' AND s.method = 'converted'`,
+		)
+		.all() as { id: number; source: number }[];
+	assert.ok(converted.length > 0);
+	const range = database.prepare(
+		`SELECT period_id AS period, min(value) AS low, max(value) AS high
+		FROM observation WHERE series_id = ? GROUP BY period_id`,
+	);
+	const values = database.prepare(
+		"SELECT period_id AS period, value FROM observation WHERE series_id = ?",
+	);
+	for (const series of converted) {
+		const bounds = new Map(
+			(
+				range.all(series.source) as {
+					period: number;
+					low: number;
+					high: number;
+				}[]
+			).map((row) => [row.period, row]),
+		);
+		for (const row of values.all(series.id) as {
+			period: number;
+			value: number;
+		}[]) {
+			const source = bounds.get(row.period);
+			assert.ok(source, "a converted period the source does not hold");
+			assert.ok(
+				row.value >= source.low - 1e-9 &&
+					row.value <= source.high + 1e-9,
+				`a mean of turnouts falls outside them (${row.value})`,
+			);
+		}
+	}
+});
