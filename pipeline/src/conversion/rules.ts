@@ -157,10 +157,11 @@ export const readMeasures = (database: DatabaseSync): MeasureRow[] =>
 	database
 		.prepare(
 			`SELECT m.id, m.slug, m.unit, m.value_kind AS valueKind, m.aggregation,
-				n.slug AS numerator, d.slug AS denominator
+				n.slug AS numerator, d.slug AS denominator, w.slug AS weight
 			FROM measure m
 			LEFT JOIN measure n ON n.id = m.numerator_id
 			LEFT JOIN measure d ON d.id = m.denominator_id
+			LEFT JOIN measure w ON w.id = m.weight_id
 			ORDER BY m.id`,
 		)
 		.all() as MeasureRow[];
