@@ -69,7 +69,7 @@ The same again, plus custom website code: `components/elections/local/*`,
 `lib/helpers/localElection.ts`, `mapRendering/elections.ts`,
 `useLocalElectionDatasets.ts`, `legend/CategoryLegends.tsx`, `legendData.ts`,
 `PlaceElections.tsx`, and pipeline `catalog/elections.ts`,
-`electionStatisticsExport.ts` and `datasetRegionChunks.mts`.
+`electionStatisticsExport.ts` and `datasetRegionChunks.ts`.
 
 ## Target shape
 

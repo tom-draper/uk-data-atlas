@@ -8,7 +8,7 @@
  *
  * The reprojected GeoJSON is ~80MB, too large to check in, so only the
  * compiled result is kept (data/source/boundaries/data-zone/2011-12-sc-bfc/
- * boundaries.topojson, read directly by compile-boundaries.mts, the same
+ * boundaries.topojson, read directly by compile-boundaries.ts, the same
  * as superOutputArea/2011-ni). To reproduce or update it:
  *   1. Convert the shapefile to source.geojson (outside this repo).
  *   2. npx tsx scripts/reproject-datazone-boundary.mts
