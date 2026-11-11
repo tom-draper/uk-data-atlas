@@ -35,7 +35,7 @@ describe("datasetIsNeeded", () => {
 	// to open as an empty map.
 	it("fetches the dataset the map is drawing even while its card is hidden", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
-			"adultSocialCareOutcomes",
+			"adult-social-care-outcomes",
 			"brexitConstituency",
 			"generalHealth",
 			"housingTenure",

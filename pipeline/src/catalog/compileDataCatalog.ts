@@ -82,7 +82,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	gasConsumption: Input;
 	businessActivity?: Input;
 	waste?: Input;
-	adultSocialCareOutcomes?: Input;
 	planningApplications?: Input;
 	electricVehicleChargers?: Input;
 	/** The compiled file of each declared dataset that publishes measures, by id. */
@@ -134,7 +133,6 @@ export const compileDataCatalog = ({
 	gasConsumption: gasConsumptionPath,
 	businessActivity: businessActivityPath,
 	waste: wastePath,
-	adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 	planningApplications: planningApplicationsPath,
 	electricVehicleChargers: electricVehicleChargersPath,
 	declared = {},
@@ -274,7 +272,6 @@ export const compileDataCatalog = ({
 	const newDatasetPaths = {
 		businessActivity: businessActivityPath,
 		waste: wastePath,
-		adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 		planningApplications: planningApplicationsPath,
 		electricVehicleChargers: electricVehicleChargersPath,
 	};

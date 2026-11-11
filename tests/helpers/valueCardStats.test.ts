@@ -355,6 +355,14 @@ describe("resolveValueCardStats", () => {
 		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
 		expect(chart.mapValueField).toBe("value");
 	});
+	it("formats declared social care outcomes as a score", () => {
+		const chart = CHART_DATASET_DEFINITIONS.find(
+			({ type }) => type === "adult-social-care-outcomes",
+		)!;
+		expect(chart.chart.defaultVisible).toBe(false);
+		expect(chart.map?.legend?.format?.(18.3, {} as never)).toBe("18.3");
+		expect(chart.mapValueField).toBe("value");
+	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "council-tax",

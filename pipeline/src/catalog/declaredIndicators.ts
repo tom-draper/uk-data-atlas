@@ -22,12 +22,14 @@ const aggregationOf = (
 ): MeasureAggregation =>
 	aggregation === "sum"
 		? { kind: "extensive", operation: "sum", available: true }
-		: {
-				kind: "intensive",
-				operation: "weighted-mean",
-				weight: { ...aggregation.weight },
-				available: false,
-			};
+		: aggregation.kind === "non-aggregatable"
+			? { ...aggregation, available: false }
+			: {
+					kind: "intensive",
+					operation: "weighted-mean",
+					weight: { ...aggregation.weight },
+					available: false,
+				};
 
 const catalogueOf = (declaration: DatasetDeclaration) => {
 	const { catalogue } = declaration;

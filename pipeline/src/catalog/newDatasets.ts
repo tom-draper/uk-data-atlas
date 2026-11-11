@@ -72,22 +72,7 @@ export const NEW_DATASET_MEASURES = (
 		note: "Collection authorities only, avoiding double counting between collection and disposal authorities.",
 	},
 
-	{
-		datasetId: "adult-social-care-outcomes",
-		path: paths.adultSocialCareOutcomes!,
-		boundaryYear: 2025,
-		period: "2024-25",
-		label: "Social care-related quality of life",
-		unit: "score out of 24",
-		valueKind: "ratio",
-		aggregation: {
-			kind: "non-aggregatable",
-			statistic: "median",
-			note: "This is a survey outcome score, not a count that can be summed.",
-			available: false,
-		},
-		note: "The total-population council outcome score from ASCOF table 1a.",
-	},
+
 	{
 		datasetId: "planning-applications",
 		path: paths.planningApplications!,

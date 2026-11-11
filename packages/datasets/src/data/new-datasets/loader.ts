@@ -15,7 +15,7 @@ type IndicatorType =
 	| "council-tax"
 	| "waste"
 	| "adult-social-care-activity"
-	| "adultSocialCareOutcomes"
+	| "adult-social-care-outcomes"
 	| "planningApplications"
 	| "electricVehicleChargers"
 	| "housingAffordability";
@@ -287,7 +287,7 @@ export async function loadAdultSocialCareOutcomes(
 		records[code] = { code, name: row[0]?.trim() || code, value };
 	}
 	return dataset(
-		"adultSocialCareOutcomes",
+		"adult-social-care-outcomes",
 		2025,
 		"localAuthority",
 		2025,
