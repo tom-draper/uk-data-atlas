@@ -118,8 +118,8 @@ way is refused.
 A regrouped value has status `derived` and no bounds. A split value has status
 `estimated` and both bounds. No converted value has status `observed`: the copy
 into the atlas fails if one does. In the built atlas, the 1,074 converted series
-hold 1,428,049 derived values, none with bounds, no estimated value and no
-observed value. The 1,643 published series are unchanged, with 9,236,105
+hold 1,428,049 derived values with no bounds, 572 estimated values with bounds
+(one series, below), and no observed value. The 1,643 published series are unchanged, with 9,236,105
 observed values.
 
 Every query in the codebase that reads `series` names the method it wants, and a
@@ -405,13 +405,23 @@ Two numbers per converted series, stored in `series_conversion`:
 `exact` is 1 where no value was estimated. The score describes the value, not
 its error: the bounds on an estimated value are in the section on bounds above.
 
-Every series scores 1 on `exact_share`. On `coverage`, 397 score 1, 3 score
+One series scores under 1 on `exact_share`, 0.61, the constituency population
+split onto authorities; the other 1,073 score 1. On `coverage`, 397 score 1, 3 score
 0.9 to under 1, 124 score 0.5 to under 0.9, and 550 score under 0.5. The low
 group is mostly authority series from older releases, where only the
 authorities that have not changed since carry (379 series), and constituency
 series (170), where a constituency holds a value only if it is made of whole
 wards or areas. Ward series from 2023 score 0.5 to 0.9 because the wards that
 changed since are not carried. Filter on `coverage` to leave them out.
+
+The one estimated series, `population-constituency/population>la`, is pinned in
+`convertedPlan.ts` with `estimates: true`. The published authority figure
+(`population-uk`) is the better one wherever it exists, so this series is kept
+as the working proof of the estimated path and for its bounds. Of its 572
+values, the published authority population sits inside the bounds in 571. The
+median difference to it is 0.23%, the 95th percentile 1.1% and the largest
+20.8% (a small authority, where the bounds are wide). The built-atlas test
+checks this at 99% or better.
 
 A series that scores 1 on `coverage` and is summed keeps the total of its
 source. The built-atlas test checks this for every such series, and checks that
