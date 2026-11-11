@@ -3,10 +3,6 @@ import { declaredDefaultOptions } from "../datasets/declared";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
 export const POPULATION_METRIC_RANGES = {
-	jobs: {
-		total: { min: 0, max: 500_000 },
-		perPopulation: { min: 0, max: 100_000 },
-	},
 	electricityConsumption: {
 		total: { min: 0, max: 2_500 },
 		perPopulation: { min: 0, max: 1_500 },

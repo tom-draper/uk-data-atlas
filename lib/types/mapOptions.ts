@@ -167,7 +167,6 @@ export type ChartMapOptions = Omit<
 	| "electricityConsumption"
 	| "gasConsumption"
 	| "waste"
-	| "jobs"
 	| "airQuality"
 	| "ghgEmissions"
 	| "unemployment"
@@ -189,7 +188,6 @@ export type ChartMapOptions = Omit<
 		electricityConsumption: EnergyConsumptionOptions;
 		gasConsumption: EnergyConsumptionOptions;
 		waste: WasteOptions;
-		jobs: CountMetricOptions;
 		airQuality: AirQualityOptions;
 		ghgEmissions: GhgEmissionsOptions;
 		unemployment: UnemploymentOptions;

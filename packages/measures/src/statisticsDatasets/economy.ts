@@ -166,30 +166,6 @@ export const WORKPLACE_INCOME: DeclaredDataset = {
 	fields: payFields("workplace"),
 };
 
-export const JOBS: DeclaredDataset = {
-	type: "jobs",
-	module: "economy",
-	payload: {
-		parts: yearParts("jobs", "localAuthority", 2023, {
-			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
-		}),
-		code: "ladCode",
-	},
-	name: "ladName",
-	measures: [
-		measure(
-			"total-jobs",
-			"Total jobs",
-			"jobs",
-			"count",
-			"sum",
-			"Jobs located in the area: employee jobs, self-employment, government-supported trainees and HM Forces.",
-		),
-	],
-	fields: [{ path: "totalJobs", measure: "total-jobs" }],
-	...per100k((record) => record.totalJobs),
-};
-
 /** Years to 2003 are April to March; later ones are calendar years. */
 const unemploymentPeriod = (key: string) =>
 	Number(key) <= 2003

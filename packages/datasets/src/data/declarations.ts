@@ -13,6 +13,7 @@ import { councilTax } from "./council-tax/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
+import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
@@ -37,6 +38,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	electricVehicleChargers,
 	historicalGeneralElection,
 	housingAffordability,
+	jobs,
 	landArea,
 	lifeExpectancySeries,
 	localGovernmentFinance,
@@ -66,6 +68,7 @@ export type DeclaredDatasetId =
 	| "electric-vehicle-chargers"
 	| "historical-general-election"
 	| "housing-affordability"
+	| "jobs"
 	| "land-area"
 	| "life-expectancy-series"
 	| "local-government-finance"

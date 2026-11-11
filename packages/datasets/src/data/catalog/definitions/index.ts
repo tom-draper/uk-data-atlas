@@ -16,7 +16,6 @@ export { housePriceDatasetDefinition } from "./housePrice.ts";
 export { housingTenureDatasetDefinition } from "./housingTenure.ts";
 export { imdDatasetDefinition } from "./imd.ts";
 export { incomeDatasetDefinition } from "./income.ts";
-export { jobsDatasetDefinition } from "./jobs.ts";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
 export { localElectionDatasetDefinition } from "./localElection.ts";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting.ts";

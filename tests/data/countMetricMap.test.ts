@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 
 import { getChartDatasetDefinition } from "@/lib/datasets";
-import { jobsDefinition } from "@/lib/datasets/jobs";
 import type { IndicatorDataset } from "@uk-data-atlas/datasets";
 import type { JobsDataset } from "@uk-data-atlas/datasets";
 
@@ -109,7 +108,7 @@ describe("count metric maps", () => {
 		).toEqual({ value: 200, secondary: undefined });
 	});
 	it("switches jobs between total and per-population values", () => {
-		const valueFor = jobsDefinition.map?.valueFor;
+		const valueFor = getChartDatasetDefinition("jobs")?.map?.valueFor;
 		expect(valueFor?.(jobsDataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(200);
 		expect(
 			valueFor?.(jobsDataset, "E1", {
