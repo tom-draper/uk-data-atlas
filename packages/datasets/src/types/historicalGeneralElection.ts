@@ -20,7 +20,7 @@ export interface HistoricalElectionConstituencyResult {
 
 export interface HistoricalGeneralElectionDataset {
 	id: string;
-	type: "historicalGeneralElection";
+	type: "historical-general-election";
 	/** The source's own label, e.g. "1974F" for February 1974. */
 	election: string;
 	/** Calendar year; 1974F and 1974O both resolve to 1974. */

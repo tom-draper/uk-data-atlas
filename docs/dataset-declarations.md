@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport),
+Declared: `claimant-count`, `regional-gdp-itl1` and `regional-gdp-itl2` (economy), `land-area` (environment), `life-expectancy-series` (health), `population-constituency` and `population-uk` (population), `road-collisions` (transport), `historical-general-election` (politics),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -185,7 +185,7 @@ website chart definition):
   adult-social-care-outcomes
 - crime: crime
 - politics: brexit, brexit-constituency, general-election,
-  historical-general-election, local-election
+  local-election
 - environment: air-quality, ghg-emissions, electricity-consumption,
   gas-consumption, waste
 - population: population, ethnicity

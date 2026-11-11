@@ -5,6 +5,7 @@ import {
 } from "../declaration/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
+import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
@@ -18,6 +19,7 @@ import { roadCollisions } from "./road-collisions/dataset.ts";
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	broadband,
 	claimantCount,
+	historicalGeneralElection,
 	landArea,
 	lifeExpectancySeries,
 	mobileCoverage,
@@ -36,6 +38,7 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 export type DeclaredDatasetId =
 	| "broadband"
 	| "claimant-count"
+	| "historical-general-election"
 	| "land-area"
 	| "life-expectancy-series"
 	| "mobile-coverage"
