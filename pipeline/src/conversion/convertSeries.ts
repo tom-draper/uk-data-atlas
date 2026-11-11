@@ -53,6 +53,49 @@ export type ConvertedObservation = {
 	status: typeof STATUS_DERIVED | typeof STATUS_ESTIMATED;
 	lower: number | null;
 	upper: number | null;
+	/**
+	 * How much of `value` took a split or a pruned pair on its way. Absent
+	 * for a regrouped value, which took none.
+	 */
+	estimated?: number;
+};
+
+/**
+ * How far a converted series can be trusted to be a regrouping of what was
+ * published, rather than an estimate or a partial cover.
+ */
+export type Quality = {
+	/**
+	 * The share of the series' value, summed over every value it holds, that
+	 * reached its area by regrouping whole source areas. 1 where no value was
+	 * split, and less where estimated values took a split.
+	 */
+	exactShare: number;
+	/**
+	 * The share of the target areas and periods reached at all that hold a
+	 * value. A gap that is a source area no crosswalk carries is not a target
+	 * and is left out.
+	 */
+	coverage: number;
+};
+
+/** The quality of a series from the values and the gaps it ended with. */
+export const qualityOf = (
+	observations: readonly ConvertedObservation[],
+	gaps: readonly SeriesGap[],
+): Quality => {
+	let total = 0;
+	let estimated = 0;
+	for (const o of observations) {
+		total += o.value;
+		estimated += Math.min(o.estimated ?? 0, o.value);
+	}
+	const missing = gaps.filter((gap) => gap.reason !== "not-carried").length;
+	const reached = observations.length + missing;
+	return {
+		exactShare: total > 0 ? 1 - estimated / total : 1,
+		coverage: reached > 0 ? observations.length / reached : 0,
+	};
 };
 
 export type SeriesGap = {
@@ -82,6 +125,7 @@ export type ConvertedSeries = {
 	}[];
 	note: string | null;
 	periods: number;
+	quality: Quality;
 	observations: ConvertedObservation[];
 	gaps: SeriesGap[];
 	/**
@@ -290,12 +334,14 @@ export function* convertEntry(
 						period: period.id,
 						value: carried.value,
 						status: STATUS_ESTIMATED,
+						estimated: carried.estimated,
 						...boundsOf(carried, factor),
 					});
 				}
 			}
 			yield {
 				...base,
+				quality: qualityOf(observations, gaps),
 				rule: "sum",
 				inputs: [{ role: "value", series: source }],
 			};
@@ -340,6 +386,7 @@ export function* convertEntry(
 			}
 			yield {
 				...base,
+				quality: qualityOf(observations, gaps),
 				rule: "rebuild",
 				inputs: [
 					{ role: "value", series: source },
@@ -410,6 +457,7 @@ export function* convertEntry(
 		}
 		yield {
 			...base,
+			quality: qualityOf(observations, gaps),
 			rule: "rebuild",
 			inputs: [
 				{ role: "numerator", series: numerator },

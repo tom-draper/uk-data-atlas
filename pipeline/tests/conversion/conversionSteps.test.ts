@@ -163,10 +163,13 @@ test("whole areas regroup exactly and a count is conserved through a split", () 
 	const ten = converted.values.get(10)!;
 	assert.equal(ten.value, 150);
 	assert.equal(ten.inputs, 2);
+	assert.equal(ten.estimated, 0);
 	assert.ok(isRegrouped(ten));
 	const twelve = converted.values.get(12)!;
 	assert.equal(twelve.value, 80);
 	assert.equal(twelve.atRisk, 15);
+	// 60 of its 80 took the split, and 20 came whole from area 4.
+	assert.equal(twelve.estimated, 60);
 	assert.deepEqual([...twelve.splits], [7]);
 	assert.ok(!isRegrouped(twelve));
 	assert.equal(

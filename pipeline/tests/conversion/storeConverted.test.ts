@@ -71,6 +71,7 @@ const converted = (fields: Partial<ConvertedSeries> = {}): ConvertedSeries => ({
 	],
 	note: null,
 	periods: 1,
+	quality: { exactShare: 0.75, coverage: 2 / 3 },
 	observations: [
 		{
 			area: 200,
@@ -159,6 +160,8 @@ test("a copied series is marked converted, names its inputs, and holds no observ
 		rule: "sum",
 		basis_id: "population",
 		exact: 0,
+		exact_share: 0.75,
+		coverage: 2 / 3,
 		note: null,
 	});
 	assert.deepEqual(one("SELECT * FROM series_crosswalk"), {
