@@ -153,6 +153,8 @@ export const TURNOUT = measure(
 	"share",
 	"weighted_mean",
 	"Ballots cast as a percentage of the electorate.",
+	// Ballots over the electorate: weighted by the electorate, the combined
+	// turnout is the combined ballots over the combined electorate.
 	{ weight: "electorate" },
 );
 

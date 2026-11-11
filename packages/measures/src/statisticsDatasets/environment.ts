@@ -20,6 +20,7 @@ export const AIR_QUALITY: DeclaredDataset = {
 			"mean",
 			"weighted_mean",
 			"Modelled annual mean background concentration, averaged over the area's 1 km grid cells.",
+			{ weight: "air-quality-grid-cells" },
 		),
 		measure(
 			"air-quality-grid-cells",
