@@ -300,7 +300,7 @@ export const crime = defineDataset<CrimeDataset>({
 				legend: {
 					min: 0,
 					max: 150000,
-					format: { kind: "decimal", digits: 0 },
+					format: { kind: "count", suffix: " offences" },
 				},
 				// A total above 100,000 offences fills the bar; lower totals stay
 				// proportional so small authorities are not flattened to zero.
