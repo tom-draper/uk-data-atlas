@@ -179,3 +179,5 @@ export * from "./data/regional-gdp/statistics.ts";
 export * from "./data/population/statistics.ts";
 
 export * from "./data/school-performance-constituency/statistics.ts";
+
+export * from "./data/new-datasets/aggregate.ts";

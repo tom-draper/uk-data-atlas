@@ -1,11 +1,9 @@
-import type {
-	IndicatorDataset,
-	IndicatorRecord,
-} from "../../types/indicator.ts";
+import type { IndicatorDataset } from "../../types/indicator.ts";
 import { defineDataset } from "../../declaration/dataset.ts";
 import { measure } from "../../declaration/measures.ts";
 import { periods } from "../../declaration/statistics.ts";
 import { yearParts } from "../../declaration/yearParts.ts";
+import { averageIndicator } from "../new-datasets/aggregate.ts";
 import { loadCouncilTax } from "../new-datasets/loader.ts";
 
 export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
@@ -113,18 +111,6 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 				card: { prefix: "£", maximum: 4000 },
 			},
 		],
-		aggregation: {
-			scope: "any",
-			aggregate: (records: IndicatorRecord[]) =>
-				records.length === 0
-					? null
-					: {
-							value:
-								records.reduce(
-									(sum, record) => sum + record.value,
-									0,
-								) / records.length,
-						},
-		},
+		aggregation: { scope: "any", aggregate: averageIndicator },
 	},
 });
