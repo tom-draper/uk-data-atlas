@@ -132,7 +132,10 @@ export default function UnemploymentChart({
 }: UnemploymentChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const measure = useCurrentMapOptions().unemployment.measure;
+	const measure =
+		useCurrentMapOptions().unemployment.measure === "count"
+			? "count"
+			: "rate";
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset

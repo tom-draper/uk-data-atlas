@@ -10,62 +10,6 @@ import type {
 } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
 import type { IncomeDataset } from "@uk-data-atlas/datasets";
-import type {
-	AggregatedUnemploymentData,
-	UnemploymentDataset,
-} from "@uk-data-atlas/datasets";
-
-/**
- * Each year's rate over the selected authorities, weighted by their
- * economically active residents: a rate is unemployed over economically
- * active, and that population is the level divided by the rate. A year no
- * authority has both for is left out.
- */
-export function aggregateUnemployment(
-	features: Features,
-	codeProperty: PropertyKeys,
-	dataset: UnemploymentDataset,
-): AggregatedUnemploymentData | null {
-	const unemployed: Record<number, number> = {};
-	const active: Record<number, number> = {};
-	for (const year of dataset.years) {
-		unemployed[year] = 0;
-		active[year] = 0;
-	}
-
-	for (const feature of features) {
-		const record =
-			dataset.data[
-				getFeatureProp(feature.properties, codeProperty) ?? ""
-			];
-		if (!record) continue;
-		for (const year of dataset.years) {
-			const rate = record.rates[year];
-			const level = record.levels?.[year];
-			if (rate == null || level == null || !(rate > 0)) continue;
-			unemployed[year] += level;
-			active[year] += (level / rate) * 100;
-		}
-	}
-
-	const rates: Record<number, number> = {};
-	let hasAny = false;
-	for (const year of dataset.years) {
-		if (active[year] > 0) {
-			rates[year] = (unemployed[year] / active[year]) * 100;
-			hasAny = true;
-		}
-	}
-
-	return hasAny
-		? {
-				years: dataset.years,
-				latestYear: dataset.latestYear,
-				rates,
-				levels: unemployed,
-			}
-		: null;
-}
 
 export function aggregateHousePrices(
 	features: Features,

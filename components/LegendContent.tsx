@@ -88,20 +88,6 @@ export default function LegendContent({
 	}
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
-		const unemploymentMeasure =
-			activeDataset.type === "unemployment"
-				? displayOptions.unemployment.measure
-				: null;
-		const unemploymentLegend = unemploymentMeasure
-			? {
-					min: unemploymentMeasure === "count" ? 0 : 2.2,
-					max: unemploymentMeasure === "count" ? 45000 : 6.8,
-					format: (value: number) =>
-						unemploymentMeasure === "count"
-							? `${value.toLocaleString()} unemployed`
-							: `${value.toFixed(1)}%`,
-				}
-			: null;
 		const schoolPerformanceMeasure =
 			activeDataset.type === "schoolPerformance"
 				? displayOptions.schoolPerformance.measure
@@ -123,8 +109,7 @@ export default function LegendContent({
 								: `${value.toFixed(0)}% grade ${schoolPerformanceMeasure === "grade5" ? "5+" : "4+"}`,
 				}
 			: null;
-		const measureLegend =
-			schoolPerformanceLegend ?? unemploymentLegend ?? legend;
+		const measureLegend = schoolPerformanceLegend ?? legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -156,7 +141,6 @@ export default function LegendContent({
 				}}
 				formatLabel={
 					schoolPerformanceLegend?.format ??
-					unemploymentLegend?.format ??
 					((value) => measureLegend.format(value, displayOptions))
 				}
 				currentRange={usesInitialRange ? dynamicRange : undefined}

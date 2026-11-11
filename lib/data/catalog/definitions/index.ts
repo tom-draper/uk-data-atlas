@@ -16,5 +16,4 @@ export { qualificationDatasetDefinition } from "@uk-data-atlas/datasets";
 export { schoolPerformanceDatasetDefinition } from "@uk-data-atlas/datasets";
 export { simdDatasetDefinition } from "@uk-data-atlas/datasets";
 export { travelToWorkDatasetDefinition } from "@uk-data-atlas/datasets";
-export { unemploymentDatasetDefinition } from "@uk-data-atlas/datasets";
 export { wimdDatasetDefinition } from "@uk-data-atlas/datasets";

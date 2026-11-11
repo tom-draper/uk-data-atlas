@@ -11,7 +11,7 @@ import {
 	QUALIFICATION,
 	TRAVEL_TO_WORK,
 } from "./census.ts";
-import { HOUSE_PRICE, INCOME, UNEMPLOYMENT } from "./economy.ts";
+import { HOUSE_PRICE, INCOME } from "./economy.ts";
 import { SCHOOL_PERFORMANCE } from "./services.ts";
 import {
 	BREXIT,
@@ -32,7 +32,6 @@ const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	TRAVEL_TO_WORK,
 	ETHNICITY,
 	INCOME,
-	UNEMPLOYMENT,
 	HOUSE_PRICE,
 	SCHOOL_PERFORMANCE,
 	POPULATION_WARDS,

@@ -10,7 +10,6 @@ import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
-	aggregateUnemployment,
 } from "./economics";
 import {
 	aggregateIMD,
@@ -144,11 +143,6 @@ export const schoolPerformanceAggregation = numericAggregation(
 	"schoolPerformance",
 	"localAuthority",
 	aggregateSchoolPerformance,
-);
-export const unemploymentAggregation = boundaryAggregation(
-	"unemployment",
-	"localAuthority",
-	aggregateUnemployment,
 );
 export const indicatorAggregation = numericAggregation(
 	"indicator",

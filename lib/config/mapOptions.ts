@@ -17,7 +17,6 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "income"
 				? { measure: "median", period: "annual" }
 				: {}),
-			...(definition.type === "unemployment" ? { measure: "rate" } : {}),
 			...(definition.type === "lifeExpectancy"
 				? { measure: "average" }
 				: {}),

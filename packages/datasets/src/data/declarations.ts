@@ -39,6 +39,7 @@ import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
+import { unemployment } from "./unemployment/dataset.ts";
 import { waste } from "./waste/dataset.ts";
 import { workplaceIncome } from "./workplace-income/dataset.ts";
 
@@ -80,6 +81,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	roadCollisions,
 	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
+	unemployment,
 	waste,
 	workplaceIncome,
 ];
@@ -126,5 +128,6 @@ export type DeclaredDatasetId =
 	| "road-collisions"
 	| "school-performance-constituency"
 	| "school-performance-disadvantage"
+	| "unemployment"
 	| "waste"
 	| "workplace-income";

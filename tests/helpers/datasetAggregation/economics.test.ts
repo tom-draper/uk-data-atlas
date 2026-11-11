@@ -3,7 +3,6 @@ import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
-	aggregateUnemployment,
 } from "@/lib/helpers/datasetAggregation/economics";
 import {
 	aggregateCrime,
@@ -11,56 +10,6 @@ import {
 	aggregateNHSWaiting,
 } from "@uk-data-atlas/datasets";
 import { CODE_KEY, features } from "./fixtures";
-
-describe("aggregateUnemployment", () => {
-	// E1 has 10,000 economically active residents in 2022 (400 at 4%), E2
-	// 50,000 (3,000 at 6%).
-	const dataset = {
-		years: [2022, 2023],
-		latestYear: 2023,
-		data: {
-			E1: {
-				rates: { 2022: 4, 2023: 5 },
-				levels: { 2022: 400, 2023: 500 },
-			},
-			E2: {
-				rates: { 2022: 6, 2023: null },
-				levels: { 2022: 3000, 2023: null },
-			},
-		},
-	} as any;
-
-	it("weights each year's rate by the economically active residents reporting it", () => {
-		const result = aggregateUnemployment(
-			features(["E1", "E2"]),
-			CODE_KEY,
-			dataset,
-		);
-
-		// 3,400 of 60,000, not the flat mean of 5%.
-		expect(result?.years).toEqual([2022, 2023]);
-		expect(result?.latestYear).toBe(2023);
-		expect(result?.rates[2022]).toBeCloseTo(5.6667, 4);
-		expect(result?.rates[2023]).toBeCloseTo(5, 10);
-		expect(result?.levels[2022]).toBe(3400);
-		expect(result?.levels[2023]).toBe(500);
-	});
-
-	it("omits a year no covered area reports", () => {
-		const result = aggregateUnemployment(
-			features(["E2"]),
-			CODE_KEY,
-			dataset,
-		);
-		expect(result?.rates).toEqual({ 2022: 6 });
-	});
-
-	it("returns null when no covered area has a record", () => {
-		expect(
-			aggregateUnemployment(features(["missing"]), CODE_KEY, dataset),
-		).toBeNull();
-	});
-});
 
 describe("aggregateHousePrices", () => {
 	const data = {
