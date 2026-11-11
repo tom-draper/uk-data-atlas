@@ -57,7 +57,7 @@ export const datasetMetadata = {
 							},
 							compiled: {
 								bytes: 13350128,
-								sha256: "32adfba936cd8746fac5ccceb71299b9822e0d3c04540420106e10b5272caf10",
+								sha256: "c01b95f61b4e856e48331a42ed63283b961a0ff7eec2634d2769568b54f9e7d6",
 							},
 						},
 						meta: {
