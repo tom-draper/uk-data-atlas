@@ -78,8 +78,8 @@ ${BACKTEST_SCHEMA}
  * - `series_conversion`: its rule and weight basis. `exact` is 1 where every
  *   value is an exact regrouping and 0 where some are estimated splits.
  *   `exact_share` is the share of the series' value that reached its area by
- *   regrouping whole source areas, and `coverage` the share of the target
- *   areas reached that hold a value. See `qualityOf` in `convertSeries.ts`.
+ *   regrouping whole source areas, and `coverage` the share of the areas
+ *   reached or dropped that hold a value. See `qualityOf` in `convertSeries.ts`.
  * - `series_crosswalk`: the crosswalks of its route, in order.
  * - `series_gap`: the areas it has no value for, and why. The area is one of
  *   the series' own release, except where the reason is `not-carried`, when

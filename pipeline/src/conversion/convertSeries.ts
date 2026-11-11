@@ -72,9 +72,10 @@ export type Quality = {
 	 */
 	exactShare: number;
 	/**
-	 * The share of the target areas and periods reached at all that hold a
-	 * value. A gap that is a source area no crosswalk carries is not a target
-	 * and is left out.
+	 * The share of the areas and periods reached at all, or dropped by a
+	 * crosswalk that does not carry them, that hold a value. A source area no
+	 * crosswalk carries counts against it, so a series that loses changed wards
+	 * does not score as whole.
 	 */
 	coverage: number;
 };
@@ -92,8 +93,7 @@ export const qualityOf = (
 		total += Math.abs(o.value);
 		estimated += Math.min(o.estimated ?? 0, Math.abs(o.value));
 	}
-	const missing = gaps.filter((gap) => gap.reason !== "not-carried").length;
-	const reached = observations.length + missing;
+	const reached = observations.length + gaps.length;
 	return {
 		exactShare:
 			total > 0 ? Math.min(1, Math.max(0, 1 - estimated / total)) : 1,

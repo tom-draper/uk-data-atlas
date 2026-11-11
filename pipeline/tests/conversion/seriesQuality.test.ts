@@ -48,12 +48,20 @@ test("a value cannot be more estimated than it is large", () => {
 	assert.equal(qualityOf([value(1, 10, 25)], []).exactShare, 0);
 });
 
-test("coverage counts target gaps and leaves out source areas no crosswalk carries", () => {
+test("coverage counts target gaps and source areas no crosswalk carries", () => {
 	const quality = qualityOf(
 		[value(1, 5), value(2, 5), value(3, 5)],
 		[gap(4, "unmeasured-split"), gap(900, "not-carried")],
 	);
-	assert.equal(quality.coverage, 0.75);
+	assert.equal(quality.coverage, 0.6);
+});
+
+test("a series that drops source areas does not score as whole", () => {
+	const quality = qualityOf(
+		[value(1, 5), value(2, 5)],
+		[gap(900, "not-carried"), gap(901, "not-carried")],
+	);
+	assert.equal(quality.coverage, 0.5);
 });
 
 test("a series with no values has no coverage and is not marked inexact", () => {
