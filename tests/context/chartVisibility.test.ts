@@ -20,15 +20,15 @@ describe("chart visibility store", () => {
 				expect(DEFAULT_VISIBILITY[`localElection-${year}`]).toBe(false);
 			}
 			expect(DEFAULT_VISIBILITY["localElection-2021"]).toBe(true);
-			expect(DEFAULT_VISIBILITY["economics-net-additional-dwellings"]).toBe(
-				false,
-			);
-			expect(DEFAULT_VISIBILITY["health-adult-social-care-outcomes"]).toBe(
-				false,
-			);
-			expect(DEFAULT_VISIBILITY["economics-local-government-finance"]).toBe(
-				false,
-			);
+			expect(
+				DEFAULT_VISIBILITY["economics-net-additional-dwellings"],
+			).toBe(false);
+			expect(
+				DEFAULT_VISIBILITY["health-adult-social-care-outcomes"],
+			).toBe(false);
+			expect(
+				DEFAULT_VISIBILITY["economics-local-government-finance"],
+			).toBe(false);
 		},
 		COLD_IMPORT_TIMEOUT,
 	);

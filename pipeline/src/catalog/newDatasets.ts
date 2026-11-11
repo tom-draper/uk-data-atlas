@@ -47,9 +47,6 @@ export const compileNewDatasets = (
 export const NEW_DATASET_MEASURES = (
 	paths: Partial<Record<string, DatasetInput>>,
 ): NewDataset[] => [
-
-
-
 	{
 		datasetId: "waste",
 		path: paths.waste!,
@@ -62,7 +59,6 @@ export const NEW_DATASET_MEASURES = (
 		note: "Collection authorities only, avoiding double counting between collection and disposal authorities.",
 	},
 
-
 	{
 		datasetId: "planning-applications",
 		path: paths.planningApplications!,
@@ -74,5 +70,4 @@ export const NEW_DATASET_MEASURES = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		note: "Planning applications received during 2026 Q1; the publisher labels the areas local planning authorities but supplies local-authority district codes.",
 	},
-
 ];
