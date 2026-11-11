@@ -665,8 +665,8 @@ and the copy fails if one is.
 
 `series_conversion` also scores the series. `exact_share` is the share of the
 series' values that came from regrouping whole areas rather than an estimated
-split (1 is all exact). `coverage` is the share of the target areas and periods
-that hold a value. Both lie between 0 and 1. The weight basis is the measure's
+split (1 is all exact). `coverage` is the share of the areas and periods reached, or
+dropped as not carried, that hold a value. Both lie between 0 and 1. The weight basis is the measure's
 subject first (households, dwellings, else population), then population,
 households, dwellings and postcodes. The definitions are in
 [conversion accuracy](../../docs/conversion-accuracy.md#quality-score).
