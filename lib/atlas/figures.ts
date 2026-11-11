@@ -57,7 +57,7 @@ export type FigureInputs = {
 		premisesCount: number;
 	}>;
 	businessActivity: Editions<{ value: number }>;
-	electricVehicleChargers: Editions<{ value: number }>;
+	"electric-vehicle-chargers": Editions<{ value: number }>;
 	"council-tax": Editions<{ name: string; value: number }>;
 	"claimant-count": Editions<
 		{ totalCount: number; totalRate: number },
@@ -383,7 +383,14 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 		},
 	},
 	"electric-vehicle-chargers": {
-		compute({ electricVehicleChargers, populationUk }, location, period) {
+		compute(
+			{
+				"electric-vehicle-chargers": electricVehicleChargers,
+				populationUk,
+			},
+			location,
+			period,
+		) {
 			const { data } = electricVehicleChargers[String(period)];
 			const districts = districtsOf(location, Object.keys(data));
 			const counts = everyValue(districts, (code) => data[code]?.value);

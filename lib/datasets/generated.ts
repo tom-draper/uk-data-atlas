@@ -13,7 +13,6 @@ import { businessActivityDefinition } from "./businessActivity";
 import { carAvailabilityDefinition } from "./carAvailability";
 import { childPovertyDefinition } from "./childPoverty";
 import { crimeDefinition } from "./crime";
-import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
 import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
@@ -59,7 +58,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		carAvailabilityDefinition,
 		childPovertyDefinition,
 		crimeDefinition,
-		electricVehicleChargersDefinition,
 		electricityConsumptionDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,

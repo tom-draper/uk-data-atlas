@@ -84,15 +84,5 @@ export const NEW_DATASET_MEASURES = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		note: "Planning applications received during 2026 Q1; the publisher labels the areas local planning authorities but supplies local-authority district codes.",
 	},
-	{
-		datasetId: "electric-vehicle-chargers",
-		path: paths.electricVehicleChargers!,
-		boundaryYear: 2026,
-		period: "2026-07-01",
-		label: "Public electric vehicle chargers",
-		unit: "chargers",
-		valueKind: "count",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		note: "Publicly available chargers by local authority at 1 July 2026.",
-	},
+
 ];

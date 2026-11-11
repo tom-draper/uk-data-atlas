@@ -373,9 +373,6 @@
 				"economic-activity": "unemployed"
 			}
 		},
-		"electric-vehicle-chargers": {
-			"measure": "public-ev-chargers"
-		},
 		"electricity-consumption": {
 			"measure": "electricity-consumption",
 			"dimensions": {

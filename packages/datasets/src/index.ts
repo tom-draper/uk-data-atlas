@@ -22,7 +22,7 @@ export * from "./data/catalog/definitions/carAvailability.ts";
 export * from "./data/catalog/definitions/childPoverty.ts";
 export * from "./data/council-tax/dataset.ts";
 export * from "./data/catalog/definitions/crime.ts";
-export * from "./data/catalog/definitions/electricVehicleChargers.ts";
+export * from "./data/electric-vehicle-chargers/dataset.ts";
 export * from "./data/catalog/definitions/electricityConsumption.ts";
 export * from "./data/catalog/definitions/ethnicity.ts";
 export * from "./data/catalog/definitions/fuelPoverty.ts";

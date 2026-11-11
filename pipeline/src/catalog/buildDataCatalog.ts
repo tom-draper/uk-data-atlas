@@ -60,7 +60,6 @@ export const datasetCatalogInputs = (
 		businessActivity: precompiled("business-activity.json"),
 		waste: precompiled("waste.json"),
 		planningApplications: precompiled("planning-applications.json"),
-		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
 		declared: Object.fromEntries(
 			DATASET_DECLARATIONS.filter(
 				(declaration) => declaration.catalogue,

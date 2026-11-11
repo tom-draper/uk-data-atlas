@@ -231,31 +231,6 @@ export const GAS_CONSUMPTION: DeclaredDataset = consumption(
 	"gas",
 );
 
-export const ELECTRIC_VEHICLE_CHARGERS: DeclaredDataset = {
-	type: "electricVehicleChargers",
-	module: "transport",
-	payload: {
-		parts: yearParts("electricVehicleChargers", "localAuthority", 2026, {
-			coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
-		}),
-		code: "code",
-	},
-	name: "name",
-	period: () => periods.date("2026-07-01"),
-	measures: [
-		measure(
-			"public-ev-chargers",
-			"Public electric vehicle chargers",
-			"chargers",
-			"count",
-			"sum",
-			"Publicly available electric vehicle charging devices.",
-		),
-	],
-	fields: [{ path: "value", measure: "public-ev-chargers" }],
-	...per100k((record) => record.value, 2024),
-};
-
 export const WASTE: DeclaredDataset = {
 	type: "waste",
 	module: "environment",

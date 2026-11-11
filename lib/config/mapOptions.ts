@@ -7,10 +7,6 @@ export const POPULATION_METRIC_RANGES = {
 		total: { min: 0, max: 50_000 },
 		perPopulation: { min: 0, max: 12_000 },
 	},
-	electricVehicleChargers: {
-		total: { min: 0, max: 1_500 },
-		perPopulation: { min: 0, max: 500 },
-	},
 	jobs: {
 		total: { min: 0, max: 500_000 },
 		perPopulation: { min: 0, max: 100_000 },

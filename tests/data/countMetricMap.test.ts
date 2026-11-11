@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { businessActivityDefinition } from "@/lib/datasets/businessActivity";
-import { electricVehicleChargersDefinition } from "@/lib/datasets/electricVehicleChargers";
+import { getChartDatasetDefinition } from "@/lib/datasets";
 import { jobsDefinition } from "@/lib/datasets/jobs";
 import type { IndicatorDataset } from "@uk-data-atlas/datasets";
 import type { JobsDataset } from "@uk-data-atlas/datasets";
 
-const dataset = <T extends "businessActivity" | "electricVehicleChargers">(
+const dataset = <T extends "businessActivity" | "electric-vehicle-chargers">(
 	type: T,
 ): IndicatorDataset<T> => ({
 	id: `${type}2026`,
@@ -58,25 +58,40 @@ describe("count metric maps", () => {
 	});
 
 	it("switches EV chargers between total and per-population values", () => {
-		const valueFor = electricVehicleChargersDefinition.map?.valueFor;
+		const valueFor = getChartDatasetDefinition("electric-vehicle-chargers")
+			?.map?.valueFor;
 		expect(
 			valueFor?.(
-				dataset("electricVehicleChargers"),
+				dataset("electric-vehicle-chargers"),
 				"E1",
 				DEFAULT_MAP_OPTIONS,
 			),
 		).toBe(200);
 		expect(
-			valueFor?.(dataset("electricVehicleChargers"), "E1", {
+			valueFor?.(dataset("electric-vehicle-chargers"), "E1", {
 				...DEFAULT_MAP_OPTIONS,
-				electricVehicleChargers: {
-					...DEFAULT_MAP_OPTIONS.electricVehicleChargers,
+				"electric-vehicle-chargers": {
+					...DEFAULT_MAP_OPTIONS["electric-vehicle-chargers"],
 					measure: "perPopulation",
 				},
 			}),
 		).toBe(125);
 	});
 
+	it("keeps the EV card on the total when the map uses population rates", () => {
+		const chart = getChartDatasetDefinition("electric-vehicle-chargers")!;
+		const options = {
+			...DEFAULT_MAP_OPTIONS,
+			"electric-vehicle-chargers": {
+				...DEFAULT_MAP_OPTIONS["electric-vehicle-chargers"],
+				measure: "perPopulation",
+			},
+		};
+		const card = chart.chart.cardForOptions?.(options);
+		expect(
+			card?.fromRecord(dataset("electric-vehicle-chargers"), "E1"),
+		).toEqual({ value: 200, secondary: undefined });
+	});
 	it("switches jobs between total and per-population values", () => {
 		const valueFor = jobsDefinition.map?.valueFor;
 		expect(valueFor?.(jobsDataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(200);

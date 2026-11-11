@@ -8,6 +8,7 @@ import { adultSocialCareOutcomes } from "./adult-social-care-outcomes/dataset.ts
 import { broadband } from "./broadband/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
+import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
@@ -29,6 +30,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	broadband,
 	claimantCount,
 	councilTax,
+	electricVehicleChargers,
 	historicalGeneralElection,
 	housingAffordability,
 	landArea,
@@ -55,6 +57,7 @@ export type DeclaredDatasetId =
 	| "broadband"
 	| "claimant-count"
 	| "council-tax"
+	| "electric-vehicle-chargers"
 	| "historical-general-election"
 	| "housing-affordability"
 	| "land-area"

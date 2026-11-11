@@ -158,9 +158,20 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			componentPath: display.component ?? DECLARED_CHART_COMPONENT,
 			...(display.card
 				? {
-						card: cardFor(declaration, first),
+						card: cardFor(
+							declaration,
+							measureFor(display, display.card.fixedMeasure),
+						),
 						cardForOptions: (options: MapOptions) =>
-							cardFor(declaration, optionsOf(options))!,
+							cardFor(
+								declaration,
+								display.card?.fixedMeasure
+									? measureFor(
+											display,
+											display.card.fixedMeasure,
+										)
+									: optionsOf(options),
+							)!,
 					}
 				: {}),
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>

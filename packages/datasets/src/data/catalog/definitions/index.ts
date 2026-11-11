@@ -6,7 +6,6 @@ export { businessActivityDatasetDefinition } from "./businessActivity.ts";
 export { carAvailabilityDatasetDefinition } from "./carAvailability.ts";
 export { childPovertyDatasetDefinition } from "./childPoverty.ts";
 export { crimeDatasetDefinition } from "./crime.ts";
-export { electricVehicleChargersDatasetDefinition } from "./electricVehicleChargers.ts";
 export { electricityConsumptionDatasetDefinition } from "./electricityConsumption.ts";
 export { ethnicityDatasetDefinition } from "./ethnicity.ts";
 export { fuelPovertyDatasetDefinition } from "./fuelPoverty.ts";
