@@ -6,7 +6,7 @@ import type {
 	DataCatalog,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { compileMeasureCompatibility } from "../src/statistics/measureCompatibility";
+import { compileMeasureCompatibility } from "../../src/statistics/measureCompatibility";
 
 const dataCatalog: DataCatalog = {
 	schemaVersion: 1,

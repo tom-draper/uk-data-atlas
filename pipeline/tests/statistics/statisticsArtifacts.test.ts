@@ -6,7 +6,7 @@ import {
 	type StatisticsReadPath,
 	type StatisticsSelector,
 } from "@uk-data-atlas/measures";
-import { statisticsArtifactReader } from "../src/statistics/statisticsArtifacts";
+import { statisticsArtifactReader } from "../../src/statistics/statisticsArtifacts";
 
 test("requires an exact selector inventory for the catalogue", () => {
 	const database = new DatabaseSync(":memory:");
