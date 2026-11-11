@@ -44,6 +44,7 @@ export const broadband = defineDataset<BroadbandDataset>({
 		name: "ladName",
 		period: () => periods.month(2025, 7),
 		measures: [
+			PREMISES,
 			measure(
 				"broadband-availability",
 				"Broadband availability",
@@ -51,8 +52,8 @@ export const broadband = defineDataset<BroadbandDataset>({
 				"share",
 				"weighted_mean",
 				"Premises that can get fixed broadband at the speed, as a percentage of premises.",
+				{ weight: PREMISES.slug },
 			),
-			PREMISES,
 		],
 		dimensions: [
 			{
