@@ -6,6 +6,7 @@ import type {
 	DisplayFormat,
 	DisplayMeasure,
 } from "@uk-data-atlas/datasets";
+import { getFeatureProp } from "@/lib/types";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { formatCompactCount, formatCount } from "@/lib/helpers/formatCount";
@@ -89,11 +90,21 @@ export const declaredDefaultOptions = (type: string) => {
 	return { measure: first.id, colorRange: { ...first.colorRange } };
 };
 
+/** The record describing an area, reached through `recordsVia` when the dataset names one. */
+const recordKey = (
+	dataset: Record<string, unknown>,
+	via: string | undefined,
+	code: string,
+): string | undefined =>
+	via === undefined
+		? code
+		: (dataset[via] as Record<string, string> | undefined)?.[code];
+
 const cardFor = (
 	declaration: Displayed,
 	measure: DisplayMeasure,
 ): ValueCardConfig | undefined => {
-	const { card } = declaration.display;
+	const { card, recordsVia } = declaration.display;
 	if (!card) return undefined;
 	if (!measure.card)
 		throw new Error(
@@ -105,6 +116,7 @@ const cardFor = (
 		Record<string, unknown>
 	>({
 		heading: card.heading,
+		...(card.period ? { period: card.period } : {}),
 		source: card.source,
 		...(card.coverage ? { coverage: card.coverage } : {}),
 		unit: measure.card.unit,
@@ -114,14 +126,39 @@ const cardFor = (
 			? {}
 			: { digits: measure.card.digits }),
 		maximum: measure.card.maximum,
-		value: (record) => read(record, measure.field),
+		...(recordsVia
+			? {
+					lookup: (
+						dataset: Record<string, unknown>,
+						code: string,
+					) => {
+						const key = recordKey(dataset, recordsVia, code);
+						return key === undefined
+							? undefined
+							: (
+									dataset.data as Record<
+										string,
+										Record<string, unknown>
+									>
+								)[key];
+					},
+				}
+			: {}),
+		value: (record) => {
+			const value = read(record, measure.field);
+			return measure.card?.zeroIsMissing && value === 0 ? null : value;
+		},
 		...(secondary
 			? {
 					secondary: (record) => {
 						const value = read(record, secondary.field);
-						return value === null
+						if (value === null) return undefined;
+						if (secondary.versus === undefined)
+							return formatDisplay(secondary.format, value);
+						const other = read(record, secondary.versus);
+						return other === null
 							? undefined
-							: formatDisplay(secondary.format, value);
+							: `${formatDisplay(secondary.format, value)} vs ${formatDisplay(secondary.format, other)}`;
 					},
 				}
 			: card.secondaryText
@@ -133,13 +170,31 @@ const cardFor = (
 const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 	const { display } = declaration;
 	const [first] = display.measures;
+	const { recordsVia } = display;
+	const aggregate = display.aggregation.aggregate as (
+		records: unknown[],
+	) => unknown;
 	const aggregation = createBoundaryAggregationSpec(
 		declaration.id,
 		display.aggregation.scope,
-		(features, codeProp, data: Record<string, unknown>) =>
-			(display.aggregation.aggregate as (records: unknown[]) => unknown)(
-				collectBoundaryRecords(features, data, codeProp),
-			),
+		recordsVia
+			? // Over the whole dataset: each record counts once however many
+				// areas map to it.
+				(features, codeProp, dataset: Record<string, unknown>) => {
+					const data = dataset.data as Record<string, unknown>;
+					const keys = new Set<string>();
+					for (const feature of features) {
+						const key = recordKey(
+							dataset,
+							recordsVia,
+							getFeatureProp(feature.properties, codeProp) ?? "",
+						);
+						if (key !== undefined && key in data) keys.add(key);
+					}
+					return aggregate([...keys].map((key) => data[key]));
+				}
+			: (features, codeProp, data: Record<string, unknown>) =>
+					aggregate(collectBoundaryRecords(features, data, codeProp)),
 	);
 	const optionsOf = (options: MapOptions) =>
 		measureFor(
@@ -174,25 +229,49 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 							)!,
 					}
 				: {}),
-			calculateStats: (aggregator, geojson, data, location, datasetId) =>
-				aggregator.aggregate(
-					aggregation,
-					geojson,
-					data as Record<string, unknown>,
-					location,
-					datasetId,
-				),
+			calculateStats: (
+				aggregator,
+				geojson,
+				data,
+				location,
+				datasetId,
+				dataset,
+			) => {
+				const records = recordsVia ? dataset : data;
+				return records
+					? aggregator.aggregate(
+							aggregation,
+							geojson,
+							records as Record<string, unknown>,
+							location,
+							datasetId,
+						)
+					: null;
+			},
 			year: display.year,
 		},
 		map: {
 			...(declaration.publishMapValues
 				? { valueKey: first.field }
 				: {
-						valueFor: (dataset, code, options) =>
-							read(
-								(dataset.data as Record<string, unknown>)[code],
-								optionsOf(options).field,
-							),
+						valueFor: (dataset, code, options) => {
+							const key = recordKey(
+								dataset as unknown as Record<string, unknown>,
+								recordsVia,
+								code,
+							);
+							return key === undefined
+								? null
+								: read(
+										(
+											dataset.data as Record<
+												string,
+												unknown
+											>
+										)[key],
+										optionsOf(options).field,
+									);
+						},
 						sourceMode: (_dataset, options) =>
 							`${declaration.id}:${optionsOf(options).id}`,
 					}),

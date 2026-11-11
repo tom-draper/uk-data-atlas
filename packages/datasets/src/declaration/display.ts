@@ -33,6 +33,8 @@ export type DisplayMeasureCard = {
 	digits?: number;
 	/** The value that fills the card's bar. */
 	maximum: number;
+	/** Treat a value of zero as missing, where the source writes zero for "not attributed". */
+	zeroIsMissing?: true;
 };
 
 /** One way to read the dataset, shown as a choice when there is more than one. */
@@ -53,12 +55,17 @@ export type DisplayMeasure = {
 
 export type DisplayCard = {
 	heading: string;
+	/** Shown in brackets after the heading; defaults to the dataset's year. */
+	period?: string;
 	/** The source and method note shown as the card's tooltip. */
 	source: string;
 	/** The nations the source covers, when the compiled dataset does not say. */
 	coverage?: string;
-	/** A note under the headline, from another field of the record. */
-	secondary?: { field: string; format: DisplayFormat };
+	/**
+	 * A note under the headline, from another field of the record. With
+	 * `versus`, the note reads `field vs versus`, and is omitted unless both exist.
+	 */
+	secondary?: { field: string; format: DisplayFormat; versus?: string };
 	/** A fixed note beside the value. */
 	secondaryText?: string;
 	/** Use a hovered map record when no matching area record is available. */
@@ -92,6 +99,12 @@ export type DatasetDisplay = {
 	 * `@/components/telecoms/broadband/BroadbandChart`.
 	 */
 	component?: string;
+	/**
+	 * Name of a compiled dataset field mapping an area code to the key of the
+	 * record that describes it, for a dataset published for larger areas than
+	 * the map's, such as NHS boards. Absent, records are keyed by area code.
+	 */
+	recordsVia?: string;
 	/** Never empty; the first is the default. */
 	measures: readonly [DisplayMeasure, ...DisplayMeasure[]];
 	aggregation: DisplayAggregation;
