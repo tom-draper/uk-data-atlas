@@ -23,7 +23,6 @@ export { housingAffordabilityDatasetDefinition } from "@uk-data-atlas/datasets";
 export { imdDatasetDefinition } from "@uk-data-atlas/datasets";
 export { incomeDatasetDefinition } from "@uk-data-atlas/datasets";
 export { jobsDatasetDefinition } from "@uk-data-atlas/datasets";
-export { landAreaDatasetDefinition } from "@uk-data-atlas/datasets";
 export { lifeExpectancyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { lifeExpectancySeriesDatasetDefinition } from "@uk-data-atlas/datasets";
 export { localElectionDatasetDefinition } from "@uk-data-atlas/datasets";

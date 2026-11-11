@@ -25,7 +25,6 @@ export { housingTenureDatasetDefinition } from "./housingTenure.ts";
 export { imdDatasetDefinition } from "./imd.ts";
 export { incomeDatasetDefinition } from "./income.ts";
 export { jobsDatasetDefinition } from "./jobs.ts";
-export { landAreaDatasetDefinition } from "./landArea.ts";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
 export { lifeExpectancySeriesDatasetDefinition } from "./lifeExpectancySeries.ts";
 export { localElectionDatasetDefinition } from "./localElection.ts";

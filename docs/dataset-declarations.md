@@ -164,7 +164,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `claimant-count` (economy), `broadband` and `mobile-coverage`
+Declared: `claimant-count` (economy), `land-area` (environment), `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
 Not yet declared, by module (each still has a definition in
@@ -186,12 +186,12 @@ website chart definition):
 - politics: brexit, brexit-constituency, general-election,
   historical-general-election, local-election
 - environment: air-quality, ghg-emissions, electricity-consumption,
-  gas-consumption, waste, land-area
+  gas-consumption, waste
 - population: population, population-uk, population-constituency, ethnicity
 - deprivation: child-poverty, fuel-poverty, imd, wimd, simd, nimdm
 - transport: car-availability, travel-to-work, road-collisions,
   electric-vehicle-chargers
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the
-only place an old id survives; all three declared datasets use their kebab-case
+only place an old id survives; all declared datasets use their kebab-case
 id everywhere.

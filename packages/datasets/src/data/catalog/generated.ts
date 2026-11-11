@@ -25,7 +25,6 @@ import type { housingTenureDatasetDefinition } from "./definitions/housingTenure
 import type { imdDatasetDefinition } from "./definitions/imd.ts";
 import type { incomeDatasetDefinition } from "./definitions/income.ts";
 import type { jobsDatasetDefinition } from "./definitions/jobs.ts";
-import type { landAreaDatasetDefinition } from "./definitions/landArea.ts";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import type { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries.ts";
 import type { localElectionDatasetDefinition } from "./definitions/localElection.ts";
@@ -55,6 +54,7 @@ import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome.ts";
 import type { broadband } from "../broadband/dataset.ts";
 import type { claimantCount } from "../claimant-count/dataset.ts";
+import type { landArea } from "../land-area/dataset.ts";
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 
 export type CatalogueDataset =
@@ -128,7 +128,6 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>[string]
-	| Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
 	  >[string]
@@ -210,12 +209,14 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<ReturnType<typeof broadband.load>>[string]
 	| Awaited<ReturnType<typeof claimantCount.load>>[string]
+	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
 export type DeclaredDatasetRecords = {
 	broadband: Awaited<ReturnType<typeof broadband.load>>;
 	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
+	"land-area": Awaited<ReturnType<typeof landArea.load>>;
 	"mobile-coverage": Awaited<ReturnType<typeof mobileCoverage.load>>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
@@ -287,7 +288,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
 	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
 	jobs: Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>;
-	landArea: Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
 	>;

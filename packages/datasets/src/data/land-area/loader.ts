@@ -32,8 +32,8 @@ export async function loadLandArea(
 
 	return {
 		[YEAR]: {
-			id: `landArea${YEAR}`,
-			type: "landArea",
+			id: `land-area${YEAR}`,
+			type: "land-area",
 			year: YEAR,
 			boundaryType: "localAuthority",
 			boundaryYear: BOUNDARY_YEAR,

@@ -1,7 +1,9 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, expect, test, vi } from "vitest";
-import { landAreaDatasetDefinition } from "@uk-data-atlas/datasets";
+import { landArea, definitionOf } from "@uk-data-atlas/datasets";
+
+const landAreaDatasetDefinition = definitionOf(landArea);
 
 const paths = await vi.hoisted(async () => {
 	const { mkdtempSync } = await import("node:fs");

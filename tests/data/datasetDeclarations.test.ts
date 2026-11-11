@@ -74,7 +74,7 @@ describe("dataset declarations", () => {
 	});
 });
 
-describe("claimant count declaration", () => {
+describe("declared dataset rows", () => {
 	const declaration = DATASET_DECLARATIONS.find(
 		({ id }) => id === "claimant-count",
 	)!;
@@ -201,6 +201,64 @@ describe("claimant count declaration", () => {
 						"claimant-count",
 						"claimant-count",
 					),
+				),
+			).toEqual(compiled);
+		} finally {
+			database.close();
+		}
+	});
+	it("stores land-area measures and derives square kilometres from rows", () => {
+		const declaration = DATASET_DECLARATIONS.find(
+			({ id }) => id === "land-area",
+		)!;
+		const config = STATISTICS_DATASETS.find(
+			({ type }) => type === "land-area",
+		)!;
+		const compiled = {
+			2024: {
+				id: "land-area2024",
+				type: "land-area",
+				year: 2024,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+				data: {
+					E06000001: {
+						ladCode: "E06000001",
+						ladName: "Hartlepool",
+						landHectares: 120,
+						landSquareKm: 1.2,
+						extentHectares: 140,
+						inlandWaterHectares: 20,
+					},
+				},
+			},
+		};
+		const database = new DatabaseSync(":memory:");
+		database.exec(
+			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)",
+		);
+		try {
+			writeSqliteTables(database, {
+				...areas,
+				...statisticsTables([
+					declaredStatistics(config, () => JSON.stringify(compiled), {
+						output: declaration.id,
+						fingerprint: "sha256:fixture",
+						source: {
+							name: declaration.source.name,
+							source: declaration.source.publisher,
+							sourceUrl: declaration.source.sourceUrl,
+							licence: declaration.source.licence,
+							licenceUrl: declaration.source.licenceUrl,
+							description: declaration.source.description,
+						},
+					}),
+				]),
+			});
+			expect(
+				JSON.parse(
+					rebuildDatasetPayload(database, "land-area", "land-area"),
 				),
 			).toEqual(compiled);
 		} finally {
