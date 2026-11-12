@@ -11,6 +11,7 @@ import {
 	chartMetadata,
 } from "./dataset-registry-metadata.ts";
 import { DECLARED_CHART_DEFINITIONS } from "../lib/datasets/declared.ts";
+import { DATASET_DECLARATIONS } from "../packages/datasets/src/data/declarations.ts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATASETS_DIR = join(ROOT, "lib", "datasets");
@@ -26,9 +27,15 @@ async function main() {
 				file,
 				await loadModule(DATASETS_DIR, file),
 			);
-			const catalogue = catalogueDefinitions.find(
-				(candidate) => candidate.type === definition.type,
-			);
+			// A declared dataset may keep a chart definition of its own, for
+			// a map the shared display cannot draw.
+			const catalogue =
+				catalogueDefinitions.find(
+					(candidate) => candidate.type === definition.type,
+				) ??
+				DATASET_DECLARATIONS.find(
+					(candidate) => candidate.id === definition.type,
+				);
 			if (!catalogue)
 				throw new Error(
 					`${file} has no registered catalogue definition for ${definition.type}.`,
