@@ -12,10 +12,20 @@ const COLOR_RANGE_KEYS = Object.keys(DEFAULT_MAP_OPTIONS).filter(
 		"colorRange" in DEFAULT_MAP_OPTIONS[key as keyof MapOptions],
 );
 const CATEGORY_KEYS = [
-	"generalElection",
-	"localElection",
+	"general-election",
+	"local-election",
 	"ethnicity",
 ] as const;
+/**
+ * Shared links name these options as they were before the datasets took
+ * kebab-case ids, so the links keep working.
+ */
+const PARAM_NAMES: Readonly<Record<string, string>> = {
+	"general-election": "generalElection",
+	"local-election": "localElection",
+	"brexit-constituency": "brexitConstituency",
+};
+const paramName = (key: string) => PARAM_NAMES[key] ?? key;
 const MAP_OPTION_PARAMS = [
 	"theme",
 	"base",
@@ -24,11 +34,11 @@ const MAP_OPTION_PARAMS = [
 	"boundaries",
 	"overlay",
 	"opacity",
-	...COLOR_RANGE_KEYS.flatMap((key) => [`range.${key}`]),
+	...COLOR_RANGE_KEYS.flatMap((key) => [`range.${paramName(key)}`]),
 	...CATEGORY_KEYS.flatMap((key) => [
-		`selected.${key}`,
-		`excluded.${key}`,
-		`percentage.${key}`,
+		`selected.${paramName(key)}`,
+		`excluded.${paramName(key)}`,
+		`percentage.${paramName(key)}`,
 	]),
 	"measure.housePrice",
 	"measure.lifeExpectancy",
@@ -88,7 +98,7 @@ export function mapOptionsFromSearchParams(
 		options.visibility.overlayOpacity = opacity;
 
 	for (const key of COLOR_RANGE_KEYS) {
-		const range = parseRange(params.get(`range.${key}`));
+		const range = parseRange(params.get(`range.${paramName(key)}`));
 		if (range) (options[key] as ColorRangeOption).colorRange = range;
 	}
 	const housePriceMeasure = params.get("measure.housePrice");
@@ -99,12 +109,13 @@ export function mapOptionsFromSearchParams(
 		options.lifeExpectancy.measure = lifeExpectancyMeasure;
 
 	for (const key of CATEGORY_KEYS) {
-		const selected = params.get(`selected.${key}`);
+		const name = paramName(key);
+		const selected = params.get(`selected.${name}`);
 		const excluded = params
-			.get(`excluded.${key}`)
+			.get(`excluded.${name}`)
 			?.split(",")
 			.filter(Boolean);
-		const percentageRange = parseRange(params.get(`percentage.${key}`));
+		const percentageRange = parseRange(params.get(`percentage.${name}`));
 		if (selected) {
 			options[key].mode = "percentage";
 			options[key].selected = selected;
@@ -162,7 +173,7 @@ export function writeMapOptions(params: URLSearchParams, options: MapOptions) {
 	for (const key of COLOR_RANGE_KEYS) {
 		writeRange(
 			params,
-			key,
+			paramName(key),
 			(options[key] as ColorRangeOption).colorRange,
 			(DEFAULT_MAP_OPTIONS[key] as ColorRangeOption).colorRange,
 		);
@@ -177,11 +188,12 @@ export function writeMapOptions(params: URLSearchParams, options: MapOptions) {
 	for (const key of CATEGORY_KEYS) {
 		const option = options[key] as CategoryOptions;
 		const defaultOption = DEFAULT_MAP_OPTIONS[key] as CategoryOptions;
+		const name = paramName(key);
 		if (option.mode === "percentage" && option.selected)
-			params.set(`selected.${key}`, option.selected);
+			params.set(`selected.${name}`, option.selected);
 		if (option.excluded?.length)
 			params.set(
-				`excluded.${key}`,
+				`excluded.${name}`,
 				[...option.excluded].sort().join(","),
 			);
 		if (
@@ -189,7 +201,7 @@ export function writeMapOptions(params: URLSearchParams, options: MapOptions) {
 			option.percentageRange.max !== defaultOption.percentageRange.max
 		)
 			params.set(
-				`percentage.${key}`,
+				`percentage.${name}`,
 				`${option.percentageRange.min},${option.percentageRange.max}`,
 			);
 	}

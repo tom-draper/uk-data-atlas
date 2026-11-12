@@ -49,7 +49,7 @@ describe("dataset catalogue", () => {
 			locationAggregate: "population",
 		});
 		expect(
-			definitionFor("localElection")?.payload?.regionChunks,
+			definitionFor("local-election")?.payload?.regionChunks,
 		).toMatchObject({
 			kind: "regional",
 			wardToLadFallback: true,

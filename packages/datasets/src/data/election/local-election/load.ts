@@ -342,8 +342,8 @@ const parseLocalElectionRows = (
 	}
 
 	return {
-		id: `localElection${config.year}`,
-		type: "localElection",
+		id: `local-election${config.year}`,
+		type: "local-election",
 		year: config.year,
 		boundaryYear: config.boundaryYear,
 		boundaryType: "ward",
@@ -416,8 +416,8 @@ export const parseLeapLocalElection = (
 		};
 	}
 	return {
-		id: `localElection${config.year}`,
-		type: "localElection",
+		id: `local-election${config.year}`,
+		type: "local-election",
 		year: config.year,
 		boundaryYear: config.boundaryYear,
 		boundaryType: "ward",

@@ -90,7 +90,7 @@ export default function GeneralElectionResultChart({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const datasetId = `generalElection-${data.year}`;
+	const datasetId = `general-election-${data.year}`;
 	const winnerColor = data.partyData[0]?.color;
 
 	// An active general-election card can show the national seats breakdown.

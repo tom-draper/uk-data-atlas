@@ -25,14 +25,14 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	...chartMapOptions,
-	generalElection: {
+	"general-election": {
 		mode: "majority",
 		metric: "votes",
 		percentageRange: { min: 0, max: 50 },
 		turnoutRange: { min: 0, max: 100 },
 		colorRange: { min: 0, max: 1 },
 	},
-	localElection: {
+	"local-election": {
 		mode: "majority",
 		metric: "votes",
 		percentageRange: { min: 0, max: 50 },
@@ -54,7 +54,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 		colorRange: { min: 0, max: 1 },
 	},
 	brexit: { colorRange: { min: 30, max: 70 } },
-	brexitConstituency: { colorRange: { min: 30, max: 70 } },
+	"brexit-constituency": { colorRange: { min: 30, max: 70 } },
 	custom: { colorRange: { min: 0, max: 100 } },
 	network: {},
 	theme: {

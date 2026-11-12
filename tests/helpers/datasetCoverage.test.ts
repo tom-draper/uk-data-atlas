@@ -31,8 +31,8 @@ const geometry = {
 } as any;
 
 const localElection = {
-	id: "localElection2024",
-	type: "localElection",
+	id: "local-election2024",
+	type: "local-election",
 	year: 2024,
 	boundaryType: "ward",
 	boundaryYear: 2024,

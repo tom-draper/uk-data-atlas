@@ -89,7 +89,7 @@ export const brexitAggregation = boundaryAggregation(
 	aggregateBrexit,
 );
 export const brexitConstituencyAggregation = boundaryAggregation(
-	"brexitConstituency",
+	"brexit-constituency",
 	"constituency",
 	aggregateBrexitConstituencies,
 );

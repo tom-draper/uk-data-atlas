@@ -1,6 +1,6 @@
 import { renderLocalElection } from "@/lib/helpers/mapRendering";
 import { localElectionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { localElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, localElection } from "@uk-data-atlas/datasets";
 import type { LocalElectionDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -33,13 +33,14 @@ const localElectionCharts = localElectionYears.map(localElectionChart);
 
 export const localElectionDefinition: ChartDatasetDefinition<LocalElectionDataset> =
 	{
-		...localElectionDatasetDefinition,
+		...definitionOf(localElection),
 		chart: localElectionChart(2025),
 		charts: localElectionCharts,
 		legendAggregation: { calculateStats },
 		legendKind: "party",
 		mapRenderer: {
-			getOptions: (_activeViz, mapOptions) => mapOptions.localElection,
+			getOptions: (_activeViz, mapOptions) =>
+				mapOptions["local-election"],
 			render: ({ map, geojson, dataset, mapOptions, isDark }) =>
 				renderLocalElection(map, geojson, dataset, mapOptions, isDark),
 		},

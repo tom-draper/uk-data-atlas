@@ -89,7 +89,7 @@ export default function BrexitHanrettyEstimatesChart({
 		: null;
 
 	const isActive = !!(
-		activeDataset?.type === "brexitConstituency" &&
+		activeDataset?.type === "brexit-constituency" &&
 		activeDataset.id === (dataset?.id ?? `brexitConstituency${year}`)
 	);
 
@@ -120,7 +120,7 @@ export default function BrexitHanrettyEstimatesChart({
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset?.id ?? `brexitConstituency${year}`,
-					datasetType: "brexitConstituency",
+					datasetType: "brexit-constituency",
 					datasetYear: dataset?.year ?? year,
 				})
 			}

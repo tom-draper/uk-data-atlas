@@ -1,11 +1,11 @@
 import { renderBrexit } from "@/lib/helpers/mapRendering";
 import { brexitAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { brexitDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, brexit } from "@uk-data-atlas/datasets";
 import type { BrexitLADDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 
 export const brexitDefinition: ChartDatasetDefinition<BrexitLADDataset> = {
-	...brexitDatasetDefinition,
+	...definitionOf(brexit),
 	chart: {
 		group: "Brexit",
 		key: "brexit-electoral",

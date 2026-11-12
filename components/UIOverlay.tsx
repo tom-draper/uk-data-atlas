@@ -124,12 +124,12 @@ export default function UIOverlay({
 	const excludedCategories = useMemo(
 		() => excludedCategoriesForMapOptions(mapOptions),
 		[
-			mapOptions.generalElection.excluded,
-			mapOptions.generalElection.mode,
-			mapOptions.generalElection.selected,
-			mapOptions.localElection.excluded,
-			mapOptions.localElection.mode,
-			mapOptions.localElection.selected,
+			mapOptions["general-election"].excluded,
+			mapOptions["general-election"].mode,
+			mapOptions["general-election"].selected,
+			mapOptions["local-election"].excluded,
+			mapOptions["local-election"].mode,
+			mapOptions["local-election"].selected,
 			mapOptions.ethnicity.excluded,
 			mapOptions.ethnicity.mode,
 			mapOptions.ethnicity.selected,

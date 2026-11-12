@@ -45,7 +45,7 @@ export function PartyLegend({
 	onRightClick,
 }: CategoryLegendProps & {
 	parties: PartyDisplayData[];
-	datasetType: "generalElection" | "localElection";
+	datasetType: "general-election" | "local-election";
 	onClick: (id: string) => void;
 	onRightClick: (id: string) => void;
 }) {

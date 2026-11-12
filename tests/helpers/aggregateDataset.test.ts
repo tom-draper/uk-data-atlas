@@ -36,8 +36,8 @@ describe("aggregateDataset", () => {
 		};
 		const datasets = {
 			"2024": {
-				id: "localElection2024",
-				type: "localElection",
+				id: "local-election2024",
+				type: "local-election",
 				year: 2024,
 				boundaryYear: 2024,
 				boundaryType: "ward",

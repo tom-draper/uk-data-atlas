@@ -109,8 +109,8 @@ const statisticsInputs = (
 		if (config) {
 			const statistics = declaredStatistics(config, read, entry);
 			if (
-				entry.type === "generalElection" ||
-				entry.type === "localElection"
+				entry.type === "general-election" ||
+				entry.type === "local-election"
 			)
 				return [
 					(areas) =>

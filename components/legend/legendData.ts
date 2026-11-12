@@ -65,11 +65,11 @@ export function partyLegendItems(
 	if (!activeDataset) return [];
 
 	const datasetData =
-		activeDataset.type === "localElection"
-			? (aggregates.localElection as
+		activeDataset.type === "local-election"
+			? (aggregates["local-election"] as
 					Record<number, WardStats> | undefined)
-			: activeDataset.type === "generalElection"
-				? (aggregates.generalElection as
+			: activeDataset.type === "general-election"
+				? (aggregates["general-election"] as
 						Record<number, ConstituencyStats> | undefined)
 				: undefined;
 	const partyVotes = datasetData?.[activeDataset.year]?.partyVotes;

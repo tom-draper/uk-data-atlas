@@ -99,8 +99,8 @@ export const parseGeneralElectionCsv = (
 	}
 
 	return {
-		id: `generalElection-${config.year}`,
-		type: "generalElection",
+		id: `general-election-${config.year}`,
+		type: "general-election",
 		year: config.year,
 		boundaryYear: config.constituencyBoundaryYear, // Use configurable boundary year
 		boundaryType: "constituency",

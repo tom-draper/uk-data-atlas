@@ -19,7 +19,7 @@ export function useLocalElectionDatasets(
 
 	useEffect(() => {
 		const mappings: Record<string, string> = {};
-		for (const dataset of Object.values(datasets.localElection)) {
+		for (const dataset of Object.values(datasets["local-election"])) {
 			for (const ward of Object.values(dataset.data)) {
 				if (
 					ward.wardCode &&
@@ -31,24 +31,26 @@ export function useLocalElectionDatasets(
 			}
 		}
 		if (Object.keys(mappings).length > 0) addWardLadMappings(mappings);
-	}, [addWardLadMappings, datasets.localElection]);
+	}, [addWardLadMappings, datasets["local-election"]]);
 
 	return useMemo(() => {
 		if (!wardCodes) return datasets;
 		const localElection = Object.fromEntries(
-			Object.entries(datasets.localElection).map(([year, dataset]) => {
-				const validCodes = wardCodes[dataset.boundaryYear];
-				if (!validCodes) return [year, dataset];
-				return [
-					year,
-					normalizeElectionDatasetCodes(
-						dataset,
-						validCodes,
-						getCodeForYear,
-					),
-				];
-			}),
-		) as Datasets["localElection"];
+			Object.entries(datasets["local-election"]).map(
+				([year, dataset]) => {
+					const validCodes = wardCodes[dataset.boundaryYear];
+					if (!validCodes) return [year, dataset];
+					return [
+						year,
+						normalizeElectionDatasetCodes(
+							dataset,
+							validCodes,
+							getCodeForYear,
+						),
+					];
+				},
+			),
+		) as Datasets["local-election"];
 		return { ...datasets, localElection };
 	}, [datasets, getCodeForYear, wardCodes]);
 }

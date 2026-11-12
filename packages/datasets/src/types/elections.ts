@@ -84,7 +84,7 @@ export interface LocalElectionExcludedWard {
 }
 
 export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionWardData> {
-	type: "localElection";
+	type: "local-election";
 	year: LocalElectionYear;
 	boundaryType: "ward";
 	boundaryYear: WardYear;
@@ -109,7 +109,7 @@ export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionW
 }
 
 export interface GeneralElectionDataset extends BaseElectionDataset<GeneralElectionConstituencyData> {
-	type: "generalElection";
+	type: "general-election";
 	year: GeneralElectionYear;
 	boundaryType: "constituency";
 	boundaryYear: ConstituencyYear;

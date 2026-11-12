@@ -1,6 +1,6 @@
 import { renderGeneralElection } from "@/lib/helpers/mapRendering";
 import { generalElectionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { generalElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, generalElection } from "@uk-data-atlas/datasets";
 import type { GeneralElectionDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -66,13 +66,14 @@ const chart2010: ChartDefinition<GeneralElectionDataset> = {
 };
 export const generalElectionDefinition: ChartDatasetDefinition<GeneralElectionDataset> =
 	{
-		...generalElectionDatasetDefinition,
+		...definitionOf(generalElection),
 		chart: chart2024,
 		charts: [chart2024, chart2019, chart2017, chart2015, chart2010],
 		legendAggregation: { calculateStats },
 		legendKind: "party",
 		mapRenderer: {
-			getOptions: (_activeViz, mapOptions) => mapOptions.generalElection,
+			getOptions: (_activeViz, mapOptions) =>
+				mapOptions["general-election"],
 			render: ({ map, geojson, dataset, mapOptions, isDark }) =>
 				renderGeneralElection(
 					map,

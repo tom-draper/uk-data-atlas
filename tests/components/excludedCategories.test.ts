@@ -6,8 +6,8 @@ describe("excludedCategoriesForMapOptions", () => {
 	it("derives selected and excluded legend categories from map options", () => {
 		const categories = excludedCategoriesForMapOptions({
 			...DEFAULT_MAP_OPTIONS,
-			generalElection: {
-				...DEFAULT_MAP_OPTIONS.generalElection,
+			"general-election": {
+				...DEFAULT_MAP_OPTIONS["general-election"],
 				mode: "percentage",
 				selected: "labour",
 				excluded: ["conservative"],
@@ -38,8 +38,8 @@ describe("excludedCategoriesForMapOptions", () => {
 	it("does not expose a selected category in majority mode", () => {
 		const categories = excludedCategoriesForMapOptions({
 			...DEFAULT_MAP_OPTIONS,
-			localElection: {
-				...DEFAULT_MAP_OPTIONS.localElection,
+			"local-election": {
+				...DEFAULT_MAP_OPTIONS["local-election"],
 				mode: "majority",
 				selected: "labour",
 			},

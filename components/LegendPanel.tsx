@@ -94,16 +94,16 @@ export default function LegendPanel({
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
 	const electionSupportsTurnout =
-		(activeDataset?.type === "generalElection" ||
-			activeDataset?.type === "localElection") &&
+		(activeDataset?.type === "general-election" ||
+			activeDataset?.type === "local-election") &&
 		Object.values(activeDataset.data).some(
 			({ turnoutPercent }) => turnoutPercent > 0,
 		);
 
 	if (
 		!activeDataset ||
-		((activeDataset.type === "generalElection" ||
-			activeDataset.type === "localElection") &&
+		((activeDataset.type === "general-election" ||
+			activeDataset.type === "local-election") &&
 			parties.length === 0) ||
 		(activeDataset.type === "ethnicity" && ethnicities.length === 0)
 	) {

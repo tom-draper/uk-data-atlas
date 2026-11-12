@@ -4,7 +4,6 @@ import {
 } from "@uk-data-atlas/datasets";
 import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
-import { GENERAL_ELECTION, LOCAL_ELECTION } from "./elections.ts";
 import {
 	CAR_AVAILABILITY,
 	ETHNICITY,
@@ -13,12 +12,7 @@ import {
 } from "./census.ts";
 import { HOUSE_PRICE, INCOME } from "./economy.ts";
 import { SCHOOL_PERFORMANCE } from "./services.ts";
-import {
-	BREXIT,
-	BREXIT_CONSTITUENCY,
-	LIFE_EXPECTANCY_LATEST,
-	POPULATION_WARDS,
-} from "./people.ts";
+import { LIFE_EXPECTANCY_LATEST, POPULATION_WARDS } from "./people.ts";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
 /** Statistics declarations not yet moved into a dataset declaration. */
@@ -32,10 +26,6 @@ const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	SCHOOL_PERFORMANCE,
 	POPULATION_WARDS,
 	LIFE_EXPECTANCY_LATEST,
-	BREXIT,
-	BREXIT_CONSTITUENCY,
-	LOCAL_ELECTION,
-	GENERAL_ELECTION,
 ];
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */

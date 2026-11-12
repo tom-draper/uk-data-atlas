@@ -36,7 +36,7 @@ export function electionWinnerPaint(partyInfo: Party[]): FillPaintConfig {
 
 /** One party's vote share, shaded from its own colour. */
 export function partyPercentagePaint(
-	options: MapOptions["localElection"] | MapOptions["generalElection"],
+	options: MapOptions["local-election"] | MapOptions["general-election"],
 	isDark: boolean,
 ): FillPaintConfig | null {
 	if (!options.selected) return null;

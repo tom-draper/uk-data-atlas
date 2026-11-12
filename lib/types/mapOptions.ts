@@ -56,16 +56,23 @@ export interface DeclaredMapOptions extends ColorRangeOption {
 	measure: string;
 }
 
+/** Declared datasets whose map has options of its own, listed below. */
+type CustomMapDatasetId =
+	"brexit" | "brexit-constituency" | "general-election" | "local-election";
+
+/** Declared datasets whose map options are the declared display's. */
+type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;
+
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	| DeclaredDatasetId
+	| DisplayedDatasetId
 	| "fuelPoverty"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
 	| "schoolPerformance"
 > &
-	Record<DeclaredDatasetId, DeclaredMapOptions> & {
+	Record<DisplayedDatasetId, DeclaredMapOptions> & {
 		fuelPoverty: FuelPovertyOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
@@ -106,14 +113,14 @@ export type NumericMapOptionsKey = Extract<
 >;
 
 export type MapOptions = ChartMapOptions & {
-	generalElection: CategoryOptions;
-	localElection: CategoryOptions;
+	"general-election": CategoryOptions;
+	"local-election": CategoryOptions;
 	ethnicity: CategoryOptions;
 	ageDistribution: ColorRangeOption;
 	populationDensity: ColorRangeOption;
 	gender: ColorRangeOption;
 	brexit: ColorRangeOption;
-	brexitConstituency: ColorRangeOption;
+	"brexit-constituency": ColorRangeOption;
 	custom: CustomOptions;
 	network: NetworkOptions;
 	theme: {

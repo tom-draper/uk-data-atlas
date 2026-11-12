@@ -7,9 +7,9 @@ import {
 describe("legend data selectors", () => {
 	it("sorts active-election parties by their aggregated vote totals", () => {
 		const parties = partyLegendItems(
-			{ type: "localElection", year: 2024 } as any,
+			{ type: "local-election", year: 2024 } as any,
 			{
-				localElection: {
+				"local-election": {
 					2024: {
 						partyVotes: { LAB: 12, CON: 30, OTHER: 5, GRN: 0 },
 					},

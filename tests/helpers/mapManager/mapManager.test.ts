@@ -67,7 +67,7 @@ describe("MapManager election updates", () => {
 		});
 		const dataset = {
 			id: "test-election",
-			type: "localElection",
+			type: "local-election",
 			year: 2025,
 			boundaryType: "ward",
 			boundaryYear: 2024,
@@ -102,7 +102,7 @@ describe("MapManager election updates", () => {
 		} as any;
 		const options = {
 			...DEFAULT_MAP_OPTIONS,
-			localElection: {
+			"local-election": {
 				mode: "percentage" as const,
 				selected: "LAB",
 				percentageRange: { min: 0, max: 100 },
@@ -118,8 +118,8 @@ describe("MapManager election updates", () => {
 		renderLocalElection(manager, geojson, dataset, options);
 		renderLocalElection(manager, geojson, dataset, {
 			...options,
-			localElection: {
-				...options.localElection,
+			"local-election": {
+				...options["local-election"],
 				percentageRange: { min: 25, max: 75 },
 			},
 		});

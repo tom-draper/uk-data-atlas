@@ -3,7 +3,7 @@ import type { Dataset, EthnicityCode, PartyCode } from "@/lib/types";
 import type { CategoryOptions, MapOptions } from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey, MapOptionsChangeHandler } from "./types";
 
-type ElectionType = "generalElection" | "localElection";
+type ElectionType = "general-election" | "local-election";
 
 export function useLegendControls(
 	activeDataset: Dataset | null,
@@ -33,8 +33,8 @@ export function useLegendControls(
 	};
 
 	const electionType: ElectionType | null =
-		activeDataset?.type === "generalElection" ||
-		activeDataset?.type === "localElection"
+		activeDataset?.type === "general-election" ||
+		activeDataset?.type === "local-election"
 			? activeDataset.type
 			: null;
 	const electionOptions = electionType ? displayOptions[electionType] : null;

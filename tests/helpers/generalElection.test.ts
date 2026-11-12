@@ -105,7 +105,7 @@ describe("computeGeneralElectionYearData", () => {
 	it("shows the best-fit constituency result for a hovered ward", () => {
 		const dataset: GeneralElectionDataset = {
 			id: "general-election-2024",
-			type: "generalElection",
+			type: "general-election",
 			year: 2024,
 			boundaryType: "constituency",
 			boundaryYear: 2024,

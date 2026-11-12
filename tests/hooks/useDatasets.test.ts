@@ -19,7 +19,10 @@ const hiddenByDefault = CHART_DATASET_DEFINITIONS.filter(
 describe("datasetIsNeeded", () => {
 	it("fetches a dataset whose card is shown", () => {
 		expect(
-			datasetIsNeeded(definitionFor("localElection"), DEFAULT_VISIBILITY),
+			datasetIsNeeded(
+				definitionFor("local-election"),
+				DEFAULT_VISIBILITY,
+			),
 		).toBe(true);
 	});
 
@@ -36,7 +39,7 @@ describe("datasetIsNeeded", () => {
 	it("fetches the dataset the map is drawing even while its card is hidden", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
 			"adult-social-care-outcomes",
-			"brexitConstituency",
+			"brexit-constituency",
 			"general-health",
 			"housing-tenure",
 			"local-government-finance",
@@ -63,7 +66,7 @@ describe("datasetIsNeeded", () => {
 	});
 
 	it("does not fetch the rest just because one dataset is active", () => {
-		const active = "brexitConstituency";
+		const active = "brexit-constituency";
 		for (const definition of hiddenByDefault) {
 			if (definition.type === active) continue;
 			expect(
@@ -85,7 +88,7 @@ describe("datasetIsNeeded", () => {
 
 	it("prioritises the active map, then visible cards", () => {
 		const active = definitionFor("simd");
-		const visible = definitionFor("localElection");
+		const visible = definitionFor("local-election");
 		expect(datasetLoadPriority(active, active.type)).toBe(0);
 		expect(datasetLoadPriority(visible)).toBe(1);
 	});

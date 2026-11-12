@@ -42,7 +42,7 @@ export interface BrexitConstituencyData {
 export interface BrexitConstituencyDataset {
 	id: string;
 	year: number;
-	type: "brexitConstituency";
+	type: "brexit-constituency";
 	boundaryType: "constituency";
 	boundaryYear: number;
 	data: Record<string, BrexitConstituencyData>;

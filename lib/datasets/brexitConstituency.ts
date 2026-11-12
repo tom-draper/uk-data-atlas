@@ -1,12 +1,12 @@
 import { renderBrexitConstituency } from "@/lib/helpers/mapRendering";
 import { brexitConstituencyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { brexitConstituencyDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, brexitConstituency } from "@uk-data-atlas/datasets";
 import type { BrexitConstituencyDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 
 export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstituencyDataset> =
 	{
-		...brexitConstituencyDatasetDefinition,
+		...definitionOf(brexitConstituency),
 		chart: {
 			group: "Brexit",
 			key: "brexit-hanretty",
@@ -21,7 +21,7 @@ export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstitu
 		legendKind: "brexit",
 		mapRenderer: {
 			getOptions: (_activeViz, mapOptions) =>
-				mapOptions.brexitConstituency,
+				mapOptions["brexit-constituency"],
 			render: ({ map, geojson, dataset, mapOptions }) =>
 				renderBrexitConstituency(map, geojson, dataset, mapOptions),
 		},
