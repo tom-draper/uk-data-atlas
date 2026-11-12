@@ -27,7 +27,7 @@ describe("declared politics datasets", () => {
 
 	it("writes statistics headers whose type is the declaration id", () => {
 		for (const dataset of politics) {
-			const { payload } = statisticsOf(dataset);
+			const payload = statisticsOf(dataset).payload!;
 			const parts =
 				typeof payload.parts === "function"
 					? payload.parts(["2016"])
