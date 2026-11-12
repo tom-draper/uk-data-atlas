@@ -10,7 +10,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...declaredDefaultOptions(definition.type),
 			...(definition.type === "fuelPoverty" ? { measure: "rate" } : {}),
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
-			...(definition.type === "lifeExpectancy"
+			...(definition.type === "life-expectancy"
 				? { measure: "average" }
 				: {}),
 		},

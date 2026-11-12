@@ -75,7 +75,7 @@ export const brexitConstituencyAggregation = boundaryAggregation(
 	aggregateBrexitConstituencies,
 );
 export const lifeExpectancyAggregation = boundaryAggregation(
-	"lifeExpectancy",
+	"life-expectancy",
 	"localAuthority",
 	aggregateLifeExpectancy,
 );

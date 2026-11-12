@@ -27,7 +27,7 @@ function internalDatasetId(
 	view?: VizView,
 ): string {
 	if (datasetType === "general-election") return `general-election-${period}`;
-	if (datasetType === "lifeExpectancy")
+	if (datasetType === "life-expectancy")
 		return view === "healthy-life-expectancy" ? "hle" : "le";
 	return `${datasetType}${period}`;
 }

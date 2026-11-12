@@ -30,6 +30,7 @@ import { imd } from "./imd/dataset.ts";
 import { income } from "./income/dataset.ts";
 import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
+import { lifeExpectancy } from "./life-expectancy/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
 import { localElection } from "./local-election/dataset.ts";
 import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
@@ -87,6 +88,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	income,
 	jobs,
 	landArea,
+	lifeExpectancy,
 	lifeExpectancySeries,
 	localElection,
 	localGovernmentFinance,
@@ -149,6 +151,7 @@ export type DeclaredDatasetId =
 	| "income"
 	| "jobs"
 	| "land-area"
+	| "life-expectancy"
 	| "life-expectancy-series"
 	| "local-election"
 	| "local-government-finance"

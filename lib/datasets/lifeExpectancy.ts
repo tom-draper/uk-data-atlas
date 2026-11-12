@@ -1,5 +1,5 @@
-import { lifeExpectancyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { lifeExpectancyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import { definitionOf, lifeExpectancy } from "@uk-data-atlas/datasets";
 import type { LifeExpectancyDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -26,13 +26,13 @@ const le: ChartDefinition<LifeExpectancyDataset> = {
 };
 export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyDataset> =
 	{
-		...lifeExpectancyDatasetDefinition,
+		...definitionOf(lifeExpectancy),
 		chart: le,
 		map: {
 			valueFor: (dataset, code, mapOptions) => {
 				const area = dataset.data[code];
 				if (!area) return null;
-				switch (mapOptions.lifeExpectancy.measure) {
+				switch (mapOptions["life-expectancy"].measure) {
 					case "male":
 						return area.maleBirthLE;
 					case "female":
@@ -46,9 +46,9 @@ export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyData
 				let max = -Infinity;
 				for (const area of Object.values(dataset.data)) {
 					const value =
-						mapOptions.lifeExpectancy.measure === "male"
+						mapOptions["life-expectancy"].measure === "male"
 							? area.maleBirthLE
-							: mapOptions.lifeExpectancy.measure === "female"
+							: mapOptions["life-expectancy"].measure === "female"
 								? area.femaleBirthLE
 								: (area.maleBirthLE + area.femaleBirthLE) / 2;
 					min = Math.min(min, value);

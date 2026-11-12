@@ -244,7 +244,7 @@ describe("renderNumericDataset", () => {
 
 describe("life expectancy map measures", () => {
 	const dataset = {
-		type: "lifeExpectancy",
+		type: "life-expectancy",
 		boundaryType: "localAuthority",
 		data: {
 			E06000001: { maleBirthLE: 70, femaleBirthLE: 80 },
@@ -256,8 +256,8 @@ describe("life expectancy map measures", () => {
 	it("selects the requested value and derives its matching legend range", () => {
 		const options = (measure: "average" | "male" | "female") => ({
 			...DEFAULT_MAP_OPTIONS,
-			lifeExpectancy: {
-				...DEFAULT_MAP_OPTIONS.lifeExpectancy,
+			"life-expectancy": {
+				...DEFAULT_MAP_OPTIONS["life-expectancy"],
 				measure,
 			},
 		});

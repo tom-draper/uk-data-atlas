@@ -167,11 +167,11 @@ export default function LegendPanel({
 					}
 				/>
 			)}
-			{activeDataset?.type === "lifeExpectancy" && setActiveViz && (
+			{activeDataset?.type === "life-expectancy" && setActiveViz && (
 				<LifeExpectancyKindPanel
 					kind={activeDataset.id === "hle" ? "hle" : "le"}
 					onChange={(id) => {
-						const dataset = datasets.lifeExpectancy[id];
+						const dataset = datasets["life-expectancy"][id];
 						if (dataset)
 							setActiveViz({
 								datasetId: dataset.id,
@@ -213,11 +213,11 @@ export default function LegendPanel({
 				/>
 			)}
 
-			{activeDataset?.type === "lifeExpectancy" && (
+			{activeDataset?.type === "life-expectancy" && (
 				<LifeExpectancyMeasurePanel
-					measure={controls.displayOptions.lifeExpectancy.measure}
+					measure={controls.displayOptions["life-expectancy"].measure}
 					onChange={(measure) =>
-						onMapOptionsChange("lifeExpectancy", { measure })
+						onMapOptionsChange("life-expectancy", { measure })
 					}
 				/>
 			)}

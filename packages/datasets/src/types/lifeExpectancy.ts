@@ -16,7 +16,7 @@ export interface LifeExpectancyLADData {
 export interface LifeExpectancyDataset extends DatasetCoverage {
 	id: string;
 	year: number;
-	type: "lifeExpectancy";
+	type: "life-expectancy";
 	boundaryType: "localAuthority";
 	boundaryYear: number;
 	dataPeriod: string;
