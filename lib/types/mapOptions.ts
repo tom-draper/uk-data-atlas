@@ -58,7 +58,12 @@ export interface DeclaredMapOptions extends ColorRangeOption {
 
 /** Declared datasets whose map has options of its own, listed below. */
 type CustomMapDatasetId =
-	"brexit" | "brexit-constituency" | "general-election" | "local-election";
+	| "brexit"
+	| "brexit-constituency"
+	| "ethnicity"
+	| "general-election"
+	| "local-election"
+	| "population";
 
 /** Declared datasets whose map options are the declared display's. */
 type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;

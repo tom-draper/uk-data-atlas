@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { populationDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, population } from "@uk-data-atlas/datasets";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
@@ -66,7 +66,7 @@ describe("dataset catalogue", () => {
 
 	it("keeps dataset core free of chart presentation", () => {
 		for (const dataset of [
-			populationDatasetDefinition,
+			definitionOf(population),
 			...CATALOGUE_DATASET_DEFINITIONS.filter(
 				({ type }) => type === "child-poverty",
 			),
