@@ -46,6 +46,14 @@ export function formatDisplay(format: DisplayFormat, value: number): string {
 			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(format.round ? Math.round(value) : value)}${format.suffix ?? ""}`;
 		case "compact":
 			return `${formatCompactCount(value)}${format.suffix ?? ""}`;
+		case "rank": {
+			const rank = format.of + 1 - value;
+			return rank <= 1
+				? "Most deprived"
+				: rank >= format.of
+					? "Least deprived"
+					: `Rank ${Math.round(rank).toLocaleString()}`;
+		}
 		case "millions":
 			return `${format.prefix ?? ""}${
 				value >= 1_000
@@ -242,7 +250,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 					return aggregate([...keys].map((key) => data[key]));
 				}
 			: (features, codeProp, data: Record<string, unknown>) =>
-					aggregate(collectBoundaryRecords(features, data, codeProp)),
+					aggregate(
+						collectBoundaryRecords(
+							features,
+							data,
+							codeProp,
+							display.aggregation.distinct,
+						),
+					),
 	);
 	const optionsOf = (options: MapOptions) =>
 		measureFor(
@@ -324,6 +339,7 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 							`${declaration.id}:${optionsOf(options).id}`,
 					}),
 			colorRange: first.colorRange,
+			...(first.invertColor === false ? { invertColor: false } : {}),
 			legend: {
 				bounds: (options) => {
 					const { legend } = optionsOf(options);

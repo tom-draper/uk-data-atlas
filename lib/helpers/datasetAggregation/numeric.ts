@@ -21,11 +21,18 @@ export function collectBoundaryRecords<T>(
 	features: Features,
 	data: Record<string, T>,
 	codeProperty: PropertyKeys,
+	/** Take each code's record once, as a split boundary can repeat a code. */
+	distinct = false,
 ): T[] {
 	const records: T[] = [];
+	const seen = new Set<string>();
 	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
+		if (distinct) {
+			if (seen.has(code)) continue;
+			seen.add(code);
+		}
+		const record = data[code];
 		if (record) records.push(record);
 	}
 	return records;

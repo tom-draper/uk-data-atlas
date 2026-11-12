@@ -27,6 +27,15 @@ export type DisplayFormat =
 	| { kind: "compact"; suffix?: string }
 	| {
 			/**
+			 * A rank out of `of`, where a low value is the most deprived but is
+			 * drawn at the high end of the scale: written as "Most deprived",
+			 * "Least deprived" or "Rank n".
+			 */
+			kind: "rank";
+			of: number;
+	  }
+	| {
+			/**
 			 * A sum of money in millions, written as `£1.2bn` from a thousand
 			 * million up and `£340m` below.
 			 */
@@ -91,6 +100,11 @@ export type DisplayMeasure = {
 	legend: { min: number; max: number; format: DisplayFormat };
 	/** Needed when the dataset is drawn by the shared chart card. */
 	card?: DisplayMeasureCard;
+	/**
+	 * Set to false where a low value should take the low end of the colour
+	 * scale, as for a rank. The first measure decides for the dataset.
+	 */
+	invertColor?: false;
 };
 
 export type DisplayCard = {
@@ -128,6 +142,8 @@ export type DisplayCard = {
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";
+	/** Count an area once however many boundary features carry its code. */
+	distinct?: true;
 	/** Pure, so a worker can run it. Returns null when no record counts. */
 	aggregate: (records: never[]) => unknown;
 };
