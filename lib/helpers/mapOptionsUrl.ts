@@ -24,6 +24,7 @@ const PARAM_NAMES: Readonly<Record<string, string>> = {
 	"general-election": "generalElection",
 	"local-election": "localElection",
 	"brexit-constituency": "brexitConstituency",
+	"house-price": "housePrice",
 	"life-expectancy": "lifeExpectancy",
 };
 const paramName = (key: string) => PARAM_NAMES[key] ?? key;
@@ -104,7 +105,7 @@ export function mapOptionsFromSearchParams(
 	}
 	const housePriceMeasure = params.get("measure.housePrice");
 	if (housePriceMeasure === "mean")
-		options.housePrice.measure = housePriceMeasure;
+		options["house-price"].measure = housePriceMeasure;
 	const lifeExpectancyMeasure = params.get("measure.lifeExpectancy");
 	if (lifeExpectancyMeasure === "male" || lifeExpectancyMeasure === "female")
 		options["life-expectancy"].measure = lifeExpectancyMeasure;
@@ -179,8 +180,11 @@ export function writeMapOptions(params: URLSearchParams, options: MapOptions) {
 			(DEFAULT_MAP_OPTIONS[key] as ColorRangeOption).colorRange,
 		);
 	}
-	if (options.housePrice.measure !== DEFAULT_MAP_OPTIONS.housePrice.measure)
-		params.set("measure.housePrice", options.housePrice.measure);
+	if (
+		options["house-price"].measure !==
+		DEFAULT_MAP_OPTIONS["house-price"].measure
+	)
+		params.set("measure.housePrice", options["house-price"].measure);
 	if (
 		options["life-expectancy"].measure !==
 		DEFAULT_MAP_OPTIONS["life-expectancy"].measure

@@ -24,6 +24,7 @@ import { generalHealth } from "./general-health/dataset.ts";
 import { ghgEmissions } from "./ghg-emissions/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
 import { homelessness } from "./homelessness/dataset.ts";
+import { housePrice } from "./house-price/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
 import { housingTenure } from "./housing-tenure/dataset.ts";
 import { imd } from "./imd/dataset.ts";
@@ -82,6 +83,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	ghgEmissions,
 	historicalGeneralElection,
 	homelessness,
+	housePrice,
 	housingAffordability,
 	housingTenure,
 	imd,
@@ -145,6 +147,7 @@ export type DeclaredDatasetId =
 	| "ghg-emissions"
 	| "historical-general-election"
 	| "homelessness"
+	| "house-price"
 	| "housing-affordability"
 	| "housing-tenure"
 	| "imd"

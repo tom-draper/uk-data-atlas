@@ -30,7 +30,7 @@ export * from "./data/energy-consumption/aggregate.ts";
 export * from "./data/catalog/definitions/fuelPoverty.ts";
 export * from "./data/gas-consumption/dataset.ts";
 export * from "./data/historical-general-election/dataset.ts";
-export * from "./data/catalog/definitions/housePrice.ts";
+export * from "./data/house-price/dataset.ts";
 export * from "./data/housing-affordability/dataset.ts";
 export * from "./data/imd/dataset.ts";
 export * from "./data/income/dataset.ts";

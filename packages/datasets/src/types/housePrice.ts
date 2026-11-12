@@ -21,7 +21,7 @@ export type HousePriceYear = 2023;
 
 export interface HousePriceDataset {
 	id: string;
-	type: "housePrice";
+	type: "house-price";
 	year: HousePriceYear;
 	boundaryYear: WardYear;
 	boundaryType: "ward";

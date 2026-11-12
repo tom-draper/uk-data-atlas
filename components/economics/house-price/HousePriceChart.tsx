@@ -189,13 +189,13 @@ export default function HousePriceChart({
 	codeMapper,
 	setActiveViz,
 }: HousePriceChartProps) {
-	const measure = useCurrentMapOptions().housePrice.measure;
+	const measure = useCurrentMapOptions()["house-price"].measure;
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset?.type === "housePrice" &&
-		activeDataset.id === `housePrice${year}`;
+		activeDataset?.type === "house-price" &&
+		activeDataset.id === `house-price${year}`;
 
 	return (
 		<PriceChart

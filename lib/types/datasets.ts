@@ -1,8 +1,4 @@
 // lib/types/datasets.ts
-import {
-	type HousePriceDataset,
-	type AggregatedHousePriceData,
-} from "@uk-data-atlas/datasets";
 import { type AggregatedCustomData, type CustomDataset } from "./custom.ts";
 import { type NetworkDataset } from "./network.ts";
 import {
@@ -16,17 +12,12 @@ import type {
 import type { DatasetCoverage } from "@uk-data-atlas/datasets";
 
 type DatasetValue =
-	| HousePriceDataset
-	| CustomDataset
-	| NetworkDataset
-	| UnemploymentDataset
-	| CatalogueDataset;
+	CustomDataset | NetworkDataset | UnemploymentDataset | CatalogueDataset;
 
 /** Every map dataset may declare the countries its source can cover. */
 export type Dataset = DatasetValue & DatasetCoverage;
 
 export type Datasets = {
-	housePrice: Record<string, HousePriceDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
 } & CatalogueDatasetRecords;
 
