@@ -4,7 +4,6 @@ import type { DatasetDefinition } from "./types.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
-import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
 
 /**
  * Datasets still written by hand as a `definitions/<name>.ts` module. A
@@ -15,7 +14,6 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	fuelPovertyDatasetDefinition,
 	housePriceDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
-	schoolPerformanceDatasetDefinition,
 ];
 
 /** The complete framework-neutral catalogue used by compilers and API consumers. */

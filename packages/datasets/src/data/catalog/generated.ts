@@ -2,7 +2,6 @@
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
-import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
 import type { adultSocialCareActivity } from "../adult-social-care-activity/dataset.ts";
 import type { adultSocialCareOutcomes } from "../adult-social-care-outcomes/dataset.ts";
 import type { airQuality } from "../air-quality/dataset.ts";
@@ -48,6 +47,7 @@ import type { regionalGdpItl1 } from "../regional-gdp-itl1/dataset.ts";
 import type { regionalGdpItl2 } from "../regional-gdp-itl2/dataset.ts";
 import type { regionalGdpItl3 } from "../regional-gdp-itl3/dataset.ts";
 import type { roadCollisions } from "../road-collisions/dataset.ts";
+import type { schoolPerformance } from "../school-performance/dataset.ts";
 import type { schoolPerformanceConstituency } from "../school-performance-constituency/dataset.ts";
 import type { schoolPerformanceDisadvantage } from "../school-performance-disadvantage/dataset.ts";
 import type { simd } from "../simd/dataset.ts";
@@ -64,9 +64,6 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
-	  >[string]
-	| Awaited<
-			ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof adultSocialCareActivity.load>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareOutcomes.load>>[string]
@@ -113,6 +110,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof regionalGdpItl2.load>>[string]
 	| Awaited<ReturnType<typeof regionalGdpItl3.load>>[string]
 	| Awaited<ReturnType<typeof roadCollisions.load>>[string]
+	| Awaited<ReturnType<typeof schoolPerformance.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceConstituency.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceDisadvantage.load>>[string]
 	| Awaited<ReturnType<typeof simd.load>>[string]
@@ -191,6 +189,7 @@ export type DeclaredDatasetRecords = {
 	"regional-gdp-itl2": Awaited<ReturnType<typeof regionalGdpItl2.load>>;
 	"regional-gdp-itl3": Awaited<ReturnType<typeof regionalGdpItl3.load>>;
 	"road-collisions": Awaited<ReturnType<typeof roadCollisions.load>>;
+	"school-performance": Awaited<ReturnType<typeof schoolPerformance.load>>;
 	"school-performance-constituency": Awaited<
 		ReturnType<typeof schoolPerformanceConstituency.load>
 	>;
@@ -213,8 +212,5 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
-	>;
-	schoolPerformance: Awaited<
-		ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
 	>;
 };

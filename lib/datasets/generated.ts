@@ -15,7 +15,6 @@ import { housePriceDefinition } from "./housePrice";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { populationDefinition } from "./population";
-import { schoolPerformanceDefinition } from "./schoolPerformance";
 
 export type ChartDatasetType = CatalogueDatasetType;
 export type ChartDataset = CatalogueDataset;
@@ -32,6 +31,5 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		lifeExpectancyDefinition,
 		localElectionDefinition,
 		populationDefinition,
-		schoolPerformanceDefinition,
 		...DECLARED_CHART_DEFINITIONS,
 	].sort((left, right) => (left.type < right.type ? -1 : 1));

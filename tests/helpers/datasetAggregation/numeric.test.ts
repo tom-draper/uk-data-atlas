@@ -11,10 +11,12 @@ import {
 	aggregateSchoolPerformanceGap,
 } from "@uk-data-atlas/datasets";
 import { aggregateMobileCoverage } from "@uk-data-atlas/datasets";
-import { aggregateClaimantCount } from "@uk-data-atlas/datasets";
+import {
+	aggregateClaimantCount,
+	aggregateSchoolPerformance,
+} from "@uk-data-atlas/datasets";
 import {
 	aggregateFuelPoverty,
-	aggregateSchoolPerformance,
 	collectBoundaryRecords,
 } from "@/lib/helpers/datasetAggregation/numeric";
 import { CODE_KEY, features } from "./fixtures";

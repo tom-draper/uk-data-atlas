@@ -2,4 +2,3 @@
 export { fuelPovertyDatasetDefinition } from "@uk-data-atlas/datasets";
 export { housePriceDatasetDefinition } from "@uk-data-atlas/datasets";
 export { lifeExpectancyDatasetDefinition } from "@uk-data-atlas/datasets";
-export { schoolPerformanceDatasetDefinition } from "@uk-data-atlas/datasets";

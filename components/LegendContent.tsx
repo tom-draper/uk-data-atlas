@@ -88,28 +88,6 @@ export default function LegendContent({
 	}
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
-		const schoolPerformanceMeasure =
-			activeDataset.type === "schoolPerformance"
-				? displayOptions.schoolPerformance.measure
-				: null;
-		const schoolPerformanceLegend = schoolPerformanceMeasure
-			? {
-					min: schoolPerformanceMeasure === "progress8" ? -1 : 0,
-					max:
-						schoolPerformanceMeasure === "attainment8"
-							? 70
-							: schoolPerformanceMeasure === "progress8"
-								? 1
-								: 100,
-					format: (value: number) =>
-						schoolPerformanceMeasure === "attainment8"
-							? `${value.toFixed(0)} Attainment 8`
-							: schoolPerformanceMeasure === "progress8"
-								? `${value.toFixed(1)} Progress 8`
-								: `${value.toFixed(0)}% grade ${schoolPerformanceMeasure === "grade5" ? "5+" : "4+"}`,
-				}
-			: null;
-		const measureLegend = schoolPerformanceLegend ?? legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -129,20 +107,17 @@ export default function LegendContent({
 					min:
 						dynamicRange?.min ??
 						legend.bounds?.(displayOptions).min ??
-						measureLegend.min,
+						legend.min,
 					max:
 						dynamicRange?.max ??
 						legend.bounds?.(displayOptions).max ??
-						measureLegend.max,
+						legend.max,
 				}}
 				defaultRange={{
 					min: dynamicRange?.min ?? colorRange.min,
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
-				formatLabel={
-					schoolPerformanceLegend?.format ??
-					((value) => measureLegend.format(value, displayOptions))
-				}
+				formatLabel={(value) => legend.format(value, displayOptions)}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
 		);
