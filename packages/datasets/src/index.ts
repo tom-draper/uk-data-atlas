@@ -33,7 +33,7 @@ export * from "./data/historical-general-election/dataset.ts";
 export * from "./data/catalog/definitions/housePrice.ts";
 export * from "./data/housing-affordability/dataset.ts";
 export * from "./data/imd/dataset.ts";
-export * from "./data/catalog/definitions/income.ts";
+export * from "./data/income/dataset.ts";
 export * from "./data/crime/aggregate.ts";
 export * from "./data/crime/dataset.ts";
 export * from "./data/nhs-waiting/aggregate.ts";

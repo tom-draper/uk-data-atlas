@@ -2,14 +2,12 @@ import type {
 	AggregatedCrimeData,
 	AggregatedCustomData,
 	AggregatedHousePriceData,
-	AggregatedIncomeData,
 	CrimeDataset,
 	Features,
 	HousePriceWardData,
 	PropertyKeys,
 } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type { IncomeDataset } from "@uk-data-atlas/datasets";
 
 export function aggregateHousePrices(
 	features: Features,
@@ -80,50 +78,6 @@ export function aggregateHousePrices(
 		averageMeanPrice:
 			meanWardCount > 0 ? totalMeanPrice / meanWardCount : 0,
 		averageMeanPrices,
-	};
-}
-
-export function aggregateIncome(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: IncomeDataset["data"],
-): AggregatedIncomeData {
-	const hourlyMedians: number[] = [];
-	const hourlyMeans: number[] = [];
-	let totalMedianIncome = 0,
-		medianCount = 0,
-		totalMeanIncome = 0,
-		meanCount = 0;
-	for (const feature of features) {
-		const hourly =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
-				?.hourly;
-		if (hourly?.median != null) hourlyMedians.push(hourly.median);
-		if (hourly?.mean != null) hourlyMeans.push(hourly.mean);
-		const annual =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
-				?.annual;
-		const median = annual?.median;
-		if (median != null) {
-			totalMedianIncome += median;
-			medianCount++;
-		}
-		const mean = annual?.mean;
-		if (mean != null) {
-			totalMeanIncome += mean;
-			meanCount++;
-		}
-	}
-	return {
-		averageHourlyMedianIncome: hourlyMedians.length
-			? hourlyMedians.reduce((a, b) => a + b, 0) / hourlyMedians.length
-			: null,
-		averageHourlyMeanIncome: hourlyMeans.length
-			? hourlyMeans.reduce((a, b) => a + b, 0) / hourlyMeans.length
-			: null,
-		averageMedianIncome:
-			medianCount > 0 ? totalMedianIncome / medianCount : 0,
-		averageMeanIncome: meanCount > 0 ? totalMeanIncome / meanCount : 0,
 	};
 }
 

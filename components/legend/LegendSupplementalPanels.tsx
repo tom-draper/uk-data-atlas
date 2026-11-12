@@ -185,48 +185,6 @@ export function ElectionMetricPanel({
 	);
 }
 
-const INCOME_MEASURES = [
-	["median", "Median"],
-	["mean", "Mean"],
-] as const;
-
-export function IncomeMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "median" | "mean";
-	onChange: (measure: "median" | "mean") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={INCOME_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
-const INCOME_PERIODS = [
-	["annual", "Annual"],
-	["hourly", "Hourly"],
-] as const;
-
-export function IncomePeriodPanel({
-	period,
-	onChange,
-}: {
-	period: "annual" | "hourly";
-	onChange: (period: "annual" | "hourly") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={period}
-			measures={INCOME_PERIODS}
-			onChange={onChange}
-		/>
-	);
-}
-
 /** The choice of measure for a declared dataset, from its declared measures. */
 export function DeclaredMeasurePanel({
 	measure,

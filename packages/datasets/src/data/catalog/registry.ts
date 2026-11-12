@@ -3,7 +3,6 @@ import { DECLARED_DEFINITIONS } from "../declarations.ts";
 import type { DatasetDefinition } from "./types.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
-import { incomeDatasetDefinition } from "./definitions/income.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
 
@@ -15,7 +14,6 @@ import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerforma
 export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	fuelPovertyDatasetDefinition,
 	housePriceDatasetDefinition,
-	incomeDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
 ];

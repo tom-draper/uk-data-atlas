@@ -12,7 +12,6 @@ import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
 import { housePriceDefinition } from "./housePrice";
-import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { populationDefinition } from "./population";
@@ -30,7 +29,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		fuelPovertyDefinition,
 		generalElectionDefinition,
 		housePriceDefinition,
-		incomeDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
 		populationDefinition,

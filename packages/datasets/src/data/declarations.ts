@@ -27,6 +27,7 @@ import { homelessness } from "./homelessness/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
 import { housingTenure } from "./housing-tenure/dataset.ts";
 import { imd } from "./imd/dataset.ts";
+import { income } from "./income/dataset.ts";
 import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
@@ -82,6 +83,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	housingAffordability,
 	housingTenure,
 	imd,
+	income,
 	jobs,
 	landArea,
 	lifeExpectancySeries,
@@ -142,6 +144,7 @@ export type DeclaredDatasetId =
 	| "housing-affordability"
 	| "housing-tenure"
 	| "imd"
+	| "income"
 	| "jobs"
 	| "land-area"
 	| "life-expectancy-series"

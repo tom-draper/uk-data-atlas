@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
-	aggregateIncome,
 } from "@/lib/helpers/datasetAggregation/economics";
 import {
 	aggregateCrime,
@@ -61,37 +60,6 @@ describe("aggregateHousePrices", () => {
 			wardCount: 0,
 			averagePrices: {},
 			averageMeanPrices: {},
-		});
-	});
-});
-
-describe("aggregateIncome", () => {
-	const data = {
-		E1: {
-			annual: { median: 30000, mean: 35000 },
-			hourly: { median: 15, mean: 20 },
-		},
-		E2: { annual: { median: 40000, mean: 50000 }, hourly: { median: 25 } },
-		E3: {},
-	} as any;
-
-	it("averages annual and hourly pay over the areas reporting each", () => {
-		expect(
-			aggregateIncome(features(["E1", "E2", "E3"]), CODE_KEY, data),
-		).toEqual({
-			averageMedianIncome: 35000,
-			averageMeanIncome: 42500,
-			averageHourlyMedianIncome: 20,
-			averageHourlyMeanIncome: 20,
-		});
-	});
-
-	it("reports zero when no covered area reports an income", () => {
-		expect(aggregateIncome(features(["E3"]), CODE_KEY, data)).toEqual({
-			averageMedianIncome: 0,
-			averageMeanIncome: 0,
-			averageHourlyMedianIncome: null,
-			averageHourlyMeanIncome: null,
 		});
 	});
 });

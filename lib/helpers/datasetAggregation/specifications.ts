@@ -6,11 +6,7 @@ import {
 } from "./numeric";
 import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
-import {
-	aggregateCustomDataset,
-	aggregateHousePrices,
-	aggregateIncome,
-} from "./economics";
+import { aggregateCustomDataset, aggregateHousePrices } from "./economics";
 import {} from "@uk-data-atlas/datasets";
 import { aggregateEthnicity, aggregateLifeExpectancy } from "./demographics";
 import {
@@ -71,11 +67,6 @@ export const housePriceAggregation = boundaryAggregation(
 	"house-price",
 	"ward",
 	aggregateHousePrices,
-);
-export const incomeAggregation = boundaryAggregation(
-	"income",
-	"localAuthority",
-	aggregateIncome,
 );
 export const brexitAggregation = boundaryAggregation(
 	"brexit",
