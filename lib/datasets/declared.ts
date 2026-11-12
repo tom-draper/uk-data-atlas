@@ -151,7 +151,7 @@ const cardFor = (
 		throw new Error(
 			`${declaration.id} draws a card but measure ${measure.id} declares none`,
 		);
-	const { secondary } = card;
+	const secondary = measure.card.secondary ?? card.secondary;
 	return defineValueCard<
 		{ data: Record<string, Record<string, unknown>> },
 		Record<string, unknown>

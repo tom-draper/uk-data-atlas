@@ -67,6 +67,8 @@ export type DisplayMeasureCard = {
 	period?: string;
 	/** A fixed note under the headline for this measure. */
 	note?: string;
+	/** A note from another field of the record, for this measure only. */
+	secondary?: { field: string; format: DisplayFormat; versus?: string };
 	/** Treat a value of zero as missing, where the source writes zero for "not attributed". */
 	zeroIsMissing?: true;
 };
