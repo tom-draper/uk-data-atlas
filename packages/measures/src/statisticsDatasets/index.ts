@@ -16,12 +16,8 @@ import { SCHOOL_PERFORMANCE } from "./services.ts";
 import {
 	BREXIT,
 	BREXIT_CONSTITUENCY,
-	IMD,
 	LIFE_EXPECTANCY_LATEST,
-	NIMDM,
 	POPULATION_WARDS,
-	SIMD,
-	WIMD,
 } from "./people.ts";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
@@ -36,10 +32,6 @@ const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
 	SCHOOL_PERFORMANCE,
 	POPULATION_WARDS,
 	LIFE_EXPECTANCY_LATEST,
-	IMD,
-	WIMD,
-	SIMD,
-	NIMDM,
 	BREXIT,
 	BREXIT_CONSTITUENCY,
 	LOCAL_ELECTION,

@@ -3,7 +3,6 @@
 import { RangeControl } from "@/components/controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "../GlassOverlays";
 
 export function PercentageRangePanel({
@@ -117,29 +116,6 @@ export function LifeExpectancyKindPanel({
 		<GlassSegmentedMeasurePanel
 			measure={kind}
 			measures={LIFE_EXPECTANCY_KINDS}
-			onChange={onChange}
-			vertical
-		/>
-	);
-}
-
-const IMD_SEGMENTS = IMD_MEASURES.map(
-	({ value, label }) => [value, label] as const,
-);
-
-type ImdMeasure = (typeof IMD_MEASURES)[number]["value"];
-
-export function ImdMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: ImdMeasure;
-	onChange: (measure: ImdMeasure) => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={IMD_SEGMENTS}
 			onChange={onChange}
 			vertical
 		/>

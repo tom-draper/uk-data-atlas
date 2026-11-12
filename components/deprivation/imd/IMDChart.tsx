@@ -4,10 +4,13 @@ import type { DeprivationChartProps } from "../createDeprivationChart";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import { IMD_MEASURES } from "@/lib/helpers/imdMeasures";
+import { declaredMeasure } from "@/lib/datasets/declared";
 import { resolveDeprivation } from "../deprivationStats";
 import type { DeprivationIndex } from "../DeprivationChart";
 import { createDeprivationChart } from "../createDeprivationChart";
+
+/** The seven domains, whose scores the card shows beside the overall score. */
+type DomainScore = keyof NonNullable<AggregatedIMDData["domainScores"]>;
 
 const IMD: DeprivationIndex = {
 	datasetType: "imd",
@@ -37,7 +40,9 @@ const OverallIMDChart = createDeprivationChart<
 export default function IMDChart(
 	props: DeprivationChartProps<IMDDataset, AggregatedIMDData>,
 ) {
-	const measure = useCurrentMapOptions().imd.measure;
+	const options = useCurrentMapOptions();
+	const { id, label } = declaredMeasure("imd", options)!;
+	const measure = id as "imdScore" | DomainScore;
 	if (measure === "imdScore") return <OverallIMDChart {...props} />;
 	const dataset = props.availableDatasets[props.year];
 	if (!dataset) return null;
@@ -52,9 +57,6 @@ export default function IMDChart(
 		resolved?.kind === "area"
 			? resolved.record[measure]
 			: resolved?.summary.domainScores?.[measure];
-	const label =
-		IMD_MEASURES.find((option) => option.value === measure)?.label ??
-		"Deprivation";
 	return (
 		<ChartCard
 			coverage={IMD.region}

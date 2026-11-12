@@ -8,17 +8,13 @@ import { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
-import { imdDatasetDefinition } from "./definitions/imd.ts";
 import { incomeDatasetDefinition } from "./definitions/income.ts";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import { localElectionDatasetDefinition } from "./definitions/localElection.ts";
-import { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import { populationDatasetDefinition } from "./definitions/population.ts";
 import { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
-import { simdDatasetDefinition } from "./definitions/simd.ts";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
-import { wimdDatasetDefinition } from "./definitions/wimd.ts";
 
 /**
  * Datasets still written by hand as a `definitions/<name>.ts` module. A
@@ -33,17 +29,13 @@ export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	fuelPovertyDatasetDefinition,
 	generalElectionDatasetDefinition,
 	housePriceDatasetDefinition,
-	imdDatasetDefinition,
 	incomeDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
 	localElectionDatasetDefinition,
-	nimdmDatasetDefinition,
 	populationDatasetDefinition,
 	qualificationDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
-	simdDatasetDefinition,
 	travelToWorkDatasetDefinition,
-	wimdDatasetDefinition,
 ];
 
 /** The complete framework-neutral catalogue used by compilers and API consumers. */

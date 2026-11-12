@@ -6,17 +6,13 @@ import type { ethnicityDatasetDefinition } from "./definitions/ethnicity.ts";
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty.ts";
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection.ts";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice.ts";
-import type { imdDatasetDefinition } from "./definitions/imd.ts";
 import type { incomeDatasetDefinition } from "./definitions/income.ts";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy.ts";
 import type { localElectionDatasetDefinition } from "./definitions/localElection.ts";
-import type { nimdmDatasetDefinition } from "./definitions/nimdm.ts";
 import type { populationDatasetDefinition } from "./definitions/population.ts";
 import type { qualificationDatasetDefinition } from "./definitions/qualification.ts";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance.ts";
-import type { simdDatasetDefinition } from "./definitions/simd.ts";
 import type { travelToWorkDatasetDefinition } from "./definitions/travelToWork.ts";
-import type { wimdDatasetDefinition } from "./definitions/wimd.ts";
 import type { adultSocialCareActivity } from "../adult-social-care-activity/dataset.ts";
 import type { adultSocialCareOutcomes } from "../adult-social-care-outcomes/dataset.ts";
 import type { airQuality } from "../air-quality/dataset.ts";
@@ -35,6 +31,7 @@ import type { historicalGeneralElection } from "../historical-general-election/d
 import type { homelessness } from "../homelessness/dataset.ts";
 import type { housingAffordability } from "../housing-affordability/dataset.ts";
 import type { housingTenure } from "../housing-tenure/dataset.ts";
+import type { imd } from "../imd/dataset.ts";
 import type { jobs } from "../jobs/dataset.ts";
 import type { landArea } from "../land-area/dataset.ts";
 import type { lifeExpectancySeries } from "../life-expectancy-series/dataset.ts";
@@ -42,6 +39,7 @@ import type { localGovernmentFinance } from "../local-government-finance/dataset
 import type { mobileCoverage } from "../mobile-coverage/dataset.ts";
 import type { netAdditionalDwellings } from "../net-additional-dwellings/dataset.ts";
 import type { nhsWaiting } from "../nhs-waiting/dataset.ts";
+import type { nimdm } from "../nimdm/dataset.ts";
 import type { planningApplications } from "../planning-applications/dataset.ts";
 import type { populationConstituency } from "../population-constituency/dataset.ts";
 import type { populationUk } from "../population-uk/dataset.ts";
@@ -53,8 +51,10 @@ import type { regionalGdpItl3 } from "../regional-gdp-itl3/dataset.ts";
 import type { roadCollisions } from "../road-collisions/dataset.ts";
 import type { schoolPerformanceConstituency } from "../school-performance-constituency/dataset.ts";
 import type { schoolPerformanceDisadvantage } from "../school-performance-disadvantage/dataset.ts";
+import type { simd } from "../simd/dataset.ts";
 import type { unemployment } from "../unemployment/dataset.ts";
 import type { waste } from "../waste/dataset.ts";
+import type { wimd } from "../wimd/dataset.ts";
 import type { workplaceIncome } from "../workplace-income/dataset.ts";
 
 export type CatalogueDataset =
@@ -73,7 +73,6 @@ export type CatalogueDataset =
 			ReturnType<typeof generalElectionDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
-	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
@@ -81,7 +80,6 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof localElectionDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
@@ -89,11 +87,9 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof travelToWorkDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareActivity.load>>[string]
 	| Awaited<ReturnType<typeof adultSocialCareOutcomes.load>>[string]
 	| Awaited<ReturnType<typeof airQuality.load>>[string]
@@ -112,6 +108,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof homelessness.load>>[string]
 	| Awaited<ReturnType<typeof housingAffordability.load>>[string]
 	| Awaited<ReturnType<typeof housingTenure.load>>[string]
+	| Awaited<ReturnType<typeof imd.load>>[string]
 	| Awaited<ReturnType<typeof jobs.load>>[string]
 	| Awaited<ReturnType<typeof landArea.load>>[string]
 	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
@@ -119,6 +116,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
 	| Awaited<ReturnType<typeof netAdditionalDwellings.load>>[string]
 	| Awaited<ReturnType<typeof nhsWaiting.load>>[string]
+	| Awaited<ReturnType<typeof nimdm.load>>[string]
 	| Awaited<ReturnType<typeof planningApplications.load>>[string]
 	| Awaited<ReturnType<typeof populationConstituency.load>>[string]
 	| Awaited<ReturnType<typeof populationUk.load>>[string]
@@ -130,8 +128,10 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof roadCollisions.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceConstituency.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceDisadvantage.load>>[string]
+	| Awaited<ReturnType<typeof simd.load>>[string]
 	| Awaited<ReturnType<typeof unemployment.load>>[string]
 	| Awaited<ReturnType<typeof waste.load>>[string]
+	| Awaited<ReturnType<typeof wimd.load>>[string]
 	| Awaited<ReturnType<typeof workplaceIncome.load>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `data/<id>/dataset.ts`, by id. */
@@ -166,6 +166,7 @@ export type DeclaredDatasetRecords = {
 		ReturnType<typeof housingAffordability.load>
 	>;
 	"housing-tenure": Awaited<ReturnType<typeof housingTenure.load>>;
+	imd: Awaited<ReturnType<typeof imd.load>>;
 	jobs: Awaited<ReturnType<typeof jobs.load>>;
 	"land-area": Awaited<ReturnType<typeof landArea.load>>;
 	"life-expectancy-series": Awaited<
@@ -179,6 +180,7 @@ export type DeclaredDatasetRecords = {
 		ReturnType<typeof netAdditionalDwellings.load>
 	>;
 	"nhs-waiting": Awaited<ReturnType<typeof nhsWaiting.load>>;
+	nimdm: Awaited<ReturnType<typeof nimdm.load>>;
 	"planning-applications": Awaited<
 		ReturnType<typeof planningApplications.load>
 	>;
@@ -198,8 +200,10 @@ export type DeclaredDatasetRecords = {
 	"school-performance-disadvantage": Awaited<
 		ReturnType<typeof schoolPerformanceDisadvantage.load>
 	>;
+	simd: Awaited<ReturnType<typeof simd.load>>;
 	unemployment: Awaited<ReturnType<typeof unemployment.load>>;
 	waste: Awaited<ReturnType<typeof waste.load>>;
+	wimd: Awaited<ReturnType<typeof wimd.load>>;
 	"workplace-income": Awaited<ReturnType<typeof workplaceIncome.load>>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
@@ -222,7 +226,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	housePrice: Awaited<
 		ReturnType<typeof housePriceDatasetDefinition.precompile>
 	>;
-	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
 	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
@@ -230,7 +233,6 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	localElection: Awaited<
 		ReturnType<typeof localElectionDatasetDefinition.precompile>
 	>;
-	nimdm: Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>;
 	population: Awaited<
 		ReturnType<typeof populationDatasetDefinition.precompile>
 	>;
@@ -240,9 +242,7 @@ export type CatalogueDatasetRecords = DeclaredDatasetRecords & {
 	schoolPerformance: Awaited<
 		ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
 	>;
-	simd: Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
 	travelToWork: Awaited<
 		ReturnType<typeof travelToWorkDatasetDefinition.precompile>
 	>;
-	wimd: Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>;
 };

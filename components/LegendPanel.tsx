@@ -19,7 +19,6 @@ import type { BoundaryData } from "@uk-data-atlas/datasets";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
-import { imdRange } from "@/lib/helpers/imdMeasures";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
@@ -34,7 +33,6 @@ import {
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	IncomePeriodPanel,
-	ImdMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
@@ -158,17 +156,6 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "imd" && (
-				<ImdMeasurePanel
-					measure={controls.displayOptions.imd.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("imd", {
-							measure,
-							colorRange: imdRange(measure),
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "income" && (
 				<IncomePeriodPanel
 					period={controls.displayOptions.income.period}
