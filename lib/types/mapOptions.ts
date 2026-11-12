@@ -31,18 +31,6 @@ export interface FuelPovertyOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
-export interface ImdOptions extends ColorRangeOption {
-	measure:
-		| "imdScore"
-		| "incomeScore"
-		| "employmentScore"
-		| "educationScore"
-		| "healthScore"
-		| "crimeScore"
-		| "housingScore"
-		| "livingEnvironmentScore";
-}
-
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -72,7 +60,6 @@ export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
 	| DeclaredDatasetId
 	| "fuelPoverty"
-	| "imd"
 	| "housePrice"
 	| "income"
 	| "lifeExpectancy"
@@ -80,7 +67,6 @@ export type ChartMapOptions = Omit<
 > &
 	Record<DeclaredDatasetId, DeclaredMapOptions> & {
 		fuelPoverty: FuelPovertyOptions;
-		imd: ImdOptions;
 		housePrice: HousePriceOptions;
 		income: IncomeOptions;
 		schoolPerformance: SchoolPerformanceOptions;

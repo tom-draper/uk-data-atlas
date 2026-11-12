@@ -13,17 +13,13 @@ import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
 import { housePriceDefinition } from "./housePrice";
-import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
-import { nimdmDefinition } from "./nimdm";
 import { populationDefinition } from "./population";
 import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
-import { simdDefinition } from "./simd";
 import { travelToWorkDefinition } from "./travelToWork";
-import { wimdDefinition } from "./wimd";
 
 export type ChartDatasetType = CatalogueDatasetType;
 export type ChartDataset = CatalogueDataset;
@@ -38,16 +34,12 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		fuelPovertyDefinition,
 		generalElectionDefinition,
 		housePriceDefinition,
-		imdDefinition,
 		incomeDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
-		nimdmDefinition,
 		populationDefinition,
 		qualificationDefinition,
 		schoolPerformanceDefinition,
-		simdDefinition,
 		travelToWorkDefinition,
-		wimdDefinition,
 		...DECLARED_CHART_DEFINITIONS,
 	].sort((left, right) => (left.type < right.type ? -1 : 1));

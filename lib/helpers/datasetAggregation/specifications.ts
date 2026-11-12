@@ -11,12 +11,7 @@ import {
 	aggregateHousePrices,
 	aggregateIncome,
 } from "./economics";
-import {
-	aggregateIMD,
-	aggregateNIMDM,
-	aggregateSIMD,
-	aggregateWIMD,
-} from "@uk-data-atlas/datasets";
+import {} from "@uk-data-atlas/datasets";
 import {
 	aggregateEthnicity,
 	aggregateLifeExpectancy,
@@ -103,22 +98,6 @@ export const lifeExpectancyAggregation = boundaryAggregation(
 	"localAuthority",
 	aggregateLifeExpectancy,
 );
-export const simdAggregation = boundaryAggregation(
-	"simd",
-	"dataZone",
-	aggregateSIMD,
-);
-export const wimdAggregation = boundaryAggregation(
-	"wimd",
-	"lsoa",
-	aggregateWIMD,
-);
-export const nimdmAggregation = boundaryAggregation(
-	"nimdm",
-	"superOutputArea",
-	aggregateNIMDM,
-);
-export const imdAggregation = boundaryAggregation("imd", "lsoa", aggregateIMD);
 export const qualificationAggregation = boundaryAggregation(
 	"qualification",
 	"localAuthority",

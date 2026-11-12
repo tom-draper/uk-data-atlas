@@ -1,53 +1,67 @@
 import { describe, expect, it } from "vitest";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import {
-	aggregateIMD,
-	aggregateNIMDM,
-	aggregateSIMD,
-	aggregateWIMD,
 	NIMDM_MOST_DEPRIVED_RANK,
 	summariseDeprivation,
 	summariseDeprivationBy,
 } from "@uk-data-atlas/datasets";
 import { CODE_KEY, features } from "./fixtures";
 
-describe("aggregateSIMD", () => {
+/** A declared index's aggregate over the areas of the given boundary codes. */
+const aggregate = (type: string, codes: string[], data: unknown): any =>
+	CHART_DATASET_DEFINITIONS.find(
+		(definition) => definition.type === type,
+	)!.chart.calculateStats(
+		{
+			aggregate: (spec: { aggregate: (...args: unknown[]) => unknown }) =>
+				spec.aggregate(features(codes), CODE_KEY, data),
+		} as never,
+		{ features: features(codes) } as never,
+		data as never,
+		null,
+		type,
+	);
+
+describe("simd aggregation", () => {
 	const data = {
 		S1: { simdRank: 100, simdQuintile: 1, simdDecile: 1 },
 		S2: { simdRank: 3000, simdQuintile: 3, simdDecile: 5 },
 	} as any;
 
 	it("counts zones in the published most deprived decile, not an average", () => {
-		expect(aggregateSIMD(features(["S1", "S2"]), CODE_KEY, data)).toEqual({
+		expect(aggregate("simd", ["S1", "S2"], data)).toEqual({
 			areaCount: 2,
 			mostDeprivedCount: 1,
 		});
 	});
 
 	it("ignores zones with no record", () => {
-		expect(
-			aggregateSIMD(features(["S1", "missing"]), CODE_KEY, data),
-		).toEqual({ areaCount: 1, mostDeprivedCount: 1 });
+		expect(aggregate("simd", ["S1", "missing"], data)).toEqual({
+			areaCount: 1,
+			mostDeprivedCount: 1,
+		});
 	});
 
 	it("counts a zone once however many features carry its code", () => {
-		expect(
-			aggregateSIMD(features(["S1", "S1", "S2"]), CODE_KEY, data),
-		).toEqual({ areaCount: 2, mostDeprivedCount: 1 });
+		expect(aggregate("simd", ["S1", "S1", "S2"], data)).toEqual({
+			areaCount: 2,
+			mostDeprivedCount: 1,
+		});
 	});
 
 	it("returns null when no covered zone has a record", () => {
-		expect(aggregateSIMD(features(["missing"]), CODE_KEY, data)).toBeNull();
+		expect(aggregate("simd", ["missing"], data)).toBeNull();
 	});
 });
 
-describe("aggregateWIMD", () => {
+describe("wimd aggregation", () => {
 	const data = {
 		W1: { wimdScore: 60, wimdRank: 20, wimdDecile: 1, population: 1000 },
 		W2: { wimdScore: 30, wimdRank: 400, wimdDecile: 3, population: 2000 },
 	} as any;
 
 	it("counts areas in the published most deprived decile, and weights the average score by population", () => {
-		expect(aggregateWIMD(features(["W1", "W2"]), CODE_KEY, data)).toEqual({
+		expect(aggregate("wimd", ["W1", "W2"], data)).toEqual({
 			areaCount: 2,
 			mostDeprivedCount: 1,
 			population: 3000,
@@ -57,7 +71,7 @@ describe("aggregateWIMD", () => {
 	});
 });
 
-describe("aggregateIMD", () => {
+describe("imd aggregation", () => {
 	const data = {
 		E1: { imdScore: 70, imdRank: 10, imdDecile: 1, population: 1500 },
 		E2: { imdScore: 60, imdRank: 50, imdDecile: 1, population: 1500 },
@@ -65,9 +79,7 @@ describe("aggregateIMD", () => {
 	} as any;
 
 	it("counts LSOAs in the published most deprived decile, and weights the average score by population", () => {
-		expect(
-			aggregateIMD(features(["E1", "E2", "E3"]), CODE_KEY, data),
-		).toEqual({
+		expect(aggregate("imd", ["E1", "E2", "E3"], data)).toEqual({
 			areaCount: 3,
 			mostDeprivedCount: 2,
 			population: 6000,
@@ -85,7 +97,7 @@ describe("aggregateIMD", () => {
 	});
 
 	it("leaves an area without a population out of the average, not the share", () => {
-		const summary = aggregateIMD(features(["E1", "E3"]), CODE_KEY, {
+		const summary = aggregate("imd", ["E1", "E3"], {
 			...data,
 			E3: { ...data.E3, population: Number.NaN },
 		});
@@ -99,14 +111,14 @@ describe("aggregateIMD", () => {
 
 	it("has no average when no area has a population", () => {
 		expect(
-			aggregateIMD(features(["E1"]), CODE_KEY, {
+			aggregate("imd", ["E1"], {
 				E1: { ...data.E1, population: 0 },
 			})?.averageScore,
 		).toBeNull();
 	});
 });
 
-describe("aggregateNIMDM", () => {
+describe("nimdm aggregation", () => {
 	// NISRA publishes no decile, so the most deprived tenth is read from rank.
 	const data = {
 		N1: { nimdmRank: NIMDM_MOST_DEPRIVED_RANK },
@@ -115,7 +127,7 @@ describe("aggregateNIMDM", () => {
 
 	it("counts areas ranked within the most deprived tenth of 890", () => {
 		expect(NIMDM_MOST_DEPRIVED_RANK).toBe(89);
-		expect(aggregateNIMDM(features(["N1", "N2"]), CODE_KEY, data)).toEqual({
+		expect(aggregate("nimdm", ["N1", "N2"], data)).toEqual({
 			areaCount: 2,
 			mostDeprivedCount: 1,
 		});

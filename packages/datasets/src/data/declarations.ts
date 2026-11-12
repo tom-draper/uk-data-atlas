@@ -21,6 +21,7 @@ import { historicalGeneralElection } from "./historical-general-election/dataset
 import { homelessness } from "./homelessness/dataset.ts";
 import { housingAffordability } from "./housing-affordability/dataset.ts";
 import { housingTenure } from "./housing-tenure/dataset.ts";
+import { imd } from "./imd/dataset.ts";
 import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
@@ -28,6 +29,7 @@ import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
 import { nhsWaiting } from "./nhs-waiting/dataset.ts";
+import { nimdm } from "./nimdm/dataset.ts";
 import { planningApplications } from "./planning-applications/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
@@ -39,8 +41,10 @@ import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
+import { simd } from "./simd/dataset.ts";
 import { unemployment } from "./unemployment/dataset.ts";
 import { waste } from "./waste/dataset.ts";
+import { wimd } from "./wimd/dataset.ts";
 import { workplaceIncome } from "./workplace-income/dataset.ts";
 
 /** Every dataset declaration, in id order. */
@@ -63,6 +67,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	homelessness,
 	housingAffordability,
 	housingTenure,
+	imd,
 	jobs,
 	landArea,
 	lifeExpectancySeries,
@@ -70,6 +75,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	mobileCoverage,
 	netAdditionalDwellings,
 	nhsWaiting,
+	nimdm,
 	planningApplications,
 	populationConstituency,
 	populationUk,
@@ -81,8 +87,10 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	roadCollisions,
 	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
+	simd,
 	unemployment,
 	waste,
+	wimd,
 	workplaceIncome,
 ];
 
@@ -110,6 +118,7 @@ export type DeclaredDatasetId =
 	| "homelessness"
 	| "housing-affordability"
 	| "housing-tenure"
+	| "imd"
 	| "jobs"
 	| "land-area"
 	| "life-expectancy-series"
@@ -117,6 +126,7 @@ export type DeclaredDatasetId =
 	| "mobile-coverage"
 	| "net-additional-dwellings"
 	| "nhs-waiting"
+	| "nimdm"
 	| "planning-applications"
 	| "population-constituency"
 	| "population-uk"
@@ -128,6 +138,8 @@ export type DeclaredDatasetId =
 	| "road-collisions"
 	| "school-performance-constituency"
 	| "school-performance-disadvantage"
+	| "simd"
 	| "unemployment"
 	| "waste"
+	| "wimd"
 	| "workplace-income";

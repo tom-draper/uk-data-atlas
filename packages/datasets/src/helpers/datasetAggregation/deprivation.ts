@@ -1,13 +1,11 @@
-import type { Features, PropertyKeys } from "../../types/geometry.ts";
-import { getFeatureProp } from "../../types/geometry.ts";
 import type {
 	DeprivationSummary,
 	ScoredDeprivationSummary,
 } from "../../types/deprivation.ts";
-import type { IMDDataset, IMDLSOAData } from "../../types/imd.ts";
-import type { NIMDMDataset, NIMDMLSOAData } from "../../types/nimdm.ts";
-import type { SIMDDataset, SIMDDataZoneData } from "../../types/simd.ts";
-import type { WIMDDataset, WIMDLSOAData } from "../../types/wimd.ts";
+import type { IMDLSOAData } from "../../types/imd.ts";
+import type { NIMDMLSOAData } from "../../types/nimdm.ts";
+import type { SIMDDataZoneData } from "../../types/simd.ts";
+import type { WIMDLSOAData } from "../../types/wimd.ts";
 
 /**
  * Whether an area is in its nation's most deprived tenth. Where the publisher
@@ -134,52 +132,10 @@ export const summariseWIMD = (records: Iterable<WIMDLSOAData>) =>
 		(record) => record.population,
 	);
 
-function recordsFor<TRecord>(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: Record<string, TRecord>,
-): TRecord[] {
-	const seen = new Set<string>();
-	const records: TRecord[] = [];
-	for (const feature of features) {
-		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
-		// A split boundary can repeat a code; each area counts once.
-		if (seen.has(code)) continue;
-		seen.add(code);
-		const record = data[code];
-		if (record) records.push(record);
-	}
-	return records;
-}
+/** The SIMD summary of a group of data zones. */
+export const summariseSIMD = (records: Iterable<SIMDDataZoneData>) =>
+	summariseDeprivation(records, isMostDeprivedSIMD);
 
-export const aggregateIMD = (
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: IMDDataset["data"],
-) => summariseIMD(recordsFor(features, codeProperty, data));
-
-export const aggregateWIMD = (
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: WIMDDataset["data"],
-) => summariseWIMD(recordsFor(features, codeProperty, data));
-
-export const aggregateSIMD = (
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: SIMDDataset["data"],
-) =>
-	summariseDeprivation(
-		recordsFor(features, codeProperty, data),
-		isMostDeprivedSIMD,
-	);
-
-export const aggregateNIMDM = (
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: NIMDMDataset["data"],
-) =>
-	summariseDeprivation(
-		recordsFor(features, codeProperty, data),
-		isMostDeprivedNIMDM,
-	);
+/** The NIMDM summary of a group of super output areas. */
+export const summariseNIMDM = (records: Iterable<NIMDMLSOAData>) =>
+	summariseDeprivation(records, isMostDeprivedNIMDM);
