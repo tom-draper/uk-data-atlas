@@ -97,7 +97,7 @@ export default function FuelPovertyChart({
 	codeMapper,
 	setActiveViz,
 }: Props) {
-	const measure = useCurrentMapOptions().fuelPoverty.measure;
+	const measure = useCurrentMapOptions()["fuel-poverty"].measure;
 	const dataset = availableDatasets[year];
 	const isDark = useIsDark();
 	const [lsoaToLad, setLsoaToLad] = useState<Record<string, string> | null>(
@@ -143,10 +143,10 @@ export default function FuelPovertyChart({
 		selectedArea?.type === "ward" ||
 		selectedArea?.type === "localAuthority";
 	const active =
-		activeDataset?.type === "fuelPoverty" &&
+		activeDataset?.type === "fuel-poverty" &&
 		activeDataset.id === dataset?.id;
 	const display = fuelPovertyDisplay(stats, measure);
-	const accent = useHeatmapValueColor("fuelPoverty", display.value);
+	const accent = useHeatmapValueColor("fuel-poverty", display.value);
 	if (!dataset) return null;
 	return (
 		<ChartCard

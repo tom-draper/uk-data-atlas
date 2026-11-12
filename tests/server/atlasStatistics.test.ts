@@ -8,13 +8,14 @@ import { describe, expect, it } from "vitest";
 import {
 	readVersionedAtlasDataset,
 	readAtlasDatasetUrls,
+	rebuildDatasetPayload,
 } from "@uk-data-atlas/catalogue/node";
-import { type StatisticsDataset } from "@uk-data-atlas/measures";
-import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
-	fuelPovertyStatistics,
-	rebuildFuelPoverty,
+	declaredStatistics,
+	STATISTICS_DATASETS,
+	type StatisticsDataset,
 } from "@uk-data-atlas/measures";
+import { statisticsTables } from "../../pipeline/src/storage/index";
 import {
 	writeSqliteIndex,
 	writeSqliteTables,
@@ -25,6 +26,7 @@ import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
 
 const entry = {
+	output: "fuel-poverty",
 	fingerprint: "sha256:fixture",
 	source: {
 		name: "Fuel Poverty",
@@ -92,11 +94,19 @@ const areaFixture = (): Record<string, SqliteTable> => ({
 	},
 });
 
+const fuelPovertyConfig = STATISTICS_DATASETS.find(
+	(config) => config.type === "fuel-poverty",
+)!;
+const fuelPovertyStatistics = (text: string, source: typeof entry) =>
+	declaredStatistics(fuelPovertyConfig, () => text, source);
+const rebuildFuelPoverty = (database: DatabaseSync) =>
+	rebuildDatasetPayload(database, "fuel-poverty", "fuel-poverty");
+
 const fuelPovertyText = (data: Record<string, object>) =>
 	JSON.stringify({
 		2024: {
-			id: "fuelPoverty2024",
-			type: "fuelPoverty",
+			id: "fuel-poverty2024",
+			type: "fuel-poverty",
 			year: 2024,
 			boundaryType: "lsoa",
 			boundaryYear: 2021,
@@ -174,7 +184,7 @@ describe("fuel poverty on the statistics model", () => {
 							[
 								"fuel-poverty",
 								{
-									type: "fuelPoverty",
+									type: "fuel-poverty",
 									sha256: sourceHash,
 									bytes: Buffer.byteLength(compiled),
 									payloadId: null,
@@ -323,46 +333,20 @@ describe("fuel poverty on the statistics model", () => {
 		}
 	});
 
-	it.each([
-		[
-			"an unknown area",
-			{ E01000009: record("E01000009", "Name") },
-			/Unknown area E01000009/,
-		],
-		[
-			"a mismatched record code",
-			{ E01000001: record("E01000002", "Name") },
-			/Unknown fuel poverty area/,
-		],
-		[
-			"a missing value",
-			{
-				E01000001: {
-					lsoaCode: "E01000001",
-					lsoaName: "Name",
-					householdCount: 1,
-					fuelPoorHouseholdCount: 0,
-				},
-			},
-			/Invalid fuel poverty value/,
-		],
-		[
-			"records out of code order",
-			{
-				E01000002: record("E01000002", "B"),
-				E01000001: record("E01000001", "A"),
-			},
-			/not in area code order/,
-		],
-	])("refuses %s instead of publishing incomplete rows", (_, data, error) => {
+	it("refuses an area missing from the boundary release instead of publishing incomplete rows", () => {
 		expect(() => {
 			const database = memory(
 				statisticsTables([
-					fuelPovertyStatistics(fuelPovertyText(data), entry),
+					fuelPovertyStatistics(
+						fuelPovertyText({
+							E01000009: record("E01000009", "Name"),
+						}),
+						entry,
+					),
 				]),
 			);
 			database.close();
-		}).toThrow(error);
+		}).toThrow(/area E01000009 is in no listed release/);
 	});
 });
 

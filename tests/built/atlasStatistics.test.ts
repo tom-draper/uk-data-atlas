@@ -17,8 +17,10 @@ import { execFileSync } from "node:child_process";
 import { buildAreaInventory } from "../../pipeline/src/geographies/buildAreaInventory";
 import { buildAtlasSqlite } from "../../pipeline/src/atlas/buildAtlasSqlite";
 import { buildTerrainCatalogue } from "../../pipeline/src/catalog/buildTerrainCatalogue";
-import { readVersionedAtlasDataset } from "@uk-data-atlas/catalogue/node";
-import { rebuildFuelPoverty } from "@uk-data-atlas/measures";
+import {
+	readVersionedAtlasDataset,
+	rebuildDatasetPayload,
+} from "@uk-data-atlas/catalogue/node";
 
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
@@ -49,8 +51,8 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			"-e",
 			`
 		import { compileDataset } from './pipeline/src/precompile/compileDataset.ts';
-		import { fuelPovertyDatasetDefinition } from '@uk-data-atlas/datasets';
-		const entry = await compileDataset(fuelPovertyDatasetDefinition, new Map());
+		import { definitionOf, fuelPoverty } from '@uk-data-atlas/datasets';
+		const entry = await compileDataset(definitionOf(fuelPoverty), new Map());
 		process.stdout.write('MANIFEST_ENTRY=' + JSON.stringify(entry));
 	`,
 		],
@@ -136,7 +138,9 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 		symlinkSync("atlas-base.sqlite", join(output, "atlas.sqlite"));
 		const database = new DatabaseSync(path);
 		try {
-			expect(rebuildFuelPoverty(database)).toBe(text);
+			expect(
+				rebuildDatasetPayload(database, "fuel-poverty", "fuel-poverty"),
+			).toBe(text);
 			expect(
 				database.prepare("SELECT count(*) AS n FROM observation").get()
 					?.n,

@@ -47,8 +47,8 @@ export async function loadFuelPoverty(
 	);
 	return {
 		2024: {
-			id: "fuelPoverty2024",
-			type: "fuelPoverty",
+			id: "fuel-poverty2024",
+			type: "fuel-poverty",
 			year: 2024,
 			boundaryType: "lsoa",
 			// The 2024 workbook is keyed by 2021 LSOAs: it has exactly the

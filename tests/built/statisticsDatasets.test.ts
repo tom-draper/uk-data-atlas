@@ -19,12 +19,9 @@ it("stores every configured catalogue dataset as statistics rows", () => {
 		);
 	const configured = new Set(STATISTICS_DATASETS.map(({ type }) => type));
 	for (const { type } of manifest.datasets)
-		expect(
-			type === "fuelPoverty" ||
-				configured.has(type) ||
-				type in UNSTORED_DATASETS,
-			type,
-		).toBe(true);
+		expect(configured.has(type) || type in UNSTORED_DATASETS, type).toBe(
+			true,
+		);
 
 	const database = new DatabaseSync("data/build/atlas.sqlite", {
 		readOnly: true,
@@ -48,7 +45,7 @@ it("stores every configured catalogue dataset as statistics rows", () => {
 				]),
 		);
 		for (const { type, output } of manifest.datasets)
-			if (type === "fuelPoverty" || configured.has(type))
+			if (configured.has(type))
 				expect(counts[output]?.observations, output).toBeGreaterThan(0);
 		let tableBytes: Record<string, number> | null = null;
 		try {

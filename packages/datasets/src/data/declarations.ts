@@ -18,6 +18,7 @@ import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { electricityConsumption } from "./electricity-consumption/dataset.ts";
 import { ethnicity } from "./ethnicity/dataset.ts";
+import { fuelPoverty } from "./fuel-poverty/dataset.ts";
 import { gasConsumption } from "./gas-consumption/dataset.ts";
 import { generalElection } from "./general-election/dataset.ts";
 import { generalHealth } from "./general-health/dataset.ts";
@@ -77,6 +78,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	electricVehicleChargers,
 	electricityConsumption,
 	ethnicity,
+	fuelPoverty,
 	gasConsumption,
 	generalElection,
 	generalHealth,
@@ -141,6 +143,7 @@ export type DeclaredDatasetId =
 	| "electric-vehicle-chargers"
 	| "electricity-consumption"
 	| "ethnicity"
+	| "fuel-poverty"
 	| "gas-consumption"
 	| "general-election"
 	| "general-health"
