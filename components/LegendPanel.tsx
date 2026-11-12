@@ -31,8 +31,6 @@ import {
 	ElectionMetricPanel,
 	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
-	IncomeMeasurePanel,
-	IncomePeriodPanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
@@ -156,20 +154,6 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "income" && (
-				<IncomePeriodPanel
-					period={controls.displayOptions.income.period}
-					onChange={(period) =>
-						onMapOptionsChange("income", {
-							period,
-							colorRange:
-								period === "annual"
-									? { min: 25000, max: 45000 }
-									: { min: 10, max: 30 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "fuelPoverty" && (
 				<FuelPovertyMeasurePanel
 					measure={controls.displayOptions.fuelPoverty.measure}
@@ -206,15 +190,6 @@ export default function LegendPanel({
 					measure={controls.displayOptions.housePrice.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("housePrice", { measure })
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "income" && (
-				<IncomeMeasurePanel
-					measure={controls.displayOptions.income.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("income", { measure })
 					}
 				/>
 			)}

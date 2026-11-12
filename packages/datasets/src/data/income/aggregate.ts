@@ -4,7 +4,7 @@ import type { IncomeLADData } from "../../types/income.ts";
  * Pay is a typical value, not a total: a region's figure is the mean of the
  * authorities' published estimates, for each period and statistic they have.
  */
-export function averageWorkplacePay(records: IncomeLADData[]) {
+export function averagePay(records: IncomeLADData[]) {
 	const average = (period: "annual" | "hourly", stat: "median" | "mean") => {
 		const values = records.flatMap((record) => {
 			const value = record[period]?.[stat];

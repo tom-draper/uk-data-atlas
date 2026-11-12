@@ -14,11 +14,6 @@ export interface HousePriceOptions extends ColorRangeOption {
 	measure: "median" | "mean";
 }
 
-export interface IncomeOptions extends ColorRangeOption {
-	period: "annual" | "hourly";
-	measure: "median" | "mean";
-}
-
 export interface SchoolPerformanceOptions extends ColorRangeOption {
 	measure: "grade4" | "grade5" | "attainment8" | "progress8";
 }
@@ -73,14 +68,12 @@ export type ChartMapOptions = Omit<
 	| DisplayedDatasetId
 	| "fuelPoverty"
 	| "housePrice"
-	| "income"
 	| "lifeExpectancy"
 	| "schoolPerformance"
 > &
 	Record<DisplayedDatasetId, DeclaredMapOptions> & {
 		fuelPoverty: FuelPovertyOptions;
 		housePrice: HousePriceOptions;
-		income: IncomeOptions;
 		schoolPerformance: SchoolPerformanceOptions;
 		lifeExpectancy: LifeExpectancyOptions;
 	};

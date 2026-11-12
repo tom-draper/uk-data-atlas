@@ -1,4 +1,3 @@
-import { payStatistics } from "@uk-data-atlas/datasets";
 import type { DatasetModule } from "@uk-data-atlas/datasets";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 import type { StatisticsPeriod } from "../atlasStatistics.ts";
@@ -14,19 +13,6 @@ import type { DeclaredPayload } from "../declaredStatistics.ts";
 import { measure, per100k } from "./measures.ts";
 
 /** Pay, jobs, output, prices and the labour market. */
-
-export const INCOME: DeclaredDataset = {
-	type: "income",
-	module: "economy",
-	name: "ladName",
-	payload: {
-		parts: yearParts("income", "localAuthority", 2025, {
-			coverageCountries: ["GB-ENG"],
-		}),
-		code: "ladCode",
-	},
-	...payStatistics("residence"),
-};
 
 const single = (
 	type: string,

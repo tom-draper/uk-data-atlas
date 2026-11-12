@@ -1,7 +1,7 @@
 import type { WorkplaceIncomeDataset } from "../../types/income.ts";
 import { defineDataset } from "../../declaration/dataset.ts";
 import { yearParts } from "../../declaration/yearParts.ts";
-import { averageWorkplacePay } from "../income/aggregate.ts";
+import { averagePay } from "../income/aggregate.ts";
 import { loadWorkplaceIncome } from "../income/loader.ts";
 import { payStatistics } from "../income/statistics.ts";
 
@@ -145,7 +145,7 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		],
 		aggregation: {
 			scope: "localAuthority",
-			aggregate: averageWorkplacePay,
+			aggregate: averagePay,
 		},
 	},
 });
