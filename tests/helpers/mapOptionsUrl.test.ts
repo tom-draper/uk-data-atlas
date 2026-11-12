@@ -35,7 +35,7 @@ describe("map option URLs", () => {
 		expect(options.theme.id).toBe("turbo");
 		expect(options.baseStyle.id).toBe("darkMatter");
 		expect(options.visibility.overlayOpacity).toBe(0.25);
-		expect(options.housePrice).toMatchObject({
+		expect(options["house-price"]).toMatchObject({
 			measure: "mean",
 			colorRange: { min: 100000, max: 500000 },
 		});

@@ -4,8 +4,8 @@ import { housePriceDefinition } from "@/lib/datasets/housePrice";
 import type { HousePriceDataset } from "@uk-data-atlas/datasets";
 
 const dataset: HousePriceDataset = {
-	id: "housePrice2023",
-	type: "housePrice",
+	id: "house-price2023",
+	type: "house-price",
 	year: 2023,
 	boundaryYear: 2021,
 	boundaryType: "ward",
@@ -29,8 +29,8 @@ describe("house price map metric", () => {
 		expect(
 			valueFor?.(dataset, "E1", {
 				...DEFAULT_MAP_OPTIONS,
-				housePrice: {
-					...DEFAULT_MAP_OPTIONS.housePrice,
+				"house-price": {
+					...DEFAULT_MAP_OPTIONS["house-price"],
 					measure: "mean",
 				},
 			}),

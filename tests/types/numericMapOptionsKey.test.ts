@@ -6,7 +6,7 @@ import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
 // assignments are checked by `pnpm typecheck`, not at runtime.
 const numeric: NumericMapOptionsKey[] = [
 	"child-poverty",
-	"housePrice",
+	"house-price",
 	"unemployment",
 	// Categorical datasets keep a colour range alongside their category
 	// options, so they stay eligible.

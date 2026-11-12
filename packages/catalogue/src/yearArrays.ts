@@ -8,7 +8,7 @@
  */
 
 /** Dataset types whose records hold year maps. */
-const YEAR_DATASET_TYPES: ReadonlySet<unknown> = new Set(["housePrice"]);
+const YEAR_DATASET_TYPES: ReadonlySet<unknown> = new Set(["house-price"]);
 
 /** The fields of a record that map a year to a price. */
 const YEAR_FIELDS = ["prices", "meanPrices"] as const;

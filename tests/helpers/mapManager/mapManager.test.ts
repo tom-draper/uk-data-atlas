@@ -214,8 +214,8 @@ describe("MapManager election updates", () => {
 			onLocationChange: () => {},
 		});
 		const dataset = {
-			id: "housePrice2023",
-			type: "housePrice" as const,
+			id: "house-price2023",
+			type: "house-price" as const,
 			year: 2023,
 			boundaryType: "ward" as const,
 			boundaryYear: 2021,
@@ -270,8 +270,8 @@ describe("MapManager election updates", () => {
 			dataset,
 			{
 				...DEFAULT_MAP_OPTIONS,
-				housePrice: {
-					...DEFAULT_MAP_OPTIONS.housePrice,
+				"house-price": {
+					...DEFAULT_MAP_OPTIONS["house-price"],
 					measure: "mean",
 				},
 			},

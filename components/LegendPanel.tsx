@@ -184,11 +184,11 @@ export default function LegendPanel({
 					}}
 				/>
 			)}
-			{activeDataset?.type === "housePrice" && (
+			{activeDataset?.type === "house-price" && (
 				<HousePriceMeasurePanel
-					measure={controls.displayOptions.housePrice.measure}
+					measure={controls.displayOptions["house-price"].measure}
 					onChange={(measure) =>
-						onMapOptionsChange("housePrice", { measure })
+						onMapOptionsChange("house-price", { measure })
 					}
 				/>
 			)}

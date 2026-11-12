@@ -147,8 +147,8 @@ export async function loadHousePrice(
 
 	return {
 		2023: {
-			id: "housePrice2023",
-			type: "housePrice",
+			id: "house-price2023",
+			type: "house-price",
 			year: 2023,
 			boundaryYear: 2021,
 			boundaryType: "ward",

@@ -1,10 +1,10 @@
-import { housePriceDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { housePriceAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import { definitionOf, housePrice } from "@uk-data-atlas/datasets";
 import type { HousePriceDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 
 export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
-	...housePriceDatasetDefinition,
+	...definitionOf(housePrice),
 	chart: {
 		group: "Economics",
 		key: "economics-housePrice",
@@ -25,12 +25,12 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 		valueFor: (dataset, code, mapOptions) => {
 			const ward = dataset.data[code];
 			if (!ward) return null;
-			return mapOptions.housePrice.measure === "mean"
+			return mapOptions["house-price"].measure === "mean"
 				? (ward.meanPrices[dataset.year] ?? null)
 				: (ward.prices[dataset.year] ?? null);
 		},
 		sourceMode: (_dataset, mapOptions) =>
-			`housePrice:${mapOptions.housePrice.measure}`,
+			`housePrice:${mapOptions["house-price"].measure}`,
 		colorRange: { min: 80000, max: 500000 },
 		legend: {
 			min: 0,

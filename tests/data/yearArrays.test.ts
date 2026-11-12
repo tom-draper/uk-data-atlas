@@ -8,8 +8,8 @@ import { decodeYearArrays, encodeYearArrays } from "@uk-data-atlas/catalogue";
 const edition = (
 	data: Record<string, unknown>,
 	extra: Record<string, unknown> = {},
-	type = "housePrice",
-) => ({ "2023": { id: "housePrice2023", type, year: 2023, ...extra, data } });
+	type = "house-price",
+) => ({ "2023": { id: "house-price2023", type, year: 2023, ...extra, data } });
 
 const ward = (prices: unknown, meanPrices: unknown) => ({
 	wardCode: "E05000001",

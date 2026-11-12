@@ -20,8 +20,8 @@ const wardData = (
 });
 
 const dataset = (data: HousePriceDataset["data"]): HousePriceDataset => ({
-	id: "housePrice2023",
-	type: "housePrice",
+	id: "house-price2023",
+	type: "house-price",
 	year: 2023,
 	boundaryYear: 2022,
 	boundaryType: "ward",
