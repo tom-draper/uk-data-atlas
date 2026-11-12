@@ -168,7 +168,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
+Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `qualification` (education), `car-availability` and `travel-to-work` (transport), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -178,12 +178,10 @@ website chart definition):
 
 - economy: income
 - housing: house-price
-- education: school-performance,
-  qualification
+- education: school-performance
 - health: life-expectancy
 - population: population, ethnicity
 - deprivation: fuel-poverty
-- transport: car-availability, travel-to-work
 
 The four politics datasets are declared, but their maps are not drawn from a
 display: party colours, the Leave share scale, and one chart per election are
