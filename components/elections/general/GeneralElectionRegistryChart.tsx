@@ -34,8 +34,8 @@ export default function GeneralElectionRegistryChart({
 	const { excludedGeneralParties, selectedGeneralParty } =
 		useExcludedCategories();
 	const isActive =
-		activeDataset?.type === "generalElection" &&
-		activeDataset.id === `generalElection-${year}`;
+		activeDataset?.type === "general-election" &&
+		activeDataset.id === `general-election-${year}`;
 
 	const data = computeGeneralElectionYearData(
 		year,

@@ -257,7 +257,7 @@ export class FeatureBuilder {
 				return area
 					? getColorForBrexitLeave(
 							area.pctLeave,
-							mapOptions.brexitConstituency,
+							mapOptions["brexit-constituency"],
 						)
 					: DEFAULT_COLOR;
 			},

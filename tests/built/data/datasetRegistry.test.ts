@@ -74,8 +74,8 @@ describe("chart dataset registry contract", () => {
 		);
 		expect(definitions.map((definition) => definition.type)).toEqual([
 			"ethnicity",
-			"generalElection",
-			"localElection",
+			"general-election",
+			"local-election",
 		]);
 		for (const definition of definitions) {
 			expect(definition.legendAggregation?.calculateStats).toBeTypeOf(
@@ -91,10 +91,10 @@ describe("chart dataset registry contract", () => {
 			).map((definition) => [definition.type, definition.legendKind]),
 		).toEqual([
 			["brexit", "brexit"],
-			["brexitConstituency", "brexit"],
+			["brexit-constituency", "brexit"],
 			["ethnicity", "ethnicity"],
-			["generalElection", "party"],
-			["localElection", "party"],
+			["general-election", "party"],
+			["local-election", "party"],
 			["population", "population"],
 		]);
 	});

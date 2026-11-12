@@ -123,7 +123,7 @@ export function BrexitLegend({
 	datasetKey: key,
 	...controls
 }: RangeLegendControls & {
-	datasetKey: "brexit" | "brexitConstituency";
+	datasetKey: "brexit" | "brexit-constituency";
 }) {
 	const { displayOptions, overlayOpacity, onRangeInput, onRangeChangeEnd } =
 		controls;

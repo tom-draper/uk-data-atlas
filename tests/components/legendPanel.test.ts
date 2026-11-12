@@ -17,7 +17,7 @@ vi.mock("@/components/legend/legendData", async (importOriginal) => ({
 
 const dataset: LocalElectionDataset = {
 	id: "local-election-2024",
-	type: "localElection",
+	type: "local-election",
 	year: 2024,
 	boundaryType: "ward",
 	boundaryYear: 2024,
@@ -68,7 +68,7 @@ describe("legend loading", () => {
 	});
 	it("shows party items and the metric toggle together once totals are ready", () => {
 		state.aggregates = {
-			localElection: { 2024: { partyVotes: { LAB: 100 } } },
+			"local-election": { 2024: { partyVotes: { LAB: 100 } } },
 		};
 		const html = renderLegend();
 		expect(html).toContain("category-legend-LAB");
@@ -76,7 +76,7 @@ describe("legend loading", () => {
 	});
 	it("waits for the active year even when another year has totals", () => {
 		state.aggregates = {
-			localElection: { 2023: { partyVotes: { LAB: 100 } } },
+			"local-election": { 2023: { partyVotes: { LAB: 100 } } },
 		};
 		expect(renderLegend()).toBe("");
 	});

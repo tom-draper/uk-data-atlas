@@ -34,8 +34,8 @@ export default function LocalElectionRegistryChart({
 	const { excludedLocalParties, selectedLocalParty } =
 		useExcludedCategories();
 	const isActive =
-		activeDataset?.type === "localElection" &&
-		activeDataset.id === `localElection${year}`;
+		activeDataset?.type === "local-election" &&
+		activeDataset.id === `local-election${year}`;
 
 	const data = computeLocalElectionYearData(
 		year,

@@ -15,7 +15,7 @@ describe("constituency chart stats", () => {
 	it("shows Hanretty estimates for a ward's best-fit constituency", () => {
 		const dataset: BrexitConstituencyDataset = {
 			id: "brexit-constituency-2016",
-			type: "brexitConstituency",
+			type: "brexit-constituency",
 			year: 2016,
 			boundaryType: "constituency",
 			boundaryYear: 2024,

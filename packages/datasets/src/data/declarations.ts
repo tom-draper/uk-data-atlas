@@ -6,6 +6,8 @@ import {
 import { adultSocialCareActivity } from "./adult-social-care-activity/dataset.ts";
 import { adultSocialCareOutcomes } from "./adult-social-care-outcomes/dataset.ts";
 import { airQuality } from "./air-quality/dataset.ts";
+import { brexit } from "./brexit/dataset.ts";
+import { brexitConstituency } from "./brexit-constituency/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { businessActivity } from "./business-activity/dataset.ts";
 import { childPoverty } from "./child-poverty/dataset.ts";
@@ -15,6 +17,7 @@ import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { electricityConsumption } from "./electricity-consumption/dataset.ts";
 import { gasConsumption } from "./gas-consumption/dataset.ts";
+import { generalElection } from "./general-election/dataset.ts";
 import { generalHealth } from "./general-health/dataset.ts";
 import { ghgEmissions } from "./ghg-emissions/dataset.ts";
 import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
@@ -25,6 +28,7 @@ import { imd } from "./imd/dataset.ts";
 import { jobs } from "./jobs/dataset.ts";
 import { landArea } from "./land-area/dataset.ts";
 import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
+import { localElection } from "./local-election/dataset.ts";
 import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
 import { mobileCoverage } from "./mobile-coverage/dataset.ts";
 import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
@@ -52,6 +56,8 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	adultSocialCareActivity,
 	adultSocialCareOutcomes,
 	airQuality,
+	brexit,
+	brexitConstituency,
 	broadband,
 	businessActivity,
 	childPoverty,
@@ -61,6 +67,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	electricVehicleChargers,
 	electricityConsumption,
 	gasConsumption,
+	generalElection,
 	generalHealth,
 	ghgEmissions,
 	historicalGeneralElection,
@@ -71,6 +78,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	jobs,
 	landArea,
 	lifeExpectancySeries,
+	localElection,
 	localGovernmentFinance,
 	mobileCoverage,
 	netAdditionalDwellings,
@@ -103,6 +111,8 @@ export type DeclaredDatasetId =
 	| "adult-social-care-activity"
 	| "adult-social-care-outcomes"
 	| "air-quality"
+	| "brexit"
+	| "brexit-constituency"
 	| "broadband"
 	| "business-activity"
 	| "child-poverty"
@@ -112,6 +122,7 @@ export type DeclaredDatasetId =
 	| "electric-vehicle-chargers"
 	| "electricity-consumption"
 	| "gas-consumption"
+	| "general-election"
 	| "general-health"
 	| "ghg-emissions"
 	| "historical-general-election"
@@ -122,6 +133,7 @@ export type DeclaredDatasetId =
 	| "jobs"
 	| "land-area"
 	| "life-expectancy-series"
+	| "local-election"
 	| "local-government-finance"
 	| "mobile-coverage"
 	| "net-additional-dwellings"

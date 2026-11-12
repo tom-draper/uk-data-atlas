@@ -6,14 +6,14 @@ describe("mergeDatasetPayloads", () => {
 		const merged = mergeDatasetPayloads([
 			{
 				"2024": {
-					id: "localElection2024",
+					id: "local-election2024",
 					data: { E1: { wardName: "North East ward" } },
 					results: { E1: "LAB" },
 				},
 			},
 			{
 				"2024": {
-					id: "localElection2024",
+					id: "local-election2024",
 					data: { E2: { wardName: "North West ward" } },
 					results: { E2: "CON" },
 				},

@@ -10,7 +10,7 @@ const numeric: NumericMapOptionsKey[] = [
 	"unemployment",
 	// Categorical datasets keep a colour range alongside their category
 	// options, so they stay eligible.
-	"localElection",
+	"local-election",
 	"ethnicity",
 ];
 

@@ -157,7 +157,7 @@ export async function compileStaleDataset(
 												input,
 											),
 									)
-								: definition.type === "localElection"
+								: definition.type === "local-election"
 									? await withDuckdbLocalElection(
 											reader,
 											artifacts,

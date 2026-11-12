@@ -168,8 +168,8 @@ export default function LegendContent({
 
 		case "party":
 			if (
-				activeDataset.type !== "generalElection" &&
-				activeDataset.type !== "localElection"
+				activeDataset.type !== "general-election" &&
+				activeDataset.type !== "local-election"
 			) {
 				return null;
 			}
@@ -188,7 +188,7 @@ export default function LegendContent({
 		case "brexit":
 			if (
 				activeDataset.type !== "brexit" &&
-				activeDataset.type !== "brexitConstituency"
+				activeDataset.type !== "brexit-constituency"
 			) {
 				return null;
 			}

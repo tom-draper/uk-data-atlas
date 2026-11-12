@@ -347,8 +347,8 @@ export function atlasMapsHref(locationName: string) {
 }
 
 export const DEFAULT_ACTIVE_VIZ: ActiveViz = {
-	datasetId: "localElection2024",
-	datasetType: "localElection",
+	datasetId: "local-election2024",
+	datasetType: "local-election",
 	datasetYear: 2024,
 };
 

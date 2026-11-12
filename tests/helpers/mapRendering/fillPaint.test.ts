@@ -37,7 +37,7 @@ describe("electionWinnerPaint", () => {
 
 describe("partyPercentagePaint", () => {
 	const options = {
-		...DEFAULT_MAP_OPTIONS.localElection,
+		...DEFAULT_MAP_OPTIONS["local-election"],
 		selected: "LAB",
 	};
 
@@ -60,7 +60,7 @@ describe("partyPercentagePaint", () => {
 
 	it("describes no paint at all when no party is selected", () => {
 		expect(
-			partyPercentagePaint(DEFAULT_MAP_OPTIONS.localElection, false),
+			partyPercentagePaint(DEFAULT_MAP_OPTIONS["local-election"], false),
 		).toBeNull();
 	});
 });

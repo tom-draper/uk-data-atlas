@@ -4,7 +4,7 @@ import { computeLocalElectionYearData } from "@/lib/helpers/localElection";
 const dataset = (data: Record<string, { votes: number }>) =>
 	({
 		id: "local-election-2024",
-		type: "localElection",
+		type: "local-election",
 		year: 2024,
 		boundaryType: "ward",
 		boundaryYear: 2024,

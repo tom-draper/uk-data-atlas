@@ -97,8 +97,8 @@ describe("renderLocalElection", () => {
 
 		renderLocalElection(ctx, geojson, dataset, {
 			...DEFAULT_MAP_OPTIONS,
-			localElection: {
-				...DEFAULT_MAP_OPTIONS.localElection,
+			"local-election": {
+				...DEFAULT_MAP_OPTIONS["local-election"],
 				mode: "percentage",
 				selected: "LAB",
 			},
@@ -116,8 +116,8 @@ describe("renderLocalElection", () => {
 		renderLocalElection(ctx, geojson, dataset, {
 			...DEFAULT_MAP_OPTIONS,
 			theme: { id: "plasma" },
-			localElection: {
-				...DEFAULT_MAP_OPTIONS.localElection,
+			"local-election": {
+				...DEFAULT_MAP_OPTIONS["local-election"],
 				metric: "turnout",
 				turnoutRange: { min: 20, max: 80 },
 			},
@@ -132,7 +132,7 @@ describe("renderLocalElection", () => {
 		expect(ctx.transformed).toHaveBeenCalledWith(
 			geojson,
 			dataset,
-			"localElection:turnout",
+			"local-election:turnout",
 			expect.any(Function),
 		);
 	});
@@ -143,8 +143,8 @@ describe("renderLocalElection", () => {
 		renderLocalElection(ctx, geojson, dataset, DEFAULT_MAP_OPTIONS);
 		renderLocalElection(ctx, geojson, dataset, {
 			...DEFAULT_MAP_OPTIONS,
-			localElection: {
-				...DEFAULT_MAP_OPTIONS.localElection,
+			"local-election": {
+				...DEFAULT_MAP_OPTIONS["local-election"],
 				excluded: ["CON"],
 			},
 		} as never);
@@ -153,8 +153,8 @@ describe("renderLocalElection", () => {
 			ctx.transformed as ReturnType<typeof vi.fn>
 		).mock.calls.map((call) => call[2]);
 		expect(modes).toEqual([
-			"localElection:majority:",
-			"localElection:majority:CON",
+			"local-election:majority:",
+			"local-election:majority:CON",
 		]);
 	});
 });

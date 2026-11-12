@@ -47,8 +47,8 @@ describe("visualization references", () => {
 	it("maps the internal registry selection back to kebab-case", () => {
 		expect(
 			visualizationRefFromActiveViz({
-				datasetId: "localElection2024",
-				datasetType: "localElection",
+				datasetId: "local-election2024",
+				datasetType: "local-election",
 				datasetYear: 2024,
 			}),
 		).toEqual({ dataset: "local-election", period: 2024 });

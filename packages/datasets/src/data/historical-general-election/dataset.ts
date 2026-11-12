@@ -13,21 +13,8 @@ import {
 	type DeclaredHeader,
 } from "../../declaration/statistics.ts";
 import { historicalConstituencyCode } from "./constituencies.ts";
+import { GENERAL_POLLING_DAYS, pollingDay } from "../election/pollingDays.ts";
 import { loadHistoricalGeneralElection } from "./loader.ts";
-
-const pollingDay =
-	(days: Readonly<Record<string, string>>) => (key: string) => {
-		const day = days[key];
-		if (!day) throw new Error(`No polling day for election ${key}`);
-		return day;
-	};
-export const GENERAL_POLLING_DAYS: Readonly<Record<string, string>> = {
-	2010: "2010-05-06",
-	2015: "2015-05-07",
-	2017: "2017-06-08",
-	2019: "2019-12-12",
-	2024: "2024-07-04",
-};
 
 /** Polling days of the general elections from 1918 to 2019, by election. */
 const HISTORICAL_POLLING_DAYS: Readonly<Record<string, string>> = {

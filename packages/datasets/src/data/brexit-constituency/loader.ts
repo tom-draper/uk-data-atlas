@@ -36,9 +36,9 @@ export async function loadBrexitConstituency(
 	}
 
 	const dataset: BrexitConstituencyDataset = {
-		id: "brexitConstituency2016",
+		id: "brexit-constituency2016",
 		year: 2016,
-		type: "brexitConstituency",
+		type: "brexit-constituency",
 		boundaryType: "constituency",
 		boundaryYear: 2015,
 		data: records,

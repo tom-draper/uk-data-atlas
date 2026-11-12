@@ -39,7 +39,7 @@ describe("map option URLs", () => {
 			measure: "mean",
 			colorRange: { min: 100000, max: 500000 },
 		});
-		expect(options.localElection).toMatchObject({
+		expect(options["local-election"]).toMatchObject({
 			mode: "percentage",
 			selected: "lab",
 			excluded: ["con", "ld"],
@@ -50,6 +50,28 @@ describe("map option URLs", () => {
 		writeMapOptions(params, options);
 		expect(params.toString()).toBe(
 			"theme=turbo&base=darkMatter&opacity=0.25&range.housePrice=100000%2C500000&measure.housePrice=mean&selected.localElection=lab&excluded.localElection=con%2Cld&percentage.localElection=10%2C40",
+		);
+	});
+
+	it("keeps the colour range names of datasets that moved to kebab-case ids", () => {
+		const options = mapOptionsFromSearchParams(
+			new URLSearchParams(
+				"range.brexitConstituency=40,60&selected.generalElection=ld",
+			),
+		);
+		expect(options["brexit-constituency"].colorRange).toEqual({
+			min: 40,
+			max: 60,
+		});
+		expect(options["general-election"]).toMatchObject({
+			mode: "percentage",
+			selected: "ld",
+		});
+
+		const params = new URLSearchParams();
+		writeMapOptions(params, options);
+		expect(params.toString()).toBe(
+			"range.brexitConstituency=40%2C60&selected.generalElection=ld",
 		);
 	});
 

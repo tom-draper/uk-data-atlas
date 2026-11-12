@@ -20,13 +20,13 @@ function renderElection(
 	geojson: BoundaryGeojson,
 	dataset: LocalElectionDataset | GeneralElectionDataset,
 	mapOptions: MapOptions,
-	type: "localElection" | "generalElection",
+	type: "local-election" | "general-election",
 	isDark = false,
 ): void {
-	const isLocal = type === "localElection";
+	const isLocal = type === "local-election";
 	const options = isLocal
-		? mapOptions.localElection
-		: mapOptions.generalElection;
+		? mapOptions["local-election"]
+		: mapOptions["general-election"];
 
 	const codeProp = ctx.codeProp(
 		isLocal ? "ward" : "constituency",
@@ -120,7 +120,7 @@ export function renderLocalElection(
 	mapOptions: MapOptions,
 	isDark = false,
 ): void {
-	renderElection(ctx, geojson, dataset, mapOptions, "localElection", isDark);
+	renderElection(ctx, geojson, dataset, mapOptions, "local-election", isDark);
 }
 
 export function renderGeneralElection(
@@ -135,7 +135,7 @@ export function renderGeneralElection(
 		geojson,
 		dataset,
 		mapOptions,
-		"generalElection",
+		"general-election",
 		isDark,
 	);
 }

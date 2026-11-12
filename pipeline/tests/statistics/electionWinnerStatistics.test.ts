@@ -53,7 +53,7 @@ test("stores source winning party codes against the matching election area and p
 			has: (_, code) => ["A", "B"].includes(code),
 		};
 		const config = STATISTICS_DATASETS.find(
-			(item) => item.type === "generalElection",
+			(item) => item.type === "general-election",
 		)!;
 		const result = electionWinnerStatistics(base, areas, config, path);
 		assert.deepEqual(
@@ -121,7 +121,7 @@ test("refuses winning party rows that differ from the contests' winners", () => 
 			has: () => true,
 		};
 		const config = STATISTICS_DATASETS.find(
-			(item) => item.type === "generalElection",
+			(item) => item.type === "general-election",
 		)!;
 		const result = electionWinnerStatistics(base, areas, config, path);
 		const key = seriesKey(base.slug, result.series[1]);
