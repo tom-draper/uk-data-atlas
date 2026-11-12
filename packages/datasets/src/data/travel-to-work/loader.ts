@@ -98,8 +98,8 @@ export async function loadTravelToWork(
 
 	return {
 		2021: {
-			id: "travelToWork2021",
-			type: "travelToWork",
+			id: "travel-to-work2021",
+			type: "travel-to-work",
 			year: 2021,
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,

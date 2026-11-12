@@ -5,21 +5,6 @@ import type {
 	AggregatedLifeExpectancyData,
 	LifeExpectancyDataset,
 } from "@uk-data-atlas/datasets";
-import type {
-	AggregatedQualificationData,
-	QualificationBreakdown,
-	QualificationDataset,
-} from "@uk-data-atlas/datasets";
-import type {
-	AggregatedCarAvailabilityData,
-	CarAvailabilityBreakdown,
-	CarAvailabilityDataset,
-} from "@uk-data-atlas/datasets";
-import type {
-	AggregatedTravelToWorkData,
-	TravelToWorkBreakdown,
-	TravelToWorkDataset,
-} from "@uk-data-atlas/datasets";
 
 export function aggregateEthnicity(
 	features: Features,
@@ -86,96 +71,4 @@ export function aggregateLifeExpectancy(
 		averageMaleLE: count > 0 ? male / count : 0,
 		averageFemaleLE: count > 0 ? female / count : 0,
 	};
-}
-
-export function aggregateCarAvailability(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: CarAvailabilityDataset["data"],
-): AggregatedCarAvailabilityData {
-	const seen = new Set<string>();
-	const total: CarAvailabilityBreakdown = {
-		noCar: 0,
-		oneCar: 0,
-		twoCars: 0,
-		threeOrMoreCars: 0,
-		total: 0,
-	};
-	for (const feature of features) {
-		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
-		if (seen.has(code)) continue;
-		seen.add(code);
-		const breakdown = data[code]?.breakdown;
-		if (!breakdown) continue;
-		for (const key of Object.keys(total) as Array<
-			keyof CarAvailabilityBreakdown
-		>)
-			total[key] += breakdown[key];
-	}
-	return { breakdown: total };
-}
-
-export function aggregateTravelToWork(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: TravelToWorkDataset["data"],
-): AggregatedTravelToWorkData {
-	const seen = new Set<string>();
-	const total: TravelToWorkBreakdown = {
-		workFromHome: 0,
-		publicTransport: 0,
-		car: 0,
-		taxi: 0,
-		motorcycle: 0,
-		bicycle: 0,
-		onFoot: 0,
-		other: 0,
-		total: 0,
-	};
-	for (const feature of features) {
-		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
-		if (seen.has(code)) continue;
-		seen.add(code);
-		const breakdown = data[code]?.breakdown;
-		if (!breakdown) continue;
-		for (const key of Object.keys(total) as Array<
-			keyof TravelToWorkBreakdown
-		>)
-			total[key] += breakdown[key];
-	}
-	return { breakdown: total };
-}
-
-export function aggregateQualifications(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: QualificationDataset["data"],
-): AggregatedQualificationData {
-	const seen = new Set<string>();
-	const total: QualificationBreakdown = {
-		noQualifications: 0,
-		level1: 0,
-		level2: 0,
-		apprenticeship: 0,
-		level3: 0,
-		level4Plus: 0,
-		other: 0,
-		total: 0,
-	};
-	for (const feature of features) {
-		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
-		if (seen.has(code)) continue;
-		seen.add(code);
-		const breakdown = data[code]?.breakdown;
-		if (!breakdown) continue;
-		total.noQualifications += breakdown.noQualifications;
-		total.level1 += breakdown.level1;
-		total.level2 += breakdown.level2;
-		total.apprenticeship += breakdown.apprenticeship;
-		total.level3 += breakdown.level3;
-		total.level4Plus += breakdown.level4Plus;
-		total.other += breakdown.other;
-		total.total += breakdown.total;
-	}
-	return { breakdown: total };
 }

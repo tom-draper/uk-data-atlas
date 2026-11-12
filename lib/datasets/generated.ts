@@ -8,7 +8,6 @@ import type { ChartDatasetDefinition } from "./types";
 import { DECLARED_CHART_DEFINITIONS } from "./declared";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
-import { carAvailabilityDefinition } from "./carAvailability";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
@@ -17,9 +16,7 @@ import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { populationDefinition } from "./population";
-import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
-import { travelToWorkDefinition } from "./travelToWork";
 
 export type ChartDatasetType = CatalogueDatasetType;
 export type ChartDataset = CatalogueDataset;
@@ -29,7 +26,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 	[
 		brexitDefinition,
 		brexitConstituencyDefinition,
-		carAvailabilityDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
 		generalElectionDefinition,
@@ -38,8 +34,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		lifeExpectancyDefinition,
 		localElectionDefinition,
 		populationDefinition,
-		qualificationDefinition,
 		schoolPerformanceDefinition,
-		travelToWorkDefinition,
 		...DECLARED_CHART_DEFINITIONS,
 	].sort((left, right) => (left.type < right.type ? -1 : 1));
