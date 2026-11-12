@@ -1,10 +1,8 @@
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { isDeepStrictEqual } from "node:util";
 import { gunzipSync } from "node:zlib";
 import {
 	comparableCompiled,
-	generatedFromRows,
 	servedFromRows,
 } from "@uk-data-atlas/catalogue/node";
 import { payloadDifference } from "./payloadComparison.ts";
@@ -45,18 +43,13 @@ export function verifyDatasetPayloads(repositoryRoot: string): number {
 			const compiled: unknown = readJsonSync(
 				join(datasets, `${entry.output}.json`),
 			);
-			if (generatedFromRows(entry.type)) {
-				const difference = payloadDifference(
-					generated,
-					comparableCompiled(entry.type, compiled),
-				);
-				if (difference)
-					throw new Error(
-						`${entry.type}: statistics rows do not match compiled dataset values at ${difference}`,
-					);
-			} else if (!isDeepStrictEqual(generated, compiled))
+			const difference = payloadDifference(
+				generated,
+				comparableCompiled(entry.type, compiled),
+			);
+			if (difference)
 				throw new Error(
-					`${entry.type}: statistics rows differ from the compiled dataset`,
+					`${entry.type}: statistics rows do not match compiled dataset values at ${difference}`,
 				);
 			checked += 1;
 		}
