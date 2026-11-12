@@ -109,6 +109,10 @@ registry and the dataset record types from them.
   legend, the toggle panel and the default map options are built from it. A
   dataset whose chart is more than one headline value names its own component
   in `display.component`; the website looks it up from the declaration.
+  A rank is written with the `rank` format ("Most deprived" to "Least
+  deprived") and keeps low values at the low end of the colour scale with
+  `invertColor: false`; an aggregation that must count each area once however
+  many boundary features carry its code sets `distinct`.
 - `catalogue.indicators` is the API catalogue: each indicator names its
   measure id, the compiled field, the statistics measure and the fixed
   dimension members. The API's measure-to-dimension mapping and the pipeline's
@@ -164,7 +168,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
+Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `historical-general-election` (politics), `nhs-waiting` (health), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -180,7 +184,7 @@ website chart definition):
 - politics: brexit, brexit-constituency, general-election,
   local-election
 - population: population, ethnicity
-- deprivation: fuel-poverty, imd, wimd, simd, nimdm
+- deprivation: fuel-poverty
 - transport: car-availability, travel-to-work
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the
