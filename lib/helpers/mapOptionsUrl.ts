@@ -24,6 +24,7 @@ const PARAM_NAMES: Readonly<Record<string, string>> = {
 	"general-election": "generalElection",
 	"local-election": "localElection",
 	"brexit-constituency": "brexitConstituency",
+	"life-expectancy": "lifeExpectancy",
 };
 const paramName = (key: string) => PARAM_NAMES[key] ?? key;
 const MAP_OPTION_PARAMS = [
@@ -106,7 +107,7 @@ export function mapOptionsFromSearchParams(
 		options.housePrice.measure = housePriceMeasure;
 	const lifeExpectancyMeasure = params.get("measure.lifeExpectancy");
 	if (lifeExpectancyMeasure === "male" || lifeExpectancyMeasure === "female")
-		options.lifeExpectancy.measure = lifeExpectancyMeasure;
+		options["life-expectancy"].measure = lifeExpectancyMeasure;
 
 	for (const key of CATEGORY_KEYS) {
 		const name = paramName(key);
@@ -181,10 +182,13 @@ export function writeMapOptions(params: URLSearchParams, options: MapOptions) {
 	if (options.housePrice.measure !== DEFAULT_MAP_OPTIONS.housePrice.measure)
 		params.set("measure.housePrice", options.housePrice.measure);
 	if (
-		options.lifeExpectancy.measure !==
-		DEFAULT_MAP_OPTIONS.lifeExpectancy.measure
+		options["life-expectancy"].measure !==
+		DEFAULT_MAP_OPTIONS["life-expectancy"].measure
 	)
-		params.set("measure.lifeExpectancy", options.lifeExpectancy.measure);
+		params.set(
+			"measure.lifeExpectancy",
+			options["life-expectancy"].measure,
+		);
 	for (const key of CATEGORY_KEYS) {
 		const option = options[key] as CategoryOptions;
 		const defaultOption = DEFAULT_MAP_OPTIONS[key] as CategoryOptions;

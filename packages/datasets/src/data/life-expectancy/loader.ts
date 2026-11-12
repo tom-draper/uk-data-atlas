@@ -124,7 +124,7 @@ export async function loadLE(
 		le: {
 			id: "le",
 			year: 2024,
-			type: "lifeExpectancy",
+			type: "life-expectancy",
 			boundaryType: "localAuthority",
 			boundaryYear: 2023,
 			dataPeriod: "2022–2024",
@@ -142,7 +142,7 @@ export async function loadLE(
 	result.hle = {
 		id: "hle",
 		year: 2024,
-		type: "lifeExpectancy",
+		type: "life-expectancy",
 		boundaryType: "localAuthority",
 		boundaryYear: 2023,
 		dataPeriod: "2022–2024",

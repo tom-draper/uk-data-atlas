@@ -53,6 +53,7 @@ type CustomMapDatasetId =
 	| "brexit-constituency"
 	| "ethnicity"
 	| "general-election"
+	| "life-expectancy"
 	| "local-election"
 	| "population";
 
@@ -61,12 +62,12 @@ type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	DisplayedDatasetId | "fuelPoverty" | "housePrice" | "lifeExpectancy"
+	DisplayedDatasetId | "fuelPoverty" | "housePrice" | "life-expectancy"
 > &
 	Record<DisplayedDatasetId, DeclaredMapOptions> & {
 		fuelPoverty: FuelPovertyOptions;
 		housePrice: HousePriceOptions;
-		lifeExpectancy: LifeExpectancyOptions;
+		"life-expectancy": LifeExpectancyOptions;
 	};
 
 export type ColorTheme =

@@ -62,7 +62,7 @@ export * from "./data/qualification/dataset.ts";
 export * from "./data/travel-to-work/aggregate.ts";
 export * from "./data/travel-to-work/dataset.ts";
 export * from "./data/land-area/dataset.ts";
-export * from "./data/catalog/definitions/lifeExpectancy.ts";
+export * from "./data/life-expectancy/dataset.ts";
 export * from "./data/life-expectancy-series/dataset.ts";
 export * from "./data/local-government-finance/dataset.ts";
 export * from "./data/net-additional-dwellings/dataset.ts";

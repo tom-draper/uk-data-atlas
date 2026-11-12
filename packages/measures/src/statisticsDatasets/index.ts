@@ -5,14 +5,10 @@ import {
 import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
 import { HOUSE_PRICE } from "./economy.ts";
-import { LIFE_EXPECTANCY_LATEST } from "./people.ts";
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
 /** Statistics declarations not yet moved into a dataset declaration. */
-const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [
-	HOUSE_PRICE,
-	LIFE_EXPECTANCY_LATEST,
-];
+const LEGACY_STATISTICS_DATASETS: readonly DeclaredDataset[] = [HOUSE_PRICE];
 
 /** Catalogue datasets stored as statistics rows, by manifest type. */
 export const STATISTICS_DATASETS: readonly DeclaredDataset[] = [

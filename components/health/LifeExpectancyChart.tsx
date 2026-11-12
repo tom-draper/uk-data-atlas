@@ -135,11 +135,11 @@ export default function LifeExpectancyChart({
 	const isDark = useIsDark();
 	const [rememberedKind, setRememberedKind] = useState(datasetId);
 	const selectedDatasetId =
-		activeDataset?.type === "lifeExpectancy"
+		activeDataset?.type === "life-expectancy"
 			? activeDataset.id
 			: rememberedKind;
 	useEffect(() => {
-		if (activeDataset?.type === "lifeExpectancy") {
+		if (activeDataset?.type === "life-expectancy") {
 			setRememberedKind(activeDataset.id);
 		}
 	}, [activeDataset?.type, activeDataset?.id]);
@@ -161,7 +161,7 @@ export default function LifeExpectancyChart({
 
 	const isActive = !!(
 		dataset &&
-		activeDataset?.type === "lifeExpectancy" &&
+		activeDataset?.type === "life-expectancy" &&
 		activeDataset.id === dataset.id
 	);
 
