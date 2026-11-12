@@ -111,6 +111,7 @@ const fuelPovertyText = (data: Record<string, object>) =>
 			boundaryType: "lsoa",
 			boundaryYear: 2021,
 			data,
+			coverageCountries: ["GB-ENG"],
 		},
 	});
 
