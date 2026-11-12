@@ -168,7 +168,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy-series` and `public-health` (health), `ethnicity`, `population`, `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `qualification` (education), `car-availability` and `travel-to-work` (transport), `pupil-absence`, `school-performance-constituency` and `school-performance-disadvantage` (education),
+Declared: `business-activity`, `claimant-count`, `income`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `house-price`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy`, `life-expectancy-series` and `public-health` (health), `ethnicity`, `population`, `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `qualification` (education), `car-availability` and `travel-to-work` (transport), `pupil-absence`, `school-performance`, `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
 (infrastructure, a complete module).
 
@@ -176,19 +176,18 @@ Not yet declared, by module (each still has a definition in
 `data/catalog/definitions`, a statistics entry, a pipeline compiler and a
 website chart definition):
 
-- economy: income
-- housing: house-price
-- education: school-performance
-- health: life-expectancy
-- deprivation: fuel-poverty
+- deprivation: fuel-poverty, which still has its own statistics export
+  (`fuelPovertyStatistics.ts`) to move onto the shared path first.
 
-The four politics datasets, `ethnicity` and `population` are declared, but their
-maps are not drawn from a display: party colours, the Leave share scale, one
+The four politics datasets, `ethnicity`, `population`, `house-price` and
+`life-expectancy` are declared, but their maps are not drawn from a display: party colours, the Leave share scale, one
 chart per election, the ethnicity categories and the population age, gender and
-density views are website code. Each keeps a hand-written `lib/datasets/<name>.ts` that spreads
+density views, the house price series and the life expectancy male, female and
+average views are website code. Each keeps a hand-written `lib/datasets/<name>.ts` that spreads
 `definitionOf(<declaration>)` and adds its renderer, legend kind and charts.
 Shared links keep the old `generalElection`, `localElection` and
-`brexitConstituency` names in the map option parameters.
+`brexitConstituency`, `housePrice` and `lifeExpectancy` names in the map option
+parameters.
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the
 only place an old id survives; all declared datasets use their kebab-case
