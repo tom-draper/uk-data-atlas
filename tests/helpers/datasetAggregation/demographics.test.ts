@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { aggregateQualifications } from "@uk-data-atlas/datasets";
 import {
 	aggregateEthnicity,
 	aggregateLifeExpectancy,
-	aggregateQualifications,
 } from "@/lib/helpers/datasetAggregation/demographics";
+import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { CODE_KEY, features } from "./fixtures";
 
 describe("aggregateEthnicity", () => {
@@ -92,9 +93,12 @@ describe("aggregateQualifications", () => {
 
 	it("sums the breakdown across the covered areas", () => {
 		const result = aggregateQualifications(
-			features(["E1", "E2"]),
-			CODE_KEY,
-			data,
+			collectBoundaryRecords(
+				features(["E1", "E2"]),
+				data,
+				CODE_KEY,
+				true,
+			),
 		);
 
 		expect(result.breakdown).toEqual({
@@ -111,9 +115,12 @@ describe("aggregateQualifications", () => {
 
 	it("counts an area once even when several features share its code", () => {
 		const result = aggregateQualifications(
-			features(["E1", "E1", "E1"]),
-			CODE_KEY,
-			data,
+			collectBoundaryRecords(
+				features(["E1", "E1", "E1"]),
+				data,
+				CODE_KEY,
+				true,
+			),
 		);
 
 		expect(result.breakdown.level4Plus).toBe(100);
@@ -122,9 +129,7 @@ describe("aggregateQualifications", () => {
 
 	it("returns a zeroed breakdown when nothing is covered", () => {
 		const result = aggregateQualifications(
-			features(["missing"]),
-			CODE_KEY,
-			data,
+			collectBoundaryRecords(features(["missing"]), data, CODE_KEY, true),
 		);
 		expect(result.breakdown.total).toBe(0);
 	});

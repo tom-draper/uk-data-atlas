@@ -12,13 +12,7 @@ import {
 	aggregateIncome,
 } from "./economics";
 import {} from "@uk-data-atlas/datasets";
-import {
-	aggregateEthnicity,
-	aggregateLifeExpectancy,
-	aggregateQualifications,
-	aggregateCarAvailability,
-	aggregateTravelToWork,
-} from "./demographics";
+import { aggregateEthnicity, aggregateLifeExpectancy } from "./demographics";
 import {
 	aggregateBrexit,
 	aggregateBrexitConstituencies,
@@ -97,21 +91,6 @@ export const lifeExpectancyAggregation = boundaryAggregation(
 	"lifeExpectancy",
 	"localAuthority",
 	aggregateLifeExpectancy,
-);
-export const qualificationAggregation = boundaryAggregation(
-	"qualification",
-	"localAuthority",
-	aggregateQualifications,
-);
-export const carAvailabilityAggregation = boundaryAggregation(
-	"carAvailability",
-	"localAuthority",
-	aggregateCarAvailability,
-);
-export const travelToWorkAggregation = boundaryAggregation(
-	"travelToWork",
-	"localAuthority",
-	aggregateTravelToWork,
 );
 export const fuelPovertyAggregation = numericAggregation(
 	"fuelPoverty",

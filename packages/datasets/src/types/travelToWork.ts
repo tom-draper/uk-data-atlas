@@ -20,7 +20,7 @@ export interface TravelToWorkLAData {
 
 export interface TravelToWorkDataset {
 	id: string;
-	type: "travelToWork";
+	type: "travel-to-work";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

@@ -12,7 +12,7 @@ import {
 } from "@uk-data-atlas/datasets";
 
 const config: BreakdownChartConfig<TravelToWorkMode> = {
-	datasetType: "travelToWork",
+	datasetType: "travel-to-work",
 	heading: "Travel to Work",
 	coverage: "England & Wales",
 	source: "Office for National Statistics. Census 2021: Method used to travel to workplace, England and Wales. TS061.",

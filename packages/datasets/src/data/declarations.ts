@@ -10,6 +10,7 @@ import { brexit } from "./brexit/dataset.ts";
 import { brexitConstituency } from "./brexit-constituency/dataset.ts";
 import { broadband } from "./broadband/dataset.ts";
 import { businessActivity } from "./business-activity/dataset.ts";
+import { carAvailability } from "./car-availability/dataset.ts";
 import { childPoverty } from "./child-poverty/dataset.ts";
 import { claimantCount } from "./claimant-count/dataset.ts";
 import { councilTax } from "./council-tax/dataset.ts";
@@ -39,6 +40,7 @@ import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
 import { publicHealth } from "./public-health/dataset.ts";
 import { pupilAbsence } from "./pupil-absence/dataset.ts";
+import { qualification } from "./qualification/dataset.ts";
 import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
@@ -46,6 +48,7 @@ import { roadCollisions } from "./road-collisions/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
 import { simd } from "./simd/dataset.ts";
+import { travelToWork } from "./travel-to-work/dataset.ts";
 import { unemployment } from "./unemployment/dataset.ts";
 import { waste } from "./waste/dataset.ts";
 import { wimd } from "./wimd/dataset.ts";
@@ -60,6 +63,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	brexitConstituency,
 	broadband,
 	businessActivity,
+	carAvailability,
 	childPoverty,
 	claimantCount,
 	councilTax,
@@ -89,6 +93,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	populationUk,
 	publicHealth,
 	pupilAbsence,
+	qualification,
 	regionalGdpItl1,
 	regionalGdpItl2,
 	regionalGdpItl3,
@@ -96,6 +101,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
 	simd,
+	travelToWork,
 	unemployment,
 	waste,
 	wimd,
@@ -115,6 +121,7 @@ export type DeclaredDatasetId =
 	| "brexit-constituency"
 	| "broadband"
 	| "business-activity"
+	| "car-availability"
 	| "child-poverty"
 	| "claimant-count"
 	| "council-tax"
@@ -144,6 +151,7 @@ export type DeclaredDatasetId =
 	| "population-uk"
 	| "public-health"
 	| "pupil-absence"
+	| "qualification"
 	| "regional-gdp-itl1"
 	| "regional-gdp-itl2"
 	| "regional-gdp-itl3"
@@ -151,6 +159,7 @@ export type DeclaredDatasetId =
 	| "school-performance-constituency"
 	| "school-performance-disadvantage"
 	| "simd"
+	| "travel-to-work"
 	| "unemployment"
 	| "waste"
 	| "wimd"

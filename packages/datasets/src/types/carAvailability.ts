@@ -14,7 +14,7 @@ export interface CarAvailabilityLAData {
 
 export interface CarAvailabilityDataset {
 	id: string;
-	type: "carAvailability";
+	type: "car-availability";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadTravelToWork } from "@uk-data-atlas/datasets";
-import { aggregateTravelToWork } from "@/lib/helpers/datasetAggregation/demographics";
+import { aggregateTravelToWork } from "@uk-data-atlas/datasets";
+import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 
 const HEADER =
@@ -69,8 +70,8 @@ describe("loadTravelToWork", () => {
 			250 * APRIL_2023_LAD_MERGERS.E06000066.predecessors.length,
 		);
 		expect(datasets[2021]).toMatchObject({
-			id: "travelToWork2021",
-			type: "travelToWork",
+			id: "travel-to-work2021",
+			type: "travel-to-work",
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
 		});
@@ -93,9 +94,12 @@ describe("aggregateTravelToWork", () => {
 		];
 
 		const { breakdown } = aggregateTravelToWork(
-			features as never,
-			["LAD25CD"] as never,
-			datasets[2021].data,
+			collectBoundaryRecords(
+				features as never,
+				datasets[2021].data,
+				["LAD25CD"] as never,
+				true,
+			),
 		);
 
 		expect(breakdown.car).toBe(250);

@@ -12,7 +12,7 @@ import {
 } from "@uk-data-atlas/datasets";
 
 const config: BreakdownChartConfig<CarAvailabilityKey> = {
-	datasetType: "carAvailability",
+	datasetType: "car-availability",
 	heading: "Car Availability",
 	coverage: "England & Wales",
 	source: "Office for National Statistics. Census 2021: Car or van availability, England and Wales. TS045.",

@@ -81,8 +81,8 @@ export async function loadCarAvailability(
 
 	return {
 		2021: {
-			id: "carAvailability2021",
-			type: "carAvailability",
+			id: "car-availability2021",
+			type: "car-availability",
 			year: 2021,
 			boundaryType: "localAuthority",
 			boundaryYear: 2025,
