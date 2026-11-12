@@ -1,4 +1,3 @@
-import { AGE, byAge } from "@uk-data-atlas/datasets";
 import {
 	type DeclaredDataset,
 	type DeclaredDimension,
@@ -9,32 +8,9 @@ import {
 	type DeclaredHeader,
 	periods,
 } from "../declaredStatistics.ts";
-import { yearParts } from "../declaredPayload.ts";
-import { LIFE_EXPECTANCY, POPULATION, SEX, measure } from "./measures.ts";
+import { LIFE_EXPECTANCY, SEX, measure } from "./measures.ts";
 
 /** Population and life expectancy. */
-
-export const POPULATION_WARDS: DeclaredDataset = {
-	type: "population",
-	module: "population",
-	payload: {
-		parts: yearParts("population", "ward", 2023, {
-			coverageCountries: ["GB-ENG", "GB-WLS"],
-		}),
-		arrays: ["total", "males", "females"],
-	},
-	name: "wardName",
-	parents: [
-		{
-			code: "ladCode",
-			name: "ladName",
-			release: { geography: "localAuthority", year: 2023 },
-		},
-	],
-	measures: [POPULATION],
-	dimensions: [SEX, AGE],
-	fields: byAge,
-};
 
 /** `2022-2024`, with a hyphen or an en dash. */
 const yearRange = (text: unknown) => {

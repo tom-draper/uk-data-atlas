@@ -17,6 +17,7 @@ import { councilTax } from "./council-tax/dataset.ts";
 import { crime } from "./crime/dataset.ts";
 import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
 import { electricityConsumption } from "./electricity-consumption/dataset.ts";
+import { ethnicity } from "./ethnicity/dataset.ts";
 import { gasConsumption } from "./gas-consumption/dataset.ts";
 import { generalElection } from "./general-election/dataset.ts";
 import { generalHealth } from "./general-health/dataset.ts";
@@ -36,6 +37,7 @@ import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
 import { nhsWaiting } from "./nhs-waiting/dataset.ts";
 import { nimdm } from "./nimdm/dataset.ts";
 import { planningApplications } from "./planning-applications/dataset.ts";
+import { population } from "./population/dataset.ts";
 import { populationConstituency } from "./population-constituency/dataset.ts";
 import { populationUk } from "./population-uk/dataset.ts";
 import { publicHealth } from "./public-health/dataset.ts";
@@ -70,6 +72,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	crime,
 	electricVehicleChargers,
 	electricityConsumption,
+	ethnicity,
 	gasConsumption,
 	generalElection,
 	generalHealth,
@@ -89,6 +92,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	nhsWaiting,
 	nimdm,
 	planningApplications,
+	population,
 	populationConstituency,
 	populationUk,
 	publicHealth,
@@ -128,6 +132,7 @@ export type DeclaredDatasetId =
 	| "crime"
 	| "electric-vehicle-chargers"
 	| "electricity-consumption"
+	| "ethnicity"
 	| "gas-consumption"
 	| "general-election"
 	| "general-health"
@@ -147,6 +152,7 @@ export type DeclaredDatasetId =
 	| "nhs-waiting"
 	| "nimdm"
 	| "planning-applications"
+	| "population"
 	| "population-constituency"
 	| "population-uk"
 	| "public-health"

@@ -4,7 +4,7 @@ import {
 	renderPopulationDensity,
 } from "@/lib/helpers/mapRendering";
 import { populationAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { populationDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { definitionOf, population } from "@uk-data-atlas/datasets";
 import type { PopulationDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -54,7 +54,7 @@ const gender: ChartDefinition<PopulationDataset> = {
 	year: 2022,
 };
 export const populationDefinition: ChartDatasetDefinition<PopulationDataset> = {
-	...populationDatasetDefinition,
+	...definitionOf(population),
 	chart: density,
 	charts: [density, age, gender],
 	legendKind: "population",
