@@ -13,7 +13,10 @@ const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
 );
 
-/** Whether a manifest type's JSON is rebuilt from rows instead of stored. */
+/**
+ * Whether a manifest type's JSON is generated from statistics rows instead of
+ * stored, so it carries no layout tables and compares by what rows can say.
+ */
 export const servedFromRows = (type: string) =>
 	declared.get(type)?.payload !== undefined;
 
@@ -22,10 +25,6 @@ const others = new WeakMap<
 	SqlReader,
 	Map<string, { readonly [key: string]: Json }>
 >();
-
-/** Whether a dataset's JSON is generated from rows, with no layout tables. */
-export const generatedFromRows = (type: string) =>
-	declared.get(type)?.payload !== undefined;
 
 /**
  * A compiled dataset's parts without the header fields its declaration says

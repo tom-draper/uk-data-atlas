@@ -5,7 +5,7 @@ import { resolve, join } from "node:path";
 
 import {
 	comparableCompiled,
-	generatedFromRows,
+	servedFromRows,
 	readAtlasPayload,
 } from "@uk-data-atlas/catalogue/node";
 import { datasetCatalogInputs } from "../pipeline/src/catalog/buildDataCatalog";
@@ -30,7 +30,7 @@ assert.ok(manifest.datasets.length > 0);
 for (const { type, output } of manifest.datasets)
 	assert.deepEqual(
 		JSON.parse(readAtlasPayload(root, `dataset:${output}`)),
-		generatedFromRows(type)
+		servedFromRows(type)
 			? comparableCompiled(
 					type,
 					JSON.parse(
@@ -69,7 +69,7 @@ class ComparableDatasetInput extends AtlasDatasetInput {
 const comparable = (value: unknown): unknown => {
 	if (!(value instanceof AtlasDatasetInput)) return value;
 	const type = datasetTypes.get(value.output);
-	return type && generatedFromRows(type)
+	return type && servedFromRows(type)
 		? new ComparableDatasetInput(root, value.output, type)
 		: value;
 };

@@ -6,7 +6,7 @@ import { buildLog, readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 
 import {
 	comparableCompiled,
-	generatedFromRows,
+	servedFromRows,
 	readAtlasPayload,
 } from "@uk-data-atlas/catalogue/node";
 import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
@@ -103,7 +103,7 @@ for (const dataset of manifest.datasets ?? []) {
 			`Precompiled ${dataset.type} does not match dataset-manifest.json.`,
 		);
 	const payload = readAtlasPayload(root, `dataset:${dataset.output}`);
-	if (generatedFromRows(dataset.type)) {
+	if (servedFromRows(dataset.type)) {
 		if (
 			!isDeepStrictEqual(
 				JSON.parse(payload),
