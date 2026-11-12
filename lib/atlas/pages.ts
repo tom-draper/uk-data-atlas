@@ -29,7 +29,6 @@ const ALL_COUNTRIES: readonly DatasetCountry[] = [
 const COVERAGE_OVERRIDES: Partial<
 	Record<ChartDatasetType, readonly DatasetCountry[]>
 > = {
-	fuelPoverty: ["GB-ENG"],
 	imd: ["GB-ENG"],
 	nimdm: ["GB-NIR"],
 	simd: ["GB-SCT"],

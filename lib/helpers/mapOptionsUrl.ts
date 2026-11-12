@@ -24,6 +24,7 @@ const PARAM_NAMES: Readonly<Record<string, string>> = {
 	"general-election": "generalElection",
 	"local-election": "localElection",
 	"brexit-constituency": "brexitConstituency",
+	"fuel-poverty": "fuelPoverty",
 	"house-price": "housePrice",
 	"life-expectancy": "lifeExpectancy",
 };

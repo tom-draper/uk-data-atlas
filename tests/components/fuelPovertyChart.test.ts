@@ -8,7 +8,7 @@ import type {
 
 const dataset: FuelPovertyDataset = {
 	id: "fuel-poverty-2024",
-	type: "fuelPoverty",
+	type: "fuel-poverty",
 	year: 2024,
 	boundaryType: "lsoa",
 	boundaryYear: 2021,

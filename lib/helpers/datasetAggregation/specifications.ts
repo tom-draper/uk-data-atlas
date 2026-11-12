@@ -80,7 +80,7 @@ export const lifeExpectancyAggregation = boundaryAggregation(
 	aggregateLifeExpectancy,
 );
 export const fuelPovertyAggregation = numericAggregation(
-	"fuelPoverty",
+	"fuel-poverty",
 	"lsoa",
 	aggregateFuelPoverty,
 );

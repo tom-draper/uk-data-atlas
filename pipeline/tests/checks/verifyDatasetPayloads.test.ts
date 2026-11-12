@@ -61,7 +61,7 @@ test("passes when the generated payload holds the compiled values", (context) =>
 			generated: { part: { count: 1 } },
 		},
 		{
-			type: "fuelPoverty",
+			type: "fuel-poverty",
 			output: "two",
 			compiled: { 2023: { data: { E01: { value: 2 } } } },
 			generated: { 2023: { data: { E01: { value: 2 } } } },
@@ -87,24 +87,9 @@ test("fails with the path of the first value that differs", (context) => {
 	);
 });
 
-test("fails when fuel poverty rows differ from the compiled values", (context) => {
-	const root = fixture(context, [
-		{
-			type: "fuelPoverty",
-			output: "two",
-			compiled: { 2023: { data: { E01: { value: 2 } } } },
-			generated: { 2023: { data: { E01: { value: 3 } } } },
-		},
-	]);
-	assert.throws(
-		() => verifyDatasetPayloads(root),
-		/fuelPoverty: statistics rows differ/,
-	);
-});
-
 test("fails when the cache lacks a payload it should hold", (context) => {
 	const root = fixture(context, [
-		{ type: "fuelPoverty", output: "two", compiled: {}, generated: {} },
+		{ type: "fuel-poverty", output: "two", compiled: {}, generated: {} },
 	]);
 	const cache = new DatabaseSync(join(root, "data/build/atlas-cache.sqlite"));
 	cache.exec("DELETE FROM dataset_payload");

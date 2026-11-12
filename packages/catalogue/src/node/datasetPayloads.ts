@@ -7,7 +7,6 @@ import { unpackText } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
 import type { Json } from "@uk-data-atlas/measures";
-import { rebuildFuelPoverty } from "@uk-data-atlas/measures";
 import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 
 const declared = new Map(
@@ -16,7 +15,7 @@ const declared = new Map(
 
 /** Whether a manifest type's JSON is rebuilt from rows instead of stored. */
 export const servedFromRows = (type: string) =>
-	type === "fuelPoverty" || declared.get(type)?.payload !== undefined;
+	declared.get(type)?.payload !== undefined;
 
 /** Datasets that derived rules have read, once per database. */
 const others = new WeakMap<
@@ -55,7 +54,6 @@ export function rebuildDatasetPayload(
 	type: string,
 	output: string,
 ): string {
-	if (type === "fuelPoverty") return rebuildFuelPoverty(database);
 	const config = declared.get(type);
 	if (config?.payload)
 		return rebuildFromDeclaration(database, config, output, (other) => {

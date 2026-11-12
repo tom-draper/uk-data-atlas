@@ -8,7 +8,7 @@ export interface FuelPovertyLSOAData {
 
 export interface FuelPovertyDataset {
 	id: string;
-	type: "fuelPoverty";
+	type: "fuel-poverty";
 	year: number;
 	boundaryType: "lsoa";
 	boundaryYear: number;

@@ -153,11 +153,11 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "fuelPoverty" && (
+			{activeDataset?.type === "fuel-poverty" && (
 				<FuelPovertyMeasurePanel
-					measure={controls.displayOptions.fuelPoverty.measure}
+					measure={controls.displayOptions["fuel-poverty"].measure}
 					onChange={(measure) =>
-						onMapOptionsChange("fuelPoverty", {
+						onMapOptionsChange("fuel-poverty", {
 							measure,
 							colorRange:
 								measure === "rate"

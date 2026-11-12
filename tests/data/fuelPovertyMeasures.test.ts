@@ -8,8 +8,8 @@ it("maps rate or household count without filling absent areas", () => {
 	} as unknown as FuelPovertyDataset;
 	const options = {
 		...DEFAULT_MAP_OPTIONS,
-		fuelPoverty: {
-			...DEFAULT_MAP_OPTIONS.fuelPoverty,
+		"fuel-poverty": {
+			...DEFAULT_MAP_OPTIONS["fuel-poverty"],
 			measure: "count" as const,
 		},
 	};

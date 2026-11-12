@@ -1,11 +1,11 @@
-import { fuelPovertyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { fuelPovertyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import { definitionOf, fuelPoverty } from "@uk-data-atlas/datasets";
 import type { FuelPovertyDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition } from "./types";
 
 export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 	{
-		...fuelPovertyDatasetDefinition,
+		...definitionOf(fuelPoverty),
 		chart: {
 			group: "Economics",
 			key: "economics-fuelPoverty",
@@ -26,22 +26,23 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 		map: {
 			valueFor: (dataset, code, options) =>
 				dataset.data[code]?.[
-					options.fuelPoverty.measure === "count"
+					options["fuel-poverty"].measure === "count"
 						? "fuelPoorHouseholdCount"
 						: "fuelPovertyRate"
 				] ?? null,
 			sourceMode: (_dataset, options) =>
-				`fuelPoverty:${options.fuelPoverty.measure}`,
+				`fuelPoverty:${options["fuel-poverty"].measure}`,
 			colorRange: { min: 5, max: 15 },
 			legend: {
 				min: 0,
 				max: 30,
 				bounds: (options) => ({
 					min: 0,
-					max: options.fuelPoverty.measure === "count" ? 1000 : 30,
+					max:
+						options["fuel-poverty"].measure === "count" ? 1000 : 30,
 				}),
 				format: (value, options) =>
-					options.fuelPoverty.measure === "count"
+					options["fuel-poverty"].measure === "count"
 						? `${Math.round(value).toLocaleString("en-GB")} households`
 						: `${value.toFixed(0)}% households`,
 			},

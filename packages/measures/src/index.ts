@@ -18,7 +18,6 @@ export * from "./atlasStatisticsVocabulary.ts";
 export * from "./observationLoader.ts";
 export * from "./observationTables.ts";
 export * from "./atlasStatistics.ts";
-export * from "./fuelPovertyStatistics.ts";
 export * from "./declaredPayload.ts";
 export * from "./declaredStatistics.ts";
 export * from "./statisticsDatasets/index.ts";

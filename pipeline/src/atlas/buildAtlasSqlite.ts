@@ -7,7 +7,6 @@ import {
 } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics } from "@uk-data-atlas/measures";
-import { fuelPovertyStatistics } from "@uk-data-atlas/measures";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
@@ -103,8 +102,6 @@ const statisticsInputs = (
 				join(directory, `datasets/${entry.output}.json`),
 				"utf8",
 			);
-		if (entry.type === "fuelPoverty")
-			return [fuelPovertyStatistics(read(), entry)];
 		const config = declared.get(entry.type);
 		if (config) {
 			const statistics = declaredStatistics(config, read, entry);
