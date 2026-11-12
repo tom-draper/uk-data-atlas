@@ -378,15 +378,7 @@ release, if an observed value is null, or if a dataset's `verify` hook fails.
 members, area code and name, geography, release, period, value, status,
 method, licence).
 
-Fuel poverty (`packages/measures/src/fuelPovertyStatistics.ts`) maps each record field to a
-measure (`households`, `fuel-poor-households`, `fuel-poverty-rate`) on the 2021
-LSOA release. Record order is area code order and is not stored; the mapper
-refuses unordered input. The period header (`id`, `year`, `boundaryType`,
-`boundaryYear`) is derived from the period and release. It is served from rows:
-the build refuses to publish if the rebuilt values differ from the compiled JSON,
-and stores no payload.
-
-The other datasets are configuration in `packages/catalogue/src/node/statisticsDatasets/`, read by
+Datasets are configuration in `packages/catalogue/src/node/statisticsDatasets/`, read by
 `packages/measures/src/declaredStatistics.ts`. Each config names the record fields that hold
 values, the measure and dimension members each one is, and the period. Every
 number in a record must be claimed by a field or listed as `derived` with a
