@@ -20,7 +20,7 @@ export interface SchoolPerformanceLADData extends SchoolPerformanceMeasures {
 
 export interface SchoolPerformanceDataset {
 	id: string;
-	type: "schoolPerformance";
+	type: "school-performance";
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

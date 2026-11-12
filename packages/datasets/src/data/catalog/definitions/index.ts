@@ -2,4 +2,3 @@
 export { fuelPovertyDatasetDefinition } from "./fuelPoverty.ts";
 export { housePriceDatasetDefinition } from "./housePrice.ts";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy.ts";
-export { schoolPerformanceDatasetDefinition } from "./schoolPerformance.ts";

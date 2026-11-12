@@ -66,8 +66,8 @@ export async function loadSchoolPerformance(
 
 	return {
 		[latest]: {
-			id: `schoolPerformance${latest}`,
-			type: "schoolPerformance",
+			id: `school-performance${latest}`,
+			type: "school-performance",
 			year: latest,
 			boundaryType: "localAuthority",
 			boundaryYear: 2024,

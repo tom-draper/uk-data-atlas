@@ -48,6 +48,7 @@ import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
 import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
 import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
 import { roadCollisions } from "./road-collisions/dataset.ts";
+import { schoolPerformance } from "./school-performance/dataset.ts";
 import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
 import { simd } from "./simd/dataset.ts";
@@ -104,6 +105,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	regionalGdpItl2,
 	regionalGdpItl3,
 	roadCollisions,
+	schoolPerformance,
 	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
 	simd,
@@ -165,6 +167,7 @@ export type DeclaredDatasetId =
 	| "regional-gdp-itl2"
 	| "regional-gdp-itl3"
 	| "road-collisions"
+	| "school-performance"
 	| "school-performance-constituency"
 	| "school-performance-disadvantage"
 	| "simd"

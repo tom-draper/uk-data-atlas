@@ -34,7 +34,6 @@ import {
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
-	SchoolPerformanceMeasurePanel,
 } from "./legend/LegendSupplementalPanels";
 import type { MapOptionsChangeHandler } from "./legend/types";
 import { useLegendControls } from "./legend/useLegendControls";
@@ -210,23 +209,6 @@ export default function LegendPanel({
 								},
 							},
 						)
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "schoolPerformance" && (
-				<SchoolPerformanceMeasurePanel
-					measure={controls.displayOptions.schoolPerformance.measure}
-					onChange={(measure) =>
-						onMapOptionsChange("schoolPerformance", {
-							measure,
-							colorRange:
-								measure === "attainment8"
-									? { min: 35, max: 60 }
-									: measure === "progress8"
-										? { min: -0.5, max: 0.5 }
-										: { min: 50, max: 80 },
-						})
 					}
 				/>
 			)}

@@ -178,7 +178,7 @@ export async function compileStaleDataset(
 													),
 											)
 										: definition.type ===
-													"schoolPerformance" ||
+													"school-performance" ||
 											  definition.type ===
 													"schoolPerformanceGap" ||
 											  definition.type ===
@@ -187,7 +187,7 @@ export async function compileStaleDataset(
 													reader,
 													artifacts,
 													definition.type ===
-														"schoolPerformance"
+														"school-performance"
 														? "Total"
 														: definition.type ===
 															  "schoolPerformanceGap"
