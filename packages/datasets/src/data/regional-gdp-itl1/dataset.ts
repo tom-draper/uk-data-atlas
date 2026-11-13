@@ -10,7 +10,7 @@ import { regionalGdpStatistics } from "../regional-gdp/statistics.ts";
 
 export const regionalGdpItl1 = defineDataset<RegionalGdpItl1Dataset>({
 	id: "regional-gdp-itl1",
-	module: "economy",
+	topic: "economic-output",
 	boundary: { type: "itl1", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	chartPending: true,

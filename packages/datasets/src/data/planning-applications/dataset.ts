@@ -10,7 +10,7 @@ export const planningApplications = defineDataset<
 	IndicatorDataset<"planning-applications">
 >({
 	id: "planning-applications",
-	module: "housing",
+	topic: "planning",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

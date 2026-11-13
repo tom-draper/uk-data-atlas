@@ -6,7 +6,7 @@ import { loadLifeExpectancySeriesRows } from "../life-expectancy/seriesLoader.ts
 
 export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 	id: "life-expectancy-series",
-	module: "health",
+	topic: "life-expectancy",
 	source: {
 		name: "Life Expectancy Series",
 		publisher: "Office for National Statistics",

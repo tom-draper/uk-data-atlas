@@ -10,6 +10,7 @@ import {
 	readAtlasDatasetUrls,
 	rebuildDatasetPayload,
 } from "@uk-data-atlas/catalogue/node";
+import { DATASET_TOPICS } from "@uk-data-atlas/datasets";
 import {
 	declaredStatistics,
 	STATISTICS_DATASETS,
@@ -375,7 +376,7 @@ describe("statistics model is generic", () => {
 	/** A census cube: one measure split by a dimension, as a mapper would write it. */
 	const tenure: StatisticsDataset = {
 		slug: "census-tenure",
-		module: "housing",
+		topic: "housing-stock",
 		title: "Tenure",
 		description: "Households by tenure.",
 		source,
@@ -430,7 +431,7 @@ describe("statistics model is generic", () => {
 	/** Crime counts by type, with one suppressed value and a categorical measure. */
 	const crime: StatisticsDataset = {
 		slug: "crime",
-		module: "society",
+		topic: "crime-and-justice",
 		title: "Crime",
 		description: "Recorded crime.",
 		source: { publisher: "Home Office", licence: "OGL v3.0" },
@@ -589,17 +590,42 @@ describe("statistics model is generic", () => {
 		}
 	});
 
-	it("refuses a module outside the closed list", () => {
+	it("stores each dataset's module as the theme of its topic", () => {
+		const database = memory(
+			statisticsTables(
+				DATASET_TOPICS.map(({ id }) => ({
+					...crime,
+					slug: `crime-${id}`,
+					topic: id,
+				})),
+			),
+		);
+		try {
+			const rows = database
+				.prepare("SELECT slug, module FROM dataset ORDER BY slug")
+				.all();
+			expect(rows).toHaveLength(DATASET_TOPICS.length);
+			for (const topic of DATASET_TOPICS)
+				expect(rows).toContainEqual({
+					slug: `crime-${topic.id}`,
+					module: topic.theme,
+				});
+		} finally {
+			database.close();
+		}
+	});
+
+	it("refuses a topic outside the registry", () => {
 		expect(() =>
 			memory(
 				statisticsTables([
 					{
 						...crime,
-						module: "retail" as StatisticsDataset["module"],
+						topic: "retail" as StatisticsDataset["topic"],
 					},
 				]),
 			),
-		).toThrow(/CHECK constraint failed/);
+		).toThrow(/Unknown dataset topic retail for crime/);
 	});
 
 	it("refuses a measure declared differently by two datasets", () => {

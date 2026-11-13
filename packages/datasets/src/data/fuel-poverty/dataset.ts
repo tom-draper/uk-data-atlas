@@ -7,7 +7,8 @@ import { loadFuelPoverty } from "./loader.ts";
 
 export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 	id: "fuel-poverty",
-	module: "society",
+	topic: "poverty",
+	related: ["energy"],
 	boundary: { type: "lsoa", year: 2021 },
 	coverageCountries: ["GB-ENG"],
 	source: {

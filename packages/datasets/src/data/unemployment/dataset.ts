@@ -26,7 +26,7 @@ const periodText = (year: number) =>
 
 export const unemployment = defineDataset<UnemploymentDataset>({
 	id: "unemployment",
-	module: "economy",
+	topic: "labour-market",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS"],
 	source: {

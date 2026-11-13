@@ -360,7 +360,8 @@ export function censusSmallAreaStatistics(
 		);
 		return {
 			slug,
-			module: table.module,
+			topic: table.topic,
+			...(table.related ? { related: table.related } : {}),
 			title: meta.title,
 			description: meta.description,
 			source: {

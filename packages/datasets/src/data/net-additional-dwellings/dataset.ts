@@ -10,7 +10,7 @@ export const netAdditionalDwellings = defineDataset<
 	IndicatorDataset<"net-additional-dwellings">
 >({
 	id: "net-additional-dwellings",
-	module: "housing",
+	topic: "housing-stock",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,

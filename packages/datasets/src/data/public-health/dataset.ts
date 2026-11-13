@@ -7,7 +7,7 @@ import { loadPublicHealth } from "./loader.ts";
 
 export const publicHealth = defineDataset<PublicHealthDataset>({
 	id: "public-health",
-	module: "health",
+	topic: "health-status",
 	boundary: { type: "countyAndUnitaryAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

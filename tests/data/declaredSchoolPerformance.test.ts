@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { schoolPerformance } from "@uk-data-atlas/datasets";
+import { schoolPerformance, themeOfTopic } from "@uk-data-atlas/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import type { MapOptions } from "@/lib/types/mapOptions";
@@ -37,7 +37,7 @@ const withMeasure = (measure: string): MapOptions => ({
 describe("school performance declaration", () => {
 	it("is a kebab-case education dataset with four measures", () => {
 		expect(schoolPerformance.id).toBe("school-performance");
-		expect(schoolPerformance.module).toBe("education");
+		expect(themeOfTopic(schoolPerformance.topic)).toBe("education");
 		expect(schoolPerformance.display?.measures.map((m) => m.id)).toEqual([
 			"grade4",
 			"grade5",

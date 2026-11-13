@@ -109,6 +109,9 @@ export type DatasetTheme = (typeof THEME_DEFINITIONS)[number]["id"];
 export type DatasetFoundationPart =
 	(typeof FOUNDATION_PART_DEFINITIONS)[number]["id"];
 
+/** An id the `dataset.module` column accepts: a theme or a foundation part. */
+export type DatasetModule = DatasetTheme | DatasetFoundationPart;
+
 const TOPIC_DEFINITIONS = [
 	// population
 	{
@@ -382,6 +385,14 @@ export const getDatasetTopic = (topic: DatasetTopic): DatasetTopicInfo =>
 /** The theme a topic belongs to. */
 export const themeOfTopic = (topic: DatasetTopic): DatasetTheme =>
 	getDatasetTopic(topic).theme;
+
+/**
+ * The module a topic is downloaded in. Today every theme is one module with
+ * the theme's id, so this is the topic's theme. A module that splits a theme
+ * will map its topics here, and nothing else changes.
+ */
+export const moduleOfTopic = (topic: DatasetTopic): DatasetModule =>
+	themeOfTopic(topic);
 
 /** The topics of a theme, in display order. */
 export const topicsOfTheme = (

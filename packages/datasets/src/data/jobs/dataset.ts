@@ -8,7 +8,7 @@ import { loadJobs } from "./loader.ts";
 
 export const jobs = defineDataset<JobsDataset>({
 	id: "jobs",
-	module: "economy",
+	topic: "labour-market",
 	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	source: {

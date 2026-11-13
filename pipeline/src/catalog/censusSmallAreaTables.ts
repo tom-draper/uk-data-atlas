@@ -1,4 +1,4 @@
-import type { DatasetTheme } from "@uk-data-atlas/datasets";
+import type { DatasetTopic } from "@uk-data-atlas/datasets";
 
 /**
  * Census 2021 tables for England and Wales at the two statistical small-area
@@ -15,8 +15,10 @@ export type Category = readonly [suffix: string, column: string, label: string];
 
 export type CensusTable = {
 	table: string;
-	/** The topic the table's dataset belongs to. */
-	module: DatasetTheme;
+	/** The one topic the table's dataset is filed under. */
+	topic: DatasetTopic;
+	/** Other topics the dataset is also listed under, never the primary. */
+	related?: readonly DatasetTopic[];
 	/** The measure id is the prefix and the category suffix. */
 	measurePrefix: string;
 	unit: string;
@@ -34,7 +36,7 @@ export type CensusTable = {
 export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	{
 		table: "ts001",
-		module: "population",
+		topic: "population-estimates",
 		measurePrefix: "usual-residents",
 		unit: "usual residents",
 		universe:
@@ -64,7 +66,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts007a",
-		module: "population",
+		topic: "population-estimates",
 		measurePrefix: "age",
 		unit: "usual residents",
 		universe: "All usual residents, by age on Census Day.",
@@ -95,7 +97,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts003",
-		module: "population",
+		topic: "population-estimates",
 		measurePrefix: "household-composition",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
@@ -183,7 +185,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts054",
-		module: "housing",
+		topic: "housing-stock",
 		measurePrefix: "tenure",
 		unit: "households",
 		universe: "Households, not people: each household counts once.",
@@ -241,7 +243,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts066",
-		module: "economy",
+		topic: "labour-market",
 		measurePrefix: "economic-activity",
 		unit: "usual residents aged 16 and over",
 		universe:
@@ -308,7 +310,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts021",
-		module: "population",
+		topic: "ethnicity-and-identity",
 		measurePrefix: "ethnicity",
 		unit: "usual residents",
 		universe:
@@ -408,7 +410,7 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 	},
 	{
 		table: "ts037",
-		module: "health",
+		topic: "health-status",
 		measurePrefix: "general-health",
 		unit: "usual residents",
 		universe:

@@ -1,6 +1,6 @@
 import {
 	DATASET_DECLARATIONS,
-	type DatasetTheme,
+	type DatasetTopic,
 } from "@uk-data-atlas/datasets";
 import { statisticsOf } from "@uk-data-atlas/datasets";
 import type { DeclaredDataset } from "../declaredStatistics.ts";
@@ -14,5 +14,5 @@ export const STATISTICS_DATASETS: readonly DeclaredDataset[] =
  * refuses a type that is in neither list.
  */
 export const UNSTORED_DATASETS: Readonly<
-	Record<string, { reason: string; module: DatasetTheme }>
+	Record<string, { reason: string; topic: DatasetTopic }>
 > = {};

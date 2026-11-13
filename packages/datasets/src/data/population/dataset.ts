@@ -8,7 +8,7 @@ import { AGE, byAge } from "./statistics.ts";
 
 export const population = defineDataset<PopulationDataset>({
 	id: "population",
-	module: "population",
+	topic: "population-estimates",
 	boundary: { type: "ward", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	layout: {

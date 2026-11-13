@@ -8,7 +8,7 @@ import { loadGeneralHealth } from "./loader.ts";
 
 export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 	id: "general-health",
-	module: "health",
+	topic: "health-status",
 	boundary: { type: "lsoa", year: 2021 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

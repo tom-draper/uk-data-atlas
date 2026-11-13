@@ -8,7 +8,7 @@ import { loadCouncilTax } from "../new-datasets/loader.ts";
 
 export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 	id: "council-tax",
-	module: "housing",
+	topic: "housing-stock",
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,

@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "@uk-data-atlas/atlas-db";
-import type { DatasetTheme } from "@uk-data-atlas/datasets";
+import type { DatasetTopic } from "@uk-data-atlas/datasets";
 import type {
 	AreaRelationship,
 	CandidacyColumn,
@@ -55,8 +55,13 @@ export type StatisticsObservation = {
 
 export type StatisticsDataset = {
 	slug: string;
-	/** The theme the dataset is packaged under (see `DeclaredDataset`). */
-	module: DatasetTheme;
+	/**
+	 * The one topic the dataset is filed under (see `DeclaredDataset`). The
+	 * stored module is derived from it.
+	 */
+	topic: DatasetTopic;
+	/** Other topics the dataset is also listed under, never the primary. */
+	related?: readonly DatasetTopic[];
 	title: string;
 	description: string;
 	source: StatisticsSource;

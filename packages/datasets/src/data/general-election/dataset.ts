@@ -29,7 +29,7 @@ const MAJORITY = measure(
 
 export const generalElection = defineDataset<GeneralElectionDataset>({
 	id: "general-election",
-	module: "politics",
+	topic: "general-elections",
 	boundary: { type: "constituency", year: 2024 },
 	source: {
 		name: "General Election Results",

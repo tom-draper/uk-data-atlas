@@ -7,6 +7,7 @@ import {
 	isDatasetFoundationPart,
 	isDatasetTheme,
 	isDatasetTopic,
+	moduleOfTopic,
 	themeOfTopic,
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets";
@@ -80,6 +81,16 @@ describe("theme and topic registry", () => {
 		}
 		for (const { id } of DATASET_THEMES)
 			expect(topicsOfTheme(id).length, id).toBeGreaterThan(0);
+	});
+
+	it("downloads each topic in the module of its theme, for now", () => {
+		for (const topic of DATASET_TOPICS) {
+			const module = moduleOfTopic(topic.id);
+			expect(module, topic.id).toBe(topic.theme);
+			expect(
+				isDatasetTheme(module) || isDatasetFoundationPart(module),
+			).toBe(true);
+		}
 	});
 
 	it("has no catch-all topics", () => {

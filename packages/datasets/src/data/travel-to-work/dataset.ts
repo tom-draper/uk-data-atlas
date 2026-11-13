@@ -11,7 +11,7 @@ import { loadTravelToWork } from "./loader.ts";
 
 export const travelToWork = defineDataset<TravelToWorkDataset>({
 	id: "travel-to-work",
-	module: "transport",
+	topic: "commuting",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

@@ -45,7 +45,7 @@ const part = (
 
 export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 	id: "life-expectancy",
-	module: "health",
+	topic: "life-expectancy",
 	boundary: { type: "localAuthority", year: 2024 },
 	source: {
 		name: "Life Expectancy",

@@ -5,7 +5,7 @@ import { loadLandArea } from "./loader.ts";
 
 export const landArea = defineDataset<LandAreaDataset>({
 	id: "land-area",
-	module: "environment",
+	topic: "emissions",
 	source: {
 		name: "Land Area",
 		publisher: "Office for National Statistics",

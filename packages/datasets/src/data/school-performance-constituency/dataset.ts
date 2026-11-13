@@ -15,7 +15,7 @@ import { loadSchoolPerformanceConstituency } from "./loader.ts";
 export const schoolPerformanceConstituency =
 	defineDataset<SchoolPerformanceConstituencyDataset>({
 		id: "school-performance-constituency",
-		module: "education",
+		topic: "schools",
 		boundary: { type: "constituency", year: 2024 },
 		chartPending: true,
 		coverageCountries: ["GB-ENG"],

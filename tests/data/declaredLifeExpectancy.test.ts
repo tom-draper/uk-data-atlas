@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { lifeExpectancy, statisticsOf } from "@uk-data-atlas/datasets";
+import {
+	lifeExpectancy,
+	statisticsOf,
+	themeOfTopic,
+} from "@uk-data-atlas/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets/generated";
 import {
@@ -10,7 +14,7 @@ import {
 describe("life expectancy declaration", () => {
 	it("is a health dataset whose two editions carry its id as their type", () => {
 		expect(lifeExpectancy.id).toBe("life-expectancy");
-		expect(lifeExpectancy.module).toBe("health");
+		expect(themeOfTopic(lifeExpectancy.topic)).toBe("health");
 		const payload = statisticsOf(lifeExpectancy).payload!;
 		const parts =
 			typeof payload.parts === "function"

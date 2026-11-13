@@ -144,7 +144,7 @@ beforeEach(() => {
 		unstored: {
 			sample: {
 				reason: "A fixture kept as a payload.",
-				module: "economy",
+				topic: "labour-market",
 			},
 		},
 		censusTables: [],

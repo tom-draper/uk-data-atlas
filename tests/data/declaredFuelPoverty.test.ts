@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { fuelPoverty, statisticsOf } from "@uk-data-atlas/datasets";
+import {
+	fuelPoverty,
+	statisticsOf,
+	themeOfTopic,
+} from "@uk-data-atlas/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets/generated";
 import {
@@ -10,7 +14,7 @@ import {
 describe("fuel poverty declaration", () => {
 	it("is a deprivation dataset whose 2024 edition carries its id as its type", () => {
 		expect(fuelPoverty.id).toBe("fuel-poverty");
-		expect(fuelPoverty.module).toBe("society");
+		expect(themeOfTopic(fuelPoverty.topic)).toBe("society");
 		const payload = statisticsOf(fuelPoverty).payload!;
 		const parts =
 			typeof payload.parts === "function"

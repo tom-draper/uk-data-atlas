@@ -10,7 +10,7 @@ export const housingAffordability = defineDataset<
 	IndicatorDataset<"housing-affordability">
 >({
 	id: "housing-affordability",
-	module: "housing",
+	topic: "prices-and-affordability",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	publishMapValues: true,

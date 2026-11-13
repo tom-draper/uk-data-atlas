@@ -8,7 +8,7 @@ import { loadHousingTenure } from "./loader.ts";
 
 export const housingTenure = defineDataset<IndicatorDataset<"housing-tenure">>({
 	id: "housing-tenure",
-	module: "housing",
+	topic: "housing-stock",
 	boundary: { type: "lsoa", year: 2021 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

@@ -806,7 +806,8 @@ export function declaredStatistics(
 
 		return {
 			slug: entry.output,
-			module: config.module,
+			topic: config.topic,
+			...(config.related ? { related: config.related } : {}),
 			title: sourceText(entry.source, "name", type)!,
 			description: sourceText(entry.source, "description", type)!,
 			source: {

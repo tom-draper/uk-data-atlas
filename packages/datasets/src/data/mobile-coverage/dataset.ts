@@ -15,7 +15,7 @@ const WEIGHT = {
 
 export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 	id: "mobile-coverage",
-	module: "infrastructure",
+	topic: "digital-connectivity",
 	source: {
 		name: "Mobile Coverage",
 		publisher: "Ofcom",

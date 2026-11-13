@@ -7,7 +7,7 @@ import { loadHousePrice } from "./loader.ts";
 
 export const housePrice = defineDataset<HousePriceDataset>({
 	id: "house-price",
-	module: "housing",
+	topic: "prices-and-affordability",
 	boundary: { type: "ward", year: 2021 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	layout: { regionChunks: { kind: "regional" } },

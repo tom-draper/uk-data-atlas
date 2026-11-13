@@ -32,7 +32,7 @@ const headerMonth = (_key: string, header: DeclaredHeader) => {
 
 export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 	id: "nhs-waiting",
-	module: "health",
+	topic: "nhs-services",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG"],
 	layout: { locationScope: { kind: "mapped", mappingField: "ladToIcb" } },

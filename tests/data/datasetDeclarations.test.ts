@@ -16,7 +16,6 @@ import {
 	CATALOGUE_DATASET_DEFINITIONS,
 	HAND_WRITTEN_DATASET_DEFINITIONS,
 } from "@uk-data-atlas/datasets";
-import { DATASET_THEMES, isDatasetTheme } from "@uk-data-atlas/datasets";
 import { UPDATE_CADENCES } from "@uk-data-atlas/datasets";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import { writeSqliteTables } from "../../pipeline/src/storage/index";
@@ -47,12 +46,9 @@ describe("dataset declarations", () => {
 		}
 	});
 
-	it("declares a valid module, a licence and the source terms", () => {
+	it("declares a licence and the source terms", () => {
 		for (const declaration of DATASET_DECLARATIONS) {
 			const { source } = declaration;
-			expect(isDatasetTheme(declaration.module), declaration.id).toBe(
-				true,
-			);
 			expect(source.licence, declaration.id).not.toBe("");
 			expect(source.licenceUrl, declaration.id).toMatch(/^https?:/);
 			expect(source.sourceUrl, declaration.id).toMatch(/^https?:/);
@@ -61,13 +57,9 @@ describe("dataset declarations", () => {
 		}
 	});
 
-	it("gives every statistics declaration a unique type and a module", () => {
+	it("gives every statistics declaration a unique type", () => {
 		const types = STATISTICS_DATASETS.map(({ type }) => type);
 		expect(new Set(types).size).toBe(types.length);
-		for (const dataset of STATISTICS_DATASETS)
-			expect(DATASET_THEMES.map(({ id }) => id)).toContain(
-				dataset.module,
-			);
 	});
 
 	it("keeps the measure ids of a declaration unique", () => {
@@ -159,11 +151,11 @@ describe("declared dataset rows", () => {
 		},
 	};
 
-	it("is registered for statistics under its id with its module", () => {
+	it("is registered for statistics under its id with its topic", () => {
 		const config = STATISTICS_DATASETS.find(
 			({ type }) => type === "claimant-count",
 		);
-		expect(config?.module).toBe("economy");
+		expect(config?.topic).toBe("labour-market");
 	});
 
 	it("stores rows and generates the compiled payload back from them", () => {

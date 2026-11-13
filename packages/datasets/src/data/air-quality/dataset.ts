@@ -10,7 +10,7 @@ const concentration = (name: string) =>
 
 export const airQuality = defineDataset<AirQualityDataset>({
 	id: "air-quality",
-	module: "environment",
+	topic: "air-quality",
 	boundary: { type: "localAuthority", year: 2024 },
 	source: {
 		name: "Air Quality",

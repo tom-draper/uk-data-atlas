@@ -4,6 +4,7 @@ import {
 	ethnicity,
 	population,
 	statisticsOf,
+	themeOfTopic,
 } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets/generated";
 
@@ -17,7 +18,7 @@ describe("declared ethnicity and population datasets", () => {
 		]);
 		for (const dataset of declared) {
 			expect(DATASET_DECLARATIONS).toContain(dataset);
-			expect(dataset.module).toBe("population");
+			expect(themeOfTopic(dataset.topic)).toBe("population");
 		}
 	});
 

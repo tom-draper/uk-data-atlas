@@ -6,7 +6,7 @@ import type {
 	DatasetReader,
 } from "../data/catalog/types.ts";
 import type { DatasetCountry } from "../types/coverage.ts";
-import type { DatasetTheme } from "./taxonomy.ts";
+import type { DatasetTopic } from "./taxonomy.ts";
 import type {
 	DeclaredDataset,
 	DeclaredHeader,
@@ -57,12 +57,12 @@ export type DeclaredBoundary = { type: BoundaryType; year: number };
 
 /**
  * The statistics half of a declaration. `type` is the declaration's id and
- * `module` its module, so neither is repeated. The payload header is built
+ * `topic` its topic, so neither is repeated. The payload header is built
  * from the id and boundary unless `parts` says otherwise.
  */
 export type DeclaredStatistics = Omit<
 	DeclaredDataset,
-	"type" | "module" | "payload"
+	"type" | "topic" | "related" | "payload"
 > & {
 	payload: Omit<DeclaredPayload, "parts"> & {
 		parts?: DeclaredPayload["parts"];
@@ -143,8 +143,10 @@ export type DatasetDeclaration<
 > = {
 	/** The only identifier: kebab-case, used by the API, pipeline and website. */
 	id: string;
-	/** The theme the dataset is packaged under (see `DeclaredDataset`). */
-	module: DatasetTheme;
+	/** The one topic the dataset is filed under (see `DeclaredDataset`). */
+	topic: DatasetTopic;
+	/** Other topics the dataset is also listed under, never the primary. */
+	related?: readonly DatasetTopic[];
 	source: DeclaredSource;
 	boundary: DeclaredBoundary;
 	/** Countries the source can cover, copied to each compiled vintage. */
@@ -237,7 +239,8 @@ export function statisticsOf(declaration: DatasetDeclaration): DeclaredDataset {
 	return {
 		...statistics,
 		type: declaration.id,
-		module: declaration.module,
+		topic: declaration.topic,
+		...(declaration.related ? { related: declaration.related } : {}),
 		payload: {
 			...rest,
 			parts:

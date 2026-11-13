@@ -16,7 +16,7 @@ const WEIGHT = {
 
 export const broadband = defineDataset<BroadbandDataset>({
 	id: "broadband",
-	module: "infrastructure",
+	topic: "digital-connectivity",
 	source: {
 		name: "Broadband Coverage",
 		publisher: "Ofcom",

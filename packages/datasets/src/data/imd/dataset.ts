@@ -99,7 +99,7 @@ const base = deprivationStatistics({
 
 export const imd = defineDataset<IMDDataset>({
 	id: "imd",
-	module: "society",
+	topic: "deprivation",
 	boundary: { type: "lsoa", year: 2021 },
 	source: {
 		name: "Indices of Multiple Deprivation",

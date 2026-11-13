@@ -48,7 +48,7 @@ const sumPartyVotes = (record: Record<string, unknown>) =>
 
 export const localElection = defineDataset<LocalElectionDataset>({
 	id: "local-election",
-	module: "politics",
+	topic: "local-elections",
 	boundary: { type: "ward", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	layout: {
