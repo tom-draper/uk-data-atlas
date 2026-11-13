@@ -11,7 +11,7 @@ import { ELECTRICITY_CONSUMPTION_SOURCE as SOURCE } from "../energy-consumption/
 export const electricityConsumption =
 	defineDataset<ElectricityConsumptionDataset>({
 		id: "electricity-consumption",
-		module: "environment",
+		topic: "energy",
 		boundary: { type: "localAuthority", year: 2025 },
 		coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
 		source: {

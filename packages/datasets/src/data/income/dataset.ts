@@ -7,7 +7,7 @@ import { payStatistics } from "./statistics.ts";
 
 export const income = defineDataset<IncomeDataset>({
 	id: "income",
-	module: "economy",
+	topic: "earnings-and-income",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

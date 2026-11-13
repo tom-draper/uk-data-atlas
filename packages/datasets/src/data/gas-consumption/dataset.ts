@@ -10,7 +10,7 @@ import { GAS_CONSUMPTION_SOURCE as SOURCE } from "../energy-consumption/source.t
 
 export const gasConsumption = defineDataset<GasConsumptionDataset>({
 	id: "gas-consumption",
-	module: "environment",
+	topic: "energy",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
 	source: {

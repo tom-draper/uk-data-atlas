@@ -85,7 +85,7 @@ used for the API, pipeline, files, SQLite slug and website.
 ```ts
 export const claimantCount = defineDataset<ClaimantCountDataset>({
 	id: "claimant-count",
-	module: "economy",
+	topic: "labour-market",
 	source: { name, publisher, sourceUrl, licence, licenceUrl, attribution,
 	          description, year, cadence, notes },
 	boundary: { type: "localAuthority", year: 2024 },
@@ -104,10 +104,10 @@ registry and the dataset record types from them.
   than replacing it. The declaration types and the `periods`, `measure` and
   `yearParts` helpers move to `packages/datasets` so a declaration can sit
   beside its loader.
-- `module` is a required tag, written to `dataset.module` in `atlas.sqlite`.
-  It is typed as a `DatasetTheme` from the registry for now. Task 2 of
-  `docs/data-organisation.md` replaces it with a primary `topic`, and the
-  module is derived from the topic's theme.
+- `topic` is required: the one registered topic the dataset is filed under.
+  `related` is an optional list of other topics, never the primary. The module
+  is derived from the topic (`moduleOfTopic`) and written to `dataset.module`
+  in `atlas.sqlite`; it is not set by hand.
 - Everything that used to be a second copy reads the declaration: the API
   catalogue compiler, the field bindings, the manifest and registry, website
   chart and map options, legend, ranking labels and place figures.
@@ -135,10 +135,10 @@ of the `society` theme, `population` and `infrastructure` keep their names, and
 
 ## Migration order
 
-1. Done: a `module` on every existing statistics declaration and the
-   `dataset.module` column with a test, now typed from the theme registry.
-   Next is a primary topic on every dataset (`docs/data-organisation.md`,
-   task 2).
+1. Done: a primary `topic` on every dataset, with `dataset.module` derived
+   from it and tests (`docs/data-organisation.md`, task 2). The census small
+   area tables and fuel poverty are filed the same way. `land-area` is
+   provisionally filed under `emissions` because no registered topic fits it.
 2. Move the declaration types and helpers to `packages/datasets`; add
    `DatasetDeclaration`, `declareDataset` and the registry. A test requires
    every catalogue dataset to have one declaration with a unique id, a valid

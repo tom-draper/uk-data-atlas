@@ -7,7 +7,7 @@ import { loadGhgEmissions } from "./loader.ts";
 
 export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 	id: "ghg-emissions",
-	module: "environment",
+	topic: "emissions",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	source: {

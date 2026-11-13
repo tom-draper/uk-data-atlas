@@ -11,7 +11,7 @@ import { loadCarAvailability } from "./loader.ts";
 
 export const carAvailability = defineDataset<CarAvailabilityDataset>({
 	id: "car-availability",
-	module: "transport",
+	topic: "vehicles",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

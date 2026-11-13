@@ -6,7 +6,7 @@ import { loadBrexitConstituency } from "./loader.ts";
 
 export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 	id: "brexit-constituency",
-	module: "politics",
+	topic: "referendums",
 	boundary: { type: "constituency", year: 2015 },
 	coverageCountries: ["GB-ENG"],
 	source: {

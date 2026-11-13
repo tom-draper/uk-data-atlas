@@ -8,7 +8,7 @@ import { loadPupilAbsence } from "./loader.ts";
 
 export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 	id: "pupil-absence",
-	module: "education",
+	topic: "schools",
 	boundary: { type: "countyAndUnitaryAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

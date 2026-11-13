@@ -447,7 +447,7 @@ const dataset = (
 ): StatisticsDataset =>
 	({
 		slug,
-		module: "population",
+		topic: "population-estimates",
 		title: slug,
 		description: slug,
 		source: {

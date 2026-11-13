@@ -6,7 +6,7 @@ import { loadPopulationUk } from "../population/ukLoader.ts";
 
 export const populationUk = defineDataset<PopulationUkDataset>({
 	id: "population-uk",
-	module: "population",
+	topic: "population-estimates",
 	boundary: { type: "localAuthority", year: 2023 },
 	chartPending: true,
 	source: {

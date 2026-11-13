@@ -5,7 +5,7 @@ import { loadRoadCollisionsByAuthority } from "../road-safety/authorityLoader.ts
 
 export const roadCollisions = defineDataset<RoadCollisionsDataset>({
 	id: "road-collisions",
-	module: "transport",
+	topic: "road-safety",
 	boundary: { type: "localAuthority", year: 2025 },
 	chartPending: true,
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],

@@ -3,7 +3,7 @@ import { crosswalkInputSourceTables } from "../storage/crosswalkInputSources.ts"
 import { licenceTables } from "../storage/licenceTables.ts";
 import {
 	type StatisticsInput,
-	type DatasetTheme,
+	type DatasetTopic,
 } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics } from "@uk-data-atlas/measures";
@@ -92,9 +92,7 @@ const statisticsInputs = (
 		source: unknown;
 		fingerprint: string;
 	}[],
-	unstored: Readonly<
-		Record<string, { reason: string; module: DatasetTheme }>
-	>,
+	unstored: Readonly<Record<string, { reason: string; topic: DatasetTopic }>>,
 ): StatisticsInput[] =>
 	entries.flatMap((entry): StatisticsInput[] => {
 		const read = () =>
@@ -136,7 +134,7 @@ const statisticsInputs = (
 			return [
 				{
 					slug: entry.output,
-					module: unstored[entry.type]!.module,
+					topic: unstored[entry.type]!.topic,
 					title: metadata.name ?? entry.output,
 					description:
 						metadata.description ?? unstored[entry.type]!.reason,
@@ -172,7 +170,7 @@ export const buildAtlasSqlite = (
 		censusTables = CENSUS_SMALL_AREA_TABLES,
 	}: {
 		unstored?: Readonly<
-			Record<string, { reason: string; module: DatasetTheme }>
+			Record<string, { reason: string; topic: DatasetTopic }>
 		>;
 		censusTables?: readonly CensusTable[];
 	} = {},

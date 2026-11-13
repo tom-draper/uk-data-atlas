@@ -37,7 +37,7 @@ const ETHNICITY_CODES: Readonly<Record<string, string>> = Object.fromEntries(
 
 export const ethnicity = defineDataset<EthnicityDataset>({
 	id: "ethnicity",
-	module: "population",
+	topic: "ethnicity-and-identity",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

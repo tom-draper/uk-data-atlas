@@ -15,7 +15,7 @@ import { loadSchoolPerformance } from "./loader.ts";
 
 export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 	id: "school-performance",
-	module: "education",
+	topic: "schools",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG"],
 	source: {

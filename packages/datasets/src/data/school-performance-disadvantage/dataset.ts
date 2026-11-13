@@ -65,7 +65,7 @@ const GAP_MINIMUM_PUPILS = 6;
 export const schoolPerformanceDisadvantage =
 	defineDataset<SchoolPerformanceGapDataset>({
 		id: "school-performance-disadvantage",
-		module: "education",
+		topic: "schools",
 		boundary: { type: "localAuthority", year: 2024 },
 		coverageCountries: ["GB-ENG"],
 		source: {

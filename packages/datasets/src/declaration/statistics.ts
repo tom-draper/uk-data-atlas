@@ -1,4 +1,4 @@
-import type { DatasetTheme } from "./taxonomy.ts";
+import type { DatasetTopic } from "./taxonomy.ts";
 import type {
 	AreaRelationship,
 	CandidacyColumn,
@@ -87,11 +87,13 @@ export type DeclaredDataset = {
 	/** The manifest `type` this describes. */
 	type: string;
 	/**
-	 * The theme the dataset is packaged under, stored with it in the database.
-	 * Transitional: a primary `topic` replaces this and the module is derived
-	 * from it (`docs/data-organisation.md`, task 2).
+	 * The one topic the dataset is filed under (`docs/data-organisation.md`).
+	 * The module it is packaged in, stored with it in the database, is derived
+	 * from the topic (`moduleOfTopic`) and is never set by hand.
 	 */
-	module: DatasetTheme;
+	topic: DatasetTopic;
+	/** Other topics the dataset is also listed under, never the primary. */
+	related?: readonly DatasetTopic[];
 	measures: StatisticsMeasure[];
 	dimensions?: DeclaredDimension[];
 	fields:

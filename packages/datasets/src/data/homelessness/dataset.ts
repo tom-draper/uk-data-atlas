@@ -7,7 +7,7 @@ import { loadHomelessness } from "./loader.ts";
 
 export const homelessness = defineDataset<HomelessnessDataset>({
 	id: "homelessness",
-	module: "housing",
+	topic: "homelessness",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

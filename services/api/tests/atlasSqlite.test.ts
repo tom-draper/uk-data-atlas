@@ -290,7 +290,7 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 	const unstored = {
 		sample: {
 			reason: "A fixture kept as a payload.",
-			module: "economy" as const,
+			topic: "economic-output" as const,
 		},
 	};
 	const path = buildAtlasSqlite(root, { unstored, censusTables: [] });

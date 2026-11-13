@@ -6,7 +6,7 @@ import { loadBrexit } from "./loader.ts";
 
 export const brexit = defineDataset<BrexitLADDataset>({
 	id: "brexit",
-	module: "politics",
+	topic: "referendums",
 	boundary: { type: "localAuthority", year: 2016 },
 	source: {
 		name: "EU Referendum Results",

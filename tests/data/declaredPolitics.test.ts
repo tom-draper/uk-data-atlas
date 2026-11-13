@@ -6,6 +6,7 @@ import {
 	generalElection,
 	localElection,
 	statisticsOf,
+	themeOfTopic,
 } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets/generated";
 
@@ -21,7 +22,7 @@ describe("declared politics datasets", () => {
 		]);
 		for (const dataset of politics) {
 			expect(DATASET_DECLARATIONS).toContain(dataset);
-			expect(dataset.module).toBe("politics");
+			expect(themeOfTopic(dataset.topic)).toBe("politics");
 		}
 	});
 

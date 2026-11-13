@@ -10,7 +10,7 @@ export const adultSocialCareOutcomes = defineDataset<
 	IndicatorDataset<"adult-social-care-outcomes">
 >({
 	id: "adult-social-care-outcomes",
-	module: "health",
+	topic: "social-care",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,

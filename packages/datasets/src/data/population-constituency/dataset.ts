@@ -12,7 +12,7 @@ const WORKBOOK =
 export const populationConstituency =
 	defineDataset<PopulationConstituencyDataset>({
 		id: "population-constituency",
-		module: "population",
+		topic: "population-estimates",
 		source: {
 			name: "Population (Constituency)",
 			publisher: "Office for National Statistics",

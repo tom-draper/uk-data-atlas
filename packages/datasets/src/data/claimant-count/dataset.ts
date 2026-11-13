@@ -7,7 +7,7 @@ import { loadClaimantCount } from "./loader.ts";
 
 export const claimantCount = defineDataset<ClaimantCountDataset>({
 	id: "claimant-count",
-	module: "economy",
+	topic: "labour-market",
 	source: {
 		name: "Claimant Count",
 		publisher: "Office for National Statistics",

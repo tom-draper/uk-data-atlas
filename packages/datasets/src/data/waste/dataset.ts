@@ -48,7 +48,7 @@ const INCLUDES_REUSE = "Includes composting and reuse";
 
 export const waste = defineDataset<IndicatorDataset<"waste">>({
 	id: "waste",
-	module: "environment",
+	topic: "waste",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	source: {

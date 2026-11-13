@@ -11,19 +11,28 @@ import { type StatisticsInput } from "@uk-data-atlas/measures";
 import {
 	DATASET_FOUNDATION_PARTS,
 	DATASET_THEMES,
+	isDatasetTopic,
+	moduleOfTopic,
 } from "@uk-data-atlas/datasets";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
 
-/** The contest columns stored as the publisher's text. */
 /** Every id the `dataset.module` column accepts: themes and foundation parts. */
 const MODULE_IDS: readonly string[] = [
 	...DATASET_THEMES,
 	...DATASET_FOUNDATION_PARTS,
 ].map(({ id }) => id);
 
+/** The module a dataset is stored under, derived from its primary topic. */
+const moduleOf = ({ slug, topic }: { slug: string; topic: string }) => {
+	if (!isDatasetTopic(topic))
+		throw new Error(`Unknown dataset topic ${topic} for ${slug}`);
+	return moduleOfTopic(topic);
+};
+
+/** The contest columns stored as the publisher's text. */
 const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 	(column) =>
 		column !== "region" &&
@@ -167,7 +176,7 @@ export function statisticsTables(
 				return datasets.map((dataset, index) => [
 					datasetIds[index]!,
 					dataset.slug,
-					dataset.module,
+					moduleOf(dataset),
 					dataset.title,
 					dataset.description,
 					sources.id(sourceKey(dataset.source), dataset.slug),

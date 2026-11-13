@@ -17,7 +17,7 @@ const money: DisplayFormat = { kind: "millions", prefix: "£" };
 
 export const regionalGdpItl3 = defineDataset<RegionalGdpItl3Dataset>({
 	id: "regional-gdp-itl3",
-	module: "economy",
+	topic: "economic-output",
 	boundary: { type: "itl3", year: 2025 },
 	coverageCountries: [...COVERAGE],
 	source: {

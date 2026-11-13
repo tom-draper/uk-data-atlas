@@ -10,7 +10,7 @@ export const localGovernmentFinance = defineDataset<
 	IndicatorDataset<"local-government-finance">
 >({
 	id: "local-government-finance",
-	module: "economy",
+	topic: "public-finance",
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,

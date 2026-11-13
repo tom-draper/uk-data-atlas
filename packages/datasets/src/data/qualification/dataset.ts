@@ -11,7 +11,7 @@ import { loadQualification } from "./loader.ts";
 
 export const qualification = defineDataset<QualificationDataset>({
 	id: "qualification",
-	module: "education",
+	topic: "qualifications",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {

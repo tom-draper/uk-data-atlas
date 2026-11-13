@@ -119,7 +119,7 @@ const BOUNDARY_SETS: Readonly<Record<string, string>> = {
 export const historicalGeneralElection =
 	defineDataset<HistoricalGeneralElectionDataset>({
 		id: "historical-general-election",
-		module: "politics",
+		topic: "general-elections",
 		boundary: { type: "constituency", year: 2019 },
 		chartPending: true,
 		source: {

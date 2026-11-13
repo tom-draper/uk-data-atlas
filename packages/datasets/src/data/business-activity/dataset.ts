@@ -9,7 +9,7 @@ export const businessActivity = defineDataset<
 	IndicatorDataset<"business-activity">
 >({
 	id: "business-activity",
-	module: "economy",
+	topic: "business",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	source: {

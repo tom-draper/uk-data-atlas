@@ -9,7 +9,8 @@ export const electricVehicleChargers = defineDataset<
 	IndicatorDataset<"electric-vehicle-chargers">
 >({
 	id: "electric-vehicle-chargers",
-	module: "transport",
+	topic: "vehicles",
+	related: ["energy"],
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	source: {
