@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import packageJson from "./package.json";
 import { LEGACY_DATA_PAGES } from "./lib/docs/legacyDataPages";
+import { DATASET_ALIASES } from "./packages/datasets/src/declaration/datasetAliases";
 
 const dataVersion =
 	process.env.VERCEL_GIT_COMMIT_SHA ?? `v${packageJson.version}`;
@@ -92,6 +93,20 @@ const nextConfig: NextConfig = {
 				destination: "/docs/v1/datasets/:path*",
 				permanent: true,
 			},
+			// Datasets that were merged keep their old addresses. A merged
+			// dataset stays in the topic of the datasets it replaced.
+			...Object.entries(DATASET_ALIASES).flatMap(([old, alias]) => [
+				{
+					source: `/docs/v1/datasets/:theme/:topic/${old}`,
+					destination: `/docs/v1/datasets/:theme/:topic/${alias.dataset}`,
+					permanent: true,
+				},
+				{
+					source: `/atlas/:location/${old}`,
+					destination: `/atlas/:location/${alias.dataset}`,
+					permanent: true,
+				},
+			]),
 		];
 	},
 	async headers() {

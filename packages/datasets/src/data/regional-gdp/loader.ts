@@ -1,8 +1,6 @@
 import type {
 	RegionalGdpAreaData,
-	RegionalGdpItl1Dataset,
-	RegionalGdpItl2Dataset,
-	RegionalGdpItl3Dataset,
+	RegionalGdpDataset,
 } from "../../types/regionalGdp.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
@@ -20,14 +18,35 @@ const BOUNDARY_YEAR = 2025;
 
 type Tier = {
 	file: string;
-	type: "regional-gdp-itl1" | "regional-gdp-itl2" | "regional-gdp-itl3";
-	boundaryType: "itl1" | "itl2" | "itl3";
+	boundaryType: RegionalGdpDataset["boundaryType"];
 };
 
-const load = async (
+const TIERS: readonly Tier[] = [
+	{ file: "gdp-itl1-1998-2023.csv", boundaryType: "itl1" },
+	{ file: "gdp-itl2-1998-2023.csv", boundaryType: "itl2" },
+	{ file: "gdp-itl3-1998-2023.csv", boundaryType: "itl3" },
+];
+
+/**
+ * The key of one tier and year in the compiled payload. The tier the dataset
+ * is drawn at keeps the bare year, as the website looks its entries up by
+ * year; the other tiers are prefixed with theirs, such as `itl1-2023`.
+ */
+export const regionalGdpKey = (
+	boundaryType: Tier["boundaryType"],
+	year: number | string,
+) => (boundaryType === "itl3" ? `${year}` : `${boundaryType}-${year}`);
+
+/** The id a tier and year carry in the compiled payload. */
+export const regionalGdpId = (
+	boundaryType: Tier["boundaryType"],
+	year: number | string,
+) => `regional-gdp-${boundaryType}${year}`;
+
+const loadTier = async (
 	read: (path: string) => Promise<string>,
-	{ file, type, boundaryType }: Tier,
-) => {
+	{ file, boundaryType }: Tier,
+): Promise<Record<string, RegionalGdpDataset>> => {
 	const { data } = await parseCsv(
 		await read(sourceDir("regional-gdp", `${file}`)),
 		{ header: true },
@@ -52,10 +71,10 @@ const load = async (
 		[...byYear.entries()]
 			.sort(([left], [right]) => left - right)
 			.map(([year, records]) => [
-				year,
+				regionalGdpKey(boundaryType, year),
 				{
-					id: `${type}${year}`,
-					type,
+					id: regionalGdpId(boundaryType, year),
+					type: "regional-gdp" as const,
 					year,
 					boundaryType,
 					boundaryYear: BOUNDARY_YEAR,
@@ -65,23 +84,10 @@ const load = async (
 	);
 };
 
-export const loadRegionalGdpItl1 = (read: (path: string) => Promise<string>) =>
-	load(read, {
-		file: "gdp-itl1-1998-2023.csv",
-		type: "regional-gdp-itl1",
-		boundaryType: "itl1",
-	}) as Promise<Record<string, RegionalGdpItl1Dataset>>;
-
-export const loadRegionalGdpItl2 = (read: (path: string) => Promise<string>) =>
-	load(read, {
-		file: "gdp-itl2-1998-2023.csv",
-		type: "regional-gdp-itl2",
-		boundaryType: "itl2",
-	}) as Promise<Record<string, RegionalGdpItl2Dataset>>;
-
-export const loadRegionalGdpItl3 = (read: (path: string) => Promise<string>) =>
-	load(read, {
-		file: "gdp-itl3-1998-2023.csv",
-		type: "regional-gdp-itl3",
-		boundaryType: "itl3",
-	}) as Promise<Record<string, RegionalGdpItl3Dataset>>;
+/** All three tiers, itl1 first, each year of each tier its own entry. */
+export const loadRegionalGdp = async (
+	read: (path: string) => Promise<string>,
+): Promise<Record<string, RegionalGdpDataset>> => {
+	const tiers = await Promise.all(TIERS.map((tier) => loadTier(read, tier)));
+	return Object.assign({}, ...tiers);
+};

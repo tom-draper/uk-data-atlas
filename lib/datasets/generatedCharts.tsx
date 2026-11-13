@@ -232,7 +232,7 @@ export const CHART_PRESENTATIONS = {
 	"health-public-health": Chart11Presentation,
 	"education-pupil-absence": Chart11Presentation,
 	"education-qualification": Chart20Presentation,
-	"economy-regional-gdp-itl3": Chart11Presentation,
+	"economy-regional-gdp": Chart11Presentation,
 	"education-school-performance": Chart11Presentation,
 	"education-school-performance-disadvantage": Chart11Presentation,
 	"society-simd": Chart21Presentation,

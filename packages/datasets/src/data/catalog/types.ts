@@ -145,6 +145,12 @@ export interface DatasetDefinition<
 	/** Geography level used by the compiled records. */
 	boundaryType: BoundaryType;
 	/**
+	 * Further geography levels the compiled file also holds, for a dataset
+	 * published at several levels. The charts and maps read `boundaryType`
+	 * only; the rest are served to the catalogue and the API.
+	 */
+	additionalBoundaryTypes?: readonly BoundaryType[];
+	/**
 	 * The record field the map colours areas by, for a dataset whose map reads one
 	 * plain number per area. The build emits it as a code-aligned value array
 	 * (see `@uk-data-atlas/map-tiles/mapValues`). Omit it for any dataset whose map

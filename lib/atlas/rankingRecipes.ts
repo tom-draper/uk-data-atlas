@@ -710,7 +710,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	qualification: {
 		columns: [breakdownShare("No qualifications", "noQualifications")],
 	},
-	"regional-gdp-itl3": {
+	"regional-gdp": {
 		level: "itl3",
 		rows: (context) =>
 			Object.entries(context.edition.data).flatMap(([code, record]) => {

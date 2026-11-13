@@ -85,11 +85,7 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 		["local-government-finance"],
 	],
 	["housing/housing-stock/council-tax", ["council-tax"]],
-	[
-		"economy/economic-output/regional-gdp",
-		["regional-gdp-itl1", "regional-gdp-itl2", "regional-gdp-itl3"],
-		"The three ITL levels are one dataset after task 15.",
-	],
+	["economy/economic-output/regional-gdp", ["regional-gdp"]],
 	["economy/labour-market/unemployment", ["unemployment"]],
 	[
 		"housing/prices-and-affordability/housing-affordability",
@@ -97,7 +93,8 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 	],
 	[
 		"education/schools/school-performance-constituency",
-		["school-performance-constituency"],
+		["school-performance"],
+		"The constituency half of school-performance, a separate file bundle from the local authority one.",
 	],
 	[
 		"education/schools/school-performance",

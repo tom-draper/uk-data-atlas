@@ -75,9 +75,7 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
-	regionalGdpItl1: Input;
-	regionalGdpItl2: Input;
-	regionalGdpItl3: Input;
+	regionalGdp: Input;
 	electricityConsumption: Input;
 	gasConsumption: Input;
 	waste?: Input;
@@ -124,9 +122,7 @@ export const compileDataCatalog = ({
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
 	localElection: localElectionPath,
-	regionalGdpItl1: regionalGdpItl1Path,
-	regionalGdpItl2: regionalGdpItl2Path,
-	regionalGdpItl3: regionalGdpItl3Path,
+	regionalGdp: regionalGdpPath,
 	electricityConsumption: electricityConsumptionPath,
 	gasConsumption: gasConsumptionPath,
 	waste: wastePath,
@@ -197,11 +193,7 @@ export const compileDataCatalog = ({
 		"electricity-consumption": electricityConsumptionPath,
 		"gas-consumption": gasConsumptionPath,
 	});
-	const regionalGdp = compileRegionalGdp(catalogManifest, {
-		"regional-gdp-itl1": regionalGdpItl1Path,
-		"regional-gdp-itl2": regionalGdpItl2Path,
-		"regional-gdp-itl3": regionalGdpItl3Path,
-	});
+	const regionalGdp = compileRegionalGdp(catalogManifest, regionalGdpPath);
 	const jobs = compileJobs(catalogManifest, jobsPath, populationCodes);
 	const declaredFile = (id: string) => {
 		const path = declared[id];

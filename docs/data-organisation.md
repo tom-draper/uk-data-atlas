@@ -37,10 +37,12 @@ Examples of the drift:
   `electricity-consumption` and `gas-consumption`, `council-tax-stock` builds
   `council-tax`, `nhs-waiting-times` builds `nhs-waiting`,
   `public-health-outcomes-framework` builds `public-health`.
-- Dataset ids that encode a geography or history: `regional-gdp-itl1/2/3`,
+- Dataset ids that encode a geography or history. Task 15 merged
+  `regional-gdp-itl1/2/3` into `regional-gdp` and
+  `school-performance-constituency` into `school-performance` (their old ids
+  are API aliases, see "Merged datasets"). Kept separate by decision, with reasons there:
   `brexit-constituency`, `population-constituency`, `population-uk`,
-  `school-performance-constituency`, `life-expectancy-series`,
-  `historical-general-election`.
+  `life-expectancy-series`, `historical-general-election`.
 - Source nesting depth varies: `politics/elections/local-elections/...`,
   `demographics/population/census-2021-lsoa`, `economics/housing/mean-price-by-ward`.
 - Unused sources: seven in `health/` (childhood-vaccination-cover,
@@ -217,8 +219,8 @@ strict, so an unknown field such as `topics` is an error. A source of `kind`
 dataset and must not name one: `boundary`, `lookup`, `postcode-directory`, and
 two added here, `support` (crosswalk weight sources in `core/`) and `staged`
 (everything in `_staging/`). A folder that feeds several datasets names the one
-it is named for, or the first of its group (`regional-gdp` names
-`regional-gdp-itl1`, `energy-consumption` names `electricity-consumption`); the
+it is named for, or the first of its group (`energy-consumption` names
+`electricity-consumption`); the
 full lists stay in `packages/datasets/src/declaration/sourceDatasets.ts`. The raw sources are not in
 git, so `scripts/migrate-source-meta.mjs` (run by `pnpm data:download`, or by
 hand with `--dry-run` first) adds `dataset` or `kind`, drops `topics` and
@@ -312,14 +314,16 @@ datasets it feeds. A folder not named for a dataset carries a reason there:
 - `environment/energy/energy-consumption` feeds `electricity-consumption` and
   `gas-consumption` from one download. Splitting it into two folders would need
   the download split too, so it stays.
-- `economy/economic-output/regional-gdp` feeds `regional-gdp-itl1`, `-itl2` and
-  `-itl3`. Task 15 merges them under one id, which is the folder's name.
+- `education/schools/school-performance-constituency` feeds `school-performance`.
+  It is the constituency half of that dataset, a separate file bundle from the
+  local authority one, and the raw sources are not in git, so it keeps its
+  folder.
 - `core/` and `_staging/` folders are foundation data and unbuilt sources, so
   the rule does not apply to them.
 
 The census tables `ts037` and `ts054` feed two datasets each (the census table
 and a derived one, `general-health`, `housing-tenure`). They are named for the
-census table, `census-2021-ts037`. Task 15 and the dataset renames may move
+census table, `census-2021-ts037`. The dataset renames may move
 `ts054` under `housing-tenure/census-2021`.
 
 ### Moving an existing checkout
@@ -420,30 +424,80 @@ the number of modules can grow freely.
   and `module` to catalogue and dataset responses, filters on each, and
   `GET /v1/themes` and `GET /v1/modules`.
 
+## Merged datasets
+
+Task 15 merged datasets that were one measure split by geography, keeping the
+old ids as aliases (`DATASET_ALIASES` in
+`packages/datasets/src/declaration/datasetAliases.ts`).
+
+| Retired id                            | Now                                              |
+| ------------------------------------- | ------------------------------------------------ |
+| `regional-gdp-itl1`, `-itl2`, `-itl3` | `regional-gdp`, geography `itl1`, `itl2`, `itl3` |
+| `school-performance-constituency`     | `school-performance`, geography `constituency`   |
+
+A dataset declares its primary `boundary` and any others in
+`additionalBoundaryTypes`. Charts and maps read only the primary one. A part of
+the payload says which geography it is on in its header, and `partPerGeography`
+keeps each part's series on that geography.
+
+On the API an alias works anywhere a dataset id is taken. `/v1/datasets/<old>`
+answers 308 to the merged dataset. `datasetId=<old>` is rewritten to the merged
+id, and on `/v1/data/*` requests `geography` is set to the old geography unless
+the caller gave one. A rewritten response carries `content-location`. The
+website redirects `/docs/v1/datasets/:theme/:topic/<old>` and
+`/atlas/:location/<old>`.
+
+Kept separate by decision, because they are not one measure split by geography.
+Each stays its own dataset; none is open work under task 15.
+
+- `brexit` and `brexit-constituency`: the constituency figures are Hanretty's
+  modelled estimates from a different publisher, source and licence, and carry
+  one measure (`pctLeave`) against the referendum count. Cross-list them under
+  task 17 (`related`).
+- `population`, `population-uk` and `population-constituency`: three ONS
+  releases with their own reference years, workbooks and layouts. The ward
+  dataset drives the chunked map and the population summary. Task 16 reshapes
+  `population` (`population-detail`), so it is left alone. Cross-list the three
+  under task 17.
+- `life-expectancy` and `life-expectancy-series`: the series is a 20-period
+  history with confidence intervals on the 2025 code vintage, the snapshot is
+  two tables on 2023 codes, so a merged chart would list every period as a
+  snapshot. Cross-list them under task 17.
+- `general-election` and `historical-general-election`: the 1918 to 2019
+  results are grouped into broad party families on constituency vintages the
+  atlas has no geometry for, from a different publisher. Cross-list them under
+  task 17.
+
+Follow-up for task 18: the external source folder
+`school-performance-constituency` and its `meta.json` still carry the old id.
+`DATASET_SOURCES` maps the folder to `school-performance`. Rename the folder
+and its `meta.json` when the source data is next refreshed, then remove the
+mapping.
+
 ## Tasks
 
 **P0** stops drift and is cheap. **P1** is the restructure. **P2** improves
 quality and size. **P3** is product polish.
 
-| #   | Priority | Task                                                                                                                                                                         |
-| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | P0       | Ratify themes, topics and the classification rules. Replace `DATASET_MODULES` with a theme and topic registry, and point `docs/dataset-declarations.md` here.                |
-| 2   | P0       | Give every dataset a primary topic (and so a theme). Every dataset in `atlas.sqlite` has one, non-null, and the old `module` column is derived from it.                      |
-| 3   | P0       | Consistency test: source path matches declared theme and topic; every source folder has a `meta.json` naming its dataset; unused sources are in `_staging/`; ids are unique. |
-| 4   | P0       | Generate website chart sections from themes and topics. Fixes the 19-card Economics group.                                                                                   |
-| 5   | P1       | Move source folders to `data/source/<theme>/<topic>/<dataset>/`, including the core, boundaries and postcodes split. Loaders resolve paths from their declaration.           |
-| 6   | P1       | Rename source folders to dataset ids (see Problem).                                                                                                                          |
-| 7   | P1       | Finish the declarations migration into `packages/datasets/src/<theme>/<topic>/<dataset>/`, theme by theme, dissolving `statisticsDatasets/*.ts`.                             |
-| 8   | P1       | Move custom charts to `components/datasets/<theme>/<topic>/<dataset>/`; delete per-dataset files in `lib/datasets/` as each dataset is declared.                             |
-| 9   | P1       | Docs: pages per theme, topic and dataset from declarations; group `/datasets`, `llms.txt` and API docs the same way; delete the old topic lists.                             |
-| 10  | P1       | API: `theme`, `topic` and `module` on responses, filters, `GET /v1/themes`, `GET /v1/modules`.                                                                               |
-| 11  | P1       | `meta.json` schema with `dataset`, replacing `topics`.                                                                                                                       |
-| 12  | P1       | Module manifests (id, topics, licence, core compatibility) and the `data/dist/` layout with generated READMEs.                                                               |
-| 13  | P1       | Per-module SQLite and Parquet builds plus the assembler (roadmap tasks 19 to 23).                                                                                            |
-| 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                           |
-| 15  | P2       | Merge datasets split by geography or history: `regional-gdp`, `brexit`, `school-performance`, `population`, `life-expectancy`, `general-election`. Keep API aliases.         |
-| 16  | P2       | Measure size per module and make the first splits (`population-detail`, `politics-sharealike`).                                                                              |
-| 17  | P2       | `related` topics: cross-listing on the website and in docs.                                                                                                                  |
-| 18  | P2       | Decide on the 8 unused sources: build, keep in `_staging/`, or delete.                                                                                                       |
-| 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                    |
-| 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                    |
+| #   | Priority | Task                                                                                                                                                                                                                                                                                     |
+| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | P0       | Ratify themes, topics and the classification rules. Replace `DATASET_MODULES` with a theme and topic registry, and point `docs/dataset-declarations.md` here.                                                                                                                            |
+| 2   | P0       | Give every dataset a primary topic (and so a theme). Every dataset in `atlas.sqlite` has one, non-null, and the old `module` column is derived from it.                                                                                                                                  |
+| 3   | P0       | Consistency test: source path matches declared theme and topic; every source folder has a `meta.json` naming its dataset; unused sources are in `_staging/`; ids are unique.                                                                                                             |
+| 4   | P0       | Generate website chart sections from themes and topics. Fixes the 19-card Economics group.                                                                                                                                                                                               |
+| 5   | P1       | Move source folders to `data/source/<theme>/<topic>/<dataset>/`, including the core, boundaries and postcodes split. Loaders resolve paths from their declaration.                                                                                                                       |
+| 6   | P1       | Rename source folders to dataset ids (see Problem).                                                                                                                                                                                                                                      |
+| 7   | P1       | Finish the declarations migration into `packages/datasets/src/<theme>/<topic>/<dataset>/`, theme by theme, dissolving `statisticsDatasets/*.ts`.                                                                                                                                         |
+| 8   | P1       | Move custom charts to `components/datasets/<theme>/<topic>/<dataset>/`; delete per-dataset files in `lib/datasets/` as each dataset is declared.                                                                                                                                         |
+| 9   | P1       | Docs: pages per theme, topic and dataset from declarations; group `/datasets`, `llms.txt` and API docs the same way; delete the old topic lists.                                                                                                                                         |
+| 10  | P1       | API: `theme`, `topic` and `module` on responses, filters, `GET /v1/themes`, `GET /v1/modules`.                                                                                                                                                                                           |
+| 11  | P1       | `meta.json` schema with `dataset`, replacing `topics`.                                                                                                                                                                                                                                   |
+| 12  | P1       | Module manifests (id, topics, licence, core compatibility) and the `data/dist/` layout with generated READMEs.                                                                                                                                                                           |
+| 13  | P1       | Per-module SQLite and Parquet builds plus the assembler (roadmap tasks 19 to 23).                                                                                                                                                                                                        |
+| 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                                                                                                                                       |
+| 15  | P2       | Done for `regional-gdp` and `school-performance`, with API aliases. `brexit`, `population`, `life-expectancy` and `general-election` are kept separate by decision (see "Merged datasets").                                                                                              |
+| 16  | P2       | Measure size per module and make the first splits (`population-detail`, `politics-sharealike`).                                                                                                                                                                                          |
+| 17  | P2       | `related` topics: cross-listing on the website and in docs. Cross-list `brexit` with `brexit-constituency` and `general-election` with `historical-general-election` (also the `life-expectancy` pair and the `population` trio), which task 15 kept separate.                           |
+| 18  | P2       | Decide on the 8 unused sources: build, keep in `_staging/`, or delete. When the source data is next refreshed, also rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
+| 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                                |
+| 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                                                                                                                                |

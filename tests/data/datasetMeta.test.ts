@@ -89,6 +89,17 @@ describe("parseDatasetMeta", () => {
 			);
 		});
 
+		it("reads an id retired by a merge as the dataset that replaced it", () => {
+			const meta = parseDatasetMeta(
+				{
+					...valid(),
+					dataset: "school-performance-constituency",
+				},
+				"2025",
+			);
+			expect(meta.dataset).toBe("school-performance");
+		});
+
 		it("is refused on a source that feeds no dataset", () => {
 			for (const kind of [
 				"boundary",

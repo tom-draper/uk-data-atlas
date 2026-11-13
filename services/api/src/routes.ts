@@ -7,6 +7,7 @@ import type {
 } from "./runtime/index.ts";
 import { problem, type ApiResponse } from "./runtime/index.ts";
 
+import { resolveDatasetAliases } from "./datasetAliasRequests";
 import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
 import {
 	breakdownResponse,
@@ -131,7 +132,7 @@ const withLocation = (response: ApiResponse, location: string): ApiResponse => {
  * A request naming a measure and dimension filters is first read as the
  * series it means, or the several it answers together.
  */
-export const route = (
+const routeResolved = (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
@@ -168,7 +169,7 @@ export const route = (
 	}
 };
 
-export const routeAsync = async (
+const routeResolvedAsync = async (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
@@ -210,4 +211,43 @@ export const routeAsync = async (
 				resolved.reading,
 			);
 	}
+};
+
+const aliasedLocation = (response: ApiResponse, url: string): ApiResponse =>
+	response.status === 200 ? withLocation(response, url) : response;
+
+const releaseOf = (context: RouteDispatchContext): string =>
+	context.atlasRelease?.releaseId ?? context.boundaryRegistry.contentHash;
+
+/** Route a request, first resolving any retired dataset id it names. */
+export const route = (
+	method: string | undefined,
+	url: string | undefined,
+	context: RouteDispatchContext,
+	body?: RequestBody,
+): ApiResponse => {
+	const aliased = resolveDatasetAliases(url ?? "/", () => releaseOf(context));
+	if (aliased.kind === "redirect") return aliased.response;
+	if (aliased.kind === "unchanged")
+		return routeResolved(method, url, context, body);
+	return aliasedLocation(
+		routeResolved(method, aliased.url, context, body),
+		aliased.url,
+	);
+};
+
+export const routeAsync = async (
+	method: string | undefined,
+	url: string | undefined,
+	context: RouteDispatchContext,
+	body?: RequestBody,
+): Promise<ApiResponse> => {
+	const aliased = resolveDatasetAliases(url ?? "/", () => releaseOf(context));
+	if (aliased.kind === "redirect") return aliased.response;
+	if (aliased.kind === "unchanged")
+		return routeResolvedAsync(method, url, context, body);
+	return aliasedLocation(
+		await routeResolvedAsync(method, aliased.url, context, body),
+		aliased.url,
+	);
 };

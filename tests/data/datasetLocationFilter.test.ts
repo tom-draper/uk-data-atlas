@@ -427,4 +427,25 @@ describe("location-scoped chart datasets", () => {
 		expect(filtered[2019].ladStats).toEqual(ladStats);
 		expect(Object.keys(filtered[2019].data)).toEqual(["E01000001"]);
 	});
+	it("drops entries published for another boundary type", async () => {
+		const payload = {
+			"lad-2025": {
+				boundaryType: "countyAndUnitaryAuthority",
+				boundaryYear: 2025,
+				data: { E08000003: { value: 1 } },
+			},
+			"constituency-2025": {
+				boundaryType: "constituency",
+				boundaryYear: 2025,
+				data: { E14000001: { value: 2 } },
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "countyAndUnitaryAuthority",
+		})) as Record<string, unknown>;
+
+		expect(Object.keys(filtered)).toEqual(["lad-2025"]);
+	});
 });

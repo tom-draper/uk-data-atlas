@@ -47,12 +47,9 @@ import { populationUk } from "../population/population-estimates/population-uk/d
 import { publicHealth } from "../health/health-status/public-health/dataset.ts";
 import { pupilAbsence } from "../education/schools/pupil-absence/dataset.ts";
 import { qualification } from "../education/qualifications/qualification/dataset.ts";
-import { regionalGdpItl1 } from "../economy/economic-output/regional-gdp-itl1/dataset.ts";
-import { regionalGdpItl2 } from "../economy/economic-output/regional-gdp-itl2/dataset.ts";
-import { regionalGdpItl3 } from "../economy/economic-output/regional-gdp-itl3/dataset.ts";
+import { regionalGdp } from "../economy/economic-output/regional-gdp/dataset.ts";
 import { roadCollisions } from "../transport/road-safety/road-collisions/dataset.ts";
 import { schoolPerformance } from "../education/schools/school-performance/dataset.ts";
-import { schoolPerformanceConstituency } from "../education/schools/school-performance-constituency/dataset.ts";
 import { schoolPerformanceDisadvantage } from "../education/schools/school-performance-disadvantage/dataset.ts";
 import { simd } from "../society/deprivation/simd/dataset.ts";
 import { travelToWork } from "../transport/commuting/travel-to-work/dataset.ts";
@@ -107,12 +104,9 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	publicHealth,
 	pupilAbsence,
 	qualification,
-	regionalGdpItl1,
-	regionalGdpItl2,
-	regionalGdpItl3,
+	regionalGdp,
 	roadCollisions,
 	schoolPerformance,
-	schoolPerformanceConstituency,
 	schoolPerformanceDisadvantage,
 	simd,
 	travelToWork,
@@ -158,7 +152,7 @@ export type DeclaredDatasetId =
 	| "public-health"
 	| "pupil-absence"
 	| "qualification"
-	| "regional-gdp-itl3"
+	| "regional-gdp"
 	| "school-performance"
 	| "school-performance-disadvantage"
 	| "simd"

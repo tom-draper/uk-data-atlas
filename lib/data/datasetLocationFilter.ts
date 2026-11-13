@@ -289,70 +289,73 @@ export const filterDatasetPayloadForLocation = async (
 	if (!filter || typeof payload !== "object" || payload === null)
 		return payload;
 
+	// A merged dataset can also carry entries for other geography levels (for
+	// example constituency rows beside local authorities). The chart shows the
+	// declared boundary, so entries for another level are dropped here.
+	const ownEntries = Object.entries(
+		payload as Record<string, DatasetRecord>,
+	).filter(
+		([, dataset]) =>
+			typeof dataset?.boundaryType !== "string" ||
+			dataset.boundaryType === filter.boundaryType,
+	);
 	const entries = await Promise.all(
-		Object.entries(payload as Record<string, DatasetRecord>).map(
-			async ([id, dataset]) => {
-				if (
-					!dataset.data ||
-					typeof dataset.data !== "object" ||
-					Array.isArray(dataset.data)
-				)
-					return [id, dataset] as const;
-				const { locationAggregates, ...datasetWithoutAggregates } =
-					dataset;
-				const scopedDataset = locationAggregates
-					? {
-							...datasetWithoutAggregates,
-							...(locationAggregates[filter.location] !==
-								undefined && {
-								locationAggregate:
-									locationAggregates[filter.location],
-							}),
-						}
-					: dataset;
-				const matcher = await matcherFor(filter, dataset.boundaryYear);
-				const locationPopulations =
-					filter.includeLocationPopulationSummary
-						? (dataset.locationPopulations ??
-							locationPopulationSummary(dataset.data))
-						: undefined;
-				if (!matcher)
-					return [
-						id,
-						locationPopulations
-							? { ...scopedDataset, locationPopulations }
-							: scopedDataset,
-					] as const;
-				const scopedFields: Record<
-					string,
-					Record<string, unknown>
-				> = {};
-				const mappedCodes = mappedCodesForLocation(
-					dataset,
-					matcher,
-					filter.payloadLayout,
-				);
-				for (const field of codeKeyedFieldsFor(filter.payloadLayout)) {
-					const records = dataset[field];
-					if (!records || typeof records !== "object") continue;
-					scopedFields[field] = Object.fromEntries(
-						Object.entries(records).filter(
-							([code]) =>
-								matcher(code) ||
-								(field === "data" && mappedCodes?.has(code)),
-						),
-					);
-				}
+		ownEntries.map(async ([id, dataset]) => {
+			if (
+				!dataset.data ||
+				typeof dataset.data !== "object" ||
+				Array.isArray(dataset.data)
+			)
+				return [id, dataset] as const;
+			const { locationAggregates, ...datasetWithoutAggregates } = dataset;
+			const scopedDataset = locationAggregates
+				? {
+						...datasetWithoutAggregates,
+						...(locationAggregates[filter.location] !==
+							undefined && {
+							locationAggregate:
+								locationAggregates[filter.location],
+						}),
+					}
+				: dataset;
+			const matcher = await matcherFor(filter, dataset.boundaryYear);
+			const locationPopulations = filter.includeLocationPopulationSummary
+				? (dataset.locationPopulations ??
+					locationPopulationSummary(dataset.data))
+				: undefined;
+			if (!matcher)
 				return [
 					id,
-					{
-						...scopedDataset,
-						...(locationPopulations && { locationPopulations }),
-						...scopedFields,
-					},
+					locationPopulations
+						? { ...scopedDataset, locationPopulations }
+						: scopedDataset,
 				] as const;
-			},
-		),
+			const scopedFields: Record<string, Record<string, unknown>> = {};
+			const mappedCodes = mappedCodesForLocation(
+				dataset,
+				matcher,
+				filter.payloadLayout,
+			);
+			for (const field of codeKeyedFieldsFor(filter.payloadLayout)) {
+				const records = dataset[field];
+				if (!records || typeof records !== "object") continue;
+				scopedFields[field] = Object.fromEntries(
+					Object.entries(records).filter(
+						([code]) =>
+							matcher(code) ||
+							(field === "data" && mappedCodes?.has(code)),
+					),
+				);
+			}
+			return [
+				id,
+				{
+					...scopedDataset,
+					...(locationPopulations && { locationPopulations }),
+					...scopedFields,
+				},
+			] as const;
+		}),
 	);
 	return Object.fromEntries(entries);
 };

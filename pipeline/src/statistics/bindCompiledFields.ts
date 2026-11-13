@@ -63,14 +63,8 @@ const fields: Record<string, Array<readonly [string, string]>> = {
 	"simd-rank": [["simd", "simdRank"]],
 	"simd-decile": [["simd", "simdDecile"]],
 	"nimdm-rank": [["nimdm", "nimdmRank"]],
-	gva: ["itl1", "itl2", "itl3"].map((level) => [
-		`regional-gdp-${level}`,
-		"gvaMillionGbp",
-	]),
-	gdp: ["itl1", "itl2", "itl3"].map((level) => [
-		`regional-gdp-${level}`,
-		"gdpMillionGbp",
-	]),
+	gva: [["regional-gdp", "gvaMillionGbp"]],
+	gdp: [["regional-gdp", "gdpMillionGbp"]],
 	...Object.fromEntries(
 		["electricity", "gas"].flatMap((fuel) => [
 			[`${fuel}-consumption`, [[`${fuel}-consumption`, "allMetersGwh"]]],

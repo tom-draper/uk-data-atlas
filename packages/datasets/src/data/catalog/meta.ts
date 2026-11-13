@@ -12,6 +12,7 @@
  * declaration (docs/data-organisation.md), so they are not repeated here.
  */
 import { z } from "zod";
+import { datasetAliasOf } from "../../declaration/datasetAliases.ts";
 import { DATASET_GUIDES } from "../../declaration/guides.ts";
 
 /** What a `meta.json` describes, which decides whether it names a dataset. */
@@ -144,9 +145,13 @@ export const DatasetMetaSchema = z
 		 * The id of the registered dataset this folder feeds, required for a
 		 * `dataset` source and absent for every other kind. A folder that feeds
 		 * several datasets names the one it is named for, the others are
-		 * recorded in packages/datasets/src/declaration/sourceDatasets.ts.
+		 * recorded in packages/datasets/src/declaration/sourceDatasets.ts. An id
+		 * retired by a merge reads as the dataset that replaced it, so a source
+		 * folder downloaded before the merge keeps working until it is refreshed.
 		 */
-		dataset: text.optional(),
+		dataset: text
+			.transform((id) => datasetAliasOf(id)?.dataset ?? id)
+			.optional(),
 		title: text,
 		description: z.string("must be a string").optional(),
 		publisher: text,

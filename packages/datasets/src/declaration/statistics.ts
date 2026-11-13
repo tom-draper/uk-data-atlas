@@ -123,9 +123,11 @@ export type DeclaredDataset = {
 	exclude?: { codes: RegExp; reason: string }[];
 	/**
 	 * Record field holding the publisher's area name, or for a dataset with
-	 * several record sets, the field of each set's records.
+	 * several record sets, the field of each set's records. A function names
+	 * it from the part's header, for parts on different geographies.
 	 */
-	name?: string | Record<string, string>;
+	name?:
+		string | Record<string, string> | ((header: DeclaredHeader) => string);
 	/**
 	 * Record fields naming another area, by code and name, with the release
 	 * the codes are on: one each record lies in, or the area its publisher
@@ -163,10 +165,18 @@ export type DeclaredPayload = {
 		labels: string[],
 	) => { key: string; header: DeclaredHeader; optional?: true }[];
 	/**
-	 * The record field holding the area's code, or for a dataset with several
-	 * record sets, the field of each set's records.
+	 * True when the parts are the dataset's geographies as well as its periods:
+	 * each part is generated from the series on the geography its header's
+	 * `boundaryType` names, and no other.
 	 */
-	code?: string | Record<string, string>;
+	partPerGeography?: true;
+	/**
+	 * The record field holding the area's code, or for a dataset with several
+	 * record sets, the field of each set's records. A function names it from
+	 * the part's header, for parts on different geographies.
+	 */
+	code?:
+		string | Record<string, string> | ((header: DeclaredHeader) => string);
 	/**
 	 * Header fields computed from the generated records, such as a count or
 	 * average over the areas inside each area they name.
@@ -194,8 +204,11 @@ export type DeclaredPayload = {
 	 * these.
 	 */
 	periodKeys?: string[];
-	/** Dot-separated paths that are null in every record with no value. */
-	nullPaths?: string[];
+	/**
+	 * Dot-separated paths that are null in every record with no value, or a
+	 * function of the part's header where parts differ.
+	 */
+	nullPaths?: string[] | ((header: DeclaredHeader) => string[]);
 	/**
 	 * Leave out the periods a record has no observation in, instead of giving
 	 * them null values. For a record that began later than the others, which

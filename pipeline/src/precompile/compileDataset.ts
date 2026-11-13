@@ -180,19 +180,14 @@ export async function compileStaleDataset(
 										: definition.type ===
 													"school-performance" ||
 											  definition.type ===
-													"schoolPerformanceGap" ||
-											  definition.type ===
-													"school-performance-constituency"
+													"school-performance-disadvantage"
 											? await withDuckdbSchoolPerformance(
 													reader,
 													artifacts,
 													definition.type ===
 														"school-performance"
 														? "Total"
-														: definition.type ===
-															  "schoolPerformanceGap"
-															? "Disadvantage status"
-															: "Constituency",
+														: "Disadvantage status",
 													(input) =>
 														compileDatasetContents(
 															definition,

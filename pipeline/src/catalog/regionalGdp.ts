@@ -20,13 +20,16 @@ import { sha256 } from "./values.ts";
  * for a 2021 release is refused rather than joined to a code that means a
  * different area.
  *
- * Each tier is its own source partition, never mixed into one total: the tiers
- * nest, so summing across them would count the same output three times.
+ * The tiers are one dataset with the tier as its geography. Each is its own
+ * source partition, never mixed into one total: the tiers nest, so summing
+ * across them would count the same output three times.
  */
+const DATASET = "regional-gdp";
+
 const TIERS = [
-	{ geography: "itl1", dataset: "regional-gdp-itl1" },
-	{ geography: "itl2", dataset: "regional-gdp-itl2" },
-	{ geography: "itl3", dataset: "regional-gdp-itl3" },
+	{ geography: "itl1" },
+	{ geography: "itl2" },
+	{ geography: "itl3" },
 ] as const;
 
 const MEASURES = [
@@ -53,22 +56,17 @@ const SHARED_NOTES = [
 
 export const compileRegionalGdp = (
 	{ manifestPath, datasets }: CatalogManifest,
-	paths: Record<(typeof TIERS)[number]["dataset"], DatasetInput>,
+	path: DatasetInput,
 ): { measures: Measure[]; artifacts: MeasureObservationArtifact[] } => {
 	const measures: Measure[] = [];
 	const artifacts: MeasureObservationArtifact[] = [];
+	const dataset = datasets.find((candidate) => candidate.id === DATASET);
+	if (!dataset) throw new Error(`${manifestPath} has no ${DATASET} dataset`);
 
 	for (const spec of MEASURES) {
 		const sources: MeasureSource[] = [];
+		let tierRecords = 0;
 		for (const tier of TIERS) {
-			const dataset = datasets.find(
-				(candidate) => candidate.id === tier.dataset,
-			);
-			if (!dataset)
-				throw new Error(
-					`${manifestPath} has no ${tier.dataset} dataset`,
-				);
-			const path = paths[tier.dataset];
 			const sourceGeography: SourceGeography = {
 				type: tier.geography,
 				boundaryYear: 2025,
@@ -78,16 +76,17 @@ export const compileRegionalGdp = (
 				spec.field,
 				2025,
 				tier.geography,
+				// ITL3 is the dataset's own boundary and keeps the bare
+				// year; the other tiers are prefixed, such as `itl1-2023`.
+				(key) =>
+					tier.geography === "itl3"
+						? /^\d{4}$/.test(key)
+							? key
+							: undefined
+						: key.startsWith(`${tier.geography}-`)
+							? key.slice(tier.geography.length + 1)
+							: undefined,
 			);
-			const recordCount = periods.reduce(
-				(total, period) => total + period.records.length,
-				0,
-			);
-			if (recordCount !== dataset.summary.dataRecordCount) {
-				throw new Error(
-					`${path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${recordCount}`,
-				);
-			}
 			// The publisher restates every year on one code vintage, so each
 			// period must hold the same areas. A year short of one would
 			// otherwise sum to a smaller total that reads as a fall in output.
@@ -105,8 +104,12 @@ export const compileRegionalGdp = (
 					);
 				}
 			}
+			tierRecords += periods.reduce(
+				(total, period) => total + period.records.length,
+				0,
+			);
 			sources.push({
-				datasetId: tier.dataset,
+				datasetId: DATASET,
 				periods: periods.map((period) => period.period),
 				sourceGeography,
 				// Three tiers of one measure, so each needs its own artifact
@@ -133,6 +136,11 @@ export const compileRegionalGdp = (
 				sourceGeography,
 				periods,
 			});
+		}
+		if (tierRecords !== dataset.summary.dataRecordCount) {
+			throw new Error(
+				`${path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${tierRecords}`,
+			);
 		}
 		measures.push({
 			id: spec.id,

@@ -44,12 +44,9 @@ import type { populationUk } from "../../population/population-estimates/populat
 import type { publicHealth } from "../../health/health-status/public-health/dataset.ts";
 import type { pupilAbsence } from "../../education/schools/pupil-absence/dataset.ts";
 import type { qualification } from "../../education/qualifications/qualification/dataset.ts";
-import type { regionalGdpItl1 } from "../../economy/economic-output/regional-gdp-itl1/dataset.ts";
-import type { regionalGdpItl2 } from "../../economy/economic-output/regional-gdp-itl2/dataset.ts";
-import type { regionalGdpItl3 } from "../../economy/economic-output/regional-gdp-itl3/dataset.ts";
+import type { regionalGdp } from "../../economy/economic-output/regional-gdp/dataset.ts";
 import type { roadCollisions } from "../../transport/road-safety/road-collisions/dataset.ts";
 import type { schoolPerformance } from "../../education/schools/school-performance/dataset.ts";
-import type { schoolPerformanceConstituency } from "../../education/schools/school-performance-constituency/dataset.ts";
 import type { schoolPerformanceDisadvantage } from "../../education/schools/school-performance-disadvantage/dataset.ts";
 import type { simd } from "../../society/deprivation/simd/dataset.ts";
 import type { travelToWork } from "../../transport/commuting/travel-to-work/dataset.ts";
@@ -103,12 +100,9 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof publicHealth.load>>[string]
 	| Awaited<ReturnType<typeof pupilAbsence.load>>[string]
 	| Awaited<ReturnType<typeof qualification.load>>[string]
-	| Awaited<ReturnType<typeof regionalGdpItl1.load>>[string]
-	| Awaited<ReturnType<typeof regionalGdpItl2.load>>[string]
-	| Awaited<ReturnType<typeof regionalGdpItl3.load>>[string]
+	| Awaited<ReturnType<typeof regionalGdp.load>>[string]
 	| Awaited<ReturnType<typeof roadCollisions.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformance.load>>[string]
-	| Awaited<ReturnType<typeof schoolPerformanceConstituency.load>>[string]
 	| Awaited<ReturnType<typeof schoolPerformanceDisadvantage.load>>[string]
 	| Awaited<ReturnType<typeof simd.load>>[string]
 	| Awaited<ReturnType<typeof travelToWork.load>>[string]
@@ -185,14 +179,9 @@ export type DeclaredDatasetRecords = {
 	"public-health": Awaited<ReturnType<typeof publicHealth.load>>;
 	"pupil-absence": Awaited<ReturnType<typeof pupilAbsence.load>>;
 	qualification: Awaited<ReturnType<typeof qualification.load>>;
-	"regional-gdp-itl1": Awaited<ReturnType<typeof regionalGdpItl1.load>>;
-	"regional-gdp-itl2": Awaited<ReturnType<typeof regionalGdpItl2.load>>;
-	"regional-gdp-itl3": Awaited<ReturnType<typeof regionalGdpItl3.load>>;
+	"regional-gdp": Awaited<ReturnType<typeof regionalGdp.load>>;
 	"road-collisions": Awaited<ReturnType<typeof roadCollisions.load>>;
 	"school-performance": Awaited<ReturnType<typeof schoolPerformance.load>>;
-	"school-performance-constituency": Awaited<
-		ReturnType<typeof schoolPerformanceConstituency.load>
-	>;
 	"school-performance-disadvantage": Awaited<
 		ReturnType<typeof schoolPerformanceDisadvantage.load>
 	>;

@@ -132,26 +132,12 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		summary:
 			"VAT and/or PAYE based enterprises in each UK local authority, published by broad industry group.",
 	},
-	"regional-gdp-itl1": {
-		title: "Regional gross domestic product: ITL1 regions",
+	"regional-gdp": {
+		title: "Regional gross domestic product",
 		topic: "economic-output",
-		about: "The size of the economy in each English region and the three other nations, measured as gross domestic product and gross value added. These figures underpin comparisons of regional prosperity.",
+		about: "The size of the economy in each UK region, measured as gross domestic product and gross value added. These figures underpin comparisons of regional prosperity.",
 		summary:
-			"Gross domestic product and gross value added for every UK region at the top tier of the International Territorial Level geography, from 1998 to 2023. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals.",
-	},
-	"regional-gdp-itl2": {
-		title: "Regional gross domestic product: ITL2 regions",
-		topic: "economic-output",
-		about: "Gross domestic product and gross value added for the middle tier of UK statistical regions, which are mostly counties or groups of counties and city regions.",
-		summary:
-			"Gross domestic product and gross value added for every UK region at the middle tier of the International Territorial Level geography, from 1998 to 2023. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals.",
-	},
-	"regional-gdp-itl3": {
-		title: "Regional gross domestic product: ITL3 regions",
-		topic: "economic-output",
-		about: "Gross domestic product and gross value added for the most detailed UK statistical regions, mostly individual or paired local authorities. It's the finest level at which official GDP is published.",
-		summary:
-			"Gross domestic product and gross value added for every UK region at the most detailed tier of the International Territorial Level geography, from 1998 to 2023. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals, summed across selected ITL3 areas.",
+			"Gross domestic product and gross value added for every UK region at all three tiers of the International Territorial Level geography, from 1998 to 2023. ITL1 is the top tier, ITL2 the middle and ITL3 the most detailed, mostly individual or paired local authorities. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals, summed across selected ITL3 areas.",
 	},
 	"local-government-finance": {
 		title: "Local authority revenue expenditure and financing",
@@ -266,12 +252,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"school-performance": {
 		title: "School Performance (KS4)",
 		topic: "schools",
-		about: "GCSE results for state-funded schools in England, grouped by local authority. It includes Attainment 8, the average grade across a pupil's best eight subjects, and Progress 8, how much progress pupils made compared with others who started secondary school at a similar level.",
-	},
-	"school-performance-constituency": {
-		title: "School Performance (KS4, Constituency)",
-		topic: "schools",
-		about: "The same GCSE measures as the local authority figures, grouped instead by Westminster constituency, so results can be compared with each MP's area.",
+		about: "GCSE results for state-funded schools in England, grouped by local authority and, for the latest two years, by Westminster constituency. It includes Attainment 8, the average grade across a pupil's best eight subjects, and Progress 8, how much progress pupils made compared with others who started secondary school at a similar level.",
 	},
 	"school-performance-disadvantage": {
 		title: "Attainment 8 Gap",

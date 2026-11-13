@@ -273,7 +273,9 @@ export function rebuildFromDeclaration(
 			const codeField =
 				typeof spec.code === "string"
 					? spec.code
-					: spec.code?.[set.from];
+					: typeof spec.code === "function"
+						? spec.code(full)
+						: spec.code?.[set.from];
 			const records = new Map<string, Record<string, Json>>();
 			const record = (code: string, name: string) => {
 				let found = records.get(code);
@@ -283,7 +285,9 @@ export function rebuildFromDeclaration(
 					const nameField =
 						typeof config.name === "string"
 							? config.name
-							: config.name?.[set.from];
+							: typeof config.name === "function"
+								? config.name(full)
+								: config.name?.[set.from];
 					if (codeField !== undefined) found[codeField] = code;
 					if (nameField !== undefined) found[nameField] = name;
 				}
@@ -301,6 +305,8 @@ export function rebuildFromDeclaration(
 				return (
 					one.measure === field.measure &&
 					(!setGeographies || setGeographies.has(one.geography)) &&
+					(!spec.partPerGeography ||
+						one.geography === String(full.boundaryType)) &&
 					one.members.size === fixed.length + wanted.length &&
 					fixed.every(
 						(slug) =>
@@ -449,7 +455,9 @@ export function rebuildFromDeclaration(
 							period,
 						});
 				else nulls.push({ path: fill(segments, dimensions) });
-			for (const path of spec.nullPaths ?? [])
+			for (const path of typeof spec.nullPaths === "function"
+				? spec.nullPaths(full)
+				: (spec.nullPaths ?? []))
 				nulls.push({ path: path.split("."), parent: true });
 			// A value with no observation is null.
 			for (const { path, period, parent } of nulls)
