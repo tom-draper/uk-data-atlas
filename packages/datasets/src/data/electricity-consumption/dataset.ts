@@ -37,7 +37,6 @@ export const electricityConsumption =
 		statistics: energyStatistics("electricity", "electricity-consumption"),
 		display: energyDisplay({
 			fuel: "electricity",
-			group: "Environment",
 			label: "Electricity Consumption [2024]",
 			year: 2024,
 			source: "Department for Energy Security and Net Zero. Subnational electricity consumption. gov.uk",

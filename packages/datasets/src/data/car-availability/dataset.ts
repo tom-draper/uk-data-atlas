@@ -95,9 +95,7 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		fields: [{ path: "breakdown.{cars-or-vans}", measure: "households" }],
 	},
 	display: {
-		group: "Transport",
 		label: "Car Availability [2021]",
-		defaultVisible: true,
 		year: 2021,
 		component:
 			"@/components/transport/car-availability/CarAvailabilityChart",

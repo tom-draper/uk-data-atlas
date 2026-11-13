@@ -2,19 +2,23 @@
 
 import { useMemo } from "react";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import {
+	compareChartsByTopic,
+	themeOfChart,
+} from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { getChartPresentation } from "@/lib/datasets/generatedCharts";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
-import type { BoundaryData } from "@uk-data-atlas/datasets";
+import type { BoundaryData, DatasetTheme } from "@uk-data-atlas/datasets";
 import type { ChartKey } from "@/lib/context/ChartVisibilityContext";
 import type { ChartComponentProps } from "./chartComponentTypes";
 import { ViewportGatedChart } from "./ViewportGatedChart";
 
 export interface ChartCardsProps {
-	group: string;
+	theme: DatasetTheme;
 	visibility: Record<ChartKey, boolean>;
 	activeDataset: Dataset | null;
 	datasets: Datasets;
@@ -27,55 +31,29 @@ export interface ChartCardsProps {
 	location: string | null;
 }
 
-const GROUP_START_CHARTS: Partial<Record<string, string[]>> = {
-	Demographics: [
-		"demographics-populationDensity",
-		"demographics-age",
-		"demographics-gender",
-		"demographics-ethnicity",
-	],
-	Economics: [
-		"economics-housePrice",
-		"economics-income",
-		"economics-workplace-income",
-		"economics-regional-gdp-itl3",
-		"economics-jobs",
-		"economics-planning-applications",
-		"economics-council-tax",
-		"economics-unemployment",
-		"economics-child-poverty",
-		"economics-fuelPoverty",
-	],
-};
-
 export function hasVisibleChart(
-	group: string,
+	theme: DatasetTheme,
 	visibility: Record<ChartKey, boolean>,
 ) {
-	return getVisibleChartDefinitions(group, visibility).length > 0;
+	return getVisibleChartDefinitions(theme, visibility).length > 0;
 }
 
 export function getVisibleChartDefinitions(
-	group: string,
+	theme: DatasetTheme,
 	visibility: Record<ChartKey, boolean>,
 ) {
-	const groupStart = GROUP_START_CHARTS[group] ?? [];
 	return CHART_DATASET_DEFINITIONS.flatMap((definition) =>
 		getChartDefinitions(definition)
-			.filter((chart) => chart.group === group && visibility[chart.key])
+			.filter(
+				(chart) =>
+					themeOfChart(chart) === theme && visibility[chart.key],
+			)
 			.map((chart) => ({ definition, chart })),
-	).sort((left, right) => {
-		const leftOrder = groupStart.indexOf(left.chart.key);
-		const rightOrder = groupStart.indexOf(right.chart.key);
-		const leftPriority = leftOrder === -1 ? groupStart.length : leftOrder;
-		const rightPriority =
-			rightOrder === -1 ? groupStart.length : rightOrder;
-		return leftPriority - rightPriority;
-	});
+	).sort((left, right) => compareChartsByTopic(left.chart, right.chart));
 }
 
 export default function ChartCards({
-	group,
+	theme,
 	visibility,
 	activeDataset,
 	datasets,
@@ -88,8 +66,8 @@ export default function ChartCards({
 	location,
 }: ChartCardsProps) {
 	const definitions = useMemo(
-		() => getVisibleChartDefinitions(group, visibility),
-		[group, visibility],
+		() => getVisibleChartDefinitions(theme, visibility),
+		[theme, visibility],
 	);
 	const aggregatedData = useMemo(
 		() =>

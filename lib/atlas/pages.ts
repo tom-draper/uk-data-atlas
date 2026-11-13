@@ -1,8 +1,9 @@
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import type { PlaceKind } from "@uk-data-atlas/datasets";
+import type { DatasetTheme, PlaceKind } from "@uk-data-atlas/datasets";
 import type { DatasetSource } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetType } from "@/lib/datasets";
+import { themeOfChart } from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import {
 	activeVizFromReference,
@@ -104,7 +105,8 @@ export type AtlasMap = {
 	dataset: string;
 	view?: VizView;
 	name: string;
-	group: string;
+	/** The theme whose section lists the map. */
+	theme: DatasetTheme;
 	/** Newest first; the first is the page's default. */
 	periods: readonly number[];
 	countries: readonly DatasetCountry[];
@@ -155,7 +157,7 @@ function buildMaps(): AtlasMap[] {
 				dataset,
 				...(chart.view ? { view: chart.view } : {}),
 				name: MAP_NAMES[slug] ?? definition.source.name,
-				group: chart.group,
+				theme: themeOfChart(chart),
 				periods: [chart.year],
 				countries:
 					definition.coverageCountries ??

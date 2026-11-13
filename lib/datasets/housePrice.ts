@@ -6,10 +6,9 @@ import type { ChartDatasetDefinition } from "./types";
 export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 	...definitionOf(housePrice),
 	chart: {
-		group: "Economics",
+		topic: "prices-and-affordability",
 		key: "economics-housePrice",
 		label: "House Prices [2023]",
-		defaultVisible: true,
 		componentPath: "@/components/economics/house-price/HousePriceChart",
 		calculateStats: (aggregator, geojson, data, location, datasetId) =>
 			aggregator.aggregate(

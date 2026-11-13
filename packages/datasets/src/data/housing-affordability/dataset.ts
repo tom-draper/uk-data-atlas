@@ -62,9 +62,7 @@ export const housingAffordability = defineDataset<
 		fields: [{ path: "value", measure: "house-price-to-earnings-ratio" }],
 	},
 	display: {
-		group: "Economics",
 		label: "Housing Affordability [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "House price to earnings",

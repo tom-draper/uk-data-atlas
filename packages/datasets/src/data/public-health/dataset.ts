@@ -139,9 +139,7 @@ export const publicHealth = defineDataset<PublicHealthDataset>({
 		},
 	},
 	display: {
-		group: "Health",
 		label: "Public Health [2024-2025]",
-		defaultVisible: false,
 		year: 2025,
 		card: {
 			heading: "Public health",

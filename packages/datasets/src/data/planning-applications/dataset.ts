@@ -79,9 +79,7 @@ export const planningApplications = defineDataset<
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Planning Applications [2026 Q1]",
-		defaultVisible: true,
 		year: 2026,
 		card: {
 			heading: "Planning applications",

@@ -87,9 +87,7 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Council Tax [2026]",
-		defaultVisible: true,
 		year: 2026,
 		card: {
 			heading: "Council Tax",

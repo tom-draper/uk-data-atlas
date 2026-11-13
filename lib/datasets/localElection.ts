@@ -17,10 +17,9 @@ const calculateStats: ChartDefinition<LocalElectionDataset>["calculateStats"] =
 const localElectionChart = (
 	year: LocalElectionDataset["year"],
 ): ChartDefinition<LocalElectionDataset> => ({
-	group: "Local Election",
+	topic: "local-elections",
 	key: `localElection-${year}`,
 	label: `${year} Local Elections`,
-	defaultVisible: year > 2019,
 	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
 	calculateStats,
 	year,

@@ -1,32 +1,33 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { DatasetTheme } from "@uk-data-atlas/datasets";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
+import { CHART_SECTIONS } from "@/lib/datasets/chartSections";
 import ChartCards, {
 	hasVisibleChart,
 	type ChartCardsProps,
 } from "./ChartCards";
 
-type ChartSectionsProps = Omit<ChartCardsProps, "group" | "visibility"> & {
+type ChartSectionsProps = Omit<ChartCardsProps, "theme" | "visibility"> & {
 	/**
-	 * Cards that are not registry charts, shown after a group's charts under
+	 * Cards that are not registry charts, shown after a section's charts under
 	 * the same heading, such as the transport map layers. `undefined` when
 	 * there is nothing to add.
 	 */
-	extras?: Partial<Record<string, ReactNode>>;
+	extras?: Partial<Record<DatasetTheme, ReactNode>>;
 };
 
-type ChartSectionProps = Omit<ChartCardsProps, "group" | "visibility"> & {
-	group: string;
+type ChartSectionProps = Omit<ChartCardsProps, "theme" | "visibility"> & {
+	theme: DatasetTheme;
 	title: string;
 	showBorder: boolean;
 	extra?: ReactNode;
 };
 
 function ChartSection({
-	group,
+	theme,
 	title,
 	showBorder,
 	extra,
@@ -34,7 +35,7 @@ function ChartSection({
 }: ChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
-	const hasCharts = hasVisibleChart(group, visibility);
+	const hasCharts = hasVisibleChart(theme, visibility);
 	if (!hasCharts && !extra) return null;
 
 	return (
@@ -49,7 +50,7 @@ function ChartSection({
 				{title}
 			</h3>
 			{hasCharts && (
-				<ChartCards group={group} visibility={visibility} {...props} />
+				<ChartCards theme={theme} visibility={visibility} {...props} />
 			)}
 			{extra}
 		</div>
@@ -60,13 +61,13 @@ export default function ChartSections({
 	extras,
 	...props
 }: ChartSectionsProps) {
-	return CHART_GROUPS.map(({ group, title }, index) => (
+	return CHART_SECTIONS.map(({ theme, title }, index) => (
 		<ChartSection
-			key={group}
-			group={group}
+			key={theme}
+			theme={theme}
 			title={title}
 			showBorder={index > 0}
-			extra={extras?.[group]}
+			extra={extras?.[theme]}
 			{...props}
 		/>
 	));

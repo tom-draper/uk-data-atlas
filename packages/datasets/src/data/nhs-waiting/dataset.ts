@@ -106,9 +106,7 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 		},
 	},
 	display: {
-		group: "Health",
 		label: "NHS Waiting Times [2026]",
-		defaultVisible: true,
 		year: 2026,
 		// Waiting times are published by integrated care board.
 		recordsVia: "ladToIcb",

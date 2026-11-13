@@ -13,16 +13,16 @@ Written 2026-11-10 from a survey of the repo at `a1cd196b7`.
 Datasets are grouped by at least seven separate vocabularies that have
 drifted apart:
 
-| Layer                                                | Groups used                                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `data/source/`                                       | economics, demographics, telecoms, deprivation, housing, geography, lookups, boundaries, ... |
-| `dataset.module` (statistics declarations)           | economy, population, infrastructure, housing, crime, deprivation, ...                        |
-| Website chart groups (`lib/datasets/chartGroups.ts`) | Economics, Demographics, Telecoms, General Election, Local Election, Brexit, ...             |
-| `components/`                                        | economics, demographics, telecoms, elections, ...                                            |
-| Docs topics (`lib/docs/content/data.ts`)             | people, work, connectivity, elections, ...                                                   |
-| `/datasets` topics (`lib/reference/datasets.ts`)     | people-and-places, work-and-economy, health-and-care, councils, crime-and-safety, ...        |
-| `meta.json` `topics`                                 | Free text                                                                                    |
-| `packages/measures/src/statisticsDatasets/`          | By shape (census, people, services), not topic                                               |
+| Layer                                                    | Groups used                                                                                  |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `data/source/`                                           | economics, demographics, telecoms, deprivation, housing, geography, lookups, boundaries, ... |
+| `dataset.module` (statistics declarations)               | economy, population, infrastructure, housing, crime, deprivation, ...                        |
+| Website chart groups (was `lib/datasets/chartGroups.ts`) | Economics, Demographics, Telecoms, General Election, Local Election, Brexit, ...             |
+| `components/`                                            | economics, demographics, telecoms, elections, ...                                            |
+| Docs topics (`lib/docs/content/data.ts`)                 | people, work, connectivity, elections, ...                                                   |
+| `/datasets` topics (`lib/reference/datasets.ts`)         | people-and-places, work-and-economy, health-and-care, councils, crime-and-safety, ...        |
+| `meta.json` `topics`                                     | Free text                                                                                    |
+| `packages/measures/src/statisticsDatasets/`              | By shape (census, people, services), not topic                                               |
 
 Examples of the drift:
 

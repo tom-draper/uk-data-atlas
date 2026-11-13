@@ -82,9 +82,7 @@ export const adultSocialCareActivity = defineDataset<
 		],
 	},
 	display: {
-		group: "Health",
 		label: "Long-term Support [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "Long-term support clients",

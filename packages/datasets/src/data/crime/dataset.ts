@@ -282,9 +282,7 @@ export const crime = defineDataset<CrimeDataset>({
 		fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 	},
 	display: {
-		group: "Economics",
 		label: "Crime Rate [2026]",
-		defaultVisible: true,
 		year: 2026,
 		card: {
 			heading: "Recorded Crime",

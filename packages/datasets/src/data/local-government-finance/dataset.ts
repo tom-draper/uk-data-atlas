@@ -82,9 +82,7 @@ export const localGovernmentFinance = defineDataset<
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Education Services Spending [2026]",
-		defaultVisible: false,
 		year: 2026,
 		card: {
 			heading: "Education services spending",

@@ -41,9 +41,7 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		...payStatistics("workplace"),
 	},
 	display: {
-		group: "Economics",
 		label: "Workplace Pay [2025]",
-		defaultVisible: false,
 		year: 2025,
 		card: {
 			heading: "Workplace pay",

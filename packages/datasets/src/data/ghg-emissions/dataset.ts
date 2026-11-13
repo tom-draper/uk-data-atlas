@@ -130,9 +130,7 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		},
 	},
 	display: {
-		group: "Environment",
 		label: "Greenhouse Gas Emissions [2024]",
-		defaultVisible: true,
 		year: 2024,
 		component: "@/components/environment/ghg-emissions/GHGEmissionsChart",
 		measures: [

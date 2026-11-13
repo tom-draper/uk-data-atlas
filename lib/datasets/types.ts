@@ -1,7 +1,7 @@
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { MapRenderContext } from "@/lib/helpers/mapRendering";
 import type { ActiveViz, VizView } from "@/lib/types/datasets";
-import type { BoundaryGeojson } from "@uk-data-atlas/datasets";
+import type { BoundaryGeojson, DatasetTopic } from "@uk-data-atlas/datasets";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
@@ -66,10 +66,10 @@ export interface ChartDatasetMapRenderer<
 export interface ChartDefinition<
 	T extends { type: string; data: unknown } = { type: string; data: unknown },
 > {
-	group: string;
+	/** The dataset's topic, which places the card under its theme. */
+	topic: DatasetTopic;
 	key: string;
 	label: string;
-	defaultVisible: boolean;
 	componentPath: string;
 	calculateStats(
 		aggregator: DatasetAggregator,

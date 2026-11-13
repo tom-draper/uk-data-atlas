@@ -25,6 +25,6 @@ describe("income declaration", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			(definition) => definition.type === "income",
 		);
-		expect(chart?.chart.key).toBe("economics-income");
+		expect(chart?.chart.key).toBe("economy-income");
 	});
 });

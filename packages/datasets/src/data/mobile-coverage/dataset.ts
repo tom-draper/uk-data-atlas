@@ -190,9 +190,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 		],
 	},
 	display: {
-		group: "Telecoms",
 		label: "Mobile Coverage [2025]",
-		defaultVisible: true,
 		year: 2025,
 		component: "@/components/telecoms/mobile/MobileCoverageChart",
 		measures: [

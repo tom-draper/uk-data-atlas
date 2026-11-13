@@ -123,7 +123,6 @@ const SECTORS = [
  */
 export const energyDisplay = ({
 	fuel,
-	group,
 	label,
 	year,
 	source,
@@ -132,7 +131,6 @@ export const energyDisplay = ({
 	legendMax,
 }: {
 	fuel: Fuel;
-	group: string;
 	label: string;
 	year: number;
 	source: string;
@@ -179,9 +177,7 @@ export const energyDisplay = ({
 		})),
 	);
 	return {
-		group,
 		label,
-		defaultVisible: true,
 		year,
 		card: {
 			heading: `${fuel === "gas" ? "Gas" : "Electricity"} consumption`,

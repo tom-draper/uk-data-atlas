@@ -24,7 +24,7 @@ A dataset is described in separate places that nothing keeps in step:
 | `services/api/config/measure-dimensions.json`                                                    | API measure id to statistics measure and dimension members                                  |
 | `services/api/config/statistics-vocabulary.json`                                                 | Measure vocabulary (a snapshot of the declarations)                                         |
 | `packages/measures/src/catalogueUnits.ts`                                                        | Which unit strings are counts                                                               |
-| `lib/datasets/<camelCase>.ts`                                                                    | Website chart definition: group, key, label, card, map value, colour range, legend          |
+| `lib/datasets/<camelCase>.ts`                                                                    | Website chart definition: topic, key, label, card, map value, colour range, legend          |
 | `lib/datasets/generated.ts`, `generatedCharts.tsx`                                               | Generated registries over the files above                                                   |
 | `lib/types/datasets.ts`, `lib/types/mapOptions.ts`                                               | One entry per dataset in the dataset and map option records                                 |
 | `lib/config/mapOptions.ts`                                                                       | Default map options, with an `if (type === ...)` per dataset                                |
@@ -92,7 +92,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 	load: ({ text, xlsxSheet }) => loadClaimantCount(text, xlsxSheet),
 	statistics: { measures, dimensions, fields, derived, computed, ... },
 	catalogue: { kind: "indicators", period, indicators: [/* API measures */] },
-	display: { group, label, year, card, measures: [/* rate, count */], aggregation },
+	display: { label, year, card, measures: [/* rate, count */], aggregation },
 });
 ```
 

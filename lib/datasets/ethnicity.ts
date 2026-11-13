@@ -22,10 +22,9 @@ const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] = (
 export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
 	...definitionOf(ethnicity),
 	chart: {
-		group: "Demographics",
+		topic: "ethnicity-and-identity",
 		key: "demographics-ethnicity",
 		label: "Ethnicity [2021]",
-		defaultVisible: true,
 		componentPath: "@/components/demographics/EthnicityRegistry",
 		calculateStats,
 		year: 2021,

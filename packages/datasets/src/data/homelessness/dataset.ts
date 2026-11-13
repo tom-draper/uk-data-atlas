@@ -109,9 +109,7 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Homelessness [2026]",
-		defaultVisible: true,
 		year: 2026,
 		component: "@/components/economics/homelessness/HomelessnessChart",
 		measures: [

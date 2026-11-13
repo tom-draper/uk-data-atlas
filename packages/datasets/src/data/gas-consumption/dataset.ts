@@ -36,7 +36,6 @@ export const gasConsumption = defineDataset<GasConsumptionDataset>({
 	statistics: energyStatistics("gas", "gas-consumption"),
 	display: energyDisplay({
 		fuel: "gas",
-		group: "Environment",
 		label: "Gas Consumption [2024]",
 		year: 2024,
 		source: "Department for Energy Security and Net Zero. Subnational gas consumption. gov.uk",

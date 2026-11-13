@@ -111,9 +111,7 @@ export const housingTenure = defineDataset<IndicatorDataset<"housing-tenure">>({
 		},
 	},
 	display: {
-		group: "Economics",
 		label: "Housing Tenure [2021]",
-		defaultVisible: false,
 		year: 2021,
 		card: {
 			heading: "Housing tenure",

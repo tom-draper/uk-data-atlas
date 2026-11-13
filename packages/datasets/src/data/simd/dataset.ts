@@ -57,7 +57,6 @@ export const simd = defineDataset<SIMDDataset>({
 	}),
 	display: rankDisplay({
 		prefix: "simd",
-		group: "Deprivation",
 		label: "Deprivation (SIMD) [2020]",
 		year: 2020,
 		areaCount: 6976,

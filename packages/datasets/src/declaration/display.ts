@@ -151,11 +151,8 @@ export type DisplayAggregation = {
 };
 
 export type DatasetDisplay = {
-	/** The chart group the card is listed under. */
-	group: string;
 	/** The chart's label in the data list. */
 	label: string;
-	defaultVisible: boolean;
 	/** The edition shown first. */
 	year: number;
 	/**

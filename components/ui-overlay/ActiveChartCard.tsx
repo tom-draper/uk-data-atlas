@@ -6,6 +6,7 @@ import { ChartLoadingProvider } from "@components/ChartLoadingPlaceholder";
 import TransportCards from "@components/transport/TransportCards";
 import { CustomDatasetCard } from "@components/custom/CustomDatasetCard";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { themeOfChart } from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import type {
 	ActiveViz,
@@ -65,7 +66,7 @@ export default function ActiveChartCard({
 			).flatMap((definition) => getChartDefinitions(definition)),
 		[activeViz.datasetType],
 	);
-	const groups = [...new Set(charts.map((chart) => chart.group))];
+	const themes = [...new Set(charts.map(themeOfChart))];
 	const visibility = useMemo(
 		() => Object.fromEntries(charts.map((chart) => [chart.key, true])),
 		[charts],
@@ -86,10 +87,10 @@ export default function ActiveChartCard({
 	return (
 		<div className="[&_[data-active=false]]:hidden">
 			<ChartLoadingProvider loading={chartsLoading}>
-				{groups.map((group) => (
+				{themes.map((theme) => (
 					<ChartCards
-						key={group}
-						group={group}
+						key={theme}
+						theme={theme}
 						visibility={visibility}
 						activeDataset={activeDataset}
 						datasets={datasets}

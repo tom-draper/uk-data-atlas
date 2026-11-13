@@ -184,7 +184,8 @@ After the freeze lifts. Unordered within each group.
   each boundary release.
 - Fix `/places/manchester` and similar: a visitor lands on a "grouping of
   councils" with "no official status".
-- The 19-card Economics group (`data-organisation.md` task 4).
+- The old 19-card Economics group, now split into theme sections
+  (`data-organisation.md` task 4).
 - Meet analysts where they work: Excel, Sheets, QGIS, Power BI.
 
 ### Database

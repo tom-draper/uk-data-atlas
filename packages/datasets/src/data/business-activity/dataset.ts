@@ -77,9 +77,7 @@ export const businessActivity = defineDataset<
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Businesses [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "Businesses",

@@ -17,6 +17,7 @@ import CustomSection from "./custom/CustomSection";
 import ChartSections from "./ChartSections";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
 import { ChartVisibilityProvider } from "@/lib/context/ChartVisibilityContext";
+import { CARDS_OUTSIDE_THE_REGISTRY } from "@/lib/datasets/chartSections";
 import ChartSettings from "./ChartSettings";
 import { ChartPanelShell } from "./ChartPanelShell";
 
@@ -81,7 +82,8 @@ function ChartPanelContent({
 								boundaryData={boundaryData}
 								location={location}
 								extras={{
-									Transport: hasTransportLayers ? (
+									[CARDS_OUTSIDE_THE_REGISTRY.transportLayers
+										.theme]: hasTransportLayers ? (
 										<TransportCards
 											roadSafetyDatasets={
 												roadSafetyDatasets

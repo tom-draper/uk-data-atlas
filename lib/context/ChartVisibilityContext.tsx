@@ -1,12 +1,14 @@
 "use client";
 import { createContext, use, useSyncExternalStore } from "react";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { DEFAULT_CHART_KEYS } from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
+import type { DatasetTopic } from "@uk-data-atlas/datasets";
 
 export type ChartKey = string;
 
 export interface ChartConfigEntry {
-	group: string;
+	topic: DatasetTopic;
 	key: ChartKey;
 	label: string;
 	source: string;
@@ -14,8 +16,8 @@ export interface ChartConfigEntry {
 
 export const CHART_CONFIG: ChartConfigEntry[] = [
 	...CHART_DATASET_DEFINITIONS.flatMap((definition) =>
-		getChartDefinitions(definition).map(({ group, key, label }) => ({
-			group,
+		getChartDefinitions(definition).map(({ topic, key, label }) => ({
+			topic,
 			key,
 			label,
 			source: definition.source.source,
@@ -24,14 +26,8 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
-	...Object.fromEntries(
-		CHART_DATASET_DEFINITIONS.flatMap((definition) =>
-			getChartDefinitions(definition).map((chart) => [
-				chart.key,
-				chart.defaultVisible,
-			]),
-		),
-	),
+	...Object.fromEntries(CHART_CONFIG.map(({ key }) => [key, false])),
+	...Object.fromEntries(DEFAULT_CHART_KEYS.map((key) => [key, true])),
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";

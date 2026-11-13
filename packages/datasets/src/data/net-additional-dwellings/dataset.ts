@@ -82,9 +82,7 @@ export const netAdditionalDwellings = defineDataset<
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Net Additional Dwellings [2025]",
-		defaultVisible: false,
 		year: 2025,
 		card: {
 			heading: "Net additional dwellings",

@@ -8,10 +8,9 @@ export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstitu
 	{
 		...definitionOf(brexitConstituency),
 		chart: {
-			group: "Brexit",
+			topic: "referendums",
 			key: "brexit-hanretty",
 			label: "Hanretty Estimates [2016]",
-			defaultVisible: false,
 			componentPath:
 				"@/components/elections/referendum/BrexitHanrettyEstimatesChart",
 			calculateStats: (mm, g, d, l, id) =>
