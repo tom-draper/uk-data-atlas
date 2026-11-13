@@ -1,8 +1,9 @@
 /**
- * Which dataset each folder in `data/source` feeds, until `meta.json` names
- * its dataset itself (docs/data-organisation.md, task 11). Folders are
- * relative to `data/source`. The boundaries and postcodes roots and
- * `core/lookups` are described by their own tests and are not listed.
+ * Every dataset each folder in `data/source` feeds. A `meta.json` names one of
+ * them in `dataset` (docs/data-organisation.md, task 11), the one the folder is
+ * named for, so this table is the only record of a folder that feeds several.
+ * Folders are relative to `data/source`. The boundaries and postcodes roots and
+ * `core/lookups` feed no dataset and are not listed.
  *
  * Every folder with a `meta.json` must appear here or in `SUPPORT_SOURCES`,
  * or sit in `_staging/` where nothing reads it, so adding a source means

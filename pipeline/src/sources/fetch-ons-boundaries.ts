@@ -244,7 +244,6 @@ export const fetchOnsBoundary = async ({
 					kind: "boundary",
 					title: source.title,
 					description: source.title,
-					topics: ["boundaries", "geography"],
 					publisher: "Office for National Statistics",
 					publisherRevision: metadata.editingInfo,
 					sourceUrl,

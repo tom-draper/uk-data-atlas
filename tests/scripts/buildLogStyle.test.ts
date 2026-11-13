@@ -43,6 +43,7 @@ const STANDALONE_TOOLS = [
 	"scripts/boundaries.js",
 	"scripts/gazetteer-phase0.ts",
 	"scripts/migrate-source-layout.mjs",
+	"scripts/migrate-source-meta.mjs",
 	"scripts/reproject-datazone-boundary.mts",
 	"scripts/simplify-boundary-source.mts",
 	"services/api/scripts/audit-archive.mjs",

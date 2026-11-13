@@ -26,6 +26,7 @@ import {
 	migrateMarker,
 	migrateSourceLayout,
 } from "./migrate-source-layout.mjs";
+import { migrateSourceMeta } from "./migrate-source-meta.mjs";
 import {
 	buildLog,
 	formatBytes,
@@ -532,6 +533,20 @@ async function migrateLocalLayout() {
 	);
 }
 
+async function migrateLocalMeta() {
+	if (!(await hasLocalSources())) return;
+	const { rewrites, failed } = await migrateSourceMeta(DATA);
+	if (failed.length > 0)
+		fail(
+			`Cannot migrate these meta.json files to the dataset field: ${failed.join(", ")}. Run node scripts/migrate-source-meta.mjs --dry-run`,
+		);
+	if (rewrites.length === 0) return;
+	await migrateMarker(DATA, { rewrites });
+	buildLog.info(
+		`Added the dataset field to ${formatCount(rewrites.length)} meta.json files and dropped topics`,
+	);
+}
+
 async function download(mode) {
 	const config = await readConfig();
 	if (!config) {
@@ -548,6 +563,8 @@ async function download(mode) {
 	// Data downloaded before the move to the theme layout is moved first, so the
 	// marker and the merge below see the same paths as the release.
 	await migrateLocalLayout();
+	// Likewise a meta.json that still has topics and no dataset field.
+	await migrateLocalMeta();
 	let marker = null;
 	try {
 		marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
@@ -619,6 +636,8 @@ async function download(mode) {
 		}
 		// A release published before the move has the old layout.
 		await migrateSourceLayout(workspace);
+		// And one before meta.json named its dataset.
+		await migrateSourceMeta(workspace);
 		let files;
 		if (mode === "--replace") {
 			files = {};

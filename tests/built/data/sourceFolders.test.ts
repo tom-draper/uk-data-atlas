@@ -10,13 +10,21 @@ import { DATASET_SOURCES, SUPPORT_SOURCES } from "../../data/sourceDatasets";
  * git, so it skips when they are absent. The offline half of the check, table
  * against registry and code, runs in tests/data/sourceDatasets.test.ts.
  *
- * Boundaries, core/lookups and postcodes have their own tests and are skipped
- * here.
+ * Every meta.json under the root is validated against the schema, boundaries,
+ * lookups and postcodes included, and its kind and dataset must agree with
+ * where the folder sits and with the table.
  */
 
 const ROOT = join(process.cwd(), "data/source");
-const OWN_TESTS = ["boundaries/", "core/lookups/", "postcodes/"];
 const STAGING = "_staging";
+
+/** The kind a folder must declare, by where it sits. */
+const KIND_ROOTS: readonly (readonly [root: string, kind: string])[] = [
+	["boundaries/", "boundary"],
+	["core/lookups/", "lookup"],
+	["postcodes/", "postcode-directory"],
+	[`${STAGING}/`, "staged"],
+];
 
 const listed = new Set([
 	...DATASET_SOURCES.map(([folder]) => folder),
@@ -32,13 +40,17 @@ const sourceFolders = (dir: string): string[] =>
 		return [...own, ...sourceFolders(path)];
 	});
 
+const readMeta = (folder: string) =>
+	parseDatasetMeta(
+		JSON.parse(readFileSync(join(ROOT, folder, "meta.json"), "utf8")),
+		folder.split("/").at(-1)!,
+	);
+
 describe.skipIf(!existsSync(ROOT))("source folders", () => {
-	const found = sourceFolders(ROOT)
-		.map((path) => relative(ROOT, path))
-		.filter(
-			(folder) =>
-				!OWN_TESTS.some((root) => `${folder}/`.startsWith(root)),
-		);
+	const all = sourceFolders(ROOT).map((path) => relative(ROOT, path));
+	const found = all.filter(
+		(folder) => !KIND_ROOTS.some(([root]) => `${folder}/`.startsWith(root)),
+	);
 
 	it("are each listed, so a new source says what it is for", () => {
 		expect(found.length).toBeGreaterThan(50);
@@ -57,7 +69,7 @@ describe.skipIf(!existsSync(ROOT))("source folders", () => {
 	});
 
 	it("carry a valid meta.json named after the folder", () => {
-		for (const folder of found) {
+		for (const folder of all) {
 			const dir = join(ROOT, folder);
 			expect(statSync(dir).isDirectory()).toBe(true);
 			const meta = JSON.parse(
@@ -67,6 +79,30 @@ describe.skipIf(!existsSync(ROOT))("source folders", () => {
 				() => parseDatasetMeta(meta, folder.split("/").at(-1)!),
 				folder,
 			).not.toThrow();
+		}
+	});
+
+	it("name a dataset the table says they feed, the one they are named for", () => {
+		for (const [folder, datasets] of DATASET_SOURCES) {
+			const meta = readMeta(folder);
+			expect(meta.kind, folder).toBe("dataset");
+			expect(datasets, folder).toContain(meta.dataset);
+			const named = datasets.find((id) => folder.split("/").includes(id));
+			if (named) expect(meta.dataset, folder).toBe(named);
+		}
+	});
+
+	it("name no dataset when they feed none", () => {
+		for (const folder of all) {
+			const root = KIND_ROOTS.find(([prefix]) =>
+				`${folder}/`.startsWith(prefix),
+			);
+			const meta = readMeta(folder);
+			if (root) expect(meta.kind, folder).toBe(root[1]);
+			else if (folder in SUPPORT_SOURCES)
+				expect(meta.kind, folder).toBe("support");
+			else continue;
+			expect(meta.dataset, folder).toBeUndefined();
 		}
 	});
 
