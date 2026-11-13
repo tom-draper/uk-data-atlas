@@ -12,23 +12,29 @@ afterEach(() => {
 
 describe("chart visibility store", () => {
 	it(
-		"hides the 2016 to 2019 local election cards by default",
+		"shows only the curated default cards",
 		async () => {
 			const { DEFAULT_VISIBILITY } =
 				await import("@/lib/context/ChartVisibilityContext");
-			for (const year of [2016, 2017, 2018, 2019]) {
+			const { DEFAULT_CHART_KEYS } =
+				await import("@/lib/datasets/chartSections");
+			const shown = Object.keys(DEFAULT_VISIBILITY).filter(
+				(key) => DEFAULT_VISIBILITY[key],
+			);
+			expect(shown.sort()).toEqual([...DEFAULT_CHART_KEYS].sort());
+			for (const year of [2016, 2017, 2018, 2019, 2021]) {
 				expect(DEFAULT_VISIBILITY[`localElection-${year}`]).toBe(false);
 			}
-			expect(DEFAULT_VISIBILITY["localElection-2021"]).toBe(true);
-			expect(
-				DEFAULT_VISIBILITY["economics-net-additional-dwellings"],
-			).toBe(false);
+			expect(DEFAULT_VISIBILITY["localElection-2025"]).toBe(true);
+			expect(DEFAULT_VISIBILITY["housing-net-additional-dwellings"]).toBe(
+				false,
+			);
 			expect(
 				DEFAULT_VISIBILITY["health-adult-social-care-outcomes"],
 			).toBe(false);
-			expect(
-				DEFAULT_VISIBILITY["economics-local-government-finance"],
-			).toBe(false);
+			expect(DEFAULT_VISIBILITY["economy-local-government-finance"]).toBe(
+				false,
+			);
 		},
 		COLD_IMPORT_TIMEOUT,
 	);

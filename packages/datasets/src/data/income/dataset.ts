@@ -40,9 +40,7 @@ export const income = defineDataset<IncomeDataset>({
 		...payStatistics("residence"),
 	},
 	display: {
-		group: "Economics",
 		label: "Income [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "Income",

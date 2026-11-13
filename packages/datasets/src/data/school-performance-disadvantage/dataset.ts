@@ -153,9 +153,7 @@ export const schoolPerformanceDisadvantage =
 			},
 		},
 		display: {
-			group: "Education",
 			label: "Attainment 8 Gap [2024/25]",
-			defaultVisible: false,
 			year: 2025,
 			card: {
 				heading: "Attainment 8 Gap",

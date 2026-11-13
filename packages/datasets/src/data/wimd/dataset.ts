@@ -54,7 +54,6 @@ export const wimd = defineDataset<WIMDDataset>({
 	}),
 	display: rankDisplay({
 		prefix: "wimd",
-		group: "Deprivation",
 		label: "Deprivation (WIMD) [2019]",
 		year: 2019,
 		areaCount: 1909,

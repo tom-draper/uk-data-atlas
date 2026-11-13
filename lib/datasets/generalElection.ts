@@ -15,50 +15,45 @@ const calculateStats: ChartDefinition<GeneralElectionDataset>["calculateStats"] 
 		);
 
 const chart2024: ChartDefinition<GeneralElectionDataset> = {
-	group: "General Election",
+	topic: "general-elections",
 	key: "generalElection-2024",
 	label: "2024 General Election",
-	defaultVisible: true,
 	componentPath:
 		"@/components/elections/general/GeneralElectionRegistryChart",
 	calculateStats,
 	year: 2024,
 };
 const chart2019: ChartDefinition<GeneralElectionDataset> = {
-	group: "General Election",
+	topic: "general-elections",
 	key: "generalElection-2019",
 	label: "2019 General Election",
-	defaultVisible: true,
 	componentPath:
 		"@/components/elections/general/GeneralElectionRegistryChart",
 	calculateStats,
 	year: 2019,
 };
 const chart2017: ChartDefinition<GeneralElectionDataset> = {
-	group: "General Election",
+	topic: "general-elections",
 	key: "generalElection-2017",
 	label: "2017 General Election",
-	defaultVisible: true,
 	componentPath:
 		"@/components/elections/general/GeneralElectionRegistryChart",
 	calculateStats,
 	year: 2017,
 };
 const chart2015: ChartDefinition<GeneralElectionDataset> = {
-	group: "General Election",
+	topic: "general-elections",
 	key: "generalElection-2015",
 	label: "2015 General Election",
-	defaultVisible: true,
 	componentPath:
 		"@/components/elections/general/GeneralElectionRegistryChart",
 	calculateStats,
 	year: 2015,
 };
 const chart2010: ChartDefinition<GeneralElectionDataset> = {
-	group: "General Election",
+	topic: "general-elections",
 	key: "generalElection-2010",
 	label: "2010 General Election",
-	defaultVisible: true,
 	componentPath:
 		"@/components/elections/general/GeneralElectionRegistryChart",
 	calculateStats,

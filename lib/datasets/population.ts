@@ -24,31 +24,28 @@ const calculateStats: ChartDefinition<PopulationDataset>["calculateStats"] = (
 	);
 
 const density: ChartDefinition<PopulationDataset> = {
-	group: "Demographics",
+	topic: "population-estimates",
 	key: "demographics-populationDensity",
 	label: "Population Density [2022]",
 	view: "density",
-	defaultVisible: true,
 	componentPath: "@/components/demographics/PopulationDensityRegistry",
 	calculateStats,
 	year: 2022,
 };
 const age: ChartDefinition<PopulationDataset> = {
-	group: "Demographics",
+	topic: "population-estimates",
 	key: "demographics-age",
 	label: "Age Distribution [2022]",
 	view: "age",
-	defaultVisible: true,
 	componentPath: "@/components/demographics/PopulationAgeRegistry",
 	calculateStats,
 	year: 2022,
 };
 const gender: ChartDefinition<PopulationDataset> = {
-	group: "Demographics",
+	topic: "population-estimates",
 	key: "demographics-gender",
 	label: "Gender Balance [2022]",
 	view: "gender",
-	defaultVisible: true,
 	componentPath: "@/components/demographics/PopulationGenderRegistry",
 	calculateStats,
 	year: 2022,

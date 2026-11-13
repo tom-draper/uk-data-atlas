@@ -8,7 +8,7 @@ import {
 } from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
+import { CHART_SECTIONS, themeOfChart } from "@/lib/datasets/chartSections";
 import {
 	CATALOGUE_DATASET_DEFINITIONS,
 	validatePrecompiledDataset,
@@ -108,18 +108,14 @@ describe("chart dataset registry contract", () => {
 		}
 	});
 
-	it("assigns every registry chart to a displayed group", () => {
-		const chartGroups = new Set(
-			CHART_DATASET_DEFINITIONS.flatMap((definition) =>
-				getChartDefinitions(definition).map((chart) => chart.group),
-			),
-		);
-		expect(CHART_GROUPS.map((definition) => definition.group)).toHaveLength(
-			new Set(CHART_GROUPS.map((definition) => definition.group)).size,
-		);
-		expect(
-			new Set(CHART_GROUPS.map((definition) => definition.group)),
-		).toEqual(chartGroups);
+	it("assigns every registry chart to a displayed section", () => {
+		const sections = new Set(CHART_SECTIONS.map(({ theme }) => theme));
+		expect(sections.size).toBe(CHART_SECTIONS.length);
+		for (const definition of CHART_DATASET_DEFINITIONS) {
+			for (const chart of getChartDefinitions(definition)) {
+				expect(sections.has(themeOfChart(chart))).toBe(true);
+			}
+		}
 	});
 
 	it("has one typed presentation for every registered chart", () => {

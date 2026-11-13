@@ -126,9 +126,7 @@ export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 		},
 	},
 	display: {
-		group: "Education",
 		label: "Pupil Absence [2024/25]",
-		defaultVisible: false,
 		year: 2025,
 		card: {
 			heading: "Pupil absence",

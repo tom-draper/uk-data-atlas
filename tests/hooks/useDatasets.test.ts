@@ -13,7 +13,9 @@ const definitionFor = (type: string) => {
 /** Datasets whose every card is hidden until the user turns one on. */
 const hiddenByDefault = CHART_DATASET_DEFINITIONS.filter(
 	(definition) =>
-		!getChartDefinitions(definition).some((chart) => chart.defaultVisible),
+		!getChartDefinitions(definition).some(
+			(chart) => DEFAULT_VISIBILITY[chart.key],
+		),
 );
 
 describe("datasetIsNeeded", () => {
@@ -40,16 +42,20 @@ describe("datasetIsNeeded", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
 			"adult-social-care-outcomes",
 			"brexit-constituency",
+			"council-tax",
+			"gas-consumption",
 			"general-health",
 			"housing-tenure",
 			"local-government-finance",
 			"net-additional-dwellings",
 			"nimdm",
+			"planning-applications",
 			"public-health",
 			"pupil-absence",
 			"school-performance-disadvantage",
 			"simd",
 			"unemployment",
+			"waste",
 			"wimd",
 			"workplace-income",
 		]);

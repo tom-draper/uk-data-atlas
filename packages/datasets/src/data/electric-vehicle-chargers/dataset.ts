@@ -79,9 +79,7 @@ export const electricVehicleChargers = defineDataset<
 		],
 	},
 	display: {
-		group: "Transport",
 		label: "Public EV Chargers [2026]",
-		defaultVisible: true,
 		year: 2026,
 		card: {
 			heading: "Public EV chargers",

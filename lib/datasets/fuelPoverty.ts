@@ -7,10 +7,9 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 	{
 		...definitionOf(fuelPoverty),
 		chart: {
-			group: "Economics",
+			topic: "poverty",
 			key: "economics-fuelPoverty",
 			label: "Fuel Poverty [2024]",
-			defaultVisible: true,
 			componentPath:
 				"@/components/economics/fuel-poverty/FuelPovertyChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>

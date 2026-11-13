@@ -154,9 +154,7 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 		})),
 	},
 	display: {
-		group: "Economics",
 		label: "Historic Unemployment Rate [2021]",
-		defaultVisible: false,
 		year: 2021,
 		component: "@/components/economics/unemployment/UnemploymentChart",
 		// The series ended in 2021, so the map reads that year.

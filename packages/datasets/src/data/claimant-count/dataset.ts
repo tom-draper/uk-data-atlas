@@ -123,9 +123,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 		],
 	},
 	display: {
-		group: "Economics",
 		label: "Claimant Count [2026]",
-		defaultVisible: true,
 		year: 2026,
 		card: {
 			heading: "Claimant Count",

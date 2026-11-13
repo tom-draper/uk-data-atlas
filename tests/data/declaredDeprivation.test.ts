@@ -111,8 +111,6 @@ describe("deprivation aggregation", () => {
 		expect(definitionOf("imd").chart.componentPath).toBe(
 			"@/components/deprivation/imd/IMDChart",
 		);
-		expect(definitionOf("nimdm").chart.key).toBe("deprivation-nimdm");
-		expect(definitionOf("imd").chart.defaultVisible).toBe(true);
-		expect(definitionOf("simd").chart.defaultVisible).toBe(false);
+		expect(definitionOf("nimdm").chart.key).toBe("society-nimdm");
 	});
 });

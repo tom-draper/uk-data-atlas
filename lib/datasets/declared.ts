@@ -1,4 +1,4 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { DATASET_DECLARATIONS, themeOfTopic } from "@uk-data-atlas/datasets";
 import type { DeclaredDatasetId } from "@uk-data-atlas/datasets";
 import { definitionOf, type DatasetDeclaration } from "@uk-data-atlas/datasets";
 import type {
@@ -32,11 +32,9 @@ const displayed = DATASET_DECLARATIONS.filter(
 /** The component every declared card is drawn by. */
 export const DECLARED_CHART_COMPONENT = "@/components/ValueCard";
 
-/** A chart group's name as it appears in chart keys: `Economics` is `economics`. */
-const groupSlug = (group: string) => group.toLowerCase().replace(/\s+/g, "-");
-
+/** A declared card's key: its theme, then its id, such as `economy-claimant-count`. */
 export const declaredChartKey = (declaration: Displayed) =>
-	`${groupSlug(declaration.display.group)}-${declaration.id}`;
+	`${themeOfTopic(declaration.topic)}-${declaration.id}`;
 
 export function formatDisplay(format: DisplayFormat, value: number): string {
 	switch (format.kind) {
@@ -269,10 +267,9 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 	return {
 		...definitionOf(declaration),
 		chart: {
-			group: display.group,
+			topic: declaration.topic,
 			key: declaredChartKey(declaration),
 			label: display.label,
-			defaultVisible: display.defaultVisible,
 			componentPath: display.component ?? DECLARED_CHART_COMPONENT,
 			...(display.card
 				? {

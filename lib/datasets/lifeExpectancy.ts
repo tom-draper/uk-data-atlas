@@ -14,10 +14,9 @@ const calculateStats: ChartDefinition<LifeExpectancyDataset>["calculateStats"] =
 		);
 
 const le: ChartDefinition<LifeExpectancyDataset> = {
-	group: "Health",
+	topic: "life-expectancy",
 	key: "health-lifeExpectancy",
 	label: "Life Expectancy [2022-2024]",
-	defaultVisible: true,
 	componentPath: "@/components/health/LifeExpectancyChart",
 	datasetId: "le",
 	keyBy: "id",

@@ -139,9 +139,7 @@ export const imd = defineDataset<IMDDataset>({
 		],
 	},
 	display: {
-		group: "Deprivation",
 		label: "Deprivation (IMD) [2025]",
-		defaultVisible: true,
 		year: 2025,
 		component: "@/components/deprivation/imd/IMDChart",
 		measures,

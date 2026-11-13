@@ -239,22 +239,18 @@ export const deprivationStatistics = (
  */
 export const rankDisplay = ({
 	prefix,
-	group,
 	label,
 	year,
 	areaCount,
 	aggregation,
 }: {
 	prefix: string;
-	group: string;
 	label: string;
 	year: number;
 	areaCount: number;
 	aggregation: DatasetDisplay["aggregation"];
 }): DatasetDisplay => ({
-	group,
 	label,
-	defaultVisible: false,
 	year,
 	component: `@/components/deprivation/${prefix}/${prefix.toUpperCase()}Chart`,
 	measures: [

@@ -66,9 +66,7 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 		computed: latestCopyRules(SCHOOL_COPIES),
 	},
 	display: {
-		group: "Education",
 		label: "GCSE Performance [2024/25]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "GCSE Performance",

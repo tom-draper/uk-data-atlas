@@ -60,9 +60,7 @@ export const jobs = defineDataset<JobsDataset>({
 		...per100k((record) => record.totalJobs),
 	},
 	display: {
-		group: "Economics",
 		label: "Jobs [2024]",
-		defaultVisible: true,
 		year: 2024,
 		card: {
 			heading: "Jobs",

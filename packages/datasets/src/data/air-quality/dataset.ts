@@ -106,9 +106,7 @@ export const airQuality = defineDataset<AirQualityDataset>({
 		],
 	},
 	display: {
-		group: "Environment",
 		label: "Air Quality - NO₂ [2024]",
-		defaultVisible: true,
 		year: 2024,
 		component: "@/components/environment/air-quality/AirQualityChart",
 		measures: [

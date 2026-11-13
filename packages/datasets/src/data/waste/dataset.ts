@@ -125,9 +125,7 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 		...per100k((record) => record.value, 2024),
 	},
 	display: {
-		group: "Environment",
 		label: "Collected Waste [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "Collected waste",

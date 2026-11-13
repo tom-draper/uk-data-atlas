@@ -137,9 +137,7 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 		],
 	},
 	display: {
-		group: "Transport",
 		label: "Travel to Work [2021]",
-		defaultVisible: true,
 		year: 2021,
 		component: "@/components/transport/travel-to-work/TravelToWorkChart",
 		measures: [

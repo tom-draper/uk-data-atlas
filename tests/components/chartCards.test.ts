@@ -8,63 +8,76 @@ const visibility = (enabled: Partial<Record<ChartKey, boolean>>) =>
 	enabled as Record<ChartKey, boolean>;
 
 describe("ChartCards registry selection", () => {
-	it("returns only visible charts in the requested group", () => {
+	it("returns only visible charts in the requested theme", () => {
 		const charts = getVisibleChartDefinitions(
-			"Economics",
+			"economy",
 			visibility({
+				"economy-income": true,
+				"economy-jobs": false,
 				"economics-housePrice": true,
-				"economics-income": false,
-				"economics-crime": false,
 			}),
 		);
 
 		expect(charts).toHaveLength(1);
-		expect(charts[0].chart.key).toBe("economics-housePrice");
+		expect(charts[0].chart.key).toBe("economy-income");
 	});
 
-	it("reports whether a group contains a visible chart", () => {
+	it("reports whether a theme contains a visible chart", () => {
 		expect(
 			hasVisibleChart(
-				"Health",
+				"health",
 				visibility({ "health-nhs-waiting": true }),
 			),
 		).toBe(true);
 		expect(
 			hasVisibleChart(
-				"Health",
+				"health",
 				visibility({ "health-nhs-waiting": false }),
 			),
 		).toBe(false);
 	});
 
-	it("puts the primary economics cards first", () => {
+	it("splits the old Economics group across themes", () => {
+		const all = visibility({
+			"economics-housePrice": true,
+			"economy-income": true,
+			"society-child-poverty": true,
+			"society-crime": true,
+		});
+
+		expect(
+			getVisibleChartDefinitions("economy", all).map(
+				({ chart }) => chart.key,
+			),
+		).toEqual(["economy-income"]);
+		expect(
+			getVisibleChartDefinitions("housing", all).map(
+				({ chart }) => chart.key,
+			),
+		).toEqual(["economics-housePrice"]);
+		expect(
+			getVisibleChartDefinitions("society", all).map(
+				({ chart }) => chart.key,
+			),
+		).toEqual(["society-child-poverty", "society-crime"]);
+	});
+
+	it("orders cards by topic, then by registry order", () => {
 		const charts = getVisibleChartDefinitions(
-			"Economics",
+			"economy",
 			visibility({
-				"economics-housePrice": true,
-				"economics-income": true,
-				"economics-regional-gdp-itl3": true,
-				"economics-jobs": true,
-				"economics-planning-applications": true,
-				"economics-council-tax": true,
-				"economics-unemployment": true,
-				"economics-child-poverty": true,
-				"economics-fuelPoverty": true,
-				"economics-business-activity": true,
+				"economy-regional-gdp-itl3": true,
+				"economy-jobs": true,
+				"economy-income": true,
+				"economy-business-activity": true,
 			}),
 		);
 
-		expect(charts.map(({ chart }) => chart.key)).toEqual([
-			"economics-housePrice",
-			"economics-income",
-			"economics-regional-gdp-itl3",
-			"economics-jobs",
-			"economics-planning-applications",
-			"economics-council-tax",
-			"economics-unemployment",
-			"economics-child-poverty",
-			"economics-fuelPoverty",
-			"economics-business-activity",
+		expect(charts.map(({ chart }) => chart.topic)).toEqual([
+			"labour-market",
+			"earnings-and-income",
+			"business",
+			"economic-output",
 		]);
 	});
 });

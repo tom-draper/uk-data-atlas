@@ -50,9 +50,7 @@ export const regionalGdpItl3 = defineDataset<RegionalGdpItl3Dataset>({
 		},
 	},
 	display: {
-		group: "Economics",
 		label: "Regional GDP [2023]",
-		defaultVisible: true,
 		year: 2023,
 		card: {
 			heading: "Regional GDP",

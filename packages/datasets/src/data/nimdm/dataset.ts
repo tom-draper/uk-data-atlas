@@ -51,7 +51,6 @@ export const nimdm = defineDataset<NIMDMDataset>({
 	}),
 	display: rankDisplay({
 		prefix: "nimdm",
-		group: "Deprivation",
 		label: "Deprivation (NIMDM) [2017]",
 		year: 2017,
 		areaCount: 890,

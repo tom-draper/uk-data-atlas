@@ -80,9 +80,7 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 		},
 	},
 	display: {
-		group: "Economics",
 		label: "Child Poverty [2025]",
-		defaultVisible: true,
 		year: 2025,
 		card: {
 			heading: "Child Poverty",

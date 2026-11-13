@@ -86,9 +86,7 @@ export const adultSocialCareOutcomes = defineDataset<
 		],
 	},
 	display: {
-		group: "Health",
 		label: "Social Care Quality of Life [2025]",
-		defaultVisible: false,
 		year: 2025,
 		card: {
 			heading: "Social care quality of life",

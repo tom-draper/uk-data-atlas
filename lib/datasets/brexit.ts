@@ -7,10 +7,9 @@ import type { ChartDatasetDefinition } from "./types";
 export const brexitDefinition: ChartDatasetDefinition<BrexitLADDataset> = {
 	...definitionOf(brexit),
 	chart: {
-		group: "Brexit",
+		topic: "referendums",
 		key: "brexit-electoral",
 		label: "Electoral Commission [2016]",
-		defaultVisible: true,
 		componentPath: "@/components/elections/referendum/BrexitElectoralChart",
 		calculateStats: (mm, g, d, l, id) =>
 			mm.aggregate(brexitAggregation, g, d, l, id),

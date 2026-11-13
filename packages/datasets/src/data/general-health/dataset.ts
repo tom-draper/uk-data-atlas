@@ -110,9 +110,7 @@ export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 		},
 	},
 	display: {
-		group: "Health",
 		label: "General health [2021]",
-		defaultVisible: false,
 		year: 2021,
 		card: {
 			heading: "General health",
