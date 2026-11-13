@@ -30,6 +30,14 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-13",
+		title: "Datasets list their related topics",
+		surface: "eec677cc63c7",
+		changes: [
+			"A dataset in `GET /v1/datasets` and `GET /v1/datasets/{id}` gains `relatedTopics`: the ids of other topics it is also listed under in the docs. It is left off a dataset with none. It is additive: no existing field or parameter changed, and the `topic` and `theme` filters still match the primary topic only.",
+		],
+	},
+	{
+		date: "2026-11-13",
 		title: "Population and politics split into more modules",
 		breaking: true,
 		surface: "d2719d5c4be3",

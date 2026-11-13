@@ -518,3 +518,27 @@ export const topicsOfTheme = (
 	theme: DatasetTheme,
 ): readonly DatasetTopicInfo[] =>
 	DATASET_TOPICS.filter((topic) => topic.theme === theme);
+
+/**
+ * What is wrong with a dataset's `related` topics, empty when they are valid.
+ * Each must be a registered topic, none may repeat the primary topic, and none
+ * may be listed twice. `related` only helps people find a dataset: the primary
+ * topic alone decides its theme, module, source path and builds.
+ */
+export function relatedTopicProblems(
+	primary: DatasetTopic,
+	related: readonly unknown[] = [],
+): string[] {
+	const problems: string[] = [];
+	const seen = new Set<unknown>();
+	for (const topic of related) {
+		if (!isDatasetTopic(topic))
+			problems.push(`related topic ${String(topic)} is not registered`);
+		else if (topic === primary)
+			problems.push(`related topic ${topic} is the primary topic`);
+		if (seen.has(topic))
+			problems.push(`related topic ${String(topic)} is listed twice`);
+		seen.add(topic);
+	}
+	return problems;
+}

@@ -22,6 +22,7 @@ const taxonomy = {
 };
 const dataset = z.looseObject({
 	...taxonomy,
+	relatedTopics: z.array(z.string()).optional(),
 	id: z.string(),
 	label: z.string(),
 	publisher: z.string(),

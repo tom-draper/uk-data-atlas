@@ -11,6 +11,12 @@ export interface DatasetGuide {
 	title: string;
 	/** The one topic the dataset is filed under. */
 	topic: DatasetTopic;
+	/**
+	 * Other topics the dataset is also listed under, as in its declaration
+	 * (a test checks they agree). They only affect discovery: the primary
+	 * topic decides the theme, module, source path and builds.
+	 */
+	related?: readonly DatasetTopic[];
 	/** A plain explanation of what the dataset measures. */
 	about: string;
 	/**
@@ -155,6 +161,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"housing-affordability": {
 		title: "House price to residence-based earnings ratio",
 		topic: "prices-and-affordability",
+		related: ["earnings-and-income"],
 		about: "How many years of typical local earnings it would take to buy a typical home in each local authority. A ratio of 10 means the median home costs ten times the median full-time salary of residents.",
 	},
 	"census-2021-ts054": {
@@ -167,6 +174,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"council-tax": {
 		title: "Council Tax levels in England",
 		topic: "housing-stock",
+		related: ["public-finance"],
 		about: "The average Band D council tax bill in each English council area, including precepts for police, fire and parish councils. Band D is the standard band used to compare council tax between areas.",
 		summary:
 			"The council tax levels billing authorities in England set for 2026-27.",
@@ -302,6 +310,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"fuel-poverty": {
 		title: "Fuel Poverty",
 		topic: "poverty",
+		related: ["energy"],
 		about: "The share of households in each small neighbourhood of England in fuel poverty: living in a home with a poor energy efficiency rating and left below the poverty line after paying for energy.",
 		summary:
 			"The share of households in fuel poverty in each small neighbourhood of England. The fuel poverty map switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
@@ -386,6 +395,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"travel-to-work": {
 		title: "Travel to Work",
 		topic: "commuting",
+		related: ["labour-market"],
 		about: "How people in work usually travel to their job, by car, public transport, bike or on foot, and how many worked mainly from home, from the 2021 Census.",
 		summary:
 			"How working residents of each local authority in England and Wales get to work, from driving and public transport to cycling and working from home, from Census 2021.",
@@ -400,6 +410,7 @@ export const DATASET_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"electric-vehicle-chargers": {
 		title: "Public electric vehicle chargers by local authority",
 		topic: "vehicles",
+		related: ["energy"],
 		about: "How many public charging devices for electric vehicles there are in each local authority, counted every quarter by the Department for Transport.",
 		summary:
 			"Public electric vehicle charger counts by UK local authority.",

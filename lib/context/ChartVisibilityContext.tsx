@@ -1,14 +1,19 @@
 "use client";
 import { createContext, use, useSyncExternalStore } from "react";
-import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import { DEFAULT_CHART_KEYS } from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import type { DatasetTopic } from "@uk-data-atlas/datasets";
+import {
+	getRegisteredDataset,
+	type DatasetTopic,
+} from "@uk-data-atlas/datasets";
 
 export type ChartKey = string;
 
 export interface ChartConfigEntry {
 	topic: DatasetTopic;
+	/** Other topics the card's dataset is also listed under. */
+	related: readonly DatasetTopic[];
 	key: ChartKey;
 	label: string;
 	source: string;
@@ -18,6 +23,9 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	...CHART_DATASET_DEFINITIONS.flatMap((definition) =>
 		getChartDefinitions(definition).map(({ topic, key, label }) => ({
 			topic,
+			related:
+				getRegisteredDataset(datasetSlug(definition.type))?.related ??
+				[],
 			key,
 			label,
 			source: definition.source.source,

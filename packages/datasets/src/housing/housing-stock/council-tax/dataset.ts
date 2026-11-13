@@ -12,6 +12,7 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,
+	related: ["public-finance"],
 	source: {
 		name: "Council Tax levels in England",
 		publisher: "Ministry of Housing, Communities and Local Government",

@@ -7,6 +7,11 @@ import {
 	themeOfChart,
 } from "@/lib/datasets/chartSections";
 import { getChartDefinitions } from "@/lib/datasets/types";
+import { buildSettingsSections } from "@/lib/datasets/chartSettingsSections";
+import {
+	CHART_CONFIG,
+	DEFAULT_VISIBILITY,
+} from "@/lib/context/ChartVisibilityContext";
 import { DATASETS } from "./datasetUniverse";
 
 /**
@@ -91,6 +96,44 @@ describe("website chart sections", () => {
 				expect(count, theme).toBeGreaterThanOrEqual(1);
 				expect(count, theme).toBeLessThanOrEqual(5);
 			}
+		});
+	});
+
+	describe("settings panel", () => {
+		const sections = buildSettingsSections(CHART_CONFIG);
+		const topics = sections.flatMap((section) => section.topics);
+
+		it("lists every card once under its own topic", () => {
+			const own = topics.flatMap(({ items }) => items.map((i) => i.key));
+			expect(own.sort()).toEqual(CHART_CONFIG.map((c) => c.key).sort());
+		});
+
+		it("lists a related card under each related topic, as the same card", () => {
+			const related = CHART_CONFIG.filter((c) => c.related.length > 0);
+			expect(related.length).toBeGreaterThan(0);
+			const listed = topics.flatMap((t) => t.related.map((r) => r.key));
+			expect(listed.sort()).toEqual(
+				related.flatMap((c) => c.related.map(() => c.key)).sort(),
+			);
+			for (const { key } of related)
+				expect(
+					Object.keys(DEFAULT_VISIBILITY).filter((k) => k === key),
+				).toHaveLength(1);
+		});
+
+		it("never repeats a card under its own topic, nor changes the defaults", () => {
+			for (const topic of topics) {
+				const own = new Set(topic.items.map(({ key }) => key));
+				expect(topic.related.filter(({ key }) => own.has(key))).toEqual(
+					[],
+				);
+			}
+			const defaults = Object.values(DEFAULT_CHARTS_BY_THEME).flat();
+			expect(
+				Object.keys(DEFAULT_VISIBILITY)
+					.filter((key) => DEFAULT_VISIBILITY[key])
+					.sort(),
+			).toEqual([...defaults].sort());
 		});
 	});
 });

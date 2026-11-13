@@ -14,6 +14,7 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 	topic: "commuting",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
+	related: ["labour-market"],
 	source: {
 		name: "Travel to Work",
 		publisher: "Office for National Statistics",

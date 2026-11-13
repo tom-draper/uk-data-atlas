@@ -14,6 +14,7 @@ export const housingAffordability = defineDataset<
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	publishMapValues: true,
+	related: ["earnings-and-income"],
 	source: {
 		name: "House price to residence-based earnings ratio",
 		publisher: "Office for National Statistics",

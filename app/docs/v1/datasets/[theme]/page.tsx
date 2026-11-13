@@ -7,6 +7,7 @@ import {
 } from "@uk-data-atlas/datasets";
 import { loadCatalogue } from "@/lib/docs/catalogue";
 import DatasetCards from "@/components/docs/DatasetCards";
+import RelatedDatasets from "@/components/docs/RelatedDatasets";
 import { DocPage, H2, P } from "@/components/docs/Content";
 import { TextLink } from "@/components/docs/Prose";
 import { docsMetadata } from "@/lib/docs/metadata";
@@ -53,11 +54,12 @@ export default async function ThemePage({ params }: { params: Params }) {
 				title: topic.label,
 			}))}
 		>
-			{topics.map(({ topic, datasets }) => (
+			{topics.map(({ topic, datasets, related }) => (
 				<section key={topic.id}>
 					<H2 id={topic.id}>{topic.label}</H2>
 					<P>{topic.description}</P>
 					<DatasetCards datasets={datasets} catalogue={catalogue} />
+					<RelatedDatasets datasets={related} />
 					<P>
 						<TextLink href={topicHref(topic.id)}>
 							All {topic.label.toLowerCase()} datasets

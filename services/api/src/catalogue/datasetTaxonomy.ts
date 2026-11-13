@@ -23,6 +23,12 @@ export type DatasetTaxonomy = {
 	topic: DatasetTopic;
 	module: DatasetModule;
 	/**
+	 * Other topics the dataset is also listed under, in registry order. They
+	 * only help discovery: `theme`, `topic` and `module` come from the primary
+	 * topic alone.
+	 */
+	relatedTopics: readonly DatasetTopic[];
+	/**
 	 * Modules that hold some of the dataset's rows beside its own, such as the
 	 * ShareAlike local elections of `politics-sharealike`. Empty for most.
 	 */
@@ -41,6 +47,9 @@ export const taxonomyOfDataset = (
 				theme: registered.theme,
 				topic: registered.topic,
 				module: moduleOfDataset(registered),
+				relatedTopics: DATASET_TOPICS.filter(({ id }) =>
+					registered.related?.includes(id),
+				).map(({ id }) => id),
 				addOnModules: splitModulesOfDataset(registered.id)
 					.filter((split) => split.holds === "licensed-rows")
 					.map((split) => split.id),
@@ -75,6 +84,21 @@ export const withTaxonomy = <T extends object>(
 				module: taxonomy.module,
 			}
 		: item;
+
+/**
+ * A dataset response with its taxonomy and, when it lists any, the other
+ * topics it is related to. `relatedTopics` is left off a dataset with none, so
+ * most responses are unchanged.
+ */
+export const withDatasetTaxonomy = <T extends object>(
+	dataset: T,
+	taxonomy: DatasetTaxonomy | undefined,
+): T & Partial<DatasetTaxonomy> => {
+	const filed = withTaxonomy(dataset, taxonomy);
+	return taxonomy && taxonomy.relatedTopics.length > 0
+		? { ...filed, relatedTopics: taxonomy.relatedTopics }
+		: filed;
+};
 
 export const TAXONOMY_FILTERS = ["theme", "topic", "module"] as const;
 type TaxonomyFilter = (typeof TAXONOMY_FILTERS)[number];

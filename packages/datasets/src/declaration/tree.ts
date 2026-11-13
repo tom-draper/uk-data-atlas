@@ -6,6 +6,7 @@ import {
 	type DatasetTopicInfo,
 	type DatasetTheme,
 	type DatasetTopic,
+	themeOfTopic,
 } from "./taxonomy.ts";
 
 /**
@@ -23,7 +24,13 @@ export interface RegisteredDataset extends DatasetGuide {
 
 export interface DatasetTopicBranch {
 	topic: DatasetTopicInfo;
+	/** The datasets filed under the topic (their primary topic). */
 	datasets: readonly RegisteredDataset[];
+	/**
+	 * Datasets filed under another topic that list this one as `related`. They
+	 * are shown as secondary, and are never counted with `datasets`.
+	 */
+	related: readonly RegisteredDataset[];
 }
 
 export interface DatasetThemeBranch {
@@ -50,6 +57,12 @@ export const REGISTERED_DATASETS: readonly RegisteredDataset[] =
 		),
 	);
 
+/** Datasets filed elsewhere that list the topic as `related`, in registry order. */
+export const relatedDatasetsOfTopic = (
+	topic: DatasetTopic,
+): readonly RegisteredDataset[] =>
+	REGISTERED_DATASETS.filter((dataset) => dataset.related?.includes(topic));
+
 export const DATASET_TREE: readonly DatasetThemeBranch[] = DATASET_THEMES.map(
 	(theme) => ({
 		theme,
@@ -59,6 +72,7 @@ export const DATASET_TREE: readonly DatasetThemeBranch[] = DATASET_THEMES.map(
 				datasets: REGISTERED_DATASETS.filter(
 					(dataset) => dataset.topic === topic.id,
 				),
+				related: relatedDatasetsOfTopic(topic.id),
 			}),
 		),
 	}),
@@ -78,3 +92,23 @@ export const datasetsOfTheme = (
 	theme: DatasetTheme,
 ): readonly RegisteredDataset[] =>
 	REGISTERED_DATASETS.filter((dataset) => dataset.theme === theme);
+
+/**
+ * Datasets filed under another theme that list a topic of this theme as
+ * `related`, in registry order. A dataset related to a topic of its own theme
+ * is not included, since the theme already lists it.
+ */
+export const relatedDatasetsOfTheme = (
+	theme: DatasetTheme,
+): readonly RegisteredDataset[] =>
+	REGISTERED_DATASETS.filter(
+		(dataset) =>
+			dataset.theme !== theme &&
+			dataset.related?.some((topic) => themeOfTopic(topic) === theme),
+	);
+
+/** The topics a dataset is also listed under, as topic records, in registry order. */
+export const relatedTopicsOf = (
+	dataset: Pick<RegisteredDataset, "related">,
+): readonly DatasetTopicInfo[] =>
+	DATASET_TOPICS.filter((topic) => dataset.related?.includes(topic.id));
