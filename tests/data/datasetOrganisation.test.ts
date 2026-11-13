@@ -3,21 +3,23 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
 	DATASET_DECLARATIONS,
+	DATASET_GUIDES as REGISTRY_GUIDES,
+	DATASET_THEMES,
 	DATASET_TOPICS,
+	DATASET_TREE,
+	REGISTERED_DATASETS,
 	getDatasetTopic,
 	isDatasetTopic,
 	themeOfTopic,
 	type DatasetTopic,
 } from "@uk-data-atlas/datasets";
-import { DATA_PAGES } from "@/lib/docs/content/data";
-import { DATASET_GUIDES } from "@/lib/reference/datasets";
 import { DATASETS } from "./datasetUniverse";
 
 /**
  * Keeps the dataset organisation from drifting (docs/data-organisation.md,
  * task 3). The checks that a dataset has a registered topic, and that its
  * module follows from it, live in datasetTopics.test.ts and taxonomy.test.ts;
- * this file covers ids, topic membership and the lists that name datasets.
+ * this file covers ids, topic membership and the registry's guides and tree.
  * Source folders are checked in sourceDatasets.test.ts and, against the
  * built data/source tree, tests/built/data/sourceFolders.test.ts.
  *
@@ -72,12 +74,6 @@ const THIN_TOPIC_ALLOWLIST: Record<string, Exception> = {
  * Empty today. Never add to it without a task that removes the entry.
  */
 const ID_ALLOWLIST: Record<string, Exception> = {};
-
-/**
- * Ids named by a docs page or a reference guide that the registry does not
- * build. Empty today. Never add to it without a task that removes the entry.
- */
-const UNREGISTERED_ID_ALLOWLIST: Record<string, Exception> = {};
 
 describe("dataset ids", () => {
 	it("are kebab-case", () => {
@@ -182,29 +178,51 @@ describe("declaration folders", () => {
 	});
 });
 
-describe("lists that name datasets", () => {
-	const known = new Set(DATASETS.map(({ id }) => id));
-	const unknown = (ids: string[]) =>
-		ids.filter(
-			(id) => !known.has(id) && !(id in UNREGISTERED_ID_ALLOWLIST),
-		);
-
-	it("have docs pages that only name registered datasets", () => {
-		expect(unknown(DATA_PAGES.flatMap((page) => page.datasets))).toEqual(
-			[],
-		);
+describe("registry guides", () => {
+	it("describe every dataset, under the topic it is filed in", () => {
+		for (const { id, topic } of DATASETS) {
+			expect(REGISTRY_GUIDES[id]?.about, id).toBeTruthy();
+			expect(REGISTRY_GUIDES[id]?.topic, id).toBe(topic);
+		}
 	});
 
-	it("have reference guides that only describe registered datasets", () => {
-		expect(unknown(Object.keys(DATASET_GUIDES))).toEqual([]);
+	it("title every dataset, without repeating a title within a topic", () => {
+		const seen = new Set<string>();
+		for (const { id, topic } of DATASETS) {
+			const title = REGISTRY_GUIDES[id]?.title;
+			expect(title, id).toBeTruthy();
+			expect(seen.has(`${topic}/${title}`), `${id}: ${title}`).toBe(
+				false,
+			);
+			seen.add(`${topic}/${title}`);
+		}
 	});
 
-	it("keep every allowlisted unregistered id unregistered", () => {
+	it("only describe registered datasets", () => {
+		const known = new Set(DATASETS.map(({ id }) => id));
 		expect(
-			Object.keys(UNREGISTERED_ID_ALLOWLIST).filter((id) =>
-				known.has(id),
-			),
+			Object.keys(REGISTRY_GUIDES).filter((id) => !known.has(id)),
 		).toEqual([]);
+	});
+});
+
+describe("dataset tree", () => {
+	it("lists themes and topics in registry order, each topic with a dataset", () => {
+		expect(DATASET_TREE.map(({ theme }) => theme.id)).toEqual(
+			DATASET_THEMES.map(({ id }) => id),
+		);
+		expect(
+			DATASET_TREE.flatMap(({ topics }) => topics.map((t) => t.topic.id)),
+		).toEqual(DATASET_TOPICS.map(({ id }) => id));
+		for (const { topics } of DATASET_TREE)
+			for (const { topic, datasets } of topics)
+				expect(datasets.length, topic.id).toBeGreaterThan(0);
+	});
+
+	it("holds every dataset exactly once", () => {
+		expect(REGISTERED_DATASETS.map(({ id }) => id).sort()).toEqual(
+			DATASETS.map(({ id }) => id).sort(),
+		);
 	});
 });
 

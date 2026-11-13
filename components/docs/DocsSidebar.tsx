@@ -20,10 +20,15 @@ function filterLinks(links: NavLink[], needle: string): NavLink[] {
 	});
 }
 
-function contains(link: NavLink, pathname: string): boolean {
+/** A page is current on its own address, and for a child on the pages beneath it. */
+function isCurrent(href: string, pathname: string, nested = false): boolean {
+	return href === pathname || (nested && pathname.startsWith(`${href}/`));
+}
+
+function contains(link: NavLink, pathname: string, nested = false): boolean {
 	return (
-		link.href === pathname ||
-		(link.children ?? []).some((child) => contains(child, pathname))
+		isCurrent(link.href, pathname, nested) ||
+		(link.children ?? []).some((child) => contains(child, pathname, true))
 	);
 }
 
@@ -157,7 +162,7 @@ function ParentLink({
 			{open && (
 				<ul className="mt-0.5 mb-2 ml-3 border-l border-slate-900/[0.08]">
 					{(link.children ?? []).map((child) => {
-						const active = pathname === child.href;
+						const active = isCurrent(child.href, pathname, true);
 						return (
 							<li key={child.href}>
 								<Link

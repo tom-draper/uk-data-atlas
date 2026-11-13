@@ -8,7 +8,7 @@ import ReferencePage from "@/components/reference/ReferencePage";
 import {
 	boundaryHref,
 	datasetEntries,
-	datasetsByTopic,
+	datasetsByTheme,
 } from "@/lib/reference/entries";
 import { pageMetadata } from "@/lib/site";
 
@@ -51,7 +51,7 @@ function LinkList({ links }: { links: { name: string; href: string }[] }) {
 export default async function DatasetsPage() {
 	const catalogue = await loadCatalogue();
 	const entries = datasetEntries(catalogue);
-	const topics = datasetsByTopic(entries);
+	const themes = datasetsByTheme(entries);
 
 	return (
 		<ReferencePage
@@ -64,12 +64,14 @@ export default async function DatasetsPage() {
 						{ id: "all-datasets", title: "All datasets" },
 					],
 				},
-				...topics.map((topic) => ({
-					title: topic.title,
-					links: topic.datasets.map((dataset) => ({
-						id: dataset.slug,
-						title: dataset.source.name,
-					})),
+				...themes.map(({ theme, topics }) => ({
+					title: theme.label,
+					links: topics.flatMap(({ datasets }) =>
+						datasets.map((dataset) => ({
+							id: dataset.slug,
+							title: dataset.title,
+						})),
+					),
 				})),
 			]}
 			eyebrow="Datasets"
@@ -121,103 +123,154 @@ export default async function DatasetsPage() {
 			<H2 id="all-datasets">All datasets</H2>
 			<Table
 				head={["Dataset", "Published by", "Years", "Boundary"]}
-				rows={topics.flatMap((topic) =>
-					topic.datasets.map((dataset) => [
-						<TextLink key="name" href={`#${dataset.slug}`}>
-							{dataset.source.name}
-						</TextLink>,
-						dataset.source.source,
-						dataset.source.year,
-						<TextLink
-							key="boundary"
-							href={boundaryHref(dataset.geography)}
-						>
-							{dataset.geographyTitle}
-						</TextLink>,
-					]),
+				rows={themes.flatMap(({ topics }) =>
+					topics.flatMap(({ datasets }) =>
+						datasets.map((dataset) => [
+							<TextLink key="name" href={`#${dataset.slug}`}>
+								{dataset.title}
+							</TextLink>,
+							dataset.publisher ?? "",
+							dataset.years ?? "",
+							dataset.geography ? (
+								<TextLink
+									key="boundary"
+									href={boundaryHref(dataset.geography)}
+								>
+									{dataset.geographyTitle}
+								</TextLink>
+							) : (
+								""
+							),
+						]),
+					),
 				)}
 			/>
 
-			{topics.map((topic) => (
-				<section key={topic.id}>
-					<H2 id={topic.id}>{topic.title}</H2>
-					{topic.datasets.map((dataset) => (
-						<section key={dataset.slug}>
-							<H3 id={dataset.slug}>{dataset.source.name}</H3>
-							<P>{dataset.about}</P>
-							<Facts
-								items={[
-									{
-										label: "Published by",
-										value: (
-											<ExternalLink
-												href={dataset.source.sourceUrl}
-											>
-												{dataset.source.source}
-											</ExternalLink>
-										),
-									},
-									{
-										label: "Years",
-										value: dataset.source.year,
-									},
-									...(dataset.coverage
-										? [
-												{
-													label: "Coverage",
-													value: dataset.coverage,
-												},
-											]
-										: []),
-									{
-										label: "Boundary",
-										value: (
-											<TextLink
-												href={boundaryHref(
-													dataset.geography,
-												)}
-											>
-												{dataset.geographyTitle}
-											</TextLink>
-										),
-									},
-									{
-										label: "Licence",
-										value: (
-											<ExternalLink
-												href={dataset.source.licenceUrl}
-											>
-												{dataset.source.licence}
-											</ExternalLink>
-										),
-									},
-									...(dataset.maps.length > 0
-										? [
-												{
-													label: "Maps",
-													value: (
-														<LinkList
-															links={dataset.maps}
-														/>
-													),
-												},
-											]
-										: []),
-									{
-										label: "API",
-										value: dataset.docsHref ? (
-											<TextLink href={dataset.docsHref}>
-												API documentation
-											</TextLink>
-										) : (
-											"Not served by the API"
-										),
-									},
-								]}
-							/>
-							<p className="-mt-4 text-[13.5px] leading-[1.7] text-slate-500">
-								{dataset.source.description}
-							</p>
+			{themes.map(({ theme, topics }) => (
+				<section key={theme.id}>
+					<H2 id={`theme-${theme.id}`}>{theme.label}</H2>
+					<P>{theme.description}</P>
+					{topics.map(({ topic, datasets }) => (
+						<section key={topic.id}>
+							<H3 id={`topic-${topic.id}`}>{topic.label}</H3>
+							{datasets.map((dataset) => (
+								<section key={dataset.slug}>
+									<h4
+										id={dataset.slug}
+										className="mt-8 scroll-mt-24 text-[16px] font-semibold text-slate-900"
+									>
+										{dataset.title}
+									</h4>
+									<P>{dataset.about}</P>
+									<Facts
+										items={[
+											...(dataset.publisher
+												? [
+														{
+															label: "Published by",
+															value: dataset.sourceUrl ? (
+																<ExternalLink
+																	href={
+																		dataset.sourceUrl
+																	}
+																>
+																	{
+																		dataset.publisher
+																	}
+																</ExternalLink>
+															) : (
+																dataset.publisher
+															),
+														},
+													]
+												: []),
+											...(dataset.years
+												? [
+														{
+															label: "Years",
+															value: dataset.years,
+														},
+													]
+												: []),
+											...(dataset.coverage
+												? [
+														{
+															label: "Coverage",
+															value: dataset.coverage,
+														},
+													]
+												: []),
+											...(dataset.geography
+												? [
+														{
+															label: "Boundary",
+															value: (
+																<TextLink
+																	href={boundaryHref(
+																		dataset.geography,
+																	)}
+																>
+																	{
+																		dataset.geographyTitle
+																	}
+																</TextLink>
+															),
+														},
+													]
+												: []),
+											...(dataset.licence
+												? [
+														{
+															label: "Licence",
+															value: dataset.licenceUrl ? (
+																<ExternalLink
+																	href={
+																		dataset.licenceUrl
+																	}
+																>
+																	{
+																		dataset.licence
+																	}
+																</ExternalLink>
+															) : (
+																dataset.licence
+															),
+														},
+													]
+												: []),
+											...(dataset.maps.length > 0
+												? [
+														{
+															label: "Maps",
+															value: (
+																<LinkList
+																	links={
+																		dataset.maps
+																	}
+																/>
+															),
+														},
+													]
+												: []),
+											{
+												label: "API",
+												value: (
+													<TextLink
+														href={dataset.docsHref}
+													>
+														API documentation
+													</TextLink>
+												),
+											},
+										]}
+									/>
+									{dataset.description && (
+										<p className="-mt-4 text-[13.5px] leading-[1.7] text-slate-500">
+											{dataset.description}
+										</p>
+									)}
+								</section>
+							))}
 						</section>
 					))}
 				</section>

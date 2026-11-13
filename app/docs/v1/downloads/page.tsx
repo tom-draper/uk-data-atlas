@@ -6,9 +6,11 @@ import {
 	LinkCard,
 	P,
 } from "@/components/docs/Content";
-import { DATA_PAGES, DATA_TOPICS } from "@/lib/docs/content/data";
+import DatasetCards from "@/components/docs/DatasetCards";
+import { DATASET_TREE } from "@uk-data-atlas/datasets";
+import { loadCatalogue, servedDatasetIds } from "@/lib/docs/catalogue";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
-import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
+import { geographyHref } from "@/lib/docs/navigation";
 import { docsMetadata } from "@/lib/docs/metadata";
 
 export const metadata = docsMetadata(
@@ -17,7 +19,9 @@ export const metadata = docsMetadata(
 	"/docs/v1/downloads",
 );
 
-export default function DownloadsPage() {
+export default async function DownloadsPage() {
+	const catalogue = await loadCatalogue();
+	const served = new Set(servedDatasetIds(catalogue));
 	return (
 		<DocPage
 			href="/docs/v1/downloads"
@@ -42,24 +46,22 @@ export default function DownloadsPage() {
 				available for it. The detail page lists each measure, period and
 				geography, with a direct download link.
 			</P>
-			{DATA_TOPICS.map((topic) => (
-				<section key={topic.id}>
-					<H2 id={`datasets-${topic.id}`}>{topic.title}</H2>
-					<CardGrid>
-						{DATA_PAGES.filter(
-							(page) => page.topic === topic.id,
-						).map((page) => (
-							<LinkCard
-								key={page.slug}
-								href={`${dataPageHref(page.slug)}#downloads`}
-								title={page.title}
-							>
-								{page.intro}
-							</LinkCard>
-						))}
-					</CardGrid>
-				</section>
-			))}
+			{DATASET_TREE.map(({ theme, topics }) => {
+				const datasets = topics
+					.flatMap((branch) => branch.datasets)
+					.filter(({ id }) => served.has(id));
+				if (datasets.length === 0) return null;
+				return (
+					<section key={theme.id}>
+						<H2 id={`datasets-${theme.id}`}>{theme.label}</H2>
+						<DatasetCards
+							datasets={datasets}
+							catalogue={catalogue}
+							hash="#downloads"
+						/>
+					</section>
+				);
+			})}
 
 			<H2 id="boundaries">Boundaries</H2>
 			<P>

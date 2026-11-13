@@ -65,7 +65,7 @@ export default async function BoundariesPage() {
 													? `1 release, ${releaseYears(releases)}`
 													: `${releases.length} releases, ${releaseYears(releases)}`,
 												data.length > 0 &&
-													`${data.length} data ${data.length === 1 ? "page" : "pages"}`,
+													`${data.length} ${data.length === 1 ? "dataset" : "datasets"}`,
 											]
 												.filter(Boolean)
 												.join(" · ")}

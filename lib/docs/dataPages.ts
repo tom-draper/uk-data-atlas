@@ -7,16 +7,19 @@ import {
 	type Catalogue,
 	type CatalogueMeasure,
 } from "./catalogue";
-import { DATA_PAGES, type DataPage } from "./content/data";
+import { REGISTERED_DATASETS } from "@uk-data-atlas/datasets";
 import { GEOGRAPHIES } from "./content/geographies";
 
-/** Everything a data page shows, gathered from the catalogue. */
-export function dataPageFacts(page: DataPage, catalogue: Catalogue) {
+/** Everything a page about some datasets shows, gathered from the catalogue. */
+export function dataPageFacts(
+	datasetIds: readonly string[],
+	catalogue: Catalogue,
+) {
 	const datasets = catalogue.datasets.filter((d) =>
-		page.datasets.includes(d.id),
+		datasetIds.includes(d.id),
 	);
-	const measures = measuresFromDatasets(catalogue, page.datasets);
-	const sources = sourceSummaries(catalogue, page.datasets);
+	const measures = measuresFromDatasets(catalogue, datasetIds);
+	const sources = sourceSummaries(catalogue, datasetIds);
 	const periods = sources.flatMap((s) => s.periods);
 	// Every year a period names, so 2022-2024 reaches 2024.
 	const years = periods.flatMap((p) =>
@@ -64,22 +67,18 @@ export function combining(measure: CatalogueMeasure): string {
 	return "Not combined";
 }
 
-export function findDataPage(slug: string): DataPage | undefined {
-	return DATA_PAGES.find((page) => page.slug === slug);
-}
-
-/** The data pages with anything published on a geography. */
+/** The registry datasets with anything published on a geography. */
 export function dataPagesOnGeography(geography: string, catalogue: Catalogue) {
 	const measureIds = new Set(
 		measuresOnGeography(catalogue, geography).map((m) => m.id),
 	);
-	return DATA_PAGES.map((page) => {
-		const sources = sourceSummaries(catalogue, page.datasets).filter(
+	return REGISTERED_DATASETS.map((dataset) => {
+		const sources = sourceSummaries(catalogue, [dataset.id]).filter(
 			(source) =>
 				source.geography === geography &&
 				source.measureIds.some((id) => measureIds.has(id)),
 		);
-		return { page, sources };
+		return { dataset, sources };
 	}).filter(({ sources }) => sources.length > 0);
 }
 

@@ -31,7 +31,6 @@ A dataset is described in separate places that nothing keeps in step:
 | `lib/helpers/datasetAggregation/*`                                                               | Aggregation functions and one specification per dataset                                     |
 | `components/LegendContent.tsx`, `LegendPanel.tsx`, `legend/*`                                    | Per-dataset legend and measure toggle                                                       |
 | `lib/atlas/figures.ts`, `rankingRecipes.ts`, `rankings.ts`, `pages.ts`, `scripts/map-figures.ts` | Place figures, ranking recipes and labels, keyed by dataset id                              |
-| `lib/reference/datasets.ts`, `lib/docs/content/data.ts`                                          | Reference copy and docs topics                                                              |
 | `lib/places/headlines.ts`                                                                        | Place headline per dataset                                                                  |
 
 ### Claimant count
@@ -56,7 +55,7 @@ files name it:
   `LegendContent.tsx`, `LegendPanel.tsx`, `LegendSupplementalPanels.tsx`.
 - Aggregation and figures: `specifications.ts`, `numeric.ts`, `lib/atlas/figures.ts`,
   `rankingRecipes.ts`, `rankings.ts`, `pages.ts`, `scripts/map-figures.ts`,
-  `lib/places/headlines.ts`, `lib/reference/datasets.ts`, `lib/docs/content/data.ts`.
+  `lib/places/headlines.ts`.
 
 ### House price
 

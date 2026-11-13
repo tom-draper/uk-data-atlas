@@ -3,7 +3,11 @@ import {
 	ATLAS_MAPS,
 	atlasLocationsFor,
 } from "@/lib/atlas/pages";
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
+import {
+	CATALOGUE_DATASET_DEFINITIONS,
+	DATASET_TREE,
+	REGISTERED_DATASETS,
+} from "@uk-data-atlas/datasets";
 import { datasetSlug } from "@/lib/datasets";
 import {
 	type Catalogue,
@@ -11,15 +15,13 @@ import {
 	releasesForGeography,
 	sourceSummaries,
 } from "@/lib/docs/catalogue";
-import { DATA_PAGES } from "@/lib/docs/content/data";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
-import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
+import { datasetPageHref, geographyHref } from "@/lib/docs/navigation";
 import { BOUNDARY_DETAILS } from "./boundaries";
-import { DATASET_GUIDES, DATASET_TOPICS } from "./datasets";
 
 /**
  * What the /datasets and /boundaries pages show, gathered from the dataset
- * registry, the boundary catalogue and the written guides.
+ * registry, the boundary catalogue and the registry's guides.
  */
 
 export type DatasetEntry = ReturnType<typeof datasetEntries>[number];
@@ -33,13 +35,22 @@ export const boundaryHref = (geography: string) =>
 export const datasetHref = (slug: string) => `/datasets#${slug}`;
 
 export function datasetEntries(catalogue: Catalogue) {
-	return CATALOGUE_DATASET_DEFINITIONS.map((definition) => {
-		const slug = datasetSlug(definition.type);
+	const definitions = new Map(
+		CATALOGUE_DATASET_DEFINITIONS.map((definition) => [
+			datasetSlug(definition.type),
+			definition,
+		]),
+	);
+	return REGISTERED_DATASETS.map((dataset) => {
+		const slug = dataset.id;
+		const definition = definitions.get(slug);
+		const published = catalogue.datasets.find((d) => d.id === slug);
+		const sources = sourceSummaries(catalogue, [slug]);
 		const countries =
-			definition.coverageCountries ??
-			sourceSummaries(catalogue, [slug]).flatMap(
-				(source) => source.countries,
-			);
+			definition?.coverageCountries ??
+			sources.flatMap((source) => source.countries);
+		const geography =
+			definition?.boundaryType ?? sources[0]?.geography ?? null;
 		const maps = ATLAS_MAPS.filter((map) => map.dataset === slug).map(
 			(map) => {
 				// The widest place the map has a page for.
@@ -51,28 +62,46 @@ export function datasetEntries(catalogue: Catalogue) {
 				};
 			},
 		);
-		const docs = DATA_PAGES.find((page) => page.datasets.includes(slug));
 		return {
 			slug,
-			...DATASET_GUIDES[slug],
-			source: definition.source,
-			geography: definition.boundaryType,
-			geographyTitle:
-				GEOGRAPHIES[definition.boundaryType]?.title ??
-				definition.boundaryType,
+			...dataset,
+			publisher:
+				definition?.source.source ?? published?.publisher ?? null,
+			sourceUrl:
+				definition?.source.sourceUrl ?? published?.sourceUrl ?? null,
+			years:
+				definition?.source.year ?? published?.temporalCoverage ?? null,
+			licence:
+				definition?.source.licence ?? published?.licence?.name ?? null,
+			licenceUrl:
+				definition?.source.licenceUrl ??
+				published?.licence?.url ??
+				null,
+			description:
+				definition?.source.description ??
+				published?.description ??
+				null,
+			geography,
+			geographyTitle: geography
+				? (GEOGRAPHIES[geography]?.title ?? geography)
+				: null,
 			coverage: countries.length > 0 ? nationList(countries) : null,
 			maps,
-			docsHref: docs ? dataPageHref(docs.slug) : null,
+			docsHref: datasetPageHref(slug),
 		};
 	});
 }
 
-export function datasetsByTopic(entries: DatasetEntry[]) {
-	return DATASET_TOPICS.map((topic) => ({
-		...topic,
-		datasets: entries
-			.filter((entry) => entry.topic === topic.id)
-			.sort((a, b) => a.source.name.localeCompare(b.source.name)),
+/** Themes, then topics, in registry order, each with its datasets' entries. */
+export function datasetsByTheme(entries: DatasetEntry[]) {
+	return DATASET_TREE.map(({ theme, topics }) => ({
+		theme,
+		topics: topics.map(({ topic, datasets }) => ({
+			topic,
+			datasets: datasets.flatMap((dataset) =>
+				entries.filter((entry) => entry.slug === dataset.id),
+			),
+		})),
 	}));
 }
 
