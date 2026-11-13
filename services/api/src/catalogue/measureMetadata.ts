@@ -25,6 +25,9 @@ export const measureMetadata = {
 						atlasRelease:
 							"sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
 						data: {
+							theme: "society",
+							topic: "crime-and-justice",
+							module: "society",
 							id: "recorded-crimes",
 							label: "Police recorded crime",
 							description: "Offences recorded by the police.",

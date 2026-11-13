@@ -38,6 +38,8 @@ export const indexResponse = (releaseId: string): ApiResponse => {
 				"/v1/datasets/{dataset-id}",
 				"/v1/measures",
 				"/v1/measures/{measure-id}",
+				"/v1/themes",
+				"/v1/modules",
 				"/v1/analysis-geographies",
 				"/v1/analysis:plan",
 				"/v1/data/{measure-id}",

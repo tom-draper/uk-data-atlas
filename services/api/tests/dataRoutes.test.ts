@@ -68,12 +68,23 @@ const populationProvenance = (
 	},
 });
 
+// The fixture dataset `population` is registered, so it carries its place in
+// the theme, topic and module hierarchy.
+const populationTaxonomy = {
+	theme: "population",
+	topic: "population-estimates",
+	module: "population",
+};
+
 test("publishes datasets, measures and source-exact population observations", () => {
 	const datasets = routeWithData("/v1/datasets");
 	assert.equal(datasets.status, 200);
 	assert.deepEqual(
 		"data" in datasets.body && datasets.body.data,
-		dataCatalog.datasets,
+		dataCatalog.datasets.map((dataset) => ({
+			...dataset,
+			...populationTaxonomy,
+		})),
 	);
 
 	// A measure with no breakdown is one series: its own definition, with
@@ -83,6 +94,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	const { sources, ...definition } = dataCatalog.measures[0]!;
 	assert.deepEqual("data" in measure.body && measure.body.data, {
 		...definition,
+		...populationTaxonomy,
 		description: definition.label,
 		dimensions: [],
 		series: [

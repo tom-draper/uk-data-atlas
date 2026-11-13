@@ -150,6 +150,14 @@ export const PROBLEM_CODES = {
 			"A dimension filter names a member the measure does not publish; `members` lists the ones it does.",
 		example: "/v1/data/recorded-crimes/value?place=Leeds&offence=arson",
 	},
+	unknown_filter_value: {
+		statuses: [400],
+		members: ["parameter", "members"],
+		alternatives: ["members"],
+		meaning:
+			"A `theme`, `topic` or `module` filter names a value the registry does not hold; `parameter` is the filter and `members` lists the values it accepts.",
+		example: "/v1/datasets?theme=nonsense",
+	},
 	retired_measure_id: {
 		statuses: [404],
 		members: ["measure", "members"],

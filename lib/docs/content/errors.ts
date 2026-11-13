@@ -78,6 +78,12 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		meaning: "This operation doesn't declare the query parameter you sent.",
 		fix: "Remove the parameter or replace it with the response's optional `suggestion`.",
 	},
+	unknown_filter_value: {
+		status: 400,
+		meaning:
+			"A `theme`, `topic` or `module` filter named something that isn't one.",
+		fix: "The response's `parameter` names the filter and `members` lists the values it accepts. `GET /v1/themes` and `GET /v1/modules` list them too.",
+	},
 	no_release_for_date: {
 		status: 404,
 		meaning: "No boundary release covers that date (or that country).",

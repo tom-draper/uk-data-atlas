@@ -24,6 +24,8 @@ test("generated route contracts match the published description", async () => {
 		"/datasets/{dataset-id}",
 		"/measures",
 		"/measures/{measure-id}",
+		"/themes",
+		"/modules",
 		"/boundaries",
 		"/boundary-releases",
 		"/boundary-releases/{geography}/{release}",

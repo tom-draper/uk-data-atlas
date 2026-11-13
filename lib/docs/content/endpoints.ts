@@ -461,7 +461,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Catalogue
 	listDatasets: {
 		title: "List datasets",
-		intro: "List every source dataset behind the Atlas, where it came from, and fingerprints of the files it was built from.",
+		intro: "List every source dataset behind the Atlas, where it came from, and fingerprints of the files it was built from. Filter by `theme`, `topic` or `module`.",
 	},
 	getDataset: {
 		title: "Get a dataset",
@@ -469,7 +469,15 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	listMeasures: {
 		title: "List measures",
-		intro: "List every measure you can query, with its unit, what it covers and whether it can be added up. A great place to start exploring.",
+		intro: "List every measure you can query, with its unit, what it covers and whether it can be added up. A great place to start exploring. Filter by `theme`, `topic` or `module`.",
+	},
+	listThemes: {
+		title: "List themes",
+		intro: "List the themes datasets are filed under, in the order the docs show them, each with its topics and how many datasets it holds.",
+	},
+	listModules: {
+		title: "List modules",
+		intro: "List the modules datasets are downloaded in, with the themes and topics each covers and how many datasets it holds.",
 	},
 	getMeasure: {
 		title: "Get a measure",

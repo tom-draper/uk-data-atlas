@@ -2824,9 +2824,16 @@ paths:
       summary: List published source datasets and their lineage
       tags:
         - Data catalogue
+      description: >
+        Each dataset carries the `theme` and `topic` it is filed under and the `module` it is
+        downloaded in, from the same registry as the docs. Filter on any of them: `GET
+        /v1/datasets?theme=population`. The filters combine, and a value the registry does not hold is
+        refused with the values it does.
       x-likely-refusal:
         status: 503
-        when: Takes no input. Refused only when the server was started without the data catalogue built.
+        when:
+          "Refused only when the server was started without the data catalogue built. A `theme`, `topic`
+          or `module` the registry does not hold is a 400 with `code: unknown_filter_value`."
       responses:
         "200":
           description: Dataset metadata compiled from the repository dataset manifest.
@@ -2837,7 +2844,10 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - id: air-quality
+                  - theme: environment
+                    topic: air-quality
+                    module: environment
+                    id: air-quality
                     label: Air Quality
                     publisher: Department for Environment, Food and Rural Affairs
                     sourceUrl: https://uk-air.defra.gov.uk/data/pcm-data
@@ -2886,6 +2896,12 @@ paths:
                     items:
                       type: object
                       properties:
+                        theme:
+                          type: string
+                        topic:
+                          type: string
+                        module:
+                          type: string
                         id:
                           type: string
                         label:
@@ -2973,6 +2989,32 @@ paths:
                 additionalProperties: {}
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: theme
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is filed under this theme, such as `population`. The themes are listed
+            by `GET /v1/themes`. An id that is not a theme is refused, with the ids that are.
+        - name: topic
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is filed under this topic, such as `population-estimates`. The topics
+            are listed under their themes by `GET /v1/themes`. An id that is not a topic is refused,
+            with the ids that are.
+        - name: module
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is downloaded in this module, such as `population`. The modules are
+            listed by `GET /v1/modules`. An id that is not a module is refused, with the ids that are.
 
   /datasets/{dataset-id}:
     get:
@@ -3004,6 +3046,9 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
+                  theme: population
+                  topic: population-estimates
+                  module: population
                   id: population-uk
                   label: Population (Local Authority)
                   publisher: Office for National Statistics
@@ -3051,6 +3096,12 @@ paths:
                   data:
                     type: object
                     properties:
+                      theme:
+                        type: string
+                      topic:
+                        type: string
+                      module:
+                        type: string
                       id:
                         type: string
                       label:
@@ -3176,6 +3227,12 @@ paths:
         measure for the caller, and matching nothing is an empty list rather than a refusal. A
         measure's `aliases`, where it has any, are other names each naming it alone, accepted wherever
         its id is.
+
+
+        Each measure carries the `theme` and `topic` of the dataset it is published in and the
+        `module` that dataset is downloaded in. `theme`, `topic` and `module` filter the list, alone
+        or with `q`: `GET /v1/measures?topic=population-estimates`. A value the registry does not hold
+        is refused with the values it does.
       x-likely-refusal:
         status: 503
         when:
@@ -3191,7 +3248,10 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - id: population
+                  - theme: population
+                    topic: population-estimates
+                    module: population
+                    id: population
                     label: Population
                     description: Mid-year population estimate.
                     valueKind: count
@@ -3274,6 +3334,12 @@ paths:
                     items:
                       type: object
                       properties:
+                        theme:
+                          type: string
+                        topic:
+                          type: string
+                        module:
+                          type: string
                         id:
                           type: string
                         label:
@@ -3649,6 +3715,31 @@ paths:
           schema:
             type: string
           description: Words to search measures by, such as `house prices`. Omit to list every measure.
+        - name: theme
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is filed under this theme, such as `population`. The themes are listed
+            by `GET /v1/themes`. An id that is not a theme is refused, with the ids that are.
+        - name: topic
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is filed under this topic, such as `population-estimates`. The topics
+            are listed under their themes by `GET /v1/themes`. An id that is not a topic is refused,
+            with the ids that are.
+        - name: module
+          in: query
+          required: false
+          schema:
+            type: string
+          description:
+            List only what is downloaded in this module, such as `population`. The modules are
+            listed by `GET /v1/modules`. An id that is not a module is refused, with the ids that are.
 
   /measures/{measure-id}:
     get:
@@ -3692,6 +3783,9 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
+                  theme: society
+                  topic: crime-and-justice
+                  module: society
                   id: recorded-crimes
                   label: Police recorded crime
                   description: Offences recorded by the police.
@@ -3784,6 +3878,12 @@ paths:
                   data:
                     type: object
                     properties:
+                      theme:
+                        type: string
+                      topic:
+                        type: string
+                      module:
+                        type: string
                       id:
                         type: string
                       label:
@@ -4152,6 +4252,276 @@ paths:
                 additionalProperties: {}
         "404":
           $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /themes:
+    get:
+      operationId: listThemes
+      summary: List the themes and topics datasets are filed under
+      tags:
+        - Data catalogue
+      description: >
+        Datasets are filed under a topic, and topics under a theme, in the order the docs use. Each
+        theme lists its topics, the `modules` it is downloaded in and how many published datasets it
+        holds. `links.datasets` is the listing filtered to it: `GET /v1/datasets?theme=population`.
+        The ids are the `theme` and `topic` on `/v1/datasets` and `/v1/measures`, and the values their
+        filters accept.
+      x-likely-refusal:
+        status: 503
+        when:
+          Refused only when the server was started without the data catalogue built, because the dataset
+          counts come from it.
+      responses:
+        "200":
+          description: Themes in registry order, each with its topics.
+          content:
+            application/json:
+              x-example-request: /v1/themes
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: population
+                    label: People and population
+                    description: How many people live where, and who they are.
+                    modules:
+                      - population
+                    datasetCount: 8
+                    links:
+                      datasets: /v1/datasets?theme=population
+                    topics:
+                      - id: population-estimates
+                        label: Population estimates
+                        description: How many people live in each area, by age and sex.
+                        module: population
+                        datasetCount: 6
+                        links:
+                          datasets: /v1/datasets?topic=population-estimates
+                meta:
+                  nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        label:
+                          type: string
+                        description:
+                          type: string
+                        modules:
+                          type: array
+                          items:
+                            type: string
+                        datasetCount:
+                          type: number
+                        links:
+                          type: object
+                          properties:
+                            datasets:
+                              type: string
+                          required:
+                            - datasets
+                          additionalProperties: {}
+                        topics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              label:
+                                type: string
+                              description:
+                                type: string
+                              module:
+                                type: string
+                              datasetCount:
+                                type: number
+                              links:
+                                type: object
+                                properties:
+                                  datasets:
+                                    type: string
+                                required:
+                                  - datasets
+                                additionalProperties: {}
+                            required:
+                              - id
+                              - label
+                              - description
+                              - module
+                              - datasetCount
+                              - links
+                            additionalProperties: {}
+                      required:
+                        - id
+                        - label
+                        - description
+                        - modules
+                        - datasetCount
+                        - links
+                        - topics
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /modules:
+    get:
+      operationId: listModules
+      summary: List the modules datasets are downloaded in
+      tags:
+        - Data catalogue
+      description: >
+        A module is a download unit built from topics: one per theme, plus the foundation parts
+        `core`, `boundaries` and `postcodes`, which hold no datasets of their own. Each lists the
+        `themes` and `topics` it is built from and how many published datasets it holds. It does not
+        describe the download itself. The ids are the `module` on `/v1/datasets` and `/v1/measures`,
+        and the values its filter accepts.
+      x-likely-refusal:
+        status: 503
+        when:
+          Refused only when the server was started without the data catalogue built, because the dataset
+          counts come from it.
+      responses:
+        "200":
+          description: "Modules in registry order: theme modules, then foundation parts."
+          content:
+            application/json:
+              x-example-request: /v1/modules
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: population
+                    kind: theme
+                    label: People and population
+                    description: How many people live where, and who they are.
+                    themes:
+                      - population
+                    topics:
+                      - id: population-estimates
+                        label: Population estimates
+                        theme: population
+                    datasetCount: 8
+                    links:
+                      datasets: /v1/datasets?module=population
+                  - id: core
+                    kind: foundation
+                    label: Core
+                    description:
+                      Areas, releases, crosswalks, lookups, named places, the catalogue of every module and
+                      denominators. Always included.
+                    themes: []
+                    topics: []
+                    datasetCount: 0
+                meta:
+                  nextCursor: null
+              schema:
+                type: object
+                properties:
+                  apiVersion:
+                    type: string
+                    const: v1
+                  atlasRelease:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      nextCursor:
+                        type:
+                          - string
+                          - "null"
+                    required:
+                      - nextCursor
+                    additionalProperties: {}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        kind:
+                          type: string
+                          enum:
+                            - theme
+                            - foundation
+                        label:
+                          type: string
+                        description:
+                          type: string
+                        themes:
+                          type: array
+                          items:
+                            type: string
+                        topics:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              label:
+                                type: string
+                              theme:
+                                type: string
+                            required:
+                              - id
+                              - label
+                              - theme
+                            additionalProperties: {}
+                        datasetCount:
+                          type: number
+                        links:
+                          type: object
+                          properties:
+                            datasets:
+                              type: string
+                          required:
+                            - datasets
+                          additionalProperties: {}
+                      required:
+                        - id
+                        - kind
+                        - label
+                        - description
+                        - themes
+                        - topics
+                        - datasetCount
+                      additionalProperties: {}
+                required:
+                  - apiVersion
+                  - atlasRelease
+                  - meta
+                  - data
+                additionalProperties: {}
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -10666,6 +11036,7 @@ components:
             - ambiguous_release
             - unknown_dimension
             - unknown_dimension_member
+            - unknown_filter_value
             - retired_measure_id
             - no_matching_series
             - ambiguous_dimension
@@ -10696,7 +11067,10 @@ components:
             measure does not have, `retired_measure_id` (404) when a path names
             a retired series id, `no_matching_series` (404) when no series has
             the members asked for, and `ambiguous_dimension` (409) when the
-            request leaves several series and the operation answers one.
+            request leaves several series and the operation answers one. From a
+            catalogue listing's `theme`, `topic` or `module` filter:
+            `unknown_filter_value` (400) for a value the registry does not hold,
+            with the values it does.
         absence:
           type: string
           enum:
@@ -10725,7 +11099,9 @@ components:
             been abolished, merged or recoded, and none of those is claimed.
         parameter:
           type: string
-          description: The query parameter the operation does not declare.
+          description:
+            The query parameter the operation does not declare, or on an
+            `unknown_filter_value` problem the filter whose value is unknown.
         suggestion:
           type: string
           description: The closest declared query parameter, when one is unambiguous.
@@ -10773,8 +11149,9 @@ components:
           description: On a `retired_measure_id` problem, the canonical measure.
         members:
           description:
-            Available members for an unknown member, or the retired id's
-            dimension members.
+            Available members for an unknown member, the retired id's dimension
+            members, or on an `unknown_filter_value` problem the values the filter
+            accepts.
           oneOf:
             - type: array
               items: { type: string }
@@ -11135,6 +11512,37 @@ components:
           code: unknown_dimension
           dimensions:
             - offence
+
+    UnknownFilterValueProblem:
+      description: A `theme`, `topic` or `module` filter names a value the registry does not hold.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, parameter, members]
+          properties:
+            status: { enum: [400] }
+            code:
+              const: unknown_filter_value
+      examples:
+        - type: https://api.ukdataatlas.com/problems/invalid-query
+          title: Invalid Query
+          status: 400
+          detail:
+            '"nonsense" is not a theme. Use one of: population, economy, housing, health,
+            education, society, politics, environment, transport, infrastructure.'
+          code: unknown_filter_value
+          parameter: theme
+          members:
+            - population
+            - economy
+            - housing
+            - health
+            - education
+            - society
+            - politics
+            - environment
+            - transport
+            - infrastructure
 
     UnknownDimensionMemberProblem:
       description: A dimension filter names a member the measure does not publish.

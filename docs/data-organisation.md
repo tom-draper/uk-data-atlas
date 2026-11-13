@@ -196,6 +196,20 @@ page that replaced them (`lib/docs/legacyDataPages.ts`), except
 `/docs/v1/datasets/population`, which is now the population theme. No
 `THIN_TOPIC_ALLOWLIST` entry is fixed by this task.
 
+Task 10 added `theme`, `topic` and `module` to API datasets and measures
+(listings and detail), `theme`, `topic` and `module` filters on
+`GET /v1/datasets` and `GET /v1/measures`, `GET /v1/themes` and
+`GET /v1/modules`. All three values come from the registry
+(`@uk-data-atlas/datasets/registry`), so `atlas.sqlite` and the pipeline are
+unchanged. `dataset.module` in SQLite is derived the same way, by
+`moduleOfTopic`. An unknown filter value is a 400 with
+`code: unknown_filter_value`. Datasets the registry does not file (a few test
+fixtures) omit the three fields, and the one catalogue id the registry spells
+differently (`school-performance-disadvantage`) is mapped in
+`services/api/src/catalogue/datasetTaxonomy.ts`. `/v1/modules` lists only what
+the registry knows, plus the foundation parts with no datasets; module
+manifests are task 12.
+
 ### Naming
 
 A folder is named for a dataset it feeds, and `SOURCES` derives it: a source's
