@@ -108,7 +108,8 @@ export const airQuality = defineDataset<AirQualityDataset>({
 	display: {
 		label: "Air Quality - NO₂ [2024]",
 		year: 2024,
-		component: "@/components/environment/air-quality/AirQualityChart",
+		component:
+			"@/components/datasets/environment/air-quality/air-quality/AirQualityChart",
 		measures: [
 			// Modelled background NO2 runs from under 1 µg/m³ in the Highlands to
 			// about 33 in the City of London; 95% of authorities are below 18.

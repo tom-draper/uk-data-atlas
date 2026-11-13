@@ -152,7 +152,8 @@ export const broadband = defineDataset<BroadbandDataset>({
 	display: {
 		label: "Fixed Broadband Coverage [2025]",
 		year: 2025,
-		component: "@/components/telecoms/broadband/BroadbandChart",
+		component:
+			"@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart",
 		measures: [
 			{
 				id: "fullFibre",

@@ -13,7 +13,7 @@ import {
 	PartyVotesGrid,
 	VoteBar,
 	type PartyVotes,
-} from "@/components/elections/PartyVotes";
+} from "@/components/datasets/politics/PartyVotes";
 
 interface ProcessedYearData {
 	year: number;

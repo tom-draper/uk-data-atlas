@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { SelectedArea } from "@lib/types";
-import { resolveDeprivation } from "@/components/deprivation/deprivationStats";
+import { resolveDeprivation } from "@/components/datasets/society/deprivation/deprivationStats";
 
 const summary = (mostDeprivedCount: number, areaCount = 10) => ({
 	areaCount,

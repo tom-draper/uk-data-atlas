@@ -11,7 +11,7 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 			key: "economics-fuelPoverty",
 			label: "Fuel Poverty [2024]",
 			componentPath:
-				"@/components/economics/fuel-poverty/FuelPovertyChart",
+				"@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
 				aggregator.aggregate(
 					fuelPovertyAggregation,

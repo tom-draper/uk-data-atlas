@@ -25,7 +25,8 @@ export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
 		topic: "ethnicity-and-identity",
 		key: "demographics-ethnicity",
 		label: "Ethnicity [2021]",
-		componentPath: "@/components/demographics/EthnicityRegistry",
+		componentPath:
+			"@/components/datasets/population/ethnicity-and-identity/ethnicity/EthnicityRegistry",
 		calculateStats,
 		year: 2021,
 	},

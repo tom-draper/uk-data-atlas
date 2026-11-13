@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveBrexitHanrettyStats } from "@/components/elections/referendum/BrexitHanrettyEstimatesChart";
+import { resolveBrexitHanrettyStats } from "@/components/datasets/politics/referendums/brexit-constituency/BrexitHanrettyEstimatesChart";
 import type { BrexitConstituencyDataset, SelectedArea } from "@/lib/types";
 
 const ward: SelectedArea = {

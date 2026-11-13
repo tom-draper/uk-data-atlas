@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deprivationColor } from "@/components/deprivation/DecileChart";
+import { deprivationColor } from "@/components/datasets/society/deprivation/DecileChart";
 
 describe("deprivationColor", () => {
 	it("interpolates a continuous low-to-high deprivation scale", () => {

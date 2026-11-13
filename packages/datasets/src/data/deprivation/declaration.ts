@@ -252,7 +252,7 @@ export const rankDisplay = ({
 }): DatasetDisplay => ({
 	label,
 	year,
-	component: `@/components/deprivation/${prefix}/${prefix.toUpperCase()}Chart`,
+	component: `@/components/datasets/society/deprivation/${prefix}/${prefix.toUpperCase()}Chart`,
 	measures: [
 		{
 			id: "rank",

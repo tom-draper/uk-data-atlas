@@ -3,7 +3,7 @@ import {
 	areaDisplay,
 	summaryDisplay,
 	type DeprivationIndex,
-} from "@/components/deprivation/DeprivationChart";
+} from "@/components/datasets/society/deprivation/DeprivationChart";
 
 const index: DeprivationIndex = {
 	datasetType: "imd",

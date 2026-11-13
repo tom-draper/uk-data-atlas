@@ -50,8 +50,8 @@ files name it:
   year 2024, period `2026-04`), `compileDataCatalog.ts`, `build-data-catalog.ts`,
   `bindCompiledFields.ts`, `measure-dimensions.json`, `statistics-vocabulary.json`,
   `catalogueUnits.ts`.
-- Website chart: `lib/datasets/claimantCount.ts`, `components/economics/claimant-count/ClaimantCountChart.tsx`,
-  `generated.ts`, `generatedCharts.tsx`.
+- Website chart: the declaration's `display` block, built by `lib/datasets/declared.ts`,
+  then `generated.ts`, `generatedCharts.tsx`.
 - Website options and legend: `lib/types/mapOptions.ts`, `lib/config/mapOptions.ts`,
   `LegendContent.tsx`, `LegendPanel.tsx`, `LegendSupplementalPanels.tsx`.
 - Aggregation and figures: `specifications.ts`, `numeric.ts`, `lib/atlas/figures.ts`,
@@ -70,7 +70,7 @@ and defaults, `ChartCards.tsx`, aggregation, figures, rankings and docs.
 
 ### Local election
 
-The same again, plus custom website code: `components/elections/local/*`,
+The same again, plus custom website code: `components/datasets/politics/local-elections/local-election/*`,
 `lib/helpers/localElection.ts`, `mapRendering/elections.ts`,
 `useLocalElectionDatasets.ts`, `legend/CategoryLegends.tsx`, `legendData.ts`,
 `PlaceElections.tsx`, and pipeline `catalog/elections.ts`,

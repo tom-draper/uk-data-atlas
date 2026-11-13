@@ -26,7 +26,7 @@ describe("house price declaration", () => {
 		);
 		expect(definition?.chart.key).toBe("economics-housePrice");
 		expect(definition?.chart.componentPath).toBe(
-			"@/components/economics/house-price/HousePriceChart",
+			"@/components/datasets/housing/prices-and-affordability/house-price/HousePriceChart",
 		);
 		expect(DEFAULT_MAP_OPTIONS["house-price"].measure).toBe("median");
 	});

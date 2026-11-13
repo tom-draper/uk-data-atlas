@@ -127,7 +127,8 @@ export const qualification = defineDataset<QualificationDataset>({
 	display: {
 		label: "Qualifications [2021]",
 		year: 2021,
-		component: "@/components/education/QualificationChart",
+		component:
+			"@/components/datasets/education/qualifications/qualification/QualificationChart",
 		measures: [
 			{
 				id: "level-4-plus",

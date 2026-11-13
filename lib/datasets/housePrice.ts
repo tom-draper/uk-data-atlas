@@ -9,7 +9,8 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 		topic: "prices-and-affordability",
 		key: "economics-housePrice",
 		label: "House Prices [2023]",
-		componentPath: "@/components/economics/house-price/HousePriceChart",
+		componentPath:
+			"@/components/datasets/housing/prices-and-affordability/house-price/HousePriceChart",
 		calculateStats: (aggregator, geojson, data, location, datasetId) =>
 			aggregator.aggregate(
 				housePriceAggregation,
