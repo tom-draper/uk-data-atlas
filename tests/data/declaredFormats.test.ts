@@ -137,12 +137,12 @@ describe("planning-applications", () => {
 	});
 });
 
-describe("regional-gdp-itl3", () => {
-	const definition = definitionOf("regional-gdp-itl3");
+describe("regional-gdp", () => {
+	const definition = definitionOf("regional-gdp");
 
 	it("writes the card and legend in pounds, headed by the chosen measure", () => {
-		const gva = withMeasure("regional-gdp-itl3", "gva");
-		const gdp = withMeasure("regional-gdp-itl3", "gdp");
+		const gva = withMeasure("regional-gdp", "gva");
+		const gdp = withMeasure("regional-gdp", "gdp");
 		expect(definition.chart.cardForOptions!(gva).heading).toBe(
 			"Regional GVA",
 		);

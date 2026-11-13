@@ -32,9 +32,8 @@ import { migrateMarker } from "./migrate-source-layout.mjs";
 
 /**
  * The dataset each source folder feeds, relative to `data/source`. A folder that
- * feeds several names the one it is named for. `regional-gdp` and
- * `energy-consumption` are named for none of theirs, so they take the first,
- * until task 15 merges the three ITL levels. The full lists stay in
+ * feeds several names the one it is named for. `energy-consumption` is named
+ * for none of theirs, so it takes the first. The full lists stay in
  * packages/datasets/src/declaration/sourceDatasets.ts.
  */
 export const DATASET_FOLDERS = Object.fromEntries([
@@ -87,16 +86,13 @@ export const DATASET_FOLDERS = Object.fromEntries([
 		"local-government-finance",
 	],
 	["housing/housing-stock/council-tax", "council-tax"],
-	["economy/economic-output/regional-gdp", "regional-gdp-itl1"],
+	["economy/economic-output/regional-gdp", "regional-gdp"],
 	["economy/labour-market/unemployment", "unemployment"],
 	[
 		"housing/prices-and-affordability/housing-affordability",
 		"housing-affordability",
 	],
-	[
-		"education/schools/school-performance-constituency",
-		"school-performance-constituency",
-	],
+	["education/schools/school-performance-constituency", "school-performance"],
 	["education/schools/school-performance", "school-performance"],
 	["education/schools/pupil-absence", "pupil-absence"],
 	["education/qualifications/qualification", "qualification"],
@@ -151,6 +147,20 @@ export const DATASET_FOLDERS = Object.fromEntries([
 	["transport/road-safety/road-collisions", "road-collisions"],
 	["transport/commuting/travel-to-work", "travel-to-work"],
 ]);
+
+/**
+ * Dataset ids a `meta.json` may still carry after the datasets were merged
+ * (task 15). They are API aliases of the id the folder feeds now; the file is
+ * left as it is until its source data is next refreshed.
+ */
+const RETIRED_DATASET_IDS = {
+	"school-performance": ["school-performance-constituency"],
+	"regional-gdp": [
+		"regional-gdp-itl1",
+		"regional-gdp-itl2",
+		"regional-gdp-itl3",
+	],
+};
 
 /** `core/` sources that feed a build, not a dataset. */
 export const SUPPORT_FOLDERS = [
@@ -228,6 +238,11 @@ export function migrateMetaText(text, additions) {
 	const add = {};
 	for (const [key, value] of Object.entries(additions)) {
 		if (parsed[key] === undefined) add[key] = value;
+		else if (
+			key === "dataset" &&
+			RETIRED_DATASET_IDS[value]?.includes(parsed[key])
+		)
+			continue;
 		else if (parsed[key] !== value)
 			throw new Error(
 				`has ${key} ${JSON.stringify(parsed[key])}, expected ${JSON.stringify(value)}`,

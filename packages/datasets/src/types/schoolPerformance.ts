@@ -34,9 +34,10 @@ export interface SchoolPerformanceConstituencyData extends SchoolPerformanceMeas
 	series: Record<number, SchoolPerformanceMeasures>;
 }
 
+/** The same dataset on constituencies, a part of `school-performance`. */
 export interface SchoolPerformanceConstituencyDataset {
 	id: string;
-	type: "school-performance-constituency";
+	type: "school-performance";
 	year: number;
 	boundaryType: "constituency";
 	boundaryYear: number;

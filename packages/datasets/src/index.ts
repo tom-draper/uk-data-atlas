@@ -71,14 +71,11 @@ export * from "./data/planning-applications/aggregate.ts";
 export * from "./housing/planning/planning-applications/dataset.ts";
 export * from "./population/population-estimates/population-constituency/dataset.ts";
 export * from "./population/population-estimates/population-uk/dataset.ts";
-export * from "./economy/economic-output/regional-gdp-itl1/dataset.ts";
-export * from "./economy/economic-output/regional-gdp-itl2/dataset.ts";
-export * from "./economy/economic-output/regional-gdp-itl3/dataset.ts";
+export * from "./economy/economic-output/regional-gdp/dataset.ts";
 export * from "./data/regional-gdp/aggregate.ts";
 export * from "./transport/road-safety/road-collisions/dataset.ts";
 export * from "./data/school-performance/aggregate.ts";
 export * from "./education/schools/school-performance/dataset.ts";
-export * from "./education/schools/school-performance-constituency/dataset.ts";
 export * from "./society/deprivation/simd/dataset.ts";
 export * from "./data/unemployment/aggregate.ts";
 export * from "./economy/labour-market/unemployment/dataset.ts";
@@ -204,6 +201,6 @@ export * from "./data/regional-gdp/statistics.ts";
 
 export * from "./data/population/statistics.ts";
 
-export * from "./data/school-performance-constituency/statistics.ts";
+export * from "./data/school-performance/statistics.ts";
 
 export * from "./data/new-datasets/aggregate.ts";

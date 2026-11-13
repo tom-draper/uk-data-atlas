@@ -66,7 +66,7 @@ describe("ChartCards registry selection", () => {
 		const charts = getVisibleChartDefinitions(
 			"economy",
 			visibility({
-				"economy-regional-gdp-itl3": true,
+				"economy-regional-gdp": true,
 				"economy-jobs": true,
 				"economy-income": true,
 				"economy-business-activity": true,

@@ -155,6 +155,11 @@ export type DatasetDeclaration<
 	related?: readonly DatasetTopic[];
 	source: DeclaredSource;
 	boundary: DeclaredBoundary;
+	/**
+	 * Further geography levels the dataset is published at, each on the same
+	 * boundary release. `boundary` stays the level the website charts.
+	 */
+	additionalBoundaryTypes?: readonly BoundaryType[];
 	/** Countries the source can cover, copied to each compiled vintage. */
 	coverageCountries?: readonly DatasetCountry[];
 	/** Build-time validation requirements for the loader output. */
@@ -221,6 +226,12 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		type: typeOf(declaration) as T["type"],
 		precompiledFile: declaration.id,
 		boundaryType: declaration.boundary.type,
+		...(declaration.additionalBoundaryTypes
+			? {
+					additionalBoundaryTypes:
+						declaration.additionalBoundaryTypes,
+				}
+			: {}),
 		...(declaration.coverageCountries
 			? { coverageCountries: declaration.coverageCountries }
 			: {}),

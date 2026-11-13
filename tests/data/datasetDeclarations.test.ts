@@ -215,35 +215,44 @@ describe("declared dataset rows", () => {
 			database.close();
 		}
 	});
-	it.each([
-		["itl1", "TLC", "North East (England)"],
-		["itl2", "TLC3", "Tees Valley"],
-	])("stores GDP and GVA for %s across years", (tier, code, name) => {
-		const id = `regional-gdp-${tier}`;
+	it("stores GDP and GVA for every tier across years", () => {
+		const id = "regional-gdp";
+		const tiers = [
+			["itl1", "TLC", "North East (England)"],
+			["itl2", "TLC3", "Tees Valley"],
+			["itl3", "TLC31", "Hartlepool and Stockton-on-Tees"],
+		] as const;
 		const declaration = DATASET_DECLARATIONS.find(
 			(entry) => entry.id === id,
 		)!;
 		const config = STATISTICS_DATASETS.find((entry) => entry.type === id)!;
 		const compiled = Object.fromEntries(
-			[2022, 2023].map((year) => [
-				String(year),
-				{
-					id: `${id}${year}`,
-					type: id,
-					year,
-					boundaryType: tier,
-					boundaryYear: 2025,
-					coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
-					data: {
-						[code]: {
-							itlCode: code,
-							itlName: name,
-							gvaMillionGbp: year + 0.5,
-							gdpMillionGbp: year + 1.5,
+			tiers.flatMap(([tier, code, name]) =>
+				[2022, 2023].map((year) => [
+					tier === "itl3" ? String(year) : `${tier}-${year}`,
+					{
+						id: `${id}-${tier}${year}`,
+						type: id,
+						year,
+						boundaryType: tier,
+						boundaryYear: 2025,
+						coverageCountries: [
+							"GB-ENG",
+							"GB-WLS",
+							"GB-SCT",
+							"GB-NIR",
+						],
+						data: {
+							[code]: {
+								itlCode: code,
+								itlName: name,
+								gvaMillionGbp: year + 0.5,
+								gdpMillionGbp: year + 1.5,
+							},
 						},
 					},
-				},
-			]),
+				]),
+			),
 		);
 		const database = new DatabaseSync(":memory:");
 		database.exec(
@@ -256,20 +265,43 @@ describe("declared dataset rows", () => {
 					...areas.area_releases,
 					rows: [
 						...areas.area_releases.rows,
-						[2, tier, "2025-01-uk-bgc", "available"],
+						...tiers.map(([tier], index) => [
+							2 + index,
+							tier,
+							"2025-01-uk-bgc",
+							"available",
+						]),
 					],
 				},
 				geography: {
 					...areas.geography,
-					rows: [...areas.geography.rows, [2, tier]],
+					rows: [
+						...areas.geography.rows,
+						...tiers.map(([tier], index) => [2 + index, tier]),
+					],
 				},
 				area: {
 					...areas.area,
-					rows: [...areas.area.rows, [3, 2, code]],
+					rows: [
+						...areas.area.rows,
+						...tiers.map(([, code], index) => [
+							3 + index,
+							2 + index,
+							code,
+						]),
+					],
 				},
 				area_version: {
 					...areas.area_version,
-					rows: [...areas.area_version.rows, [3, 3, 2, name]],
+					rows: [
+						...areas.area_version.rows,
+						...tiers.map(([, , name], index) => [
+							3 + index,
+							3 + index,
+							2 + index,
+							name,
+						]),
+					],
 				},
 				...statisticsTables([
 					declaredStatistics(config, () => JSON.stringify(compiled), {
@@ -533,7 +565,7 @@ describe("declared dataset rows", () => {
 		}
 	});
 	it("stores school results by academic year and preserves suppressed progress", () => {
-		const id = "school-performance-constituency";
+		const id = "school-performance";
 		const declaration = DATASET_DECLARATIONS.find(
 			(entry) => entry.id === id,
 		)!;
@@ -548,6 +580,31 @@ describe("declared dataset rows", () => {
 		const compiled = {
 			2025: {
 				id: `${id}2025`,
+				type: id,
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				coverageCountries: ["GB-ENG"],
+				data: {
+					E06000001: {
+						ladCode: "E06000001",
+						ladName: "Hartlepool",
+						...latest,
+						series: {
+							2024: {
+								ptL2basics94: 72,
+								ptL2basics95: 53.1,
+								avgAtt8: 49.8,
+								avgP8score: 0.04,
+								pupils: 1241,
+							},
+							2025: latest,
+						},
+					},
+				},
+			},
+			"constituency-2025": {
+				id: `${id}-constituency2025`,
 				type: id,
 				year: 2025,
 				boundaryType: "constituency",

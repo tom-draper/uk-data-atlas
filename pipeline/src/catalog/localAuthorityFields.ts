@@ -20,9 +20,18 @@ export const localAuthorityFieldPeriods = (
 	field: string,
 	boundaryYear: number,
 	geography: SourceGeography["type"] = "localAuthority",
+	/**
+	 * For a file holding several geographies, the period of an entry key, or
+	 * undefined to leave the entry out.
+	 */
+	periodOf: (key: string) => string | undefined = (key) => key,
 ): MeasureObservationArtifact["periods"] => {
 	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
 	const periods = Object.entries(source)
+		.flatMap(([key, value]) => {
+			const period = periodOf(key);
+			return period === undefined ? [] : [[period, value] as const];
+		})
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
 				throw new Error(`${path}: invalid period ${period}`);

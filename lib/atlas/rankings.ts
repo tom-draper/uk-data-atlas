@@ -338,8 +338,7 @@ const RANKED_FORMATS: Readonly<Record<string, (value: number) => string>> = {
 	"brexit-constituency": (value) => `${value.toFixed(1)}%`,
 	"nhs-waiting": (value) => `${value.toFixed(1)}%`,
 	// Published in millions of pounds.
-	"regional-gdp-itl3": (value) =>
-		`£${Math.round(value).toLocaleString("en-GB")}m`,
+	"regional-gdp": (value) => `£${Math.round(value).toLocaleString("en-GB")}m`,
 	"population-density": (value) =>
 		`${Math.round(value).toLocaleString("en-GB")} per km²`,
 };
@@ -372,7 +371,7 @@ const RANKED_VALUE_LABELS: Readonly<Record<string, string>> = {
 	"general-election": "Majority as a share of votes",
 	"brexit-constituency": "Estimated share voting Leave",
 	"nhs-waiting": "Patients waiting over 18 weeks",
-	"regional-gdp-itl3": "Gross domestic product",
+	"regional-gdp": "Gross domestic product",
 	"population-density": "Residents per km²",
 };
 

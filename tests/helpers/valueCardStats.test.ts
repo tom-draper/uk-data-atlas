@@ -311,7 +311,7 @@ describe("resolveValueCardStats", () => {
 				},
 			},
 		};
-		const card = cardOf("regional-gdp-itl3");
+		const card = cardOf("regional-gdp");
 
 		expect(
 			resolveValueCardStats(

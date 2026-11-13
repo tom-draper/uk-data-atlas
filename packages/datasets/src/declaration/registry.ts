@@ -8,3 +8,4 @@ export * from "./taxonomy.ts";
 export * from "./tree.ts";
 export * from "./sourceDatasets.ts";
 export * from "./modules.ts";
+export * from "./datasetAliases.ts";

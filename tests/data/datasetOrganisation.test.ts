@@ -59,6 +59,7 @@ const THIN_TOPIC_ALLOWLIST: Record<string, Exception> = {
 			"waste",
 			"commuting",
 			"road-safety",
+			"economic-output",
 		].map((topic) => [
 			topic,
 			{

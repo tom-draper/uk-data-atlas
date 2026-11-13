@@ -8,27 +8,51 @@ import { SOURCE_DATA } from "./paths.ts";
 
 const quote = (value: string) => `'${value.replaceAll("'", "''")}'`;
 
+const SCHOOL_CONSTITUENCY_CSV =
+	/\/202425_parliamentary_constituency_revised\.csv$/;
+
+/**
+ * Stages the school performance CSVs. "Total" stages both the local authority
+ * file and the constituency file of `school-performance`, which is one dataset
+ * on two geographies; "Disadvantage status" stages the gap breakdown of the
+ * local authority file only.
+ */
 export async function withDuckdbSchoolPerformance<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
 		typeof import("./trackedReader.ts").createTrackedReader
 	>["artifacts"],
-	topic: "Total" | "Disadvantage status" | "Constituency",
+	topic: "Total" | "Disadvantage status",
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot = SOURCE_DATA,
 ): Promise<T> {
-	const fields =
-		topic === "Constituency"
-			? "geographic_level, geography_basis, time_period, pcon_code, pcon_name, engmath_94_percent, engmath_95_percent, attainment8_average, progress8_average, pupil_count"
-			: "* EXCLUDE (ordinal)";
-	const where = `geographic_level=${quote(topic === "Constituency" ? "Parliamentary constituency" : "Local authority district")} AND geography_basis='Pupil residency' ${topic === "Constituency" ? "" : `AND breakdown_topic=${quote(topic)}`}`;
-	return withDuckdbFilteredCsv(
-		reader,
-		artifacts,
-		fields,
-		where,
-		compile,
-		sourceRoot,
+	const localAuthorities = (inner: (reader: DatasetReader) => Promise<T>) =>
+		withDuckdbFilteredCsv(
+			reader,
+			artifacts,
+			"* EXCLUDE (ordinal)",
+			`geographic_level='Local authority district' AND geography_basis='Pupil residency' AND breakdown_topic=${quote(topic)}`,
+			inner,
+			sourceRoot,
+			{
+				header: true,
+				matches: (path) => !SCHOOL_CONSTITUENCY_CSV.test(path),
+			},
+		);
+	if (topic !== "Total") return localAuthorities(compile);
+	return localAuthorities((staged) =>
+		withDuckdbFilteredCsv(
+			staged,
+			artifacts,
+			"geographic_level, geography_basis, time_period, pcon_code, pcon_name, engmath_94_percent, engmath_95_percent, attainment8_average, progress8_average, pupil_count",
+			"geographic_level='Parliamentary constituency' AND geography_basis='Pupil residency'",
+			compile,
+			sourceRoot,
+			{
+				header: true,
+				matches: (path) => SCHOOL_CONSTITUENCY_CSV.test(path),
+			},
+		),
 	);
 }
 

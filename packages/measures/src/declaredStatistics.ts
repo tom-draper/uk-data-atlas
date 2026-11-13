@@ -190,8 +190,12 @@ export function declaredStatistics(
 	entry: DeclaredManifestEntry,
 ): (areas: AreaIndex) => StatisticsDataset {
 	const type = config.type;
-	const nameOf = (from: string) =>
-		typeof config.name === "string" ? config.name : config.name?.[from];
+	const nameOf = (from: string, header: DeclaredHeader) =>
+		typeof config.name === "string"
+			? config.name
+			: typeof config.name === "function"
+				? config.name(header)
+				: config.name?.[from];
 	const recordSets: DeclaredRecords[] = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
 	];
@@ -413,7 +417,7 @@ export function declaredStatistics(
 							throw new Error(
 								`${context}: record ${code} is not an object`,
 							);
-						const nameField = nameOf(set.from);
+						const nameField = nameOf(set.from, header);
 						if (nameField !== undefined && onName) {
 							const name = record[nameField];
 							if (typeof name !== "string")

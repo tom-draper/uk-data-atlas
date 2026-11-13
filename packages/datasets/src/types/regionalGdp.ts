@@ -10,9 +10,9 @@
  * regionally, so a GDP total is the one comparable with national accounts.
  *
  * The three tiers are a hierarchy, not one table: an ITL3 code sits inside an
- * ITL2 code inside an ITL1 code. They are registered as separate datasets
- * because each is a different geography, and a measure names all three as
- * separate source partitions rather than mixing tiers in one total.
+ * ITL2 code inside an ITL1 code. They are one dataset with the tier as its
+ * geography, and a measure names all three as separate source partitions
+ * rather than mixing tiers in one total.
  */
 export interface RegionalGdpAreaData {
 	itlCode: string;
@@ -31,24 +31,12 @@ export type RegionalGdpMetrics = Pick<
 /** GDP and GVA summed across the selected ITL3 areas. */
 export type AggregatedRegionalGdpData = RegionalGdpMetrics;
 
-interface RegionalGdpDataset<Type extends string, Boundary extends string> {
+/** One tier and year of the series. The tier is the dataset's geography. */
+export interface RegionalGdpDataset {
 	id: string;
-	type: Type;
+	type: "regional-gdp";
 	year: number;
-	boundaryType: Boundary;
+	boundaryType: "itl1" | "itl2" | "itl3";
 	boundaryYear: number;
 	data: Record<string, RegionalGdpAreaData>;
 }
-
-export type RegionalGdpItl1Dataset = RegionalGdpDataset<
-	"regional-gdp-itl1",
-	"itl1"
->;
-export type RegionalGdpItl2Dataset = RegionalGdpDataset<
-	"regional-gdp-itl2",
-	"itl2"
->;
-export type RegionalGdpItl3Dataset = RegionalGdpDataset<
-	"regional-gdp-itl3",
-	"itl3"
->;

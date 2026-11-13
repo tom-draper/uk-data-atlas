@@ -58,7 +58,7 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 			"economy-income",
 			"economy-jobs",
 			"economy-claimant-count",
-			"economy-regional-gdp-itl3",
+			"economy-regional-gdp",
 			"economy-business-activity",
 		],
 		housing: [

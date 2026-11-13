@@ -1,3 +1,4 @@
+import { loadSchoolPerformanceConstituency } from "../../../data/school-performance/constituencyLoader.ts";
 import type { SchoolPerformanceDataset } from "../../../types/schoolPerformance.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -9,9 +10,21 @@ import {
 	schoolYears,
 	latestCopies,
 	latestCopyRules,
-} from "../../../data/school-performance-constituency/statistics.ts";
+} from "../../../data/school-performance/statistics.ts";
 import { aggregateSchoolPerformance } from "../../../data/school-performance/aggregate.ts";
 import { loadSchoolPerformance } from "../../../data/school-performance/loader.ts";
+
+const LA_NULLS = [
+	"avgP8score",
+	"series.2020.avgP8score",
+	"series.2021.avgP8score",
+	"series.2025.avgP8score",
+];
+const CONSTITUENCY_NULLS = ["avgP8score", "series.2025.avgP8score"];
+
+/** A part of the file is on constituencies when its key says so. */
+const onConstituencies = (header: { boundaryType?: unknown }) =>
+	header.boundaryType === "constituency";
 
 export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 	id: "school-performance",
@@ -30,36 +43,61 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 		attribution:
 			"Department for Education. Contains public sector information licensed under the Open Government Licence v3.0.",
 		description:
-			"Key Stage 4 performance measures (GCSE results) by local authority district for England, with the 2018/19 to 2024/25 back series.",
+			"Key Stage 4 performance measures (GCSE results) for England by local authority district, with the 2018/19 to 2024/25 back series, and by Westminster parliamentary constituency on 2024 review boundaries for 2023/24 onwards.",
 		cadence: "annual",
 		notes: [],
 	},
-	load: ({ text }) => loadSchoolPerformance(text),
+	additionalBoundaryTypes: ["constituency"],
+	ingestion: { minimumDatasets: 2 },
+	load: async ({ text }) => ({
+		...(await loadSchoolPerformance(text)),
+		// The charts read only the primary local authority parts, so the
+		// constituency parts are typed as the dataset's shape here.
+		...((await loadSchoolPerformanceConstituency(
+			text,
+		)) as unknown as Record<string, SchoolPerformanceDataset>),
+	}),
 	statistics: {
 		payload: {
-			parts: yearParts(
-				"school-performance",
-				"localAuthority",
-				2024,
-				{ coverageCountries: ["GB-ENG"] },
-				["2025"],
-			),
-			code: "ladCode",
+			parts: (labels) => [
+				...yearParts(
+					"school-performance",
+					"localAuthority",
+					2024,
+					{ coverageCountries: ["GB-ENG"] },
+					["2025"],
+				)(labels),
+				...yearParts(
+					"school-performance",
+					"constituency",
+					2024,
+					{ coverageCountries: ["GB-ENG"] },
+					["2025"],
+				)(labels).map(({ key, header }) => ({
+					key: `constituency-${key}`,
+					header: {
+						...header,
+						id: `school-performance-constituency${key}`,
+					},
+				})),
+			],
+			partPerGeography: true,
+			code: (header) =>
+				onConstituencies(header) ? "pconCode" : "ladCode",
 			periodKeys: schoolYears,
 			sparsePeriods: true,
-			nullPaths: [
-				"avgP8score",
-				"series.2020.avgP8score",
-				"series.2021.avgP8score",
-				"series.2025.avgP8score",
-			],
+			nullPaths: (header) =>
+				onConstituencies(header) ? CONSTITUENCY_NULLS : LA_NULLS,
 		},
-		name: "ladName",
-		period: schoolYear,
-		alsoIn: [
-			{ geography: "localAuthority", year: 2022 },
-			{ geography: "localAuthority", year: 2018 },
-		],
+		name: (header) => (onConstituencies(header) ? "pconName" : "ladName"),
+		period: (key) => schoolYear(key.slice(key.lastIndexOf("-") + 1)),
+		alsoIn: (header) =>
+			onConstituencies(header)
+				? []
+				: [
+						{ geography: "localAuthority", year: 2022 },
+						{ geography: "localAuthority", year: 2018 },
+					],
 		measures: SCHOOL_MEASURES,
 		fields: schoolFields("series.{period}."),
 		derived: latestCopies(SCHOOL_COPIES),

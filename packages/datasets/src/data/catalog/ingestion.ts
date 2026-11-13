@@ -63,9 +63,14 @@ export function validatePrecompiledDataset<
 				`${definition.type}: ${key} has type ${String(dataset.type)}.`,
 			);
 		}
-		if (dataset.boundaryType !== definition.boundaryType) {
+		if (
+			dataset.boundaryType !== definition.boundaryType &&
+			!definition.additionalBoundaryTypes?.includes(
+				dataset.boundaryType as never,
+			)
+		) {
 			throw new Error(
-				`${definition.type}: ${key} uses ${String(dataset.boundaryType)} boundaries; expected ${definition.boundaryType}.`,
+				`${definition.type}: ${key} uses ${String(dataset.boundaryType)} boundaries; expected ${[definition.boundaryType, ...(definition.additionalBoundaryTypes ?? [])].join(" or ")}.`,
 			);
 		}
 		if (!Number.isInteger(dataset.boundaryYear)) {

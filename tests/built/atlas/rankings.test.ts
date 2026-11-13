@@ -133,7 +133,7 @@ describe("ranking pages", () => {
 	});
 
 	it("places a region of councils where most of its councils are", async () => {
-		const ranking = await loadRanking("regional-gdp-itl3");
+		const ranking = await loadRanking("regional-gdp");
 		const london = areasWithin(ranking, findAtlasLocation("london")!);
 		expect(london.length).toBeGreaterThan(5);
 		expect(london.every((area) => area.code.startsWith("TLI"))).toBe(true);

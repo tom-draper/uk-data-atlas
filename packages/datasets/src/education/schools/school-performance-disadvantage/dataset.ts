@@ -12,7 +12,7 @@ import {
 	latestCopyRules,
 	schoolYear,
 	schoolYears,
-} from "../../../data/school-performance-constituency/statistics.ts";
+} from "../../../data/school-performance/statistics.ts";
 import { aggregateSchoolPerformanceGap } from "../../../data/school-performance-disadvantage/aggregate.ts";
 import { loadSchoolPerformanceDisadvantage } from "../../../data/school-performance-disadvantage/loader.ts";
 

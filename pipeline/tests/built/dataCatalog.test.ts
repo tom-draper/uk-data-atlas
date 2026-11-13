@@ -196,11 +196,7 @@ const writeSources = (
 		electricity: join(directory, "electricity-consumption.json"),
 		gas: join(directory, "gas-consumption.json"),
 	} as const;
-	const regionalGdp = {
-		itl1: join(directory, "regional-gdp-itl1.json"),
-		itl2: join(directory, "regional-gdp-itl2.json"),
-		itl3: join(directory, "regional-gdp-itl3.json"),
-	} as const;
+	const regionalGdp = join(directory, "regional-gdp.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -261,9 +257,7 @@ const writeSources = (
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
 				dataset("local-election", 7, 2, 2019),
-				dataset("regional-gdp-itl1", 4, 2, 2025),
-				dataset("regional-gdp-itl2", 4, 2, 2025),
-				dataset("regional-gdp-itl3", 4, 2, 2025),
+				dataset("regional-gdp", 12, 6, 2025),
 				dataset("electricity-consumption", 4, 2, 2025),
 				dataset("gas-consumption", 3, 2, 2025),
 			],
@@ -1015,19 +1009,23 @@ const writeSources = (
 			},
 		}),
 	);
-	// Two ITL areas over two years, the same areas in both, as the publisher
-	// restates the whole series on one code vintage.
-	for (const [tier, codes] of [
-		["itl1", ["TLC", "TLL"]],
-		["itl2", ["TLC3", "TLL1"]],
-		["itl3", ["TLC31", "TLL11"]],
-	] as const) {
-		writeFileSync(
-			regionalGdp[tier],
-			JSON.stringify(
-				Object.fromEntries(
+	// Two ITL areas per tier over two years, the same areas in both, as the
+	// publisher restates the whole series on one code vintage.
+	writeFileSync(
+		regionalGdp,
+		JSON.stringify(
+			Object.fromEntries(
+				(
+					[
+						["itl1", ["TLC", "TLL"]],
+						["itl2", ["TLC3", "TLL1"]],
+						["itl3", ["TLC31", "TLL11"]],
+					] as const
+				).flatMap(([tier, codes]) =>
 					["2022", "2023"].map((year, index) => [
-						year,
+						// ITL3 is the dataset's own boundary and keeps the bare
+						// year; the other tiers are prefixed.
+						tier === "itl3" ? year : `${tier}-${year}`,
 						{
 							year: Number(year),
 							boundaryType: tier,
@@ -1047,8 +1045,8 @@ const writeSources = (
 					]),
 				),
 			),
-		);
-	}
+		),
+	);
 	// Two authorities over two years. Gas leaves one of them out of the later
 	// year, as the publisher does where it records no value at all.
 	for (const [path, drop] of [
@@ -1133,9 +1131,7 @@ const writeSources = (
 		populationConstituency,
 		generalElection,
 		localElection,
-		regionalGdpItl1: regionalGdp.itl1,
-		regionalGdpItl2: regionalGdp.itl2,
-		regionalGdpItl3: regionalGdp.itl3,
+		regionalGdp,
 		electricityConsumption: energy.electricity,
 		gasConsumption: energy.gas,
 	};
@@ -1148,7 +1144,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 39);
+		assert.equal(result.catalog.datasets.length, 37);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

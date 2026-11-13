@@ -130,6 +130,14 @@ test("leaves a migrated file alone, and refuses one that names another dataset",
 	);
 });
 
+test("accepts the id a merged dataset had before, and leaves the file alone", () => {
+	const text = `{\n\t"id": "x",\n\t"dataset": "school-performance-constituency"\n}\n`;
+	expect(migrateMetaText(text, { dataset: "school-performance" })).toBeNull();
+	expect(() => migrateMetaText(text, { dataset: "population" })).toThrow(
+		/expected "population"/,
+	);
+});
+
 test("migrates a tree, reports unknown folders, and is idempotent", async () => {
 	const root = tree();
 	write(root, `${FOLDER}/meta.json`, old("2025"));

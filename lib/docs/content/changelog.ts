@@ -29,6 +29,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-13",
+		title: "Datasets split by geography are merged",
+		breaking: true,
+		changes: [
+			"`regional-gdp-itl1`, `regional-gdp-itl2` and `regional-gdp-itl3` are now one dataset, `regional-gdp`, with the tier as its geography. `school-performance-constituency` is now part of `school-performance`, on geography `constituency`.",
+			"The old ids still work. `GET /v1/datasets/<old>` answers 308 to the merged dataset, and `datasetId=<old>` is read as the merged id with `geography` set to the old geography on `/v1/data/*` requests unless you pass one. Responses to a rewritten request carry `content-location`. Series ids in SQLite for the merged datasets are new.",
+		],
+	},
+	{
 		date: "2026-11-12",
 		title: "Modules carry their manifest",
 		surface: "efddb12da319",
