@@ -33,6 +33,7 @@ test("data commands use one public vocabulary", () => {
 			.filter((name) => name.startsWith("data:"))
 			.sort(),
 	).toEqual([
+		"data:assemble",
 		"data:build",
 		"data:dist",
 		"data:download",

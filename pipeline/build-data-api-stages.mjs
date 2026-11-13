@@ -363,6 +363,20 @@ export const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Splits atlas.sqlite into core and per-module SQLite and Parquet. The
+	// website and the API keep reading atlas.sqlite, which it does not change.
+	stage(
+		"build-modules",
+		["assemble-atlas"],
+		["pipeline/src/stages/build-modules.ts"],
+		{
+			rawInputs: [],
+			writes: ["data/build/modules"],
+			outputs: ["data/build/modules"],
+			requiredOutputs: ["data/build/modules/build.json"],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"measure-compatibility",
 		[

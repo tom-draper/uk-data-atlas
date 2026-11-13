@@ -1,16 +1,25 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+	existsSync,
+	linkSync,
+	readdirSync,
+	readFileSync,
+	copyFileSync,
+} from "node:fs";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets";
 import {
 	DATASET_SOURCES,
+	CORE_COMPATIBILITY_KEY,
 	buildModuleManifests,
 	type DatasetFoundationPart,
 } from "@uk-data-atlas/datasets/registry";
+import { BUILD_FILE } from "../pipeline/src/modules/buildFile.ts";
 import {
 	licenceInputOf,
 	planDist,
+	type DistBuilds,
 	type DistFacts,
 	type SourceFact,
 } from "./dist-modules.mts";
@@ -100,6 +109,48 @@ export const checkDistFacts = (facts: DistFacts): string[] => {
 	]);
 };
 
+const BUILT = join(ROOT, "data/build/modules");
+
+/** The results of `pnpm data:build --only build-modules`, or none when it has not run. */
+export const readBuilds = (dir = BUILT): DistBuilds => {
+	const path = join(dir, BUILD_FILE);
+	if (!existsSync(path)) return {};
+	const file = JSON.parse(readFileSync(path, "utf8")) as {
+		schemaVersion?: number;
+		core?: string;
+		modules?: DistBuilds;
+	};
+	if (file.schemaVersion !== 1 || file.core !== CORE_COMPATIBILITY_KEY)
+		throw new Error(
+			`${path} was written for ${String(file.core)}, this code is ${CORE_COMPATIBILITY_KEY}. Run the module build again.`,
+		);
+	const modules = file.modules ?? {};
+	for (const build of Object.values(modules))
+		if (build.status === "built")
+			for (const { path: relativePath } of build.files)
+				if (!existsSync(join(dir, relativePath)))
+					throw new Error(
+						`${relativePath} is listed in ${path} but missing. Run the module build again.`,
+					);
+	return modules;
+};
+
+/** Hard links the built files into the release (a copy across file systems). */
+const placeBuilt = async (builds: DistBuilds, root: string) => {
+	for (const build of Object.values(builds)) {
+		if (build.status !== "built") continue;
+		for (const { path } of build.files) {
+			const to = join(root, path);
+			await mkdir(dirname(to), { recursive: true });
+			try {
+				linkSync(join(BUILT, path), to);
+			} catch {
+				copyFileSync(join(BUILT, path), to);
+			}
+		}
+	}
+};
+
 const main = async () => {
 	const args = process.argv.slice(2);
 	const at = args.indexOf("--release");
@@ -116,7 +167,9 @@ const main = async () => {
 		throw new Error(`Cannot describe the modules:\n${problems.join("\n")}`);
 	const root = join(DIST, `uk-data-atlas-${release}`);
 	await rm(root, { recursive: true, force: true });
-	for (const [path, text] of planDist(facts, release)) {
+	const builds = readBuilds();
+	await placeBuilt(builds, root);
+	for (const [path, text] of planDist(facts, release, builds)) {
 		await mkdir(dirname(join(root, path)), { recursive: true });
 		await writeFile(join(root, path), text);
 	}
