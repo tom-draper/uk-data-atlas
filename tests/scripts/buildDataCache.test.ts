@@ -829,7 +829,7 @@ test("website dataset key tracks declared file presence without hashing its cont
 	current.begin(stage.name);
 	current.record(stage, []);
 	write(
-		`data/source/${sourceDir("road-safety", "dft-road-casualty-statistics-collision-provisional-2025.csv")}`,
+		`data/source/${sourceDir("road-collisions", "dft-road-casualty-statistics-collision-provisional-2025.csv")}`,
 		"road safety",
 	);
 	current = cache();

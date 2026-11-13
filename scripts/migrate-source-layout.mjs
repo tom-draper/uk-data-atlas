@@ -1,6 +1,10 @@
 /**
  * One-off, idempotent move of `data/source` from the old subject layout to
- * `<theme>/<topic>/<folder>` (docs/data-organisation.md, task 5).
+ * `<theme>/<topic>/<dataset id>` (docs/data-organisation.md, tasks 5 and 6).
+ * It runs in two stages, `SOURCE_MOVES` into the theme layout and then
+ * `SOURCE_RENAMES` to the id of each dataset, so a machine on either layout
+ * ends in the same place. A renamed folder's `meta.json` takes the folder name
+ * as its `id`.
  *
  *   node scripts/migrate-source-layout.mjs [--dry-run] [directory]
  *
@@ -18,6 +22,7 @@
  * tests/scripts/migrateSourceLayout.test.ts checks the two agree. Sources
  * nothing reads move to `_staging/`.
  */
+import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import {
 	mkdir,
@@ -28,7 +33,7 @@ import {
 	stat,
 	writeFile,
 } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** [old path, new path], relative to `data/source`. */
@@ -264,6 +269,159 @@ export const SOURCE_MOVES = [
 	["environment/flood-risk", "_staging/flood-risk"],
 ];
 
+/**
+ * [path in the theme layout, final path], relative to `data/source`. The second
+ * stage renames a folder to the id of the dataset it feeds (task 6). It runs
+ * after the first, so a machine on either layout ends up in the same place.
+ */
+export const SOURCE_RENAMES = [
+	[
+		"population/population-estimates/ts001",
+		"population/population-estimates/census-2021-ts001",
+	],
+	[
+		"population/population-estimates/ts003",
+		"population/population-estimates/census-2021-ts003",
+	],
+	[
+		"population/population-estimates/ts007a",
+		"population/population-estimates/census-2021-ts007a",
+	],
+	[
+		"population/ethnicity-and-identity/ts021",
+		"population/ethnicity-and-identity/census-2021-ts021",
+	],
+	["health/health-status/ts037", "health/health-status/census-2021-ts037"],
+	["housing/housing-stock/ts054", "housing/housing-stock/census-2021-ts054"],
+	["economy/labour-market/ts066", "economy/labour-market/census-2021-ts066"],
+	[
+		"population/ethnicity-and-identity/ts021-ethnic-group",
+		"population/ethnicity-and-identity/ethnicity",
+	],
+	[
+		"population/population-estimates/uk",
+		"population/population-estimates/population-uk",
+	],
+	[
+		"population/population-estimates/population-constituency-estimates",
+		"population/population-estimates/population-constituency",
+	],
+	[
+		"population/population-estimates/population-ward-estimates",
+		"population/population-estimates/population",
+	],
+	["economy/labour-market/model-based", "economy/labour-market/unemployment"],
+	[
+		"housing/prices-and-affordability/mean-price-by-ward",
+		"housing/prices-and-affordability/house-price/mean-price-by-ward",
+	],
+	[
+		"housing/prices-and-affordability/median-price-by-ward",
+		"housing/prices-and-affordability/house-price/median-price-by-ward",
+	],
+	[
+		"education/schools/local-authority-district",
+		"education/schools/school-performance",
+	],
+	[
+		"education/schools/ks4-constituency",
+		"education/schools/school-performance-constituency",
+	],
+	["education/schools/pupil-attendance", "education/schools/pupil-absence"],
+	[
+		"health/social-care/activity",
+		"health/social-care/adult-social-care-activity",
+	],
+	[
+		"health/social-care/ascof",
+		"health/social-care/adult-social-care-outcomes",
+	],
+	[
+		"health/nhs-services/nhs-waiting-times",
+		"health/nhs-services/nhs-waiting",
+	],
+	[
+		"health/health-status/public-health-outcomes-framework",
+		"health/health-status/public-health",
+	],
+	[
+		"politics/general-elections/1918-2019",
+		"politics/general-elections/historical-general-election",
+	],
+	[
+		"politics/general-elections/2010",
+		"politics/general-elections/general-election/2010",
+	],
+	[
+		"politics/general-elections/2015",
+		"politics/general-elections/general-election/2015",
+	],
+	[
+		"politics/general-elections/2017",
+		"politics/general-elections/general-election/2017",
+	],
+	[
+		"politics/general-elections/2019",
+		"politics/general-elections/general-election/2019",
+	],
+	[
+		"politics/general-elections/2024",
+		"politics/general-elections/general-election/2024",
+	],
+	[
+		"politics/local-elections/2016",
+		"politics/local-elections/local-election/2016",
+	],
+	[
+		"politics/local-elections/2017",
+		"politics/local-elections/local-election/2017",
+	],
+	[
+		"politics/local-elections/2018",
+		"politics/local-elections/local-election/2018",
+	],
+	[
+		"politics/local-elections/2019",
+		"politics/local-elections/local-election/2019",
+	],
+	[
+		"politics/local-elections/2021",
+		"politics/local-elections/local-election/2021",
+	],
+	[
+		"politics/local-elections/2022",
+		"politics/local-elections/local-election/2022",
+	],
+	[
+		"politics/local-elections/2023",
+		"politics/local-elections/local-election/2023",
+	],
+	[
+		"politics/local-elections/2024",
+		"politics/local-elections/local-election/2024",
+	],
+	[
+		"politics/local-elections/2025",
+		"politics/local-elections/local-election/2025",
+	],
+	[
+		"politics/referendums/constituencies-2016",
+		"politics/referendums/brexit-constituency",
+	],
+	[
+		"politics/referendums/local-authorities-2016",
+		"politics/referendums/brexit",
+	],
+	[
+		"infrastructure/digital-connectivity/mobile",
+		"infrastructure/digital-connectivity/mobile-coverage",
+	],
+	[
+		"transport/road-safety/road-safety",
+		"transport/road-safety/road-collisions",
+	],
+];
+
 const MARKER = ".source-release.json";
 /** Where folders wait between the two phases, so a new path can sit inside an old one. */
 const HOLD = ".layout-move";
@@ -271,29 +429,51 @@ const HOLD = ".layout-move";
 const inside = (path, folder) =>
 	path === folder || path.startsWith(`${folder}/`);
 
-/** The new path of a file in the old layout, or null if its folder did not move. */
-export function movedPath(path) {
-	// A path already inside a new folder that nests in its old one has moved.
-	if (SOURCE_MOVES.some(([from, to]) => inside(to, from) && inside(path, to)))
-		return null;
-	const move = [...SOURCE_MOVES]
+/** The path a file has once `moves` are applied, or null if its folder is not in them. */
+const mapped = (moves, path) => {
+	const move = [...moves]
 		.sort((a, b) => b[0].length - a[0].length)
 		.find(([from]) => inside(path, from));
 	return move ? move[1] + path.slice(move[0].length) : null;
+};
+
+/** The final path of a folder the theme layout put in `to`. */
+const finalFolder = (to, renames) => mapped(renames, to) ?? to;
+
+/**
+ * The new path of a file at `path` in any earlier layout, or null if its
+ * folder did not move.
+ */
+export function movedPath(path, renames = SOURCE_RENAMES) {
+	// A path already inside a folder that nests in its old one has moved: the
+	// theme layout's, or the one it is renamed to.
+	const settled = SOURCE_MOVES.some(
+		([from, to]) =>
+			inside(to, from) &&
+			(inside(path, to) || inside(path, finalFolder(to, renames))),
+	);
+	const themed = settled ? null : mapped(SOURCE_MOVES, path);
+	const current = themed ?? path;
+	// The nested moves above are settled in the theme layout, not the final one,
+	// so a path in the theme layout still goes through the renames.
+	const final = mapped(renames, current) ?? current;
+	return final === path ? null : final;
 }
 
 /**
- * Moves the folders under `root`. Returns what it did and anything it could not
- * do: a folder wanted at a path that is already taken is a conflict and nothing
- * is moved until it is resolved.
+ * Moves the folders of `moves` under `root`. Returns what it did and anything
+ * it could not do: a folder wanted at a path that is already taken is a
+ * conflict and nothing is moved until it is resolved.
  */
-export async function migrateSourceLayout(root, { dryRun = false } = {}) {
+async function moveFolders(
+	root,
+	moves,
+	{ dryRun = false, settled = () => false, reportStrays = true } = {},
+) {
 	// Deepest first, so a folder nested in another leaves before its parent does.
-	const moves = SOURCE_MOVES.map(([from, to], index) => ({
-		from,
-		to,
-		index,
-	})).sort((a, b) => b.from.split("/").length - a.from.split("/").length);
+	const ordered = moves
+		.map(([from, to], index) => ({ from, to, index }))
+		.sort((a, b) => b.from.split("/").length - a.from.split("/").length);
 	const at = (path) => join(root, path);
 	const held = (move) => join(root, HOLD, String(move.index));
 
@@ -301,8 +481,9 @@ export async function migrateSourceLayout(root, { dryRun = false } = {}) {
 	// `health/life-expectancy/life-expectancy`), so there the old path existing
 	// beside the new one just means the folder has moved.
 	const done = (move) =>
-		existsSync(at(move.to)) && inside(move.to, move.from);
-	const pending = moves.filter(
+		inside(move.to, move.from) &&
+		(existsSync(at(move.to)) || settled(move));
+	const pending = ordered.filter(
 		(move) =>
 			!done(move) &&
 			(existsSync(at(move.from)) || existsSync(held(move))),
@@ -339,13 +520,13 @@ export async function migrateSourceLayout(root, { dryRun = false } = {}) {
 	}
 	const filled = (path) =>
 		parents.has(path) ||
-		SOURCE_MOVES.some(([, to]) => to === path || to.startsWith(`${path}/`));
+		moves.some(([, to]) => to === path || to.startsWith(`${path}/`));
 	const strays = [];
 	for (const dir of [...parents].sort((a, b) => b.length - a.length)) {
 		if (!existsSync(at(dir))) continue;
 		const left = await readdir(at(dir));
 		if (left.length === 0) await rmdir(at(dir));
-		else
+		else if (reportStrays)
 			strays.push(
 				...left
 					.map((name) => `${dir}/${name}`)
@@ -359,13 +540,104 @@ export async function migrateSourceLayout(root, { dryRun = false } = {}) {
 	};
 }
 
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+/**
+ * Sets the `id` in the `meta.json` of each folder to the folder's name, which
+ * `parseDatasetMeta` requires. It edits the one value in place, so the rest of
+ * the file is as it was. Returns the files changed, as their path with the hash
+ * before and after, which the release marker needs.
+ */
+async function setMetaIds(root, folders, dryRun) {
+	const rewrites = [];
+	for (const folder of folders) {
+		const path = `${folder}/meta.json`;
+		let raw;
+		try {
+			raw = await readFile(join(root, path));
+		} catch {
+			continue;
+		}
+		const id = basename(folder);
+		try {
+			if (JSON.parse(raw.toString("utf8")).id === id) continue;
+			const text = raw
+				.toString("utf8")
+				.replace(
+					/("id"\s*:\s*)"(?:[^"\\]|\\.)*"/,
+					(_, key) => `${key}${JSON.stringify(id)}`,
+				);
+			if (JSON.parse(text).id !== id) continue;
+			const next = Buffer.from(text);
+			rewrites.push({ path, before: sha256(raw), after: sha256(next) });
+			if (!dryRun) await writeFile(join(root, path), next);
+		} catch {
+			// Not JSON we can edit: leave it for the build to report.
+		}
+	}
+	return rewrites;
+}
+
+/**
+ * Moves `data/source` into the theme layout and renames its folders to dataset
+ * ids. Returns each folder moved, from where it was found to where it ended,
+ * and anything it could not do.
+ */
+export async function migrateSourceLayout(
+	root,
+	{ dryRun = false, renames = SOURCE_RENAMES } = {},
+) {
+	const first = await moveFolders(root, SOURCE_MOVES, {
+		dryRun,
+		// A nested folder whose renamed path exists has moved on already.
+		settled: ({ to }) => existsSync(join(root, finalFolder(to, renames))),
+	});
+	if (first.conflicts.length > 0)
+		return { ...first, moved: [], rewrites: [] };
+	const second = await moveFolders(root, renames, {
+		dryRun,
+		reportStrays: false,
+	});
+	// A dry run has not moved the first stage, so say where it would end.
+	const moved = [
+		...first.moved.map(([from, to]) => [from, finalFolder(to, renames)]),
+		...second.moved.filter(
+			([from]) => !first.moved.some(([, to]) => to === from),
+		),
+	];
+	if (second.conflicts.length > 0)
+		return { moved, conflicts: second.conflicts, strays: [], rewrites: [] };
+	return {
+		moved,
+		conflicts: [],
+		strays: first.strays,
+		rewrites: await setMetaIds(
+			root,
+			renames.map(([, to]) => to),
+			dryRun,
+		),
+	};
+}
+
 /**
  * Rewrites the paths in the release marker to the new layout. The recorded
- * hashes stay. Renaming changes a file's ctime, so that one stamp is renewed
- * for each file whose size and mtime still match what was recorded; a file
- * that was edited keeps its old stamp and so still counts as edited.
+ * hashes stay, except for a `meta.json` whose id was set (`rewrites`) and that
+ * still had the hash the release recorded: it takes the hash of the rewritten
+ * file and its stamp, so the folder still counts as the downloaded release.
+ * Renaming changes a file's ctime, so that one stamp is renewed for each file
+ * whose size and mtime still match what was recorded; a file that was edited
+ * keeps its old stamp and hash, and so still counts as edited.
+ *
+ * @param {string} root
+ * @param {{
+ *   renames?: readonly (readonly [string, string])[],
+ *   rewrites?: { path: string, before: string, after: string }[],
+ * }} [options]
  */
-export async function migrateMarker(root) {
+export async function migrateMarker(
+	root,
+	{ renames = SOURCE_RENAMES, rewrites = [] } = {},
+) {
 	const path = join(root, MARKER);
 	let marker;
 	try {
@@ -373,18 +645,32 @@ export async function migrateMarker(root) {
 	} catch {
 		return 0;
 	}
-	if (!marker?.files || !Object.keys(marker.files).some(movedPath)) return 0;
+	const target = (old) => movedPath(old, renames);
+	if (!marker?.files) return 0;
+	const rewritten = new Map(rewrites.map((r) => [r.path, r]));
+	const changes = Object.keys(marker.files).some(
+		(old) => target(old) || rewritten.has(old),
+	);
+	if (!changes) return 0;
 	const files = {};
 	const fileStamps = {};
 	for (const [old, hash] of Object.entries(marker.files)) {
-		const next = movedPath(old) ?? old;
-		files[next] = hash;
+		const next = target(old) ?? old;
+		const rewrite = rewritten.get(next);
+		const refreshed = rewrite?.before === hash;
+		files[next] = refreshed ? rewrite.after : hash;
 		const recorded = marker.fileStamps?.[old];
 		if (!recorded) continue;
 		fileStamps[next] = recorded;
 		try {
 			const now = await stat(join(root, next));
-			if (
+			if (refreshed)
+				fileStamps[next] = {
+					bytes: now.size,
+					modifiedAt: now.mtimeMs,
+					changedAt: now.ctimeMs,
+				};
+			else if (
 				now.size === recorded.bytes &&
 				now.mtimeMs === recorded.modifiedAt
 			)
@@ -407,9 +693,10 @@ async function main() {
 		console.log(`${root} does not exist, nothing to move`);
 		return;
 	}
-	const { moved, conflicts, strays } = await migrateSourceLayout(root, {
-		dryRun,
-	});
+	const { moved, conflicts, strays, rewrites } = await migrateSourceLayout(
+		root,
+		{ dryRun },
+	);
 	if (conflicts.length > 0) {
 		console.error(
 			`Not moved. These paths exist already, beside the old folders:\n${conflicts.map((c) => `  ${c}`).join("\n")}`,
@@ -419,7 +706,9 @@ async function main() {
 	}
 	for (const [from, to] of moved) console.log(`${from} -> ${to}`);
 	if (!dryRun) {
-		const renamed = await migrateMarker(root);
+		if (rewrites.length > 0)
+			console.log(`Set the id in ${rewrites.length} meta.json files`);
+		const renamed = await migrateMarker(root, { rewrites });
 		if (renamed > 0) console.log(`Rewrote ${renamed} paths in ${MARKER}`);
 	}
 	if (strays.length > 0)
@@ -427,8 +716,8 @@ async function main() {
 			`Left in place, not part of any source folder:\n${strays.map((s) => `  ${s}`).join("\n")}`,
 		);
 	console.log(
-		moved.length === 0
-			? "Already in the theme layout"
+		moved.length === 0 && rewrites.length === 0
+			? "Already in the final layout"
 			: `${dryRun ? "Would move" : "Moved"} ${moved.length} folders`,
 	);
 }

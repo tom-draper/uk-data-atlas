@@ -18,16 +18,6 @@ const ROOT = join(process.cwd(), "data/source");
 const OWN_TESTS = ["boundaries/", "core/lookups/", "postcodes/"];
 const STAGING = "_staging";
 
-/**
- * Two folders that were both `2016` under `referendum/` share a parent now, so
- * they carry the name of their dataset, while the release still holds the id
- * they had. The ids change when the release is next published (task 6).
- */
-const RELEASE_IDS: Readonly<Record<string, string>> = {
-	"politics/referendums/constituencies-2016": "2016",
-	"politics/referendums/local-authorities-2016": "2016",
-};
-
 const listed = new Set([
 	...DATASET_SOURCES.map(([folder]) => folder),
 	...Object.keys(SUPPORT_SOURCES),
@@ -74,11 +64,7 @@ describe.skipIf(!existsSync(ROOT))("source folders", () => {
 				readFileSync(join(dir, "meta.json"), "utf8"),
 			);
 			expect(
-				() =>
-					parseDatasetMeta(
-						meta,
-						RELEASE_IDS[folder] ?? folder.split("/").at(-1)!,
-					),
+				() => parseDatasetMeta(meta, folder.split("/").at(-1)!),
 				folder,
 			).not.toThrow();
 		}

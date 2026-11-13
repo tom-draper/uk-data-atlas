@@ -10,37 +10,51 @@
  */
 
 /**
- * A dataset source folder: the folder, the dataset ids it feeds, and the task
- * that renames it to the dataset id. Every folder sits under its theme and
- * topic; most still carry the name they had before the move, so they name
- * task 6. A folder named after its dataset leaves the task out.
+ * A dataset source folder: the folder, the dataset ids it feeds, and, for a
+ * folder not named after a dataset, why. Every folder sits under its theme
+ * and topic and is named for a dataset it feeds (docs/data-organisation.md,
+ * "Layout"), or for the dataset a part belongs to, `house-price/<part>`.
+ * The exceptions are listed with their reason, so each is a choice.
  */
 export type DatasetSource = readonly [
 	folder: string,
 	datasets: readonly string[],
-	layoutTask?: 6,
+	exception?: string,
 ];
 
 export const DATASET_SOURCES: readonly DatasetSource[] = [
-	["population/population-estimates/ts001", ["census-2021-ts001"], 6],
-	["population/population-estimates/ts003", ["census-2021-ts003"], 6],
-	["population/population-estimates/ts007a", ["census-2021-ts007a"], 6],
-	["population/ethnicity-and-identity/ts021", ["census-2021-ts021"], 6],
-	["health/health-status/ts037", ["census-2021-ts037", "general-health"], 6],
-	["housing/housing-stock/ts054", ["census-2021-ts054", "housing-tenure"], 6],
-	["economy/labour-market/ts066", ["census-2021-ts066"], 6],
-	["population/ethnicity-and-identity/ts021-ethnic-group", ["ethnicity"], 6],
-	["population/population-estimates/uk", ["population-uk"], 6],
 	[
-		"population/population-estimates/population-constituency-estimates",
+		"population/population-estimates/census-2021-ts001",
+		["census-2021-ts001"],
+	],
+	[
+		"population/population-estimates/census-2021-ts003",
+		["census-2021-ts003"],
+	],
+	[
+		"population/population-estimates/census-2021-ts007a",
+		["census-2021-ts007a"],
+	],
+	[
+		"population/ethnicity-and-identity/census-2021-ts021",
+		["census-2021-ts021"],
+	],
+	[
+		"health/health-status/census-2021-ts037",
+		["census-2021-ts037", "general-health"],
+	],
+	[
+		"housing/housing-stock/census-2021-ts054",
+		["census-2021-ts054", "housing-tenure"],
+	],
+	["economy/labour-market/census-2021-ts066", ["census-2021-ts066"]],
+	["population/ethnicity-and-identity/ethnicity", ["ethnicity"]],
+	["population/population-estimates/population-uk", ["population-uk"]],
+	[
+		"population/population-estimates/population-constituency",
 		["population-constituency"],
-		6,
 	],
-	[
-		"population/population-estimates/population-ward-estimates",
-		["population"],
-		6,
-	],
+	["population/population-estimates/population", ["population"]],
 	["society/deprivation/imd", ["imd"]],
 	["society/deprivation/nimdm", ["nimdm"]],
 	["society/deprivation/simd", ["simd"]],
@@ -51,11 +65,13 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 	["society/crime-and-justice/crime", ["crime"]],
 	["society/poverty/fuel-poverty", ["fuel-poverty"]],
 	["housing/homelessness/homelessness", ["homelessness"]],
-	["housing/prices-and-affordability/mean-price-by-ward", ["house-price"], 6],
 	[
-		"housing/prices-and-affordability/median-price-by-ward",
+		"housing/prices-and-affordability/house-price/mean-price-by-ward",
 		["house-price"],
-		6,
+	],
+	[
+		"housing/prices-and-affordability/house-price/median-price-by-ward",
+		["house-price"],
 	],
 	[
 		"housing/housing-stock/net-additional-dwellings",
@@ -71,58 +87,56 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 	[
 		"economy/economic-output/regional-gdp",
 		["regional-gdp-itl1", "regional-gdp-itl2", "regional-gdp-itl3"],
-		6,
+		"The three ITL levels are one dataset after task 15.",
 	],
-	["economy/labour-market/model-based", ["unemployment"], 6],
+	["economy/labour-market/unemployment", ["unemployment"]],
 	[
 		"housing/prices-and-affordability/housing-affordability",
 		["housing-affordability"],
 	],
 	[
-		"education/schools/ks4-constituency",
+		"education/schools/school-performance-constituency",
 		["school-performance-constituency"],
-		6,
 	],
 	[
-		"education/schools/local-authority-district",
+		"education/schools/school-performance",
 		["school-performance", "school-performance-disadvantage"],
-		6,
 	],
-	["education/schools/pupil-attendance", ["pupil-absence"], 6],
+	["education/schools/pupil-absence", ["pupil-absence"]],
 	["education/qualifications/qualification", ["qualification"]],
 	["environment/air-quality/air-quality", ["air-quality"]],
 	[
 		"environment/energy/energy-consumption",
 		["electricity-consumption", "gas-consumption"],
-		6,
+		"One download feeds both datasets, and neither id names it.",
 	],
 	["environment/emissions/ghg-emissions", ["ghg-emissions"]],
 	["environment/waste/waste", ["waste"]],
 	["core/land-area", ["land-area"]],
-	["health/social-care/activity", ["adult-social-care-activity"], 6],
-	["health/social-care/ascof", ["adult-social-care-outcomes"], 6],
+	[
+		"health/social-care/adult-social-care-activity",
+		["adult-social-care-activity"],
+	],
+	[
+		"health/social-care/adult-social-care-outcomes",
+		["adult-social-care-outcomes"],
+	],
 	[
 		"health/life-expectancy/life-expectancy",
 		["life-expectancy", "life-expectancy-series"],
 	],
-	["health/nhs-services/nhs-waiting-times", ["nhs-waiting"], 6],
-	[
-		"health/health-status/public-health-outcomes-framework",
-		["public-health"],
-		6,
-	],
+	["health/nhs-services/nhs-waiting", ["nhs-waiting"]],
+	["health/health-status/public-health", ["public-health"]],
 	["housing/planning/planning-applications", ["planning-applications"]],
 	[
-		"politics/general-elections/1918-2019",
+		"politics/general-elections/historical-general-election",
 		["historical-general-election"],
-		6,
 	],
 	...["2010", "2015", "2017", "2019", "2024"].map(
 		(year) =>
 			[
-				`politics/general-elections/${year}`,
+				`politics/general-elections/general-election/${year}`,
 				["general-election"],
-				6,
 			] as const,
 	),
 	...[
@@ -138,21 +152,23 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 	].map(
 		(year) =>
 			[
-				`politics/local-elections/${year}`,
+				`politics/local-elections/local-election/${year}`,
 				["local-election"],
-				6,
 			] as const,
 	),
-	["politics/referendums/constituencies-2016", ["brexit-constituency"], 6],
-	["politics/referendums/local-authorities-2016", ["brexit"], 6],
+	["politics/referendums/brexit-constituency", ["brexit-constituency"]],
+	["politics/referendums/brexit", ["brexit"]],
 	["infrastructure/digital-connectivity/broadband", ["broadband"]],
-	["infrastructure/digital-connectivity/mobile", ["mobile-coverage"], 6],
+	[
+		"infrastructure/digital-connectivity/mobile-coverage",
+		["mobile-coverage"],
+	],
 	["transport/vehicles/car-availability", ["car-availability"]],
 	[
 		"transport/vehicles/electric-vehicle-chargers",
 		["electric-vehicle-chargers"],
 	],
-	["transport/road-safety/road-safety", ["road-collisions"], 6],
+	["transport/road-safety/road-collisions", ["road-collisions"]],
 	["transport/commuting/travel-to-work", ["travel-to-work"]],
 ];
 
