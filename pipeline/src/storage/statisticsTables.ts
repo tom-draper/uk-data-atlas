@@ -9,27 +9,23 @@ import {
 } from "@uk-data-atlas/measures";
 import { type StatisticsInput } from "@uk-data-atlas/measures";
 import {
-	DATASET_FOUNDATION_PARTS,
-	DATASET_THEMES,
+	DATASET_HOME_MODULE_IDS,
 	isDatasetTopic,
-	moduleOfTopic,
+	moduleOfDataset,
 } from "@uk-data-atlas/datasets";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
 
-/** Every id the `dataset.module` column accepts: themes and foundation parts. */
-const MODULE_IDS: readonly string[] = [
-	...DATASET_THEMES,
-	...DATASET_FOUNDATION_PARTS,
-].map(({ id }) => id);
+/** Every id the `dataset.module` column accepts: themes, foundation parts and split modules that hold datasets. */
+const MODULE_IDS: readonly string[] = DATASET_HOME_MODULE_IDS;
 
-/** The module a dataset is stored under, derived from its primary topic. */
+/** The module a dataset is stored under: its topic's theme, or the split module that holds it. */
 const moduleOf = ({ slug, topic }: { slug: string; topic: string }) => {
 	if (!isDatasetTopic(topic))
 		throw new Error(`Unknown dataset topic ${topic} for ${slug}`);
-	return moduleOfTopic(topic);
+	return moduleOfDataset({ id: slug, topic });
 };
 
 /** The contest columns stored as the publisher's text. */

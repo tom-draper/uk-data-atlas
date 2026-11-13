@@ -232,9 +232,10 @@ named this task.
 
 Task 12 added module manifests and the `data/dist/` generator. A manifest is
 built by `buildModuleManifests` in `packages/datasets/src/declaration/modules.ts`
-from the registry (themes, topics, datasets, `moduleOfTopic`) and the licence
-names recorded for each dataset, so a split such as task 16's changes only
-`moduleOfTopic`. It carries the id, label, description, themes, topics,
+from the registry (themes, topics, datasets, `moduleOfDataset`) and the licence
+names recorded for each dataset, so a split such as task 16's is one entry in
+`SPLIT_MODULE_DEFINITIONS` (`packages/datasets/src/declaration/taxonomy.ts`).
+It carries the id, label, description, themes, topics,
 datasets, resolved licences, a `licenceConflict`, the core compatibility key
 (`atlas-core-1`, bumped when a change to core breaks modules built before it),
 the manifest `schemaVersion`, and a `build` block whose size and file checksums
@@ -297,7 +298,7 @@ Where the two documents differ, the roadmap's technical detail won:
   `<theme>/<topic>/<dataset>/`. Only the module folders exist; dataset folders
   stay with the later dataset folder work.
 - The roadmap lists `demographics` and `deprivation` modules and merges
-  environment, transport, infrastructure and crime. The registry's modules (task 12) are the ones built, and task 16 changes the split.
+  environment, transport, infrastructure and crime. The registry's modules (task 12) are the ones built, with the two splits of task 16.
 - The `boundaries` module is not built, since it needs GeoParquet.
 - `denominator: true` is not yet in the declarations, so the denominators in
   core are a fixed list of measures in `pipeline/src/modules/moduleTables.ts`.
@@ -359,16 +360,96 @@ A module manifest names its id, label, topics, licence and compatible core
 versions. Defaults:
 
 - One module per theme, with the theme's id.
-- Split along topic lines when a module's SQLite passes about 500 MB, or when
-  a part has a different licence. Expected first splits: `population` into
-  `population` and `population-detail` (single-year-of-age and small-area
-  census), and `politics` into `politics` and `politics-sharealike` (the CC
-  BY-SA 2016 to 2019 local elections).
+- Split when a module's SQLite passes about 500 MB, or when a part has a
+  different licence. The first splits (task 16) are `population-detail` out of
+  `population` and `politics-sharealike` out of `politics`; see "Module sizes
+  and splits".
 - Small modules can be sold together as bundles; a bundle is a list of
   modules, not a new grouping.
 
 Module ids are published and stable, but which topics a module holds can
 change between releases, recorded in the changelog.
+
+## Module sizes and splits
+
+`pnpm data:sizes` prints rows and bytes per module from a module build
+(`data/build/modules/build.json`, written by `pnpm data:build`). Add
+`--before-splits` to fold each split back into the module it came from. It reads
+the build and writes nothing, so the same build gives the same report. Built
+files stay out of git.
+
+Measured on a local build of `atlas.sqlite`. Two modules are missing from
+the table, `economy` and `education`: the checkout's `atlas.sqlite` predates the
+`regional-gdp` and `school-performance` merges (task 15), so run `pnpm data:sizes`
+after a fresh `pnpm data:build` for them. Neither is touched by the splits.
+
+| Module                | Datasets | Observations |  All rows |  SQLite | Parquet |   Total |
+| --------------------- | -------: | -----------: | --------: | ------: | ------: | ------: |
+| `postcodes`           |        0 |            0 | 2,747,250 |  256 MB |  106 MB |  361 MB |
+| `core`                |        0 |            0 | 5,364,854 |  241 MB | 24.3 MB |  265 MB |
+| `population-detail`   |        6 |    7,019,351 | 7,251,755 |  138 MB | 10.9 MB |  149 MB |
+| `housing`             |        8 |    1,151,548 | 1,160,211 | 22.6 MB |  2.4 MB | 25.0 MB |
+| `politics`            |        5 |      384,749 |   503,020 | 12.5 MB |  1.7 MB | 14.2 MB |
+| `health`              |        8 |      495,737 |   496,515 |  9.8 MB |  975 KB | 10.8 MB |
+| `environment`         |        6 |      219,932 |   220,442 |  5.7 MB |  955 KB |  6.6 MB |
+| `transport`           |        4 |      228,227 |   231,121 |  4.2 MB |  247 KB |  4.5 MB |
+| `politics-sharealike` |        1 |       64,603 |    86,013 |  2.4 MB |  298 KB |  2.7 MB |
+| `population`          |        2 |        8,227 |     8,516 |  304 KB | 60.6 KB |  365 KB |
+| `infrastructure`      |        2 |        7,942 |     8,098 |  304 KB | 30.9 KB |  335 KB |
+| `society`             |        7 |            0 |         0 |  112 KB |  2.9 KB |  115 KB |
+
+No module passes the 500 MB mark (the biggest are `postcodes` and `core`, which
+are foundation parts). The splits are for the shape of the data and for
+licensing, not for a size limit:
+
+- **`population` was one module with two kinds of use.** Six datasets carried
+  almost all of it: 7.0 million observations, 99.8% of the module. A user who
+  wants national and local population totals, or the ward and constituency
+  figures, now downloads `population` (365 KB) and leaves the 149 MB of detail
+  behind.
+- **`politics` mixed two licences.** The local elections from 2016 to 2019 are
+  CC BY-SA 3.0 and the rest is Open Parliament Licence or OGL.
+
+| Module       | Before (one module)                        | After                                                                   |
+| ------------ | ------------------------------------------ | ----------------------------------------------------------------------- |
+| `population` | 149 MB, 7,027,578 observations, 8 datasets | `population` 365 KB, 2 datasets; `population-detail` 149 MB, 6 datasets |
+| `politics`   | 16.9 MB, 449,352 observations, 5 datasets  | `politics` 14.2 MB; `politics-sharealike` 2.7 MB (rows of 1 dataset)    |
+
+"Before" is the two parts added together (SQLite plus Parquet), so it is close to
+what one file would be rather than a separate measurement. Row counts are exact:
+the parts sum to what `atlas.sqlite` holds, and a test checks it.
+
+### `population-detail`
+
+A split by dataset. It holds `population` (population by single year of age
+and sex), `population-uk` (local authority), and the Census 2021 small-area
+tables `census-2021-ts001`, `census-2021-ts003`, `census-2021-ts007a` and
+`census-2021-ts021`. `population` keeps `population-constituency` and
+`ethnicity`. Topics are unchanged, so the website's theme and topic sections
+and the dataset pages do not move. The `module` field of those six datasets
+changes from `population` to `population-detail` (breaking, in the API
+changelog). It needs nothing but core.
+
+### `politics-sharealike`
+
+An add-on, not a home for datasets. `local-election` stays a `politics`
+dataset, and its elections from 2016-01-01 to 2019-12-31 (the CC BY-SA 3.0
+years in its recorded licence) move, with their contests, candidacies,
+observations and the rows that depend on them, to `politics-sharealike`. The
+module therefore:
+
+- `requires` `politics`, which records `addOns: ["politics-sharealike"]`. Series,
+  measures and areas stay whole in `politics`, so the add-on holds only rows.
+- carries `cc-by-sa-3.0` as its only licence, with the ShareAlike note in its
+  README. `politics` no longer has a licence conflict, so ShareAlike does not
+  apply to it or to a download without the add-on. The `licenceConflict`
+  mechanism stays for a future source.
+- is refused by the assembler without `politics` (`... which is not in this
+assembly`), and with both, assembles to a file whose foreign keys all hold.
+  No row value changes: `politics` and `politics-sharealike` together have the
+  rows `atlas.sqlite` has for politics, and a test checks it.
+
+The API shows both through `requires`, `addOns` and `partial` on `/v1/modules`.
 
 ## Build and distribution
 
@@ -407,7 +488,9 @@ and a view or trigger stored in one file can't refer to tables in another.
 So "attach one file per module" breaks once there are more than 10 modules,
 and breaks joins before that. Hence one assembled file for SQLite users, and
 per-module Parquet for DuckDB users, which has no such limit. With assembly,
-the number of modules can grow freely.
+the number of modules can grow freely. The split modules add to that count
+only in the download: `population-detail` and `politics-sharealike` are
+assembled with core like any other module.
 
 ## Website and docs
 
@@ -456,9 +539,10 @@ Each stays its own dataset; none is open work under task 15.
   task 17 (`related`).
 - `population`, `population-uk` and `population-constituency`: three ONS
   releases with their own reference years, workbooks and layouts. The ward
-  dataset drives the chunked map and the population summary. Task 16 reshapes
-  `population` (`population-detail`), so it is left alone. Cross-list the three
-  under task 17.
+  dataset drives the chunked map and the population summary. Task 16 moved
+  `population` and `population-uk` into the `population-detail` module without
+  merging them, so they stay separate datasets. Cross-list the three under
+  task 17.
 - `life-expectancy` and `life-expectancy-series`: the series is a 20-period
   history with confidence intervals on the 2025 code vintage, the snapshot is
   two tables on 2023 codes, so a merged chart would list every period as a
@@ -496,7 +580,7 @@ quality and size. **P3** is product polish.
 | 13  | P1       | Per-module SQLite and Parquet builds plus the assembler (roadmap tasks 19 to 23).                                                                                                                                                                                                        |
 | 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                                                                                                                                       |
 | 15  | P2       | Done for `regional-gdp` and `school-performance`, with API aliases. `brexit`, `population`, `life-expectancy` and `general-election` are kept separate by decision (see "Merged datasets").                                                                                              |
-| 16  | P2       | Measure size per module and make the first splits (`population-detail`, `politics-sharealike`).                                                                                                                                                                                          |
+| 16  | P2       | Done: `pnpm data:sizes`, `population-detail` and the `politics-sharealike` add-on (see "Module sizes and splits").                                                                                                                                                                       |
 | 17  | P2       | `related` topics: cross-listing on the website and in docs. Cross-list `brexit` with `brexit-constituency` and `general-election` with `historical-general-election` (also the `life-expectancy` pair and the `population` trio), which task 15 kept separate.                           |
 | 18  | P2       | Decide on the 8 unused sources: build, keep in `_staging/`, or delete. When the source data is next refreshed, also rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
 | 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                                |

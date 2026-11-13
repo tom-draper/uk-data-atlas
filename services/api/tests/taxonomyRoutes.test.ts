@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
 	CORE_COMPATIBILITY_KEY,
-	DATASET_FOUNDATION_PARTS,
+	DATASET_MODULE_IDS,
 	MODULE_MANIFEST_SCHEMA_VERSION,
 	buildModuleManifests,
 	DATASET_THEMES,
@@ -19,7 +19,7 @@ const body = (url: string) => {
 const populationTaxonomy = {
 	theme: "population",
 	topic: "population-estimates",
-	module: "population",
+	module: "population-detail",
 };
 
 test("dataset and measure responses carry theme, topic and module", () => {
@@ -39,12 +39,12 @@ test("dataset and measure responses carry theme, topic and module", () => {
 	assert.equal(detail.status, 200);
 	assert.equal(detail.body.data.theme, "population");
 	assert.equal(detail.body.data.topic, "population-estimates");
-	assert.equal(detail.body.data.module, "population");
+	assert.equal(detail.body.data.module, "population-detail");
 
 	const measures = body("/v1/measures");
 	const measure = measures.body.data.find((m: any) => m.id === "population");
 	assert.equal(measure.theme, "population");
-	assert.equal(measure.module, "population");
+	assert.equal(measure.module, "population-detail");
 	const measureDetail = body("/v1/measures/population");
 	assert.equal(measureDetail.body.data.topic, "population-estimates");
 });
@@ -123,11 +123,10 @@ test("GET /v1/modules lists theme modules then foundation parts", () => {
 	const answer = body("/v1/modules");
 	assert.equal(answer.status, 200);
 	const ids = answer.body.data.map((m: any) => m.id);
-	assert.deepEqual(ids, [
-		...DATASET_THEMES.map((theme) => theme.id),
-		...DATASET_FOUNDATION_PARTS.map((part) => part.id),
-	]);
-	const population = answer.body.data.find((m: any) => m.id === "population");
+	assert.deepEqual(ids, [...DATASET_MODULE_IDS]);
+	const population = answer.body.data.find(
+		(m: any) => m.id === "population-detail",
+	);
 	assert.equal(population.kind, "theme");
 	assert.deepEqual(population.themes, ["population"]);
 	assert.equal(population.datasetCount, 1);
@@ -165,12 +164,34 @@ test("GET /v1/modules serves the manifest the data download is built from", () =
 	}
 	const core = answer.body.data.find((m: any) => m.id === "core");
 	assert.equal(core.licences, null, "foundation licences are not derived");
-	const population = answer.body.data.find((m: any) => m.id === "population");
+	const population = answer.body.data.find(
+		(m: any) => m.id === "population-detail",
+	);
 	assert.deepEqual(
 		population.licences.map((l: any) => l.id),
 		["ogl-3.0"],
 	);
 	assert.equal(population.licenceConflict, null);
+});
+
+test("GET /v1/modules lists an add-on with what it requires and adds to", () => {
+	const answer = body("/v1/modules");
+	const find = (id: string) => answer.body.data.find((m: any) => m.id === id);
+	assert.deepEqual(find("politics-sharealike").requires, ["politics"]);
+	assert.deepEqual(find("politics").addOns, ["politics-sharealike"]);
+	assert.deepEqual(find("population-detail").requires, []);
+	assert.deepEqual(find("core").requires, []);
+	assert.deepEqual(
+		find("politics-sharealike").datasets.map((d: any) => d.partial),
+		[true],
+	);
+});
+
+test("a dataset an add-on adds rows to is in both modules of the module filter", () => {
+	const modules = body("/v1/datasets?module=politics-sharealike");
+	assert.equal(modules.status, 200);
+	for (const dataset of modules.body.data)
+		assert.equal(dataset.module, "politics");
 });
 
 test("themes and modules are unavailable without the data catalogue", () => {

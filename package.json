@@ -12,6 +12,7 @@
 		"data:build": "node pipeline/build-data.mjs",
 		"data:dist": "tsx scripts/build-dist.mts",
 		"data:assemble": "tsx pipeline/src/stages/assemble-modules.ts",
+		"data:sizes": "tsx scripts/module-sizes.mts",
 		"docs:sources": "tsx scripts/generate-sources-readme.mts",
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",

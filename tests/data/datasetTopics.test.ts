@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import {
 	DATASET_DECLARATIONS,
+	DATASET_SPLIT_MODULES,
 	getDatasetTopic,
 	isDatasetTopic,
-	moduleOfTopic,
+	moduleOfDataset,
 	typeOf,
 } from "@uk-data-atlas/datasets";
 import { CENSUS_SMALL_AREA_TABLES } from "../../pipeline/src/catalog/censusSmallAreaTables";
@@ -53,10 +54,15 @@ describe("dataset topics", () => {
 		}
 	});
 
-	it("derives each module from the primary topic's theme", () => {
-		for (const { id, topic } of FILED)
-			expect(moduleOfTopic(topic as never), id).toBe(
-				getDatasetTopic(topic as never).theme,
+	it("homes each dataset in its theme's module or a split of that theme", () => {
+		for (const { id, topic } of FILED) {
+			const theme = getDatasetTopic(topic as never).theme;
+			const module = moduleOfDataset({ id, topic: topic as never });
+			const split = DATASET_SPLIT_MODULES.find(
+				(candidate) => candidate.id === module,
 			);
+			if (split) expect(split.theme, id).toBe(theme);
+			else expect(module, id).toBe(theme);
+		}
 	});
 });

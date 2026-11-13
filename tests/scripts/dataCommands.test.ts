@@ -38,6 +38,7 @@ test("data commands use one public vocabulary", () => {
 		"data:dist",
 		"data:download",
 		"data:publish",
+		"data:sizes",
 		"data:verify",
 	]);
 	for (const scripts of [root.scripts, api.scripts])

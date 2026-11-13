@@ -3,7 +3,7 @@ export const modulesMetadata = {
 	tags: ["Data catalogue"],
 	summary: "List the modules datasets are downloaded in",
 	description:
-		"A module is a download unit built from topics: one per theme, plus the foundation parts `core`, `boundaries` and `postcodes`, which hold no datasets of their own. Each lists the `themes` and `topics` it is built from and how many published datasets it holds. The manifest fields are the ones written beside each module in the data download: the licences its datasets use, a `licenceConflict` when it mixes share-alike data with other licences, the core `compatibility` key, the manifest `schemaVersion` and a `build` block whose size and files are null until the module database is built. `licences` is null for a foundation part whose licences are not derived. The ids are the `module` on `/v1/datasets` and `/v1/measures`, and the values its filter accepts.\n",
+		"A module is a download unit built from datasets: one per theme, a few split-out modules such as `population-detail` and `politics-sharealike`, plus the foundation parts `core`, `boundaries` and `postcodes`, which hold no datasets of their own. A module with `requires` is an add-on: `politics-sharealike` holds only the share-alike rows of a dataset that stays in `politics` (those datasets are marked `partial`), so it is downloaded with the module it requires, and the module it adds to lists it under `addOns`. Each lists the `themes` and `topics` it is built from and how many published datasets it holds. The manifest fields are the ones written beside each module in the data download: the licences its datasets use, a `licenceConflict` when it mixes share-alike data with other licences, the core `compatibility` key, the manifest `schemaVersion` and a `build` block whose size and files are null until the module database is built. `licences` is null for a foundation part whose licences are not derived. The ids are the `module` on `/v1/datasets` and `/v1/measures`, and the values its filter accepts.\n",
 	"x-likely-refusal": {
 		status: 503,
 		when: "Refused only when the server was started without the data catalogue built, because the dataset counts come from it.",
@@ -42,6 +42,8 @@ export const modulesMetadata = {
 								},
 								schemaVersion: 1,
 								alwaysIncluded: false,
+								requires: [],
+								addOns: [],
 								compatibility: { core: "atlas-core-1" },
 								licences: [
 									{
@@ -58,6 +60,7 @@ export const modulesMetadata = {
 										id: "population",
 										title: "Population Estimates",
 										topic: "population-estimates",
+										partial: false,
 									},
 								],
 								build: {

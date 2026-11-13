@@ -1,22 +1,26 @@
 import {
 	DATASET_FOUNDATION_PARTS,
+	DATASET_MODULE_IDS,
+	DATASET_SPLIT_MODULES,
 	DATASET_THEMES,
-	moduleOfTopic,
-	topicsOfTheme,
+	getDatasetTopic,
+	moduleOfDataset,
 	type DatasetFoundationPart,
 	type DatasetModule,
+	type DatasetSplitModuleInfo,
 	type DatasetTheme,
 	type DatasetTopic,
 } from "./taxonomy.ts";
-import { datasetsOfTopic } from "./tree.ts";
+import { REGISTERED_DATASETS } from "./tree.ts";
 
 /**
  * Module manifests, derived from the registry. A module is a download unit
  * (docs/data-organisation.md, "Modules"): one per theme, plus the foundation
  * parts. The manifest is what the dist tree writes beside each module and
  * what `/v1/modules` serves, so both read `buildModuleManifests` and neither
- * keeps a list of its own. Which topics a module holds is `moduleOfTopic`, so
- * a split such as `population-detail` changes that mapping and nothing here.
+ * keeps a list of its own. Which datasets a module holds is `moduleOfDataset`
+ * and the split definitions in the taxonomy, so a split such as
+ * `population-detail` changes those and nothing here.
  *
  * This file is pure: licences are passed in, because the files that record
  * them (`meta.json`) are not on every machine that builds a manifest.
@@ -115,6 +119,11 @@ export interface ModuleManifestDataset {
 	readonly topic: DatasetTopic;
 	/** Ids from `MODULE_LICENCES`. */
 	readonly licences: readonly ModuleLicenceId[];
+	/**
+	 * True when the module holds only the rows of this dataset under its
+	 * licence (a `licensed-rows` split); the rest are in a module it requires.
+	 */
+	readonly partial: boolean;
 }
 
 export interface ModuleManifestTopic {
@@ -127,7 +136,9 @@ export interface ModuleManifestTopic {
 /**
  * Set when a module holds both share-alike data and data under licences
  * without that term, so it cannot be offered as one unit under one set of
- * terms. The module is still built; the split is task 16.
+ * terms. The module is still built. No module has one today: task 16 moved the
+ * share-alike local elections into `politics-sharealike`. A new share-alike
+ * source that lands in a module with other licences raises it again.
  */
 export interface ModuleLicenceConflict {
 	readonly kind: "share-alike";
@@ -175,6 +186,10 @@ export interface ModuleManifest {
 	readonly themes: readonly DatasetTheme[];
 	readonly topics: readonly ModuleManifestTopic[];
 	readonly datasets: readonly ModuleManifestDataset[];
+	/** Modules a download needs beside core: the module a split adds to. */
+	readonly requires: readonly DatasetModule[];
+	/** Modules that add rows to this module's datasets, such as a share-alike add-on. */
+	readonly addOns: readonly DatasetModule[];
 	/** Null when the licences of a foundation part were not derived. */
 	readonly licences: readonly ModuleLicenceInfo[] | null;
 	readonly licenceConflict: ModuleLicenceConflict | null;
@@ -183,6 +198,26 @@ export interface ModuleManifest {
 	readonly compatibility: { readonly core: typeof CORE_COMPATIBILITY_KEY };
 	readonly build: ModuleBuild;
 }
+
+/**
+ * The modules that hold datasets of a topic, in module order: the theme's
+ * module first when it holds any, then its splits. An add-on that holds rows
+ * of a dataset of the topic is included.
+ */
+export const modulesOfTopic = (topic: DatasetTopic): DatasetModule[] => {
+	const held = new Set<DatasetModule>();
+	for (const dataset of REGISTERED_DATASETS) {
+		if (dataset.topic !== topic) continue;
+		held.add(moduleOfDataset(dataset));
+		for (const split of DATASET_SPLIT_MODULES)
+			if (
+				split.holds === "licensed-rows" &&
+				split.datasets.includes(dataset.id)
+			)
+				held.add(split.id);
+	}
+	return DATASET_MODULE_IDS.filter((id) => held.has(id));
+};
 
 const NOT_BUILT: ModuleBuild = {
 	status: "not-built",
@@ -249,62 +284,111 @@ const withLicences = (
 export const buildModuleManifests = (
 	input: ModuleLicenceInput,
 ): ModuleManifest[] => {
-	const byModule = new Map<
-		DatasetModule,
-		{ themes: DatasetTheme[]; topics: ModuleManifestTopic[] }
-	>();
-	for (const theme of DATASET_THEMES)
-		for (const topic of topicsOfTheme(theme.id)) {
-			const id = moduleOfTopic(topic.id);
-			const entry = byModule.get(id) ?? { themes: [], topics: [] };
-			if (!entry.themes.includes(theme.id)) entry.themes.push(theme.id);
-			entry.topics.push({
+	const splitById = new Map<string, DatasetSplitModuleInfo>(
+		DATASET_SPLIT_MODULES.map((split) => [split.id, split]),
+	);
+	/** The licence ids a licensed-rows split takes out of the module its datasets stay in. */
+	const addOnLicence = (datasetId: string, module: DatasetModule) =>
+		DATASET_SPLIT_MODULES.filter(
+			(split) =>
+				split.holds === "licensed-rows" &&
+				split.datasets.includes(datasetId) &&
+				split.id !== module,
+		).flatMap((split) => (split.licence ? [split.licence] : []));
+	const manifestDataset = (
+		dataset: (typeof REGISTERED_DATASETS)[number],
+		module: DatasetModule,
+	): ModuleManifestDataset => {
+		const split = splitById.get(module);
+		const partial = split?.holds === "licensed-rows";
+		const resolved = licencesOf(input.datasets(dataset.id)).ids;
+		return {
+			id: dataset.id,
+			title: dataset.title,
+			topic: dataset.topic,
+			licences: partial
+				? resolved.filter((id) => id === split.licence)
+				: resolved.filter(
+						(id) => !addOnLicence(dataset.id, module).includes(id),
+					),
+			partial,
+		};
+	};
+	const themeModules = DATASET_MODULE_IDS.filter(
+		(id) => !DATASET_FOUNDATION_PARTS.some((part) => part.id === id),
+	);
+	const themeManifests = themeModules.flatMap((id) => {
+		const split = splitById.get(id);
+		const held = REGISTERED_DATASETS.filter((dataset) =>
+			split?.holds === "licensed-rows"
+				? split.datasets.includes(dataset.id)
+				: moduleOfDataset(dataset) === id,
+		);
+		if (held.length === 0) return [];
+		const datasets = held.map((dataset) => manifestDataset(dataset, id));
+		const topicIds = [...new Set(datasets.map(({ topic }) => topic))];
+		const topics = topicIds.map((topicId): ModuleManifestTopic => {
+			const topic = getDatasetTopic(topicId);
+			return {
 				id: topic.id,
 				label: topic.label,
 				description: topic.description,
-				theme: theme.id,
-			});
-			byModule.set(id, entry);
-		}
-	const themeManifests = [...byModule].map(([id, { themes, topics }]) => {
+				theme: topic.theme,
+			};
+		});
+		const themes = [...new Set(topics.map(({ theme }) => theme))];
 		const owned = DATASET_THEMES.filter((theme) =>
 			themes.includes(theme.id),
 		);
-		const datasets = topics.flatMap((topic) =>
-			datasetsOfTopic(topic.id).map((dataset): ModuleManifestDataset => ({
-				id: dataset.id,
-				title: dataset.title,
-				topic: topic.id,
-				licences: licencesOf(input.datasets(dataset.id)).ids,
-			})),
+		const names = held.flatMap(({ id: datasetId }) => {
+			const kept = new Set(
+				datasets.find((dataset) => dataset.id === datasetId)!.licences,
+			);
+			return input.datasets(datasetId).filter((name) => {
+				const ids = resolveLicences(name);
+				return ids.length === 0 || ids.some((id) => kept.has(id));
+			});
+		});
+		const { ids, unresolved } = licencesOf(names);
+		const licenceIds = ids.filter((licence) =>
+			datasets.some((dataset) => dataset.licences.includes(licence)),
 		);
-		const { ids, unresolved } = licencesOf(
-			datasets.flatMap(({ id: datasetId }) => input.datasets(datasetId)),
-		);
-		return withLicences(
-			{
-				schemaVersion: MODULE_MANIFEST_SCHEMA_VERSION,
-				id,
-				kind: "theme",
-				label: owned.map((theme) => theme.label).join(", "),
-				description: owned.map((theme) => theme.description).join(" "),
-				alwaysIncluded: false,
-				themes,
-				topics,
-				datasets,
-				compatibility: { core: CORE_COMPATIBILITY_KEY },
-				build: NOT_BUILT,
-			},
-			ids,
-			unresolved,
-			datasets
-				.filter(({ licences }) =>
-					licences.some(
-						(licence) => getModuleLicence(licence)?.shareAlike,
-					),
-				)
-				.map(({ id: datasetId }) => datasetId),
-		);
+		return [
+			withLicences(
+				{
+					schemaVersion: MODULE_MANIFEST_SCHEMA_VERSION,
+					id,
+					kind: "theme",
+					label:
+						split?.label ??
+						owned.map((theme) => theme.label).join(", "),
+					description:
+						split?.description ??
+						owned.map((theme) => theme.description).join(" "),
+					alwaysIncluded: false,
+					themes,
+					topics,
+					datasets,
+					requires: split?.requires ?? [],
+					addOns: DATASET_SPLIT_MODULES.filter(
+						(other) =>
+							other.holds === "licensed-rows" &&
+							other.requires.some((required) => required === id),
+					).map((other) => other.id),
+					compatibility: { core: CORE_COMPATIBILITY_KEY },
+					build: NOT_BUILT,
+				},
+				licenceIds,
+				unresolved,
+				datasets
+					.filter(({ licences }) =>
+						licences.some(
+							(licence) => getModuleLicence(licence)?.shareAlike,
+						),
+					)
+					.map(({ id: datasetId }) => datasetId),
+			),
+		];
 	});
 	const foundationManifests = DATASET_FOUNDATION_PARTS.map((part) => {
 		const names = input.foundation?.[part.id];
@@ -320,6 +404,8 @@ export const buildModuleManifests = (
 				themes: [],
 				topics: [],
 				datasets: [],
+				requires: [],
+				addOns: [],
 				compatibility: { core: CORE_COMPATIBILITY_KEY },
 				build: NOT_BUILT,
 			},

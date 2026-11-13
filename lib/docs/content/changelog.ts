@@ -30,6 +30,16 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-13",
+		title: "Population and politics split into more modules",
+		breaking: true,
+		surface: "d2719d5c4be3",
+		changes: [
+			"`population-detail` is a new module holding `population`, `population-uk` and the Census 2021 tables `census-2021-ts001`, `census-2021-ts003`, `census-2021-ts007a` and `census-2021-ts021`. Those datasets' `module` is now `population-detail`, not `population`, and `module=population` no longer lists them. Their theme and topic are unchanged.",
+			"`politics-sharealike` is a new add-on module holding only the CC BY-SA local election rows for 2016 to 2019. `local-election` stays in `politics`, so its `module` is unchanged. Modules gain `requires` (the modules an add-on needs beside core) and `addOns`, datasets in a module gain `partial`, and topics in `GET /v1/themes` gain `modules`. `module=politics-sharealike` lists `local-election`. `politics` no longer has a `licenceConflict`.",
+		],
+	},
+	{
+		date: "2026-11-13",
 		title: "Datasets split by geography are merged",
 		breaking: true,
 		changes: [

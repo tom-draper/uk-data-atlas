@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
 	CORE_COMPATIBILITY_KEY,
 	DATASET_FOUNDATION_PARTS,
-	DATASET_THEMES,
+	DATASET_MODULE_IDS,
+	DATASET_SPLIT_MODULES,
 	MODULE_LICENCES,
 	REGISTERED_DATASETS,
 	buildModuleManifests,
-	moduleOfTopic,
+	moduleOfDataset,
 	resolveLicences,
 } from "@uk-data-atlas/datasets/registry";
 
@@ -26,25 +27,83 @@ const manifests = buildModuleManifests({
 	foundation: { core: [OGL], boundaries: [OGL, OPL] },
 });
 const byId = (id: string) => manifests.find((manifest) => manifest.id === id)!;
+/** A dataset that stays in the population module. */
+const POPULATION_DATASET = byId("population").datasets[0]!.id;
 
 describe("module manifests", () => {
-	it("hold one module per theme, then the foundation parts, in registry order", () => {
-		expect(manifests.map(({ id }) => id)).toEqual([
-			...DATASET_THEMES.map(({ id }) => id),
-			...DATASET_FOUNDATION_PARTS.map(({ id }) => id),
-		]);
+	it("hold one module per theme and split, then the foundation parts, in registry order", () => {
+		expect(manifests.map(({ id }) => id)).toEqual(DATASET_MODULE_IDS);
+		expect(DATASET_MODULE_IDS).toEqual(
+			expect.arrayContaining([
+				"population",
+				"population-detail",
+				"politics",
+				"politics-sharealike",
+				...DATASET_FOUNDATION_PARTS.map(({ id }) => id),
+			]),
+		);
 	});
 
-	it("hold every registered dataset exactly once, in the module of its topic", () => {
-		const held = manifests.flatMap(({ datasets }) =>
-			datasets.map(({ id }) => id),
+	it("hold every registered dataset once as a whole, in the module it is homed in", () => {
+		const whole = manifests.flatMap(({ datasets }) =>
+			datasets.filter(({ partial }) => !partial).map(({ id }) => id),
 		);
-		expect(held.toSorted()).toEqual(
+		expect(whole.toSorted()).toEqual(
 			REGISTERED_DATASETS.map(({ id }) => id).toSorted(),
 		);
 		for (const manifest of manifests)
-			for (const dataset of manifest.datasets)
-				expect(moduleOfTopic(dataset.topic)).toBe(manifest.id);
+			for (const dataset of manifest.datasets.filter(
+				({ partial }) => !partial,
+			))
+				expect(moduleOfDataset(dataset)).toBe(manifest.id);
+	});
+
+	it("split the heavy population datasets out of population", () => {
+		const detail = byId("population-detail");
+		expect(detail.requires).toEqual([]);
+		expect(detail.datasets.map(({ id }) => id).toSorted()).toEqual(
+			DATASET_SPLIT_MODULES.find(
+				({ id }) => id === "population-detail",
+			)!.datasets.toSorted(),
+		);
+		expect(detail.themes).toEqual(["population"]);
+		const population = byId("population").datasets.map(({ id }) => id);
+		for (const { id } of detail.datasets)
+			expect(population, id).not.toContain(id);
+	});
+
+	it("keep share-alike out of politics: the add-on holds only those rows", () => {
+		const addOn = byId("politics-sharealike");
+		expect(addOn.requires).toEqual(["politics"]);
+		expect(byId("politics").addOns).toEqual(["politics-sharealike"]);
+		expect(addOn.datasets).toEqual([
+			expect.objectContaining({ id: "local-election", partial: true }),
+		]);
+		expect(addOn.licences?.map(({ id }) => id)).toEqual(["cc-by-sa-3.0"]);
+		expect(addOn.licences?.every(({ shareAlike }) => shareAlike)).toBe(
+			true,
+		);
+		const politics = byId("politics");
+		expect(politics.licences?.some(({ shareAlike }) => shareAlike)).toBe(
+			false,
+		);
+		const local = politics.datasets.find(
+			({ id }) => id === "local-election",
+		)!;
+		expect(local.partial).toBe(false);
+		expect(local.licences).toEqual(["open-parliament"]);
+	});
+
+	it("require only real modules, never a foundation part or themselves", () => {
+		const ids = new Set(manifests.map(({ id }) => id));
+		for (const manifest of manifests)
+			for (const required of manifest.requires) {
+				expect(ids.has(required), manifest.id).toBe(true);
+				expect(required, manifest.id).not.toBe(manifest.id);
+				expect(
+					DATASET_FOUNDATION_PARTS.some(({ id }) => id === required),
+				).toBe(false);
+			}
 	});
 
 	it("give every module the core compatibility key and a schema version", () => {
@@ -76,21 +135,29 @@ describe("module manifests", () => {
 			expect(resolveLicences(licence.name)).toEqual([licence.id]);
 	});
 
-	it("flag a module that mixes share-alike data with other licences", () => {
-		expect(byId("politics").licenceConflict).toEqual({
+	it("have no licence conflict once share-alike is its own add-on", () => {
+		for (const manifest of manifests)
+			expect(manifest.licenceConflict, manifest.id).toBeNull();
+	});
+
+	it("still flag a module that mixes share-alike data with other licences", () => {
+		const mixed = buildModuleManifests({
+			datasets: (id) => (id === POPULATION_DATASET ? [OGL, CC] : [OGL]),
+		});
+		expect(
+			mixed.find(({ id }) => id === "population")!.licenceConflict,
+		).toEqual({
 			kind: "share-alike",
 			shareAlike: ["cc-by-sa-3.0"],
-			others: ["ogl-3.0", "open-parliament"],
-			datasets: ["local-election"],
+			others: ["ogl-3.0"],
+			datasets: [POPULATION_DATASET],
 		});
-		expect(byId("population").licenceConflict).toBeNull();
-		expect(byId("boundaries").licenceConflict).toBeNull();
 	});
 
 	it("report a licence it cannot resolve, and one not derived", () => {
 		const unresolved = buildModuleManifests({
 			datasets: (id) =>
-				id === "population" ? ["All rights reserved"] : [OGL],
+				id === POPULATION_DATASET ? ["All rights reserved"] : [OGL],
 		});
 		expect(
 			unresolved.find(({ id }) => id === "population")!
