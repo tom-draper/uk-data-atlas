@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { loadChildPoverty } from "@uk-data-atlas/datasets";
+import { loadChildPoverty, sourceDir } from "@uk-data-atlas/datasets";
 
 describe("loadChildPoverty", () => {
 	it("aggregates rows as they are read from the ODS table", async () => {
 		const result = await loadChildPoverty(async (path, options, visit) => {
 			expect(path).toBe(
-				"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
+				sourceDir(
+					"child-poverty",
+					"children-in-low-income-families-2022-2025.ods",
+				),
 			);
 			expect(options).toEqual({
 				table: "7_BHC_Relative_LA",

@@ -6,6 +6,7 @@ import {
 } from "../../types/income.ts";
 import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
 import { parseNullableNum as parseNumber } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 async function parsePayData(text: string): Promise<{
 	data: Record<string, IncomePayData>;
@@ -56,8 +57,14 @@ export async function loadIncome(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, IncomeDataset>> {
 	return loadIncomeFromFiles(read, {
-		annual: "economics/income/table-8/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx",
-		hourly: "economics/income/table-8/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx",
+		annual: sourceDir(
+			"income",
+			"table-8/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx",
+		),
+		hourly: sourceDir(
+			"income",
+			"table-8/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx",
+		),
 		id: "income2025",
 		type: "income",
 	});
@@ -67,8 +74,14 @@ export async function loadWorkplaceIncome(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, WorkplaceIncomeDataset>> {
 	return loadIncomeFromFiles(read, {
-		annual: "economics/income/table-7/PROV - Work Geography Table 7.7a   Annual pay - Gross 2025.xlsx",
-		hourly: "economics/income/table-7/PROV - Work Geography Table 7.5a   Hourly pay - Gross 2025.xlsx",
+		annual: sourceDir(
+			"income",
+			"table-7/PROV - Work Geography Table 7.7a   Annual pay - Gross 2025.xlsx",
+		),
+		hourly: sourceDir(
+			"income",
+			"table-7/PROV - Work Geography Table 7.5a   Hourly pay - Gross 2025.xlsx",
+		),
 		id: "workplace-income2025",
 		type: "workplace-income",
 	});

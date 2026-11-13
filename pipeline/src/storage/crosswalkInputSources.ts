@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { IdRegistries } from "../ids/idRegistries.ts";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { onspdEdition } from "../crosswalk-weights/atoms.ts";
 
 /** Inputs used to construct postcode atoms, including their placement and counts. */
@@ -10,14 +11,29 @@ export function weightInputPaths(root: string): string[] {
 	return [
 		`${edition}/onspd-permitted.csv.gz`,
 		`${edition}/onspd-output-areas.csv.gz`,
-		"demographics/census-2021-small-area/ts001/census2021-ts001-oa.csv",
-		"demographics/census-2021-small-area/ts003/census2021-ts003-oa.csv",
-		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
-		"demographics/population/census-2022-scotland-output-area/census_2022_UV406_Household_size_OA.csv",
-		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
-		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
-		"lookups/output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
-		"housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
+		sourceDir("census-2021-ts001", "census2021-ts001-oa.csv"),
+		sourceDir("census-2021-ts003", "census2021-ts003-oa.csv"),
+		sourceDir(
+			"census-2022-scotland-output-area",
+			"outputarea2022_usualresidentpopulation.csv",
+		),
+		sourceDir(
+			"census-2022-scotland-output-area",
+			"census_2022_UV406_Household_size_OA.csv",
+		),
+		sourceDir(
+			"population-weighted-centroids",
+			"oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+		),
+		sourceDir(
+			"population-weighted-centroids",
+			"oa-2022-sc/oa-2022-sc-pwc.csv",
+		),
+		sourceDir(
+			"lookups",
+			"output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
+		),
+		sourceDir("council-tax-stock", "2026/CTSOP1_1_2026_03_31.csv"),
 	];
 }
 

@@ -1,6 +1,7 @@
 import type { BoundaryType } from "@uk-data-atlas/datasets";
 import { parseCsv } from "@uk-data-atlas/datasets";
 import type { Gazetteer } from "@uk-data-atlas/places";
+import { sourceDir } from "@uk-data-atlas/datasets";
 
 type CustomPoint = {
 	lng: number;
@@ -34,8 +35,10 @@ type CustomDataset = {
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
-const SOURCE =
-	"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv";
+const SOURCE = sourceDir(
+	"road-safety",
+	"dft-road-casualty-statistics-collision-provisional-2025.csv",
+);
 
 // DfT collision severity: 1 = Fatal, 2 = Serious, 3 = Slight. We invert it into a
 // point "value" so the most severe collisions map to the top of the colour scale.

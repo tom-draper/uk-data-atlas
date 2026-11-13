@@ -250,7 +250,7 @@ only **available** when its endpoint, contract and provenance are published.
       claim, nor a shared code on its own.
 - [x] Extend `population-overlap` weighting to Northern Ireland. Its 2021
       Data Zones use Census 2021 usual-resident population from NISRA CT0102
-      (`data/source/demographics/population/census-2021-ni-data-zone/`), alongside
+      (`data/source/core/census-2021-ni-data-zone/`), alongside
       Scotland's 2011 data zones and SIMD 2020v2 small-area estimates.
 - [x] Publish the official Welsh local authority → local health board
       (December 2023) and English sub-ICB location → NHS England region
@@ -3568,7 +3568,7 @@ over its land, and they rarely are: Luton is 21% of the land of Luton South
 and South Bedfordshire but holds 88% of its residents, so area weighting
 would put most of Luton's people in rural Bedfordshire. The building blocks
 are 2021 LSOAs with their Census 2021 usual residents (table TS001, under
-`data/source/demographics/population/census-2021-lsoa`). Each block's residents are
+`data/source/core/census-2021-lsoa`). Each block's residents are
 split among the source and target pairs it falls in, in proportion to its
 area in each, so the assumption of evenness shrinks from a whole constituency
 to about 1,500 people.

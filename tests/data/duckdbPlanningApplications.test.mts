@@ -4,13 +4,14 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import Papa from "papaparse";
 import { expect, test } from "vitest";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { loadPlanningApplications } from "../../packages/datasets/src/data/new-datasets/loader";
 import { withDuckdbPlanningApplications } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
 import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 test("DuckDB planning applications matches the Node reader, including malformed UTF-8", async () => {
 	const root = await mkdtemp(join(tmpdir(), "planning-applications-"));
-	const path = "housing/planning-applications/ps1-full-2026-03.csv";
+	const path = sourceDir("planning-applications", "ps1-full-2026-03.csv");
 	const csv = Papa.unparse({
 		fields: [
 			"LPACD",

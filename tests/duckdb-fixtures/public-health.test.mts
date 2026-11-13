@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import Papa from "papaparse";
 import { afterEach, test } from "vitest";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { strict as assert } from "node:assert";
 import { loadPublicHealth } from "../../packages/datasets/src/data/public-health/loader";
 import { withDuckdbPublicHealth } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
@@ -16,7 +17,7 @@ afterEach(async () => {
 
 test("DuckDB preserves public health selection, order, and source hashes", async () => {
 	root = await mkdtemp(join(tmpdir(), "public-health-"));
-	const dir = join(root, "health/public-health-outcomes-framework");
+	const dir = join(root, sourceDir("public-health"));
 	await mkdir(dir, { recursive: true });
 	const columns = [
 		"Indicator ID",
@@ -97,7 +98,7 @@ test("DuckDB preserves public health selection, order, and source hashes", async
 	assert.equal(candidate.artifacts.size, 2);
 	for (let i = 0; i < names.length; i++) {
 		const item = candidate.artifacts.get(
-			`csvRows:health/public-health-outcomes-framework/${names[i]}`,
+			`csvRows:${sourceDir("public-health", names[i]!)}`,
 		)!;
 		assert.equal(
 			item.sha256,

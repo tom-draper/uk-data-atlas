@@ -328,7 +328,7 @@ that, so it stays as is.
 
 Decided 2026-09-27: rather than reverse the build so the gazetteer consumes the
 API, official places take their members from the ONS lookups already in
-`data/source/lookups`, and every named location says what it is. The build order is
+`data/source/core/lookups`, and every named location says what it is. The build order is
 unchanged; the API reads the result from the core as before.
 
 - `packages/datasets/src/data/gazetteer/places.ts` lists the official places: the 9 English

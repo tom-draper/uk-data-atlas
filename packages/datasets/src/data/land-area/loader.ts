@@ -1,6 +1,7 @@
 import type { LandAreaDataset, LandAreaLADData } from "../../types/landArea.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const YEAR = 2024;
 const BOUNDARY_YEAR = 2024;
@@ -10,7 +11,7 @@ export async function loadLandArea(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, LandAreaDataset>> {
 	const { data } = await parseCsv(
-		await read("geography/land-area/sam-lad-2024-12.csv"),
+		await read(sourceDir("land-area", "sam-lad-2024-12.csv")),
 		{ header: true },
 	);
 

@@ -3,6 +3,7 @@ import {
 	type AirQualityLADData,
 } from "../../types/airQuality.ts";
 import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const YEAR = 2024;
 // The area means are joined to December 2024 authorities and Defra's table is
@@ -29,12 +30,15 @@ export async function loadAirQuality(
 ): Promise<Record<string, AirQualityDataset>> {
 	const { data: areaRows } = await parseCsv<Record<string, string>>(
 		await read(
-			"environment/air-quality/pcm-background-by-local-authority-2024.csv",
+			sourceDir(
+				"air-quality",
+				"pcm-background-by-local-authority-2024.csv",
+			),
 		),
 		{ header: true },
 	);
 	const weightedText = await read(
-		"environment/air-quality/popwmpm252024byUKlocalauthority.csv",
+		sourceDir("air-quality", "popwmpm252024byUKlocalauthority.csv"),
 	);
 	const { data: weightedRows } = await parseCsv<string[]>(weightedText, {
 		header: false,

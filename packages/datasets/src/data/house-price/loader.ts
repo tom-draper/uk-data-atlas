@@ -4,11 +4,16 @@ import {
 } from "../../types/housePrice.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
 import { SALFORD_WARD_CODE_REMAP } from "./wardCodes.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
-const MEDIAN_PRICE_PATH =
-	"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip";
-const MEAN_PRICE_PATH =
-	"economics/housing/mean-price-by-ward/hpssadataset38meanpricepaidbyward.zip";
+const MEDIAN_PRICE_PATH = sourceDir(
+	"house-price-median",
+	"hpssadataset37medianpricepaidbyward.zip",
+);
+const MEAN_PRICE_PATH = sourceDir(
+	"house-price-mean",
+	"hpssadataset38meanpricepaidbyward.zip",
+);
 
 type XlsSheetRowReader = (
 	path: string,

@@ -4,13 +4,17 @@ import {
 } from "../../types/schoolPerformance.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { endYear, measureSeries, readMeasures } from "../education/ks4.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export async function loadSchoolPerformance(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, SchoolPerformanceDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
-			"education/ks4-performance/local-authority-district/202425_local_authority_district_revised.csv",
+			sourceDir(
+				"school-performance",
+				"202425_local_authority_district_revised.csv",
+			),
 		),
 		{ header: true },
 	);

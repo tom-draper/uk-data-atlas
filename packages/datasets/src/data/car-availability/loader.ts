@@ -5,6 +5,7 @@ import type {
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * Census category code to the field it contributes to. Code -8, "does not
@@ -46,7 +47,7 @@ export async function loadCarAvailability(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, CarAvailabilityDataset>> {
 	const { data } = await parseCsv(
-		await read("transport/car-availability/TS045-2021-4.csv"),
+		await read(sourceDir("car-availability", "TS045-2021-4.csv")),
 		{ header: true },
 	);
 

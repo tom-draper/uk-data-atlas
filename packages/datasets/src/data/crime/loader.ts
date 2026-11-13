@@ -5,6 +5,7 @@ import {
 	type CrimePartnershipData,
 } from "../../types/crime.ts";
 import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * The twelve months a table covers, from its title, such as "year ending March
@@ -103,7 +104,7 @@ const citedNotes = (cell: string) =>
 export async function loadCrime(
 	read: (path: string, sheet: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
-	const workbook = "economics/crime/pfatablesyemarch2026.xlsx";
+	const workbook = sourceDir("crime", "pfatablesyemarch2026.xlsx");
 	const csvText = await read(workbook, "Table C2");
 	const unassigned = await unassignedNotes(
 		await read(workbook, "Notes - CSP"),

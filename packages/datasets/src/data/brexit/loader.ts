@@ -4,14 +4,13 @@ import {
 } from "../../types/referendum.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export async function loadBrexit(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, BrexitLADDataset>> {
 	const { data } = await parseCsv(
-		await read(
-			"politics/referendum/local-authorities/2016/EU-referendum-result-data.csv",
-		),
+		await read(sourceDir("brexit", "EU-referendum-result-data.csv")),
 		{ header: true },
 	);
 

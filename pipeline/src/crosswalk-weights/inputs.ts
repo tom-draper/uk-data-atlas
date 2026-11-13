@@ -10,6 +10,7 @@ import {
 	type WeightAtoms,
 } from "./atoms.ts";
 import { readJsonSync } from "../lib/json.ts";
+import { sourceDir, type SourceName } from "@uk-data-atlas/datasets";
 
 /**
  * The held counts, centroids and postcodes the atoms are made of, read from
@@ -17,8 +18,10 @@ import { readJsonSync } from "../lib/json.ts";
  * the same ones.
  */
 
-const OUTPUT_AREA_LSOA_LOOKUP =
-	"lookups/output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson";
+const OUTPUT_AREA_LSOA_LOOKUP = sourceDir(
+	"lookups",
+	"output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
+);
 
 /**
  * Households of each Scottish output area from table UV406: the first column
@@ -50,12 +53,15 @@ export const readOutputAreaCounts = (root: string): OutputAreaCounts => {
 	const census = (table: string, column: string) =>
 		readColumn(
 			source(
-				`demographics/census-2021-small-area/${table}/census2021-${table}-oa.csv`,
+				sourceDir(
+					`census-2021-${table}` as SourceName,
+					`census2021-${table}-oa.csv`,
+				),
 			),
 			"geography code",
 			column,
 		);
-	const scotland = "demographics/population/census-2022-scotland-output-area";
+	const scotland = sourceDir("census-2022-scotland-output-area");
 	const population = census(
 		"ts001",
 		"Residence type: Total; measures: Value",
@@ -77,11 +83,17 @@ export const readOutputAreaCounts = (root: string): OutputAreaCounts => {
 	const centroids = new Map<string, readonly [number, number]>();
 	for (const [path, column] of [
 		[
-			"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+			sourceDir(
+				"population-weighted-centroids",
+				"oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+			),
 			"OA21CD",
 		],
 		[
-			"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
+			sourceDir(
+				"population-weighted-centroids",
+				"oa-2022-sc/oa-2022-sc-pwc.csv",
+			),
 			"OA22CD",
 		],
 	] as const) {
@@ -108,7 +120,9 @@ export const readOutputAreaCounts = (root: string): OutputAreaCounts => {
 		population,
 		households,
 		dwellings: readColumn(
-			source("housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv"),
+			source(
+				sourceDir("council-tax-stock", "2026/CTSOP1_1_2026_03_31.csv"),
+			),
 			"ecode",
 			"all_properties",
 			{

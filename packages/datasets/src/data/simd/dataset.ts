@@ -1,5 +1,6 @@
 import type { SIMDDataset } from "../../types/simd.ts";
 import { defineDataset } from "../../declaration/dataset.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 import { summariseSIMD } from "../../helpers/datasetAggregation/deprivation.ts";
 import {
 	deprivationStatistics,
@@ -31,7 +32,10 @@ export const simd = defineDataset<SIMDDataset>({
 		loadSIMD(
 			text,
 			await xlsxSheet(
-				"deprivation/simd/SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx",
+				sourceDir(
+					"simd",
+					"SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx",
+				),
 				"SIMD 2020v2 DZ lookup data",
 			),
 		),

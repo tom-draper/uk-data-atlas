@@ -4,14 +4,14 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import Papa from "papaparse";
 import { expect, test } from "vitest";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { loadHousingTenure } from "../../packages/datasets/src/data/housing-tenure/loader";
 import { withDuckdbCensusLsoa } from "../../pipeline/src/precompile/duckdbPublicHealth.ts";
 import { createTrackedReader } from "../../pipeline/src/precompile/trackedReader.ts";
 
 test("DuckDB housing tenure selection preserves loader output and source tracking", async () => {
 	const root = await mkdtemp(join(tmpdir(), "housing-tenure-"));
-	const path =
-		"demographics/census-2021-small-area/ts054/census2021-ts054-lsoa.csv";
+	const path = sourceDir("census-2021-ts054", "census2021-ts054-lsoa.csv");
 	const csv = Papa.unparse({
 		fields: [
 			"geography code",

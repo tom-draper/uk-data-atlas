@@ -1,3 +1,4 @@
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { execFileSync } from "node:child_process";
@@ -76,7 +77,11 @@ export const extractOnsWardHistory = (
 				`${right.properties.PREDECESSORCD}|${right.properties.SUCCESSORCD}`,
 			),
 		);
-	const directory = join(repositoryRoot, "data/source", "lookups", DIRECTORY);
+	const directory = join(
+		repositoryRoot,
+		"data/source",
+		sourceDir("lookups", DIRECTORY),
+	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, FILE),

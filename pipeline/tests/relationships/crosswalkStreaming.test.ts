@@ -3,12 +3,13 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
+import { sourceInput } from "@uk-data-atlas/datasets";
 import { compileCrosswalks } from "../../src/relationships/crosswalkCompiler";
 import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/relationships";
 
 const adapter = (id: string): PropertyCrosswalkAdapter => ({
 	id,
-	input: `${id}.geojson`,
+	input: `lookups/${id}.geojson`,
 	method: "official-lookup",
 	quality: "publisher-supplied",
 	weighting: { status: "not-provided" },
@@ -34,8 +35,14 @@ test("yields a complete artifact before reading the next source", () => {
 			adapter("first"),
 			adapter("missing"),
 		]);
+		const file = join(
+			root,
+			"data/source",
+			sourceInput("lookups/first.geojson"),
+		);
+		mkdirSync(join(file, ".."), { recursive: true });
 		writeFileSync(
-			join(root, "data/source/first.geojson"),
+			file,
 			JSON.stringify({
 				type: "FeatureCollection",
 				features: [

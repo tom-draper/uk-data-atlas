@@ -1,13 +1,16 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { getDatasetTopic, type DatasetTopic } from "@uk-data-atlas/datasets";
-import { DATASETS } from "./datasetUniverse";
 import {
-	DATASET_SOURCES,
-	SUPPORT_SOURCES,
-	UNUSED_SOURCES,
-} from "./sourceDatasets";
+	getDatasetTopic,
+	SOURCES,
+	sourceDir,
+	sourceTopic,
+	type DatasetTopic,
+	type SourceName,
+} from "@uk-data-atlas/datasets";
+import { DATASETS } from "./datasetUniverse";
+import { DATASET_SOURCES, SUPPORT_SOURCES } from "./sourceDatasets";
 
 /**
  * Checks the table that says which dataset each source folder feeds against
@@ -19,22 +22,22 @@ import {
 const known = new Map(DATASETS.map(({ id, topic }) => [id, topic]));
 const folders = DATASET_SOURCES.map(([folder]) => folder);
 
-/** Code that names source paths. Loaders are read whole; the rest by file. */
+/** Code that names source folders. Loaders are read whole; the rest by file. */
 const READERS = [
 	"packages/datasets/src/data",
-	"pipeline/src/crosswalk-weights/inputs.ts",
-	"pipeline/src/sources/fetch-weight-sources.ts",
-	"pipeline/src/precompile/roadSafety.ts",
-	"pipeline/src/precompile/roadSafetyLoader.ts",
-	"pipeline/src/catalog/censusSmallArea.ts",
+	"pipeline/src",
+	"pipeline/build-data-inputs.mjs",
+	"pipeline/build-data-api-stages.mjs",
+	"scripts",
+	"lib/data",
 ];
 
 const filesUnder = (path: string): string[] => {
-	if (path.endsWith(".ts")) return [path];
+	if (/\.(ts|mts|mjs)$/.test(path)) return [path];
 	return readdirSync(path, { withFileTypes: true }).flatMap((entry) =>
 		entry.isDirectory()
 			? filesUnder(join(path, entry.name))
-			: entry.name.endsWith(".ts") && !entry.name.endsWith(".test.ts")
+			: /\.(ts|mts|mjs)$/.test(entry.name) && !/\.test\./.test(entry.name)
 				? [join(path, entry.name)]
 				: [],
 	);
@@ -43,33 +46,67 @@ const filesUnder = (path: string): string[] => {
 const stripComments = (code: string) =>
 	code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
-/** Every quoted path under a source root, cut at the first `${`. */
-const roots = [...new Set(folders.map((folder) => folder.split("/")[0]))];
+// The migration script lists the old paths on purpose.
+const MIGRATION = join(process.cwd(), "scripts/migrate-source-layout.mjs");
+const code = READERS.flatMap((reader) =>
+	filesUnder(join(process.cwd(), reader))
+		.filter((file) => file !== MIGRATION)
+		.map((file) => stripComments(readFileSync(file, "utf8"))),
+).join("\n");
+
+/** The folders at the top of `data/source`, now and before the theme layout. */
+const OLD_ROOTS = [
+	"demographics",
+	"deprivation",
+	"economics",
+	"education",
+	"geography",
+	"lookups",
+	"politics",
+	"telecoms",
+];
+
+/**
+ * Every quoted path that names a source folder: one under an old root, or
+ * under a folder of the table. Cut at the first `${`.
+ */
 const literal = new RegExp(
-	`["'\`]((?:${roots.join("|")})/[^"'\`]*)["'\`]`,
+	`["'\`]((?:${OLD_ROOTS.join("|")})/[^"'\`]*)["'\`]`,
 	"g",
 );
-const references = READERS.flatMap((reader) =>
-	filesUnder(join(process.cwd(), reader)).flatMap((file) =>
-		[...stripComments(readFileSync(file, "utf8")).matchAll(literal)].map(
-			(match) => match[1].split("${")[0].replace(/\/$/, ""),
-		),
-	),
+const quoted = [...code.matchAll(/["'`]([a-z0-9_-]+\/[^"'`]*)["'`]/g)].map(
+	(match) => match[1],
+);
+const hardCoded = [...code.matchAll(literal)].map((match) => match[1]);
+/**
+ * A path joined in parts, `join(root, "data/source", "lookups", ...)`. Only
+ * the boundaries and postcodes roots may be named so; the rest go through
+ * `sourceDir`. `transport` is the hand-downloaded OS Open Roads tiles of
+ * scripts/serve-os-open-roads.mjs, which are not a source.
+ */
+const joined = [
+	...code.matchAll(/["']data\/source["'],\s*["'`]([^"'`$/]+)["'`]/g),
+]
+	.map((match) => match[1])
+	.filter((root) => !["boundaries", "postcodes", "transport"].includes(root));
+/** Config files name a source as the first part of a path, `<name>/<file>`. */
+const config = readFileSync(
+	join(process.cwd(), "services/api/config/crosswalk-adapters.json"),
+	"utf8",
 );
 
-/** A reference names a folder when one is a path prefix of the other. */
-const names = (reference: string, folder: string) =>
-	reference === folder ||
-	reference.startsWith(`${folder}/`) ||
-	folder.startsWith(`${reference}/`);
+const names = Object.keys(SOURCES) as SourceName[];
+const listed = new Set([...folders, ...Object.keys(SUPPORT_SOURCES)]);
+const named = quoted.filter((path) =>
+	[...listed].some(
+		(folder) => path === folder || path.startsWith(`${folder}/`),
+	),
+);
 
 describe("source folders and datasets", () => {
 	it("list each folder once", () => {
 		expect(folders.filter((f, i) => folders.indexOf(f) !== i)).toEqual([]);
-		const others = [
-			...Object.keys(SUPPORT_SOURCES),
-			...Object.keys(UNUSED_SOURCES),
-		];
+		const others = Object.keys(SUPPORT_SOURCES);
 		expect(others.filter((f) => folders.includes(f))).toEqual([]);
 		expect(others.filter((f, i) => others.indexOf(f) !== i)).toEqual([]);
 	});
@@ -89,44 +126,94 @@ describe("source folders and datasets", () => {
 		expect([...known.keys()].filter((id) => !fed.has(id))).toEqual([]);
 	});
 
-	it("are read by code, so none is quietly unused", () => {
-		const unread = folders.filter(
-			(folder) =>
-				!references.some((reference) => names(reference, folder)),
+	it("are each named by a SOURCES entry, and the reverse", () => {
+		const inside = (path: string, folder: string) =>
+			path === folder || path.startsWith(`${folder}/`);
+		const paths = names.map((name) => sourceDir(name));
+		// Sources with no meta.json of their own, so no row in the table.
+		const bare = new Set<SourceName>(["lookups", "ceremonial-counties"]);
+		expect(
+			names.filter(
+				(name) =>
+					!bare.has(name) &&
+					![...listed].some((folder) =>
+						inside(folder, sourceDir(name)),
+					),
+			),
+		).toEqual([]);
+		expect(
+			[...folders, ...Object.keys(SUPPORT_SOURCES)].filter(
+				(folder) => !paths.some((path) => inside(folder, path)),
+			),
+		).toEqual([]);
+		expect(paths.filter((p, i) => paths.indexOf(p) !== i)).toEqual([]);
+	});
+
+	it("are read by code through SOURCES, so none is quietly unused", () => {
+		const unread = names.filter(
+			(name) =>
+				!code.includes(`"${name}"`) &&
+				!config.includes(`"${name}/`) &&
+				!(
+					/^census-2021-ts\d/.test(name) &&
+					code.includes("census-2021-${")
+				),
 		);
 		expect(unread).toEqual([]);
 	});
 
-	it("are all that code reads under a source root", () => {
-		const listed = [
-			...folders,
-			...Object.keys(SUPPORT_SOURCES),
-			...Object.keys(UNUSED_SOURCES),
-		];
-		const unlisted = [...new Set(references)].filter(
-			(reference) => !listed.some((folder) => names(reference, folder)),
-		);
-		expect(unlisted).toEqual([]);
+	it("are never named by a literal path in code", () => {
+		expect([...new Set([...hardCoded, ...named])]).toEqual([]);
+		expect(joined).toEqual([]);
 	});
 
-	it("sit under the theme and topic of the dataset they feed, unless excepted", () => {
+	it("file each source under the topic of the datasets it feeds", () => {
 		const wrong: string[] = [];
-		for (const [folder, datasets, layoutTask] of DATASET_SOURCES) {
-			const [segment0, segment1, segment2] = folder.split("/");
-			const conforms = datasets.some((id) => {
-				const { theme } = getDatasetTopic(
-					known.get(id) as DatasetTopic,
+		for (const name of names) {
+			const folder = sourceDir(name);
+			const topic = sourceTopic(name);
+			const source = DATASET_SOURCES.find(([path]) => path === folder);
+			if (topic === "core") continue; // Denominators serve many topics.
+			if (!source) {
+				wrong.push(`${name}: ${topic} but no dataset`);
+				continue;
+			}
+			const topics = source[1].map((id) => known.get(id));
+			if (!topics.includes(topic as DatasetTopic))
+				wrong.push(
+					`${name}: ${topic}, datasets are ${topics.join(", ")}`,
 				);
-				return (
-					segment0 === theme &&
-					segment1 === known.get(id) &&
-					segment2 === id
-				);
-			});
-			if (!conforms && layoutTask === undefined) wrong.push(folder);
-			if (conforms && layoutTask !== undefined)
+		}
+		expect(wrong).toEqual([]);
+	});
+
+	it("sit under the theme and topic of the dataset they feed, named for it unless excepted", () => {
+		const wrong: string[] = [];
+		for (const [folder, datasets, renameTask] of DATASET_SOURCES) {
+			const [theme, topic, name] = folder.split("/");
+			if (theme === "core") continue; // Denominators serve many topics.
+			const under = datasets.some(
+				(id) =>
+					theme ===
+						getDatasetTopic(known.get(id) as DatasetTopic).theme &&
+					topic === known.get(id),
+			);
+			if (!under)
+				wrong.push(`${folder} is not under its theme and topic`);
+			const named = datasets.includes(name);
+			if (!named && renameTask === undefined)
+				wrong.push(`${folder} is not named after a dataset`);
+			if (named && renameTask !== undefined)
 				wrong.push(`${folder} now conforms, drop its task`);
 		}
 		expect(wrong).toEqual([]);
+	});
+
+	it("keep foundation sources in core/", () => {
+		expect(
+			Object.keys(SUPPORT_SOURCES).filter(
+				(folder) => !folder.startsWith("core/"),
+			),
+		).toEqual([]);
 	});
 });

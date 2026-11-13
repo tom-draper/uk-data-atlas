@@ -15,6 +15,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readJsonSync } from "../lib/json.ts";
+import { sourceDir } from "@uk-data-atlas/datasets";
 
 /**
  * Download the small-area counts that crosswalk weights share between
@@ -50,19 +51,25 @@ const CTSOP =
 	"https://assets.publishing.service.gov.uk/media/6ab25147a9c3d267bcccecc1/CTSOP_1_1.zip";
 
 export const WEIGHT_SOURCE_FILES = {
-	residentsEw:
-		"demographics/census-2021-small-area/ts001/census2021-ts001-oa.csv",
-	householdsEw:
-		"demographics/census-2021-small-area/ts003/census2021-ts003-oa.csv",
-	centroidsEw:
-		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
-	residentsSc:
-		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
-	householdsSc:
-		"demographics/population/census-2022-scotland-output-area/census_2022_UV406_Household_size_OA.csv",
-	centroidsSc:
-		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
-	dwellingsEw: "housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
+	residentsEw: sourceDir("census-2021-ts001", "census2021-ts001-oa.csv"),
+	householdsEw: sourceDir("census-2021-ts003", "census2021-ts003-oa.csv"),
+	centroidsEw: sourceDir(
+		"population-weighted-centroids",
+		"oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+	),
+	residentsSc: sourceDir(
+		"census-2022-scotland-output-area",
+		"outputarea2022_usualresidentpopulation.csv",
+	),
+	householdsSc: sourceDir(
+		"census-2022-scotland-output-area",
+		"census_2022_UV406_Household_size_OA.csv",
+	),
+	centroidsSc: sourceDir(
+		"population-weighted-centroids",
+		"oa-2022-sc/oa-2022-sc-pwc.csv",
+	),
+	dwellingsEw: sourceDir("council-tax-stock", "2026/CTSOP1_1_2026_03_31.csv"),
 	postcodeOutputAreas: "postcodes/onspd/<edition>/onspd-output-areas.csv.gz",
 } as const;
 
@@ -376,11 +383,7 @@ export const fetchWeightSources = async (
 const scriptPath = fileURLToPath(import.meta.url);
 if (isMainModule(import.meta.url)) {
 	const root = resolve(dirname(scriptPath), "../../..");
-	if (
-		!existsSync(
-			join(root, "data/source/demographics/census-2021-small-area"),
-		)
-	)
+	if (!existsSync(join(root, "data/source", sourceDir("census-2021-ts001"))))
 		throw new Error("Restore data/source first: pnpm data:download");
 	const result = await fetchWeightSources(root);
 	buildLog.info(

@@ -4,12 +4,13 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import { sourceInput } from "@uk-data-atlas/datasets";
 import { compileCrosswalks } from "../helpers/compileCrosswalks";
 
 test("compiles a published lookup without inventing apportionment weights", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const input = "boundaries/constituency/2024/lookup.geojson";
-	const path = join(root, "data/source", input);
+	const path = join(root, "data/source", sourceInput(input));
 	mkdirSync(join(path, ".."), { recursive: true });
 	writeFileSync(
 		path,
@@ -117,7 +118,7 @@ test("compiles a published lookup without inventing apportionment weights", () =
 test("filters an official multi-year history source to its declared releases", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const input = "lookups/ward-history/changes.geojson";
-	const path = join(root, "data/source", input);
+	const path = join(root, "data/source", sourceInput(input));
 	mkdirSync(join(path, ".."), { recursive: true });
 	writeFileSync(
 		path,
@@ -205,7 +206,7 @@ test("filters an official multi-year history source to its declared releases", (
 test("compiles a published parent-code containment with weighting marked not-applicable", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const input = "boundaries/ward/2025/wards.geojson";
-	const path = join(root, "data/source", input);
+	const path = join(root, "data/source", sourceInput(input));
 	mkdirSync(join(path, ".."), { recursive: true });
 	writeFileSync(
 		path,
@@ -276,7 +277,7 @@ test("compiles a published parent-code containment with weighting marked not-app
 const compileContainment = (parentRing: number[][]) => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const write = (path: string, value: unknown) => {
-		const fullPath = join(root, "data/source", path);
+		const fullPath = join(root, "data/source", sourceInput(path));
 		mkdirSync(join(fullPath, ".."), { recursive: true });
 		writeFileSync(fullPath, JSON.stringify(value));
 	};
@@ -470,7 +471,7 @@ test("keeps the publisher's change indicator on each pair, checked against the l
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const input = "lookups/lsoa-changes/fixture.geojson";
 	const write = (rows: Array<[string, string, string]>) => {
-		const path = join(root, "data/source", input);
+		const path = join(root, "data/source", sourceInput(input));
 		mkdirSync(join(path, ".."), { recursive: true });
 		writeFileSync(
 			path,

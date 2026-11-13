@@ -5,6 +5,7 @@ import type {
 } from "../../types/energyConsumption.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * DESNZ restates the series on current boundaries, so every year published
@@ -30,7 +31,7 @@ const load = async (
 	type: "electricity-consumption" | "gas-consumption",
 ) => {
 	const { data } = await parseCsv(
-		await read(`environment/energy-consumption/${file}`),
+		await read(sourceDir("energy-consumption", `${file}`)),
 		{ header: true },
 	);
 

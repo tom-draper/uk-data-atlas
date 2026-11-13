@@ -4,12 +4,13 @@ import type {
 	IndicatorRecord,
 } from "../../types/indicator.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 export async function loadHousingTenure(
 	read: DatasetReader["csvRows"],
 ): Promise<Record<string, IndicatorDataset<"housing-tenure">>> {
 	const data: Record<string, IndicatorRecord> = {};
 	await read(
-		"demographics/census-2021-small-area/ts054/census2021-ts054-lsoa.csv",
+		sourceDir("census-2021-ts054", "census2021-ts054-lsoa.csv"),
 		{},
 		(row) => {
 			const code = row["geography code"]?.trim();

@@ -4,9 +4,12 @@ import type {
 	HistoricalGeneralElectionDataset,
 	HistoricalPartyGroup,
 } from "../../types/historicalGeneralElection.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
-const SOURCE_PATH =
-	"politics/elections/general-elections/1918-2019/1918-2019election_results.csv";
+const SOURCE_PATH = sourceDir(
+	"historical-general-election",
+	"1918-2019election_results.csv",
+);
 
 // The source's header row has trailing spaces on a couple of columns
 // ("lib_votes ", "turnout "), so these are named exactly, not derived.

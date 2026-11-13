@@ -3,6 +3,7 @@ import {
 	type ChildPovertyLADData,
 } from "../../types/childPoverty.ts";
 import type { OdsTableOptions } from "../spreadsheet/ods.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const TABLE_NAME = "7_BHC_Relative_LA";
 const YEARS = [2022, 2023, 2024, 2025] as const;
@@ -25,7 +26,10 @@ export async function loadChildPoverty(
 	);
 
 	await readRows(
-		"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
+		sourceDir(
+			"child-poverty",
+			"children-in-low-income-families-2022-2025.ods",
+		),
 		TABLE_OPTIONS,
 		(row) => {
 			const [ladName, ladCode, ...values] = row;

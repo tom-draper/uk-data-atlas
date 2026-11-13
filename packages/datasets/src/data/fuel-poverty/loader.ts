@@ -3,6 +3,7 @@ import {
 	type FuelPovertyLSOAData,
 } from "../../types/fuelPoverty.ts";
 import type { OdsTableOptions } from "../spreadsheet/ods.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const TABLE_NAME = "Table_4";
 
@@ -21,7 +22,7 @@ export async function loadFuelPoverty(
 ): Promise<Record<string, FuelPovertyDataset>> {
 	const data: Record<string, FuelPovertyLSOAData> = {};
 	await readRows(
-		"economics/fuel-poverty/fuel-poverty-2024.ods",
+		sourceDir("fuel-poverty", "fuel-poverty-2024.ods"),
 		TABLE_OPTIONS,
 		([lsoaCode, lsoaName, , , , households, fuelPoor, rate]) => {
 			if (!/^E01\d{6}$/.test(lsoaCode)) return;

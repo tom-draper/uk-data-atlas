@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { loadNHSWaiting } from "@uk-data-atlas/datasets";
+import { loadNHSWaiting, sourceDir } from "@uk-data-atlas/datasets";
 
 describe("loadNHSWaiting", () => {
 	it("aggregates rows as they are read from the archive", async () => {
 		const result = await loadNHSWaiting(async (path, visit) => {
-			expect(path).toBe("health/nhs-waiting-times/rtt-mar-2026.zip");
+			expect(path).toBe(sourceDir("nhs-waiting", "rtt-mar-2026.zip"));
 			visit({
 				"RTT Part Description": "Incomplete Pathways",
 				"Provider Parent Org Code": "E54000001",

@@ -3,6 +3,7 @@ import {
 	type HomelessnessLADData,
 } from "../../types/homelessness.ts";
 import type { OdsTableOptions } from "../spreadsheet/ods.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const TABLE_NAME = "TA1";
 const MAX_COLUMNS = 7;
@@ -23,7 +24,7 @@ export async function loadHomelessness(
 ): Promise<Record<string, HomelessnessDataset>> {
 	const data: Record<string, HomelessnessLADData> = {};
 	await readRows(
-		"economics/homelessness/homelessness-2026-q1.ods",
+		sourceDir("homelessness", "homelessness-2026-q1.ods"),
 		TABLE_OPTIONS,
 		(row) => {
 			const [

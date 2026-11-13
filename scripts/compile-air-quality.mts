@@ -10,6 +10,7 @@
  * Run via: npx tsx scripts/compile-air-quality.mts
  */
 import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -21,7 +22,7 @@ import {
 } from "../lib/data/air-quality/pcmGrid";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const DIRECTORY = join(ROOT, "data/source", "environment", "air-quality");
+const DIRECTORY = join(ROOT, "data/source", sourceDir("air-quality"));
 const BOUNDARIES = join(
 	ROOT,
 	"data/source",

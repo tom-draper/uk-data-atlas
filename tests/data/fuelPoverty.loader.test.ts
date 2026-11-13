@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { loadFuelPoverty } from "@uk-data-atlas/datasets";
+import { loadFuelPoverty, sourceDir } from "@uk-data-atlas/datasets";
 
 describe("loadFuelPoverty", () => {
 	it("aggregates LSOA rows as they are read from the ODS table", async () => {
 		const result = await loadFuelPoverty(async (path, options, visit) => {
-			expect(path).toBe("economics/fuel-poverty/fuel-poverty-2024.ods");
+			expect(path).toBe(
+				sourceDir("fuel-poverty", "fuel-poverty-2024.ods"),
+			);
 			expect(options).toEqual({
 				table: "Table_4",
 				label: "fuel-poverty",

@@ -1,5 +1,10 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
+import {
+	SOURCES,
+	sourceDir,
+	sourceInput,
+} from "../packages/datasets/src/declaration/sources.ts";
 import { PLACE_LOOKUPS } from "../packages/datasets/src/data/gazetteer/places.ts";
 import {
 	BOUNDARY_CATALOG,
@@ -76,9 +81,9 @@ const crosswalkInputs = (root) => {
 	return [
 		...geometryStoreInputs(root),
 		...crosswalks.flatMap((adapter) =>
-			[adapter.input, adapter.population?.input].filter(
-				(input) => typeof input === "string",
-			),
+			[adapter.input, adapter.population?.input]
+				.filter((input) => typeof input === "string")
+				.map(sourceInput),
 		),
 	];
 };
@@ -300,15 +305,27 @@ const boundaryOffsetInputs = (root) => {
 	}
 };
 
-const countyShapeInputs = [
-	"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.shp",
-	"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.dbf",
-	"geography/historic-counties/source/Boundary-line-historic-counties_region.shp",
-	"geography/historic-counties/source/Boundary-line-historic-counties_region.dbf",
+export const countyShapeInputs = [
+	sourceDir(
+		"ceremonial-counties",
+		"source/Boundary-line-ceremonial-counties_region.shp",
+	),
+	sourceDir(
+		"ceremonial-counties",
+		"source/Boundary-line-ceremonial-counties_region.dbf",
+	),
+	sourceDir(
+		"historic-counties",
+		"source/Boundary-line-historic-counties_region.shp",
+	),
+	sourceDir(
+		"historic-counties",
+		"source/Boundary-line-historic-counties_region.dbf",
+	),
 ];
 
 const gazetteerLookupInputs = PLACE_LOOKUPS.map(({ lookup, file }) =>
-	join("lookups", lookup, file),
+	sourceDir("lookups", lookup, file),
 );
 
 const apiDatasetInputs = (root) => [
@@ -330,21 +347,18 @@ const websiteFallbackBoundaryInputs = Object.values(BOUNDARY_CATALOG).flatMap(
 		}),
 );
 
-const censusSmallAreaInputs = (root) => {
-	const prefix = "demographics/census-2021-small-area";
-	try {
-		return readdirSync(join(root, "data/source", prefix), {
-			withFileTypes: true,
-		})
-			.filter((entry) => entry.isDirectory())
-			.flatMap(({ name }) => [
-				join(prefix, name, "meta.json"),
-				join(prefix, name, `census2021-${name}-lsoa.csv`),
-				join(prefix, name, `census2021-${name}-msoa.csv`),
-			]);
-	} catch {
-		return [prefix];
-	}
+const censusSmallAreaInputs = () => {
+	const tables = Object.keys(SOURCES)
+		.filter((name) => /^census-2021-ts\d/.test(name))
+		.map((name) => name.slice("census-2021-".length));
+	return tables.flatMap((table) => {
+		const directory = sourceDir(`census-2021-${table}`);
+		return [
+			join(directory, "meta.json"),
+			join(directory, `census2021-${table}-lsoa.csv`),
+			join(directory, `census2021-${table}-msoa.csv`),
+		];
+	});
 };
 
 // The files `weight-atoms` and `crosswalk-weights` share between postcodes: counts of residents,
@@ -363,14 +377,29 @@ const crosswalkWeightInputs = (root) => {
 		edition = undefined;
 	}
 	return [
-		"demographics/census-2021-small-area/ts001/census2021-ts001-oa.csv",
-		"demographics/census-2021-small-area/ts003/census2021-ts003-oa.csv",
-		"demographics/population/census-2022-scotland-output-area/outputarea2022_usualresidentpopulation.csv",
-		"demographics/population/census-2022-scotland-output-area/census_2022_UV406_Household_size_OA.csv",
-		"lookups/output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
-		"geography/population-weighted-centroids/oa-2021-ew-v4/oa-2021-ew-pwc.csv",
-		"geography/population-weighted-centroids/oa-2022-sc/oa-2022-sc-pwc.csv",
-		"housing/council-tax-stock/2026/CTSOP1_1_2026_03_31.csv",
+		sourceDir("census-2021-ts001", "census2021-ts001-oa.csv"),
+		sourceDir("census-2021-ts003", "census2021-ts003-oa.csv"),
+		sourceDir(
+			"census-2022-scotland-output-area",
+			"outputarea2022_usualresidentpopulation.csv",
+		),
+		sourceDir(
+			"census-2022-scotland-output-area",
+			"census_2022_UV406_Household_size_OA.csv",
+		),
+		sourceDir(
+			"lookups",
+			"output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
+		),
+		sourceDir(
+			"population-weighted-centroids",
+			"oa-2021-ew-v4/oa-2021-ew-pwc.csv",
+		),
+		sourceDir(
+			"population-weighted-centroids",
+			"oa-2022-sc/oa-2022-sc-pwc.csv",
+		),
+		sourceDir("council-tax-stock", "2026/CTSOP1_1_2026_03_31.csv"),
 		...(edition
 			? [
 					`postcodes/onspd/${edition}/meta.json`,
@@ -443,7 +472,10 @@ const websiteDatasetInputs = (root) => {
 				...metadata,
 				...websiteFallbackBoundaryInputs,
 				...gazetteerLookupInputs,
-				"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+				sourceDir(
+					"road-safety",
+					"dft-road-casualty-statistics-collision-provisional-2025.csv",
+				),
 			],
 			presence,
 		};

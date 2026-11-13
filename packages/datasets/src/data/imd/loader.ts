@@ -5,12 +5,16 @@ import {
 } from "../../helpers/datasetAggregation/deprivation.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum, parseNumInt } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export async function loadIMD(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, IMDDataset>> {
 	const text = await read(
-		"deprivation/imd/File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
+		sourceDir(
+			"imd",
+			"File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
+		),
 	);
 	const { data } = await parseCsv(text, { header: true });
 

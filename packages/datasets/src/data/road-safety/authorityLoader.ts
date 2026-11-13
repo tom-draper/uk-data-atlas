@@ -5,10 +5,11 @@ import type {
 	RoadCollisionsLSOAData,
 } from "../../types/roadCollisions.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export const ROAD_COLLISION_SOURCES = [
-	"transport/road-safety/dft-road-casualty-statistics-collision-2024.csv",
-	"transport/road-safety/dft-road-casualty-statistics-collision-2025.csv",
+	sourceDir("road-safety", "dft-road-casualty-statistics-collision-2024.csv"),
+	sourceDir("road-safety", "dft-road-casualty-statistics-collision-2025.csv"),
 ] as const;
 // Each annual file retains its own local-authority code vintage; its LSOA
 // codes resolve against the December 2021 release.

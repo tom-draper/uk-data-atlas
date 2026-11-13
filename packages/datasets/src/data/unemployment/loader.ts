@@ -6,9 +6,12 @@ import {
 } from "../../types/unemployment.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
-const WORKBOOK =
-	"economics/unemployment/model-based/modelbasedunemploymentdataaugust2022.xls";
+const WORKBOOK = sourceDir(
+	"unemployment",
+	"modelbasedunemploymentdataaugust2022.xls",
+);
 
 const MONTHS = [
 	"January",

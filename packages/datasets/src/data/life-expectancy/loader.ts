@@ -4,6 +4,7 @@ import type {
 } from "../../types/lifeExpectancy.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 import type { DatasetReader } from "../catalog/types.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const COMMON_COLUMNS = [
 	[0, "Period"],
@@ -107,13 +108,13 @@ export async function loadLE(
 	const [leRecords, hleRecords] = await Promise.all([
 		readLifeExpectancyRows(
 			readRows,
-			"health/life-expectancy/lifeexpectancylocalareas.xlsx",
+			sourceDir("life-expectancy", "lifeexpectancylocalareas.xlsx"),
 			9,
 			"Life expectancy",
 		),
 		readLifeExpectancyRows(
 			readRows,
-			"health/life-expectancy/healthylifeexpectancyuk.xlsx",
+			sourceDir("life-expectancy", "healthylifeexpectancyuk.xlsx"),
 			9,
 			"HLE",
 		),

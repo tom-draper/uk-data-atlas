@@ -45,7 +45,7 @@ export const datasetMetadata = {
 							inputs: [
 								{
 									kind: "xlsxSheet",
-									path: "demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx#MYEB1",
+									path: "population/population-estimates/uk/myebtablesuk20112024.xlsx#MYEB1",
 									bytes: 5951518,
 									sha256: "aec8a5343f3f71ee062cc5b0e3f137087f89e1a1ccd0725cc6ffd2c77ba5d0f1",
 								},

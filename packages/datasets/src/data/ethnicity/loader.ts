@@ -5,6 +5,7 @@ import {
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 type EthnicityData = Record<string, Record<string, EthnicityCategory>>;
 
@@ -92,9 +93,7 @@ export async function loadEthnicity(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, EthnicityDataset>> {
 	const { data } = await parseCsv(
-		await read(
-			"demographics/ethnicity/ts021-ethnic-group/TS021-2021-3.csv",
-		),
+		await read(sourceDir("ethnicity", "TS021-2021-3.csv")),
 		{ header: true },
 	);
 

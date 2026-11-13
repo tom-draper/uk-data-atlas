@@ -3,6 +3,7 @@ import { ATLAS_CACHE_WORK } from "./src/storage/atlasCacheWork.ts";
 import { CACHE_STAGES } from "./src/storage/stageStamp.ts";
 import { stage, checkStage, stampOf } from "./build-data-stage.mjs";
 import {
+	countyShapeInputs,
 	datasetInputs,
 	crosswalkInputs,
 	sourceMetadataInputs,
@@ -211,12 +212,7 @@ export const apiStages = [
 		["area-inventory", "geometry-store", "api-datasets"],
 		["pipeline/src/stages/build-named-locations.ts"],
 		{
-			rawInputs: [
-				"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.shp",
-				"geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region.dbf",
-				"geography/historic-counties/source/Boundary-line-historic-counties_region.shp",
-				"geography/historic-counties/source/Boundary-line-historic-counties_region.dbf",
-			],
+			rawInputs: countyShapeInputs,
 			writes: [
 				`${artifacts}/location-geometries`,
 				`${artifacts}/named-locations.json`,

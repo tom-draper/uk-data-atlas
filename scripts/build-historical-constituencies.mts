@@ -17,7 +17,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadHistoricalGeneralElection } from "@uk-data-atlas/datasets";
-import { historicalConstituencyCode } from "@uk-data-atlas/datasets";
+import { historicalConstituencyCode, sourceDir } from "@uk-data-atlas/datasets";
 
 const root = join(import.meta.dirname, "..");
 const out =
@@ -25,7 +25,8 @@ const out =
 	join(root, "data/source/boundaries/historical-constituency");
 const sourceDirectory = join(
 	root,
-	"data/source/politics/elections/general-elections/1918-2019",
+	"data/source",
+	sourceDir("historical-general-election"),
 );
 const source = JSON.parse(
 	readFileSync(join(sourceDirectory, "meta.json"), "utf8"),

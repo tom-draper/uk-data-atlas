@@ -59,7 +59,7 @@ afterAll(() => rmSync(fixture.root, { recursive: true, force: true }));
 test("gazetteer cache rebuilds when a lookup changes", async () => {
 	mkdirSync(join(fixture.boundary, "boundaries"), { recursive: true });
 	for (const { lookup, file } of PLACE_LOOKUPS) {
-		const path = join(fixture.source, "lookups", lookup, file);
+		const path = join(fixture.source, "core/lookups", lookup, file);
 		mkdirSync(dirname(path), { recursive: true });
 		writeFileSync(path, "initial");
 	}
@@ -92,7 +92,7 @@ test("gazetteer cache rebuilds when a lookup changes", async () => {
 	expect(loadGazetteerCore).toHaveBeenCalledTimes(1);
 	const lookup = PLACE_LOOKUPS[0]!;
 	writeFileSync(
-		join(fixture.source, "lookups", lookup.lookup, lookup.file),
+		join(fixture.source, "core/lookups", lookup.lookup, lookup.file),
 		"changed lookup",
 	);
 	await (

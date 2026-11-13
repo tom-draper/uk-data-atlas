@@ -10,6 +10,7 @@ import type {
 import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import { csvFields } from "@uk-data-atlas/artifacts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
+import { sourceDir, type SourceName } from "@uk-data-atlas/datasets";
 import { sha256 } from "./values.ts";
 import { readJsonSync } from "../lib/json.ts";
 
@@ -38,8 +39,9 @@ export const CENSUS_SMALL_AREA_GEOGRAPHIES = [
 
 const BOUNDARY_YEAR = 2021;
 const PERIOD = "2021";
-export const CENSUS_SMALL_AREA_DIRECTORY =
-	"demographics/census-2021-small-area";
+/** The source folder of a table, relative to `data/source`. */
+export const censusTableDirectory = (table: string) =>
+	sourceDir(`census-2021-${table}` as SourceName);
 
 /** The artifact name each measure of a table partition names. */
 export const censusTableArtifactName = (table: string, geography: string) =>
@@ -143,8 +145,7 @@ export const compileCensusSmallArea = (
 		const directory = join(
 			repositoryRoot,
 			"data/source",
-			CENSUS_SMALL_AREA_DIRECTORY,
-			table.table,
+			censusTableDirectory(table.table),
 		);
 		const meta = readJsonSync(join(directory, "meta.json")) as {
 			title: string;
@@ -187,7 +188,7 @@ export const compileCensusSmallArea = (
 				artifact,
 				input: {
 					kind: "text",
-					path: `${CENSUS_SMALL_AREA_DIRECTORY}/${table.table}/${file}`,
+					path: `${censusTableDirectory(table.table)}/${file}`,
 					bytes: content.byteLength,
 					sha256: sha256Hex(content),
 				},
