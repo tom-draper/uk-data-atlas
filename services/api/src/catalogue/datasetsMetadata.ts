@@ -5,7 +5,7 @@ export const datasetsMetadata = {
 	tags: ["Data catalogue"],
 	summary: "List published source datasets and their lineage",
 	description:
-		"Each dataset carries the `theme` and `topic` it is filed under and the `module` it is downloaded in, from the same registry as the docs. Filter on any of them: `GET /v1/datasets?theme=population`. The filters combine, and a value the registry does not hold is refused with the values it does.\n",
+		"Each dataset carries the `theme` and `topic` it is filed under and the `module` it is downloaded in, from the same registry as the docs. Filter on any of them: `GET /v1/datasets?theme=population`. The filters combine, and a value the registry does not hold is refused with the values it does. A dataset also listed under other topics names them in `relatedTopics`; the filters match the primary `topic` only.\n",
 	parameters: taxonomyParameters,
 	"x-likely-refusal": {
 		status: 503,

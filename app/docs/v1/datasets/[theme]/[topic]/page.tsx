@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { DATASET_TREE } from "@uk-data-atlas/datasets";
 import { loadCatalogue } from "@/lib/docs/catalogue";
 import DatasetCards from "@/components/docs/DatasetCards";
+import RelatedDatasets from "@/components/docs/RelatedDatasets";
 import { DocPage } from "@/components/docs/Content";
 import { docsMetadata } from "@/lib/docs/metadata";
 import { DATASETS_HREF, themeHref, topicHref } from "@/lib/docs/navigation";
@@ -42,7 +43,7 @@ export default async function TopicPage({ params }: { params: Params }) {
 	const found = await params;
 	const branch = findTopic(found);
 	if (!branch) notFound();
-	const { topic, datasets } = branch;
+	const { topic, datasets, related } = branch;
 	const theme = DATASET_TREE.find(
 		({ theme: t }) => t.id === found.theme,
 	)!.theme;
@@ -59,6 +60,7 @@ export default async function TopicPage({ params }: { params: Params }) {
 			lede={topic.description}
 		>
 			<DatasetCards datasets={datasets} catalogue={catalogue} />
+			<RelatedDatasets datasets={related} />
 		</DocPage>
 	);
 }

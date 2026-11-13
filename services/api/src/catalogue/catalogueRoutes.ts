@@ -17,6 +17,7 @@ import {
 	taxonomyOfDataset,
 	taxonomyOfMeasure,
 	withTaxonomy,
+	withDatasetTaxonomy,
 	type TaxonomyQuery,
 } from "./datasetTaxonomy";
 import { describeModules, describeThemes } from "./themesAndModules";
@@ -83,7 +84,10 @@ export const handleCatalogueRoutes = ({
 						matchesTaxonomy(taxonomyOfDataset(dataset.id), query),
 					)
 					.map((dataset) =>
-						withTaxonomy(dataset, taxonomyOfDataset(dataset.id)),
+						withDatasetTaxonomy(
+							dataset,
+							taxonomyOfDataset(dataset.id),
+						),
 					),
 			),
 		};
@@ -103,7 +107,10 @@ export const handleCatalogueRoutes = ({
 					status: 200,
 					body: envelope(
 						releaseId,
-						withTaxonomy(dataset, taxonomyOfDataset(dataset.id)),
+						withDatasetTaxonomy(
+							dataset,
+							taxonomyOfDataset(dataset.id),
+						),
 					),
 				}
 			: problem(

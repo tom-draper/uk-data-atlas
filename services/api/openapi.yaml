@@ -2828,7 +2828,8 @@ paths:
         Each dataset carries the `theme` and `topic` it is filed under and the `module` it is
         downloaded in, from the same registry as the docs. Filter on any of them: `GET
         /v1/datasets?theme=population`. The filters combine, and a value the registry does not hold is
-        refused with the values it does.
+        refused with the values it does. A dataset also listed under other topics names them in
+        `relatedTopics`; the filters match the primary `topic` only.
       x-likely-refusal:
         status: 503
         when:
@@ -2902,6 +2903,10 @@ paths:
                           type: string
                         module:
                           type: string
+                        relatedTopics:
+                          type: array
+                          items:
+                            type: string
                         id:
                           type: string
                         label:
@@ -3102,6 +3107,10 @@ paths:
                         type: string
                       module:
                         type: string
+                      relatedTopics:
+                        type: array
+                        items:
+                          type: string
                       id:
                         type: string
                       label:

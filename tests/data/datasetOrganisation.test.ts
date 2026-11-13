@@ -193,6 +193,22 @@ describe("registry guides", () => {
 		}
 	});
 
+	it("list the same related topics as the dataset, in registry order", () => {
+		const order = DATASET_TOPICS.map(({ id }) => id);
+		for (const { id, related } of DATASETS) {
+			const guided = REGISTRY_GUIDES[id]?.related ?? [];
+			expect([...guided].sort(), id).toEqual([...related].sort());
+			expect(
+				guided.map((topic) => order.indexOf(topic)),
+				`${id}: related topics in registry order`,
+			).toEqual(
+				guided
+					.map((topic) => order.indexOf(topic))
+					.sort((a, b) => a - b),
+			);
+		}
+	});
+
 	it("title every dataset, without repeating a title within a topic", () => {
 		const seen = new Set<string>();
 		for (const { id, topic } of DATASETS) {
@@ -230,6 +246,46 @@ describe("dataset tree", () => {
 		expect(REGISTERED_DATASETS.map(({ id }) => id).sort()).toEqual(
 			DATASETS.map(({ id }) => id).sort(),
 		);
+	});
+});
+
+describe("related topics", () => {
+	it("never change where a dataset is filed", () => {
+		for (const dataset of REGISTERED_DATASETS) {
+			const branches = DATASET_TREE.flatMap(({ topics }) => topics);
+			const primary = branches.filter(({ datasets }) =>
+				datasets.some(({ id }) => id === dataset.id),
+			);
+			expect(
+				primary.map(({ topic }) => topic.id),
+				dataset.id,
+			).toEqual([dataset.topic]);
+		}
+	});
+
+	it("list a dataset under each related topic, apart from its own", () => {
+		const branches = DATASET_TREE.flatMap(({ topics }) => topics);
+		for (const dataset of REGISTERED_DATASETS) {
+			const listed = branches
+				.filter(({ related }) =>
+					related.some(({ id }) => id === dataset.id),
+				)
+				.map(({ topic }) => topic.id);
+			expect(listed, dataset.id).toEqual(
+				DATASET_TOPICS.map(({ id }) => id).filter((id) =>
+					dataset.related?.includes(id),
+				),
+			);
+		}
+	});
+
+	it("hold few datasets, so the secondary lists stay short", () => {
+		const related = REGISTERED_DATASETS.filter(
+			({ related }) => (related?.length ?? 0) > 0,
+		);
+		expect(related.length).toBeLessThanOrEqual(12);
+		for (const dataset of related)
+			expect(dataset.related!.length, dataset.id).toBeLessThanOrEqual(2);
 	});
 });
 

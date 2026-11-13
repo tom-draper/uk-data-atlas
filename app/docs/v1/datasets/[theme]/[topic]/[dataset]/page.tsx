@@ -18,6 +18,7 @@ import {
 	getDatasetTopic,
 	getRegisteredDataset,
 	REGISTERED_DATASETS,
+	relatedTopicsOf,
 } from "@uk-data-atlas/datasets";
 import {
 	exportsFromDatasets,
@@ -89,6 +90,7 @@ export default async function DatasetPage({ params }: { params: Params }) {
 	const downloads = exportsFromDatasets(catalogue, [dataset.id]);
 	const theme = getDatasetTheme(dataset.theme);
 	const topic = getDatasetTopic(dataset.topic);
+	const related = relatedTopicsOf(dataset);
 	// Some datasets are in the Atlas but not yet served by the API.
 	const served = facts.measures.length > 0;
 
@@ -147,6 +149,23 @@ export default async function DatasetPage({ params }: { params: Params }) {
 						label: "Published by",
 						value: facts.publishers.join("; "),
 					},
+					...(related.length > 0
+						? [
+								{
+									label: "Also listed under",
+									value: related.map((other, i) => (
+										<span key={other.id}>
+											{i > 0 && ", "}
+											<TextLink
+												href={topicHref(other.id)}
+											>
+												{other.label}
+											</TextLink>
+										</span>
+									)),
+								},
+							]
+						: []),
 					...(served
 						? [
 								{

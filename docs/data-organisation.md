@@ -507,6 +507,43 @@ assembled with core like any other module.
   and `module` to catalogue and dataset responses, filters on each, and
   `GET /v1/themes` and `GET /v1/modules`.
 
+## Related topics
+
+A dataset has one primary topic, which decides its theme, module, source path
+and builds. It may also declare `related` topics, which only change where it is
+found. `related` is optional, lists topic ids, and is declared beside `topic`
+in the dataset's `dataset.ts`. `DATASET_GUIDES` repeats it, as it does `topic`,
+and the consistency test fails if the two differ.
+
+`defineDataset` and the consistency test refuse a `related` topic that is not
+in the registry, that is the dataset's own primary topic, or that is listed
+twice.
+
+- Website: the chart settings panel lists a related card under the related
+  topic, in a "Related" sub-group marked `from <primary topic>`. It is the same
+  card, so its toggle, key, default visibility and place in the chart panel are
+  unchanged. The chart panel itself still shows a card once, under its primary
+  theme.
+- Docs: a dataset page shows "Also listed under" with its related topics. A
+  topic page lists datasets related to it, and a theme page those related to
+  any of its topics, in a "Related" group after the topic's own datasets, each
+  linking to the dataset and naming the topic it is filed under.
+- API: `relatedTopics` on `GET /v1/datasets` and `GET /v1/datasets/{id}`, left
+  off a dataset with none. The `theme`, `topic` and `module` filters match the
+  primary topic only, so a related dataset is not returned by them.
+
+Use `related` where people looking in another topic would reasonably expect the
+dataset, not for a dataset that merely mentions another subject. Datasets
+that already share a primary topic need nothing. Current entries:
+
+| Dataset                     | Primary topic              | Related               |
+| --------------------------- | -------------------------- | --------------------- |
+| `housing-affordability`     | `prices-and-affordability` | `earnings-and-income` |
+| `travel-to-work`            | `commuting`                | `labour-market`       |
+| `council-tax`               | `housing-stock`            | `public-finance`      |
+| `electric-vehicle-chargers` | `vehicles`                 | `energy`              |
+| `fuel-poverty`              | `poverty`                  | `energy`              |
+
 ## Merged datasets
 
 Task 15 merged datasets that were one measure split by geography, keeping the
@@ -535,22 +572,23 @@ Each stays its own dataset; none is open work under task 15.
 
 - `brexit` and `brexit-constituency`: the constituency figures are Hanretty's
   modelled estimates from a different publisher, source and licence, and carry
-  one measure (`pctLeave`) against the referendum count. Cross-list them under
-  task 17 (`related`).
+  one measure (`pctLeave`) against the referendum count. They share the
+  `referendums` topic, so task 17 needed no `related` entry for them.
 - `population`, `population-uk` and `population-constituency`: three ONS
   releases with their own reference years, workbooks and layouts. The ward
   dataset drives the chunked map and the population summary. Task 16 moved
   `population` and `population-uk` into the `population-detail` module without
-  merging them, so they stay separate datasets. Cross-list the three under
-  task 17.
+  merging them, so they stay separate datasets. The three share the
+  `population-estimates` topic, so task 17 needed no `related` entry.
 - `life-expectancy` and `life-expectancy-series`: the series is a 20-period
   history with confidence intervals on the 2025 code vintage, the snapshot is
   two tables on 2023 codes, so a merged chart would list every period as a
-  snapshot. Cross-list them under task 17.
+  snapshot. They share the `life-expectancy` topic, so task 17 needed no
+  `related` entry.
 - `general-election` and `historical-general-election`: the 1918 to 2019
   results are grouped into broad party families on constituency vintages the
-  atlas has no geometry for, from a different publisher. Cross-list them under
-  task 17.
+  atlas has no geometry for, from a different publisher. They share the
+  `general-elections` topic, so task 17 needed no `related` entry.
 
 Follow-up for task 18: the external source folder
 `school-performance-constituency` and its `meta.json` still carry the old id.
@@ -581,7 +619,7 @@ quality and size. **P3** is product polish.
 | 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                                                                                                                                       |
 | 15  | P2       | Done for `regional-gdp` and `school-performance`, with API aliases. `brexit`, `population`, `life-expectancy` and `general-election` are kept separate by decision (see "Merged datasets").                                                                                              |
 | 16  | P2       | Done: `pnpm data:sizes`, `population-detail` and the `politics-sharealike` add-on (see "Module sizes and splits").                                                                                                                                                                       |
-| 17  | P2       | `related` topics: cross-listing on the website and in docs. Cross-list `brexit` with `brexit-constituency` and `general-election` with `historical-general-election` (also the `life-expectancy` pair and the `population` trio), which task 15 kept separate.                           |
+| 17  | P2       | Done: `related` topics are validated and cross-listed in the website settings panel, the docs and the API (see "Related topics"). The task 15 pairs share a primary topic, so they need no entry.                                                                                        |
 | 18  | P2       | Decide on the 8 unused sources: build, keep in `_staging/`, or delete. When the source data is next refreshed, also rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
 | 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                                |
 | 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                                                                                                                                |

@@ -6,7 +6,7 @@ import type {
 	DatasetReader,
 } from "../data/catalog/types.ts";
 import type { DatasetCountry } from "../types/coverage.ts";
-import type { DatasetTopic } from "./taxonomy.ts";
+import { relatedTopicProblems, type DatasetTopic } from "./taxonomy.ts";
 import type {
 	DeclaredDataset,
 	DeclaredHeader,
@@ -210,6 +210,12 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 		throw new Error(
 			`Dataset ${declaration.id} needs a card for fixed measure ${fixedMeasure}`,
 		);
+	const problems = relatedTopicProblems(
+		declaration.topic,
+		declaration.related,
+	);
+	if (problems.length > 0)
+		throw new Error(`Dataset ${declaration.id}: ${problems.join("; ")}`);
 	return declaration;
 }
 

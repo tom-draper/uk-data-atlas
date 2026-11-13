@@ -9,7 +9,13 @@ import {
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets/registry";
 import { route as routeRequest } from "../src/routes";
-import { routeWithData, testContext } from "./routeFixtures";
+import {
+	dataCatalog,
+	measureObservations,
+	routeWithCatalog,
+	routeWithData,
+	testContext,
+} from "./routeFixtures";
 
 const body = (url: string) => {
 	const answer = routeWithData(url);
@@ -47,6 +53,40 @@ test("dataset and measure responses carry theme, topic and module", () => {
 	assert.equal(measure.module, "population-detail");
 	const measureDetail = body("/v1/measures/population");
 	assert.equal(measureDetail.body.data.topic, "population-estimates");
+});
+
+test("a dataset lists the other topics it is related to, and only when it has any", () => {
+	const [population] = dataCatalog.datasets;
+	const catalog = {
+		...dataCatalog,
+		datasets: [
+			population,
+			{ ...population, id: "council-tax", label: "Council tax" },
+		],
+	};
+	const read = (url: string) => {
+		const answer = routeWithCatalog(url, catalog, measureObservations);
+		return { status: answer.status, body: answer.body as any };
+	};
+
+	const list = read("/v1/datasets");
+	assert.equal(list.status, 200);
+	const councilTax = list.body.data.find((d: any) => d.id === "council-tax");
+	assert.equal(councilTax.topic, "housing-stock");
+	assert.deepEqual(councilTax.relatedTopics, ["public-finance"]);
+	const plain = list.body.data.find((d: any) => d.id === "population");
+	assert.ok(!("relatedTopics" in plain), "left off a dataset with none");
+
+	const detail = read("/v1/datasets/council-tax");
+	assert.equal(detail.status, 200);
+	assert.deepEqual(detail.body.data.relatedTopics, ["public-finance"]);
+	assert.ok(!("relatedTopics" in read("/v1/datasets/population").body.data));
+
+	// Related topics only aid discovery: the primary topic still decides what
+	// the topic filter returns.
+	const underRelated = read("/v1/datasets?topic=public-finance");
+	assert.equal(underRelated.status, 200);
+	assert.ok(!underRelated.body.data.some((d: any) => d.id === "council-tax"));
 });
 
 test("datasets and measures filter by theme, topic and module", () => {
