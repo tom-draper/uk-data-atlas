@@ -7,6 +7,7 @@ import type {
 	IndicatorRecord,
 } from "../../types/indicator.ts";
 import type { BoundaryType } from "../boundaries/catalog.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 type IndicatorType =
 	| "business-activity"
@@ -81,7 +82,10 @@ export async function loadBusinessActivity(
 	const { data: rows } = await parseCsv<string[]>(
 		await read(
 			source(
-				"economics/business-activity/ukbusinessworkbook2025new.xlsx",
+				sourceDir(
+					"business-activity",
+					"ukbusinessworkbook2025new.xlsx",
+				),
 			),
 			"Table 1",
 		),
@@ -108,9 +112,7 @@ export async function loadNetAdditionalDwellings(
 ) {
 	const rows = table(
 		await read(
-			source(
-				"economics/housing/net-additional-dwellings/Live_Table_122.ods",
-			),
+			source(sourceDir("net-additional-dwellings", "Live_Table_122.ods")),
 		),
 		"LT_122",
 		40,
@@ -139,7 +141,10 @@ export async function loadLocalGovernmentFinance(
 	const rows = table(
 		await read(
 			source(
-				"economics/local-government-finance/RA_2026-27_data_Part_1.ods",
+				sourceDir(
+					"local-government-finance",
+					"RA_2026-27_data_Part_1.ods",
+				),
 			),
 		),
 		"RA_LA_Data_2026-27",
@@ -165,11 +170,7 @@ export async function loadLocalGovernmentFinance(
 
 export async function loadCouncilTax(read: (path: string) => Promise<string>) {
 	const rows = table(
-		await read(
-			source(
-				"economics/local-government-finance/council-tax/Tables_1-9_2026-27.ods",
-			),
-		),
+		await read(source(sourceDir("council-tax", "Tables_1-9_2026-27.ods"))),
 		"Table_9",
 		16,
 	);
@@ -199,7 +200,7 @@ export async function loadWaste(
 	const records: Record<string, IndicatorRecord> = {};
 	let rowIndex = 0;
 	await readRows(
-		source("environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods"),
+		source(sourceDir("waste", "LA_and_Regional_Spreadsheet_2024-25.ods")),
 		{ table: "Table_1", label: "Table_1", maxColumns: 32 },
 		(row) => {
 			if (rowIndex++ < 4) return;
@@ -232,7 +233,10 @@ export async function loadAdultSocialCareActivity(
 	const rows = table(
 		await read(
 			source(
-				"health/adult-social-care/activity/asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+				sourceDir(
+					"adult-social-care-activity",
+					"asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+				),
 			),
 		),
 		"Table_2",
@@ -266,7 +270,10 @@ export async function loadAdultSocialCareOutcomes(
 	const rows = table(
 		await read(
 			source(
-				"health/adult-social-care/ascof/dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+				sourceDir(
+					"adult-social-care-outcomes",
+					"dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+				),
 			),
 		),
 		"Table_1a",
@@ -304,7 +311,7 @@ export async function loadPlanningApplications(
 ) {
 	const records: Record<string, IndicatorRecord> = {};
 	await readRows(
-		source("housing/planning-applications/ps1-full-2026-03.csv"),
+		source(sourceDir("planning-applications", "ps1-full-2026-03.csv")),
 		{ skipLines: 3 },
 		(row) => {
 			const code = row.LPACD?.trim() ?? "";
@@ -350,7 +357,10 @@ export async function loadElectricVehicleChargers(
 	const rows = table(
 		await read(
 			source(
-				"transport/electric-vehicle-chargers/evci0102_2026-07_EV_chargers_by_local_authority_UK.ods",
+				sourceDir(
+					"electric-vehicle-chargers",
+					"evci0102_2026-07_EV_chargers_by_local_authority_UK.ods",
+				),
 			),
 		),
 		"EVCI0102a",
@@ -385,7 +395,10 @@ export async function loadHousingAffordability(
 	const { data: rows } = await parseCsv<string[]>(
 		await read(
 			source(
-				"education/housing-affordability/ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
+				sourceDir(
+					"housing-affordability",
+					"ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
+				),
 			),
 			"5c",
 		),

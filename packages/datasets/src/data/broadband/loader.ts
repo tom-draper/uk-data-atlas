@@ -3,6 +3,7 @@ import {
 	type BroadbandLADData,
 } from "../../types/broadband.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const YEAR = 2025;
 const BOUNDARY_YEAR = 2024;
@@ -17,7 +18,9 @@ export async function loadBroadband(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, BroadbandDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
-		await read("telecoms/broadband/202507_fixed_laua_coverage_r01.csv"),
+		await read(
+			sourceDir("broadband", "202507_fixed_laua_coverage_r01.csv"),
+		),
 		{ header: true },
 	);
 

@@ -6,6 +6,7 @@ import {
 } from "../../helpers/datasetAggregation/deprivation.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNumInt } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const LGD_CODES: Record<string, string> = {
 	"Antrim and Newtownabbey": "N09000001",
@@ -47,7 +48,7 @@ export async function loadNIMDM(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, NIMDMDataset>> {
 	const { data } = await parseCsv(
-		await read("deprivation/nimdm/NIMDM17_SOAresults.csv"),
+		await read(sourceDir("nimdm", "NIMDM17_SOAresults.csv")),
 		{ header: true },
 	);
 

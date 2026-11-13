@@ -4,6 +4,7 @@ import {
 } from "../../types/schoolPerformance.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { endYear, measureSeries, readMeasures } from "../education/ks4.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * The release spans 2018/19 onwards, but the constituencies were redrawn for
@@ -19,7 +20,10 @@ export async function loadSchoolPerformanceConstituency(
 ): Promise<Record<string, SchoolPerformanceConstituencyDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
-			"education/ks4-performance/ks4-constituency/202425_parliamentary_constituency_revised.csv",
+			sourceDir(
+				"school-performance-constituency",
+				"202425_parliamentary_constituency_revised.csv",
+			),
 		),
 		{ header: true },
 	);

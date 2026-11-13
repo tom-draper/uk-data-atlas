@@ -5,6 +5,7 @@ import {
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const CATEGORY_MAP: Record<string, keyof QualificationBreakdown> = {
 	"0": "noQualifications",
@@ -46,7 +47,7 @@ export async function loadQualification(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, QualificationDataset>> {
 	const { data } = await parseCsv(
-		await read("education/qualification/TS067-2021-3.csv"),
+		await read(sourceDir("qualification", "TS067-2021-3.csv")),
 		{ header: true },
 	);
 

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { loadPlanningApplications } from "@uk-data-atlas/datasets";
+import { loadPlanningApplications, sourceDir } from "@uk-data-atlas/datasets";
 
 describe("loadPlanningApplications", () => {
 	it("aggregates application rows as they are read from the CSV", async () => {
 		const result = await loadPlanningApplications(
 			async (path, options, visit) => {
 				expect(path).toBe(
-					"housing/planning-applications/ps1-full-2026-03.csv",
+					sourceDir("planning-applications", "ps1-full-2026-03.csv"),
 				);
 				expect(options).toEqual({ skipLines: 3 });
 				visit({

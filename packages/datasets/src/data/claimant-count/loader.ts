@@ -6,6 +6,7 @@ import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNumOrZero } from "../../helpers/parseNumber.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 import { loadPopulationUk } from "../population/ukLoader.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const COL_TOTAL_COUNT =
 	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimant count; measures: Value";
@@ -71,7 +72,7 @@ export async function loadClaimantCount(
 	readPopulation: (path: string, sheet: string) => Promise<string>,
 ): Promise<Record<string, ClaimantCountDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
-		await read("economics/claimant-count/claimant-count-2026.csv"),
+		await read(sourceDir("claimant-count", "claimant-count-2026.csv")),
 		{ header: true },
 	);
 

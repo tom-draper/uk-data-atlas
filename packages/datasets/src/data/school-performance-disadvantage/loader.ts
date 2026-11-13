@@ -6,6 +6,7 @@ import {
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { endYear } from "../education/ks4.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * Both groups must reach this many pupils before a gap is reported. The
@@ -80,7 +81,10 @@ export async function loadSchoolPerformanceDisadvantage(
 ): Promise<Record<string, SchoolPerformanceGapDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
-			"education/ks4-performance/local-authority-district/202425_local_authority_district_revised.csv",
+			sourceDir(
+				"school-performance",
+				"202425_local_authority_district_revised.csv",
+			),
 		),
 		{ header: true },
 	);

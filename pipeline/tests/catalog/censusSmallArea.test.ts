@@ -6,6 +6,7 @@ import { test } from "vitest";
 import {
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableArtifactName,
+	censusTableDirectory,
 	compileCensusSmallArea,
 } from "../../src/catalog/censusSmallArea";
 
@@ -27,9 +28,7 @@ const repository = (
 	const directory = join(
 		root,
 		"data/source",
-		"demographics",
-		"census-2021-small-area",
-		table.table,
+		censusTableDirectory(table.table),
 	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(

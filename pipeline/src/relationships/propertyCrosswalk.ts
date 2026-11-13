@@ -1,3 +1,4 @@
+import { sourceInput } from "@uk-data-atlas/datasets";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaLookup } from "@uk-data-atlas/areas";
@@ -110,7 +111,11 @@ export const compilePropertyCrosswalk = (
 	geometrySources: GeometrySourceLookup | undefined,
 	geometryCache?: AreaGeometryCache,
 ): PropertyCrosswalkArtifact => {
-	const inputPath = join(repositoryRoot, "data/source", adapter.input);
+	const inputPath = join(
+		repositoryRoot,
+		"data/source",
+		sourceInput(adapter.input),
+	);
 	const input = readFileSync(inputPath, "utf8");
 	const source = JSON.parse(input) as FeatureCollection;
 	if (

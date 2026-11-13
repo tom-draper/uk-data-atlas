@@ -2,6 +2,7 @@
 
 import type { WardYear } from "../../boundaries/years.ts";
 import type { LocalElectionYear } from "../../../types/elections.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
 
 interface ElectionSourceBase {
 	year: LocalElectionYear;
@@ -72,7 +73,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2025,
 		source: "xlsx",
 		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
-		path: "politics/elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
+		path: sourceDir("local-election-2025", "LEH-2025-results-HoC.xlsx"),
 		sheet: "Ward results",
 		fields: {
 			code: "ONS ward code",
@@ -96,7 +97,10 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2024,
 		boundaryYear: 2024,
 		source: "xlsx",
-		path: "politics/elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
+		path: sourceDir(
+			"local-election-2024",
+			"LEH-2024-results-HoC-version.xlsx",
+		),
 		sheet: "Wards results",
 		fields: {
 			code: "Ward code",
@@ -121,7 +125,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2023,
 		boundaryYear: 2023,
 		source: "xlsx",
-		path: "politics/elections/local-elections/2023/LEH-Candidates-2023.xlsx",
+		path: sourceDir("local-election-2023", "LEH-Candidates-2023.xlsx"),
 		sheet: "Ward_Level",
 		fields: {
 			name: "WARDNAME",
@@ -150,7 +154,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2022,
 		boundaryYear: 2022,
 		source: "xlsx",
-		path: "politics/elections/local-elections/2022/local-elections-2022.xlsx",
+		path: sourceDir("local-election-2022", "local-elections-2022.xlsx"),
 		sheet: "Wards-results",
 		fields: {
 			code: "Ward code",
@@ -175,7 +179,10 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2021,
 		boundaryYear: 2021,
 		source: "xlsx",
-		path: "politics/elections/local-elections/2021/local_elections_2021_results-2.xlsx",
+		path: sourceDir(
+			"local-election-2021",
+			"local_elections_2021_results-2.xlsx",
+		),
 		sheet: "Wards-results",
 		fields: {
 			code: "Ward/ED code",
@@ -220,26 +227,26 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		year: 2019,
 		boundaryYear: 2019,
 		source: "leap",
-		path: "politics/elections/local-elections/2019/leap-2019-05-02.csv",
+		path: sourceDir("local-election-2019", "leap-2019-05-02.csv"),
 	},
 	2018: {
 		year: 2018,
 		boundaryYear: 2018,
 		source: "leap",
-		path: "politics/elections/local-elections/2018/leap-2018-05-03.csv",
+		path: sourceDir("local-election-2018", "leap-2018-05-03.csv"),
 	},
 	2017: {
 		year: 2017,
 		boundaryYear: 2017,
 		source: "leap",
-		path: "politics/elections/local-elections/2017/leap-2017-05-04.csv",
+		path: sourceDir("local-election-2017", "leap-2017-05-04.csv"),
 		wardCodeTypos: HUNTINGDONSHIRE_TYPOS,
 	},
 	2016: {
 		year: 2016,
 		boundaryYear: 2016,
 		source: "leap",
-		path: "politics/elections/local-elections/2016/leap-2016-05-05.csv",
+		path: sourceDir("local-election-2016", "leap-2016-05-05.csv"),
 		wardCodeTypos: HUNTINGDONSHIRE_TYPOS,
 	},
 };

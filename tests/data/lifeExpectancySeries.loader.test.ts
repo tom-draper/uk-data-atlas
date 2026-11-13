@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	loadLifeExpectancySeries,
 	loadLifeExpectancySeriesRows,
+	sourceDir,
 } from "@uk-data-atlas/datasets";
 
 const HEADER =
@@ -82,7 +83,10 @@ describe("loadLifeExpectancySeries", () => {
 
 		expect(requests).toEqual([
 			{
-				path: "health/life-expectancy/lifeexpectancylocalareas.xlsx",
+				path: sourceDir(
+					"life-expectancy",
+					"lifeexpectancylocalareas.xlsx",
+				),
 				columns: [0, 2, 3, 4, 5, 7, 9, 10, 11],
 			},
 		]);

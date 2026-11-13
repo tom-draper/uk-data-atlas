@@ -4,6 +4,7 @@ import type {
 	PopulationUkDataset,
 } from "../../types/population.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * ONS restates the whole jobs density series on current district codes with
@@ -33,7 +34,7 @@ export async function loadJobs(
 	populationByYear: Record<string, PopulationUkDataset>,
 ): Promise<Record<string, JobsDataset>> {
 	const { data } = await parseCsv(
-		await read("economics/jobs/total-jobs-lad-2011-2024.csv"),
+		await read(sourceDir("jobs", "total-jobs-lad-2011-2024.csv")),
 		{ header: true },
 	);
 

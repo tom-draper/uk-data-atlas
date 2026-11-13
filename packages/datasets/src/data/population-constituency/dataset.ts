@@ -5,9 +5,12 @@ import {
 	loadPopulationConstituencyYear,
 	POPULATION_CONSTITUENCY_SHEETS,
 } from "./loader.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
-const WORKBOOK =
-	"demographics/population/small-area-estimates/population-constituency-estimates/sapepconstablefinal.xlsx";
+const WORKBOOK = sourceDir(
+	"population-constituency",
+	"sapepconstablefinal.xlsx",
+);
 
 export const populationConstituency =
 	defineDataset<PopulationConstituencyDataset>({

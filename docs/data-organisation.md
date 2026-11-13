@@ -163,9 +163,34 @@ packages/datasets/src/<theme>/<topic>/<dataset>/{dataset.ts,loader.ts,types.ts}
 components/datasets/<theme>/<topic>/<dataset>/   custom charts only
 ```
 
-Code never hard-codes these paths. Loaders resolve sources relative to their
-own declaration, and the registry finds declarations by glob, so moving a
-dataset is a `git mv` and nothing else.
+Code never hard-codes these paths. Every source folder is named once, in the
+`SOURCES` table in `packages/datasets/src/declaration/sources.ts`, as a topic
+and a folder. Loaders, pipeline stages and config files ask for a folder by
+name (`sourceDir("census-2021-ts001")`, or `sourceInput("name/file")` in
+config), and the theme comes from the topic. Moving a source is a change to
+that table and a move of the folder. A test fails on any literal path to a
+source folder in code.
+
+Task 5 moved `data/source` to this layout. Folders keep their old names under
+the new theme and topic; task 6 renames them to dataset ids. Sources no dataset
+reads sit in `_staging/`.
+
+### Moving an existing checkout
+
+`data/source/` is not in git; `pnpm data:download` syncs it from a GitHub
+Release. The release assets are still in the old layout until a new release is
+published, so both routes below end in the new layout and neither needs the
+release to change.
+
+- `node scripts/migrate-source-layout.mjs` moves an existing `data/source` in
+  place, rewrites `.source-release.json` to match, and is safe to run again.
+  `--dry-run` lists what it would do. It reports conflicts and stray files and
+  leaves them alone.
+- `pnpm data:download` runs the same migration first, and again on a freshly
+  extracted old-layout release, so a checkout on either layout ends up correct.
+- `scripts/serve-os-open-roads.mjs` expects its manually downloaded tiles at
+  `data/source/transport/os-open-roads/`. They are not a dataset source and the
+  migration does not touch them.
 
 Shared census tables move to the dataset that reads them, for example
 `census-2021-small-area/ts054` to `housing/housing-stock/housing-tenure/census-2021/`.

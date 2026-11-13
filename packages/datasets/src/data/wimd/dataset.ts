@@ -1,5 +1,6 @@
 import type { WIMDDataset } from "../../types/wimd.ts";
 import { defineDataset } from "../../declaration/dataset.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 import { summariseWIMD } from "../../helpers/datasetAggregation/deprivation.ts";
 import {
 	deprivationStatistics,
@@ -30,7 +31,10 @@ export const wimd = defineDataset<WIMDDataset>({
 		loadWIMD(
 			text,
 			await odsContent(
-				"deprivation/wimd/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+				sourceDir(
+					"wimd",
+					"welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+				),
 			),
 		),
 	statistics: deprivationStatistics({

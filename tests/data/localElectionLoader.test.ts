@@ -4,6 +4,7 @@ import {
 	parseLeapLocalElection,
 	parseLocalElectionTable,
 	wardCodesByName,
+	sourceDir,
 } from "@uk-data-atlas/datasets";
 import {
 	ELECTION_SOURCES,
@@ -356,7 +357,7 @@ Nowhere,Example Council,LAB,100`,
 		}
 		expect(datasets[2023].wardCodes).toBe("name-matched");
 		expect(reads).toContain(
-			"politics/elections/local-elections/2023/LEH-Candidates-2023.xlsx#Cand_Table",
+			`${sourceDir("local-election-2023", "LEH-Candidates-2023.xlsx")}#Cand_Table`,
 		);
 	});
 });

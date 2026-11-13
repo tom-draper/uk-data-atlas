@@ -8,6 +8,7 @@ import { out, outputMatches } from "./websiteOutput.ts";
 import { SOURCE_DATA } from "./paths.ts";
 import { readSource } from "./sources/read.ts";
 import type { CompiledOutput, ReuseContext } from "./types.ts";
+import { sourceDir } from "@uk-data-atlas/datasets";
 
 const logRoadSafety = (
 	status: "cached" | "compiled",
@@ -40,7 +41,10 @@ export function compileRoadSafety(
 	return gazetteerCore.then(async ({ data: core, compiled: coreOutput }) => {
 		const path = join(
 			SOURCE_DATA,
-			"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+			sourceDir(
+				"road-safety",
+				"dft-road-casualty-statistics-collision-provisional-2025.csv",
+			),
 		);
 		const input = await fileStamp(path);
 		const cached = existingManifest.artifacts?.roadSafety;

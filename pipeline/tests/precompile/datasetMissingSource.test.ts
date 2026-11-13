@@ -1,7 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, expect, test, vi } from "vitest";
-import { landArea, definitionOf } from "@uk-data-atlas/datasets";
+import { landArea, definitionOf, sourceDir } from "@uk-data-atlas/datasets";
 
 const landAreaDatasetDefinition = definitionOf(landArea);
 
@@ -24,10 +24,12 @@ vi.mock("../../src/precompile/paths.ts", () => paths);
 import { compileStaleDataset } from "../../src/precompile/compileDataset.ts";
 import { canReuseDataset } from "../../src/precompile/cache.ts";
 
+const ADDITIONAL = sourceDir("land-area", "additional.csv");
+
 afterAll(() => rmSync(paths.ROOT, { recursive: true, force: true }));
 
 test("preserved datasets record missing inputs and rebuild when they return", async () => {
-	const source = join(paths.SOURCE_DATA, "geography/land-area");
+	const source = join(paths.SOURCE_DATA, sourceDir("land-area"));
 	mkdirSync(source, { recursive: true });
 	mkdirSync(paths.COMPILED_DATASETS, { recursive: true });
 	writeFileSync(
@@ -57,7 +59,7 @@ test("preserved datasets record missing inputs and rebuild when they return", as
 		precompile: async (
 			reader: Parameters<typeof definition.precompile>[0],
 		) => {
-			await reader.text("geography/land-area/additional.csv");
+			await reader.text(ADDITIONAL);
 			return definition.precompile(reader);
 		},
 	};
@@ -67,7 +69,7 @@ test("preserved datasets record missing inputs and rebuild when they return", as
 		legacy,
 		"fingerprint",
 	);
-	expect(preserved.missingSource).toBe("geography/land-area/additional.csv");
+	expect(preserved.missingSource).toBe(ADDITIONAL);
 	expect(preserved.inputTrackingVersion).toBe(1);
 	expect(
 		await canReuseDataset(preserved, updated, undefined, "fingerprint"),
@@ -84,9 +86,7 @@ test("preserved datasets record missing inputs and rebuild when they return", as
 	);
 	expect(rebuilt.missingSource).toBeUndefined();
 	expect(rebuilt.inputTrackingVersion).toBe(1);
-	expect(rebuilt.inputs.map((input) => input.path)).toContain(
-		"geography/land-area/additional.csv",
-	);
+	expect(rebuilt.inputs.map((input) => input.path)).toContain(ADDITIONAL);
 	expect(
 		await canReuseDataset(rebuilt, updated, undefined, "fingerprint"),
 	).toBeDefined();

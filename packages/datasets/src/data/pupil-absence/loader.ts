@@ -4,12 +4,13 @@ import type {
 	IndicatorRecord,
 } from "../../types/indicator.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 export async function loadPupilAbsence(
 	read: DatasetReader["zipCsvRows"],
 ): Promise<Record<string, IndicatorDataset<"pupil-absence">>> {
 	const data: Record<string, IndicatorRecord> = {};
 	await read(
-		"education/pupil-attendance/2024-25-full-year-absence-data.zip",
+		sourceDir("pupil-absence", "2024-25-full-year-absence-data.zip"),
 		(row) => {
 			if (
 				row.time_period !== "202425" ||

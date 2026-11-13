@@ -6,6 +6,7 @@ import {
 import { findHeaderLine, parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
 import { odsTableRows } from "../spreadsheet/ods.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const LOCAL_AUTHORITY_CODES: Record<string, string> = {
 	"Isle of Anglesey": "W06000001",
@@ -94,9 +95,9 @@ export async function loadWIMD(
 ): Promise<Record<string, WIMDDataset>> {
 	const published = publishedWIMDRanks(ranksContentXml);
 	const populations = welshLSOAPopulations(
-		await read("deprivation/wimd/wales-lsoa-population-mid-2017.csv"),
+		await read(sourceDir("wimd", "wales-lsoa-population-mid-2017.csv")),
 	);
-	const text = await read("deprivation/wimd/wimd2019.csv");
+	const text = await read(sourceDir("wimd", "wimd2019.csv"));
 	const { data } = await parseCsv(text, {
 		header: true,
 		skipLines: findHeaderLine(text, "LSOA code"),

@@ -1,5 +1,6 @@
 import { type AgeData } from "../../types/common.ts";
 import { type PopulationDataset } from "../../types/population.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 type XlsxSheetRowReader = (
 	path: string,
@@ -19,7 +20,7 @@ export async function loadPopulation(
 	let rowIndex = 0;
 	let ageColumns: AgeColumn[] | undefined;
 	await readRows(
-		"demographics/population/small-area-estimates/population-ward-estimates/sapewardstablefinal.xlsx",
+		sourceDir("population", "sapewardstablefinal.xlsx"),
 		"Mid-2022 Ward 2023",
 		(row) => {
 			if (rowIndex++ < 3) return;

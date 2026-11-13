@@ -1,5 +1,6 @@
 import type { DatasetReader } from "../catalog/types.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 export const PUBLIC_HEALTH_MEASURES = [
 	{
 		value: "smoking",
@@ -77,33 +78,28 @@ export async function loadPublicHealth(
 	}[] = [];
 	const latest: Partial<Record<PublicHealthMeasure, number>> = {};
 	for (const file of ["health-improvement", "healthcare-premature-mortality"])
-		await read(
-			`health/public-health-outcomes-framework/${file}.csv`,
-			{},
-			(row) => {
-				const option = PUBLIC_HEALTH_MEASURES.find(
-					(option) =>
-						option.id === row["Indicator ID"] &&
-						option.age === row.Age,
-				);
-				if (
-					!option ||
-					row.Sex !== "Persons" ||
-					row.Category ||
-					row["Category Type"] ||
-					row["Area Type"] !== "Counties & UAs (from Apr 2023)" ||
-					!/^E(?:0[6789]|10)[0-9]{6}$/.test(row["Area Code"] ?? "")
-				)
-					return;
-				const sort = Number(row["Time period Sortable"]);
-				if (!Number.isFinite(sort)) return;
-				latest[option.value] = Math.max(
-					latest[option.value] ?? -Infinity,
-					sort,
-				);
-				rows.push({ row, measure: option.value, sort });
-			},
-		);
+		await read(sourceDir("public-health", `${file}.csv`), {}, (row) => {
+			const option = PUBLIC_HEALTH_MEASURES.find(
+				(option) =>
+					option.id === row["Indicator ID"] && option.age === row.Age,
+			);
+			if (
+				!option ||
+				row.Sex !== "Persons" ||
+				row.Category ||
+				row["Category Type"] ||
+				row["Area Type"] !== "Counties & UAs (from Apr 2023)" ||
+				!/^E(?:0[6789]|10)[0-9]{6}$/.test(row["Area Code"] ?? "")
+			)
+				return;
+			const sort = Number(row["Time period Sortable"]);
+			if (!Number.isFinite(sort)) return;
+			latest[option.value] = Math.max(
+				latest[option.value] ?? -Infinity,
+				sort,
+			);
+			rows.push({ row, measure: option.value, sort });
+		});
 	const data: Record<string, PublicHealthRecord> = {};
 	const periods: PublicHealthDataset["periods"] = {};
 	for (const { row, measure, sort } of rows) {

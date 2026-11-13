@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { loadWaste } from "@uk-data-atlas/datasets";
+import { loadWaste, sourceDir } from "@uk-data-atlas/datasets";
 
 describe("loadWaste", () => {
 	it("aggregates collection rows as they are read from the ODS table", async () => {
 		const result = await loadWaste(async (path, options, visit) => {
 			expect(path).toBe(
-				"environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods",
+				sourceDir("waste", "LA_and_Regional_Spreadsheet_2024-25.ods"),
 			);
 			expect(options).toEqual({
 				table: "Table_1",

@@ -5,6 +5,7 @@ import type {
 	LifeExpectancySeriesLADData,
 } from "../../types/lifeExpectancySeries.ts";
 import type { DatasetReader } from "../catalog/types.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const PERIOD = /^(\d{4}) to (\d{4})$/;
 // Unitary authorities, districts, metropolitan and London boroughs, Scottish
@@ -171,7 +172,7 @@ export async function loadLifeExpectancySeriesRows(
 	let foundHeaders = false;
 	return loadSeriesRows(async (visit) => {
 		await readRows(
-			"health/life-expectancy/lifeexpectancylocalareas.xlsx",
+			sourceDir("life-expectancy", "lifeexpectancylocalareas.xlsx"),
 			"1",
 			SERIES_COLUMNS.map(([column]) => column),
 			(row) => {

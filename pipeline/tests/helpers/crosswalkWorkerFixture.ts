@@ -5,6 +5,7 @@ import type {
 	AreaOverlapCrosswalkAdapter,
 	PopulationOverlapCrosswalkAdapter,
 } from "@uk-data-atlas/relationships";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { readCompiledAreaLookup } from "../../src/relationships/crosswalkBuildInputs";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
@@ -57,7 +58,13 @@ export const crosswalkWorkerFixture = () => {
 			}),
 		);
 	}
-	writeFileSync(join(root, "data/source/people.csv"), "code,people\nB,100\n");
+	const people = join(
+		root,
+		"data/source",
+		sourceDir("census-2021-lsoa", "people.csv"),
+	);
+	mkdirSync(join(people, ".."), { recursive: true });
+	writeFileSync(people, "code,people\nB,100\n");
 	writeFileSync(
 		join(outputDirectory, "area-inventory.json"),
 		JSON.stringify({
@@ -108,7 +115,7 @@ export const crosswalkWorkerFixture = () => {
 		pairs: area.id,
 		minimumCoverage: 0.99,
 		population: {
-			input: "people.csv",
+			input: "census-2021-lsoa/people.csv",
 			codeColumn: "code",
 			valueColumn: "people",
 		},

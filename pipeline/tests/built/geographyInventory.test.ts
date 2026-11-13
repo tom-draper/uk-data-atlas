@@ -22,8 +22,7 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 	);
 	assert.ok(
 		sourceInventory.sources.some(
-			(source) =>
-				source.key === "demographics/population/mid-year-estimates/uk",
+			(source) => source.key === "population/population-estimates/uk",
 		),
 	);
 	assert.equal(

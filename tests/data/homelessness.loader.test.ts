@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadHomelessness } from "@uk-data-atlas/datasets";
+import { sourceDir, loadHomelessness } from "@uk-data-atlas/datasets";
 import { odsTableRows } from "@uk-data-atlas/datasets";
 
 const worksheet = `
@@ -23,7 +23,7 @@ describe("loadHomelessness", () => {
 	it("aggregates rows as they are read from the ODS table", async () => {
 		const result = await loadHomelessness(async (path, options, visit) => {
 			expect(path).toBe(
-				"economics/homelessness/homelessness-2026-q1.ods",
+				sourceDir("homelessness", "homelessness-2026-q1.ods"),
 			);
 			expect(options).toEqual({
 				table: "TA1",

@@ -5,6 +5,7 @@ import {
 	summariseDeprivationBy,
 } from "../../helpers/datasetAggregation/deprivation.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 type PublishedRanks = {
 	rank: number;
@@ -47,7 +48,7 @@ export async function loadSIMD(
 	lookupCsv: string,
 ): Promise<Record<string, SIMDDataset>> {
 	const { data } = await parseCsv(
-		await read("deprivation/simd/SIMD+2020v2+-+indicators.csv"),
+		await read(sourceDir("simd", "SIMD+2020v2+-+indicators.csv")),
 		{ header: true },
 	);
 	const published = await publishedSIMDRanks(lookupCsv);

@@ -4,6 +4,7 @@ import type {
 	PopulationLocalAuthorityData,
 	PopulationUkDataset,
 } from "../../types/population.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /** Local authority codes in the MYEB1 sheet, e.g. E06000001. */
 const LA_CODE = /^[ENSW]\d{8}$/;
@@ -28,7 +29,7 @@ export async function loadPopulationUk(
 ): Promise<Record<string, PopulationUkDataset>> {
 	const { data } = await parseCsv<string[]>(
 		await readSheet(
-			"demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx",
+			sourceDir("population-uk", "myebtablesuk20112024.xlsx"),
 			"MYEB1",
 		),
 		{ header: false, skipLines: 1 },

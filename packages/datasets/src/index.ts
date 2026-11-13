@@ -142,6 +142,7 @@ export * from "./data/wimd/loader.ts";
 export * from "./declaration/dataset.ts";
 export * from "./declaration/display.ts";
 export * from "./declaration/measures.ts";
+export * from "./declaration/sources.ts";
 export * from "./declaration/statistics.ts";
 export * from "./declaration/taxonomy.ts";
 export * from "./declaration/vocabulary.ts";

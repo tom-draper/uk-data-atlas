@@ -4,13 +4,14 @@ import {
 } from "../../types/referendum.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parsePct } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export async function loadBrexitConstituency(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, BrexitConstituencyDataset>> {
 	const { data } = await parseCsv<string[]>(
 		await read(
-			"politics/referendum/constituencies/2016/eureferendum_constitunecy.xlsx",
+			sourceDir("brexit-constituency", "eureferendum_constitunecy.xlsx"),
 		),
 		{ header: false },
 	);

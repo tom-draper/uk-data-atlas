@@ -6,6 +6,7 @@ import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { convertObservations } from "@uk-data-atlas/measures";
 import type {
 	AreaOverlapCrosswalkAdapter,
@@ -15,6 +16,7 @@ import { compileCrosswalks } from "../helpers/compileCrosswalks";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;
+const PEOPLE = sourceDir("census-2021-lsoa", "people.csv");
 
 const box = (west: number, east: number): Polygon => [
 	[
@@ -60,10 +62,9 @@ const writeFixture = (root: string, counts = "B1,900\nB2,100\nB3,200\n") => {
 		["B2", box(1.5 * D, 2 * D)],
 		["B3", box(0.5 * D, 1.5 * D)],
 	]);
-	writeFileSync(
-		join(root, "data/source", "people.csv"),
-		`code,people\n${counts}`,
-	);
+	const people = join(root, "data/source", PEOPLE);
+	mkdirSync(join(people, ".."), { recursive: true });
+	writeFileSync(people, `code,people\n${counts}`);
 };
 
 const geometrySources: GeometrySourceLookup = new Map([
@@ -131,7 +132,7 @@ const populationOverlap = (
 	to: areaOverlap.to,
 	pairs: areaOverlap.id,
 	population: {
-		input: "people.csv",
+		input: "census-2021-lsoa/people.csv",
 		codeColumn: "code",
 		valueColumn: "people",
 	},

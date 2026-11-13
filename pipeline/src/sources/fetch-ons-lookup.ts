@@ -1,3 +1,4 @@
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, formatCount, repoPath } from "@uk-data-atlas/atlas-db";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -139,8 +140,7 @@ const writeLookup = (
 	const directory = join(
 		repositoryRoot,
 		"data/source",
-		"lookups",
-		source.directory,
+		sourceDir("lookups", source.directory),
 	);
 	mkdirSync(directory, { recursive: true });
 	const file = `${source.service}.geojson`;

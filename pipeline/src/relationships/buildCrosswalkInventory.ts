@@ -1,3 +1,4 @@
+import { sourceInput } from "@uk-data-atlas/datasets";
 import { writeCrosswalkArtifact } from "./crosswalkArtifact.ts";
 import {
 	compileCrosswalksInWorkers,
@@ -197,7 +198,11 @@ const reusablePopulationOverlap = (
 		);
 		const populationHash = sha256(
 			readFileSync(
-				join(repositoryRoot, "data/source", adapter.population.input),
+				join(
+					repositoryRoot,
+					"data/source",
+					sourceInput(adapter.population.input),
+				),
 				"utf8",
 			),
 		);
@@ -269,7 +274,7 @@ const reusableCleanContainment = (
 		);
 		const inputHash = sha256(
 			readFileSync(
-				join(repositoryRoot, "data/source", adapter.input),
+				join(repositoryRoot, "data/source", sourceInput(adapter.input)),
 				"utf8",
 			),
 		);

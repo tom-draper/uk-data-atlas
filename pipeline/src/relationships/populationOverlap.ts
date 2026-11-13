@@ -1,3 +1,4 @@
+import { sourceInput } from "@uk-data-atlas/datasets";
 import { CrosswalkSpatialIndex } from "@uk-data-atlas/geography";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -61,7 +62,9 @@ const readPopulation = (
 		valueColumn,
 	}: PopulationOverlapCrosswalkAdapter["population"],
 ) => {
-	const content = readFileSync(join(repositoryRoot, "data/source", input));
+	const content = readFileSync(
+		join(repositoryRoot, "data/source", sourceInput(input)),
+	);
 	const [header, ...lines] = content
 		.toString("utf8")
 		.replace(/^\uFEFF/, "")

@@ -17,6 +17,7 @@ import {
 } from "./places.ts";
 import type { GazetteerCore } from "./types.ts";
 import type { Topology } from "topojson-specification";
+import { sourceDir } from "../../declaration/sources.ts";
 
 export const GAZETTEER_VERSION = 1;
 
@@ -112,7 +113,7 @@ async function loadPlaceMembers(
 	const members: Record<string, string[]> = {};
 	for (const { lookup, file, localAuthorityKey, placeKey } of PLACE_LOOKUPS) {
 		const { features } = JSON.parse(
-			await read(`lookups/${lookup}/${file}`),
+			await read(sourceDir("lookups", `${lookup}/${file}`)),
 		) as { features: { properties: Record<string, unknown> }[] };
 		for (const { properties } of features) {
 			const place = properties[placeKey];

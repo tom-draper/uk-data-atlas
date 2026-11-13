@@ -14,7 +14,7 @@ import {
 	type StatisticsSeries,
 } from "@uk-data-atlas/measures";
 import {
-	CENSUS_SMALL_AREA_DIRECTORY,
+	censusTableDirectory,
 	CENSUS_SMALL_AREA_GEOGRAPHIES,
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableRecords,
@@ -303,8 +303,7 @@ export function censusSmallAreaStatistics(
 		const directory = join(
 			repositoryRoot,
 			"data/source",
-			CENSUS_SMALL_AREA_DIRECTORY,
-			table.table,
+			censusTableDirectory(table.table),
 		);
 		const meta = readJsonSync(join(directory, "meta.json")) as Meta;
 		const files = CENSUS_SMALL_AREA_GEOGRAPHIES.map((geography) => ({

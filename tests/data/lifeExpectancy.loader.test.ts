@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadLE } from "@uk-data-atlas/datasets";
+import { loadLE, sourceDir } from "@uk-data-atlas/datasets";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
 
 const PREDECESSORS = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
@@ -79,11 +79,17 @@ describe("loadLE", () => {
 
 		expect(requests).toEqual([
 			{
-				path: "health/life-expectancy/lifeexpectancylocalareas.xlsx",
+				path: sourceDir(
+					"life-expectancy",
+					"lifeexpectancylocalareas.xlsx",
+				),
 				columns: [0, 2, 3, 4, 5, 7, 9],
 			},
 			{
-				path: "health/life-expectancy/healthylifeexpectancyuk.xlsx",
+				path: sourceDir(
+					"life-expectancy",
+					"healthylifeexpectancyuk.xlsx",
+				),
 				columns: [0, 2, 3, 4, 5, 7, 9],
 			},
 		]);

@@ -23,6 +23,10 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 import {
+	migrateMarker,
+	migrateSourceLayout,
+} from "./migrate-source-layout.mjs";
+import {
 	buildLog,
 	formatBytes,
 	formatCount,
@@ -514,6 +518,20 @@ export async function sourcesMatchRelease(root = ROOT) {
 	}
 }
 
+async function migrateLocalLayout() {
+	if (!(await hasLocalSources())) return;
+	const { moved, conflicts } = await migrateSourceLayout(DATA);
+	if (conflicts.length > 0)
+		fail(
+			`Cannot move data/source to the theme layout, these paths already exist: ${conflicts.join(", ")}. Run node scripts/migrate-source-layout.mjs --dry-run`,
+		);
+	if (moved.length === 0) return;
+	await migrateMarker(DATA);
+	buildLog.info(
+		`Moved ${formatCount(moved.length)} source folders to the theme layout`,
+	);
+}
+
 async function download(mode) {
 	const config = await readConfig();
 	if (!config) {
@@ -527,6 +545,9 @@ async function download(mode) {
 			"No data-release.json is committed and no local source data is available.",
 		);
 	}
+	// Data downloaded before the move to the theme layout is moved first, so the
+	// marker and the merge below see the same paths as the release.
+	await migrateLocalLayout();
 	let marker = null;
 	try {
 		marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
@@ -596,6 +617,8 @@ async function download(mode) {
 			]);
 			await rm(path, { force: true });
 		}
+		// A release published before the move has the old layout.
+		await migrateSourceLayout(workspace);
 		let files;
 		if (mode === "--replace") {
 			files = {};

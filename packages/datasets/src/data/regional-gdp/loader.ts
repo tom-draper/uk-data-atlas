@@ -6,6 +6,7 @@ import type {
 } from "../../types/regionalGdp.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * ONS restates the whole 1998 series on current ITL codes with every release,
@@ -28,7 +29,7 @@ const load = async (
 	{ file, type, boundaryType }: Tier,
 ) => {
 	const { data } = await parseCsv(
-		await read(`economics/regional-gdp/${file}`),
+		await read(sourceDir("regional-gdp", `${file}`)),
 		{ header: true },
 	);
 

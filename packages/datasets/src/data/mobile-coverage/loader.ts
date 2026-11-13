@@ -3,6 +3,7 @@ import type {
 	MobileCoverageLADData,
 } from "../../types/mobileCoverage.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 const YEAR = 2025;
 const BOUNDARY_YEAR = 2024;
@@ -44,7 +45,9 @@ export async function loadMobileCoverage(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, MobileCoverageDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
-		await read("telecoms/mobile/202507_mobile_coverage_laua_r01.csv"),
+		await read(
+			sourceDir("mobile-coverage", "202507_mobile_coverage_laua_r01.csv"),
+		),
 		{ header: true },
 	);
 

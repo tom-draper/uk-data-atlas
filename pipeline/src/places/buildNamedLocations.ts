@@ -13,6 +13,7 @@ import { compileNamedLocations, membersAt } from "@uk-data-atlas/places";
 import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "@uk-data-atlas/geography";
 import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
+import { sourceDir, type SourceName } from "@uk-data-atlas/datasets";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { createAreaLookup } from "@uk-data-atlas/areas";
@@ -28,19 +29,12 @@ import { readJsonSync } from "../lib/json.ts";
  */
 const readCountyShapes = (
 	repositoryRoot: string,
-	directory: string,
+	source: SourceName,
 	file: string,
 	excludeScottishLieutenancy = false,
 ): CountyShape[] =>
 	readShapefileFeatures(
-		join(
-			repositoryRoot,
-			"data/source",
-			"geography",
-			directory,
-			"source",
-			file,
-		),
+		join(repositoryRoot, "data/source", sourceDir(source, "source", file)),
 	)
 		.filter(
 			({ properties }) =>

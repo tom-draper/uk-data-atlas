@@ -4,7 +4,11 @@ import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
 } from "@uk-data-atlas/geography";
-import { loadGazetteerCore, type GazetteerCore } from "@uk-data-atlas/datasets";
+import {
+	loadGazetteerCore,
+	sourceDir,
+	type GazetteerCore,
+} from "@uk-data-atlas/datasets";
 import { loadMatchIndex } from "../gazetteer/matchIndex.ts";
 import { PLACE_LOOKUPS } from "@uk-data-atlas/datasets";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
@@ -36,7 +40,7 @@ export async function compileAtlasAssets({
 	const boundaryInputs = await fileSnapshots(boundaryDirectory);
 	const lookupInputs = await Promise.all(
 		PLACE_LOOKUPS.map(async ({ lookup, file }) => {
-			const input = join("lookups", lookup, file);
+			const input = sourceDir("lookups", lookup, file);
 			const compiled = join(BOUNDARY_DATA, input);
 			const path = existsSync(compiled)
 				? compiled

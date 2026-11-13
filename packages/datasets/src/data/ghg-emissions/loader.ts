@@ -4,6 +4,7 @@ import type {
 } from "../../types/ghgEmissions.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNum } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 /**
  * The published series is restated on current boundaries with every release,
@@ -39,7 +40,7 @@ export async function loadGhgEmissions(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, GhgEmissionsDataset>> {
 	const { data } = await parseCsv(
-		await read("environment/ghg-emissions/ghg-lad-2005-2024.csv"),
+		await read(sourceDir("ghg-emissions", "ghg-lad-2005-2024.csv")),
 		{ header: true },
 	);
 

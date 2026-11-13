@@ -1,3 +1,4 @@
+import { sourceDir } from "../../packages/datasets/src/declaration/sources.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import {
@@ -205,12 +206,15 @@ test("crosswalk inputs follow the adapter configuration", async () => {
 		JSON.stringify({
 			crosswalks: [
 				{ input: "lookups/a.csv" },
-				{ population: { input: "demographics/population.csv" } },
+				{ population: { input: "census-2021-lsoa/population.csv" } },
 			],
 		}),
 	);
-	write("data/source/lookups/a.csv", "lookup");
-	write("data/source/demographics/population.csv", "population");
+	write(`data/source/${sourceDir("lookups", "a.csv")}`, "lookup");
+	write(
+		`data/source/${sourceDir("census-2021-lsoa", "population.csv")}`,
+		"population",
+	);
 	const stage = buildDataStages.find(
 		(entry) => entry.name === "crosswalk-inventory",
 	)!;
@@ -226,7 +230,10 @@ test("crosswalk inputs follow the adapter configuration", async () => {
 	write("data/source/input.csv", "unrelated dataset");
 	current = cache();
 	assert.notEqual(current.lookup(stage, []), null);
-	write("data/source/demographics/population.csv", "changed population");
+	write(
+		`data/source/${sourceDir("census-2021-lsoa", "population.csv")}`,
+		"changed population",
+	);
 	current = cache();
 	assert.equal(current.lookup(stage, []), null);
 });
@@ -456,7 +463,7 @@ test("census stages ignore unrelated files within census tables", async () => {
 		)
 		.map((stage) => ({ ...stage, outputs: [], requiredOutputs: [] }));
 	assert.equal(stages.length, 2);
-	const directory = "data/source/demographics/census-2021-small-area/ts001";
+	const directory = `data/source/${sourceDir("census-2021-ts001")}`;
 	write(`${directory}/meta.json`, "metadata");
 	write(`${directory}/census2021-ts001-lsoa.csv`, "census");
 	write(`${directory}/notes.txt`, "notes");
@@ -486,8 +493,7 @@ test("named locations track county shapes and their attributes", async () => {
 		(stage) => stage.name === "named-locations",
 	)!;
 	const stage = { ...entry, outputs: [], requiredOutputs: [] };
-	const base =
-		"data/source/geography/ceremonial-counties/source/Boundary-line-ceremonial-counties_region";
+	const base = `data/source/${sourceDir("ceremonial-counties", "source/Boundary-line-ceremonial-counties_region")}`;
 	write(`${base}.shp`, "shape");
 	write(`${base}.dbf`, "attributes");
 	write(`${base}.prj`, "projection");
@@ -823,18 +829,21 @@ test("website dataset key tracks declared file presence without hashing its cont
 	current.begin(stage.name);
 	current.record(stage, []);
 	write(
-		"data/source/transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+		`data/source/${sourceDir("road-safety", "dft-road-casualty-statistics-collision-provisional-2025.csv")}`,
 		"road safety",
 	);
 	current = cache();
 	assert.equal(current.lookup(stage, []), null);
 	current.begin(stage.name);
 	current.record(stage, []);
-	write("data/source/lookups/places/source.csv", "new lookup");
+	write(
+		`data/source/${sourceDir("lookups", "places/source.csv")}`,
+		"new lookup",
+	);
 	current = cache();
 	assert.notEqual(current.lookup(stage, []), null);
 	write(
-		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		`data/source/${sourceDir("lookups", "local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson")}`,
 		"gazetteer lookup",
 	);
 	current = cache();
@@ -919,11 +928,11 @@ test("area, map and atlas stages track their own raw sources", async () => {
 		JSON.stringify({ files: [] }),
 	);
 	write(
-		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		`data/source/${sourceDir("lookups", "local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson")}`,
 		"lookup",
 	);
 	write(
-		"data/source/demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
+		`data/source/${sourceDir("census-2021-ts001", "census2021-ts001-lsoa.csv")}`,
 		"census",
 	);
 	const stages = buildDataStages
@@ -956,12 +965,12 @@ test("area, map and atlas stages track their own raw sources", async () => {
 	write("data/source/input.csv", "different dataset");
 	assert.deepEqual(stale(), []);
 	write(
-		"data/source/demographics/census-2021-small-area/ts001/census2021-ts001-lsoa.csv",
+		`data/source/${sourceDir("census-2021-ts001", "census2021-ts001-lsoa.csv")}`,
 		"updated census",
 	);
 	assert.deepEqual(stale(), ["atlas-sqlite"]);
 	write(
-		"data/source/lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+		`data/source/${sourceDir("lookups", "local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson")}`,
 		"updated lookup",
 	);
 	assert.deepEqual(stale(), ["atlas-sqlite", "api-datasets"]);

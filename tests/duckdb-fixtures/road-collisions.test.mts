@@ -2,6 +2,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, test } from "vitest";
+import { sourceDir } from "@uk-data-atlas/datasets";
 import { strict as assert } from "node:assert";
 import {
 	loadRoadCollisionsByAuthority,
@@ -21,7 +22,7 @@ const valid = (year: number) =>
 
 test("DuckDB matches the collision loader and rejects invalid sources", async () => {
 	root = await mkdtemp(join(tmpdir(), "road-collisions-"));
-	await mkdir(join(root, "transport/road-safety"), { recursive: true });
+	await mkdir(join(root, sourceDir("road-safety")), { recursive: true });
 	const writeSources = async (first: string, second: string) => {
 		await Promise.all(
 			[first, second].map((value, index) =>

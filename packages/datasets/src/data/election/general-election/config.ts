@@ -2,6 +2,7 @@
 
 import { type ConstituencyYear } from "../../boundaries/years.ts";
 import type { GeneralElectionYear } from "../../../types/elections.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
 
 export type GeneralElectionSourceConfig = {
 	year: GeneralElectionYear;
@@ -79,7 +80,10 @@ export const GENERAL_ELECTION_SOURCES: Record<
 > = {
 	"general-election-2010": {
 		year: 2010,
-		path: "politics/elections/general-elections/2010/HoC-GE2010-results-by-constituency.csv",
+		path: sourceDir(
+			"general-election-2010",
+			"HoC-GE2010-results-by-constituency.csv",
+		),
 		requiresHeaderCleaning: false,
 		// The constituencies first contested in 2010 lasted until 2024, so like
 		// 2015 and 2017 its results carry the codes of the 2019 release.
@@ -101,7 +105,10 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2024": {
 		year: 2024,
-		path: "politics/elections/general-elections/2024/HoC-GE2024-results-by-constituency.csv",
+		path: sourceDir(
+			"general-election-2024",
+			"HoC-GE2024-results-by-constituency.csv",
+		),
 		requiresHeaderCleaning: true, // Need to skip initial metadata rows
 		constituencyBoundaryYear: 2024,
 		fields: {
@@ -120,7 +127,10 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2019": {
 		year: 2019,
-		path: "politics/elections/general-elections/2019/HoC-GE2019-results-by-constituency.csv",
+		path: sourceDir(
+			"general-election-2019",
+			"HoC-GE2019-results-by-constituency.csv",
+		),
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019,
 		fields: {
@@ -139,7 +149,10 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2017": {
 		year: 2017,
-		path: "politics/elections/general-elections/2017/HoC-GE2017-results-by-constituency.csv",
+		path: sourceDir(
+			"general-election-2017",
+			"HoC-GE2017-results-by-constituency.csv",
+		),
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {
@@ -158,7 +171,10 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2015": {
 		year: 2015,
-		path: "politics/elections/general-elections/2015/HoC-GE2015-results-by-constituency.csv",
+		path: sourceDir(
+			"general-election-2015",
+			"HoC-GE2015-results-by-constituency.csv",
+		),
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {

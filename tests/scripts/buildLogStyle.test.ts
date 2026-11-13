@@ -42,6 +42,7 @@ const STANDALONE_TOOLS = [
 	"pipeline/src/stages/verify-map-downloads.ts",
 	"scripts/boundaries.js",
 	"scripts/gazetteer-phase0.ts",
+	"scripts/migrate-source-layout.mjs",
 	"scripts/reproject-datazone-boundary.mts",
 	"scripts/simplify-boundary-source.mts",
 	"services/api/scripts/audit-archive.mjs",

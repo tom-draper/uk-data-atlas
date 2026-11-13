@@ -4,6 +4,7 @@ import {
 } from "../../types/nhsWaiting.ts";
 import { LAD_TO_ICB } from "./ladToIcb.ts";
 import { parseNumOrZero } from "../../helpers/parseNumber.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 
 // Column names for weekly bands ≥18 weeks
 function isOver18WeeksBand(col: string): boolean {
@@ -24,7 +25,7 @@ export async function loadNHSWaiting(
 		{ icbName: string; total: number; over18: number }
 	> = {};
 	let over18Cols: string[] | undefined;
-	await readRows("health/nhs-waiting-times/rtt-mar-2026.zip", (row) => {
+	await readRows(sourceDir("nhs-waiting", "rtt-mar-2026.zip"), (row) => {
 		// Identify over-18-week band columns from the first parsed row.
 		over18Cols ??= Object.keys(row).filter(isOver18WeeksBand);
 		if (row["RTT Part Description"] !== "Incomplete Pathways") return;
