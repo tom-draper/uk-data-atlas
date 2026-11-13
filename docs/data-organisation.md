@@ -244,11 +244,61 @@ Licence data. The flag is a warning, not a split. `pnpm data:dist [--release
 <name>]` reads `data/source` and writes `data/dist/uk-data-atlas-<release>/`
 (gitignored): the top-level `README.md`, `catalogue.json`, `licences.json` and
 `CHANGELOG.md`, a `README.md` per module and `sqlite/atlas-<module>.manifest.json`.
-Module databases, dataset folders and Parquet are task 13, and until then the
-READMEs say the database is not built and show no size. `GET /v1/modules`
-serves the same manifests, with licences read from the catalogue, so the API
-and the dist tree cannot drift; the fields were added without changing existing
-ones.
+A module's READMEs say the database is not built, and show no size, until
+`pnpm data:dist` finds a build for it. `GET /v1/modules` serves the same
+manifests, with licences read from the catalogue, so the API and the dist tree
+cannot drift; the fields were added without changing existing ones.
+
+Task 13 added the module builds and the assembler (roadmap tasks 19 to 23).
+`atlas.sqlite` is unchanged. The `build-modules` stage
+(`node pipeline/build-data.mjs --only build-modules`, after `assemble-atlas`)
+splits it into `data/build/modules/`:
+
+- `sqlite/atlas-core.sqlite`: the foundation tables (releases, areas,
+  crosswalks, measures, dimensions, periods, sources, the catalogue), the
+  `module` and `module_dataset` tables that list every module including ones
+  not installed, `core_denominator` (population, households, usual residents
+  and area, totals only) and the views over core tables.
+- `sqlite/atlas-<module>.sqlite`: one per module. A theme module holds its
+  datasets, series, observations and the metadata bound to them
+  (`series_input`, `series_gap`, `series_conversion`, `series_crosswalk`,
+  `conversion_skip`, `area_relationship`, area keys and names, elections).
+  `postcodes` holds the `postcode*` tables and the postcode payloads. Rows point
+  at core by the stable ids from `pipeline/ids`, which core assigns. A module
+  that points at another module's series fails the build.
+- `<module>/parquet/<table>.parquet`: the same tables as ZSTD Parquet, written
+  with DuckDB, and `duckdb-views.sql`, which creates one view per table over
+  these files.
+- `build.json`, which `pnpm data:dist --release <name>` reads to link the files
+  into the release tree, fill each manifest's size, files and SHA-256 and
+  regenerate the READMEs.
+
+Views over module tables are stored in core's `module_view` table (SQL, order,
+and the tables each needs) because a view in an attached database cannot read
+another database. The assembler creates a view only when its tables are present.
+
+`pnpm data:assemble --from <release dir> --modules a,b --out <file>
+[--allow-licence-conflict]` builds one self-contained SQLite file: core plus the
+chosen modules, with `module.installed` set, the module hashes and licences in
+`meta`, and `PRAGMA foreign_key_check` clean. SQLite attaches at most 10
+databases and has no foreign keys across files, so the modules are copied into
+one file, not attached. It refuses a module that is not built, whose manifest or
+database names a different core compatibility key, or whose manifest carries a
+licence conflict (`politics`) unless the flag is given. Modules are applied in id
+order and the file is vacuumed, so the same inputs give the same bytes whatever
+order the modules are named in.
+
+Where the two documents differ, the roadmap's technical detail won:
+
+- The roadmap ships Parquet as one folder per module with a DuckDB views file.
+  The organisation doc files per-measure Parquet beside each dataset under
+  `<theme>/<topic>/<dataset>/`. Only the module folders exist; dataset folders
+  stay with the later dataset folder work.
+- The roadmap lists `demographics` and `deprivation` modules and merges
+  environment, transport, infrastructure and crime. The registry's modules (task 12) are the ones built, and task 16 changes the split.
+- The `boundaries` module is not built, since it needs GeoParquet.
+- `denominator: true` is not yet in the declarations, so the denominators in
+  core are a fixed list of measures in `pipeline/src/modules/moduleTables.ts`.
 
 ### Naming
 

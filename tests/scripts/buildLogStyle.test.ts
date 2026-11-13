@@ -39,6 +39,7 @@ const AWAITING_OBSERVATION_TABLES_PR = [
  * for a person at a terminal, so they keep their own output.
  */
 const STANDALONE_TOOLS = [
+	"pipeline/src/stages/assemble-modules.ts",
 	"pipeline/src/stages/verify-map-downloads.ts",
 	"scripts/boundaries.js",
 	"scripts/build-dist.mts",

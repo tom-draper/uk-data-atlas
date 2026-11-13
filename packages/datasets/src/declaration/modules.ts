@@ -137,14 +137,32 @@ export interface ModuleLicenceConflict {
 	readonly datasets: readonly string[];
 }
 
-/** Filled by the per-module build (task 13). Null means "not built". */
-export interface ModuleBuild {
-	readonly status: "not-built";
-	/** Size of the module's SQLite file in bytes. */
-	readonly bytes: null;
-	/** Every file in the module with its size and SHA-256. */
-	readonly files: null;
+/** A file of a built module, listed in its manifest. */
+export interface ModuleBuildFile {
+	/** Relative to the build output, with forward slashes. */
+	readonly path: string;
+	readonly format: "sqlite" | "parquet";
+	readonly bytes: number;
+	/** Lower-case hex SHA-256 of the file. */
+	readonly sha256: string;
 }
+
+/** What the per-module build (task 13) records. */
+export type ModuleBuild =
+	| {
+			readonly status: "not-built";
+			readonly bytes: null;
+			readonly files: null;
+	  }
+	| {
+			readonly status: "built";
+			/** Size of the module's SQLite file in bytes. */
+			readonly bytes: number;
+			/** Every file in the module with its size and SHA-256. */
+			readonly files: readonly ModuleBuildFile[];
+			/** Rows per table in the module's SQLite file, by table name. */
+			readonly rows: Readonly<Record<string, number>>;
+	  };
 
 export interface ModuleManifest {
 	readonly schemaVersion: typeof MODULE_MANIFEST_SCHEMA_VERSION;
@@ -171,6 +189,12 @@ const NOT_BUILT: ModuleBuild = {
 	bytes: null,
 	files: null,
 };
+
+/** The manifest with the result of a build recorded in it. */
+export const withModuleBuild = (
+	manifest: ModuleManifest,
+	build: ModuleBuild,
+): ModuleManifest => ({ ...manifest, build });
 
 const unique = <T>(values: readonly T[]): T[] => [...new Set(values)];
 

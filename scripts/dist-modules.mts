@@ -4,9 +4,13 @@ import {
 	buildModuleManifests,
 	getRegisteredDataset,
 	type DatasetFoundationPart,
+	withModuleBuild,
+	type ModuleBuild,
 	type ModuleLicenceInfo,
 	type ModuleManifest,
 } from "@uk-data-atlas/datasets/registry";
+import { VIEWS_FILE } from "../pipeline/src/modules/buildFile.ts";
+import { renderDuckdbViews } from "../pipeline/src/modules/duckdbViews.ts";
 
 /**
  * The files of `data/dist/uk-data-atlas-<release>/` that need no module
@@ -16,9 +20,10 @@ import {
  * same inputs give the same bytes. `build-dist.mts` reads the sources and
  * writes the result.
  *
- * Task 13 builds the module databases and fills the `build` field of each
- * manifest; until then the READMEs say the database is not built and show no
- * size.
+ * The module build (`pnpm data:build --only build-modules`) writes
+ * `data/build/modules/build.json`; its results fill the `build` field of each
+ * manifest here, and the READMEs then show sizes, checksums and row counts.
+ * A module with no result is described as not built.
  */
 
 /** What a source's `meta.json` says, as far as the READMEs use it. */
@@ -39,11 +44,26 @@ export interface DistFacts {
 
 export const FOUNDATION_PARTS = ["core", "boundaries", "postcodes"] as const;
 
-/** Where the database of a module will be written by task 13. */
+/** Where the database of a module is written by the module build. */
 export const databasePath = (moduleId: string) =>
 	`sqlite/atlas-${moduleId}.sqlite`;
 export const manifestPath = (moduleId: string) =>
 	`sqlite/atlas-${moduleId}.manifest.json`;
+
+/** The results of the module build, by module id. */
+export type DistBuilds = Readonly<Record<string, ModuleBuild>>;
+
+export const formatBytes = (bytes: number): string => {
+	if (bytes < 1024) return `${bytes} B`;
+	const units = ["KB", "MB", "GB"];
+	let value = bytes / 1024;
+	let unit = 0;
+	while (value >= 1024 && unit < units.length - 1) {
+		value /= 1024;
+		unit += 1;
+	}
+	return `${value.toFixed(value >= 100 ? 0 : 1)} ${units[unit]}`;
+};
 
 const cell = (text: string) => text.replace(/\|/g, "\\|").replace(/\s+/g, " ");
 
@@ -82,18 +102,82 @@ const datasetFacts = (facts: DistFacts, manifest: ModuleManifest) =>
 const usageSection = (manifest: ModuleManifest) => {
 	const file = databasePath(manifest.id);
 	const alias = manifest.id.replace(/[^a-z0-9]/g, "_");
+	const attach = ["```sql", `ATTACH DATABASE '${file}' AS ${alias};`, "```"];
+	const limits =
+		"SQLite attaches at most 10 extra databases to one connection by default, and the `sqlite3` command line and `node:sqlite` both use that limit. Raising it means recompiling SQLite. Attached databases also lose foreign keys across files, and a view or trigger in one file cannot refer to tables in another. To use several modules together, assemble core plus the modules you choose into one file, or read the per-module Parquet files with DuckDB, which has no such limit.";
+	if (manifest.build.status === "not-built")
+		return [
+			"## Using this module",
+			"",
+			`The module database is \`${file}\`. It is not built yet, so there is nothing to attach today (see Status).`,
+			"",
+			limits,
+		];
+	const parquet = manifest.build.files.some(
+		({ format }) => format === "parquet",
+	);
 	return [
 		"## Using this module",
 		"",
-		`The module database is \`${file}\`. It is not built yet, so there is nothing to attach today (see Status).`,
+		`The module database is \`${file}\`. It holds the module's own datasets, series and observations and refers to core by id, so attach it to a connection that already has core:`,
 		"",
-		"Once built, attach it to an SQLite connection that already has core:",
+		...attach,
 		"",
-		"```sql",
-		`ATTACH DATABASE '${file}' AS ${alias};`,
+		"To use several modules, join core and the modules you choose into one self-contained file. From a clone of the repository:",
+		"",
+		"```",
+		`pnpm data:assemble --from <release folder> --modules ${manifest.id === "core" ? "<module>,<module>" : manifest.id} --out atlas.sqlite`,
 		"```",
 		"",
-		"SQLite attaches at most 10 extra databases to one connection by default, and the `sqlite3` command line and `node:sqlite` both use that limit. Raising it means recompiling SQLite. Attached databases also lose foreign keys across files, and a view or trigger in one file cannot refer to tables in another. To use several modules together, use the assembled `atlas.sqlite` that core plus the modules you choose are joined into, or read the per-module Parquet files with DuckDB, which has no such limit.",
+		...(parquet
+			? [
+					"Each table is also a Parquet file in `" +
+						manifest.id +
+						"/parquet/`. `duckdb-views.sql` at the root of the release creates one DuckDB view per table over the files that are present:",
+					"",
+					"```",
+					"duckdb -init duckdb-views.sql",
+					"```",
+					"",
+				]
+			: []),
+		limits,
+	];
+};
+
+const statusSection = (manifest: ModuleManifest): string[] => {
+	const build = manifest.build;
+	if (build.status === "not-built")
+		return [
+			`Not built yet. The module database \`${databasePath(manifest.id)}\`, its Parquet files and their checksums come from the per-module build, and until it covers this module the manifest records the size and checksums as null.`,
+		];
+	const rows = Object.entries(build.rows).filter(([, count]) => count > 0);
+	return [
+		`Built. The module database is ${formatBytes(build.bytes)}.`,
+		"",
+		table(
+			["File", "Format", "Size", "SHA-256"],
+			build.files.map((file) => [
+				`\`${file.path}\``,
+				file.format,
+				formatBytes(file.bytes),
+				`\`${file.sha256}\``,
+			]),
+		),
+		...(rows.length > 0
+			? [
+					"",
+					"Rows per table in the database:",
+					"",
+					table(
+						["Table", "Rows"],
+						rows.map(([name, count]) => [
+							`\`${name}\``,
+							count.toLocaleString("en-GB"),
+						]),
+					),
+				]
+			: []),
 	];
 };
 
@@ -135,7 +219,7 @@ export const renderModuleReadme = (
 		"",
 		"## Status",
 		"",
-		`Not built yet. The module database \`${databasePath(manifest.id)}\`, its Parquet and CSV files and their checksums are produced by the per-module build, and until it runs the manifest records the size and checksums as null.`,
+		...statusSection(manifest),
 		"",
 		"## What is inside",
 		"",
@@ -253,7 +337,7 @@ export const renderIndexReadme = (
 					: manifest.licences.map(({ id }) => `\`${id}\``).join(", "),
 				manifest.build.status === "not-built"
 					? "Not built yet"
-					: `\`${databasePath(manifest.id)}\``,
+					: `\`${databasePath(manifest.id)}\` (${formatBytes(manifest.build.bytes)})`,
 			]),
 		),
 		"",
@@ -276,14 +360,16 @@ export const renderIndexReadme = (
 		"  <module>/README.md          what the module holds, its sources and licences",
 		"  sqlite/",
 		"    atlas-<module>.manifest.json",
-		"    atlas-<module>.sqlite     not built yet",
+		"    atlas-<module>.sqlite     core, or a module that attaches to it",
+		"  <module>/parquet/<table>.parquet",
+		"  duckdb-views.sql            one DuckDB view per table, over the files present",
 		"```",
 		"",
-		"Module databases, dataset folders and Parquet files are produced by the per-module build and are not part of this tree yet.",
+		"Modules marked not built have no database yet. Dataset folders and GeoParquet boundaries are not part of this tree yet.",
 		"",
 		"## Using several modules",
 		"",
-		"SQLite attaches at most 10 extra databases to one connection by default, and raising the limit means recompiling SQLite. Attached databases also lose foreign keys across files. For SQLite, use one assembled file made from core plus the modules you choose. For DuckDB, read the per-module Parquet files, which have no such limit.",
+		"SQLite attaches at most 10 extra databases to one connection by default, and raising the limit means recompiling SQLite. Attached databases also lose foreign keys across files. For SQLite, assemble one file from core plus the modules you choose with `pnpm data:assemble --from <release folder> --modules a,b --out atlas.sqlite`. For DuckDB, read the per-module Parquet files with `duckdb -init duckdb-views.sql`, which has no such limit.",
 		"",
 	].join("\n");
 };
@@ -296,7 +382,7 @@ export const renderChangelog = (release: string): string =>
 		`## ${release}`,
 		"",
 		"- Module manifests and READMEs generated from the registry.",
-		"- Module databases are not built yet.",
+		"- Module databases and Parquet files are built per module where the build covers them.",
 		"",
 	].join("\n");
 
@@ -323,6 +409,7 @@ export const renderCatalogueJson = (
 				database: {
 					path: databasePath(manifest.id),
 					status: manifest.build.status,
+					bytes: manifest.build.bytes,
 				},
 				topics: manifest.topics.map(({ id }) => id),
 				datasets: manifest.datasets.map(({ id }) => id),
@@ -379,14 +466,28 @@ export const licenceInputOf = (facts: DistFacts) => ({
 export const planDist = (
 	facts: DistFacts,
 	release: string,
+	builds: DistBuilds = {},
 ): Map<string, string> => {
-	const manifests = buildModuleManifests(licenceInputOf(facts));
+	const manifests = buildModuleManifests(licenceInputOf(facts)).map(
+		(manifest) => {
+			const build = builds[manifest.id];
+			return build ? withModuleBuild(manifest, build) : manifest;
+		},
+	);
 	const files = new Map<string, string>([
 		["README.md", renderIndexReadme(manifests, release)],
 		["catalogue.json", renderCatalogueJson(manifests, release)],
 		["licences.json", renderLicencesJson(manifests, release)],
 		["CHANGELOG.md", renderChangelog(release)],
 	]);
+	const parquet = manifests.flatMap(({ build }) =>
+		build.status === "built"
+			? build.files
+					.filter(({ format }) => format === "parquet")
+					.map(({ path }) => path)
+			: [],
+	);
+	if (parquet.length > 0) files.set(VIEWS_FILE, renderDuckdbViews(parquet));
 	for (const manifest of manifests) {
 		files.set(
 			`${manifest.id}/README.md`,
