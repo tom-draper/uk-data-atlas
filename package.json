@@ -10,6 +10,7 @@
 		"ids": "tsx pipeline/src/ids/cli.ts",
 		"data:verify": "tsx scripts/verify-data.mts && node pipeline/build-data.mjs --checks",
 		"data:build": "node pipeline/build-data.mjs",
+		"data:dist": "tsx scripts/build-dist.mts",
 		"docs:sources": "tsx scripts/generate-sources-readme.mts",
 		"data:download": "node scripts/data-release.mjs download",
 		"data:publish": "node scripts/data-release.mjs publish",

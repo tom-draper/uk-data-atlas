@@ -207,8 +207,8 @@ unchanged. `dataset.module` in SQLite is derived the same way, by
 fixtures) omit the three fields, and the one catalogue id the registry spells
 differently (`school-performance-disadvantage`) is mapped in
 `services/api/src/catalogue/datasetTaxonomy.ts`. `/v1/modules` lists only what
-the registry knows, plus the foundation parts with no datasets; module
-manifests are task 12.
+the registry knows, plus the foundation parts with no datasets; task 12 added
+the manifest fields.
 
 Task 11 replaced `meta.json` `topics` with `dataset`. The schema is a zod
 schema in `packages/datasets/src/data/catalog/meta.ts` (`parseDatasetMeta`),
@@ -219,7 +219,7 @@ two added here, `support` (crosswalk weight sources in `core/`) and `staged`
 (everything in `_staging/`). A folder that feeds several datasets names the one
 it is named for, or the first of its group (`regional-gdp` names
 `regional-gdp-itl1`, `energy-consumption` names `electricity-consumption`); the
-full lists stay in `tests/data/sourceDatasets.ts`. The raw sources are not in
+full lists stay in `packages/datasets/src/declaration/sourceDatasets.ts`. The raw sources are not in
 git, so `scripts/migrate-source-meta.mjs` (run by `pnpm data:download`, or by
 hand with `--dry-run` first) adds `dataset` or `kind`, drops `topics` and
 refreshes the release marker. The pipeline writers no longer emit `topics`.
@@ -228,13 +228,35 @@ including boundaries, lookups and postcodes. The free-text topics are gone, and
 the registry already holds each dataset's theme and topic. No allowlist entry
 named this task.
 
+Task 12 added module manifests and the `data/dist/` generator. A manifest is
+built by `buildModuleManifests` in `packages/datasets/src/declaration/modules.ts`
+from the registry (themes, topics, datasets, `moduleOfTopic`) and the licence
+names recorded for each dataset, so a split such as task 16's changes only
+`moduleOfTopic`. It carries the id, label, description, themes, topics,
+datasets, resolved licences, a `licenceConflict`, the core compatibility key
+(`atlas-core-1`, bumped when a change to core breaks modules built before it),
+the manifest `schemaVersion`, and a `build` block whose size and file checksums
+are null until task 13 fills them. Licences resolve to ids (`ogl-3.0`,
+`open-parliament`, `cc-by-sa-3.0`) from the `meta.json` licence name; a name
+that matches none fails `pnpm data:dist`. `politics` is flagged today because
+the 2016 to 2019 local elections are CC BY-SA 3.0 beside Open Parliament
+Licence data. The flag is a warning, not a split. `pnpm data:dist [--release
+<name>]` reads `data/source` and writes `data/dist/uk-data-atlas-<release>/`
+(gitignored): the top-level `README.md`, `catalogue.json`, `licences.json` and
+`CHANGELOG.md`, a `README.md` per module and `sqlite/atlas-<module>.manifest.json`.
+Module databases, dataset folders and Parquet are task 13, and until then the
+READMEs say the database is not built and show no size. `GET /v1/modules`
+serves the same manifests, with licences read from the catalogue, so the API
+and the dist tree cannot drift; the fields were added without changing existing
+ones.
+
 ### Naming
 
 A folder is named for a dataset it feeds, and `SOURCES` derives it: a source's
 key is its folder name, so only a part needs a folder written out
 (`house-price/mean-price-by-ward`, `general-election/2010`). Dataset ids are
 stable and public, so a rename changes the folder and its `meta.json` id, never
-the dataset. `tests/data/sourceDatasets.ts` lists every folder with the
+the dataset. `packages/datasets/src/declaration/sourceDatasets.ts` lists every folder with the
 datasets it feeds. A folder not named for a dataset carries a reason there:
 
 - `environment/energy/energy-consumption` feeds `electricity-consumption` and

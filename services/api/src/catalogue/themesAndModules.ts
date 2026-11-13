@@ -1,11 +1,10 @@
 import {
-	DATASET_FOUNDATION_PARTS,
 	DATASET_THEMES,
-	topicsOfTheme,
+	buildModuleManifests,
 	moduleOfTopic,
-	type DatasetModule,
+	topicsOfTheme,
 } from "@uk-data-atlas/datasets/registry";
-import { taxonomyOfDataset } from "./datasetTaxonomy";
+import { registryIdOfDataset, taxonomyOfDataset } from "./datasetTaxonomy";
 
 /**
  * The registry's themes and modules as `/v1/themes` and `/v1/modules` serve
@@ -53,48 +52,53 @@ export const describeThemes = (datasets: Counted) => {
 	});
 };
 
-export const describeModules = (datasets: Counted) => {
+/** A catalogue dataset, with the licence it records, if the catalogue has one. */
+type Licensed = { id: string; licence?: { name: string } };
+
+/**
+ * The manifests the dist tree writes (`buildModuleManifests`), with the
+ * counts of this API's datasets. The licences are the names the catalogue
+ * records, read through the same resolver as the `meta.json` files the dist
+ * generator reads. A foundation part has no catalogue dataset, so its
+ * licences are `null`, not derived.
+ */
+export const describeModules = (datasets: ReadonlyArray<Licensed>) => {
 	const byModule = countBy(datasets, "module");
-	const themeModules = new Map<DatasetModule, string[]>();
-	for (const theme of DATASET_THEMES)
-		for (const topic of topicsOfTheme(theme.id)) {
-			const module = moduleOfTopic(topic.id);
-			themeModules.set(module, [
-				...new Set([...(themeModules.get(module) ?? []), theme.id]),
+	const namesOf = new Map<string, string[]>();
+	for (const { id, licence } of datasets)
+		if (licence)
+			namesOf.set(registryIdOfDataset(id), [
+				...(namesOf.get(registryIdOfDataset(id)) ?? []),
+				licence.name,
 			]);
-		}
-	return [
-		...[...themeModules].map(([id, themes]) => {
-			const owned = DATASET_THEMES.filter((theme) =>
-				themes.includes(theme.id),
-			);
-			return {
-				id,
-				kind: "theme" as const,
-				label: owned.map((theme) => theme.label).join(", "),
-				description: owned.map((theme) => theme.description).join(" "),
-				themes,
-				topics: owned.flatMap((theme) =>
-					topicsOfTheme(theme.id)
-						.filter((topic) => moduleOfTopic(topic.id) === id)
-						.map((topic) => ({
-							id: topic.id,
-							label: topic.label,
-							theme: theme.id,
-						})),
-				),
-				datasetCount: byModule(id),
-				links: { datasets: datasetsHref("module", id) },
-			};
-		}),
-		...DATASET_FOUNDATION_PARTS.map((part) => ({
-			id: part.id,
-			kind: "foundation" as const,
-			label: part.label,
-			description: part.description,
-			themes: [] as string[],
-			topics: [] as Array<{ id: string; label: string; theme: string }>,
-			datasetCount: byModule(part.id),
+	return buildModuleManifests({
+		datasets: (datasetId) => namesOf.get(datasetId) ?? [],
+	}).map((manifest) => ({
+		id: manifest.id,
+		kind: manifest.kind,
+		label: manifest.label,
+		description: manifest.description,
+		themes: [...manifest.themes],
+		topics: manifest.topics.map((topic) => ({
+			id: topic.id,
+			label: topic.label,
+			theme: topic.theme,
+			description: topic.description,
 		})),
-	];
+		datasetCount: byModule(manifest.id),
+		...(manifest.kind === "theme"
+			? { links: { datasets: datasetsHref("module", manifest.id) } }
+			: {}),
+		schemaVersion: manifest.schemaVersion,
+		alwaysIncluded: manifest.alwaysIncluded,
+		compatibility: manifest.compatibility,
+		licences: manifest.licences,
+		licenceConflict: manifest.licenceConflict,
+		datasets: manifest.datasets.map((dataset) => ({
+			id: dataset.id,
+			title: dataset.title,
+			topic: dataset.topic,
+		})),
+		build: manifest.build,
+	}));
 };

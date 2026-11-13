@@ -21,7 +21,7 @@
  *
  * A folder this script does not know is reported and left alone, and the
  * consistency test then names it. tests/scripts/migrateSourceMeta.test.ts checks
- * the table below against tests/data/sourceDatasets.ts.
+ * the table below against packages/datasets/src/declaration/sourceDatasets.ts.
  */
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -35,7 +35,7 @@ import { migrateMarker } from "./migrate-source-layout.mjs";
  * feeds several names the one it is named for. `regional-gdp` and
  * `energy-consumption` are named for none of theirs, so they take the first,
  * until task 15 merges the three ITL levels. The full lists stay in
- * tests/data/sourceDatasets.ts.
+ * packages/datasets/src/declaration/sourceDatasets.ts.
  */
 export const DATASET_FOLDERS = Object.fromEntries([
 	["population/population-estimates/census-2021-ts001", "census-2021-ts001"],

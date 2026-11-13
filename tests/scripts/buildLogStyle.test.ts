@@ -41,6 +41,7 @@ const AWAITING_OBSERVATION_TABLES_PR = [
 const STANDALONE_TOOLS = [
 	"pipeline/src/stages/verify-map-downloads.ts",
 	"scripts/boundaries.js",
+	"scripts/build-dist.mts",
 	"scripts/gazetteer-phase0.ts",
 	"scripts/migrate-source-layout.mjs",
 	"scripts/migrate-source-meta.mjs",

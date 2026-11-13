@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
+	CORE_COMPATIBILITY_KEY,
 	DATASET_FOUNDATION_PARTS,
+	MODULE_MANIFEST_SCHEMA_VERSION,
+	buildModuleManifests,
 	DATASET_THEMES,
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets/registry";
@@ -135,6 +138,39 @@ test("GET /v1/modules lists theme modules then foundation parts", () => {
 	assert.equal(core.kind, "foundation");
 	assert.equal(core.datasetCount, 0);
 	assert.deepEqual(core.themes, []);
+});
+
+test("GET /v1/modules serves the manifest the data download is built from", () => {
+	const answer = body("/v1/modules");
+	const manifests = buildModuleManifests({ datasets: () => [] });
+	assert.deepEqual(
+		answer.body.data.map((m: any) => [m.id, m.kind, m.alwaysIncluded]),
+		manifests.map((m) => [m.id, m.kind, m.alwaysIncluded]),
+	);
+	for (const module of answer.body.data) {
+		const manifest = manifests.find((m) => m.id === module.id)!;
+		assert.equal(module.schemaVersion, MODULE_MANIFEST_SCHEMA_VERSION);
+		assert.deepEqual(module.compatibility, {
+			core: CORE_COMPATIBILITY_KEY,
+		});
+		assert.deepEqual(
+			module.datasets.map((d: any) => d.id),
+			manifest.datasets.map((d) => d.id),
+		);
+		assert.deepEqual(module.build, {
+			status: "not-built",
+			bytes: null,
+			files: null,
+		});
+	}
+	const core = answer.body.data.find((m: any) => m.id === "core");
+	assert.equal(core.licences, null, "foundation licences are not derived");
+	const population = answer.body.data.find((m: any) => m.id === "population");
+	assert.deepEqual(
+		population.licences.map((l: any) => l.id),
+		["ogl-3.0"],
+	);
+	assert.equal(population.licenceConflict, null);
 });
 
 test("themes and modules are unavailable without the data catalogue", () => {

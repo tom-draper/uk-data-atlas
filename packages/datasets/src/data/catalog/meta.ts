@@ -144,7 +144,7 @@ export const DatasetMetaSchema = z
 		 * The id of the registered dataset this folder feeds, required for a
 		 * `dataset` source and absent for every other kind. A folder that feeds
 		 * several datasets names the one it is named for, the others are
-		 * recorded in tests/data/sourceDatasets.ts.
+		 * recorded in packages/datasets/src/declaration/sourceDatasets.ts.
 		 */
 		dataset: text.optional(),
 		title: text,
