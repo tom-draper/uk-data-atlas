@@ -200,6 +200,7 @@ describe("shared packages", () => {
 							"topojson-specification",
 							"proj4",
 							"geojson",
+							"zod",
 						].includes(packageName(specifier))
 					)
 						invalid.push(`${relative(ROOT, file)}: ${specifier}`);

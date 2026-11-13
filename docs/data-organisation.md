@@ -20,7 +20,7 @@ drifted apart:
 | Website chart groups (was `lib/datasets/chartGroups.ts`) | Economics, Demographics, Telecoms, General Election, Local Election, Brexit, ...             |
 | `components/`                                            | economics, demographics, telecoms, elections, ...                                            |
 | Docs and `/datasets` topics (were hand-kept lists)       | people, work, connectivity, people-and-places, work-and-economy, councils, ... (now deleted) |
-| `meta.json` `topics`                                     | Free text                                                                                    |
+| `meta.json` `topics` (replaced by `dataset`, task 11)    | Free text                                                                                    |
 | `packages/measures/src/statisticsDatasets/`              | By shape (census, people, services), not topic (only five leftovers remain)                  |
 
 Examples of the drift:
@@ -209,6 +209,24 @@ differently (`school-performance-disadvantage`) is mapped in
 `services/api/src/catalogue/datasetTaxonomy.ts`. `/v1/modules` lists only what
 the registry knows, plus the foundation parts with no datasets; module
 manifests are task 12.
+
+Task 11 replaced `meta.json` `topics` with `dataset`. The schema is a zod
+schema in `packages/datasets/src/data/catalog/meta.ts` (`parseDatasetMeta`),
+strict, so an unknown field such as `topics` is an error. A source of `kind`
+`dataset` (the default) must name a registered dataset. The other kinds feed no
+dataset and must not name one: `boundary`, `lookup`, `postcode-directory`, and
+two added here, `support` (crosswalk weight sources in `core/`) and `staged`
+(everything in `_staging/`). A folder that feeds several datasets names the one
+it is named for, or the first of its group (`regional-gdp` names
+`regional-gdp-itl1`, `energy-consumption` names `electricity-consumption`); the
+full lists stay in `tests/data/sourceDatasets.ts`. The raw sources are not in
+git, so `scripts/migrate-source-meta.mjs` (run by `pnpm data:download`, or by
+hand with `--dry-run` first) adds `dataset` or `kind`, drops `topics` and
+refreshes the release marker. The pipeline writers no longer emit `topics`.
+`tests/built/data/sourceFolders.test.ts` now validates every `meta.json`,
+including boundaries, lookups and postcodes. The free-text topics are gone, and
+the registry already holds each dataset's theme and topic. No allowlist entry
+named this task.
 
 ### Naming
 

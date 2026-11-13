@@ -46,11 +46,14 @@ const filesUnder = (path: string): string[] => {
 const stripComments = (code: string) =>
 	code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
 
-// The migration script lists the old paths on purpose.
-const MIGRATION = join(process.cwd(), "scripts/migrate-source-layout.mjs");
+// The migration scripts list the old and the current paths on purpose.
+const MIGRATIONS = [
+	"scripts/migrate-source-layout.mjs",
+	"scripts/migrate-source-meta.mjs",
+].map((file) => join(process.cwd(), file));
 const code = READERS.flatMap((reader) =>
 	filesUnder(join(process.cwd(), reader))
-		.filter((file) => file !== MIGRATION)
+		.filter((file) => !MIGRATIONS.includes(file))
 		.map((file) => stripComments(readFileSync(file, "utf8"))),
 ).join("\n");
 

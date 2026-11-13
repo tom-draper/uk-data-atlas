@@ -194,10 +194,10 @@ const fetchEnglandWalesCentroids = async (root: string, retrieved: string) => {
 	const hash = write(root, path, `${rows.join("\n")}\n`);
 	writeMeta(root, dirname(path), {
 		id: "oa-2021-ew-v4",
+		kind: "support",
 		title: "Output Areas (December 2021) EW Population Weighted Centroids (V4)",
 		description:
 			"The population weighted centroid of every 2021 output area in England and Wales, as WGS 84 longitude and latitude.",
-		topics: ["geography", "census"],
 		publisher: "Office for National Statistics",
 		sourceUrl: PWC_SERVICE,
 		retrieved,
@@ -238,10 +238,10 @@ const fetchScotland = async (root: string, retrieved: string) => {
 	);
 	writeMeta(root, dirname(populationPath), {
 		id: "census-2022-scotland-output-area",
+		kind: "support",
 		title: "Scotland's Census 2022 output area usual residents and households",
 		description:
 			"The usual resident population and the number of occupied household spaces (households, UV406 household size) of every 2022 output area in Scotland.",
-		topics: ["demographics", "population", "census", "scotland"],
 		publisher: "National Records of Scotland",
 		sourceUrl:
 			"https://www.nrscotland.gov.uk/publications/2022-census-geography-products",
@@ -303,10 +303,10 @@ const fetchScotland = async (root: string, retrieved: string) => {
 	const hash = write(root, path, `${rows.join("\n")}\n`);
 	writeMeta(root, dirname(path), {
 		id: "oa-2022-sc",
+		kind: "support",
 		title: "Output Area 2022 Population Weighted Centroids (Scotland)",
 		description:
 			"The population weighted centroid of every 2022 output area in Scotland, as WGS 84 longitude and latitude.",
-		topics: ["geography", "census", "scotland"],
 		publisher: "National Records of Scotland",
 		sourceUrl:
 			"https://www.nrscotland.gov.uk/publications/2022-census-geography-products",
@@ -340,10 +340,10 @@ const fetchDwellings = async (root: string, retrieved: string) => {
 	const hash = write(root, path, csv);
 	writeMeta(root, dirname(path), {
 		id: "2026",
+		kind: "support",
 		title: "Council Tax: stock of properties 2026, CTSOP1.1",
 		description:
 			"Properties on the Council Tax valuation list in England and Wales at 31 March 2026, by Council Tax band, local authority, LSOA and MSOA. Counts are rounded to the nearest 10 and small counts are suppressed.",
-		topics: ["housing"],
 		publisher: "Valuation Office Agency",
 		sourceUrl:
 			"https://www.gov.uk/government/statistics/council-tax-stock-of-properties-2026",
