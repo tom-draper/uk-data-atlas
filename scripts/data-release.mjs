@@ -520,13 +520,13 @@ export async function sourcesMatchRelease(root = ROOT) {
 
 async function migrateLocalLayout() {
 	if (!(await hasLocalSources())) return;
-	const { moved, conflicts } = await migrateSourceLayout(DATA);
+	const { moved, conflicts, rewrites } = await migrateSourceLayout(DATA);
 	if (conflicts.length > 0)
 		fail(
 			`Cannot move data/source to the theme layout, these paths already exist: ${conflicts.join(", ")}. Run node scripts/migrate-source-layout.mjs --dry-run`,
 		);
-	if (moved.length === 0) return;
-	await migrateMarker(DATA);
+	if (moved.length === 0 && rewrites.length === 0) return;
+	await migrateMarker(DATA, { rewrites });
 	buildLog.info(
 		`Moved ${formatCount(moved.length)} source folders to the theme layout`,
 	);

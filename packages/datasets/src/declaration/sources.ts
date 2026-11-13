@@ -16,102 +16,98 @@ import { themeOfTopic, type DatasetTopic } from "./taxonomy.ts";
 interface SourceEntry {
 	/** The topic of the dataset the folder feeds, or `core` for foundation data. */
 	readonly topic: DatasetTopic | "core";
-	/** The folder name under `<theme>/<topic>/`. */
-	readonly folder: string;
+	/**
+	 * The folder under `<theme>/<topic>/`. Left out, it is the source's own
+	 * name, which is the id of the dataset it feeds. It is set only where the
+	 * folder is a part of a dataset, `house-price/mean-price-by-ward`.
+	 */
+	readonly folder?: string;
 }
 
-const entry = (topic: SourceEntry["topic"], folder: string): SourceEntry => ({
-	topic,
-	folder,
-});
+const entry = (topic: SourceEntry["topic"], folder?: string): SourceEntry =>
+	folder === undefined ? { topic } : { topic, folder };
 
-/** One entry per year folder of an election, named `<prefix>-<year>`. */
+/** One entry per year folder of an election, `<prefix>/<year>`. */
 const years = <Prefix extends string, Year extends number>(
 	prefix: Prefix,
 	topic: SourceEntry["topic"],
 	list: readonly Year[],
 ) =>
 	Object.fromEntries(
-		list.map((year) => [`${prefix}-${year}`, entry(topic, String(year))]),
+		list.map((year) => [
+			`${prefix}-${year}`,
+			entry(topic, `${prefix}/${year}`),
+		]),
 	) as Record<`${Prefix}-${Year}`, SourceEntry>;
 
 export const SOURCES = {
 	// Population
-	"census-2021-ts001": entry("population-estimates", "ts001"),
-	"census-2021-ts003": entry("population-estimates", "ts003"),
-	"census-2021-ts007a": entry("population-estimates", "ts007a"),
-	"census-2021-ts021": entry("ethnicity-and-identity", "ts021"),
-	"census-2021-ts037": entry("health-status", "ts037"),
-	"census-2021-ts054": entry("housing-stock", "ts054"),
-	"census-2021-ts066": entry("labour-market", "ts066"),
-	ethnicity: entry("ethnicity-and-identity", "ts021-ethnic-group"),
-	"population-uk": entry("population-estimates", "uk"),
-	"population-constituency": entry(
-		"population-estimates",
-		"population-constituency-estimates",
-	),
-	population: entry("population-estimates", "population-ward-estimates"),
+	"census-2021-ts001": entry("population-estimates"),
+	"census-2021-ts003": entry("population-estimates"),
+	"census-2021-ts007a": entry("population-estimates"),
+	"census-2021-ts021": entry("ethnicity-and-identity"),
+	"census-2021-ts037": entry("health-status"),
+	"census-2021-ts054": entry("housing-stock"),
+	"census-2021-ts066": entry("labour-market"),
+	ethnicity: entry("ethnicity-and-identity"),
+	"population-uk": entry("population-estimates"),
+	"population-constituency": entry("population-estimates"),
+	population: entry("population-estimates"),
 
 	// Society
-	imd: entry("deprivation", "imd"),
-	nimdm: entry("deprivation", "nimdm"),
-	simd: entry("deprivation", "simd"),
-	wimd: entry("deprivation", "wimd"),
-	"child-poverty": entry("poverty", "child-poverty"),
-	"fuel-poverty": entry("poverty", "fuel-poverty"),
-	crime: entry("crime-and-justice", "crime"),
+	imd: entry("deprivation"),
+	nimdm: entry("deprivation"),
+	simd: entry("deprivation"),
+	wimd: entry("deprivation"),
+	"child-poverty": entry("poverty"),
+	"fuel-poverty": entry("poverty"),
+	crime: entry("crime-and-justice"),
 
 	// Economy
-	"business-activity": entry("business", "business-activity"),
-	"claimant-count": entry("labour-market", "claimant-count"),
-	jobs: entry("labour-market", "jobs"),
-	unemployment: entry("labour-market", "model-based"),
-	income: entry("earnings-and-income", "income"),
-	"local-government-finance": entry(
-		"public-finance",
-		"local-government-finance",
-	),
-	"regional-gdp": entry("economic-output", "regional-gdp"),
+	"business-activity": entry("business"),
+	"claimant-count": entry("labour-market"),
+	jobs: entry("labour-market"),
+	unemployment: entry("labour-market"),
+	income: entry("earnings-and-income"),
+	"local-government-finance": entry("public-finance"),
+	"regional-gdp": entry("economic-output"),
 
 	// Housing
-	homelessness: entry("homelessness", "homelessness"),
-	"house-price-mean": entry("prices-and-affordability", "mean-price-by-ward"),
+	homelessness: entry("homelessness"),
+	"house-price-mean": entry(
+		"prices-and-affordability",
+		"house-price/mean-price-by-ward",
+	),
 	"house-price-median": entry(
 		"prices-and-affordability",
-		"median-price-by-ward",
+		"house-price/median-price-by-ward",
 	),
-	"housing-affordability": entry(
-		"prices-and-affordability",
-		"housing-affordability",
-	),
-	"net-additional-dwellings": entry(
-		"housing-stock",
-		"net-additional-dwellings",
-	),
-	"council-tax": entry("housing-stock", "council-tax"),
-	"planning-applications": entry("planning", "planning-applications"),
+	"housing-affordability": entry("prices-and-affordability"),
+	"net-additional-dwellings": entry("housing-stock"),
+	"council-tax": entry("housing-stock"),
+	"planning-applications": entry("planning"),
 
 	// Education
-	"school-performance": entry("schools", "local-authority-district"),
-	"school-performance-constituency": entry("schools", "ks4-constituency"),
-	"pupil-absence": entry("schools", "pupil-attendance"),
-	qualification: entry("qualifications", "qualification"),
+	"school-performance": entry("schools"),
+	"school-performance-constituency": entry("schools"),
+	"pupil-absence": entry("schools"),
+	qualification: entry("qualifications"),
 
 	// Environment
-	"air-quality": entry("air-quality", "air-quality"),
-	"energy-consumption": entry("energy", "energy-consumption"),
-	"ghg-emissions": entry("emissions", "ghg-emissions"),
-	waste: entry("waste", "waste"),
+	"air-quality": entry("air-quality"),
+	"energy-consumption": entry("energy"),
+	"ghg-emissions": entry("emissions"),
+	waste: entry("waste"),
 
 	// Health
-	"adult-social-care-activity": entry("social-care", "activity"),
-	"adult-social-care-outcomes": entry("social-care", "ascof"),
-	"life-expectancy": entry("life-expectancy", "life-expectancy"),
-	"nhs-waiting": entry("nhs-services", "nhs-waiting-times"),
-	"public-health": entry("health-status", "public-health-outcomes-framework"),
+	"adult-social-care-activity": entry("social-care"),
+	"adult-social-care-outcomes": entry("social-care"),
+	"life-expectancy": entry("life-expectancy"),
+	"nhs-waiting": entry("nhs-services"),
+	"public-health": entry("health-status"),
 
 	// Politics
-	"historical-general-election": entry("general-elections", "1918-2019"),
+	"historical-general-election": entry("general-elections"),
 	...years(
 		"general-election",
 		"general-elections",
@@ -122,18 +118,18 @@ export const SOURCES = {
 		"local-elections",
 		[2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025],
 	),
-	"brexit-constituency": entry("referendums", "constituencies-2016"),
-	brexit: entry("referendums", "local-authorities-2016"),
+	"brexit-constituency": entry("referendums"),
+	brexit: entry("referendums"),
 
 	// Infrastructure
-	broadband: entry("digital-connectivity", "broadband"),
-	"mobile-coverage": entry("digital-connectivity", "mobile"),
+	broadband: entry("digital-connectivity"),
+	"mobile-coverage": entry("digital-connectivity"),
 
 	// Transport
-	"car-availability": entry("vehicles", "car-availability"),
-	"electric-vehicle-chargers": entry("vehicles", "electric-vehicle-chargers"),
-	"road-safety": entry("road-safety", "road-safety"),
-	"travel-to-work": entry("commuting", "travel-to-work"),
+	"car-availability": entry("vehicles"),
+	"electric-vehicle-chargers": entry("vehicles"),
+	"road-collisions": entry("road-safety"),
+	"travel-to-work": entry("commuting"),
 
 	// Foundation: denominators, lookups and the geometry inputs of crosswalks
 	lookups: entry("core", "lookups"),
@@ -164,7 +160,7 @@ const join = (...parts: readonly string[]) =>
  * path inside the folder.
  */
 export function sourceDir(name: SourceName, ...inside: string[]): string {
-	const { topic, folder } = SOURCES[name];
+	const { topic, folder = name } = SOURCES[name] as SourceEntry;
 	return join(
 		topic === "core" ? "core" : `${themeOfTopic(topic)}/${topic}`,
 		folder,

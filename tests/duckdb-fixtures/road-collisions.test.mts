@@ -22,7 +22,7 @@ const valid = (year: number) =>
 
 test("DuckDB matches the collision loader and rejects invalid sources", async () => {
 	root = await mkdtemp(join(tmpdir(), "road-collisions-"));
-	await mkdir(join(root, sourceDir("road-safety")), { recursive: true });
+	await mkdir(join(root, sourceDir("road-collisions")), { recursive: true });
 	const writeSources = async (first: string, second: string) => {
 		await Promise.all(
 			[first, second].map((value, index) =>

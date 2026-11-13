@@ -473,7 +473,7 @@ const websiteDatasetInputs = (root) => {
 				...websiteFallbackBoundaryInputs,
 				...gazetteerLookupInputs,
 				sourceDir(
-					"road-safety",
+					"road-collisions",
 					"dft-road-casualty-statistics-collision-provisional-2025.csv",
 				),
 			],

@@ -36,7 +36,7 @@ type CustomDataset = {
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
 const SOURCE = sourceDir(
-	"road-safety",
+	"road-collisions",
 	"dft-road-casualty-statistics-collision-provisional-2025.csv",
 );
 

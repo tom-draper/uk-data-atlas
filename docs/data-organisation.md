@@ -171,29 +171,54 @@ config), and the theme comes from the topic. Moving a source is a change to
 that table and a move of the folder. A test fails on any literal path to a
 source folder in code.
 
-Task 5 moved `data/source` to this layout. Folders keep their old names under
-the new theme and topic; task 6 renames them to dataset ids. Sources no dataset
-reads sit in `_staging/`.
+Task 5 moved `data/source` to this layout and task 6 named each folder for the
+dataset id it serves. Sources no dataset reads sit in `_staging/`.
+
+### Naming
+
+A folder is named for a dataset it feeds, and `SOURCES` derives it: a source's
+key is its folder name, so only a part needs a folder written out
+(`house-price/mean-price-by-ward`, `general-election/2010`). Dataset ids are
+stable and public, so a rename changes the folder and its `meta.json` id, never
+the dataset. `tests/data/sourceDatasets.ts` lists every folder with the
+datasets it feeds. A folder not named for a dataset carries a reason there:
+
+- `environment/energy/energy-consumption` feeds `electricity-consumption` and
+  `gas-consumption` from one download. Splitting it into two folders would need
+  the download split too, so it stays.
+- `economy/economic-output/regional-gdp` feeds `regional-gdp-itl1`, `-itl2` and
+  `-itl3`. Task 15 merges them under one id, which is the folder's name.
+- `core/` and `_staging/` folders are foundation data and unbuilt sources, so
+  the rule does not apply to them.
+
+The census tables `ts037` and `ts054` feed two datasets each (the census table
+and a derived one, `general-health`, `housing-tenure`). They are named for the
+census table, `census-2021-ts037`. Task 15 and the dataset renames may move
+`ts054` under `housing-tenure/census-2021`.
 
 ### Moving an existing checkout
 
 `data/source/` is not in git; `pnpm data:download` syncs it from a GitHub
 Release. The release assets are still in the old layout until a new release is
-published, so both routes below end in the new layout and neither needs the
-release to change.
+published, so both routes below end in the final layout and neither needs the
+release to change. A checkout in the old layout or the task 5 layout reaches the
+same place.
 
 - `node scripts/migrate-source-layout.mjs` moves an existing `data/source` in
-  place, rewrites `.source-release.json` to match, and is safe to run again.
+  place, sets the `id` in each renamed folder's `meta.json` to the folder name,
+  rewrites `.source-release.json` to match, and is safe to run again.
   `--dry-run` lists what it would do. It reports conflicts and stray files and
   leaves them alone.
 - `pnpm data:download` runs the same migration first, and again on a freshly
   extracted old-layout release, so a checkout on either layout ends up correct.
+- On another machine or the server: pull this branch, then run
+  `node scripts/migrate-source-layout.mjs --dry-run` and, if it lists only
+  moves, run it again without `--dry-run`. Run `pnpm data:download` afterwards
+  to check nothing reports as edited. The script does nothing on a machine
+  already in the final layout.
 - `scripts/serve-os-open-roads.mjs` expects its manually downloaded tiles at
   `data/source/transport/os-open-roads/`. They are not a dataset source and the
   migration does not touch them.
-
-Shared census tables move to the dataset that reads them, for example
-`census-2021-small-area/ts054` to `housing/housing-stock/housing-tenure/census-2021/`.
 
 `meta.json` replaces free-text `topics` with `dataset`, validated against a
 schema. Theme and topic come from the declaration, not repeated here.

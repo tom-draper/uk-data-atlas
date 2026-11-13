@@ -42,7 +42,7 @@ export function compileRoadSafety(
 		const path = join(
 			SOURCE_DATA,
 			sourceDir(
-				"road-safety",
+				"road-collisions",
 				"dft-road-casualty-statistics-collision-provisional-2025.csv",
 			),
 		);

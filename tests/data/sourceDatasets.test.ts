@@ -187,9 +187,9 @@ describe("source folders and datasets", () => {
 		expect(wrong).toEqual([]);
 	});
 
-	it("sit under the theme and topic of the dataset they feed, named for it unless excepted", () => {
+	it("sit under the theme and topic of the dataset they feed, named for it unless excepted with a reason", () => {
 		const wrong: string[] = [];
-		for (const [folder, datasets, renameTask] of DATASET_SOURCES) {
+		for (const [folder, datasets, exception] of DATASET_SOURCES) {
 			const [theme, topic, name] = folder.split("/");
 			if (theme === "core") continue; // Denominators serve many topics.
 			const under = datasets.some(
@@ -201,10 +201,12 @@ describe("source folders and datasets", () => {
 			if (!under)
 				wrong.push(`${folder} is not under its theme and topic`);
 			const named = datasets.includes(name);
-			if (!named && renameTask === undefined)
+			if (!named && exception === undefined)
 				wrong.push(`${folder} is not named after a dataset`);
-			if (named && renameTask !== undefined)
-				wrong.push(`${folder} now conforms, drop its task`);
+			if (named && exception !== undefined)
+				wrong.push(
+					`${folder} is named after a dataset, drop its exception`,
+				);
 		}
 		expect(wrong).toEqual([]);
 	});
