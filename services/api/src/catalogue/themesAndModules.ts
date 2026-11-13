@@ -1,10 +1,14 @@
 import {
 	DATASET_THEMES,
 	buildModuleManifests,
-	moduleOfTopic,
+	modulesOfTopic,
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets/registry";
-import { registryIdOfDataset, taxonomyOfDataset } from "./datasetTaxonomy";
+import {
+	datasetIsInModule,
+	registryIdOfDataset,
+	taxonomyOfDataset,
+} from "./datasetTaxonomy";
 
 /**
  * The registry's themes and modules as `/v1/themes` and `/v1/modules` serve
@@ -14,7 +18,7 @@ import { registryIdOfDataset, taxonomyOfDataset } from "./datasetTaxonomy";
 
 type Counted = ReadonlyArray<{ id: string }>;
 
-const countBy = (datasets: Counted, key: "theme" | "topic" | "module") => {
+const countBy = (datasets: Counted, key: "theme" | "topic") => {
 	const counts = new Map<string, number>();
 	for (const { id } of datasets) {
 		const value = taxonomyOfDataset(id)?.[key];
@@ -22,6 +26,12 @@ const countBy = (datasets: Counted, key: "theme" | "topic" | "module") => {
 	}
 	return (value: string) => counts.get(value) ?? 0;
 };
+
+/** Datasets with rows in a module: its own, and those an add-on adds rows to. */
+const countInModule = (datasets: Counted) => (module: string) =>
+	datasets.filter(({ id }) =>
+		datasetIsInModule(taxonomyOfDataset(id), module),
+	).length;
 
 const datasetsHref = (filter: "theme" | "topic" | "module", id: string) =>
 	`/v1/datasets?${filter}=${id}`;
@@ -36,7 +46,7 @@ export const describeThemes = (datasets: Counted) => {
 			label: theme.label,
 			description: theme.description,
 			modules: [
-				...new Set(topics.map((topic) => moduleOfTopic(topic.id))),
+				...new Set(topics.flatMap((topic) => modulesOfTopic(topic.id))),
 			],
 			datasetCount: byTheme(theme.id),
 			links: { datasets: datasetsHref("theme", theme.id) },
@@ -44,7 +54,8 @@ export const describeThemes = (datasets: Counted) => {
 				id: topic.id,
 				label: topic.label,
 				description: topic.description,
-				module: moduleOfTopic(topic.id),
+				module: modulesOfTopic(topic.id)[0],
+				modules: modulesOfTopic(topic.id),
 				datasetCount: byTopic(topic.id),
 				links: { datasets: datasetsHref("topic", topic.id) },
 			})),
@@ -63,7 +74,7 @@ type Licensed = { id: string; licence?: { name: string } };
  * licences are `null`, not derived.
  */
 export const describeModules = (datasets: ReadonlyArray<Licensed>) => {
-	const byModule = countBy(datasets, "module");
+	const byModule = countInModule(datasets);
 	const namesOf = new Map<string, string[]>();
 	for (const { id, licence } of datasets)
 		if (licence)
@@ -91,6 +102,8 @@ export const describeModules = (datasets: ReadonlyArray<Licensed>) => {
 			: {}),
 		schemaVersion: manifest.schemaVersion,
 		alwaysIncluded: manifest.alwaysIncluded,
+		requires: [...manifest.requires],
+		addOns: [...manifest.addOns],
 		compatibility: manifest.compatibility,
 		licences: manifest.licences,
 		licenceConflict: manifest.licenceConflict,
@@ -98,6 +111,7 @@ export const describeModules = (datasets: ReadonlyArray<Licensed>) => {
 			id: dataset.id,
 			title: dataset.title,
 			topic: dataset.topic,
+			partial: dataset.partial,
 		})),
 		build: manifest.build,
 	}));

@@ -1,16 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
 	DATASET_FOUNDATION_PARTS,
+	DATASET_SPLIT_MODULES,
 	DATASET_THEMES,
 	DATASET_TOPICS,
 	getDatasetTheme,
 	isDatasetFoundationPart,
 	isDatasetTheme,
 	isDatasetTopic,
-	moduleOfTopic,
 	themeOfTopic,
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets";
+import { modulesOfTopic } from "@uk-data-atlas/datasets/registry";
 
 const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 // "general" is only a catch-all on its own: `general-elections` is a real topic.
@@ -83,13 +84,17 @@ describe("theme and topic registry", () => {
 			expect(topicsOfTheme(id).length, id).toBeGreaterThan(0);
 	});
 
-	it("downloads each topic in the module of its theme, for now", () => {
+	it("downloads each topic in the module of its theme, or a split of it", () => {
 		for (const topic of DATASET_TOPICS) {
-			const module = moduleOfTopic(topic.id);
-			expect(module, topic.id).toBe(topic.theme);
-			expect(
-				isDatasetTheme(module) || isDatasetFoundationPart(module),
-			).toBe(true);
+			const modules = modulesOfTopic(topic.id);
+			for (const module of modules) {
+				const split = DATASET_SPLIT_MODULES.find(
+					({ id }) => id === module,
+				);
+				if (split) expect(split.theme, topic.id).toBe(topic.theme);
+				else expect(module, topic.id).toBe(topic.theme);
+				expect(isDatasetFoundationPart(module)).toBe(false);
+			}
 		}
 	});
 

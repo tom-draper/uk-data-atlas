@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -13,6 +13,12 @@ import {
 	themeOfTopic,
 	type DatasetTopic,
 } from "@uk-data-atlas/datasets";
+import {
+	DATASET_HOME_MODULE_IDS,
+	DATASET_SPLIT_MODULES,
+	isDatasetModule,
+	moduleOfDataset,
+} from "@uk-data-atlas/datasets/registry";
 import { DATASETS } from "./datasetUniverse";
 
 /**
@@ -224,6 +230,83 @@ describe("dataset tree", () => {
 		expect(REGISTERED_DATASETS.map(({ id }) => id).sort()).toEqual(
 			DATASETS.map(({ id }) => id).sort(),
 		);
+	});
+});
+
+describe("split modules", () => {
+	const registered = new Map(
+		REGISTERED_DATASETS.map((dataset) => [dataset.id, dataset]),
+	);
+
+	it("only name registered datasets, under the theme they are split from", () => {
+		for (const split of DATASET_SPLIT_MODULES) {
+			expect(split.datasets.length, split.id).toBeGreaterThan(0);
+			for (const id of split.datasets) {
+				const dataset = registered.get(id);
+				expect(dataset, `${split.id}: ${id}`).toBeDefined();
+				expect(dataset!.theme, `${split.id}: ${id}`).toBe(split.theme);
+			}
+		}
+	});
+
+	it("give every dataset exactly one home module", () => {
+		const homes = new Map<string, string[]>();
+		for (const dataset of REGISTERED_DATASETS) {
+			const home = moduleOfDataset(dataset);
+			expect(DATASET_HOME_MODULE_IDS, dataset.id).toContain(home);
+			homes.set(home, [...(homes.get(home) ?? []), dataset.id]);
+		}
+		for (const split of DATASET_SPLIT_MODULES) {
+			const held = homes.get(split.id) ?? [];
+			if (split.holds === "datasets")
+				expect(held.sort(), split.id).toEqual(
+					[...split.datasets].sort(),
+				);
+			else expect(held, `${split.id} is an add-on`).toEqual([]);
+		}
+	});
+
+	it("make add-ons require a module that homes their datasets", () => {
+		for (const split of DATASET_SPLIT_MODULES) {
+			if (split.holds !== "licensed-rows") {
+				expect(split.requires, split.id).toEqual([]);
+				continue;
+			}
+			expect(split.requires.length, split.id).toBeGreaterThan(0);
+			for (const required of split.requires) {
+				expect(
+					isDatasetModule(required),
+					`${split.id} -> ${required}`,
+				).toBe(true);
+				expect(DATASET_HOME_MODULE_IDS).toContain(required);
+			}
+			for (const id of split.datasets)
+				expect(split.requires, `${split.id}: ${id}`).toContain(
+					moduleOfDataset(registered.get(id)!),
+				);
+		}
+	});
+
+	it("keep the local elections add-on in step with the recorded licence years", () => {
+		const split = DATASET_SPLIT_MODULES.find(
+			({ id }) => id === "politics-sharealike",
+		);
+		expect(split?.holds).toBe("licensed-rows");
+		if (split?.holds !== "licensed-rows") return;
+		const definition = readFileSync(
+			join(
+				process.cwd(),
+				"packages/datasets/src/politics/local-elections/local-election/dataset.ts",
+			),
+			"utf8",
+		);
+		const years = /CC BY-SA 3\.0 \((\d{4})\S(\d{4})\)/.exec(definition);
+		expect(
+			years,
+			"the local-election licence names the CC BY-SA years",
+		).not.toBeNull();
+		expect(split.electionDates?.from.slice(0, 4)).toBe(years![1]);
+		expect(split.electionDates?.to.slice(0, 4)).toBe(years![2]);
 	});
 });
 

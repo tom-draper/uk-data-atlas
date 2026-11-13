@@ -5,14 +5,17 @@ import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
 	CORE_COMPATIBILITY_KEY,
+	DATASET_SPLIT_MODULES,
 	type ModuleBuild,
 	type ModuleBuildFile,
 	type ModuleManifest,
 } from "@uk-data-atlas/datasets/registry";
 import { publishVacuumed } from "../storage/publishVacuumed.ts";
 import {
+	type ModuleTable,
 	DATASET_TABLES,
 	DENOMINATOR_MEASURES,
+	LICENSED_ROW_TABLES,
 	MODULE_INFO_TABLE,
 	POSTCODE_PAYLOADS,
 	classifyViews,
@@ -144,14 +147,81 @@ const copyTable = (database: DatabaseSync, table: string, where?: string) => {
 	);
 };
 
-/** The temp tables naming the rows a theme module owns. */
+/** The `licensed-rows` split a module is, if it is one. */
+const addOnOf = (moduleId: string) =>
+	DATASET_SPLIT_MODULES.find(
+		(split) => split.id === moduleId && split.holds === "licensed-rows",
+	);
+
+/** The `licensed-rows` splits that take rows out of a module. */
+const withheldFrom = (moduleId: string) =>
+	DATASET_SPLIT_MODULES.filter(
+		(split) =>
+			split.holds === "licensed-rows" &&
+			(split.requires as readonly string[]).includes(moduleId),
+	);
+
+/**
+ * The temp tables naming the rows a theme module owns. A `licensed-rows`
+ * add-on owns the datasets it adds rows to, and takes only the licensed rows
+ * of them (`markLicensed`); every other module owns the datasets homed in it.
+ */
 const markOwned = (database: DatabaseSync, moduleId: string) => {
+	const addOn = addOnOf(moduleId);
+	const owned = addOn
+		? `slug IN (${addOn.datasets.map(literal).join(", ")})`
+		: `module = ${literal(moduleId)}`;
 	database.exec(
-		`CREATE TEMP TABLE owned_dataset AS SELECT id FROM src.dataset WHERE module = ${literal(moduleId)};
+		`CREATE TEMP TABLE owned_dataset AS SELECT id FROM src.dataset WHERE ${owned};
 		 CREATE TEMP TABLE owned_series AS SELECT id FROM src.series WHERE dataset_id IN (SELECT id FROM owned_dataset);
 		 CREATE TEMP TABLE owned_election AS SELECT id FROM src.election WHERE dataset_id IN (SELECT id FROM owned_dataset);
 		 CREATE TEMP TABLE owned_contest AS SELECT id FROM src.contest WHERE election_id IN (SELECT id FROM owned_election)`,
 	);
+};
+
+/**
+ * The temp tables naming the rows a licensed-rows split holds: the elections
+ * of its datasets polled in its date range, and what hangs off them. Filled for
+ * the add-on and for the module it takes the rows from, so the two select
+ * complementary rows.
+ */
+const markLicensed = (
+	database: DatabaseSync,
+	splits: ReadonlyArray<{
+		datasets: readonly string[];
+		electionDates?: { from: string; to: string };
+	}>,
+) => {
+	const licensed = splits.flatMap((split) =>
+		split.electionDates
+			? split.datasets.map(
+					(slug) =>
+						`(d.slug = ${literal(slug)} AND e.date BETWEEN ${literal(split.electionDates!.from)} AND ${literal(split.electionDates!.to)})`,
+				)
+			: [],
+	);
+	database.exec(
+		`CREATE TEMP TABLE licensed_election AS SELECT e.id, e.date FROM src.election e
+		   JOIN src.dataset d ON d.id = e.dataset_id
+		  WHERE ${licensed.join(" OR ") || "0"};
+		 CREATE TEMP TABLE licensed_dataset AS SELECT DISTINCT e.dataset_id AS id FROM src.election e WHERE e.id IN (SELECT id FROM licensed_election);
+		 CREATE TEMP TABLE licensed_series AS SELECT id FROM src.series WHERE dataset_id IN (SELECT id FROM licensed_dataset);
+		 CREATE TEMP TABLE licensed_contest AS SELECT id FROM src.contest WHERE election_id IN (SELECT id FROM licensed_election);
+		 CREATE TEMP TABLE licensed_period AS SELECT id FROM src.period WHERE label IN (SELECT date FROM licensed_election)`,
+	);
+};
+
+/** Fails when the periods of licensed rows are not the election dates they are read from. */
+const checkLicensedPeriods = (database: DatabaseSync, moduleId: string) => {
+	const missing = database
+		.prepare(
+			"SELECT count(*) AS n FROM temp.licensed_election WHERE date NOT IN (SELECT label FROM src.period)",
+		)
+		.get() as { n: number };
+	if (Number(missing.n) > 0)
+		throw new Error(
+			`Module ${moduleId}: ${missing.n} licensed elections have no period labelled with their date, so their observations cannot be told apart.`,
+		);
 };
 
 /** Fails when a module's rows point at a row of another module. */
@@ -223,8 +293,32 @@ const moduleInfo = (
 const moduleSelection = (id: string) => {
 	if (id === "postcodes")
 		return (table: string) => tableOwner(table) === "postcodes";
+	if (addOnOf(id))
+		return (table: string) =>
+			LICENSED_ROW_TABLES.some((licensed) => licensed.table === table);
 	return (table: string) =>
 		DATASET_TABLES.some((owned) => owned.table === table);
+};
+
+/**
+ * Which rows of each table a theme module copies. A module a licensed-rows
+ * split takes from leaves those rows out, and the add-on takes exactly them.
+ */
+const rowSelection = (id: string): readonly ModuleTable[] => {
+	const addOn = addOnOf(id);
+	if (addOn) return LICENSED_ROW_TABLES;
+	if (withheldFrom(id).length === 0) return DATASET_TABLES;
+	return DATASET_TABLES.map((owned) => {
+		const licensed = LICENSED_ROW_TABLES.find(
+			({ table }) => table === owned.table,
+		);
+		return licensed
+			? {
+					table: owned.table,
+					where: `(${owned.where}) AND NOT (${licensed.where})`,
+				}
+			: owned;
+	});
 };
 
 /** Builds the SQLite file of one theme module or of `postcodes`. */
@@ -252,15 +346,22 @@ export const buildModuleDatabase = (
 			);
 		} else {
 			markOwned(database, manifest.id);
+			const addOn = addOnOf(manifest.id);
+			const withheld = withheldFrom(manifest.id);
+			if (addOn || withheld.length > 0) {
+				markLicensed(database, addOn ? [addOn] : withheld);
+				checkLicensedPeriods(database, manifest.id);
+			}
 			checkDatasets(database, manifest);
 			checkSelfContained(database, manifest.id);
-			for (const { table, where } of DATASET_TABLES)
+			for (const { table, where } of rowSelection(manifest.id))
 				copyTable(database, table, where);
 		}
 		moduleInfo(database, {
 			id: manifest.id,
 			coreCompatibility: CORE_COMPATIBILITY_KEY,
 			kind: manifest.kind,
+			requires: manifest.requires.join(","),
 		});
 	});
 

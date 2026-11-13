@@ -59,7 +59,20 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				conversion_skip: 1,
 			},
 		],
-		["politics", { dataset: 1, series: 1, observation: 1 }],
+		[
+			"politics",
+			{
+				dataset: 2,
+				series: 2,
+				// The 2016 local rows are the add-on's.
+				observation: 2,
+				series_gap: 1,
+				area_relationship: 1,
+				election: 2,
+				contest: 3,
+				candidacy: 4,
+			},
+		],
 	] as const) {
 		const file = open(join(root, "release", sqlitePath(module)));
 		try {
@@ -80,6 +93,8 @@ test("a module file holds only the rows of its datasets", async (t) => {
 		} finally {
 			file.close();
 		}
+		// Politics gives up its 2016 local rows to the add-on (tested below).
+		if (module === "politics") continue;
 		const inAtlas = count(
 			atlas,
 			`SELECT count(*) AS n FROM observation WHERE series_id IN (SELECT s.id FROM series s JOIN dataset d ON d.id = s.dataset_id WHERE d.module = '${module}')`,
@@ -172,14 +187,20 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 	const out = join(root, "all.sqlite");
 	const result = await assembleModules({
 		root: join(root, "release"),
-		modules: ["postcodes", "politics", "health", "economy"],
+		modules: [
+			"postcodes",
+			"politics-sharealike",
+			"politics",
+			"health",
+			"economy",
+		],
 		out,
-		allowLicenceConflict: true,
 	});
 	assert.deepEqual(result.modules, [
 		"economy",
 		"health",
 		"politics",
+		"politics-sharealike",
 		"postcodes",
 	]);
 	assert.deepEqual(result.skippedViews, []);
@@ -198,6 +219,8 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 			"SELECT count(*) AS n FROM series_crosswalk",
 			"SELECT count(*) AS n FROM area_relationship",
 			"SELECT count(*) AS n FROM candidacy",
+			"SELECT count(*) AS n FROM contest",
+			"SELECT count(*) AS n FROM election",
 			"SELECT count(*) AS n FROM postcode_unit",
 			"SELECT count(*) AS n FROM payloads",
 			"SELECT total AS n FROM observation_totals WHERE measure = 'population'",
@@ -217,7 +240,7 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 					)
 					.get() as { value: string }
 			).value,
-			"economy,health,politics,postcodes",
+			"economy,health,politics,politics-sharealike,postcodes",
 		);
 		assert.deepEqual(
 			assembled.prepare("PRAGMA foreign_key_check").all(),
@@ -375,21 +398,38 @@ test("modules with share-alike data beside other terms need a flag", async (t) =
 	const root = scratch(t);
 	await buildFixtureRelease(root);
 	const release = join(root, "release");
+	// No registry module has a conflict now, so mark one in its manifest.
+	const manifestPath = join(release, manifestFilePath("health"));
+	const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as object;
+	writeFileSync(
+		manifestPath,
+		JSON.stringify({
+			...manifest,
+			licenceConflict: {
+				shareAlike: ["cc-by-sa-4.0"],
+				others: ["ogl-3.0"],
+			},
+		}),
+	);
 	await assert.rejects(
 		assembleModules({
 			root: release,
 			modules: ["politics", "health"],
 			out: join(root, "out.sqlite"),
 		}),
-		/politics.*cannot be offered as one unit/,
+		/health.*cannot be offered as one unit/,
 	);
 	const result = await assembleModules({
 		root: release,
-		modules: ["politics", "health"],
+		modules: ["politics", "politics-sharealike", "health"],
 		out: join(root, "out.sqlite"),
 		allowLicenceConflict: true,
 	});
-	assert.deepEqual(result.modules, ["health", "politics"]);
+	assert.deepEqual(result.modules, [
+		"health",
+		"politics",
+		"politics-sharealike",
+	]);
 	const assembled = open(join(root, "out.sqlite"));
 	try {
 		assert.equal(
@@ -401,6 +441,114 @@ test("modules with share-alike data beside other terms need a flag", async (t) =
 					.get() as { value: string }
 			).value,
 			"cc-by-sa-4.0,ogl-3.0",
+		);
+	} finally {
+		assembled.close();
+	}
+});
+
+test("an add-on and its parent split the licensed rows, none shared or lost", async (t) => {
+	const root = scratch(t);
+	await buildFixtureRelease(root);
+	const atlas = open(join(root, "atlas.sqlite"));
+	const parent = open(join(root, "release", sqlitePath("politics")));
+	const addOn = open(
+		join(root, "release", sqlitePath("politics-sharealike")),
+	);
+	try {
+		const tables = readSchema(addOn)
+			.filter((row) => row.type === "table")
+			.map((row) => row.name)
+			.sort();
+		assert.deepEqual(tables, [
+			"area_relationship",
+			"candidacy",
+			"contest",
+			"election",
+			"module_info",
+			"observation",
+			"series_gap",
+		]);
+		for (const [table, rows] of [
+			["election", 1],
+			["contest", 1],
+			["candidacy", 1],
+			["observation", 2],
+			["series_gap", 1],
+			["area_relationship", 1],
+		] as const)
+			assert.equal(
+				count(addOn, `SELECT count(*) AS n FROM ${table}`),
+				rows,
+				table,
+			);
+		// Together the two files hold exactly the rows atlas.sqlite has for the politics datasets.
+		for (const [table, where] of [
+			["election", ""],
+			["contest", ""],
+			["candidacy", ""],
+			["observation", " WHERE series_id IN (6, 7)"],
+			["series_gap", " WHERE series_id = 7"],
+			["area_relationship", " WHERE dataset_id = 5"],
+		] as const)
+			assert.equal(
+				count(parent, `SELECT count(*) AS n FROM ${table}${where}`) +
+					count(addOn, `SELECT count(*) AS n FROM ${table}${where}`),
+				count(atlas, `SELECT count(*) AS n FROM ${table}${where}`),
+				table,
+			);
+		// No licensed period is left in the parent, and the add-on holds only those.
+		assert.equal(
+			count(
+				parent,
+				"SELECT count(*) AS n FROM observation WHERE series_id = 7 AND period_id = 3",
+			),
+			0,
+		);
+		assert.equal(
+			count(
+				addOn,
+				"SELECT count(*) AS n FROM observation WHERE period_id <> 3",
+			),
+			0,
+		);
+		assert.equal(
+			count(
+				addOn,
+				"SELECT count(*) AS n FROM election e JOIN contest c ON c.election_id = e.id",
+			),
+			1,
+		);
+	} finally {
+		atlas.close();
+		parent.close();
+		addOn.close();
+	}
+});
+
+test("an add-on is not assembled without the module it adds to", async (t) => {
+	const root = scratch(t);
+	await buildFixtureRelease(root);
+	const release = join(root, "release");
+	await assert.rejects(
+		assembleModules({
+			root: release,
+			modules: ["politics-sharealike", "health"],
+			out: join(root, "out.sqlite"),
+		}),
+		/politics-sharealike: it adds to politics, which is not in this assembly/,
+	);
+	const result = await assembleModules({
+		root: release,
+		modules: ["politics-sharealike", "politics"],
+		out: join(root, "out.sqlite"),
+	});
+	assert.deepEqual(result.modules, ["politics", "politics-sharealike"]);
+	const assembled = open(join(root, "out.sqlite"));
+	try {
+		assert.deepEqual(
+			assembled.prepare("PRAGMA foreign_key_check").all(),
+			[],
 		);
 	} finally {
 		assembled.close();

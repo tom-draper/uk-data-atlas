@@ -3,6 +3,7 @@ import {
 	MODULE_LICENCES,
 	buildModuleManifests,
 	getRegisteredDataset,
+	resolveLicences,
 	type DatasetFoundationPart,
 	withModuleBuild,
 	type ModuleBuild,
@@ -94,10 +95,31 @@ const licenceTerms = (licence: ModuleLicenceInfo) =>
 		licence.shareAlike ? "ShareAlike" : "No ShareAlike condition",
 	].join(", ");
 
+/**
+ * The source facts behind a module's datasets. An add-on holds only the rows
+ * under one licence of a dataset that has several, so a source under another
+ * licence is left out, as it is from the manifest's licences. A source whose
+ * licence is not recognised is kept.
+ */
 const datasetFacts = (facts: DistFacts, manifest: ModuleManifest) =>
 	manifest.kind === "foundation"
 		? facts.foundation[manifest.id as DatasetFoundationPart]
-		: manifest.datasets.flatMap(({ id }) => facts.datasets[id] ?? []);
+		: manifest.datasets.flatMap((dataset) =>
+				(facts.datasets[dataset.id] ?? []).filter((fact) => {
+					const ids = resolveLicences(fact.licenceName);
+					return (
+						ids.length === 0 ||
+						ids.some((id) =>
+							(dataset.licences as readonly string[]).includes(
+								id,
+							),
+						)
+					);
+				}),
+			);
+
+const code = (ids: readonly string[]) =>
+	ids.map((id) => `\`${id}\``).join(", ");
 
 const usageSection = (manifest: ModuleManifest) => {
 	const file = databasePath(manifest.id);
@@ -126,7 +148,7 @@ const usageSection = (manifest: ModuleManifest) => {
 		"To use several modules, join core and the modules you choose into one self-contained file. From a clone of the repository:",
 		"",
 		"```",
-		`pnpm data:assemble --from <release folder> --modules ${manifest.id === "core" ? "<module>,<module>" : manifest.id} --out atlas.sqlite`,
+		`pnpm data:assemble --from <release folder> --modules ${manifest.id === "core" ? "<module>,<module>" : [...manifest.requires, manifest.id].join(",")} --out atlas.sqlite`,
 		"```",
 		"",
 		...(parquet
@@ -211,6 +233,17 @@ export const renderModuleReadme = (
 						? "None of its own"
 						: String(manifest.datasets.length),
 				],
+				...(manifest.requires.length > 0
+					? [
+							[
+								"Requires",
+								`${code(manifest.requires)} (an add-on: it holds rows of datasets in ${manifest.requires.length === 1 ? "that module" : "those modules"}, so download them together)`,
+							],
+						]
+					: []),
+				...(manifest.addOns.length > 0
+					? [["Add-ons", code(manifest.addOns)]]
+					: []),
 				["Core compatibility", `\`${manifest.compatibility.core}\``],
 				["Manifest schema version", String(manifest.schemaVersion)],
 				["Manifest", `\`${manifestPath(manifest.id)}\``],
@@ -242,7 +275,7 @@ export const renderModuleReadme = (
 			for (const dataset of datasets) {
 				const registered = getRegisteredDataset(dataset.id);
 				lines.push(
-					`- **${dataset.title}** (\`${dataset.id}\`): ${registered?.about ?? ""}`,
+					`- **${dataset.title}** (\`${dataset.id}\`)${dataset.partial ? ` (only its rows under ${code(dataset.licences)}; the rest is in ${code(manifest.requires)})` : ""}: ${registered?.about ?? ""}`,
 				);
 			}
 			lines.push("");
@@ -269,9 +302,23 @@ export const renderModuleReadme = (
 		const { shareAlike, others, datasets } = manifest.licenceConflict;
 		lines.push(
 			"",
-			`> **Licence conflict.** This module mixes ShareAlike data (${shareAlike.map((id) => `\`${id}\``).join(", ")}) with data under ${others.map((id) => `\`${id}\``).join(", ")}. ${datasets.length > 0 ? `The ShareAlike data is in ${datasets.map((id) => `\`${id}\``).join(", ")}. ` : ""}Anything built from the ShareAlike data must be shared under the same terms. A planned split puts it in its own module.`,
+			`> **Licence conflict.** This module mixes ShareAlike data (${shareAlike.map((id) => `\`${id}\``).join(", ")}) with data under ${others.map((id) => `\`${id}\``).join(", ")}. ${datasets.length > 0 ? `The ShareAlike data is in ${datasets.map((id) => `\`${id}\``).join(", ")}. ` : ""}Anything built from the ShareAlike data must be shared under the same terms.`,
 		);
 	}
+	if (manifest.requires.length > 0) {
+		const shareAlike = (manifest.licences ?? []).filter(
+			(licence) => licence.shareAlike,
+		);
+		lines.push(
+			"",
+			`> **Add-on.** This module holds only some rows of datasets in ${code(manifest.requires)}, and needs ${manifest.requires.length === 1 ? "that module" : "those modules"} beside core.${shareAlike.length > 0 ? ` Its rows are under ${shareAlike.map(licenceLink).join(", ")}, a ShareAlike licence: anything built from them must be shared under the same terms. That condition applies to this module only. The rest of ${code(manifest.requires)} does not carry it, and neither does a download without this module.` : ""}`,
+		);
+	}
+	if (manifest.addOns.length > 0)
+		lines.push(
+			"",
+			`> **Add-ons.** Some rows of this module's datasets are held in ${code(manifest.addOns)} instead, because they are under different terms. Add ${manifest.addOns.length === 1 ? "it" : "them"} for the full datasets.`,
+		);
 	if (sources.length > 0) {
 		lines.push(
 			"",
@@ -320,18 +367,19 @@ export const renderIndexReadme = (
 		"",
 		"Open UK public data, organised into modules. This file is generated from the module manifests. Do not edit it.",
 		"",
-		"A download is the core module plus the modules you choose. `catalogue.json` lists every module, including ones you have not downloaded, so you can tell what needs another module. `licences.json` lists every licence and the modules it applies to.",
+		"A download is the core module plus the modules you choose. `catalogue.json` lists every module, including ones you have not downloaded, so you can tell what needs another module. `licences.json` lists every licence and the modules it applies to. A module with something under Requires is an add-on: it holds rows of datasets in another module, under different terms, and is downloaded with that module.",
 		"",
 		"## Modules",
 		"",
 		table(
-			["Module", "Label", "Datasets", "Licences", "Database"],
+			["Module", "Label", "Datasets", "Requires", "Licences", "Database"],
 			manifests.map((manifest) => [
 				`[\`${manifest.id}\`](${manifest.id}/README.md)`,
 				manifest.label,
 				manifest.kind === "foundation"
 					? "None of its own"
 					: String(manifest.datasets.length),
+				manifest.requires.length > 0 ? code(manifest.requires) : "None",
 				manifest.licences === null
 					? "Not derived"
 					: manifest.licences.map(({ id }) => `\`${id}\``).join(", "),
@@ -382,6 +430,7 @@ export const renderChangelog = (release: string): string =>
 		`## ${release}`,
 		"",
 		"- Module manifests and READMEs generated from the registry.",
+		"- `population-detail` holds the heavy population datasets, and `politics-sharealike` holds the CC BY-SA local election rows for 2016 to 2019 as an add-on to `politics`.",
 		"- Module databases and Parquet files are built per module where the build covers them.",
 		"",
 	].join("\n");
@@ -411,16 +460,30 @@ export const renderCatalogueJson = (
 					status: manifest.build.status,
 					bytes: manifest.build.bytes,
 				},
+				requires: manifest.requires,
+				addOns: manifest.addOns,
 				topics: manifest.topics.map(({ id }) => id),
 				datasets: manifest.datasets.map(({ id }) => id),
 			})),
+			// Each dataset once, in the module it is homed in. An add-on lists the
+			// datasets it adds rows to under `addOns` of the module they are in.
 			datasets: manifests.flatMap((manifest) =>
-				manifest.datasets.map((dataset) => ({
-					id: dataset.id,
-					title: dataset.title,
-					topic: dataset.topic,
-					module: manifest.id,
-				})),
+				manifest.datasets
+					.filter(({ partial }) => !partial)
+					.map((dataset) => ({
+						id: dataset.id,
+						title: dataset.title,
+						topic: dataset.topic,
+						module: manifest.id,
+						addOns: manifests
+							.filter(({ datasets }) =>
+								datasets.some(
+									({ id, partial }) =>
+										partial && id === dataset.id,
+								),
+							)
+							.map(({ id }) => id),
+					})),
 			),
 		},
 		null,

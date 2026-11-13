@@ -24,7 +24,9 @@ const fact = (licenceName: string, tag: string): SourceFact => ({
 
 const OGL = "Open Government Licence v3.0";
 
-/** One OGL fact per dataset, except the local elections, which are share-alike. */
+const SHARE_ALIKE = "Creative Commons Attribution-ShareAlike 3.0 Unported";
+
+/** One OGL fact per dataset. The local elections also have a share-alike source. */
 const facts = (): DistFacts => {
 	const ids = buildModuleManifests({ datasets: () => [] }).flatMap(
 		({ datasets }) => datasets.map(({ id }) => id),
@@ -33,14 +35,9 @@ const facts = (): DistFacts => {
 		datasets: Object.fromEntries(
 			ids.map((id) => [
 				id,
-				[
-					fact(
-						id === "local-election"
-							? "Creative Commons Attribution-ShareAlike 3.0 Unported"
-							: OGL,
-						id,
-					),
-				],
+				id === "local-election"
+					? [fact(OGL, `${id}-open`), fact(SHARE_ALIKE, id)]
+					: [fact(OGL, id)],
 			]),
 		),
 		foundation: {
@@ -81,6 +78,11 @@ describe("planDist", () => {
 		expect(ids.length).toBeGreaterThan(0);
 		expect(new Set(ids).size).toBe(ids.length);
 		expect(ids.sort()).toEqual(Object.keys(facts().datasets).sort());
+		const local = catalogue.datasets.find(
+			(d: { id: string }) => d.id === "local-election",
+		);
+		expect(local.module).toBe("politics");
+		expect(local.addOns).toEqual(["politics-sharealike"]);
 	});
 
 	it("records no sizes or checksums before the databases exist", () => {
@@ -96,12 +98,27 @@ describe("planDist", () => {
 		expect(plan.get("politics/README.md")).toContain("Not built yet");
 	});
 
-	it("flags the share-alike mix in the politics module", () => {
+	it("keeps share-alike out of politics and in its add-on", () => {
 		const licences = JSON.parse(plan.get("licences.json")!);
-		expect(
-			licences.conflicts.map((c: { module: string }) => c.module),
-		).toEqual(["politics"]);
-		expect(plan.get("politics/README.md")).toContain("Licence conflict");
+		expect(licences.conflicts).toEqual([]);
+		const politics = plan.get("politics/README.md")!;
+		expect(politics).not.toContain("Licence conflict");
+		expect(politics).not.toContain("ShareAlike 3.0");
+		expect(politics).toContain("politics-sharealike");
+		const addOn = plan.get("politics-sharealike/README.md")!;
+		expect(addOn).toContain("ShareAlike");
+		expect(addOn).toContain("Requires");
+		expect(addOn).toContain("**Add-on.**");
+		expect(addOn).toContain("applies to this module only");
+		expect(politics).toContain("**Add-ons.**");
+		expect(addOn).not.toContain("planned split");
+		const manifest = JSON.parse(
+			plan.get("sqlite/atlas-politics-sharealike.manifest.json")!,
+		);
+		expect(manifest.requires).toEqual(["politics"]);
+		expect(manifest.licences.map((l: { id: string }) => l.id)).toEqual([
+			"cc-by-sa-3.0",
+		]);
 	});
 
 	it("uses no em dashes", () => {
@@ -155,6 +172,27 @@ describe("planDist with built modules", () => {
 		expect(readme).toContain("pnpm data:assemble");
 		expect(readme).not.toContain("Not built yet");
 		expect(plan.get("politics/README.md")).toContain("Not built yet");
+	});
+
+	it("tells an add-on to be assembled with the module it needs", () => {
+		const built = planDist(facts(), "test", {
+			"politics-sharealike": {
+				status: "built",
+				bytes: 10,
+				files: [
+					{
+						path: "sqlite/atlas-politics-sharealike.sqlite",
+						format: "sqlite",
+						bytes: 10,
+						sha256: "c".repeat(64),
+					},
+				],
+				rows: { observation: 1 },
+			},
+		} as never);
+		expect(built.get("politics-sharealike/README.md")).toContain(
+			"--modules politics,politics-sharealike",
+		);
 	});
 
 	it("writes DuckDB views for the Parquet files that exist", () => {

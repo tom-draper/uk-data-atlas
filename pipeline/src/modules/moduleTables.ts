@@ -73,6 +73,44 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 	},
 ];
 
+/**
+ * The tables whose rows a `licensed-rows` split can take out of the module a
+ * dataset stays in (`politics-sharealike`). `where` selects the rows under
+ * the split's licence, from the temp tables `markLicensed` fills: the
+ * elections polled in the split's date range, their contests
+ * and candidacies, and the observations, gaps and area relationships of the
+ * split's datasets in those elections' periods. A period is labelled with the
+ * election date, which is how the period-keyed rows are told apart. Every
+ * other dataset table stays whole in the parent: series are one per measure
+ * and span both licences, and hold no result.
+ */
+export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
+	{
+		table: "election",
+		where: "id IN (SELECT id FROM temp.licensed_election)",
+	},
+	{
+		table: "contest",
+		where: "id IN (SELECT id FROM temp.licensed_contest)",
+	},
+	{
+		table: "candidacy",
+		where: "contest_id IN (SELECT id FROM temp.licensed_contest)",
+	},
+	{
+		table: "observation",
+		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+	},
+	{
+		table: "series_gap",
+		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+	},
+	{
+		table: "area_relationship",
+		where: "dataset_id IN (SELECT id FROM temp.licensed_dataset) AND period_id IN (SELECT id FROM temp.licensed_period)",
+	},
+];
+
 /** Postcode tables share this prefix. */
 export const POSTCODE_TABLE = /^postcode/;
 

@@ -89,7 +89,8 @@ export type DeclaredDataset = {
 	/**
 	 * The one topic the dataset is filed under (`docs/data-organisation.md`).
 	 * The module it is packaged in, stored with it in the database, is derived
-	 * from the topic (`moduleOfTopic`) and is never set by hand.
+	 * from the topic's theme, or the split module that holds the dataset
+	 * (`moduleOfDataset`), and is never set by hand.
 	 */
 	topic: DatasetTopic;
 	/** Other topics the dataset is also listed under, never the primary. */

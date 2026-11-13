@@ -11,7 +11,7 @@ import { buildModules } from "../../src/modules/buildModules";
 
 /**
  * A small `atlas.sqlite` with the table layout the module build splits: core
- * tables, dataset tables for three modules, postcode tables, one view over
+ * tables, dataset tables for three modules and one add-on, postcode tables, one view over
  * core and one over a module. Only the columns the build touches are real; the
  * foreign keys are kept so the assembler's check has something to check.
  */
@@ -42,7 +42,7 @@ CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE, from_
 CREATE TABLE series_conversion (series_id INTEGER PRIMARY KEY REFERENCES series(id), rule TEXT NOT NULL, basis_id TEXT NOT NULL REFERENCES weight_basis(id), exact INTEGER NOT NULL);
 CREATE TABLE series_crosswalk (series_id INTEGER NOT NULL REFERENCES series(id), position INTEGER NOT NULL, crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id), reversed INTEGER NOT NULL, PRIMARY KEY (series_id, position)) WITHOUT ROWID;
 CREATE TABLE area_relationship (dataset_id INTEGER NOT NULL REFERENCES dataset(id), relation TEXT NOT NULL, period_id INTEGER NOT NULL REFERENCES period(id), child_version_id INTEGER NOT NULL REFERENCES area_version(id), parent_version_id INTEGER NOT NULL REFERENCES area_version(id), PRIMARY KEY (dataset_id, relation, period_id, child_version_id, parent_version_id)) WITHOUT ROWID;
-CREATE TABLE election (id INTEGER NOT NULL PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, release_id INTEGER NOT NULL REFERENCES area_releases(id));
+CREATE TABLE election (id INTEGER NOT NULL PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, date TEXT NOT NULL, release_id INTEGER NOT NULL REFERENCES area_releases(id));
 CREATE TABLE contest (id INTEGER NOT NULL PRIMARY KEY, election_id INTEGER NOT NULL REFERENCES election(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), winner_party_id INTEGER REFERENCES party(id));
 CREATE TABLE candidacy (contest_id INTEGER NOT NULL REFERENCES contest(id), position INTEGER NOT NULL, family_name TEXT, PRIMARY KEY (contest_id, position)) WITHOUT ROWID;
 CREATE TABLE postcode_unit (id INTEGER NOT NULL PRIMARY KEY, postcode TEXT NOT NULL, area_version_id INTEGER NOT NULL REFERENCES area_version(id));
@@ -57,6 +57,7 @@ export const FIXTURE_MODULES = [
 	"economy",
 	"health",
 	"politics",
+	"politics-sharealike",
 	"postcodes",
 ] as const;
 
@@ -72,14 +73,14 @@ INSERT INTO payloads VALUES ('catalogue', x'01'), ('postcode-index', x'0203'), (
 INSERT INTO source VALUES (1, 'ons');
 INSERT INTO area_releases VALUES (1, '2024');
 INSERT INTO area_version VALUES (1, 'E01'), (2, 'E02'), (3, 'E03');
-INSERT INTO period VALUES (1, '2021'), (2, '2022');
+INSERT INTO period VALUES (1, '2021'), (2, '2022'), (3, '2016-05-05'), (4, '2021-05-06');
 INSERT INTO status VALUES (1, 'ok', 'Ok'), (2, 'suppressed', 'Suppressed');
 INSERT INTO party VALUES (1, 'Alpha'), (2, 'Beta');
 INSERT INTO dimension VALUES (1, 'sex');
 INSERT INTO dimension_member VALUES (1, 1, 'female'), (2, 1, 'male');
 INSERT INTO measure VALUES (1, 'population', 'Population'), (2, 'households', 'Households'), (3, 'income', 'Income'), (4, 'vacancies', 'Vacancies'), (5, 'vote-share', 'Vote share');
-INSERT INTO dataset VALUES (1, 'income-estimates', 'economy', 'Income', 1), (2, 'jobs', 'economy', 'Jobs', 1), (3, 'census-health', 'health', 'Health', 1), (4, 'general-elections', 'politics', 'Elections', 1);
-INSERT INTO series VALUES (1, 1, 1, 1, NULL, 's1'), (2, 1, 3, 1, NULL, 's2'), (3, 2, 4, 1, 1, 's3'), (4, 3, 1, 1, NULL, 's4'), (5, 3, 2, 1, NULL, 's5'), (6, 4, 5, 1, NULL, 's6');
+INSERT INTO dataset VALUES (1, 'income-estimates', 'economy', 'Income', 1), (2, 'jobs', 'economy', 'Jobs', 1), (3, 'census-health', 'health', 'Health', 1), (4, 'general-elections', 'politics', 'Elections', 1), (5, 'local-election', 'politics', 'Local elections', 1);
+INSERT INTO series VALUES (1, 1, 1, 1, NULL, 's1'), (2, 1, 3, 1, NULL, 's2'), (3, 2, 4, 1, 1, 's3'), (4, 3, 1, 1, NULL, 's4'), (5, 3, 2, 1, NULL, 's5'), (6, 4, 5, 1, NULL, 's6'), (7, 5, 5, 1, NULL, 's7');
 INSERT INTO series_member VALUES (4, 1, 1), (2, 1, 2);
 INSERT INTO observation VALUES
   (1, 1, 1, 100, 1, NULL, NULL), (1, 2, 1, 200, 1, NULL, NULL), (1, 3, 1, NULL, 2, NULL, NULL),
@@ -87,20 +88,21 @@ INSERT INTO observation VALUES
   (3, 1, 2, 7, 1, NULL, NULL),
   (4, 1, 1, 60, 1, NULL, NULL), (4, 2, 2, 80, 1, NULL, NULL),
   (5, 1, 1, 40, 1, NULL, NULL),
-  (6, 1, 1, 55, 1, NULL, NULL);
+  (6, 1, 1, 55, 1, NULL, NULL),
+  (7, 1, 3, 10, 1, NULL, NULL), (7, 2, 3, 12, 1, NULL, NULL), (7, 1, 4, 20, 1, NULL, NULL);
 INSERT INTO dataset_area_key VALUES (1, 1, 'k1'), (3, 2, 'k2');
 INSERT INTO dataset_area_name VALUES (1, 1, 'One'), (4, 2, 'Two');
 INSERT INTO series_input VALUES (3, 1, 'value');
-INSERT INTO series_gap VALUES (1, 3, 1, 'suppressed'), (4, 2, 2, 'missing');
+INSERT INTO series_gap VALUES (1, 3, 1, 'suppressed'), (4, 2, 2, 'missing'), (7, 3, 3, 'missing'), (7, 3, 4, 'missing');
 INSERT INTO conversion_skip VALUES (1, 1, 1, 1, 'no-route', 2), (3, 2, 1, 1, 'no-values', 1);
 INSERT INTO weight_basis VALUES ('pop', 'Population');
 INSERT INTO crosswalk VALUES (1, 'x', 1, 1, 'pop');
 INSERT INTO series_conversion VALUES (1, 'sum', 'pop', 1), (4, 'rebuild', 'pop', 0);
 INSERT INTO series_crosswalk VALUES (1, 1, 1, 0), (4, 1, 1, 1);
-INSERT INTO area_relationship VALUES (1, 'parent', 1, 1, 2), (3, 'parent', 1, 2, 3);
-INSERT INTO election VALUES (1, 4, 'GE 2024', 1);
-INSERT INTO contest VALUES (1, 1, 1, 1), (2, 1, 2, 2);
-INSERT INTO candidacy VALUES (1, 1, 'Smith'), (1, 2, 'Jones'), (2, 1, 'Khan');
+INSERT INTO area_relationship VALUES (1, 'parent', 1, 1, 2), (3, 'parent', 1, 2, 3), (5, 'parent', 3, 1, 2), (5, 'parent', 4, 1, 2);
+INSERT INTO election VALUES (1, 4, 'GE 2024', '2024-07-04', 1), (2, 5, 'Local 2016', '2016-05-05', 1), (3, 5, 'Local 2021', '2021-05-06', 1);
+INSERT INTO contest VALUES (1, 1, 1, 1), (2, 1, 2, 2), (3, 2, 1, 1), (4, 3, 2, 2);
+INSERT INTO candidacy VALUES (1, 1, 'Smith'), (1, 2, 'Jones'), (2, 1, 'Khan'), (3, 1, 'Cooper'), (4, 1, 'Dean');
 INSERT INTO postcode_unit VALUES (1, 'AA1 1AA', 1), (2, 'AA1 1AB', 2);
 `);
 	} finally {
@@ -108,16 +110,22 @@ INSERT INTO postcode_unit VALUES (1, 'AA1 1AA', 1), (2, 'AA1 1AB', 2);
 	}
 };
 
-/** Registry manifests for the fixture modules, with licences and a conflict on politics. */
+/** Registry manifests for the fixture modules, with `politics-sharealike` an add-on to `politics`. */
 export const fixtureManifests = (): ModuleManifest[] => {
-	const datasets: Record<string, Array<[string, string]>> = {
+	const datasets: Record<string, Array<[string, string, boolean]>> = {
 		economy: [
-			["income-estimates", "Income"],
-			["jobs", "Jobs"],
+			["income-estimates", "Income", false],
+			["jobs", "Jobs", false],
 		],
-		health: [["census-health", "Health"]],
-		politics: [["general-elections", "Elections"]],
+		health: [["census-health", "Health", false]],
+		politics: [
+			["general-elections", "Elections", false],
+			["local-election", "Local elections", false],
+		],
+		"politics-sharealike": [["local-election", "Local elections", true]],
 	};
+	const licence = (id: string) =>
+		id === "politics-sharealike" ? "cc-by-sa-4.0" : "ogl-3.0";
 	return FIXTURE_MODULES.map((id): ModuleManifest => {
 		const theme = id in datasets;
 		return {
@@ -126,19 +134,17 @@ export const fixtureManifests = (): ModuleManifest[] => {
 			label: id,
 			description: `The ${id} module.`,
 			alwaysIncluded: id === "core",
-			datasets: (datasets[id] ?? []).map(([dataset, title]) => ({
+			datasets: (datasets[id] ?? []).map(([dataset, title, partial]) => ({
 				id: dataset,
 				title,
 				topic: id,
-				licences: [
-					{ id: id === "politics" ? "cc-by-sa-4.0" : "ogl-3.0" },
-				],
+				partial,
+				licences: [{ id: licence(id) }],
 			})),
-			licences: [{ id: id === "politics" ? "cc-by-sa-4.0" : "ogl-3.0" }],
-			licenceConflict:
-				id === "politics"
-					? { shareAlike: ["cc-by-sa-4.0"], others: ["ogl-3.0"] }
-					: null,
+			requires: id === "politics-sharealike" ? ["politics"] : [],
+			addOns: id === "politics" ? ["politics-sharealike"] : [],
+			licences: [{ id: licence(id) }],
+			licenceConflict: null,
 			unresolvedLicences: [],
 			compatibility: { core: CORE_COMPATIBILITY_KEY },
 			build: { status: "not-built", bytes: null, files: null },

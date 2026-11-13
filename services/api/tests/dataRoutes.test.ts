@@ -73,7 +73,7 @@ const populationProvenance = (
 const populationTaxonomy = {
 	theme: "population",
 	topic: "population-estimates",
-	module: "population",
+	module: "population-detail",
 };
 
 test("publishes datasets, measures and source-exact population observations", () => {

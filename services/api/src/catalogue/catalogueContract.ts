@@ -168,6 +168,7 @@ const theme = z.looseObject({
 			label: z.string(),
 			description: z.string(),
 			module: z.string(),
+			modules: z.array(z.string()).optional(),
 			datasetCount: z.number(),
 			links: datasetLinks,
 		}),
@@ -191,6 +192,8 @@ const catalogueModule = z.looseObject({
 	links: datasetLinks.optional(),
 	schemaVersion: z.number().optional(),
 	alwaysIncluded: z.boolean().optional(),
+	requires: z.array(z.string()).optional(),
+	addOns: z.array(z.string()).optional(),
 	compatibility: z.looseObject({ core: z.string() }).optional(),
 	licences: z
 		.array(
@@ -219,6 +222,7 @@ const catalogueModule = z.looseObject({
 				id: z.string(),
 				title: z.string(),
 				topic: z.string(),
+				partial: z.boolean().optional(),
 			}),
 		)
 		.optional(),

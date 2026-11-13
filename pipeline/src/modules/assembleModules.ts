@@ -20,6 +20,8 @@ import { sha256OfFile, sqlitePath } from "./buildModules.ts";
 interface ManifestFacts {
 	id: string;
 	compatibility: { core: string };
+	/** Modules this one needs beside core; absent in manifests written before add-ons. */
+	requires?: string[];
 	licenceConflict: { shareAlike: string[]; others: string[] } | null;
 	licences: Array<{ id: string }> | null;
 }
@@ -33,7 +35,8 @@ export interface AssembleModulesOptions {
 	out: string;
 	/**
 	 * Allows a module that holds share-alike data beside data without that
-	 * term (`politics` until its split). The licence ids are written to `meta`.
+	 * term. No module has one since `politics-sharealike` was split out, but a
+	 * new source can raise it again. The licence ids are written to `meta`.
 	 */
 	allowLicenceConflict?: boolean;
 }
@@ -119,6 +122,11 @@ export const assembleModules = async ({
 			if (key !== coreKey)
 				problems.push(
 					`${id}: its ${where} needs core ${String(key)}, this core is ${String(coreKey)}.`,
+				);
+		for (const required of manifest.requires ?? [])
+			if (required !== "core" && !ids.includes(required))
+				problems.push(
+					`${id}: it adds to ${required}, which is not in this assembly. Add ${required} too.`,
 				);
 		for (const licence of manifest.licences ?? []) licences.add(licence.id);
 		if (manifest.licenceConflict) conflicted.push(id);

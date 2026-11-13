@@ -1,11 +1,12 @@
 import {
-	DATASET_FOUNDATION_PARTS,
 	DATASET_THEMES,
 	DATASET_TOPICS,
 	getRegisteredDataset,
 	isDatasetTheme,
 	isDatasetTopic,
-	moduleOfTopic,
+	DATASET_MODULE_IDS,
+	moduleOfDataset,
+	splitModulesOfDataset,
 	type DatasetModule,
 	type DatasetTheme,
 	type DatasetTopic,
@@ -21,6 +22,11 @@ export type DatasetTaxonomy = {
 	theme: DatasetTheme;
 	topic: DatasetTopic;
 	module: DatasetModule;
+	/**
+	 * Modules that hold some of the dataset's rows beside its own, such as the
+	 * ShareAlike local elections of `politics-sharealike`. Empty for most.
+	 */
+	addOnModules: readonly DatasetModule[];
 };
 
 /** The registry id of a catalogue dataset: the two now share their ids. */
@@ -34,7 +40,10 @@ export const taxonomyOfDataset = (
 		? {
 				theme: registered.theme,
 				topic: registered.topic,
-				module: moduleOfTopic(registered.topic),
+				module: moduleOfDataset(registered),
+				addOnModules: splitModulesOfDataset(registered.id)
+					.filter((split) => split.holds === "licensed-rows")
+					.map((split) => split.id),
 			}
 		: undefined;
 };
@@ -70,10 +79,7 @@ export const withTaxonomy = <T extends object>(
 export const TAXONOMY_FILTERS = ["theme", "topic", "module"] as const;
 type TaxonomyFilter = (typeof TAXONOMY_FILTERS)[number];
 
-const MODULE_IDS: readonly string[] = [
-	...new Set(DATASET_TOPICS.map((topic) => moduleOfTopic(topic.id))),
-	...DATASET_FOUNDATION_PARTS.map((part) => part.id),
-];
+const MODULE_IDS: readonly string[] = DATASET_MODULE_IDS;
 
 const ACCEPTED: Record<TaxonomyFilter, readonly string[]> = {
 	theme: DATASET_THEMES.map((theme) => theme.id),
@@ -119,11 +125,27 @@ export const isTaxonomyQuery = (
 	value: TaxonomyQuery | ApiResponse,
 ): value is TaxonomyQuery => !("status" in value);
 
+/**
+ * Whether a dataset has rows in a module: its own module, or an add-on that
+ * holds some of its rows. So `module=politics-sharealike` lists the local
+ * elections, whose `module` field stays `politics`.
+ */
+export const datasetIsInModule = (
+	taxonomy: DatasetTaxonomy | undefined,
+	module: string,
+) =>
+	taxonomy !== undefined &&
+	(taxonomy.module === module ||
+		taxonomy.addOnModules.some((addOn) => addOn === module));
+
 export const matchesTaxonomy = (
 	taxonomy: DatasetTaxonomy | undefined,
 	query: TaxonomyQuery,
 ) =>
-	TAXONOMY_FILTERS.every(
-		(filter) =>
-			query[filter] === undefined || taxonomy?.[filter] === query[filter],
+	TAXONOMY_FILTERS.every((filter) =>
+		query[filter] === undefined
+			? true
+			: filter === "module"
+				? datasetIsInModule(taxonomy, query[filter])
+				: taxonomy?.[filter] === query[filter],
 	);

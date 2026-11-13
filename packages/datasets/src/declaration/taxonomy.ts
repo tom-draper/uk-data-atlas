@@ -22,6 +22,34 @@ interface FoundationPartDefinition extends ThemeDefinition {
 	readonly alwaysIncluded: boolean;
 }
 
+/**
+ * A module cut out of a theme's module once the theme grows too large or
+ * carries a licence the rest does not (docs/data-organisation.md, "Modules").
+ * It keeps the theme and the topics of the datasets it holds, so the website's
+ * sections, which follow themes and topics, do not change.
+ */
+interface SplitModuleDefinition extends ThemeDefinition {
+	readonly theme: DatasetTheme;
+	/**
+	 * `datasets`: the datasets listed are held in full here, and this module is
+	 * their home. `licensed-rows`: the datasets stay in `requires`, and this
+	 * module holds only their rows under `licence`.
+	 */
+	readonly holds: "datasets" | "licensed-rows";
+	readonly datasets: readonly string[];
+	/** Modules a download needs beside core. */
+	readonly requires: readonly DatasetTheme[];
+	/** For `licensed-rows`: the licence id (`MODULE_LICENCES`) of the rows held. */
+	readonly licence?: string;
+	/**
+	 * For `licensed-rows`: the rows held are those of the elections polled
+	 * from `from` to `to`, as ISO dates (inclusive). A dataset's licence is a
+	 * string in its source ("CC BY-SA 3.0 (2016–2019)"), so the range is
+	 * declared here; tests/data/datasetOrganisation.test.ts keeps it in step.
+	 */
+	readonly electionDates?: { readonly from: string; readonly to: string };
+}
+
 interface TopicDefinition {
 	readonly id: string;
 	readonly theme: DatasetTheme;
@@ -109,8 +137,51 @@ export type DatasetTheme = (typeof THEME_DEFINITIONS)[number]["id"];
 export type DatasetFoundationPart =
 	(typeof FOUNDATION_PART_DEFINITIONS)[number]["id"];
 
-/** An id the `dataset.module` column accepts: a theme or a foundation part. */
-export type DatasetModule = DatasetTheme | DatasetFoundationPart;
+/**
+ * Modules cut out of a theme, in display order. The first split is by size:
+ * `population` (7.0 of 10.7 million observations, 715 MB) is divided so that
+ * single-year-of-age and small-area census data can be left out. The second is
+ * by licence: the CC BY-SA local elections (2016 to 2019) are an add-on, so
+ * ShareAlike does not apply to the rest of `politics`.
+ */
+const SPLIT_MODULE_DEFINITIONS = [
+	{
+		id: "population-detail",
+		theme: "population",
+		label: "Population detail",
+		description:
+			"Population by single year of age and sex for wards and local authorities, and Census 2021 tables for lower and middle layer super output areas. The bulk of the population data.",
+		holds: "datasets",
+		datasets: [
+			"population",
+			"population-uk",
+			"census-2021-ts001",
+			"census-2021-ts003",
+			"census-2021-ts007a",
+			"census-2021-ts021",
+		],
+		requires: [],
+	},
+	{
+		id: "politics-sharealike",
+		theme: "politics",
+		label: "Local elections 2016 to 2019 (ShareAlike)",
+		description:
+			"Ward-level local election results for 2016 to 2019 from the Local Elections Archive Project, under CC BY-SA 3.0. An add-on to politics: anything built from it must be shared under the same licence.",
+		holds: "licensed-rows",
+		datasets: ["local-election"],
+		requires: ["politics"],
+		licence: "cc-by-sa-3.0",
+		electionDates: { from: "2016-01-01", to: "2019-12-31" },
+	},
+] as const satisfies readonly SplitModuleDefinition[];
+
+export type DatasetSplitModule =
+	(typeof SPLIT_MODULE_DEFINITIONS)[number]["id"];
+
+/** An id the module registry accepts: a theme, a foundation part or a split. */
+export type DatasetModule =
+	DatasetTheme | DatasetFoundationPart | DatasetSplitModule;
 
 const TOPIC_DEFINITIONS = [
 	// population
@@ -340,6 +411,19 @@ export interface DatasetTopicInfo {
 export const DATASET_THEMES: readonly DatasetThemeInfo[] =
 	THEME_DEFINITIONS.map((theme, index) => ({ ...theme, order: index + 1 }));
 
+export interface DatasetSplitModuleInfo extends SplitModuleDefinition {
+	readonly id: DatasetSplitModule;
+	/** Position among the splits, from 1. */
+	readonly order: number;
+}
+
+/** Split modules in display order. */
+export const DATASET_SPLIT_MODULES: readonly DatasetSplitModuleInfo[] =
+	SPLIT_MODULE_DEFINITIONS.map((split, index) => ({
+		...split,
+		order: index + 1,
+	}));
+
 /** Foundation parts in display order. */
 export const DATASET_FOUNDATION_PARTS: readonly DatasetFoundationPartInfo[] =
 	FOUNDATION_PART_DEFINITIONS.map((part, index) => ({
@@ -387,12 +471,47 @@ export const themeOfTopic = (topic: DatasetTopic): DatasetTheme =>
 	getDatasetTopic(topic).theme;
 
 /**
- * The module a topic is downloaded in. Today every theme is one module with
- * the theme's id, so this is the topic's theme. A module that splits a theme
- * will map its topics here, and nothing else changes.
+ * The module a dataset is stored under, and so the `dataset.module` column.
+ * Its theme's module, unless a split module holds the dataset in full. A
+ * `licensed-rows` split leaves the dataset where it is.
  */
-export const moduleOfTopic = (topic: DatasetTopic): DatasetModule =>
-	themeOfTopic(topic);
+export const moduleOfDataset = (dataset: {
+	readonly id: string;
+	readonly topic: DatasetTopic;
+}): DatasetModule =>
+	DATASET_SPLIT_MODULES.find(
+		(split) =>
+			split.holds === "datasets" && split.datasets.includes(dataset.id),
+	)?.id ?? themeOfTopic(dataset.topic);
+
+/** The split modules that hold part or all of a dataset, in display order. */
+export const splitModulesOfDataset = (
+	datasetId: string,
+): readonly DatasetSplitModuleInfo[] =>
+	DATASET_SPLIT_MODULES.filter((split) => split.datasets.includes(datasetId));
+
+/** Every id a module can have: each theme followed by its splits, then the foundation parts. */
+export const DATASET_MODULE_IDS: readonly DatasetModule[] = [
+	...DATASET_THEMES.flatMap(({ id }) => [
+		id,
+		...DATASET_SPLIT_MODULES.filter(({ theme }) => theme === id).map(
+			(split) => split.id,
+		),
+	]),
+	...DATASET_FOUNDATION_PARTS.map(({ id }) => id),
+];
+
+/** The ids `dataset.module` accepts: a dataset's home, never an add-on. */
+export const DATASET_HOME_MODULE_IDS: readonly DatasetModule[] =
+	DATASET_MODULE_IDS.filter((id) =>
+		DATASET_SPLIT_MODULES.every(
+			(split) => split.id !== id || split.holds === "datasets",
+		),
+	);
+
+export const isDatasetModule = (value: unknown): value is DatasetModule =>
+	typeof value === "string" &&
+	(DATASET_MODULE_IDS as readonly string[]).includes(value);
 
 /** The topics of a theme, in display order. */
 export const topicsOfTheme = (
