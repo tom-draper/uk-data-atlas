@@ -1,4 +1,10 @@
-import { DATA_PAGES, DATA_TOPICS } from "./content/data";
+import {
+	DATASET_TREE,
+	getRegisteredDataset,
+	themeOfTopic,
+	type DatasetTheme,
+	type DatasetTopic,
+} from "@uk-data-atlas/datasets";
 import { ENDPOINTS } from "./content/endpoints";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "./content/geographies";
 import { SECTIONS } from "./content/sections";
@@ -86,32 +92,36 @@ export const GUIDES: NavLink[] = [
 	{ href: "/docs/v1/guides/sync", title: "Keep a copy in sync" },
 ];
 
-export function dataPageHref(slug: string): string {
-	return `/docs/v1/datasets/${slug}`;
+export const DATASETS_HREF = "/docs/v1/datasets";
+
+export const themeHref = (theme: DatasetTheme): string =>
+	`${DATASETS_HREF}/${theme}`;
+
+export const topicHref = (topic: DatasetTopic): string =>
+	`${themeHref(themeOfTopic(topic))}/${topic}`;
+
+/** The docs page of a dataset, at its theme, topic and id. */
+export function datasetPageHref(id: string): string {
+	const dataset = getRegisteredDataset(id);
+	if (!dataset) throw new Error(`No dataset ${id} in the registry`);
+	return `${topicHref(dataset.topic)}/${id}`;
 }
 
 export function geographyHref(geography: string): string {
 	return `/docs/v1/boundaries/${GEOGRAPHIES[geography].slug}`;
 }
 
-/** Dataset pages under their topics, each topic an anchor on the dataset overview. */
+/** The registry's themes, each with its topics; a topic page lists its datasets. */
 export const DATA: NavLink[] = [
-	{ href: "/docs/v1/datasets", title: "All datasets" },
-	...DATA_TOPICS.map((topic): NavLink => {
-		const pages = DATA_PAGES.filter((page) => page.topic === topic.id);
-		// A topic of one page is just that page.
-		if (pages.length === 1) {
-			return { href: dataPageHref(pages[0].slug), title: topic.title };
-		}
-		return {
-			href: `/docs/v1/datasets#${topic.id}`,
-			title: topic.title,
-			children: pages.map((page) => ({
-				href: dataPageHref(page.slug),
-				title: page.title,
-			})),
-		};
-	}),
+	{ href: DATASETS_HREF, title: "All datasets" },
+	...DATASET_TREE.map(({ theme, topics }): NavLink => ({
+		href: themeHref(theme.id),
+		title: theme.label,
+		children: topics.map(({ topic }) => ({
+			href: topicHref(topic.id),
+			title: topic.label,
+		})),
+	})),
 	{ href: "/docs/v1/downloads", title: "Downloads" },
 ];
 
@@ -190,9 +200,27 @@ function flatten(links: NavLink[]): NavLink[] {
 	]);
 }
 
-/** Every page in reading order, for previous and next links. */
+/** A topic's dataset pages, which the sidebar leaves out: topic pages list them. */
+const DATASET_LINKS = new Map<string, NavLink[]>(
+	DATASET_TREE.flatMap(({ topics }) =>
+		topics.map(({ topic, datasets }): [string, NavLink[]] => [
+			topicHref(topic.id),
+			datasets.map((dataset) => ({
+				href: datasetPageHref(dataset.id),
+				title: dataset.title,
+			})),
+		]),
+	),
+);
+
+/**
+ * Every page in reading order, for previous and next links, the sitemap and
+ * llms.txt. Each topic is followed by its dataset pages.
+ */
 export function readingOrder(contract: ApiContract): NavLink[] {
-	return docsNavigation(contract).flatMap((group) => flatten(group.links));
+	return docsNavigation(contract)
+		.flatMap((group) => flatten(group.links))
+		.flatMap((link) => [link, ...(DATASET_LINKS.get(link.href) ?? [])]);
 }
 
 export function neighbours(

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import packageJson from "./package.json";
+import { LEGACY_DATA_PAGES } from "./lib/docs/legacyDataPages";
 
 const dataVersion =
 	process.env.VERCEL_GIT_COMMIT_SHA ?? `v${packageJson.version}`;
@@ -64,6 +65,28 @@ const nextConfig: NextConfig = {
 				destination: "/docs/v1/reference/geography/list-boundaries",
 				permanent: true,
 			},
+			// The dataset pages were once under /data, then grouped by hand
+			// at /datasets/<slug>. Both go straight to the page that replaced
+			// them. The population page is now the population theme, which
+			// keeps its own address, so only /data/population moves.
+			...Object.entries(LEGACY_DATA_PAGES).flatMap(
+				([slug, destination]) => [
+					{
+						source: `/docs/v1/data/${slug}`,
+						destination,
+						permanent: true,
+					},
+					...(slug === "population"
+						? []
+						: [
+								{
+									source: `/docs/v1/datasets/${slug}`,
+									destination,
+									permanent: true,
+								},
+							]),
+				],
+			),
 			{
 				source: "/docs/v1/data/:path*",
 				destination: "/docs/v1/datasets/:path*",

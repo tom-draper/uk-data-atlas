@@ -1,35 +1,38 @@
-import { CATALOGUE_DATASET_DEFINITIONS } from "@uk-data-atlas/datasets";
+import {
+	CATALOGUE_DATASET_DEFINITIONS,
+	DATASET_THEMES,
+	DATASET_TOPICS,
+	REGISTERED_DATASETS,
+} from "@uk-data-atlas/datasets";
 import { datasetSlug } from "@/lib/datasets";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import { BOUNDARY_DETAILS } from "@/lib/reference/boundaries";
-import { DATASET_GUIDES, DATASET_TOPICS } from "@/lib/reference/datasets";
 
-const slugs = CATALOGUE_DATASET_DEFINITIONS.map((d) => datasetSlug(d.type));
-const topics = new Set(DATASET_TOPICS.map((topic) => topic.id));
+const slugs = REGISTERED_DATASETS.map(({ id }) => id);
 
 const duplicates = (ids: string[]) =>
 	ids.filter((id, i) => ids.indexOf(id) !== i);
 
 describe("dataset guides", () => {
-	it("explains every registered dataset under a known topic", () => {
-		expect(slugs.filter((slug) => !DATASET_GUIDES[slug])).toEqual([]);
+	it("explain every dataset of the registry the catalogue defines", () => {
+		const registered = new Set(slugs);
 		expect(
-			Object.entries(DATASET_GUIDES)
-				.filter(([, guide]) => !topics.has(guide.topic))
-				.map(([slug]) => slug),
-		).toEqual([]);
-	});
-
-	it("has no guide for a dataset the registry no longer has", () => {
-		expect(
-			Object.keys(DATASET_GUIDES).filter((slug) => !slugs.includes(slug)),
+			CATALOGUE_DATASET_DEFINITIONS.map((d) =>
+				datasetSlug(d.type),
+			).filter((slug) => !registered.has(slug)),
 		).toEqual([]);
 	});
 
 	it("gives every section on the page its own anchor", () => {
 		// Map pages' structured data points at /datasets#{slug}.
 		expect(
-			duplicates([...slugs, ...topics, "about-datasets", "all-datasets"]),
+			duplicates([
+				...slugs,
+				...DATASET_THEMES.map(({ id }) => `theme-${id}`),
+				...DATASET_TOPICS.map(({ id }) => `topic-${id}`),
+				"about-datasets",
+				"all-datasets",
+			]),
 		).toEqual([]);
 	});
 });

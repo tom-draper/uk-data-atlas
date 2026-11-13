@@ -303,7 +303,7 @@ export function nationList(countries: Iterable<string>): string {
 /** The measures that take any of their values from these datasets. */
 export function measuresFromDatasets(
 	catalogue: Catalogue,
-	datasetIds: string[],
+	datasetIds: readonly string[],
 ): CatalogueMeasure[] {
 	return catalogue.measures.filter((measure) =>
 		measure.sources.some((source) => datasetIds.includes(source.datasetId)),
@@ -313,7 +313,7 @@ export function measuresFromDatasets(
 /** Complete observation exports that include at least one of these datasets. */
 export function exportsFromDatasets(
 	catalogue: Catalogue,
-	datasetIds: string[],
+	datasetIds: readonly string[],
 ): CatalogueExport[] {
 	return catalogue.exports.filter((item) =>
 		datasetIds.includes(item.datasetId),
@@ -345,7 +345,7 @@ export interface SourceSummary {
  */
 export function sourceSummaries(
 	catalogue: Catalogue,
-	datasetIds: string[],
+	datasetIds: readonly string[],
 ): SourceSummary[] {
 	const rows = new Map<string, SourceSummary>();
 	for (const measure of measuresFromDatasets(catalogue, datasetIds)) {

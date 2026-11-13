@@ -9,8 +9,8 @@ import {
 	servedDatasetIds,
 	sourceSummaries,
 } from "@/lib/docs/catalogue";
+import { REGISTERED_DATASETS } from "@uk-data-atlas/datasets";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
-import { DATA_PAGES, DATA_TOPICS } from "@/lib/docs/content/data";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import {
 	combining,
@@ -20,33 +20,28 @@ import {
 
 const catalogue = await loadCatalogue();
 
-describe("data pages", () => {
-	it("put every served dataset on exactly one page", () => {
-		const placed = DATA_PAGES.flatMap((page) => page.datasets);
-		expect(new Set(placed).size).toBe(placed.length);
-		expect([...placed].sort()).toEqual(servedDatasetIds(catalogue).sort());
-	});
-
-	it("each belong to a topic, with a unique slug", () => {
-		const topics = new Set(DATA_TOPICS.map((t) => t.id));
-		for (const page of DATA_PAGES) expect(topics).toContain(page.topic);
-		const slugs = DATA_PAGES.map((p) => p.slug);
-		expect(new Set(slugs).size).toBe(slugs.length);
+describe("dataset pages", () => {
+	it("put every served dataset in the registry", () => {
+		const registered = new Set(REGISTERED_DATASETS.map(({ id }) => id));
+		expect(
+			servedDatasetIds(catalogue).filter((id) => !registered.has(id)),
+		).toEqual([]);
 	});
 
 	it("span every year a period names", () => {
-		const page = DATA_PAGES.find((p) => p.slug === "life-expectancy")!;
-		expect(dataPageFacts(page, catalogue).years).toEqual({
+		expect(
+			dataPageFacts(["life-expectancy-series"], catalogue).years,
+		).toEqual({
 			from: 2001,
 			to: 2024,
 		});
 	});
 
-	it("each have measures and somewhere they're published", () => {
-		for (const page of DATA_PAGES) {
-			const facts = dataPageFacts(page, catalogue);
-			expect(facts.measures.length, page.slug).toBeGreaterThan(0);
-			expect(facts.sources.length, page.slug).toBeGreaterThan(0);
+	it("each have measures and somewhere they're published, once served", () => {
+		for (const id of servedDatasetIds(catalogue)) {
+			const facts = dataPageFacts([id], catalogue);
+			expect(facts.measures.length, id).toBeGreaterThan(0);
+			expect(facts.sources.length, id).toBeGreaterThan(0);
 		}
 	});
 });
@@ -96,10 +91,10 @@ describe("geography pages", () => {
 	});
 
 	it("find the data published on a geography", () => {
-		const pages = dataPagesOnGeography("lsoa", catalogue).map(
-			({ page }) => page.slug,
+		const datasets = dataPagesOnGeography("lsoa", catalogue).map(
+			({ dataset }) => dataset.id,
 		);
-		expect(pages).toContain("deprivation");
+		expect(datasets).toContain("imd");
 	});
 });
 

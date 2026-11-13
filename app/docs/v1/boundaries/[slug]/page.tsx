@@ -18,7 +18,7 @@ import {
 	findGeographyBySlug,
 } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
-import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
+import { datasetPageHref, geographyHref } from "@/lib/docs/navigation";
 import { API_BASE_URL } from "@/lib/docs/openapi";
 
 type Params = Promise<{ slug: string }>;
@@ -143,14 +143,14 @@ export default async function GeographyPage({ params }: { params: Params }) {
 			{data.length > 0 ? (
 				<Table
 					head={["Datasets", "Code year", "Periods", "Covers"]}
-					rows={data.flatMap(({ page, sources }) =>
+					rows={data.flatMap(({ dataset, sources }) =>
 						sources.map((source, i) => [
 							i === 0 ? (
 								<TextLink
 									key="page"
-									href={dataPageHref(page.slug)}
+									href={datasetPageHref(dataset.id)}
 								>
-									{page.title}
+									{dataset.title}
 								</TextLink>
 							) : (
 								""

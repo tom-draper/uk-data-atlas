@@ -1,9 +1,14 @@
+import { DATASET_TREE } from "@uk-data-atlas/datasets";
 import { frontDoorExamples, type FrontDoorExample } from "./frontDoor";
 import {
 	CONCEPTS,
 	endpointContent,
 	GET_STARTED,
+	datasetPageHref,
+	DATASETS_HREF,
 	GUIDES,
+	themeHref,
+	topicHref,
 	USING_THE_API,
 	type NavLink,
 } from "./navigation";
@@ -36,6 +41,26 @@ function pageLinks(site: string, links: NavLink[]): string[] {
 	return links.map((link) => `- [${link.title}](${site}${link.href})`);
 }
 
+/**
+ * The datasets, by theme then topic in registry order: a heading for each
+ * theme, a line for each topic, and each dataset's page under its topic.
+ */
+function datasetSections(site: string): string[] {
+	return DATASET_TREE.flatMap(({ theme, topics }) => [
+		`### ${theme.label}`,
+		[
+			`- [${theme.label}](${site}${themeHref(theme.id)}): ${theme.description}`,
+			...topics.flatMap(({ topic, datasets }) => [
+				`- [${topic.label}](${site}${topicHref(topic.id)}): ${topic.description}`,
+				...datasets.map(
+					(dataset) =>
+						`  - [${dataset.title}](${site}${datasetPageHref(dataset.id)}): ${firstSentence(dataset.summary ?? dataset.about)}`,
+				),
+			]),
+		].join("\n"),
+	]);
+}
+
 function routeLine(site: string, example: FrontDoorExample): string {
 	const { operation, route } = example;
 	const title = endpointContent(operation).title;
@@ -57,6 +82,9 @@ export function buildLlmsTxt(contract: ApiContract, site: string): string {
 		].join("\n"),
 		"## Front door",
 		examples.map((example) => routeLine(site, example)).join("\n"),
+		"## Datasets",
+		`- [All datasets](${site}${DATASETS_HREF}): every dataset by theme and topic, with what it covers and how to request it`,
+		...datasetSections(site),
 		"## Optional",
 		[
 			`- [API reference](${site}/docs/v1/reference): every route, generated from the spec`,

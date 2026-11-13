@@ -190,7 +190,7 @@ export default async function BoundariesPage() {
 														dataset.slug,
 													)}
 												>
-													{dataset.source.name}
+													{dataset.title}
 												</TextLink>
 											</Fragment>
 										))}

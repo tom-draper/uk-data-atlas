@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { DATASET_TREE, REGISTERED_DATASETS } from "@uk-data-atlas/datasets";
 import { buildLlmsFullTxt, buildLlmsTxt } from "@/lib/docs/llms";
 import { frontDoorExamples } from "@/lib/docs/frontDoor";
-import { readingOrder } from "@/lib/docs/navigation";
+import { datasetPageHref, readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { directionRoutes } from "./directionRoutes";
 
@@ -15,7 +16,12 @@ describe("llms.txt", () => {
 		expect(lines[0]).toBe("# UK Data Atlas API");
 		expect(lines[2]).toMatch(/^> .+/);
 		const sections = lines.filter((line) => line.startsWith("## "));
-		expect(sections).toEqual(["## Docs", "## Front door", "## Optional"]);
+		expect(sections).toEqual([
+			"## Docs",
+			"## Front door",
+			"## Datasets",
+			"## Optional",
+		]);
 		for (const line of lines.filter((line) => line.startsWith("- "))) {
 			expect(line).toMatch(/^- \[[^\]]+\]\(https?:\/\/[^)\s]+\)/);
 		}
@@ -40,10 +46,35 @@ describe("llms.txt", () => {
 		}
 	});
 
+	it("lists the datasets by theme, then topic, in registry order", () => {
+		const section = lines.slice(
+			lines.indexOf("## Datasets") + 1,
+			lines.indexOf("## Optional"),
+		);
+		expect(section.filter((line) => line.startsWith("### "))).toEqual(
+			DATASET_TREE.map(({ theme }) => `### ${theme.label}`),
+		);
+		const topicLines = section.filter((line) =>
+			/^- \[[^\]]+\]\(\S+\/datasets\/[^/]+\/[^/)]+\)/.test(line),
+		);
+		expect(topicLines).toHaveLength(
+			DATASET_TREE.flatMap(({ topics }) => topics).length,
+		);
+		const datasetLines = section.filter((line) => line.startsWith("  - "));
+		expect(datasetLines).toHaveLength(REGISTERED_DATASETS.length);
+		for (const dataset of REGISTERED_DATASETS)
+			expect(
+				datasetLines.filter((line) =>
+					line.includes(`(${SITE}${datasetPageHref(dataset.id)})`),
+				),
+				dataset.id,
+			).toHaveLength(1);
+	});
+
 	it("lists every front-door route once, with its curl example", () => {
 		const front = lines.slice(
 			lines.indexOf("## Front door") + 1,
-			lines.indexOf("## Optional"),
+			lines.indexOf("## Datasets"),
 		);
 		const routes = front.filter((line) => line.startsWith("- "));
 		const examples = frontDoorExamples(contract);

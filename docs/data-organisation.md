@@ -19,8 +19,7 @@ drifted apart:
 | `dataset.module` (statistics declarations)               | economy, population, infrastructure, housing, crime, deprivation, ...                        |
 | Website chart groups (was `lib/datasets/chartGroups.ts`) | Economics, Demographics, Telecoms, General Election, Local Election, Brexit, ...             |
 | `components/`                                            | economics, demographics, telecoms, elections, ...                                            |
-| Docs topics (`lib/docs/content/data.ts`)                 | people, work, connectivity, elections, ...                                                   |
-| `/datasets` topics (`lib/reference/datasets.ts`)         | people-and-places, work-and-economy, health-and-care, councils, crime-and-safety, ...        |
+| Docs and `/datasets` topics (were hand-kept lists)       | people, work, connectivity, people-and-places, work-and-economy, councils, ... (now deleted) |
 | `meta.json` `topics`                                     | Free text                                                                                    |
 | `packages/measures/src/statisticsDatasets/`              | By shape (census, people, services), not topic (only five leftovers remain)                  |
 
@@ -187,6 +186,16 @@ cannot yet express their card, `calculateStats`, map value or legend, and only
 claimant count, broadband and mobile coverage (which already have no file)
 use it.
 
+Task 9 made the docs, `/datasets` and `llms.txt` read the registry. Docs have
+a page per theme (`/docs/v1/datasets/<theme>`), topic
+(`/docs/v1/datasets/<theme>/<topic>`) and dataset
+(`/docs/v1/datasets/<theme>/<topic>/<dataset>`). The 16 registry datasets the
+API does not serve get a page without API sections. The old
+`/docs/v1/data/<slug>` and `/docs/v1/datasets/<slug>` pages redirect to the
+page that replaced them (`lib/docs/legacyDataPages.ts`), except
+`/docs/v1/datasets/population`, which is now the population theme. No
+`THIN_TOPIC_ALLOWLIST` entry is fixed by this task.
+
 ### Naming
 
 A folder is named for a dataset it feeds, and `SOURCES` derives it: a source's
@@ -301,8 +310,8 @@ the number of modules can grow freely.
   control. Place pages follow the same rule.
 - `/datasets`, docs data pages and `llms.txt` have a page per theme, topic
   and dataset, generated from declarations.
-- The topic lists in `lib/docs/content/data.ts` and
-  `lib/reference/datasets.ts` are deleted.
+- The hand-kept topic lists (`lib/docs/content/data.ts` and
+  `lib/reference/datasets.ts`) are deleted.
 - The API refers to datasets by id, never by path. It adds `theme`, `topic`
   and `module` to catalogue and dataset responses, filters on each, and
   `GET /v1/themes` and `GET /v1/modules`.
