@@ -32,7 +32,13 @@ test("data commands use one public vocabulary", () => {
 		Object.keys(root.scripts)
 			.filter((name) => name.startsWith("data:"))
 			.sort(),
-	).toEqual(["data:build", "data:download", "data:publish", "data:verify"]);
+	).toEqual([
+		"data:build",
+		"data:dist",
+		"data:download",
+		"data:publish",
+		"data:verify",
+	]);
 	for (const scripts of [root.scripts, api.scripts])
 		expect(
 			Object.keys(scripts).filter((name) =>

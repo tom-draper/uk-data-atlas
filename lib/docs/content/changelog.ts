@@ -30,6 +30,15 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-12",
+		title: "Modules carry their manifest",
+		surface: "efddb12da319",
+		changes: [
+			"`GET /v1/modules` gains the manifest fields the data download is built from: `schemaVersion`, `alwaysIncluded`, `compatibility.core`, `licences`, `licenceConflict`, `datasets` and `build`, and each topic gains a `description`. They are additive: no existing field changed.",
+			"`licenceConflict` is set when a module mixes share-alike data with other licences, and `licences` is null for a foundation part whose licences are not derived. `build` reports `not-built` with a null size until module databases are built.",
+		],
+	},
+	{
+		date: "2026-11-12",
 		title: "Datasets and measures carry theme, topic and module",
 		surface: "f6ca502a1f36",
 		changes: [

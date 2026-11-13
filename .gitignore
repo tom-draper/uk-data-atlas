@@ -59,6 +59,10 @@ next-env.d.ts
 !/data/build/
 /.data-release/
 
+# Module manifests, READMEs and (later) databases, written by pnpm data:dist and
+# served from the VPS, never committed. Already covered by /data/*.
+/data/dist/
+
 AGENTS.md
 CLAUDE.md
 

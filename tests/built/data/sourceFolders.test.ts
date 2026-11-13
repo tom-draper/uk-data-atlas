@@ -5,7 +5,7 @@ import { parseDatasetMeta } from "@uk-data-atlas/datasets";
 import { DATASET_SOURCES, SUPPORT_SOURCES } from "../../data/sourceDatasets";
 
 /**
- * Checks `data/source` against the table in tests/data/sourceDatasets.ts
+ * Checks `data/source` against the table in packages/datasets/src/declaration/sourceDatasets.ts
  * (docs/data-organisation.md, task 3). Needs the raw sources, which are not in
  * git, so it skips when they are absent. The offline half of the check, table
  * against registry and code, runs in tests/data/sourceDatasets.test.ts.

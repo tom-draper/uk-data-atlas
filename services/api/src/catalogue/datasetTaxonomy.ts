@@ -23,21 +23,13 @@ export type DatasetTaxonomy = {
 	module: DatasetModule;
 };
 
-/**
- * Catalogue ids that differ from the registry's. The disadvantage dataset is
- * catalogued under the id of its declaration and registered under the public
- * id of its docs page.
- */
-const REGISTRY_IDS: Readonly<Record<string, string>> = {
-	"school-performance-disadvantage": "school-performance-gap",
-};
+/** The registry id of a catalogue dataset: the two now share their ids. */
+export const registryIdOfDataset = (datasetId: string): string => datasetId;
 
 export const taxonomyOfDataset = (
 	datasetId: string,
 ): DatasetTaxonomy | undefined => {
-	const registered = getRegisteredDataset(
-		REGISTRY_IDS[datasetId] ?? datasetId,
-	);
+	const registered = getRegisteredDataset(registryIdOfDataset(datasetId));
 	return registered
 		? {
 				theme: registered.theme,

@@ -180,10 +180,55 @@ const catalogueModule = z.looseObject({
 	description: z.string(),
 	themes: z.array(z.string()),
 	topics: z.array(
-		z.looseObject({ id: z.string(), label: z.string(), theme: z.string() }),
+		z.looseObject({
+			id: z.string(),
+			label: z.string(),
+			theme: z.string(),
+			description: z.string().optional(),
+		}),
 	),
 	datasetCount: z.number(),
 	links: datasetLinks.optional(),
+	schemaVersion: z.number().optional(),
+	alwaysIncluded: z.boolean().optional(),
+	compatibility: z.looseObject({ core: z.string() }).optional(),
+	licences: z
+		.array(
+			z.looseObject({
+				id: z.string(),
+				name: z.string(),
+				url: z.string(),
+				commercialUse: z.boolean(),
+				shareAlike: z.boolean(),
+			}),
+		)
+		.nullable()
+		.optional(),
+	licenceConflict: z
+		.looseObject({
+			kind: z.string(),
+			shareAlike: z.array(z.string()),
+			others: z.array(z.string()),
+			datasets: z.array(z.string()),
+		})
+		.nullable()
+		.optional(),
+	datasets: z
+		.array(
+			z.looseObject({
+				id: z.string(),
+				title: z.string(),
+				topic: z.string(),
+			}),
+		)
+		.optional(),
+	build: z
+		.looseObject({
+			status: z.string(),
+			bytes: z.number().nullable(),
+			files: z.unknown().nullable(),
+		})
+		.optional(),
 });
 
 export const datasets = {
