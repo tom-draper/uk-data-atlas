@@ -8,13 +8,22 @@ import {
 	CANDIDACY_COLUMNS,
 } from "@uk-data-atlas/measures";
 import { type StatisticsInput } from "@uk-data-atlas/measures";
-import { DATASET_MODULES } from "@uk-data-atlas/datasets";
+import {
+	DATASET_FOUNDATION_PARTS,
+	DATASET_THEMES,
+} from "@uk-data-atlas/datasets";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
 
 /** The contest columns stored as the publisher's text. */
+/** Every id the `dataset.module` column accepts: themes and foundation parts. */
+const MODULE_IDS: readonly string[] = [
+	...DATASET_THEMES,
+	...DATASET_FOUNDATION_PARTS,
+].map(({ id }) => id);
+
 const CONTEST_TEXT_COLUMNS = CONTEST_COLUMNS.filter(
 	(column) =>
 		column !== "region" &&
@@ -133,7 +142,7 @@ export function statisticsTables(
 			columns: [
 				"id INTEGER NOT NULL",
 				"slug TEXT NOT NULL UNIQUE",
-				`module TEXT NOT NULL CHECK (module IN (${DATASET_MODULES.map((module) => `'${module}'`).join(",")}))`,
+				`module TEXT NOT NULL CHECK (module IN (${MODULE_IDS.map((module) => `'${module}'`).join(",")}))`,
 				"title TEXT NOT NULL",
 				"description TEXT NOT NULL",
 				"source_id INTEGER NOT NULL REFERENCES source(id)",

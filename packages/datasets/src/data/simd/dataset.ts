@@ -9,7 +9,7 @@ import { loadSIMD } from "./loader.ts";
 
 export const simd = defineDataset<SIMDDataset>({
 	id: "simd",
-	module: "deprivation",
+	module: "society",
 	boundary: { type: "dataZone", year: 2011 },
 	source: {
 		name: "Scottish Index of Multiple Deprivation",

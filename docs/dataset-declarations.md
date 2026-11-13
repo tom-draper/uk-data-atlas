@@ -3,6 +3,11 @@
 One module per dataset. This note records where a dataset is described today,
 the shape that replaces it, the order datasets move in, and what stays custom.
 
+How datasets are grouped (themes, topics, classification rules, download
+modules and folder layout) is defined in `docs/data-organisation.md`, and the
+registry in `packages/datasets/src/declaration/taxonomy.ts`. This note covers
+only the shape of a declaration and how datasets move to it.
+
 ## Current state
 
 A dataset is described in separate places that nothing keeps in step:
@@ -99,8 +104,10 @@ registry and the dataset record types from them.
   than replacing it. The declaration types and the `periods`, `measure` and
   `yearParts` helpers move to `packages/datasets` so a declaration can sit
   beside its loader.
-- `module` is a required tag from a closed union, written to
-  `dataset.module` in `atlas.sqlite`, so a package step can select by topic.
+- `module` is a required tag, written to `dataset.module` in `atlas.sqlite`.
+  It is typed as a `DatasetTheme` from the registry for now. Task 2 of
+  `docs/data-organisation.md` replaces it with a primary `topic`, and the
+  module is derived from the topic's theme.
 - Everything that used to be a second copy reads the declaration: the API
   catalogue compiler, the field bindings, the manifest and registry, website
   chart and map options, legend, ranking labels and place figures.
@@ -119,29 +126,19 @@ registry and the dataset record types from them.
   field bindings are read from it, so `measure-dimensions.json` lists only
   ids no declaration publishes.
 
-### Modules
+### Themes, topics and modules
 
-| Module           | Holds                                                                          |
-| ---------------- | ------------------------------------------------------------------------------ |
-| `core`           | Geography: areas, releases, crosswalks, places, postcodes. No dataset uses it. |
-| `economy`        | Pay, jobs, output, businesses, labour market, public finance                   |
-| `education`      | Schools, attainment, absence, qualifications                                   |
-| `health`         | Health, care, life expectancy, waiting times                                   |
-| `housing`        | Prices, tenure, homelessness, planning, council tax bands                      |
-| `crime`          | Recorded crime                                                                 |
-| `politics`       | Elections and referendums                                                      |
-| `environment`    | Air quality, emissions, energy, waste, land                                    |
-| `infrastructure` | Broadband and mobile coverage                                                  |
-| `population`     | Population, ethnicity                                                          |
-| `deprivation`    | Indices of deprivation, child and fuel poverty                                 |
-| `transport`      | Travel to work, car availability, collisions, charging points                  |
-
-Every dataset fits one of these, so the list is unchanged from the brief.
+Themes, topics and modules are defined in `docs/data-organisation.md`. The
+module table that was here is superseded: `crime` and `deprivation` are topics
+of the `society` theme, `population` and `infrastructure` keep their names, and
+`core` splits into `core`, `boundaries` and `postcodes`.
 
 ## Migration order
 
-1. Module vocabulary, a `module` on every existing statistics declaration, and
-   the `dataset.module` column with a test. This covers all datasets at once.
+1. Done: a `module` on every existing statistics declaration and the
+   `dataset.module` column with a test, now typed from the theme registry.
+   Next is a primary topic on every dataset (`docs/data-organisation.md`,
+   task 2).
 2. Move the declaration types and helpers to `packages/datasets`; add
    `DatasetDeclaration`, `declareDataset` and the registry. A test requires
    every catalogue dataset to have one declaration with a unique id, a valid
@@ -150,7 +147,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 3. Pilot: claimant count moves fully and its scattered definitions are
    deleted. The API catalogue compiler, field bindings, and website options
    read its declaration generically.
-4. Batches by module, one or a few commits each, deleting old definitions as
+4. Batches by theme, one or a few commits each, deleting old definitions as
    each dataset moves: economy first (it shares the claimant count shapes),
    then housing, then the rest.
 5. Delete the leftover generic scaffolding: per-dataset switch statements, maps
@@ -170,7 +167,7 @@ Every dataset fits one of these, so the list is unchanged from the brief.
 
 Declared: `business-activity`, `claimant-count`, `income`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `house-price`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy`, `life-expectancy-series` and `public-health` (health), `ethnicity`, `population`, `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `fuel-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `qualification` (education), `car-availability` and `travel-to-work` (transport), `pupil-absence`, `school-performance`, `school-performance-constituency` and `school-performance-disadvantage` (education),
 `broadband` and `mobile-coverage`
-(infrastructure, a complete module).
+(infrastructure, a complete theme).
 
 Every dataset is now declared. The last one, `fuel-poverty`, had its own
 statistics export and payload rebuild; both are gone, and it goes through the

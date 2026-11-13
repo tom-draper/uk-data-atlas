@@ -10,7 +10,7 @@ import {
 describe("fuel poverty declaration", () => {
 	it("is a deprivation dataset whose 2024 edition carries its id as its type", () => {
 		expect(fuelPoverty.id).toBe("fuel-poverty");
-		expect(fuelPoverty.module).toBe("deprivation");
+		expect(fuelPoverty.module).toBe("society");
 		const payload = statisticsOf(fuelPoverty).payload!;
 		const parts =
 			typeof payload.parts === "function"

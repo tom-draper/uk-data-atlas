@@ -6,7 +6,7 @@ import type {
 	DatasetReader,
 } from "../data/catalog/types.ts";
 import type { DatasetCountry } from "../types/coverage.ts";
-import type { DatasetModule } from "./modules.ts";
+import type { DatasetTheme } from "./taxonomy.ts";
 import type {
 	DeclaredDataset,
 	DeclaredHeader,
@@ -143,7 +143,8 @@ export type DatasetDeclaration<
 > = {
 	/** The only identifier: kebab-case, used by the API, pipeline and website. */
 	id: string;
-	module: DatasetModule;
+	/** The theme the dataset is packaged under (see `DeclaredDataset`). */
+	module: DatasetTheme;
 	source: DeclaredSource;
 	boundary: DeclaredBoundary;
 	/** Countries the source can cover, copied to each compiled vintage. */

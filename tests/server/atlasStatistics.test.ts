@@ -430,7 +430,7 @@ describe("statistics model is generic", () => {
 	/** Crime counts by type, with one suppressed value and a categorical measure. */
 	const crime: StatisticsDataset = {
 		slug: "crime",
-		module: "crime",
+		module: "society",
 		title: "Crime",
 		description: "Recorded crime.",
 		source: { publisher: "Home Office", licence: "OGL v3.0" },
@@ -575,8 +575,8 @@ describe("statistics model is generic", () => {
 					.all(),
 			).toEqual([
 				{ slug: "census-tenure", module: "housing" },
-				{ slug: "crime", module: "crime" },
-				{ slug: "fuel-poverty", module: "deprivation" },
+				{ slug: "crime", module: "society" },
+				{ slug: "fuel-poverty", module: "society" },
 			]);
 			expect(rebuildFuelPoverty(database)).toContain(
 				"City of London 001A",
