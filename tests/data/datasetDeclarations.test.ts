@@ -16,7 +16,7 @@ import {
 	CATALOGUE_DATASET_DEFINITIONS,
 	HAND_WRITTEN_DATASET_DEFINITIONS,
 } from "@uk-data-atlas/datasets";
-import { UPDATE_CADENCES } from "@uk-data-atlas/datasets";
+import { typeOf, UPDATE_CADENCES } from "@uk-data-atlas/datasets";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import { writeSqliteTables } from "../../pipeline/src/storage/index";
 
@@ -36,13 +36,25 @@ describe("dataset declarations", () => {
 		);
 	});
 
-	it("uses one kebab-case id for the type, the file and the declaration", () => {
+	it("uses one kebab-case id for the file and the declaration", () => {
 		for (const declaration of DATASET_DECLARATIONS) {
 			expect(declaration.id).toMatch(/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/);
 			const definition = DECLARED_DEFINITIONS.find(
-				({ type }) => type === declaration.id,
+				({ type }) => type === typeOf(declaration),
 			);
 			expect(definition?.precompiledFile).toBe(declaration.id);
+		}
+	});
+
+	it("types a dataset by its id unless it keeps a legacy type", () => {
+		for (const declaration of DATASET_DECLARATIONS) {
+			if (declaration.legacyType === undefined) continue;
+			expect(declaration.legacyType, declaration.id).toMatch(
+				/^[a-z][A-Za-z0-9]*$/,
+			);
+			expect(declaration.legacyType, declaration.id).not.toBe(
+				declaration.id,
+			);
 		}
 	});
 

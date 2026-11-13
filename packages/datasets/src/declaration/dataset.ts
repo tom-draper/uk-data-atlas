@@ -143,6 +143,12 @@ export type DatasetDeclaration<
 > = {
 	/** The only identifier: kebab-case, used by the API, pipeline and website. */
 	id: string;
+	/**
+	 * The camelCase manifest type of a dataset that predates kebab-case types,
+	 * still the key of the website's chart code and of compiled payload
+	 * headers. Dropped, with the website's keys, once those use the id.
+	 */
+	legacyType?: string;
 	/** The one topic the dataset is filed under (see `DeclaredDataset`). */
 	topic: DatasetTopic;
 	/** Other topics the dataset is also listed under, never the primary. */
@@ -155,6 +161,8 @@ export type DatasetDeclaration<
 	ingestion?: DatasetIngestionContract;
 	/** How the compiled payload is sliced and delivered. */
 	layout?: DatasetPayloadLayout;
+	/** The record field the map-values sidecars are built from, if it has any. */
+	mapValueField?: string;
 	/** True for a dataset that is compiled but has no chart yet. */
 	chartPending?: boolean;
 	/** Publish the first display measure as a map-values dataset. */
@@ -200,13 +208,17 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 	return declaration;
 }
 
+/** The manifest type: the id, unless the dataset still has a legacy type. */
+export const typeOf = (declaration: DatasetDeclaration): string =>
+	declaration.legacyType ?? declaration.id;
+
 /** The manifest definition the dataset compiler reads. */
 export function definitionOf<T extends { type: string; data: unknown }>(
 	declaration: DatasetDeclaration<T>,
 ): DatasetDefinition<T> {
 	const { source } = declaration;
 	return {
-		type: declaration.id as T["type"],
+		type: typeOf(declaration) as T["type"],
 		precompiledFile: declaration.id,
 		boundaryType: declaration.boundary.type,
 		...(declaration.coverageCountries
@@ -224,6 +236,9 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		},
 		...(declaration.ingestion ? { ingestion: declaration.ingestion } : {}),
 		...(declaration.layout ? { payload: declaration.layout } : {}),
+		...(declaration.mapValueField
+			? { mapValueField: declaration.mapValueField }
+			: {}),
 		...(declaration.chartPending ? { chartPending: true } : {}),
 		...(declaration.publishMapValues && declaration.display
 			? { mapValueField: declaration.display.measures[0].field as string }
@@ -238,7 +253,7 @@ export function statisticsOf(declaration: DatasetDeclaration): DeclaredDataset {
 	const { header, parts, ...rest } = payload;
 	return {
 		...statistics,
-		type: declaration.id,
+		type: typeOf(declaration),
 		topic: declaration.topic,
 		...(declaration.related ? { related: declaration.related } : {}),
 		payload: {

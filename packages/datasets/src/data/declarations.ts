@@ -3,63 +3,63 @@ import {
 	definitionOf,
 	type DatasetDeclaration,
 } from "../declaration/dataset.ts";
-import { adultSocialCareActivity } from "./adult-social-care-activity/dataset.ts";
-import { adultSocialCareOutcomes } from "./adult-social-care-outcomes/dataset.ts";
-import { airQuality } from "./air-quality/dataset.ts";
-import { brexit } from "./brexit/dataset.ts";
-import { brexitConstituency } from "./brexit-constituency/dataset.ts";
-import { broadband } from "./broadband/dataset.ts";
-import { businessActivity } from "./business-activity/dataset.ts";
-import { carAvailability } from "./car-availability/dataset.ts";
-import { childPoverty } from "./child-poverty/dataset.ts";
-import { claimantCount } from "./claimant-count/dataset.ts";
-import { councilTax } from "./council-tax/dataset.ts";
-import { crime } from "./crime/dataset.ts";
-import { electricVehicleChargers } from "./electric-vehicle-chargers/dataset.ts";
-import { electricityConsumption } from "./electricity-consumption/dataset.ts";
-import { ethnicity } from "./ethnicity/dataset.ts";
-import { fuelPoverty } from "./fuel-poverty/dataset.ts";
-import { gasConsumption } from "./gas-consumption/dataset.ts";
-import { generalElection } from "./general-election/dataset.ts";
-import { generalHealth } from "./general-health/dataset.ts";
-import { ghgEmissions } from "./ghg-emissions/dataset.ts";
-import { historicalGeneralElection } from "./historical-general-election/dataset.ts";
-import { homelessness } from "./homelessness/dataset.ts";
-import { housePrice } from "./house-price/dataset.ts";
-import { housingAffordability } from "./housing-affordability/dataset.ts";
-import { housingTenure } from "./housing-tenure/dataset.ts";
-import { imd } from "./imd/dataset.ts";
-import { income } from "./income/dataset.ts";
-import { jobs } from "./jobs/dataset.ts";
-import { landArea } from "./land-area/dataset.ts";
-import { lifeExpectancy } from "./life-expectancy/dataset.ts";
-import { lifeExpectancySeries } from "./life-expectancy-series/dataset.ts";
-import { localElection } from "./local-election/dataset.ts";
-import { localGovernmentFinance } from "./local-government-finance/dataset.ts";
-import { mobileCoverage } from "./mobile-coverage/dataset.ts";
-import { netAdditionalDwellings } from "./net-additional-dwellings/dataset.ts";
-import { nhsWaiting } from "./nhs-waiting/dataset.ts";
-import { nimdm } from "./nimdm/dataset.ts";
-import { planningApplications } from "./planning-applications/dataset.ts";
-import { population } from "./population/dataset.ts";
-import { populationConstituency } from "./population-constituency/dataset.ts";
-import { populationUk } from "./population-uk/dataset.ts";
-import { publicHealth } from "./public-health/dataset.ts";
-import { pupilAbsence } from "./pupil-absence/dataset.ts";
-import { qualification } from "./qualification/dataset.ts";
-import { regionalGdpItl1 } from "./regional-gdp-itl1/dataset.ts";
-import { regionalGdpItl2 } from "./regional-gdp-itl2/dataset.ts";
-import { regionalGdpItl3 } from "./regional-gdp-itl3/dataset.ts";
-import { roadCollisions } from "./road-collisions/dataset.ts";
-import { schoolPerformance } from "./school-performance/dataset.ts";
-import { schoolPerformanceConstituency } from "./school-performance-constituency/dataset.ts";
-import { schoolPerformanceDisadvantage } from "./school-performance-disadvantage/dataset.ts";
-import { simd } from "./simd/dataset.ts";
-import { travelToWork } from "./travel-to-work/dataset.ts";
-import { unemployment } from "./unemployment/dataset.ts";
-import { waste } from "./waste/dataset.ts";
-import { wimd } from "./wimd/dataset.ts";
-import { workplaceIncome } from "./workplace-income/dataset.ts";
+import { adultSocialCareActivity } from "../health/social-care/adult-social-care-activity/dataset.ts";
+import { adultSocialCareOutcomes } from "../health/social-care/adult-social-care-outcomes/dataset.ts";
+import { airQuality } from "../environment/air-quality/air-quality/dataset.ts";
+import { brexit } from "../politics/referendums/brexit/dataset.ts";
+import { brexitConstituency } from "../politics/referendums/brexit-constituency/dataset.ts";
+import { broadband } from "../infrastructure/digital-connectivity/broadband/dataset.ts";
+import { businessActivity } from "../economy/business/business-activity/dataset.ts";
+import { carAvailability } from "../transport/vehicles/car-availability/dataset.ts";
+import { childPoverty } from "../society/poverty/child-poverty/dataset.ts";
+import { claimantCount } from "../economy/labour-market/claimant-count/dataset.ts";
+import { councilTax } from "../housing/housing-stock/council-tax/dataset.ts";
+import { crime } from "../society/crime-and-justice/crime/dataset.ts";
+import { electricVehicleChargers } from "../transport/vehicles/electric-vehicle-chargers/dataset.ts";
+import { electricityConsumption } from "../environment/energy/electricity-consumption/dataset.ts";
+import { ethnicity } from "../population/ethnicity-and-identity/ethnicity/dataset.ts";
+import { fuelPoverty } from "../society/poverty/fuel-poverty/dataset.ts";
+import { gasConsumption } from "../environment/energy/gas-consumption/dataset.ts";
+import { generalElection } from "../politics/general-elections/general-election/dataset.ts";
+import { generalHealth } from "../health/health-status/general-health/dataset.ts";
+import { ghgEmissions } from "../environment/emissions/ghg-emissions/dataset.ts";
+import { historicalGeneralElection } from "../politics/general-elections/historical-general-election/dataset.ts";
+import { homelessness } from "../housing/homelessness/homelessness/dataset.ts";
+import { housePrice } from "../housing/prices-and-affordability/house-price/dataset.ts";
+import { housingAffordability } from "../housing/prices-and-affordability/housing-affordability/dataset.ts";
+import { housingTenure } from "../housing/housing-stock/housing-tenure/dataset.ts";
+import { imd } from "../society/deprivation/imd/dataset.ts";
+import { income } from "../economy/earnings-and-income/income/dataset.ts";
+import { jobs } from "../economy/labour-market/jobs/dataset.ts";
+import { landArea } from "../environment/emissions/land-area/dataset.ts";
+import { lifeExpectancy } from "../health/life-expectancy/life-expectancy/dataset.ts";
+import { lifeExpectancySeries } from "../health/life-expectancy/life-expectancy-series/dataset.ts";
+import { localElection } from "../politics/local-elections/local-election/dataset.ts";
+import { localGovernmentFinance } from "../economy/public-finance/local-government-finance/dataset.ts";
+import { mobileCoverage } from "../infrastructure/digital-connectivity/mobile-coverage/dataset.ts";
+import { netAdditionalDwellings } from "../housing/housing-stock/net-additional-dwellings/dataset.ts";
+import { nhsWaiting } from "../health/nhs-services/nhs-waiting/dataset.ts";
+import { nimdm } from "../society/deprivation/nimdm/dataset.ts";
+import { planningApplications } from "../housing/planning/planning-applications/dataset.ts";
+import { population } from "../population/population-estimates/population/dataset.ts";
+import { populationConstituency } from "../population/population-estimates/population-constituency/dataset.ts";
+import { populationUk } from "../population/population-estimates/population-uk/dataset.ts";
+import { publicHealth } from "../health/health-status/public-health/dataset.ts";
+import { pupilAbsence } from "../education/schools/pupil-absence/dataset.ts";
+import { qualification } from "../education/qualifications/qualification/dataset.ts";
+import { regionalGdpItl1 } from "../economy/economic-output/regional-gdp-itl1/dataset.ts";
+import { regionalGdpItl2 } from "../economy/economic-output/regional-gdp-itl2/dataset.ts";
+import { regionalGdpItl3 } from "../economy/economic-output/regional-gdp-itl3/dataset.ts";
+import { roadCollisions } from "../transport/road-safety/road-collisions/dataset.ts";
+import { schoolPerformance } from "../education/schools/school-performance/dataset.ts";
+import { schoolPerformanceConstituency } from "../education/schools/school-performance-constituency/dataset.ts";
+import { schoolPerformanceDisadvantage } from "../education/schools/school-performance-disadvantage/dataset.ts";
+import { simd } from "../society/deprivation/simd/dataset.ts";
+import { travelToWork } from "../transport/commuting/travel-to-work/dataset.ts";
+import { unemployment } from "../economy/labour-market/unemployment/dataset.ts";
+import { waste } from "../environment/waste/waste/dataset.ts";
+import { wimd } from "../society/deprivation/wimd/dataset.ts";
+import { workplaceIncome } from "../economy/earnings-and-income/workplace-income/dataset.ts";
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -131,8 +131,6 @@ export type DeclaredDatasetId =
 	| "adult-social-care-activity"
 	| "adult-social-care-outcomes"
 	| "air-quality"
-	| "brexit"
-	| "brexit-constituency"
 	| "broadband"
 	| "business-activity"
 	| "car-availability"
@@ -142,42 +140,26 @@ export type DeclaredDatasetId =
 	| "crime"
 	| "electric-vehicle-chargers"
 	| "electricity-consumption"
-	| "ethnicity"
-	| "fuel-poverty"
 	| "gas-consumption"
-	| "general-election"
 	| "general-health"
 	| "ghg-emissions"
-	| "historical-general-election"
 	| "homelessness"
-	| "house-price"
 	| "housing-affordability"
 	| "housing-tenure"
 	| "imd"
 	| "income"
 	| "jobs"
-	| "land-area"
-	| "life-expectancy"
-	| "life-expectancy-series"
-	| "local-election"
 	| "local-government-finance"
 	| "mobile-coverage"
 	| "net-additional-dwellings"
 	| "nhs-waiting"
 	| "nimdm"
 	| "planning-applications"
-	| "population"
-	| "population-constituency"
-	| "population-uk"
 	| "public-health"
 	| "pupil-absence"
 	| "qualification"
-	| "regional-gdp-itl1"
-	| "regional-gdp-itl2"
 	| "regional-gdp-itl3"
-	| "road-collisions"
 	| "school-performance"
-	| "school-performance-constituency"
 	| "school-performance-disadvantage"
 	| "simd"
 	| "travel-to-work"

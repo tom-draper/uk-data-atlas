@@ -22,7 +22,7 @@ drifted apart:
 | Docs topics (`lib/docs/content/data.ts`)                 | people, work, connectivity, elections, ...                                                   |
 | `/datasets` topics (`lib/reference/datasets.ts`)         | people-and-places, work-and-economy, health-and-care, councils, crime-and-safety, ...        |
 | `meta.json` `topics`                                     | Free text                                                                                    |
-| `packages/measures/src/statisticsDatasets/`              | By shape (census, people, services), not topic                                               |
+| `packages/measures/src/statisticsDatasets/`              | By shape (census, people, services), not topic (only five leftovers remain)                  |
 
 Examples of the drift:
 
@@ -173,6 +173,10 @@ source folder in code.
 
 Task 5 moved `data/source` to this layout and task 6 named each folder for the
 dataset id it serves. Sources no dataset reads sit in `_staging/`.
+
+Task 7 moved the declarations into `packages/datasets/src/<theme>/<topic>/<dataset>/`.
+Five datasets are still hand written, with reasons in
+`docs/dataset-declarations.md`. Loaders and types have not moved yet.
 
 ### Naming
 

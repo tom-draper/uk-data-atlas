@@ -5,7 +5,7 @@ import type { DatasetDefinition } from "./types.ts";
 /**
  * Datasets still written by hand as a `definitions/<name>.ts` module. A
  * dataset moves out of this list, and into `DECLARED_DEFINITIONS`, when it
- * becomes a declaration (`data/<id>/dataset.ts`).
+ * becomes a declaration (`<theme>/<topic>/<id>/dataset.ts`).
  */
 export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] =
 	[];

@@ -17,7 +17,7 @@ A dataset is described in separate places that nothing keeps in step:
 | `packages/datasets/src/data/<name>/loader.ts`                                                    | Reads raw files into the compiled payload                                                   |
 | `packages/datasets/src/data/catalog/definitions/<camelCase>.ts`                                  | Manifest `type`, output file, boundary type, source and licence, loader hook                |
 | `packages/datasets/src/types/<camelCase>.ts`                                                     | Types of the compiled payload                                                               |
-| `packages/measures/src/statisticsDatasets/*.ts`                                                  | Statistics declaration: measures, dimensions, fields, payload header, boundary year         |
+| `packages/measures/src/statisticsDatasets/*.ts`                                                  | Statistics declaration of the datasets not yet declared (see Migration status)              |
 | `pipeline/src/catalog/<name>.ts`, `compileDataCatalog.ts`                                        | A second compiler for the API catalogue: indicator ids, units, notes, boundary year, period |
 | `pipeline/src/stages/build-data-catalog.ts`                                                      | Input file per dataset                                                                      |
 | `pipeline/src/statistics/bindCompiledFields.ts`                                                  | API measure id to dataset field                                                             |
@@ -44,8 +44,8 @@ files name it:
 
 - Loader and definition: `data/claimant-count/loader.ts`,
   `catalog/definitions/claimantCount.ts`, `types/claimantCount.ts`.
-- Statistics: `statisticsDatasets/economy.ts` (measures, age-group dimension,
-  fields, header, `derived` youth rate).
+- Statistics: the `statistics` block of its declaration (measures, age-group
+  dimension, fields, header, `derived` youth rate).
 - API: `pipeline/src/catalog/claimantCount.ts` (indicators, notes, boundary
   year 2024, period `2026-04`), `compileDataCatalog.ts`, `build-data-catalog.ts`,
   `bindCompiledFields.ts`, `measure-dimensions.json`, `statistics-vocabulary.json`,
@@ -78,7 +78,7 @@ The same again, plus custom website code: `components/elections/local/*`,
 
 ## Target shape
 
-Each dataset is one module, `packages/datasets/src/data/<id>/dataset.ts`,
+Each dataset is one module, `packages/datasets/src/<theme>/<topic>/<id>/dataset.ts`,
 exporting a `DatasetDeclaration`. `<id>` is the only identifier: kebab-case,
 used for the API, pipeline, files, SQLite slug and website.
 
@@ -97,7 +97,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 ```
 
 `pnpm data:build --only catalogue-registry` finds every
-`data/<id>/dataset.ts` and writes `data/declarations.ts`, the catalogue
+`<theme>/<topic>/<id>/dataset.ts` and writes `data/declarations.ts`, the catalogue
 registry and the dataset record types from them.
 
 - It extends the existing `DeclaredDataset` (the statistics declaration) rather
@@ -165,24 +165,26 @@ of the `society` theme, `population` and `infrastructure` keep their names, and
 
 ## Migration status
 
-Declared: `business-activity`, `claimant-count`, `income`, `jobs`, `local-government-finance`, `regional-gdp-itl1`, `regional-gdp-itl2`, `regional-gdp-itl3`, `unemployment` and `workplace-income` (economy), `council-tax`, `homelessness`, `house-price`, `housing-affordability`, `housing-tenure` and `net-additional-dwellings` and `planning-applications` (housing), `air-quality`, `electricity-consumption`, `gas-consumption`, `ghg-emissions`, `land-area` and `waste` (environment), `adult-social-care-activity`, `adult-social-care-outcomes`, `general-health`, `life-expectancy`, `life-expectancy-series` and `public-health` (health), `ethnicity`, `population`, `population-constituency` and `population-uk` (population), `electric-vehicle-chargers` and `road-collisions` (transport), `child-poverty`, `fuel-poverty`, `imd`, `nimdm`, `simd` and `wimd` (deprivation), `crime` (crime), `brexit`, `brexit-constituency`, `general-election`, `historical-general-election` and `local-election` (politics), `nhs-waiting` (health), `qualification` (education), `car-availability` and `travel-to-work` (transport), `pupil-absence`, `school-performance`, `school-performance-constituency` and `school-performance-disadvantage` (education),
-`broadband` and `mobile-coverage`
-(infrastructure, a complete theme).
-
-Every dataset is now declared. The last one, `fuel-poverty`, had its own
-statistics export and payload rebuild; both are gone, and it goes through the
-shared path like the rest.
+Every dataset is a declaration in
+`packages/datasets/src/<theme>/<topic>/<id>/dataset.ts`. A test checks that the
+folder matches the declared theme, topic and id. The statistics entries of
+declared datasets are built from their declarations (`statisticsOf`).
 
 The four politics datasets, `ethnicity`, `population`, `house-price`,
-`life-expectancy` and `fuel-poverty` are declared, but their maps are not drawn from a display: party colours, the Leave share scale, one
-chart per election, the ethnicity categories and the population age, gender and
-density views, the house price series, the life expectancy male, female and
-average views and the fuel poverty ward and local authority summary are website code. Each keeps a hand-written `lib/datasets/<name>.ts` that spreads
-`definitionOf(<declaration>)` and adds its renderer, legend kind and charts.
-Shared links keep the old `generalElection`, `localElection` and
-`brexitConstituency`, `fuelPoverty`, `housePrice` and `lifeExpectancy` names in the map option
-parameters.
+`life-expectancy` and `fuel-poverty` are declared, but their maps are not drawn
+from a display: party colours, the Leave share scale, one chart per election,
+the ethnicity categories and the population age, gender and density views, the
+house price series, the life expectancy male, female and average views and the
+fuel poverty ward and local authority summary are website code. Each keeps a
+hand-written `lib/datasets/<name>.ts` that spreads `definitionOf(<declaration>)`
+and adds its renderer, legend kind and charts. Shared links keep the old
+`generalElection`, `localElection`, `brexitConstituency`, `fuelPoverty`,
+`housePrice` and `lifeExpectancy` names in the map option parameters.
 
 A dataset that stays on a camelCase website key (`type`) until it moves is the
-only place an old id survives; all declared datasets use their kebab-case
-id everywhere.
+only place an old id survives; all declared datasets use their kebab-case id
+everywhere.
+
+Declared metadata that was derived rather than researched: `attribution` comes
+from the publisher, `cadence` from a table in the migration script, and `notes`
+is empty. Review these per dataset when its docs page is written.

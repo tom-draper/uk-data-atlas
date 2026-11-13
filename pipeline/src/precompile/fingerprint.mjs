@@ -54,7 +54,8 @@ const pipelineInputs = [
 ];
 
 const definitionsDirectory = "packages/datasets/src/data/catalog/definitions";
-const dataDirectory = "packages/datasets/src/data";
+const sourceDirectory = "packages/datasets/src";
+const dataDirectory = `${sourceDirectory}/data`;
 
 // These name every dataset, so reaching one from a single dataset's imports
 // would tie that dataset to all the others, and adding a dataset would change
@@ -251,6 +252,23 @@ const fingerprintOf = async (context, label, files) => {
 	return `sha256:${hash.digest("hex")}`;
 };
 
+/** Every `<theme>/<topic>/<id>/dataset.ts` under the datasets source folder. */
+const declarationFiles = async (root) => {
+	const subfolders = async (path) =>
+		(await readdir(path, { withFileTypes: true }))
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => join(path, entry.name))
+			.sort((left, right) => left.localeCompare(right));
+	const files = [];
+	for (const theme of await subfolders(join(root, sourceDirectory)))
+		for (const topic of await subfolders(theme))
+			for (const dataset of await subfolders(topic)) {
+				const path = join(dataset, "dataset.ts");
+				if (await isFile(path)) files.push(path);
+			}
+	return files;
+};
+
 /**
  * The dataset type each definition file declares, by file: the definitions
  * not yet moved, then the declarations, whose id is their type.
@@ -274,22 +292,17 @@ const definitionFiles = async (root) => {
 			);
 		found.set(type, path);
 	}
-	const declarations = join(root, dataDirectory);
-	for (const entry of (
-		await readdir(declarations, { withFileTypes: true })
-	).sort((left, right) => left.name.localeCompare(right.name))) {
-		const path = join(declarations, entry.name, "dataset.ts");
-		if (!entry.isDirectory() || !(await isFile(path))) continue;
-		const id = /^\s*id:\s*"([^"]+)"/m.exec(
-			await readFile(path, "utf8"),
-		)?.[1];
-		if (!id)
+	for (const path of await declarationFiles(root)) {
+		const source = await readFile(path, "utf8");
+		const id = /^\s*id:\s*"([^"]+)"/m.exec(source)?.[1];
+		if (!id) throw new Error(`${relative(root, path)} declares no id.`);
+		// A dataset with a legacy type is known by that type, not its id.
+		const type = /^\s*legacyType:\s*"([^"]+)"/m.exec(source)?.[1] ?? id;
+		if (found.has(type))
 			throw new Error(
-				`${dataDirectory}/${entry.name}/dataset.ts declares no id.`,
+				`Two dataset definitions declare the type ${type}.`,
 			);
-		if (found.has(id))
-			throw new Error(`Two dataset definitions declare the type ${id}.`);
-		found.set(id, path);
+		found.set(type, path);
 	}
 	return found;
 };

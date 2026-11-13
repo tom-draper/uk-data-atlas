@@ -1,9 +1,12 @@
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
 	DATASET_DECLARATIONS,
 	DATASET_TOPICS,
 	getDatasetTopic,
 	isDatasetTopic,
+	themeOfTopic,
 	type DatasetTopic,
 } from "@uk-data-atlas/datasets";
 import { DATA_PAGES } from "@/lib/docs/content/data";
@@ -138,6 +141,44 @@ describe("dataset topics", () => {
 			const filed = DATASETS.find(({ id }) => id === declaration.id);
 			expect(filed?.topic, declaration.id).toBe(declaration.topic);
 		}
+	});
+});
+
+describe("declaration folders", () => {
+	const SOURCE = join(process.cwd(), "packages/datasets/src");
+	const folders = (path: string) =>
+		readdirSync(path, { withFileTypes: true })
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => entry.name);
+
+	it("sit at <theme>/<topic>/<id> for the declared theme, topic and id", () => {
+		for (const { id, topic } of DATASET_DECLARATIONS) {
+			const path = join(
+				SOURCE,
+				themeOfTopic(topic),
+				topic,
+				id,
+				"dataset.ts",
+			);
+			expect(existsSync(path), `${id} should be in ${path}`).toBe(true);
+		}
+	});
+
+	it("hold no dataset.ts that is not a declaration", () => {
+		const declared = new Set(
+			DATASET_DECLARATIONS.map(
+				({ id, topic }) => `${themeOfTopic(topic)}/${topic}/${id}`,
+			),
+		);
+		const found: string[] = [];
+		for (const theme of folders(SOURCE))
+			for (const topic of folders(join(SOURCE, theme)))
+				for (const id of folders(join(SOURCE, theme, topic)))
+					if (
+						existsSync(join(SOURCE, theme, topic, id, "dataset.ts"))
+					)
+						found.push(`${theme}/${topic}/${id}`);
+		expect(found.sort()).toEqual([...declared].sort());
 	});
 });
 
