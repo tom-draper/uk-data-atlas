@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import {
 	loadModule,
 	readCatalogueDefinitions,
+	readDatasetDeclarations,
 	writeGenerated,
 } from "../pipeline/src/catalog/buildCatalogueRegistry.ts";
 import {
@@ -19,7 +20,10 @@ const OUTPUT = join(DATASETS_DIR, "generated.ts");
 const CHART_OUTPUT = join(DATASETS_DIR, "generatedCharts.tsx");
 
 async function main() {
-	const catalogueDefinitions = await readCatalogueDefinitions();
+	const catalogueDefinitions = [
+		...(await readCatalogueDefinitions()),
+		...(await readDatasetDeclarations()),
+	];
 	const files = chartDefinitionFiles(await readdir(DATASETS_DIR));
 	const definitions = await Promise.all(
 		files.map(async (file) => {

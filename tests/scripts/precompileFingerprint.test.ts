@@ -277,11 +277,11 @@ describe("precompile fingerprints", () => {
 
 	it("fingerprints a declaration by its id and what it imports", async () => {
 		await write(
-			"packages/datasets/src/data/gamma/dataset.ts",
+			"packages/datasets/src/economy/labour-market/gamma/dataset.ts",
 			'import { load } from "./loader";\nexport const gamma = {\n\tid: "gamma",\n\tload,\n};\n',
 		);
 		await write(
-			"packages/datasets/src/data/gamma/loader.ts",
+			"packages/datasets/src/economy/labour-market/gamma/loader.ts",
 			"export const load = 1;",
 		);
 		await write(
@@ -295,7 +295,7 @@ describe("precompile fingerprints", () => {
 			"gamma",
 		]);
 		await write(
-			"packages/datasets/src/data/gamma/loader.ts",
+			"packages/datasets/src/economy/labour-market/gamma/loader.ts",
 			"export const load = 2;",
 		);
 		const after = await precompileFingerprints(root);
@@ -303,6 +303,16 @@ describe("precompile fingerprints", () => {
 		expect(after.datasets.gamma).not.toEqual(before.datasets.gamma);
 		expect(after.datasets.alpha).toEqual(before.datasets.alpha);
 		expect(after.datasets.beta).toEqual(before.datasets.beta);
+	});
+
+	it("fingerprints a declaration with a legacy type by that type", async () => {
+		await write(
+			"packages/datasets/src/economy/labour-market/gamma-ray/dataset.ts",
+			'export const gammaRay = {\n\tid: "gamma-ray",\n\tlegacyType: "gammaRay",\n};\n',
+		);
+		const { datasets } = await precompileFingerprints(root);
+
+		expect(Object.keys(datasets)).toEqual(["alpha", "beta", "gammaRay"]);
 	});
 
 	it("refuses two definitions that declare the same type", async () => {

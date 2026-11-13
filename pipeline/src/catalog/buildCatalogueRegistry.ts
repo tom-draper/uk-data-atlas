@@ -15,6 +15,7 @@ const CATALOGUE_DIRECTORY = join(
 );
 const DEFINITIONS_DIRECTORY = join(CATALOGUE_DIRECTORY, "definitions");
 const DATA_DIRECTORY = join(CATALOGUE_DIRECTORY, "..");
+const SOURCE_DIRECTORY = join(DATA_DIRECTORY, "..");
 
 const GENERATED_BY = "pipeline/src/stages/build-catalogue-registry.ts";
 
@@ -64,11 +65,17 @@ export function catalogueMetadata(
 }
 
 export type DatasetDeclarationEntry = {
-	/** The directory under `data/` holding `dataset.ts`. */
+	/** The `<theme>/<topic>/<id>` directory under `src/` holding `dataset.ts`. */
 	directory: string;
 	/** The exported declaration. */
 	name: string;
 	id: string;
+	/** The manifest type: the id, unless the dataset has a legacy type. */
+	type: string;
+	/** Whether the declaration says how the website draws it. */
+	displayed: boolean;
+	/** Whether the website has no chart for it yet. */
+	chartPending: boolean;
 };
 
 /** Finds the one declaration a dataset module exports. */
@@ -85,32 +92,56 @@ export function declarationMetadata(
 	if (matches.length !== 1)
 		throw new Error(`${file} must export exactly one dataset declaration.`);
 	const [name, value] = matches[0] as [string, Record<string, unknown>];
-	return { name, id: value.id as string };
+	const id = value.id as string;
+	const { legacyType } = value;
+	if (legacyType !== undefined && typeof legacyType !== "string")
+		throw new Error(`${file} has a legacyType that is not a string.`);
+	return {
+		name,
+		id,
+		type: legacyType ?? id,
+		displayed: value.display !== undefined,
+		chartPending: value.chartPending === true,
+	};
 }
 
-/** Every dataset declaration (`data/<id>/dataset.ts`), in id order. */
-export async function readDatasetDeclarations(): Promise<
-	DatasetDeclarationEntry[]
-> {
-	const directories = (await readdir(DATA_DIRECTORY, { withFileTypes: true }))
+const subdirectories = async (path: string): Promise<string[]> =>
+	(await readdir(path, { withFileTypes: true }))
 		.filter((entry) => entry.isDirectory())
 		.map((entry) => entry.name)
 		.sort();
+
+/**
+ * Every dataset declaration (`<theme>/<topic>/<id>/dataset.ts` under `src/`),
+ * in path order. The folder must be named for the declared id; that it also
+ * matches the declared theme and topic is checked by the organisation test.
+ */
+export async function readDatasetDeclarations(): Promise<
+	DatasetDeclarationEntry[]
+> {
 	const found: DatasetDeclarationEntry[] = [];
-	for (const directory of directories) {
-		const path = join(DATA_DIRECTORY, directory, "dataset.ts");
-		if (!existsSync(path)) continue;
-		const entry = declarationMetadata(
-			`${directory}/dataset.ts`,
-			await loadModule(join(DATA_DIRECTORY, directory), "dataset.ts"),
-		);
-		if (entry.id !== directory)
-			throw new Error(
-				`${directory}/dataset.ts declares id ${entry.id}; the directory is the id.`,
-			);
-		found.push({ directory, ...entry });
+	for (const theme of await subdirectories(SOURCE_DIRECTORY)) {
+		for (const topic of await subdirectories(
+			join(SOURCE_DIRECTORY, theme),
+		)) {
+			const topicDirectory = join(SOURCE_DIRECTORY, theme, topic);
+			for (const id of await subdirectories(topicDirectory)) {
+				const directory = `${theme}/${topic}/${id}`;
+				if (!existsSync(join(topicDirectory, id, "dataset.ts")))
+					continue;
+				const entry = declarationMetadata(
+					`${directory}/dataset.ts`,
+					await loadModule(join(topicDirectory, id), "dataset.ts"),
+				);
+				if (entry.id !== id)
+					throw new Error(
+						`${directory}/dataset.ts declares id ${entry.id}; the folder is the id.`,
+					);
+				found.push({ directory, ...entry });
+			}
+		}
 	}
-	return found;
+	return found.sort((left, right) => (left.id < right.id ? -1 : 1));
 }
 
 /**
@@ -174,7 +205,7 @@ export async function writeCatalogueRegistry(
 		join(DATA_DIRECTORY, "declarations.ts"),
 		`${header}
 import { definitionOf, type DatasetDeclaration } from "../declaration/dataset.ts";
-${declarations.map(({ directory, name }) => `import { ${name} } from "./${directory}/dataset.ts";`).join("\n")}
+${declarations.map(({ directory, name }) => `import { ${name} } from "../${directory}/dataset.ts";`).join("\n")}
 
 /** Every dataset declaration, in id order. */
 export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
@@ -186,7 +217,14 @@ export const DECLARED_DEFINITIONS = DATASET_DECLARATIONS.map((declaration) =>
 	definitionOf(declaration),
 );
 
-export type DeclaredDatasetId = ${declarations.length === 0 ? "never" : declarations.map(({ id }) => `"${id}"`).join(" | ")};
+export type DeclaredDatasetId = ${
+			declarations.filter(({ displayed }) => displayed).length === 0
+				? "never"
+				: declarations
+						.filter(({ displayed }) => displayed)
+						.map(({ type }) => `"${type}"`)
+						.join(" | ")
+		};
 `,
 	);
 	await writeGenerated(
@@ -199,7 +237,7 @@ ${imports}
 /**
  * Datasets still written by hand as a \`definitions/<name>.ts\` module. A
  * dataset moves out of this list, and into \`DECLARED_DEFINITIONS\`, when it
- * becomes a declaration (\`data/<id>/dataset.ts\`).
+ * becomes a declaration (\`<theme>/<topic>/<id>/dataset.ts\`).
  */
 export const HAND_WRITTEN_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [\n${values}\n];
 
@@ -219,7 +257,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	const declarationImports = declarations
 		.map(
 			({ directory, name }) =>
-				`import type { ${name} } from "../${directory}/dataset.ts";`,
+				`import type { ${name} } from "../../${directory}/dataset.ts";`,
 		)
 		.join("\n");
 	const datasetTypes = [
@@ -239,12 +277,12 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 		.join("\n");
 	const declaredRecords = declarations
 		.map(
-			({ id, name }) =>
-				`\t"${id}": Awaited<ReturnType<typeof ${name}.load>>;`,
+			({ type, name }) =>
+				`\t"${type}": Awaited<ReturnType<typeof ${name}.load>>;`,
 		)
 		.join("\n");
 	await writeGenerated(
 		join(CATALOGUE_DIRECTORY, "generated.ts"),
-		`${header}\n${typeImports}\n${declarationImports}\n\nexport type CatalogueDataset = ${datasetTypes};\nexport type CatalogueDatasetType = CatalogueDataset["type"];\n/** Records of the datasets declared in \`data/<id>/dataset.ts\`, by id. */\nexport type DeclaredDatasetRecords = {\n${declaredRecords}\n};\nexport type CatalogueDatasetRecords = DeclaredDatasetRecords & {\n${records}\n};\n`,
+		`${header}\n${typeImports}\n${declarationImports}\n\nexport type CatalogueDataset = ${datasetTypes};\nexport type CatalogueDatasetType = CatalogueDataset["type"];\n/** Records of the datasets declared in \`<theme>/<topic>/<id>/dataset.ts\`, by type. */\nexport type DeclaredDatasetRecords = {\n${declaredRecords}\n};\nexport type CatalogueDatasetRecords = DeclaredDatasetRecords & {\n${records}\n};\n`,
 	);
 }

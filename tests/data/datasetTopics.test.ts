@@ -5,6 +5,7 @@ import {
 	getDatasetTopic,
 	isDatasetTopic,
 	moduleOfTopic,
+	typeOf,
 } from "@uk-data-atlas/datasets";
 import { CENSUS_SMALL_AREA_TABLES } from "../../pipeline/src/catalog/censusSmallAreaTables";
 
@@ -33,7 +34,7 @@ describe("dataset topics", () => {
 	it("keeps each declaration's topic in its statistics", () => {
 		for (const declaration of DATASET_DECLARATIONS) {
 			const statistics = STATISTICS_DATASETS.find(
-				({ type }) => type === declaration.id,
+				({ type }) => type === typeOf(declaration),
 			);
 			expect(statistics?.topic, declaration.id).toBe(declaration.topic);
 			expect(isDatasetTopic(declaration.topic), declaration.id).toBe(
