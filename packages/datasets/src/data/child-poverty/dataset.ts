@@ -8,7 +8,7 @@ import { loadChildPoverty } from "./loader.ts";
 
 export const childPoverty = defineDataset<ChildPovertyDataset>({
 	id: "child-poverty",
-	module: "deprivation",
+	module: "society",
 	boundary: { type: "localAuthority", year: 2024 },
 	publishMapValues: true,
 	source: {

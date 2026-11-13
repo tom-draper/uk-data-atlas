@@ -16,7 +16,7 @@ import {
 	CATALOGUE_DATASET_DEFINITIONS,
 	HAND_WRITTEN_DATASET_DEFINITIONS,
 } from "@uk-data-atlas/datasets";
-import { DATASET_MODULES, isDatasetModule } from "@uk-data-atlas/datasets";
+import { DATASET_THEMES, isDatasetTheme } from "@uk-data-atlas/datasets";
 import { UPDATE_CADENCES } from "@uk-data-atlas/datasets";
 import { statisticsTables } from "../../pipeline/src/storage/index";
 import { writeSqliteTables } from "../../pipeline/src/storage/index";
@@ -50,10 +50,9 @@ describe("dataset declarations", () => {
 	it("declares a valid module, a licence and the source terms", () => {
 		for (const declaration of DATASET_DECLARATIONS) {
 			const { source } = declaration;
-			expect(isDatasetModule(declaration.module), declaration.id).toBe(
+			expect(isDatasetTheme(declaration.module), declaration.id).toBe(
 				true,
 			);
-			expect(declaration.module, declaration.id).not.toBe("core");
 			expect(source.licence, declaration.id).not.toBe("");
 			expect(source.licenceUrl, declaration.id).toMatch(/^https?:/);
 			expect(source.sourceUrl, declaration.id).toMatch(/^https?:/);
@@ -66,7 +65,9 @@ describe("dataset declarations", () => {
 		const types = STATISTICS_DATASETS.map(({ type }) => type);
 		expect(new Set(types).size).toBe(types.length);
 		for (const dataset of STATISTICS_DATASETS)
-			expect(DATASET_MODULES).toContain(dataset.module);
+			expect(DATASET_THEMES.map(({ id }) => id)).toContain(
+				dataset.module,
+			);
 	});
 
 	it("keeps the measure ids of a declaration unique", () => {

@@ -1,4 +1,4 @@
-import type { DatasetModule } from "@uk-data-atlas/datasets";
+import type { DatasetTheme } from "@uk-data-atlas/datasets";
 
 /**
  * Census 2021 tables for England and Wales at the two statistical small-area
@@ -16,7 +16,7 @@ export type Category = readonly [suffix: string, column: string, label: string];
 export type CensusTable = {
 	table: string;
 	/** The topic the table's dataset belongs to. */
-	module: DatasetModule;
+	module: DatasetTheme;
 	/** The measure id is the prefix and the category suffix. */
 	measurePrefix: string;
 	unit: string;

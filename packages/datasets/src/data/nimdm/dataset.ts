@@ -9,7 +9,7 @@ import { loadNIMDM } from "./loader.ts";
 
 export const nimdm = defineDataset<NIMDMDataset>({
 	id: "nimdm",
-	module: "deprivation",
+	module: "society",
 	boundary: { type: "superOutputArea", year: 2011 },
 	source: {
 		name: "Northern Ireland Multiple Deprivation Measure",

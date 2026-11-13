@@ -9,7 +9,7 @@ import { loadWIMD } from "./loader.ts";
 
 export const wimd = defineDataset<WIMDDataset>({
 	id: "wimd",
-	module: "deprivation",
+	module: "society",
 	boundary: { type: "lsoa", year: 2011 },
 	source: {
 		name: "Welsh Index of Multiple Deprivation",

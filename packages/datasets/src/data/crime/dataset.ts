@@ -14,7 +14,7 @@ const offence = (
 
 export const crime = defineDataset<CrimeDataset>({
 	id: "crime",
-	module: "crime",
+	module: "society",
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	publishMapValues: true,
