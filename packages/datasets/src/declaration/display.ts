@@ -162,7 +162,7 @@ export type DatasetDisplay = {
 	card?: DisplayCard;
 	/**
 	 * The website module of a chart component of its own, such as
-	 * `@/components/telecoms/broadband/BroadbandChart`.
+	 * `@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart`.
 	 */
 	component?: string;
 	/**

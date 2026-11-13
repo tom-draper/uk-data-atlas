@@ -192,7 +192,8 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 	display: {
 		label: "Mobile Coverage [2025]",
 		year: 2025,
-		component: "@/components/telecoms/mobile/MobileCoverageChart",
+		component:
+			"@/components/datasets/infrastructure/digital-connectivity/mobile-coverage/MobileCoverageChart",
 		measures: [
 			{
 				id: "pct5GOutdoorAll",

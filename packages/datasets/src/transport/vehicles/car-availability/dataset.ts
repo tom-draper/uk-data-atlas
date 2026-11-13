@@ -98,7 +98,7 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		label: "Car Availability [2021]",
 		year: 2021,
 		component:
-			"@/components/transport/car-availability/CarAvailabilityChart",
+			"@/components/datasets/transport/vehicles/car-availability/CarAvailabilityChart",
 		measures: [
 			{
 				// Households with no car: the measure with the most spread, and

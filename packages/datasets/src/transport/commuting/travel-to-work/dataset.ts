@@ -139,7 +139,8 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 	display: {
 		label: "Travel to Work [2021]",
 		year: 2021,
-		component: "@/components/transport/travel-to-work/TravelToWorkChart",
+		component:
+			"@/components/datasets/transport/commuting/travel-to-work/TravelToWorkChart",
 		measures: [
 			{
 				// Car share: the widest spread of any mode, and the one that

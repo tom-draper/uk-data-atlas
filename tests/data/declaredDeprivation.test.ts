@@ -109,7 +109,7 @@ describe.each([
 describe("deprivation aggregation", () => {
 	it("is drawn by each index's own chart", () => {
 		expect(definitionOf("imd").chart.componentPath).toBe(
-			"@/components/deprivation/imd/IMDChart",
+			"@/components/datasets/society/deprivation/imd/IMDChart",
 		);
 		expect(definitionOf("nimdm").chart.key).toBe("society-nimdm");
 	});

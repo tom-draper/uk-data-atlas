@@ -141,7 +141,7 @@ export const imd = defineDataset<IMDDataset>({
 	display: {
 		label: "Deprivation (IMD) [2025]",
 		year: 2025,
-		component: "@/components/deprivation/imd/IMDChart",
+		component: "@/components/datasets/society/deprivation/imd/IMDChart",
 		measures,
 		aggregation: {
 			scope: "lsoa",

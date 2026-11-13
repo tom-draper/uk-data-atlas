@@ -207,3 +207,41 @@ describe("lists that name datasets", () => {
 		).toEqual([]);
 	});
 });
+
+describe("chart component folders", () => {
+	const COMPONENTS = join(process.cwd(), "components/datasets");
+	const folders = (path: string) =>
+		readdirSync(path, { withFileTypes: true })
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => entry.name);
+
+	const found = () => {
+		const paths: string[] = [];
+		for (const theme of folders(COMPONENTS))
+			for (const topic of folders(join(COMPONENTS, theme)))
+				for (const id of folders(join(COMPONENTS, theme, topic)))
+					paths.push(`${theme}/${topic}/${id}`);
+		return paths;
+	};
+
+	it("sit at <theme>/<topic>/<id> for a registered dataset", () => {
+		const registered = new Set(
+			DATASETS.filter(({ topic }) => isDatasetTopic(topic)).map(
+				({ id, topic }) =>
+					`${themeOfTopic(topic as DatasetTopic)}/${topic}/${id}`,
+			),
+		);
+		expect(found().filter((path) => !registered.has(path))).toEqual([]);
+	});
+
+	it("only use folders for themes and topics that exist", () => {
+		const themes = new Set(DATASET_TOPICS.map(({ theme }) => theme));
+		for (const theme of folders(COMPONENTS)) {
+			expect(themes.has(theme as never), theme).toBe(true);
+			for (const topic of folders(join(COMPONENTS, theme))) {
+				expect(isDatasetTopic(topic), `${theme}/${topic}`).toBe(true);
+				expect(themeOfTopic(topic as DatasetTopic), topic).toBe(theme);
+			}
+		}
+	});
+});

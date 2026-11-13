@@ -28,7 +28,8 @@ const density: ChartDefinition<PopulationDataset> = {
 	key: "demographics-populationDensity",
 	label: "Population Density [2022]",
 	view: "density",
-	componentPath: "@/components/demographics/PopulationDensityRegistry",
+	componentPath:
+		"@/components/datasets/population/population-estimates/population/PopulationDensityRegistry",
 	calculateStats,
 	year: 2022,
 };
@@ -37,7 +38,8 @@ const age: ChartDefinition<PopulationDataset> = {
 	key: "demographics-age",
 	label: "Age Distribution [2022]",
 	view: "age",
-	componentPath: "@/components/demographics/PopulationAgeRegistry",
+	componentPath:
+		"@/components/datasets/population/population-estimates/population/PopulationAgeRegistry",
 	calculateStats,
 	year: 2022,
 };
@@ -46,7 +48,8 @@ const gender: ChartDefinition<PopulationDataset> = {
 	key: "demographics-gender",
 	label: "Gender Balance [2022]",
 	view: "gender",
-	componentPath: "@/components/demographics/PopulationGenderRegistry",
+	componentPath:
+		"@/components/datasets/population/population-estimates/population/PopulationGenderRegistry",
 	calculateStats,
 	year: 2022,
 };

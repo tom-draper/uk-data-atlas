@@ -12,7 +12,7 @@ export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstitu
 			key: "brexit-hanretty",
 			label: "Hanretty Estimates [2016]",
 			componentPath:
-				"@/components/elections/referendum/BrexitHanrettyEstimatesChart",
+				"@/components/datasets/politics/referendums/brexit-constituency/BrexitHanrettyEstimatesChart",
 			calculateStats: (mm, g, d, l, id) =>
 				mm.aggregate(brexitConstituencyAggregation, g, d, l, id),
 			year: 2016,

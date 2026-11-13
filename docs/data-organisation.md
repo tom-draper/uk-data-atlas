@@ -178,6 +178,15 @@ Task 7 moved the declarations into `packages/datasets/src/<theme>/<topic>/<datas
 Five datasets are still hand written, with reasons in
 `docs/dataset-declarations.md`. Loaders and types have not moved yet.
 
+Task 8 moved the custom charts into
+`components/datasets/<theme>/<topic>/<dataset>/`. Code shared by a topic or a
+theme sits as files at that level (`society/deprivation/`,
+`politics/PartyVotes.tsx`). A test checks each folder against the registry.
+The `lib/datasets/<camelCase>.ts` files stay: a declaration's `display` block
+cannot yet express their card, `calculateStats`, map value or legend, and only
+claimant count, broadband and mobile coverage (which already have no file)
+use it.
+
 ### Naming
 
 A folder is named for a dataset it feeds, and `SOURCES` derives it: a source's

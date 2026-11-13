@@ -3,7 +3,7 @@
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { IncomeCardBackground } from "@/components/economics/income/IncomeCardBackground";
+import { IncomeCardBackground } from "@/components/datasets/economy/earnings-and-income/income/IncomeCardBackground";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,

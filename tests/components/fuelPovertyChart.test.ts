@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveFuelPovertyStats } from "@/components/economics/fuel-poverty/FuelPovertyChart";
+import { resolveFuelPovertyStats } from "@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart";
 import { aggregateFuelPovertyByLad } from "@/lib/helpers/fuelPoverty";
 import type {
 	AggregatedFuelPovertyData,

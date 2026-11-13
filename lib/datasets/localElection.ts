@@ -20,7 +20,8 @@ const localElectionChart = (
 	topic: "local-elections",
 	key: `localElection-${year}`,
 	label: `${year} Local Elections`,
-	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
+	componentPath:
+		"@/components/datasets/politics/local-elections/local-election/LocalElectionRegistryChart",
 	calculateStats,
 	year,
 });

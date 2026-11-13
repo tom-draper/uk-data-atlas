@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveBrexitElectoralStats } from "@/components/elections/referendum/BrexitElectoralChart";
+import { resolveBrexitElectoralStats } from "@/components/datasets/politics/referendums/brexit/BrexitElectoralChart";
 import type {
 	AggregatedBrexitData,
 	BrexitLADDataset,
