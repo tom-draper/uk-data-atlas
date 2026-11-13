@@ -1,10 +1,15 @@
+import { taxonomyParameters } from "./taxonomyParameters";
+
 export const datasetsMetadata = {
 	operationId: "listDatasets",
 	tags: ["Data catalogue"],
 	summary: "List published source datasets and their lineage",
+	description:
+		"Each dataset carries the `theme` and `topic` it is filed under and the `module` it is downloaded in, from the same registry as the docs. Filter on any of them: `GET /v1/datasets?theme=population`. The filters combine, and a value the registry does not hold is refused with the values it does.\n",
+	parameters: taxonomyParameters,
 	"x-likely-refusal": {
 		status: 503,
-		when: "Takes no input. Refused only when the server was started without the data catalogue built.",
+		when: "Refused only when the server was started without the data catalogue built. A `theme`, `topic` or `module` the registry does not hold is a 400 with `code: unknown_filter_value`.",
 	},
 	responses: {
 		"200": {
@@ -19,6 +24,9 @@ export const datasetsMetadata = {
 							"sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
 						data: [
 							{
+								theme: "environment",
+								topic: "air-quality",
+								module: "environment",
 								id: "air-quality",
 								label: "Air Quality",
 								publisher:

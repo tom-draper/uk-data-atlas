@@ -113,6 +113,7 @@ const v1 = (
 const documentPath = v1("documents", { length: 3 });
 const datasetPath = v1("datasets");
 const measureBasePath = v1("measures", { maxLength: 3 });
+const taxonomyPath = v1(["themes", "modules"], { length: 2 });
 const analysisPath = v1(["analysis-geographies", "analysis:plan"]);
 const boundaryPath = v1([
 	"geographies",
@@ -157,7 +158,10 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "catalogue",
-		owns: (segments) => datasetPath(segments) || measureBasePath(segments),
+		owns: (segments) =>
+			datasetPath(segments) ||
+			measureBasePath(segments) ||
+			taxonomyPath(segments),
 		handle: handleCatalogueRoutes,
 	},
 	{

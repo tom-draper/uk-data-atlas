@@ -10,6 +10,16 @@ import {
 	describeMeasure,
 	searchDimensionalMeasures,
 } from "../dimensions/measureDiscovery";
+import {
+	isTaxonomyQuery,
+	matchesTaxonomy,
+	readTaxonomyQuery,
+	taxonomyOfDataset,
+	taxonomyOfMeasure,
+	withTaxonomy,
+	type TaxonomyQuery,
+} from "./datasetTaxonomy";
+import { describeModules, describeThemes } from "./themesAndModules";
 
 /** Dataset and measure metadata discovery, separate from analytical operations. */
 export const handleCatalogueRoutes = ({
@@ -28,15 +38,56 @@ export const handleCatalogueRoutes = ({
 					},
 				}
 			: measure;
+	const withTheme = <T extends { sources: Array<{ datasetId: string }> }>(
+		measure: T,
+	) => withTaxonomy(measure, taxonomyOfMeasure(measure));
+	const inTaxonomy = (
+		measure: { sources: Array<{ datasetId: string }> },
+		query: TaxonomyQuery,
+	) => matchesTaxonomy(taxonomyOfMeasure(measure), query);
 	if (segments[0] !== "v1") return undefined;
-	if (segments[1] === "datasets" && segments.length === 2)
-		return dataCatalog
-			? { status: 200, body: envelope(releaseId, dataCatalog.datasets) }
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the data catalogue before listing datasets.",
-				);
+	if (
+		(segments[1] === "themes" || segments[1] === "modules") &&
+		segments.length === 2
+	) {
+		// The dataset counts come from the catalogue, so without one they
+		// would read as zero rather than as unknown.
+		if (!dataCatalog)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`Build the data catalogue before listing ${segments[1]}.`,
+			);
+		const describe =
+			segments[1] === "themes" ? describeThemes : describeModules;
+		return {
+			status: 200,
+			body: envelope(releaseId, describe(dataCatalog.datasets)),
+		};
+	}
+	if (segments[1] === "datasets" && segments.length === 2) {
+		if (!dataCatalog)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before listing datasets.",
+			);
+		const query = readTaxonomyQuery(parsedUrl.searchParams);
+		if (!isTaxonomyQuery(query)) return query;
+		return {
+			status: 200,
+			body: envelope(
+				releaseId,
+				dataCatalog.datasets
+					.filter((dataset) =>
+						matchesTaxonomy(taxonomyOfDataset(dataset.id), query),
+					)
+					.map((dataset) =>
+						withTaxonomy(dataset, taxonomyOfDataset(dataset.id)),
+					),
+			),
+		};
+	}
 	if (segments[1] === "datasets" && segments.length === 3) {
 		if (!dataCatalog)
 			return problem(
@@ -48,7 +99,13 @@ export const handleCatalogueRoutes = ({
 			(candidate) => candidate.id === segments[2],
 		);
 		return dataset
-			? { status: 200, body: envelope(releaseId, dataset) }
+			? {
+					status: 200,
+					body: envelope(
+						releaseId,
+						withTaxonomy(dataset, taxonomyOfDataset(dataset.id)),
+					),
+				}
 			: problem(
 					404,
 					"Not Found",
@@ -64,11 +121,13 @@ export const handleCatalogueRoutes = ({
 		: undefined;
 	if (dimensional && segments[1] === "measures" && segments.length === 2) {
 		const query = parsedUrl.searchParams.get("q");
+		const taxonomy = readTaxonomyQuery(parsedUrl.searchParams);
+		if (!isTaxonomyQuery(taxonomy)) return taxonomy;
 		return {
 			status: 200,
 			body: envelope(
 				releaseId,
-				query === null
+				(query === null
 					? dimensional.measures.map((measure) =>
 							describeMeasure(measure, context.documents),
 						)
@@ -81,7 +140,10 @@ export const handleCatalogueRoutes = ({
 							...(members.length > 0
 								? { matchedMembers: members }
 								: {}),
-						})),
+						}))
+				)
+					.filter((measure) => inTaxonomy(measure, taxonomy))
+					.map(withTheme),
 			),
 		};
 	}
@@ -102,7 +164,7 @@ export const handleCatalogueRoutes = ({
 			status: 200,
 			body: envelope(
 				releaseId,
-				describeMeasure(measure, context.documents),
+				withTheme(describeMeasure(measure, context.documents)),
 			),
 		};
 	}
@@ -110,16 +172,21 @@ export const handleCatalogueRoutes = ({
 		// A search never picks one: it lists every match, best first, and an
 		// empty list is an answer, not a refusal.
 		const query = parsedUrl.searchParams.get("q");
+		const taxonomy = readTaxonomyQuery(parsedUrl.searchParams);
+		if (!isTaxonomyQuery(taxonomy)) return taxonomy;
 		return dataCatalog
 			? {
 					status: 200,
 					body: envelope(
 						releaseId,
-						query === null
+						(query === null
 							? dataCatalog.measures.map(withEvidence)
 							: searchMeasures(dataCatalog, query).map(
 									withEvidence,
-								),
+								)
+						)
+							.filter((measure) => inTaxonomy(measure, taxonomy))
+							.map(withTheme),
 					),
 				}
 			: problem(
@@ -139,7 +206,10 @@ export const handleCatalogueRoutes = ({
 			(candidate) => candidate.id === segments[2],
 		);
 		return measure
-			? { status: 200, body: envelope(releaseId, withEvidence(measure)) }
+			? {
+					status: 200,
+					body: envelope(releaseId, withTheme(withEvidence(measure))),
+				}
 			: problem(
 					404,
 					"Not Found",

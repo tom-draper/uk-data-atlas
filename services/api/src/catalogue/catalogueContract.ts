@@ -3,6 +3,8 @@ import { datasetMetadata } from "./datasetMetadata";
 import { measureMetadata } from "./measureMetadata";
 import { datasetsMetadata } from "./datasetsMetadata";
 import { measuresMetadata } from "./measuresMetadata";
+import { themesMetadata } from "./themesMetadata";
+import { modulesMetadata } from "./modulesMetadata";
 
 const envelope = (data: z.ZodType) =>
 	z.looseObject({
@@ -12,7 +14,14 @@ const envelope = (data: z.ZodType) =>
 		data,
 	});
 
+/** Where a dataset sits in the registry, on every response that describes one. */
+const taxonomy = {
+	theme: z.string().optional(),
+	topic: z.string().optional(),
+	module: z.string().optional(),
+};
 const dataset = z.looseObject({
+	...taxonomy,
 	id: z.string(),
 	label: z.string(),
 	publisher: z.string(),
@@ -71,6 +80,7 @@ const dimension = z.looseObject({
 });
 const members = z.record(z.string(), z.string());
 const measure = z.looseObject({
+	...taxonomy,
 	id: z.string(),
 	label: z.string(),
 	description: z.string(),
@@ -142,6 +152,38 @@ const measure = z.looseObject({
 			}),
 		)
 		.optional(),
+});
+
+const datasetLinks = z.looseObject({ datasets: z.string() });
+const theme = z.looseObject({
+	id: z.string(),
+	label: z.string(),
+	description: z.string(),
+	modules: z.array(z.string()),
+	datasetCount: z.number(),
+	links: datasetLinks,
+	topics: z.array(
+		z.looseObject({
+			id: z.string(),
+			label: z.string(),
+			description: z.string(),
+			module: z.string(),
+			datasetCount: z.number(),
+			links: datasetLinks,
+		}),
+	),
+});
+const catalogueModule = z.looseObject({
+	id: z.string(),
+	kind: z.enum(["theme", "foundation"]),
+	label: z.string(),
+	description: z.string(),
+	themes: z.array(z.string()),
+	topics: z.array(
+		z.looseObject({ id: z.string(), label: z.string(), theme: z.string() }),
+	),
+	datasetCount: z.number(),
+	links: datasetLinks.optional(),
 });
 
 export const datasets = {
@@ -216,6 +258,45 @@ export const measureDetail = {
 						"application/json"
 					],
 					schema: envelope(measure),
+				},
+			},
+		},
+	},
+} as const;
+
+export const themes = {
+	...themesMetadata,
+	method: "get",
+	path: "/themes",
+	responses: {
+		...themesMetadata.responses,
+		200: {
+			...themesMetadata.responses[200],
+			content: {
+				"application/json": {
+					...themesMetadata.responses[200].content[
+						"application/json"
+					],
+					schema: envelope(z.array(theme)),
+				},
+			},
+		},
+	},
+} as const;
+export const modules = {
+	...modulesMetadata,
+	method: "get",
+	path: "/modules",
+	responses: {
+		...modulesMetadata.responses,
+		200: {
+			...modulesMetadata.responses[200],
+			content: {
+				"application/json": {
+					...modulesMetadata.responses[200].content[
+						"application/json"
+					],
+					schema: envelope(z.array(catalogueModule)),
 				},
 			},
 		},

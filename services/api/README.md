@@ -1815,6 +1815,8 @@ GET /v1/datasets
 GET /v1/datasets/{dataset-id}
 GET /v1/measures
 GET /v1/measures/{measure-id}
+GET /v1/themes
+GET /v1/modules
 GET /v1/boundaries
 GET /v1/boundary-releases
 GET /v1/locations
@@ -3268,6 +3270,8 @@ second inventory to maintain:
 - `GET /v1/datasets/{dataset-id}`, Get one published source dataset and its input hashes
 - `GET /v1/measures`, List measures currently available to query
 - `GET /v1/measures/{measure-id}`, Get one measure's semantics and availability
+- `GET /v1/themes`, List the themes and topics datasets are filed under
+- `GET /v1/modules`, List the modules datasets are downloaded in
 
 **Governance**
 

@@ -29,6 +29,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-12",
+		title: "Datasets and measures carry theme, topic and module",
+		surface: "f6ca502a1f36",
+		changes: [
+			"Datasets and measures, in listings and detail, gain `theme`, `topic` and `module` fields, as the registry files them. They are additive: no existing field or parameter changed.",
+			"`GET /v1/datasets` and `GET /v1/measures` accept `theme`, `topic` and `module` filters. An unknown value returns a 400 with the code `unknown_filter_value`, naming the parameter and the values it accepts.",
+			"`GET /v1/themes` lists the themes in registry order with their topics, and `GET /v1/modules` lists the modules datasets are downloaded in, each with a dataset count.",
+		],
+	},
+	{
 		date: "2026-11-03",
 		title: "Measure query parameters take dimension filters",
 		surface: "8a0221254f75",

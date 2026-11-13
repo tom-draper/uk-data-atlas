@@ -30,6 +30,9 @@ export const datasetMetadata = {
 						atlasRelease:
 							"sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
 						data: {
+							theme: "population",
+							topic: "population-estimates",
+							module: "population",
 							id: "population-uk",
 							label: "Population (Local Authority)",
 							publisher: "Office for National Statistics",

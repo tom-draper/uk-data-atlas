@@ -14,6 +14,8 @@ import {
 	measures,
 	datasetDetail,
 	measureDetail,
+	modules,
+	themes,
 } from "../catalogue/catalogueContract";
 import { documentation } from "./documentation";
 import { openapiDescription } from "./openapiDescription";
@@ -58,6 +60,8 @@ const schemas = new Map<string, z.ZodType>([
 	],
 	[datasets.path, datasets.responses[200].content["application/json"].schema],
 	[measures.path, measures.responses[200].content["application/json"].schema],
+	[themes.path, themes.responses[200].content["application/json"].schema],
+	[modules.path, modules.responses[200].content["application/json"].schema],
 ]);
 const detailSchemas = new Map<string, z.ZodType>([
 	[

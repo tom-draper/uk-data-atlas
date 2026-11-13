@@ -11,6 +11,8 @@ import {
 	datasets,
 	measureDetail,
 	measures,
+	modules,
+	themes,
 } from "./catalogueContract";
 
 export const catalogueFastifyRoutes: FastifyPluginAsync<{
@@ -22,6 +24,8 @@ export const catalogueFastifyRoutes: FastifyPluginAsync<{
 		datasetDetail,
 		measures,
 		measureDetail,
+		themes,
+		modules,
 	]) {
 		registerGetRoute(
 			app,

@@ -23,12 +23,16 @@ import {
 	datasetDetail,
 	measures,
 	measureDetail,
+	themes,
+	modules,
 } from "../catalogue/catalogueContract";
 import { catalogueFastifyRoutes } from "../catalogue/catalogueFastifyRoutes";
 import { datasetMetadata } from "../catalogue/datasetMetadata";
 import { measureMetadata } from "../catalogue/measureMetadata";
 import { datasetsMetadata } from "../catalogue/datasetsMetadata";
 import { measuresMetadata } from "../catalogue/measuresMetadata";
+import { themesMetadata } from "../catalogue/themesMetadata";
+import { modulesMetadata } from "../catalogue/modulesMetadata";
 import swagger from "@fastify/swagger";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { atlasRelease } from "./atlasRelease";
@@ -115,6 +119,8 @@ export const generatedPaths = async () => {
 		["/datasets/{dataset-id}", datasetMetadata, datasetDetail],
 		["/measures", measuresMetadata, measures],
 		["/measures/{measure-id}", measureMetadata, measureDetail],
+		["/themes", themesMetadata, themes],
+		["/modules", modulesMetadata, modules],
 		[
 			"/areas/{geography}/{code}/similar",
 			similarAreasMetadata,
