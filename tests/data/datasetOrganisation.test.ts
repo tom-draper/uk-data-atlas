@@ -49,8 +49,8 @@ interface Exception {
  */
 const THIN_TOPIC_ALLOWLIST: Record<string, Exception> = {
 	"nhs-services": {
-		reason: "Only nhs-waiting is built. GP, hospital and prescribing sources are in the unused set.",
-		task: 18,
+		reason: "Only nhs-waiting is built. The GP, hospital and prescribing sources are staged in _staging/; promoting one adds the second dataset.",
+		task: null,
 	},
 	...Object.fromEntries(
 		[

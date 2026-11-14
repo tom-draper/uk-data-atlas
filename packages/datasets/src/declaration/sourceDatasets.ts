@@ -7,7 +7,7 @@
  *
  * Every folder with a `meta.json` must appear here or in `SUPPORT_SOURCES`,
  * or sit in `_staging/` where nothing reads it, so adding a source means
- * saying what it is for. Task 18 decides what becomes of the staged ones.
+ * saying what it is for ("Staged sources" in the doc lists the staged ones).
  */
 
 /**

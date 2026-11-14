@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
 	getDatasetTopic,
+	isStagedPath,
 	SOURCES,
 	sourceDir,
 	sourceTopic,
@@ -212,6 +213,12 @@ describe("source folders and datasets", () => {
 				);
 		}
 		expect(wrong).toEqual([]);
+	});
+
+	it("never list a staged source, which nothing builds", () => {
+		expect(
+			[...folders, ...Object.keys(SUPPORT_SOURCES)].filter(isStagedPath),
+		).toEqual([]);
 	});
 
 	it("keep foundation sources in core/", () => {

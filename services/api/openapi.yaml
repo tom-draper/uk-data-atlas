@@ -2861,7 +2861,7 @@ paths:
                       from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.
                     inputs:
                       - kind: text
-                        path: environment/air-quality/pcm-background-by-local-authority-2024.csv
+                        path: environment/air-quality/air-quality/pcm-background-by-local-authority-2024.csv
                         bytes: 16025
                         sha256: 433a690b5d67b88e86543c0e4696a87239f34a1afa5d024956bb0eb285d24e31
                     summary:
@@ -3053,7 +3053,7 @@ paths:
                 data:
                   theme: population
                   topic: population-estimates
-                  module: population
+                  module: population-detail
                   id: population-uk
                   label: Population (Local Authority)
                   publisher: Office for National Statistics
@@ -3259,7 +3259,7 @@ paths:
                 data:
                   - theme: population
                     topic: population-estimates
-                    module: population
+                    module: population-detail
                     id: population
                     label: Population
                     description: Mid-year population estimate.
@@ -4468,8 +4468,8 @@ paths:
                         shareAlike: false
                     licenceConflict: null
                     datasets:
-                      - id: population
-                        title: Population Estimates
+                      - id: population-constituency
+                        title: Population (Constituency)
                         topic: population-estimates
                         partial: false
                     build:
@@ -9276,7 +9276,7 @@ paths:
                         name: Open Government Licence v3.0
                         url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
                       inputs:
-                        - path: geography/land-area/sam-lad-2024-12.csv
+                        - path: core/land-area/sam-lad-2024-12.csv
                           sha256: a507a632fd3dc616f88e1be9a3af9c22ec26f55d35f0969233abd358bea8c59e
                       href: /v1/datasets/land-area
                   exports:

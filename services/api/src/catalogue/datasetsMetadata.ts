@@ -43,7 +43,7 @@ export const datasetsMetadata = {
 								inputs: [
 									{
 										kind: "text",
-										path: "environment/air-quality/pcm-background-by-local-authority-2024.csv",
+										path: "environment/air-quality/air-quality/pcm-background-by-local-authority-2024.csv",
 										bytes: 16025,
 										sha256: "433a690b5d67b88e86543c0e4696a87239f34a1afa5d024956bb0eb285d24e31",
 									},

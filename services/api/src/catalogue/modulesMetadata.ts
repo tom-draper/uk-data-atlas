@@ -57,8 +57,8 @@ export const modulesMetadata = {
 								licenceConflict: null,
 								datasets: [
 									{
-										id: "population",
-										title: "Population Estimates",
+										id: "population-constituency",
+										title: "Population (Constituency)",
 										topic: "population-estimates",
 										partial: false,
 									},

@@ -38,7 +38,7 @@ export const measuresMetadata = {
 							{
 								theme: "population",
 								topic: "population-estimates",
-								module: "population",
+								module: "population-detail",
 								id: "population",
 								label: "Population",
 								description: "Mid-year population estimate.",

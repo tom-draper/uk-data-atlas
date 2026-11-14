@@ -27,6 +27,10 @@ data/build/
          └──▶ Next.js server ──▶ hash-versioned JSON ──▶ browser
 ```
 
+`data/source/_staging/` holds sources that are downloaded but not built. Nothing in
+this folder is derived from them, and they never reach the website or the API.
+`docs/data-organisation.md` ("Staged sources") lists them and says how to promote one.
+
 Neither product writes here. The data pipeline writes this release. Both servers
 read catalogue datasets from `data/build/atlas.sqlite` on disk. The browser reads
 JSON from the Next.js server and never opens SQLite or fetches from the API.

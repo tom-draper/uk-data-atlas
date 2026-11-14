@@ -12,6 +12,7 @@ import {
 } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { STAGING_DIR } from "../packages/datasets/src/declaration/sources.ts";
 import { sha256FileHexSync, sha256Hex } from "./src/lib/hash.ts";
 import { readJsonSync } from "./src/lib/json.ts";
 
@@ -290,7 +291,8 @@ export function createStageCache({
 				root,
 				join(dataDirectory, path),
 				data,
-				new Set(outputRoots),
+				// Staged sources are not built, so they are not an input.
+				new Set([...outputRoots, join(dataDirectory, STAGING_DIR)]),
 			);
 		data.delete(join(dataDirectory, ".source-release.json"));
 		const existing = presence

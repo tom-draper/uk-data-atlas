@@ -48,6 +48,7 @@ Examples of the drift:
 - Unused sources: seven in `health/` (childhood-vaccination-cover,
   english-prescribing-dataset, gp-appointments, gp-registered-patients,
   hospital-admitted-care, ons-deaths-by-area, primary-care-workforce) and `economics/household-economic-activity`.
+  The task 3 test found six more. All 14 are now staged (see "Staged sources").
 - Build output is flat: 58 files in `data/build/datasets/`, 937 in
   `data/build/artifacts/exports/`.
 
@@ -173,7 +174,8 @@ that table and a move of the folder. A test fails on any literal path to a
 source folder in code.
 
 Task 5 moved `data/source` to this layout and task 6 named each folder for the
-dataset id it serves. Sources no dataset reads sit in `_staging/`.
+dataset id it serves. Sources no dataset reads sit in `_staging/` (see
+"Staged sources").
 
 Task 7 moved the declarations into `packages/datasets/src/<theme>/<topic>/<dataset>/`.
 Five datasets are still hand written, with reasons in
@@ -596,30 +598,96 @@ Follow-up for task 18: the external source folder
 and its `meta.json` when the source data is next refreshed, then remove the
 mapping.
 
+## Staged sources
+
+`data/source/_staging/<name>/` holds sources that are downloaded but not built:
+no dataset reads them, they have no theme or topic, and the registry does not
+know them. Task 18 decided to keep them here rather than build or delete them.
+The folder is flat, one level of `<name>`, and the name is the source's `id`.
+
+Staged sources never reach a build, the API, the docs or the website. The path
+resolver has no entry for them (`sourceInput("_staging/...")` throws), and every
+walk of `data/source` skips the folder through `isStagedPath` in
+`packages/datasets/src/declaration/sources.ts`:
+
+- the build cache and the stage input lists (`pipeline/build-data-cache.mjs`,
+  `pipeline/build-data-inputs.mjs`), so editing a staged file rebuilds nothing;
+- dataset discovery and the source inventory, so a staged `meta.json` is not
+  published and does not have to parse for a build to pass;
+- the dist generator (`pnpm data:dist`), so no module manifest, README or
+  licence list mentions a staged source. Module builds and manifests read the
+  registry, which has no staged entry.
+
+Each staged folder keeps a valid `meta.json` with `"kind": "staged"`, an `id`
+equal to the folder name, and no `dataset` (nothing is built from it). The kind
+is the staged status and `notes` carries any caveat, so the schema needed no new
+field. `tests/built/data/sourceFolders.test.ts` treats everything under
+`_staging/` as staged and checks that, and `tests/data/sourceDatasets.test.ts`
+checks that no source in the table sits in it. There is no allowlist: a source
+is either in the table or in `_staging/`.
+
+Source data is not in git, so nothing here is a `git mv`.
+`node scripts/migrate-source-layout.mjs` moves the staged folders into
+`_staging/` as part of the layout move (`--dry-run` lists them first), rewrites
+`.source-release.json` to match, and does nothing to a checkout already there.
+`pnpm data:download` runs it. Run it by hand on a server, as for any other
+layout change.
+
+To promote a staged source:
+
+1. Move the folder to `data/source/<theme>/<topic>/<dataset>/`, named for the
+   dataset id.
+2. In its `meta.json`, drop `"kind": "staged"` and set `"dataset"` to that id.
+3. Declare the dataset (`packages/datasets/src/<theme>/<topic>/<dataset>/`),
+   add the source to `SOURCES` and `DATASET_SOURCES`, and add the loader or
+   duckdb step that reads it.
+4. Run the consistency tests, then publish a data release so downloads arrive
+   with the folder in place.
+
+The 14 staged sources. The first eight are the ones task 18 named; the other six
+turned up when the task 3 test was written.
+
+| Source                        | What it is                                                                                        | Why it is not built yet                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `childhood-vaccination-cover` | UKHSA childhood immunisation coverage (COVER), England, 2025-26, by upper tier authority.         | No dataset or loader yet.                                                                          |
+| `english-prescribing-dataset` | NHSBSA monthly prescriptions by practice and medicine code, July 2026 (about 640 MB).             | Needs an aggregation step and a size decision. A candidate second dataset for `nhs-services`.      |
+| `gp-appointments`             | NHS England appointments in general practice, July 2026, with practice and PCN breakdowns.        | Experimental statistics, no loader. A candidate for `nhs-services`.                                |
+| `gp-registered-patients`      | NHS England GP registered patients, July to September 2026, with age and sex and an LSOA extract. | No dataset or loader yet. A candidate for `nhs-services`.                                          |
+| `hospital-admitted-care`      | NHS England admitted patient care activity (HES), 2025-26, by provider and specialty.             | Activity by provider, not by area, so it has no map geography yet. A candidate for `nhs-services`. |
+| `ons-deaths-by-area`          | ONS monthly registered deaths by local authority, England and Wales, 2006 to August 2026.         | No loader; a monthly deaths dataset is not designed yet.                                           |
+| `primary-care-workforce`      | NHS England GP, nurse and other primary care staff, June 2026, by practice and PCN.               | Staff by practice, not by area, and no loader.                                                     |
+| `household-economic-activity` | ONS households by combined economic activity (working, mixed, workless) by local authority, 2025. | No loader yet.                                                                                     |
+| `census-2021-22-uk-wide`      | GeoDS harmonised UK census small-area tables, 25 tables over 239,023 areas.                       | A third party harmonisation rather than an official release, and no loader.                        |
+| `ethnic-group-by-age-and-sex` | Census 2021 ethnic group by sex and single year of age, England and Wales, to local authority.    | Not read by any loader.                                                                            |
+| `england-wales`               | ONS mid-year population estimates for England and Wales, with a series back to 1838.              | No loader. Released ahead of the UK-wide estimates, which are the ones built.                      |
+| `by-age-and-duration`         | ONS UNEM01 seasonally adjusted UK unemployment by age and duration, monthly from 1992.            | National totals only, so there is no area to map.                                                  |
+| `local-indicators`            | ONS regional labour market LI01 employment, unemployment and inactivity by local authority.       | No loader yet, and one period per release.                                                         |
+| `flood-risk`                  | Flood risk and flood history from the EA, SEPA and NRW (about 2 GB).                              | The datasets differ in model, vintage and geography, so what to show needs designing first.        |
+
 ## Tasks
 
 **P0** stops drift and is cheap. **P1** is the restructure. **P2** improves
 quality and size. **P3** is product polish.
 
-| #   | Priority | Task                                                                                                                                                                                                                                                                                     |
-| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | P0       | Ratify themes, topics and the classification rules. Replace `DATASET_MODULES` with a theme and topic registry, and point `docs/dataset-declarations.md` here.                                                                                                                            |
-| 2   | P0       | Give every dataset a primary topic (and so a theme). Every dataset in `atlas.sqlite` has one, non-null, and the old `module` column is derived from it.                                                                                                                                  |
-| 3   | P0       | Consistency test: source path matches declared theme and topic; every source folder has a `meta.json` naming its dataset; unused sources are in `_staging/`; ids are unique.                                                                                                             |
-| 4   | P0       | Generate website chart sections from themes and topics. Fixes the 19-card Economics group.                                                                                                                                                                                               |
-| 5   | P1       | Move source folders to `data/source/<theme>/<topic>/<dataset>/`, including the core, boundaries and postcodes split. Loaders resolve paths from their declaration.                                                                                                                       |
-| 6   | P1       | Rename source folders to dataset ids (see Problem).                                                                                                                                                                                                                                      |
-| 7   | P1       | Finish the declarations migration into `packages/datasets/src/<theme>/<topic>/<dataset>/`, theme by theme, dissolving `statisticsDatasets/*.ts`.                                                                                                                                         |
-| 8   | P1       | Move custom charts to `components/datasets/<theme>/<topic>/<dataset>/`; delete per-dataset files in `lib/datasets/` as each dataset is declared.                                                                                                                                         |
-| 9   | P1       | Docs: pages per theme, topic and dataset from declarations; group `/datasets`, `llms.txt` and API docs the same way; delete the old topic lists.                                                                                                                                         |
-| 10  | P1       | API: `theme`, `topic` and `module` on responses, filters, `GET /v1/themes`, `GET /v1/modules`.                                                                                                                                                                                           |
-| 11  | P1       | `meta.json` schema with `dataset`, replacing `topics`.                                                                                                                                                                                                                                   |
-| 12  | P1       | Module manifests (id, topics, licence, core compatibility) and the `data/dist/` layout with generated READMEs.                                                                                                                                                                           |
-| 13  | P1       | Per-module SQLite and Parquet builds plus the assembler (roadmap tasks 19 to 23).                                                                                                                                                                                                        |
-| 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                                                                                                                                       |
-| 15  | P2       | Done for `regional-gdp` and `school-performance`, with API aliases. `brexit`, `population`, `life-expectancy` and `general-election` are kept separate by decision (see "Merged datasets").                                                                                              |
-| 16  | P2       | Done: `pnpm data:sizes`, `population-detail` and the `politics-sharealike` add-on (see "Module sizes and splits").                                                                                                                                                                       |
-| 17  | P2       | Done: `related` topics are validated and cross-listed in the website settings panel, the docs and the API (see "Related topics"). The task 15 pairs share a primary topic, so they need no entry.                                                                                        |
-| 18  | P2       | Decide on the 8 unused sources: build, keep in `_staging/`, or delete. When the source data is next refreshed, also rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
-| 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                                |
-| 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                                                                                                                                |
+| #   | Priority | Task                                                                                                                                                                                                                                                                         |
+| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | P0       | Ratify themes, topics and the classification rules. Replace `DATASET_MODULES` with a theme and topic registry, and point `docs/dataset-declarations.md` here.                                                                                                                |
+| 2   | P0       | Give every dataset a primary topic (and so a theme). Every dataset in `atlas.sqlite` has one, non-null, and the old `module` column is derived from it.                                                                                                                      |
+| 3   | P0       | Consistency test: source path matches declared theme and topic; every source folder has a `meta.json` naming its dataset; unused sources are in `_staging/`; ids are unique.                                                                                                 |
+| 4   | P0       | Generate website chart sections from themes and topics. Fixes the 19-card Economics group.                                                                                                                                                                                   |
+| 5   | P1       | Move source folders to `data/source/<theme>/<topic>/<dataset>/`, including the core, boundaries and postcodes split. Loaders resolve paths from their declaration.                                                                                                           |
+| 6   | P1       | Rename source folders to dataset ids (see Problem).                                                                                                                                                                                                                          |
+| 7   | P1       | Finish the declarations migration into `packages/datasets/src/<theme>/<topic>/<dataset>/`, theme by theme, dissolving `statisticsDatasets/*.ts`.                                                                                                                             |
+| 8   | P1       | Move custom charts to `components/datasets/<theme>/<topic>/<dataset>/`; delete per-dataset files in `lib/datasets/` as each dataset is declared.                                                                                                                             |
+| 9   | P1       | Docs: pages per theme, topic and dataset from declarations; group `/datasets`, `llms.txt` and API docs the same way; delete the old topic lists.                                                                                                                             |
+| 10  | P1       | API: `theme`, `topic` and `module` on responses, filters, `GET /v1/themes`, `GET /v1/modules`.                                                                                                                                                                               |
+| 11  | P1       | `meta.json` schema with `dataset`, replacing `topics`.                                                                                                                                                                                                                       |
+| 12  | P1       | Module manifests (id, topics, licence, core compatibility) and the `data/dist/` layout with generated READMEs.                                                                                                                                                               |
+| 13  | P1       | Per-module SQLite and Parquet builds plus the assembler (roadmap tasks 19 to 23).                                                                                                                                                                                            |
+| 14  | P1       | Website: curated default cards per theme, plus search and "add card" for the rest.                                                                                                                                                                                           |
+| 15  | P2       | Done for `regional-gdp` and `school-performance`, with API aliases. `brexit`, `population`, `life-expectancy` and `general-election` are kept separate by decision (see "Merged datasets").                                                                                  |
+| 16  | P2       | Done: `pnpm data:sizes`, `population-detail` and the `politics-sharealike` add-on (see "Module sizes and splits").                                                                                                                                                           |
+| 17  | P2       | Done: `related` topics are validated and cross-listed in the website settings panel, the docs and the API (see "Related topics"). The task 15 pairs share a primary topic, so they need no entry.                                                                            |
+| 18  | P2       | Done: the 14 unused sources are staged in `_staging/` (see "Staged sources"). At the next data refresh, rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
+| 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                    |
+| 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                                                                                                                    |

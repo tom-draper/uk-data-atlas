@@ -172,6 +172,20 @@ export function sourceDir(name: SourceName, ...inside: string[]): string {
 const OWN_ROOTS = ["boundaries", "postcodes"];
 
 /**
+ * The folder of `data/source` for sources nothing builds yet. Nothing in the
+ * table names it, and every walk of `data/source` that feeds a build, the API,
+ * the docs or the website skips it (docs/data-organisation.md, "Staged
+ * sources").
+ */
+export const STAGING_DIR = "_staging";
+
+/** True for the staging folder and anything under it, in a path relative to `data/source`. */
+export const isStagedPath = (path: string): boolean => {
+	const first = path.replaceAll("\\", "/").split("/")[0];
+	return first === STAGING_DIR;
+};
+
+/**
  * Resolves a path written as `<source name>/<path inside the folder>`, the
  * form config files use so that they too name a source and not its place.
  * A path in the boundaries or postcodes root is already a place and is
@@ -181,6 +195,10 @@ export function sourceInput(input: string): string {
 	const slash = input.indexOf("/");
 	const name = slash === -1 ? input : input.slice(0, slash);
 	if (OWN_ROOTS.includes(name)) return input;
+	if (name === STAGING_DIR)
+		throw new Error(
+			`${input} is staged: ${STAGING_DIR}/ holds sources that are not built, so no code may read it`,
+		);
 	if (!Object.hasOwn(SOURCES, name))
 		throw new Error(`${input} does not start with a source name`);
 	return sourceDir(name as SourceName, input.slice(slash + 1));
