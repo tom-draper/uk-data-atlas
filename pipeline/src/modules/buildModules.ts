@@ -246,15 +246,6 @@ const checkSelfContained = (database: DatabaseSync, moduleId: string) => {
 		);
 };
 
-/**
- * Atlas dataset slugs that the registry lists under another id. The Attainment
- * 8 gap is catalogued as `school-performance-disadvantage` and registered as
- * `school-performance-gap` (services/api datasetTaxonomy.ts holds the same pair).
- */
-const REGISTRY_ID_OF_SLUG: Readonly<Record<string, string>> = {
-	"school-performance-disadvantage": "school-performance-gap",
-};
-
 /** The dataset slugs the registry places in a module, against those built. */
 const checkDatasets = (
 	database: DatabaseSync,
@@ -266,7 +257,7 @@ const checkDatasets = (
 				"SELECT slug FROM src.dataset WHERE id IN (SELECT id FROM temp.owned_dataset) ORDER BY slug",
 			)
 			.all() as Array<{ slug: string }>
-	).map(({ slug }) => REGISTRY_ID_OF_SLUG[slug] ?? slug);
+	).map(({ slug }) => slug);
 	const declared = new Set(manifest.datasets.map(({ id }) => id));
 	const stray = built.filter((slug) => !declared.has(slug));
 	if (stray.length > 0)
