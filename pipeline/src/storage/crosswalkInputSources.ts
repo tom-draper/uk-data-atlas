@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { IdRegistries } from "../ids/idRegistries.ts";
-import { sourceDir } from "@uk-data-atlas/datasets";
+import { SOURCES, sourceDir, sourceInput } from "@uk-data-atlas/datasets";
 import { onspdEdition } from "../crosswalk-weights/atoms.ts";
 
 /** Inputs used to construct postcode atoms, including their placement and counts. */
@@ -43,8 +43,7 @@ type Metadata = {
 	licence: { name: string; url?: string };
 	attribution?: string[];
 };
-function inputMetadata(root: string, input: string): Metadata {
-	const base = join(root, "data/source");
+function metadataAbove(base: string, input: string): Metadata | undefined {
 	let directory = dirname(join(base, input));
 	while (directory.startsWith(`${base}/`)) {
 		const path = join(directory, "meta.json");
@@ -56,7 +55,22 @@ function inputMetadata(root: string, input: string): Metadata {
 		}
 		directory = dirname(directory);
 	}
-	throw new Error(`No source metadata for ${input}`);
+}
+
+/**
+ * Weight inputs are placed paths (`core/census-2021-ts001/...`); provenance
+ * inputs are logical ids (`census-2021-lsoa/...`). A source can share its name
+ * with a theme folder, so try the path as written, then as a logical id.
+ */
+function inputMetadata(root: string, input: string): Metadata {
+	const base = join(root, "data/source");
+	const meta =
+		metadataAbove(base, input) ??
+		(Object.hasOwn(SOURCES, input.split("/")[0])
+			? metadataAbove(base, sourceInput(input))
+			: undefined);
+	if (!meta) throw new Error(`No source metadata for ${input}`);
+	return meta;
 }
 
 /** Source inputs used in population overlap and the postcode atom calculation. */
