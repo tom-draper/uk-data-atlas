@@ -5,7 +5,11 @@
  */
 import { readdir, readFile } from "fs/promises";
 import { basename, join, relative, sep } from "path";
-import { parseDatasetMeta, type DatasetMeta } from "@uk-data-atlas/datasets";
+import {
+	isStagedPath,
+	parseDatasetMeta,
+	type DatasetMeta,
+} from "@uk-data-atlas/datasets";
 
 export interface DiscoveredDataset {
 	/** Folder path relative to `data/`, e.g. "politics/local-elections/local-election/2025". */
@@ -17,7 +21,7 @@ export interface DiscoveredDataset {
 
 const SKIP_DIRECTORIES = new Set(["node_modules"]);
 
-async function* walk(dir: string): AsyncGenerator<string> {
+async function* walk(dir: string, root: string = dir): AsyncGenerator<string> {
 	const entries = await readdir(dir, { withFileTypes: true });
 	for (const entry of entries) {
 		if (!entry.isDirectory()) continue;
@@ -25,8 +29,10 @@ async function* walk(dir: string): AsyncGenerator<string> {
 			continue;
 		}
 		const child = join(dir, entry.name);
+		// Staged sources are not built, so they are not datasets.
+		if (isStagedPath(relative(root, child))) continue;
 		yield child;
-		yield* walk(child);
+		yield* walk(child, root);
 	}
 }
 

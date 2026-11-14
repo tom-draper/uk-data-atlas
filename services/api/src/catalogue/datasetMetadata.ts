@@ -32,7 +32,7 @@ export const datasetMetadata = {
 						data: {
 							theme: "population",
 							topic: "population-estimates",
-							module: "population",
+							module: "population-detail",
 							id: "population-uk",
 							label: "Population (Local Authority)",
 							publisher: "Office for National Statistics",

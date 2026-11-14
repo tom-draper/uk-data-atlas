@@ -8,7 +8,7 @@ import {
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseDatasetMeta } from "@uk-data-atlas/datasets";
+import { isStagedPath, parseDatasetMeta } from "@uk-data-atlas/datasets";
 import {
 	DATASET_SOURCES,
 	CORE_COMPATIBILITY_KEY,
@@ -45,13 +45,15 @@ const PART_OF_KIND: Readonly<Record<string, DatasetFoundationPart>> = {
 	support: "core",
 };
 
-const metaFolders = (dir: string): string[] =>
+/** Source folders under `dir`, less the staged ones, which no module ships. */
+const metaFolders = (dir: string, root = dir): string[] =>
 	readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
 		if (!entry.isDirectory() || entry.name.startsWith(".")) return [];
 		const path = join(dir, entry.name);
+		if (isStagedPath(relative(root, path))) return [];
 		return [
 			...(existsSync(join(path, "meta.json")) ? [path] : []),
-			...metaFolders(path),
+			...metaFolders(path, root),
 		];
 	});
 

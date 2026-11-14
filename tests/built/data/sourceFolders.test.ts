@@ -1,7 +1,11 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
-import { parseDatasetMeta } from "@uk-data-atlas/datasets";
+import {
+	isStagedPath,
+	parseDatasetMeta,
+	STAGING_DIR,
+} from "@uk-data-atlas/datasets";
 import { DATASET_SOURCES, SUPPORT_SOURCES } from "../../data/sourceDatasets";
 
 /**
@@ -16,14 +20,13 @@ import { DATASET_SOURCES, SUPPORT_SOURCES } from "../../data/sourceDatasets";
  */
 
 const ROOT = join(process.cwd(), "data/source");
-const STAGING = "_staging";
 
 /** The kind a folder must declare, by where it sits. */
 const KIND_ROOTS: readonly (readonly [root: string, kind: string])[] = [
 	["boundaries/", "boundary"],
 	["core/lookups/", "lookup"],
 	["postcodes/", "postcode-directory"],
-	[`${STAGING}/`, "staged"],
+	[`${STAGING_DIR}/`, "staged"],
 ];
 
 const listed = new Set([
@@ -54,12 +57,7 @@ describe.skipIf(!existsSync(ROOT))("source folders", () => {
 
 	it("are each listed, so a new source says what it is for", () => {
 		expect(found.length).toBeGreaterThan(50);
-		expect(
-			found.filter(
-				(folder) =>
-					!listed.has(folder) && !folder.startsWith(`${STAGING}/`),
-			),
-		).toEqual([]);
+		expect(found.filter((folder) => !listed.has(folder))).toEqual([]);
 	});
 
 	it("exist for every listed source", () => {
@@ -106,10 +104,20 @@ describe.skipIf(!existsSync(ROOT))("source folders", () => {
 		}
 	});
 
-	it("keep unlisted sources in _staging/, where nothing reads them", () => {
-		const staged = found.filter((folder) =>
-			folder.startsWith(`${STAGING}/`),
-		);
-		expect(staged.filter((folder) => listed.has(folder))).toEqual([]);
+	it("treat everything in _staging/ as staged, one flat folder per source", () => {
+		const staged = all.filter(isStagedPath);
+		for (const folder of staged) {
+			const [, name, ...deeper] = folder.split("/");
+			expect(deeper, folder).toEqual([]);
+			expect(listed.has(folder), folder).toBe(false);
+			const meta = readMeta(folder);
+			expect(meta.kind, folder).toBe("staged");
+			expect(meta.id, folder).toBe(name);
+			expect(meta.dataset, folder).toBeUndefined();
+		}
+	});
+
+	it("keep every source outside _staging/ listed, and every listed source out of it", () => {
+		expect([...listed].filter(isStagedPath)).toEqual([]);
 	});
 });

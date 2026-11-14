@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import {
+	isStagedPath,
 	SOURCES,
 	sourceDir,
 	sourceInput,
@@ -102,7 +103,9 @@ const sourceMetadataInputs = (root, base = "") => {
 		}
 		return entries.flatMap((entry) => {
 			const path = join(directory, entry.name);
-			if (entry.isDirectory()) return metadata(path);
+			// Staged sources are not built, so they must not change a stage's key.
+			if (entry.isDirectory())
+				return isStagedPath(path) ? [] : metadata(path);
 			return entry.name === "meta.json" ? [path] : [];
 		});
 	};

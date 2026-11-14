@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { sourceMetadataCorrections } from "@uk-data-atlas/catalogue";
+import { isStagedPath } from "@uk-data-atlas/datasets";
 
 export type SourceFile = {
 	extension: string;
@@ -38,10 +39,14 @@ type Metadata = {
 const optionalString = (value: unknown): string | undefined =>
 	typeof value === "string" && value.length > 0 ? value : undefined;
 
-const metadataPaths = (directory: string): string[] =>
+/** Every `meta.json` under `directory`, less the staged sources, which are not built. */
+const metadataPaths = (directory: string, root = directory): string[] =>
 	readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
 		const path = join(directory, entry.name);
-		if (entry.isDirectory()) return metadataPaths(path);
+		if (entry.isDirectory())
+			return isStagedPath(relative(root, path))
+				? []
+				: metadataPaths(path, root);
 		return entry.name === "meta.json" ? [path] : [];
 	});
 
