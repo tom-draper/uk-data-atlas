@@ -20,17 +20,17 @@ export const readSqliteNamedLocationInventory = (
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite named location inventory");
 		const members = database.prepare(
-			"SELECT code FROM named_location_member WHERE location_id = ? ORDER BY position",
+			"SELECT a.code FROM place_member m JOIN area a ON a.id = m.area_id WHERE m.place_id = ? ORDER BY m.position",
 		);
 		const assertions = database.prepare(
-			"SELECT code, valid_from AS validFrom, valid_to AS validTo FROM named_location_assertion WHERE location_id = ? ORDER BY position",
+			"SELECT a.code, m.valid_from AS validFrom, m.valid_to AS validTo FROM place_assertion m JOIN area a ON a.id = m.area_id WHERE m.place_id = ? ORDER BY m.position",
 		);
 		const partials = database.prepare(
-			"SELECT code, share, member_of AS memberOf FROM named_location_partial_member WHERE location_id = ? ORDER BY position",
+			"SELECT a.code, m.share, o.slug AS memberOf FROM place_partial_member m JOIN area a ON a.id = m.area_id JOIN place o ON o.id = m.member_of WHERE m.place_id = ? ORDER BY m.position",
 		);
 		const locations = database
 			.prepare(
-				"SELECT id, position, fields, label, kind, definition_revision AS definitionRevision, member_geography AS memberGeography, valid_from AS validFrom, valid_to AS validTo, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, source FROM named_location ORDER BY position",
+				"SELECT id AS placeId, slug AS id, position, fields, label, kind, definition_revision AS definitionRevision, member_geography AS memberGeography, valid_from AS validFrom, valid_to AS validTo, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, source FROM place ORDER BY position",
 			)
 			.all()
 			.map((row) => {
@@ -47,16 +47,18 @@ export const readSqliteNamedLocationInventory = (
 					validity: { from: row.validFrom, to: row.validTo },
 					bbox: [row.minX, row.minY, row.maxX, row.maxY],
 					memberCodes: members
-						.all(row.id)
+						.all(row.placeId)
 						.map((member) => member.code),
-					memberAssertions: assertions.all(row.id).map((member) => ({
-						code: member.code,
-						validity: {
-							from: member.validFrom,
-							to: member.validTo,
-						},
-					})),
-					partialMembers: partials.all(row.id).map((member) => ({
+					memberAssertions: assertions
+						.all(row.placeId)
+						.map((member) => ({
+							code: member.code,
+							validity: {
+								from: member.validFrom,
+								to: member.validTo,
+							},
+						})),
+					partialMembers: partials.all(row.placeId).map((member) => ({
 						code: member.code,
 						share: member.share,
 						memberOf: member.memberOf,
@@ -75,9 +77,9 @@ export const readSqliteNamedLocationInventory = (
 						try {
 							const shape = connection
 								.prepare(
-									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM named_location_geometry g JOIN named_location_inventory_metadata i ON i.content_hash = ? WHERE g.location_id = ?",
+									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM place_geometry g JOIN named_location_inventory_metadata i ON i.content_hash = ? WHERE g.place_id = ?",
 								)
-								.get(header.contentHash, row.id);
+								.get(header.contentHash, row.placeId);
 							if (!shape)
 								throw new Error(
 									`Missing named location geometry ${row.id}`,

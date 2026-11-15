@@ -107,6 +107,10 @@ export const databaseKeys = (
 			sql: "SELECT id, code FROM party ORDER BY id",
 			key: (row) => [String(row.code)],
 		},
+		place: {
+			sql: "SELECT id, slug FROM place ORDER BY id",
+			key: (row) => [String(row.slug)],
+		},
 		contest: {
 			sql: `SELECT c.id AS id, d.slug AS dataset, e.label AS election, r.geography AS geography, r.${rname} AS release, a.code AS code FROM contest c JOIN election e ON e.id = c.election_id JOIN dataset d ON d.id = e.dataset_id JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.${rid} = v.release_id ORDER BY e.id, c.id`,
 			key: (row) => [

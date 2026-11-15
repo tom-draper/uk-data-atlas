@@ -1043,12 +1043,13 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			party_vote_share: "100 * party_votes / valid_votes.",
 		},
 	},
-	named_location: {
+	place: {
 		audience: "core",
 		description:
-			"A named place made of areas, such as a ceremonial county, historic county, region or an editorial grouping like 'Greater Manchester'.",
+			"A named place made of areas, such as a ceremonial county, historic county, region or an editorial grouping like 'Greater Manchester'. Its areas are in place_member.",
 		columns: {
-			id: "Slug of the place.",
+			id: "Integer id, stable across builds.",
+			slug: "Text id of the place, as the API and the artifacts call it.",
 			position: "Display order.",
 			fields: "Internal: JSON list of the properties the API returns.",
 			label: "Display name.",
@@ -1066,46 +1067,46 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			source: "JSON: where the definition comes from.",
 		},
 	},
-	named_location_member: {
+	place_member: {
 		audience: "core",
 		description:
-			"The area codes that make up a named place, in member_geography.",
+			"The areas that make up a place. area_id is the area itself, not one release of it: join area_version for names and boundaries, or v_area_current for the latest.",
 		columns: {
-			location_id: "The place (named_location.id).",
+			place_id: "The place (place.id).",
 			position: "Order.",
-			code: "Member area code. Join to area on code and the place's member_geography.",
+			area_id:
+				"The member area (area.id), in the place's member_geography.",
 		},
 	},
-	named_location_assertion: {
+	place_assertion: {
 		audience: "reference",
 		description:
 			"Dated statements that an area was part of a place, for places whose membership changed.",
 		columns: {
-			location_id: "The place.",
+			place_id: "The place.",
 			position: "Order.",
-			code: "Member area code.",
+			area_id: "The member area (area.id).",
 			valid_from: "First date of membership, or null.",
 			valid_to: "Date membership ends (exclusive), or null.",
 		},
 	},
-	named_location_partial_member: {
+	place_partial_member: {
 		audience: "reference",
 		description: "Areas only partly inside a place, with the share inside.",
 		columns: {
-			location_id: "The place.",
+			place_id: "The place.",
 			position: "Order.",
-			code: "Area code.",
+			area_id: "The area (area.id).",
 			share: "Share of the area inside the place (0 to 1).",
-			member_of:
-				"The other place the rest belongs to (named_location.id).",
+			member_of: "The other place the rest belongs to (place.id).",
 		},
 	},
-	named_location_geometry: {
+	place_geometry: {
 		audience: "reference",
 		description:
-			"Outline of a named place: Brotli-compressed GeoJSON in WGS84, rounded to about 1 m. Not readable in plain SQL.",
+			"Outline of a place: Brotli-compressed GeoJSON in WGS84, rounded to about 1 m. Not readable in plain SQL.",
 		columns: {
-			location_id: "The place.",
+			place_id: "The place.",
 			boundary_release: "Release of the member boundaries used.",
 			min_x: "Bounding box west edge, longitude.",
 			min_y: "Bounding box south edge, latitude.",
@@ -1375,7 +1376,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			"Full-text search over measures, datasets, dimension members, areas and places. SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank. Add kind = 'measure' to narrow it. Words match their stems (household and households) and a trailing * matches a prefix.",
 		columns: {
 			kind: "'measure', 'dataset', 'dimension_member', 'area' or 'place'.",
-			key: "How to find the row in its own table: the slug for a measure or dataset, 'dimension-slug:code' for a dimension member, the area code for an area, the named_location id for a place.",
+			key: "How to find the row in its own table: the slug for a measure or dataset, 'dimension-slug:code' for a dimension member, the area code for an area, the place slug for a place.",
 			label: "The name to show: the measure label, dataset title, member label or the area's name on its latest boundary release.",
 			body: "More searchable text: a measure's description and unit, a dataset's description and module, a member's dimension, an area's geography, a place's kind and member geography.",
 		},
@@ -1511,6 +1512,12 @@ export const schemaExamples: readonly SchemaExample[] = [
 		question: "Which places are called Aberdeenshire?",
 		sql: "SELECT key, label FROM search WHERE search MATCH 'aberdeenshire' AND kind = 'place' ORDER BY rank",
 		expect: "Aberdeenshire (historic county) and any other place with the word in its name.",
+	},
+	{
+		id: "places-of-area",
+		question: "Which places is Manchester (E08000003) part of?",
+		sql: "SELECT p.slug, p.label, p.kind FROM place_member m JOIN place p ON p.id = m.place_id JOIN area a ON a.id = m.area_id JOIN geography g ON g.id = a.geography_id AND g.slug = p.member_geography WHERE a.code = 'E08000003' ORDER BY p.position",
+		expect: "Greater Manchester and the other places that include the council, such as its historic and ceremonial counties.",
 	},
 	{
 		id: "postcode-lookup",

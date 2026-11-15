@@ -9,7 +9,7 @@ import { test } from "vitest";
 import { validateBatch } from "@uk-data-atlas/relationships";
 import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
-import { namedLocationTables } from "./pipelineFixtures";
+import { IdRegistries, namedLocationTables } from "./pipelineFixtures";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
@@ -26,6 +26,52 @@ const storeAreas = (
 	const compiled = join(apiRoot, "../../data/build");
 	mkdirSync(compiled, { recursive: true });
 	writeSqliteIndex(join(compiled, "atlas.sqlite"), {}, areaTables(directory));
+};
+
+/**
+ * A place's members are areas, so the fixture holds the two wards its places
+ * name, built with the same ids the place tables use.
+ */
+const storePlaces = (path: string, directory: string) => {
+	const release = {
+		id: "2024",
+		geography: "ward",
+		status: "available" as const,
+		recordCount: 2,
+		artifact: "wards.json",
+		contentHash: "wards",
+		codeProperty: "code",
+		nameProperty: "name",
+	};
+	writeFileSync(
+		join(directory, "area-inventory.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "inventory",
+			boundaryRegistryHash: "registry",
+			releases: [release],
+		}),
+	);
+	writeFileSync(
+		join(directory, "wards.json"),
+		JSON.stringify({
+			schemaVersion: 1,
+			contentHash: "wards",
+			areas: [
+				{ code: "E00000001", name: "Ward 1" },
+				{ code: "E00000002", name: "Ward 2" },
+			],
+		}),
+	);
+	const ids = IdRegistries.memory();
+	writeSqliteIndex(
+		path,
+		{},
+		{
+			...areaTables(directory, ids),
+			...namedLocationTables(directory, ids),
+		},
+	);
 };
 
 const fixture = (run: (root: string, directory: string) => void) => {
@@ -237,7 +283,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 		const compiled = join(root, "../../data/build");
 		mkdirSync(compiled, { recursive: true });
 		const path = join(compiled, "atlas.sqlite");
-		writeSqliteIndex(path, {}, namedLocationTables(directory));
+		storePlaces(path, directory);
 		rmSync(join(directory, "named-locations.json"));
 		const loaded = readNamedLocationInventory(join(root, "../.."));
 		assert.equal(JSON.stringify(loaded), JSON.stringify(inventory));
@@ -254,13 +300,12 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			[],
 		);
 		assert.equal(
-			database
-				.prepare("SELECT share FROM named_location_partial_member")
-				.get()?.share,
+			database.prepare("SELECT share FROM place_partial_member").get()
+				?.share,
 			0,
 		);
 		assert.throws(
-			() => database.prepare("DELETE FROM named_location").run(),
+			() => database.prepare("DELETE FROM place").run(),
 			/FOREIGN KEY/,
 		);
 		database
@@ -277,7 +322,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 				"UPDATE named_location_inventory_metadata SET content_hash = 'locations'",
 			)
 			.run();
-		database.prepare("DELETE FROM named_location_geometry").run();
+		database.prepare("DELETE FROM place_geometry").run();
 		database.close();
 		assert.equal(cold.locations[0]?.label, "Test");
 		assert.throws(
@@ -335,12 +380,12 @@ test("SQLite named location geometry is stored rounded and compressed", () =>
 		const compiled = join(root, "../../data/build");
 		mkdirSync(compiled, { recursive: true });
 		const path = join(compiled, "atlas.sqlite");
-		writeSqliteIndex(path, {}, namedLocationTables(directory));
+		storePlaces(path, directory);
 		rmSync(join(directory, "named-locations.json"));
 		const database = new DatabaseSync(path, { readOnly: true });
 		const stored = database
 			.prepare(
-				"SELECT typeof(geometry) AS type, min_x, min_y, max_x, max_y FROM named_location_geometry",
+				"SELECT typeof(geometry) AS type, min_x, min_y, max_x, max_y FROM place_geometry",
 			)
 			.get();
 		database.close();

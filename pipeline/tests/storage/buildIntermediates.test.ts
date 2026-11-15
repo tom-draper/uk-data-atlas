@@ -146,7 +146,7 @@ const fixture = (context: { onTestFinished: (run: () => void) => void }) => {
 		{
 			...areaTables(artifacts, ids),
 			...crosswalkTables(artifacts, ids),
-			...namedLocationTables(artifacts),
+			...namedLocationTables(artifacts, ids),
 		},
 	);
 	// The reader must not need the JSON it was built from.

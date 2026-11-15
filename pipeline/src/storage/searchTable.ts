@@ -27,6 +27,6 @@ INSERT INTO search (kind, key, label, body)
 INSERT INTO search (kind, key, label, body)
 	SELECT 'area', c.code, c.name, c.geography FROM v_area_current c ORDER BY c.area_id;
 INSERT INTO search (kind, key, label, body)
-	SELECT 'place', id, label, kind || ' ' || member_geography FROM named_location ORDER BY position;
+	SELECT 'place', slug, label, kind || ' ' || member_geography FROM place ORDER BY position;
 INSERT INTO search (search) VALUES ('optimize')`);
 }
