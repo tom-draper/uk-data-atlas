@@ -1,3 +1,4 @@
+import type { DatasetReader } from "../data/catalog/types.ts";
 import type { DatasetTopic } from "./taxonomy.ts";
 import type {
 	AreaRelationship,
@@ -83,6 +84,47 @@ export type DeclaredRecords = {
 		DeclaredRelease[] | ((header: DeclaredHeader) => DeclaredRelease[]);
 };
 
+/**
+ * One value read straight from a source. `members` names a member of each
+ * dimension the value sits on by the key the declaration gives it, as the
+ * `{dimension}` binding of a field does.
+ */
+export type DirectValue = {
+	measure: string;
+	members?: Record<string, string>;
+	value: number | null;
+	lower?: number;
+	upper?: number;
+	status?: StatusSlug;
+	/** Defaults to the period of the part. */
+	period?: StatisticsPeriod;
+};
+
+/** An area's name and values, as its source gives them. */
+export type DirectRecord = {
+	code: string;
+	/** The publisher's name, stored when the declaration has a `name`. */
+	name?: string;
+	values: DirectValue[];
+};
+
+/** The records of one payload part, such as the edition of one year. */
+export type DirectPart = {
+	/** The key of the part in the dataset's payload, as `payload.parts` gives it. */
+	key: string;
+	records: DirectRecord[];
+};
+
+/**
+ * Reads a dataset's sources straight into rows, with no compiled JSON between.
+ * The declaration's `fields` still say where each value sits in the payload
+ * generated from the rows, and the build checks that payload against the
+ * compiled dataset.
+ */
+export type DirectSource = {
+	read: (reader: DatasetReader) => Promise<DirectPart[]>;
+};
+
 export type DeclaredDataset = {
 	/** The manifest `type` this describes. */
 	type: string;
@@ -147,6 +189,8 @@ export type DeclaredDataset = {
 	}[];
 	/** Store each part as an election, with its records' text in contests. */
 	election?: DeclaredElection;
+	/** Read the sources into rows without the compiled JSON, when set. */
+	direct?: DirectSource;
 	/**
 	 * Rules computing each `derived` pattern's number for a generated payload,
 	 * from the rebuilt record, in the order listed.

@@ -20,6 +20,7 @@ export * from "./observationTables.ts";
 export * from "./atlasStatistics.ts";
 export * from "./declaredPayload.ts";
 export * from "./declaredStatistics.ts";
+export * from "./directStatistics.ts";
 export * from "./statisticsDatasets/index.ts";
 export * from "./statisticsDatasets/measures.ts";
 export * from "./measureDimensionsLoader.ts";
