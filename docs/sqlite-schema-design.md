@@ -131,6 +131,62 @@ summary or an area's largest ethnic group, are computed when the payload is
 generated and stored nowhere. Fixed text, such as a table's source note, sits
 in the dataset's declaration.
 
+## Reading a source straight into rows
+
+A dataset normally compiles its source to a JSON payload, and the rows are
+written from that JSON. A dataset can instead declare `statistics.direct`, a
+reader that returns the rows from the source itself (`DirectPart[]`: for each
+payload part, each area's code, name and values with their measure and
+members). The `atlas-sqlite` stage reads these first (`readDirectParts`), then
+`directStatistics` plans the series and `statisticsTables` writes them: the
+assembly (`assembleStatistics`) and the writer are the ones a compiled dataset
+uses. The compiler still runs, because the manifest's hash, summary and inputs
+come from it, and because the build compares the payload generated from the
+rows with its JSON, which now proves the direct reader and the compiler agree.
+`land-area` and `fuel-poverty` are migrated.
+
+`pipeline/tests/built/directStatistics.test.ts` writes each migrated dataset by
+both paths onto the real area tables and compares them by natural key, not id:
+observations (values, bounds, status, periods, members, area codes and names,
+releases), series, dimension members with their parents and positions, and
+dataset area names. It then rebuilds the JSON from the direct rows and
+compares it with the compiled JSON. `tests/server/directStatistics.test.ts`
+covers what a declaration rejects.
+
+To port the next dataset:
+
+1. Declare `direct.read(reader)` beside `load`. Read the same files as `load`
+   (`readDirectParts` fails if it reads another, so the `datasets` stage's
+   fingerprint of them still covers it). Share the source layout (sheet,
+   columns) with the loader, but redo the cleaning, such as `parseNum` or a
+   finite-number filter, so the test compares two readings of the file.
+   Emit one `DirectValue` per stored number, naming its measure and members as
+   a `fields` entry does, in the order `load` writes its record.
+2. Leave `fields`, `dimensions`, `name`, `release` and `payload` as they are.
+   A value that fits none of the declared fields, or names a measure or
+   member the declaration lacks, fails the build.
+3. Run `directStatistics.test.ts` and the dataset payload check.
+
+What fits: one table of areas read into one measure set, with static `fields`,
+declared dimension members, one release, no parents, keys, relationships or
+election text. That is the single-table loaders. What does not fit:
+compilers that join sources, that derive values the rows then store (the
+reader would repeat the compiler), that take their members or parents from the
+data (the planner finds them in the compiled JSON), or that carry elections,
+relationships or keys. `directStatistics` refuses those declarations. A part
+is an array, so a dataset with millions of records needs `read` to yield
+instead.
+
+The compiled JSON is not yet a pure output of the rows. The manifest records
+its hash and size, its summary and its inputs before any row exists, and
+`scripts/verify-data.mts`, `scripts/verify-atlas-datasets.mts`, the data
+catalogue (`precompiled(...)`) and `compile-website-data` still read the
+files. Retiring it means producing those from the rows, which needs the
+`datasets` stage to run after `atlas-sqlite` for migrated datasets. Until a
+compiler is replaced, a migrated dataset costs a second reader to keep equal,
+which the check enforces. The gain comes when the compiler for a migrated
+dataset can be deleted, so port a dataset only with that in view.
+
 ## Compressed columns
 
 Two columns hold whole documents rather than relational values, so they are
