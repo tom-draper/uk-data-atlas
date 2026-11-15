@@ -237,6 +237,19 @@ the pipeline writers. Writers open their own connections.
 
 ## atlas.sqlite
 
+**Start here.** The file describes itself. Run `SELECT * FROM schema_guide ORDER BY position`
+for the short topics that explain how to read it, then `schema_table` (what each table
+and view is for, with an `audience` of `core`, `reference` or `internal`), `schema_column`
+(every column) and `schema_example` (questions with SQL that runs as written). `search` is
+a full-text index over measures, datasets, dimension members and areas:
+`SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank`.
+
+The wording lives in `pipeline/src/storage/schemaDocs.ts`. `assemble-atlas` writes it into
+the file after every other table exists, and fails the build when a table or view, or a
+column of a core or reference table, has no description, or when a description names
+something that does not exist. A new table or column needs its description in the same
+change. `pipeline/tests/built/schemaDocs.test.ts` runs every example against the built file.
+
 The `atlas-sqlite` stage depends on `terrain-catalogue`, `datasets`, `area-inventory`, `crosswalk-inventory`, `named-locations`, and `location-projections` and writes this database
 with the existing `node:sqlite` library. It replaces the whole database through
 a temporary file and atomic rename. Every run writes the base tables. The stage cache requires the database file
