@@ -123,6 +123,12 @@ export type DirectPart = {
  */
 export type DirectSource = {
 	read: (reader: DatasetReader) => Promise<DirectPart[]>;
+	/**
+	 * The dataset has no compiler: no JSON is written, and the manifest entry
+	 * (inputs, summary and a hash of the parts) comes from `read` alone. Such
+	 * a dataset's `load` is `noCompiledPayload()`.
+	 */
+	only?: true;
 };
 
 export type DeclaredDataset = {
