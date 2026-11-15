@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics, directStatistics } from "@uk-data-atlas/measures";
-import type { DirectParts } from "../statistics/directSources.ts";
+import type { DirectPart } from "@uk-data-atlas/datasets";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
@@ -79,6 +79,9 @@ const hasStoredIds = (path: string) => {
 		database?.close();
 	}
 };
+
+/** The rows of each dataset read straight from its sources, by type. */
+export type DirectParts = ReadonlyMap<string, readonly DirectPart[]>;
 
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
