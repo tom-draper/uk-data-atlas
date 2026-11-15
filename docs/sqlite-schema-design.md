@@ -223,7 +223,7 @@ stored as Brotli blobs and decompressed on read.
   decompressed text. Only `atlas.sqlite` stores payloads this way. The
   `payloads` tables of `atlas-cache.sqlite` and the postcode component remain
   plain text.
-- `named_location_geometry.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
+- `place_geometry.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
   in WGS84 degrees rounded to five decimal places (about 1.1 m), Brotli
   quality 10. Write it with `packGeometry`, which also returns bounds measured
   from the rounded shape for `min_x`, `min_y`, `max_x` and `max_y`, and read it with
