@@ -1,5 +1,9 @@
 import type { BoundaryType } from "../boundaries/catalog.ts";
 import type { DatasetCountry } from "../../types/coverage.ts";
+import type {
+	DeclaredHeader,
+	DirectPart,
+} from "../../declaration/statistics.ts";
 
 /**
  * Framework-neutral dataset contracts.
@@ -171,5 +175,13 @@ export interface DatasetDefinition<
 	 * gap rather than a registration bug.
 	 */
 	chartPending?: boolean;
+	/**
+	 * No compiler: the rows are read straight from the sources
+	 * (`DirectSource.only`), and the payload's parts say what each holds.
+	 */
+	directOnly?: {
+		read: (reader: DatasetReader) => Promise<DirectPart[]>;
+		header: (key: string) => DeclaredHeader | undefined;
+	};
 	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }

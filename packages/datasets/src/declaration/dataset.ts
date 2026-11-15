@@ -223,6 +223,23 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 export const typeOf = (declaration: DatasetDeclaration): string =>
 	declaration.legacyType ?? declaration.id;
 
+/** What a direct-only dataset's compile step needs: its reader and payload headers. */
+function directOnlyOf(
+	declaration: DatasetDeclaration,
+): Pick<DatasetDefinition, "directOnly"> {
+	const { direct } = declaration.statistics;
+	if (!direct?.only) return {};
+	return {
+		directOnly: {
+			read: direct.read,
+			header: (key) =>
+				statisticsOf(declaration)
+					.payload!.parts([key])
+					.find((part) => part.key === key)?.header,
+		},
+	};
+}
+
 /** The manifest definition the dataset compiler reads. */
 export function definitionOf<T extends { type: string; data: unknown }>(
 	declaration: DatasetDeclaration<T>,
@@ -260,9 +277,22 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		...(declaration.publishMapValues && declaration.display
 			? { mapValueField: declaration.display.measures[0].field as string }
 			: {}),
+		...directOnlyOf(declaration),
 		precompile: declaration.load,
 	};
 }
+
+/**
+ * The `load` of a dataset read straight from its sources, which has no
+ * compiled payload to load.
+ */
+export const noCompiledPayload =
+	<T extends { type: string; data: unknown }>() =>
+	(): Promise<Record<string, T>> => {
+		throw new Error(
+			"This dataset is read straight from its sources and has no compiler",
+		);
+	};
 
 /** The statistics declaration the rows are written and read back from. */
 export function statisticsOf(declaration: DatasetDeclaration): DeclaredDataset {
