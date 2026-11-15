@@ -143,7 +143,7 @@ a stale one, and because several stages rewrite the cache by copy and rename.
 The assets are written by one stage, are not derived from `atlas.sqlite`, and
 have no reason to share either rule. Deploy the file with the Next.js server.
 `readAtlasAsset` fails with the build command if it is missing, and the API
-never opens it. The deprecated `website_assets` view is in this file.
+never opens it.
 
 ## What `atlas.sqlite` keeps
 
@@ -1074,10 +1074,10 @@ Rebuild older databases with the current builders; the runtime supports only the
 current schema. The writer records `postcodeAreaLayout` (currently `"4"`) in
 `meta`, and readers refuse older layouts.
 
-Deprecated read-only compatibility views preserve the earlier names and column
-spellings. New queries should use the stored tables:
+The deprecated read-only compatibility views are no longer written, and nothing
+reads them. Read the stored table instead:
 
-| Deprecated view                               | Stored table                    |
+| Retired view                                  | Stored table                    |
 | --------------------------------------------- | ------------------------------- |
 | `website_assets` (in `website-assets.sqlite`) | `website_asset`                 |
 | `area_inventory`                              | `area_inventory_metadata`       |
@@ -1085,6 +1085,8 @@ spellings. New queries should use the stored tables:
 | `crosswalk_coverage`                          | `crosswalk_coverage_entry`      |
 | `named_location_partial_members`              | `named_location_partial_member` |
 | `named_location_geometries`                   | `named_location_geometry`       |
+
+The columns of the retired views were the stored columns in camelCase.
 
 The views for `named_locations`, `named_location_members`,
 `named_location_assertions`, `named_location_inventory`, `cache_generations`,
