@@ -46,7 +46,7 @@ export type SchemaDocs = {
 export const schemaGuide: readonly GuideTopic[] = [
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation for statistics, v_area_version for areas, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members and areas: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation for statistics, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -234,6 +234,24 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			release: "The release slug.",
 			code: "The area code.",
 			name: "The area's name in this release.",
+			aliases: "JSON array of other names, or null.",
+			area_m2: "Land area in square metres.",
+			population: "Resident population, where held.",
+			in_inventory: "1 if in the release's boundary file.",
+			inventory_position: "Order in the boundary file.",
+		},
+	},
+	v_area_current: {
+		audience: "core",
+		description:
+			"View: each area at its latest version, one row per area. An area that has ended shows its last version, with the release it ended in. The easiest way to find what an area is called now, or to list the areas of a geography today.",
+		columns: {
+			area_version_id: "area_version.id of the latest version.",
+			area_id: "area.id, the same across releases.",
+			geography: "The geography slug.",
+			release: "The latest release the area is in.",
+			code: "The area code.",
+			name: "The area's name on that release.",
 			aliases: "JSON array of other names, or null.",
 			area_m2: "Land area in square metres.",
 			population: "Resident population, where held.",
@@ -479,6 +497,25 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			status: "Status slug.",
 			method: "published or converted.",
 			licence: "The source's licence as written.",
+		},
+	},
+	v_series: {
+		audience: "core",
+		description:
+			"View: every series with its dataset, measure, fixed members, boundary release and method spelled out. Use it to see what a dataset holds before reading v_observation, and to find the series a converted one came from.",
+		columns: {
+			series_id: "series.id.",
+			key: "The series' stable text key.",
+			dataset: "Dataset slug.",
+			measure: "Measure slug.",
+			unit: "Unit of the measure.",
+			members:
+				"Fixed dimension members as 'dimension=code; dimension=code', or null for no breakdown.",
+			geography: "Geography slug.",
+			release: "Boundary release slug the series is published on.",
+			method: "published, converted, aggregated or modelled.",
+			derived_from:
+				"The key of the series this one was derived from, or null for a published series.",
 		},
 	},
 	dataset_area_name: {
@@ -1335,12 +1372,12 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	search: {
 		audience: "core",
 		description:
-			"Full-text search over measures, datasets, dimension members and areas. SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank. Add kind = 'measure' to narrow it. Words match their stems (household and households) and a trailing * matches a prefix.",
+			"Full-text search over measures, datasets, dimension members, areas and places. SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank. Add kind = 'measure' to narrow it. Words match their stems (household and households) and a trailing * matches a prefix.",
 		columns: {
-			kind: "'measure', 'dataset', 'dimension_member' or 'area'.",
-			key: "How to find the row in its own table: the slug for a measure or dataset, 'dimension-slug:code' for a dimension member, the area code for an area.",
+			kind: "'measure', 'dataset', 'dimension_member', 'area' or 'place'.",
+			key: "How to find the row in its own table: the slug for a measure or dataset, 'dimension-slug:code' for a dimension member, the area code for an area, the named_location id for a place.",
 			label: "The name to show: the measure label, dataset title, member label or the area's name on its latest boundary release.",
-			body: "More searchable text: a measure's description and unit, a dataset's description and module, a member's dimension, an area's geography.",
+			body: "More searchable text: a measure's description and unit, a dataset's description and module, a member's dimension, an area's geography, a place's kind and member geography.",
 		},
 	},
 };
@@ -1455,6 +1492,25 @@ export const schemaExamples: readonly SchemaExample[] = [
 			"Which datasets cannot be used commercially or must be shared alike?",
 		sql: "SELECT d.slug, t.licences, t.commercial_use, t.share_alike FROM dataset d JOIN v_source_terms t ON t.source_id = d.source_id WHERE t.share_alike = 1 OR t.commercial_use = 0",
 		expect: "local-election (CC BY-SA).",
+	},
+	{
+		id: "area-now",
+		question: "What is E08000003 called now, and in which release?",
+		sql: "SELECT code, name, geography, release FROM v_area_current WHERE code = 'E08000003' ORDER BY geography",
+		expect: "Manchester, in its latest localAuthority and countyAndUnitaryAuthority releases.",
+	},
+	{
+		id: "series-of-measure",
+		question:
+			"Which datasets publish recorded crimes, and on which boundaries?",
+		sql: "SELECT dataset, members, geography, release, method FROM v_series WHERE measure = 'recorded-crimes' ORDER BY dataset, geography, release, members LIMIT 20",
+		expect: "One row per series: a dataset, the offence member, its geography and release, and the method.",
+	},
+	{
+		id: "find-place",
+		question: "Which places are called Aberdeenshire?",
+		sql: "SELECT key, label FROM search WHERE search MATCH 'aberdeenshire' AND kind = 'place' ORDER BY rank",
+		expect: "Aberdeenshire (historic county) and any other place with the word in its name.",
 	},
 	{
 		id: "postcode-lookup",

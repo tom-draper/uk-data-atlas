@@ -326,6 +326,20 @@ export function statisticsTables(
 					columns: ["dataset_id", "measure_id"],
 				},
 			],
+			views: {
+				v_series: `
+SELECT s.id AS series_id, s.key, d.slug AS dataset, m.slug AS measure, m.unit,
+  (SELECT group_concat(dim.slug || '=' || dm.code, '; ')
+   FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
+   JOIN dimension_member dm ON dm.id = sm.member_id
+   WHERE sm.series_id = s.id) AS members,
+  r.geography, r.release AS release, s.method, df.key AS derived_from
+FROM series s
+JOIN dataset d ON d.id = s.dataset_id
+JOIN measure m ON m.id = s.measure_id
+JOIN area_releases r ON r.id = s.release_id
+LEFT JOIN series df ON df.id = s.derived_from_id`,
+			},
 			rows: rows(function* (
 				{ seriesRows, seriesIds, measures },
 				database,

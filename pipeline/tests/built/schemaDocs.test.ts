@@ -61,7 +61,13 @@ test("the guide and the search table answer", () => {
 	assert.ok(
 		all("SELECT body FROM schema_guide ORDER BY position").length > 0,
 	);
-	for (const kind of ["measure", "dataset", "dimension_member", "area"])
+	for (const kind of [
+		"measure",
+		"dataset",
+		"dimension_member",
+		"area",
+		"place",
+	])
 		assert.ok(
 			all(`SELECT 1 FROM search WHERE kind = '${kind}' LIMIT 1`).length >
 				0,
@@ -71,5 +77,42 @@ test("the guide and the search table answer", () => {
 		all(
 			"SELECT key FROM search WHERE search MATCH 'manchester' AND kind = 'area'",
 		).length > 0,
+	);
+});
+
+test("v_area_current is each area once, at its latest release", () => {
+	assert.deepEqual(
+		all(
+			"SELECT (SELECT count(*) FROM area) AS areas, (SELECT count(*) FROM v_area_current) AS current_rows, (SELECT count(DISTINCT area_id) FROM v_area_current) AS distinct_areas",
+		).map((row) => [row.areas, row.current_rows, row.distinct_areas]),
+		all("SELECT count(*) AS n FROM area").map((row) => [
+			row.n,
+			row.n,
+			row.n,
+		]),
+	);
+	// The name the search table used before it read the view.
+	assert.deepEqual(
+		all(
+			`SELECT a.code FROM area a JOIN v_area_current c ON c.area_id = a.id
+			 WHERE c.name IS NOT (SELECT v.name FROM area_version v JOIN area_releases r ON r.id = v.release_id
+			                      WHERE v.area_id = a.id ORDER BY r.release DESC LIMIT 1)`,
+		),
+		[],
+	);
+});
+
+test("every area and place is searchable, and v_series lists every series", () => {
+	assert.deepEqual(
+		all(
+			"SELECT (SELECT count(*) FROM search WHERE kind = 'area') AS areas, (SELECT count(*) FROM search WHERE kind = 'place') AS places",
+		),
+		all(
+			"SELECT (SELECT count(*) FROM area) AS areas, (SELECT count(*) FROM named_location) AS places",
+		),
+	);
+	assert.deepEqual(
+		all("SELECT count(*) AS n FROM v_series"),
+		all("SELECT count(*) AS n FROM series"),
 	);
 });
