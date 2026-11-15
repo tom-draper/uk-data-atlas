@@ -284,8 +284,8 @@ The database contains these tables:
 | `payloads` | `id`      | `TEXT NOT NULL` | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
 | `payloads` | `payload` | `BLOB NOT NULL` | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
 
-`meta`, `payloads`, `dataset`, `area_releases`, `crosswalk_coverage_entry`, `named_location`, `named_location_member`,
-`named_location_assertion`, `named_location_partial_member`, and `named_location_geometry` use `WITHOUT ROWID`. Each dataset has one payload. The complete
+`meta`, `payloads`, `dataset`, `area_releases`, `crosswalk_coverage_entry`, `place`, `place_member`,
+`place_assertion`, `place_partial_member`, and `place_geometry` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
 the terrain catalogue. The writer validates every dataset's hash and length.
@@ -748,9 +748,11 @@ A query that reads `series` must name the method it wants.
 non-null columns are `schema_version INTEGER`, `content_hash TEXT`, `artifact TEXT`
 and `gazetteer_version INTEGER`. The last two describe the source gazetteer.
 
-`named_location` has text primary key `id`, unique integer `position`, text
-`fields`, `label`, `kind`, and `member_geography`, integer `definition_revision`,
-and real `min_x`, `min_y`, `max_x`, `max_y`. These columns are non-null. Nullable text
+`place` has integer primary key `id`, from `pipeline/ids/place.txt` and stable across
+builds, and a unique text `slug`, the id the API and the artifacts call the place.
+It also has a unique integer `position`, text `fields`, `label`, `kind`, and
+`member_geography`, integer `definition_revision`, and real `min_x`, `min_y`,
+`max_x`, `max_y`. These columns are non-null. Nullable text
 `valid_from` and `valid_to` retain the definition's half-open validity interval.
 Nullable `source TEXT` contains the publisher-specific provenance object as JSON.
 `fields` is an ordered JSON list of property names. It preserves optional arrays,
@@ -758,23 +760,25 @@ including absent versus empty arrays, and response property order. Indexes on
 `(kind, position)` and `(member_geography, position)` support filtered inventories.
 
 Membership data lives in relational child tables. Each has non-null
-`location_id TEXT`, a foreign key to `named_location.id`, and non-null
-`position INTEGER`, with composite primary key `(location_id, position)`.
+`place_id INTEGER`, a foreign key to `place.id`, and non-null
+`position INTEGER`, with composite primary key `(place_id, position)`.
 
-- `named_location_member` has non-null `code TEXT`, preserving declared member order.
-- `named_location_assertion` has non-null `code TEXT` and nullable text
+- `place_member` has non-null `area_id INTEGER`, preserving declared member order.
+- `place_assertion` has non-null `area_id` and nullable text
   `valid_from`, `valid_to` for each dated membership assertion. An index on
-  `(location_id, code, valid_from, valid_to)` supports dated membership lookups.
-- `named_location_partial_member` has non-null `code TEXT`, `share REAL`, and
-  `member_of TEXT`. Zero shares remain zero.
+  `(place_id, area_id, valid_from, valid_to)` supports dated membership lookups.
+- `place_partial_member` has non-null `area_id`, `share REAL`, and
+  `member_of INTEGER`. Zero shares remain zero.
 
-Members and partial members index `(code, location_id)` for reverse membership
-lookups. Codes refer to the parent's `member_geography`. They have no foreign key
-to `area`, because assertions can describe historical codes across releases.
-`member_of` is a foreign key to the named location holding that partial member.
+Members and partial members index `(area_id, place_id)` for reverse membership
+lookups. `area_id` is a foreign key to `area` (the area in the parent's
+`member_geography`, across all its releases), so the build fails on a code that
+is not an area. `member_of` is a foreign key to the place holding that partial member.
+Join `area` for the code, for example
+`place_member m JOIN area a ON a.id = m.area_id`.
 
-`named_location_geometry` has text primary key `location_id`, a foreign key to
-`named_location.id`, non-null `boundary_release TEXT`, real `min_x`, `min_y`,
+`place_geometry` has integer primary key `place_id`, a foreign key to
+`place.id`, non-null `boundary_release TEXT`, real `min_x`, `min_y`,
 `max_x`, `max_y`, and `geometry BLOB NOT NULL`. The blob is the GeoJSON geometry
 as Brotli-compressed UTF-8 JSON (quality 10), written by `packGeometry` and read
 by `unpackGeometry` in `packages/atlas-db/src/storedGeometry.ts`.
@@ -783,7 +787,7 @@ places, about 1.1 m of latitude. Neighbouring points that round together are
 merged, and a ring that collapses below four positions is dropped, though no
 ring did in the current data. The bounds columns are measured from the rounded
 geometry, so they match what the API returns, and differ from the unrounded
-union by at most 0.000005 degrees. `named_location` keeps its own full
+union by at most 0.000005 degrees. `place` keeps its own full
 precision bounding box. Rounding and compression shrink the table from 25.7 MB
 to 4.2 MB for 249 rows. Gzip gave 5.9 MB and Brotli quality 9 gave 6.0 MB.
 Quality 11 gave 3.6 MB for three times the build time of quality 10. Binary
@@ -1077,14 +1081,14 @@ current schema. The writer records `postcodeAreaLayout` (currently `"4"`) in
 The deprecated read-only compatibility views are no longer written, and nothing
 reads them. Read the stored table instead:
 
-| Retired view                                  | Stored table                    |
-| --------------------------------------------- | ------------------------------- |
-| `website_assets` (in `website-assets.sqlite`) | `website_asset`                 |
-| `area_inventory`                              | `area_inventory_metadata`       |
-| `crosswalk_inventory`                         | `crosswalk_inventory_metadata`  |
-| `crosswalk_coverage`                          | `crosswalk_coverage_entry`      |
-| `named_location_partial_members`              | `named_location_partial_member` |
-| `named_location_geometries`                   | `named_location_geometry`       |
+| Retired view                                  | Stored table                   |
+| --------------------------------------------- | ------------------------------ |
+| `website_assets` (in `website-assets.sqlite`) | `website_asset`                |
+| `area_inventory`                              | `area_inventory_metadata`      |
+| `crosswalk_inventory`                         | `crosswalk_inventory_metadata` |
+| `crosswalk_coverage`                          | `crosswalk_coverage_entry`     |
+| `named_location_partial_members`              | `place_partial_member`         |
+| `named_location_geometries`                   | `place_geometry`               |
 
 The columns of the retired views were the stored columns in camelCase.
 
@@ -1094,4 +1098,6 @@ The views for `named_locations`, `named_location_members`,
 `location_projection_dictionaries`, `place_index_places`, `place_index_names`,
 `place_index_codes`, `area_search_codes`, `area_search_terms` and
 `area_search_title_terms` are no longer written. Read the stored table of the
-same name in the singular (`named_location`, `place_index_place` and so on).
+same name in the singular (`place_index_place` and so on). The tables of the named
+locations are `place`, `place_member`, `place_assertion`, `place_partial_member` and
+`place_geometry`.
