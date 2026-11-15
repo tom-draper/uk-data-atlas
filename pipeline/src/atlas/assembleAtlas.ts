@@ -14,6 +14,7 @@ import {
 } from "@uk-data-atlas/atlas-db";
 import {
 	publishVacuumed,
+	writeAreaChangeEvents,
 	writePostcodeAreas,
 	writeSchemaDocs,
 	writeSearchTable,
@@ -205,6 +206,8 @@ export function assembleAtlas(
 			// Every converted series is marked as one, and none of its values
 			// as observed, or the copy fails.
 			if (convertedSeries) copyConvertedSeries(database, ids);
+			// After the crosswalks and their weights, which the events read.
+			writeAreaChangeEvents(database);
 			// Last, so the docs see every table and a missing description
 			// fails the build.
 			if (documentSchema) {
