@@ -357,6 +357,7 @@ export const copyConvertedSeries = (
 			`INSERT INTO main.${table} SELECT * FROM converted_component.${table}`,
 		);
 	assertNothingPassesAsPublished(database);
+	assertOneConvertedValuePerTarget(database);
 	return { series, observations };
 };
 
@@ -376,5 +377,57 @@ export const assertNothingPassesAsPublished = (database: DatabaseSync) => {
 	if (passing.n > 0)
 		throw new Error(
 			`${passing.n} values of series that are not published have the status of an observed value`,
+		);
+};
+
+/**
+ * A converted value is the only one for its dataset, measure, members, target
+ * release, area and period. Converted series of one dataset on several source
+ * releases can reach the same area and period by different routes, and a
+ * reader that sums or joins them would count it twice. The conversion keeps
+ * the best route (see `betterRoute.ts`), and this fails the build if two
+ * remain.
+ */
+export const assertOneConvertedValuePerTarget = (database: DatabaseSync) => {
+	const repeated = database
+		.prepare(
+			`WITH member_key AS (
+				SELECT series_id, group_concat(dimension_id || '=' || member_id, ',') AS members
+				FROM (
+					SELECT series_id, dimension_id, member_id FROM series_member
+					WHERE series_id IN (SELECT id FROM series WHERE method = 'converted')
+					ORDER BY series_id, dimension_id)
+				GROUP BY series_id),
+			grouped AS (
+				SELECT s.id, s.key, s.dataset_id AS dataset_id, s.measure_id AS measure_id,
+					s.release_id || '|' || coalesce(k.members, '') AS target
+				FROM series s LEFT JOIN member_key k ON k.series_id = s.id
+				WHERE s.method = 'converted'),
+			shared AS (
+				SELECT dataset_id, measure_id, target FROM grouped
+				GROUP BY dataset_id, measure_id, target HAVING count(*) > 1)
+			SELECT min(g.key) || ' and ' || max(g.key) AS series, o.area_version_id AS area,
+				o.period_id AS period
+			FROM shared h
+			JOIN grouped g ON g.dataset_id = h.dataset_id AND g.measure_id = h.measure_id AND g.target = h.target
+			JOIN observation o ON o.series_id = g.id
+			GROUP BY h.dataset_id, h.measure_id, h.target, o.area_version_id, o.period_id
+			HAVING count(*) > 1
+			ORDER BY min(g.key), o.area_version_id, o.period_id
+			LIMIT 5`,
+		)
+		.all() as {
+		series: string;
+		area: number;
+		period: number;
+	}[];
+	if (repeated.length > 0)
+		throw new Error(
+			`Converted series hold more than one value for the same target area and period, such as ${repeated
+				.map(
+					(row) =>
+						`${row.series} (area_version ${row.area}, period ${row.period})`,
+				)
+				.join("; ")}`,
 		);
 };

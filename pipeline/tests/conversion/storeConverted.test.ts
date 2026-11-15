@@ -7,6 +7,7 @@ import { afterEach, test } from "vitest";
 import type { ConvertedSeries } from "../../src/conversion/convertSeries.ts";
 import {
 	assertNothingPassesAsPublished,
+	assertOneConvertedValuePerTarget,
 	copyConvertedSeries,
 	openConvertedWriter,
 	writeSkips,
@@ -303,4 +304,28 @@ test("a skip names its reason and only a known reason is kept", () => {
 		writeSkips(writer.database, [{ ...row, reason: "because" }]),
 	);
 	writer.abandon();
+});
+
+test("two converted values for one target area and period fail the check", () => {
+	const database = new DatabaseSync(":memory:");
+	database.exec(ATLAS);
+	// Two sources onto release 6, one member each in the same dimension.
+	database.exec(`
+		INSERT INTO series VALUES (2, 3, 4, 6, 'converted', 1, 'from-ward');
+		INSERT INTO series VALUES (3, 3, 4, 6, 'converted', 1, 'from-constituency');
+		INSERT INTO series VALUES (4, 3, 4, 6, 'converted', 1, 'other-members');
+		INSERT INTO series_member VALUES (2, 8, 9), (3, 8, 9), (4, 8, 10);
+		INSERT INTO observation VALUES (2, 200, 2, 40, 6, NULL, NULL, NULL);
+		INSERT INTO observation VALUES (3, 201, 2, 40, 6, NULL, NULL, NULL);
+		INSERT INTO observation VALUES (4, 200, 2, 40, 6, NULL, NULL, NULL);
+		INSERT INTO observation VALUES (3, 200, 3, 40, 6, NULL, NULL, NULL);`);
+	// Different areas, different periods and different members hold apart.
+	assertOneConvertedValuePerTarget(database);
+	database.exec(
+		"INSERT INTO observation VALUES (3, 200, 2, 41, 6, NULL, NULL, NULL)",
+	);
+	assert.throws(
+		() => assertOneConvertedValuePerTarget(database),
+		/from-constituency and from-ward \(area_version 200, period 2\)/,
+	);
 });
