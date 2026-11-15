@@ -10,7 +10,6 @@ import {
 	websiteAssetsPath,
 } from "@uk-data-atlas/atlas-db";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
-import { createDeprecatedViews } from "../storage/deprecatedViews.ts";
 import { readJsonSync } from "../lib/json.ts";
 
 /**
@@ -103,7 +102,6 @@ export function buildAtlasAssets(root: string) {
 			for (const asset of assets)
 				insert.run(asset.kind, asset.id, asset.sha256, asset.gzip);
 			database.exec("COMMIT");
-			createDeprecatedViews(database);
 		} finally {
 			database.close();
 		}

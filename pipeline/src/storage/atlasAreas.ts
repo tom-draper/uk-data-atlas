@@ -1,4 +1,3 @@
-import { AREA_INVENTORY_VIEW } from "./deprecatedViews.ts";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -168,7 +167,6 @@ export const areaTables = (
 	}
 	return {
 		area_inventory_metadata: {
-			views: { area_inventory: AREA_INVENTORY_VIEW },
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",

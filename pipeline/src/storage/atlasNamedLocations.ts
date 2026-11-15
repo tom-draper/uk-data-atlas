@@ -1,7 +1,3 @@
-import {
-	NAMED_LOCATION_PARTIAL_MEMBERS_VIEW,
-	NAMED_LOCATION_GEOMETRIES_VIEW,
-} from "./deprecatedViews.ts";
 import { join } from "node:path";
 import type {
 	NamedLocation,
@@ -111,10 +107,6 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_partial_member: {
-			views: {
-				named_location_partial_members:
-					NAMED_LOCATION_PARTIAL_MEMBERS_VIEW,
-			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"position INTEGER NOT NULL",
@@ -135,9 +127,6 @@ export const namedLocationTables = (
 			),
 		},
 		named_location_geometry: {
-			views: {
-				named_location_geometries: NAMED_LOCATION_GEOMETRIES_VIEW,
-			},
 			columns: [
 				"location_id TEXT NOT NULL REFERENCES named_location(id)",
 				"boundary_release TEXT NOT NULL",
