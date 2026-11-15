@@ -10,6 +10,12 @@ import { readJsonSync } from "../lib/json.ts";
  * identify it for good. `area_version_id` is the compact integer the other
  * tables use, assigned once from `pipeline/ids/area-version.txt`.
  */
+/**
+ * Each area at its latest version: the one in the highest-sorting release,
+ * which is the newest because release slugs start with their year and month.
+ */
+export const AREA_CURRENT_VIEW = `SELECT v.id AS area_version_id, v.area_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.id = v.release_id WHERE NOT EXISTS (SELECT 1 FROM area_version w JOIN area_releases s ON s.id = w.release_id WHERE w.area_id = v.area_id AND s.release > r.release)`;
+
 export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.id = v.release_id`;
 
 /**
@@ -278,7 +284,10 @@ export const areaTables = (
 			// The unique index above leads with the release, so an area's
 			// versions need their own.
 			indexes: [{ name: "area_version_area", columns: ["area_id"] }],
-			views: { v_area_version: AREA_VERSION_VIEW },
+			views: {
+				v_area_version: AREA_VERSION_VIEW,
+				v_area_current: AREA_CURRENT_VIEW,
+			},
 		},
 	};
 };
