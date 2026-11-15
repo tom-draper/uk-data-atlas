@@ -26,8 +26,8 @@ const READS_EVERY_SERIES: Readonly<
 		reason: "Documentation text, not queries the build runs: the guide and two worked examples show a reader how to find series, and the reader chooses the method.",
 	},
 	"pipeline/src/storage/statisticsTables.ts": {
-		queries: 2,
-		reason: "A check that holds for every series, and v_observation, which returns the method of each row.",
+		queries: 4,
+		reason: "A check that holds for every series, v_observation, which returns the method of each row, and v_series, which returns the method and the series each derives from.",
 	},
 	"services/api/scripts/benchmark-sqlite-pragmas.ts": {
 		queries: 1,
