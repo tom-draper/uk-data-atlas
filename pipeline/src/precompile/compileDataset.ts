@@ -17,6 +17,7 @@ import {
 	withDuckdbPlanningApplications,
 	withDuckdbPublicHealth,
 } from "./duckdbPublicHealth.ts";
+import { compileDirectDataset } from "./compileDirectDataset.ts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import {
 	withDuckdbEnergyConsumption,
@@ -113,6 +114,8 @@ export async function compileStaleDataset(
 	existing: ExistingManifestDataset | undefined,
 	fingerprint: string | undefined,
 ) {
+	if (definition.directOnly)
+		return compileDirectDataset(definition, fingerprint);
 	const startedAt = performance.now();
 	const { reader, artifacts } = createTrackedReader();
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;

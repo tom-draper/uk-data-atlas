@@ -53,6 +53,8 @@ const createRepository = async () => {
 		'import { helper } from "../../../lib/helpers/shared";\nimport { validate } from "../../../packages/datasets/src/data/catalog";\n',
 	);
 	await write("pipeline/src/precompile/cache.ts", "// cache");
+	await write("pipeline/src/precompile/compileDirectDataset.ts", "// direct");
+	await write("pipeline/src/statistics/directDigest.ts", "// digest");
 	await write("pipeline/src/precompile/roadSafety.ts", "// road safety");
 	await write(
 		"packages/geography/package.json",

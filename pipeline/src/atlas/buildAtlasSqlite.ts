@@ -7,7 +7,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
 import { declaredStatistics, directStatistics } from "@uk-data-atlas/measures";
-import type { DirectPart } from "@uk-data-atlas/datasets";
+import type { DirectParts } from "../statistics/directParts.ts";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
@@ -80,9 +80,6 @@ const hasStoredIds = (path: string) => {
 	}
 };
 
-/** The rows of each dataset read straight from its sources, by type. */
-export type DirectParts = ReadonlyMap<string, readonly DirectPart[]>;
-
 const declared = new Map(
 	STATISTICS_DATASETS.map((config) => [config.type, config]),
 );
@@ -95,6 +92,7 @@ const statisticsInputs = (
 		output: string;
 		source: unknown;
 		fingerprint: string;
+		direct?: true;
 	}[],
 	unstored: Readonly<Record<string, { reason: string; topic: DatasetTopic }>>,
 	direct: DirectParts,
@@ -110,6 +108,10 @@ const statisticsInputs = (
 			// A dataset with direct parts has its rows from its sources; the
 			// compiled JSON is then only the manifest's and the check's.
 			const parts = direct.get(entry.type);
+			if (entry.direct && !parts)
+				throw new Error(
+					`${entry.type} has no compiled file and no direct rows`,
+				);
 			const statistics = parts
 				? directStatistics(config, parts, entry)
 				: declaredStatistics(config, read, entry);
@@ -219,6 +221,7 @@ export const buildAtlasSqlite = (
 			summary: unknown;
 			fingerprint: string;
 			compiled: { sha256: string; bytes: number };
+			direct?: true;
 		}[];
 	};
 	for (const key of ["type", "output"] as const) {
@@ -293,6 +296,14 @@ export const buildAtlasSqlite = (
 		yield ["terrain-catalogue", payload] as const;
 		yield ["dataset-manifest", manifestPayload] as const;
 		for (const entry of manifest.datasets) {
+			// A direct-only dataset has no file; its rows serve its payload.
+			if (entry.direct) {
+				if (!servedFromRows(entry.type))
+					throw new Error(
+						`${entry.type} has no compiled file and is not served from rows`,
+					);
+				continue;
+			}
 			const content = readFileSync(
 				join(directory, "datasets", `${entry.output}.json`),
 				"utf8",
