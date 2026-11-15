@@ -440,9 +440,24 @@ the number of published series it would have been:
 | `no-values`           | 79     | The route splits every value, and a split of this measure is refused.  |
 | `published-on-target` | 53     | The target release already holds the series.                           |
 | `missing-component`   | 22     | A ratio lacks its numerator, denominator or a weighted mean's weight.  |
+| `better-route`        | 90     | Another source holds every value for the same area and period.         |
 
 A count is per offered source and target, so one published series offered four
 releases can appear under more than one reason.
+
+### One converted value for each area and period
+
+A dataset published on several source releases (councils and constituencies, or
+several council editions) is converted from each of them, and two sources can
+reach the same target area and period by different routes with different
+values. For each dataset, measure, members, target release, area and period one
+value is kept, from the best source: one on the target's geography (regrouping
+beats splitting), then the higher exact share, the higher coverage, the newer
+source release, and the series key. Sources that cover different periods both
+stay. A source that loses every value is left out as `better-route`. One that
+loses only some keeps the rest, and each value it lost is a row in `series_gap`
+with the reason `better-route`. The build fails if two converted values remain
+for one key.
 
 ### Checks kept from the earlier plan
 
