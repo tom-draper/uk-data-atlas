@@ -12,7 +12,12 @@ import {
 	packText,
 	unpackText,
 } from "@uk-data-atlas/atlas-db";
-import { publishVacuumed, writePostcodeAreas } from "../storage/index.ts";
+import {
+	publishVacuumed,
+	writePostcodeAreas,
+	writeSchemaDocs,
+	writeSearchTable,
+} from "../storage/index.ts";
 import { crosswalkSetHash } from "../crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "../crosswalk-weights/paths.ts";
 import { convertedSeriesPath } from "../conversion/paths.ts";
@@ -30,13 +35,20 @@ import { readJsonSync } from "../lib/json.ts";
  * `crosswalkWeights: false` leaves crosswalks with only their own weights, for
  * fixtures whose roots hold no census counts and place no real releases. The
  * converted series are built through those weights, so they go with them.
+ * `documentSchema: false` skips the search table and the schema docs, which
+ * describe the full build's tables and fail on a fixture's partial ones.
  */
 export function assembleAtlas(
 	root: string,
 	{
 		crosswalkWeights = true,
 		convertedSeries = crosswalkWeights,
-	}: { crosswalkWeights?: boolean; convertedSeries?: boolean } = {},
+		documentSchema = crosswalkWeights,
+	}: {
+		crosswalkWeights?: boolean;
+		convertedSeries?: boolean;
+		documentSchema?: boolean;
+	} = {},
 ) {
 	const directory = join(root, "data/build");
 	const path = join(directory, "atlas.sqlite");
@@ -193,6 +205,12 @@ export function assembleAtlas(
 			// Every converted series is marked as one, and none of its values
 			// as observed, or the copy fails.
 			if (convertedSeries) copyConvertedSeries(database, ids);
+			// Last, so the docs see every table and a missing description
+			// fails the build.
+			if (documentSchema) {
+				writeSearchTable(database);
+				writeSchemaDocs(database);
+			}
 			database.exec("COMMIT");
 		} finally {
 			database.close();

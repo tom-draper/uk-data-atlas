@@ -21,3 +21,4 @@ export { statisticsTables } from "./statisticsTables.ts";
 export * from "./buildIntermediates.ts";
 export * from "./crosswalkArtifacts.ts";
 export * from "./searchTable.ts";
+export * from "./schemaTables.ts";
