@@ -144,8 +144,8 @@ function* numbers(
 }
 
 type Raw = {
-	/** Where the value and its bounds sit in the record. */
-	paths: {
+	/** Where the value and its bounds sit in the record, when read from JSON. */
+	paths?: {
 		value: string[];
 		lower?: string[];
 		upper?: string[];
@@ -204,19 +204,7 @@ export function declaredStatistics(
 	const dimensionSlugs = new Set(
 		(config.dimensions ?? []).map((dimension) => dimension.slug),
 	);
-	const declaredMembers = new Map(
-		(config.dimensions ?? [])
-			.filter((dimension) => dimension.members)
-			.map((dimension) => [
-				dimension.slug,
-				new Map(
-					dimension.members!.map((member) => [
-						member.key,
-						member.code ?? memberCode(member.key),
-					]),
-				),
-			]),
-	);
+	const declaredMembers = declaredMemberCodes(config);
 
 	const declaredKeys = new Map(
 		[...declaredMembers].map(([slug, members]) => [
@@ -225,16 +213,6 @@ export function declaredStatistics(
 		]),
 	);
 	const keysFor = (binding: string) => declaredKeys.get(binding);
-	const declaredParents = new Map(
-		(config.dimensions ?? []).flatMap((dimension) =>
-			(dimension.members ?? [])
-				.filter((member) => member.parent !== undefined)
-				.map((member) => [
-					`${dimension.slug}\0${member.key}`,
-					member.parent!,
-				]),
-		),
-	);
 
 	/** The text columns of a record's contest and elected candidate. */
 	const electionText = (
@@ -666,210 +644,258 @@ export function declaredStatistics(
 			}
 		}
 
-		const seriesKey = (raw: Raw) =>
-			JSON.stringify([
-				raw.measure,
-				raw.release.geography,
-				raw.release.id,
-				Object.entries(raw.members).sort(([a], [b]) =>
-					a < b ? -1 : a > b ? 1 : 0,
-				),
-			]);
+		return assembleStatistics(config, entry, walk);
+	};
+}
 
-		// Plan: series, periods, members and names, in first-seen order.
-		const series: StatisticsSeries[] = [];
-		const seriesIndex = new Map<string, number>();
-		const periodList = new Map<string, StatisticsPeriod>();
-		const discovered = new Map<string, Map<string, string | undefined>>();
-		const names = new Map<
-			string,
-			{ release: AreaRelease; code: string; name: string }
-		>();
-		const keys = new Map<
-			string,
-			{ release: AreaRelease; code: string; key: string }
-		>();
-		const elections: StatisticsElection[] = [];
-		const related = new Map<
-			string,
-			{
-				relation: AreaRelationship;
-				period: string;
-				child: { release: AreaRelease; code: string };
-				parent: { release: AreaRelease; code: string };
-			}
-		>();
-		const seen = new Set<string>();
-		let count = 0;
-		for (const raw of walk(
-			(dimension, key, parent) => {
-				let members = discovered.get(dimension);
-				if (!members) {
-					members = new Map();
-					discovered.set(dimension, members);
-				}
-				if (!members.has(key)) members.set(key, parent);
-				else if (members.get(key) !== parent)
-					throw new Error(
-						`${type}: ${dimension} ${key} has two parents`,
-					);
-			},
-			(release, code, name) => {
-				const key = `${release.id}\0${code}`;
-				const known = names.get(key);
-				if (!known) names.set(key, { release, code, name });
-				else if (known.name !== name)
-					throw new Error(
-						`${type}: ${code} is named ${known.name} and ${name}`,
-					);
-			},
-			(release, code, key) => {
-				const known = keys.get(`${release.id}\0${code}`);
-				if (known === undefined)
-					keys.set(`${release.id}\0${code}`, { release, code, key });
-				else if (known.key !== key)
-					throw new Error(
-						`${type}: ${code} is keyed ${known.key} and ${key}`,
-					);
-			},
-			(relation) => {
-				const key = JSON.stringify([
-					relation.relation,
-					relation.period,
-					relation.child.release.id,
-					relation.child.code,
-					relation.parent.release.id,
-					relation.parent.code,
-				]);
-				if (!related.has(key)) related.set(key, relation);
-			},
-			(election) => elections.push(election),
-		)) {
-			const key = seriesKey(raw);
-			let index = seriesIndex.get(key);
-			if (index === undefined) {
-				index = series.length;
-				seriesIndex.set(key, index);
-				series.push({
-					measure: raw.measure,
-					release: raw.release,
-					...(Object.keys(raw.members).length
-						? { members: raw.members }
-						: {}),
-				});
-			}
-			const known = periodList.get(raw.period.label);
-			if (!known) periodList.set(raw.period.label, raw.period);
-			else if (JSON.stringify(known) !== JSON.stringify(raw.period))
-				throw new Error(
-					`${type}: period ${raw.period.label} declared twice differently`,
-				);
-			const cell = `${index}\0${raw.code}\0${raw.period.label}`;
-			if (seen.has(cell))
-				throw new Error(
-					`${type}: two values for ${raw.measure} in ${raw.code} for ${raw.period.label}`,
-				);
-			seen.add(cell);
-			count++;
-		}
-		seen.clear();
+/** Every observation of a dataset in source order, naming what it finds. */
+type Walk = (
+	onMember?: (dimension: string, key: string, parent?: string) => void,
+	onName?: (release: AreaRelease, code: string, name: string) => void,
+	onKey?: (release: AreaRelease, code: string, key: string) => void,
+	onRelation?: (relation: {
+		relation: AreaRelationship;
+		period: string;
+		child: { release: AreaRelease; code: string };
+		parent: { release: AreaRelease; code: string };
+	}) => void,
+	onElection?: (election: StatisticsElection) => void,
+) => Generator<Raw>;
 
-		const dimensions: StatisticsDimension[] = (config.dimensions ?? []).map(
-			(dimension) => {
-				const found = discovered.get(dimension.slug) ?? new Map();
-				const label = new Map(
-					(dimension.members ?? []).map((member) => [
+/** The codes of each dimension's declared members, by member key. */
+export const declaredMemberCodes = (config: DeclaredDataset) =>
+	new Map(
+		(config.dimensions ?? [])
+			.filter((dimension) => dimension.members)
+			.map((dimension) => [
+				dimension.slug,
+				new Map(
+					dimension.members!.map((member) => [
 						member.key,
-						member.label ?? member.key,
+						member.code ?? memberCode(member.key),
 					]),
-				);
-				const keys = dimension.members
-					? dimension.members.map((member) => member.key)
-					: [...found.keys()];
-				const code = (key: string) =>
-					declaredMembers.get(dimension.slug)?.get(key) ??
-					memberCode(key);
-				return {
-					slug: dimension.slug,
-					label: dimension.label,
-					members: keys.map((key) => {
-						const parent =
-							declaredParents.get(`${dimension.slug}\0${key}`) ??
-							found.get(key);
-						return {
-							code: code(key),
-							label: label.get(key) ?? key,
-							...(parent === undefined
-								? {}
-								: { parent: code(parent) }),
-						};
-					}),
-				};
-			},
-		);
+				),
+			]),
+	);
 
-		return {
-			slug: entry.output,
-			topic: config.topic,
-			...(config.related ? { related: config.related } : {}),
-			title: sourceText(entry.source, "name", type)!,
-			description: sourceText(entry.source, "description", type)!,
-			source: {
-				publisher: sourceText(entry.source, "source", type)!,
-				url: sourceText(entry.source, "sourceUrl", type, false),
-				licence: sourceText(entry.source, "licence", type)!,
-				licenceUrl: sourceText(entry.source, "licenceUrl", type, false),
-			},
-			fingerprint: entry.fingerprint,
-			measures: config.measures,
-			dimensions,
-			periods: [...periodList.values()],
-			series,
-			*observations(): Generator<StatisticsObservation> {
-				for (const raw of walk())
-					yield {
-						series: seriesIndex.get(seriesKey(raw))!,
-						code: raw.code,
-						period: raw.period.label,
-						value: raw.value,
-						...(raw.lower === undefined
+/**
+ * The statistics rows of a dataset from a walk of its values: the series,
+ * periods, dimensions and names it finds, and a pass that streams its
+ * observations. Both the compiled JSON and a source read directly come
+ * through here, so they are written by one rule.
+ */
+export function assembleStatistics(
+	config: DeclaredDataset,
+	entry: DeclaredManifestEntry,
+	walk: Walk,
+): StatisticsDataset {
+	const type = config.type;
+	const declaredMembers = declaredMemberCodes(config);
+	const declaredParents = new Map(
+		(config.dimensions ?? []).flatMap((dimension) =>
+			(dimension.members ?? [])
+				.filter((member) => member.parent !== undefined)
+				.map((member) => [
+					`${dimension.slug}\0${member.key}`,
+					member.parent!,
+				]),
+		),
+	);
+	const seriesKey = (raw: Raw) =>
+		JSON.stringify([
+			raw.measure,
+			raw.release.geography,
+			raw.release.id,
+			Object.entries(raw.members).sort(([a], [b]) =>
+				a < b ? -1 : a > b ? 1 : 0,
+			),
+		]);
+
+	// Plan: series, periods, members and names, in first-seen order.
+	const series: StatisticsSeries[] = [];
+	const seriesIndex = new Map<string, number>();
+	const periodList = new Map<string, StatisticsPeriod>();
+	const discovered = new Map<string, Map<string, string | undefined>>();
+	const names = new Map<
+		string,
+		{ release: AreaRelease; code: string; name: string }
+	>();
+	const keys = new Map<
+		string,
+		{ release: AreaRelease; code: string; key: string }
+	>();
+	const elections: StatisticsElection[] = [];
+	const related = new Map<
+		string,
+		{
+			relation: AreaRelationship;
+			period: string;
+			child: { release: AreaRelease; code: string };
+			parent: { release: AreaRelease; code: string };
+		}
+	>();
+	const seen = new Set<string>();
+	let count = 0;
+	for (const raw of walk(
+		(dimension, key, parent) => {
+			let members = discovered.get(dimension);
+			if (!members) {
+				members = new Map();
+				discovered.set(dimension, members);
+			}
+			if (!members.has(key)) members.set(key, parent);
+			else if (members.get(key) !== parent)
+				throw new Error(`${type}: ${dimension} ${key} has two parents`);
+		},
+		(release, code, name) => {
+			const key = `${release.id}\0${code}`;
+			const known = names.get(key);
+			if (!known) names.set(key, { release, code, name });
+			else if (known.name !== name)
+				throw new Error(
+					`${type}: ${code} is named ${known.name} and ${name}`,
+				);
+		},
+		(release, code, key) => {
+			const known = keys.get(`${release.id}\0${code}`);
+			if (known === undefined)
+				keys.set(`${release.id}\0${code}`, { release, code, key });
+			else if (known.key !== key)
+				throw new Error(
+					`${type}: ${code} is keyed ${known.key} and ${key}`,
+				);
+		},
+		(relation) => {
+			const key = JSON.stringify([
+				relation.relation,
+				relation.period,
+				relation.child.release.id,
+				relation.child.code,
+				relation.parent.release.id,
+				relation.parent.code,
+			]);
+			if (!related.has(key)) related.set(key, relation);
+		},
+		(election) => elections.push(election),
+	)) {
+		const key = seriesKey(raw);
+		let index = seriesIndex.get(key);
+		if (index === undefined) {
+			index = series.length;
+			seriesIndex.set(key, index);
+			series.push({
+				measure: raw.measure,
+				release: raw.release,
+				...(Object.keys(raw.members).length
+					? { members: raw.members }
+					: {}),
+			});
+		}
+		const known = periodList.get(raw.period.label);
+		if (!known) periodList.set(raw.period.label, raw.period);
+		else if (JSON.stringify(known) !== JSON.stringify(raw.period))
+			throw new Error(
+				`${type}: period ${raw.period.label} declared twice differently`,
+			);
+		const cell = `${index}\0${raw.code}\0${raw.period.label}`;
+		if (seen.has(cell))
+			throw new Error(
+				`${type}: two values for ${raw.measure} in ${raw.code} for ${raw.period.label}`,
+			);
+		seen.add(cell);
+		count++;
+	}
+	seen.clear();
+
+	const dimensions: StatisticsDimension[] = (config.dimensions ?? []).map(
+		(dimension) => {
+			const found = discovered.get(dimension.slug) ?? new Map();
+			const label = new Map(
+				(dimension.members ?? []).map((member) => [
+					member.key,
+					member.label ?? member.key,
+				]),
+			);
+			const keys = dimension.members
+				? dimension.members.map((member) => member.key)
+				: [...found.keys()];
+			const code = (key: string) =>
+				declaredMembers.get(dimension.slug)?.get(key) ??
+				memberCode(key);
+			return {
+				slug: dimension.slug,
+				label: dimension.label,
+				members: keys.map((key) => {
+					const parent =
+						declaredParents.get(`${dimension.slug}\0${key}`) ??
+						found.get(key);
+					return {
+						code: code(key),
+						label: label.get(key) ?? key,
+						...(parent === undefined
 							? {}
-							: { lower: raw.lower }),
-						...(raw.upper === undefined
-							? {}
-							: { upper: raw.upper }),
-						...(raw.status === undefined
-							? {}
-							: { status: raw.status }),
+							: { parent: code(parent) }),
 					};
-			},
-			areaNames: () => names.values(),
-			areaKeys: () => keys.values(),
-			relationships: () => related.values(),
-			elections: () => elections,
-			...(config.election?.parties
-				? { parties: config.election.parties }
-				: {}),
-			...(config.election?.areas
-				? { contestAreas: config.election.areas }
-				: {}),
-			verify(database: DatabaseSync) {
-				const row = database
-					.prepare(
-						"SELECT count(*) AS n FROM observation o JOIN series s ON s.method = 'published' AND s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
-					)
-					.get(
-						JSON.stringify(
-							series.map((item) =>
-								canonicalSeriesKey(entry.output, item),
-							),
+				}),
+			};
+		},
+	);
+
+	return {
+		slug: entry.output,
+		topic: config.topic,
+		...(config.related ? { related: config.related } : {}),
+		title: sourceText(entry.source, "name", type)!,
+		description: sourceText(entry.source, "description", type)!,
+		source: {
+			publisher: sourceText(entry.source, "source", type)!,
+			url: sourceText(entry.source, "sourceUrl", type, false),
+			licence: sourceText(entry.source, "licence", type)!,
+			licenceUrl: sourceText(entry.source, "licenceUrl", type, false),
+		},
+		fingerprint: entry.fingerprint,
+		measures: config.measures,
+		dimensions,
+		periods: [...periodList.values()],
+		series,
+		*observations(): Generator<StatisticsObservation> {
+			for (const raw of walk())
+				yield {
+					series: seriesIndex.get(seriesKey(raw))!,
+					code: raw.code,
+					period: raw.period.label,
+					value: raw.value,
+					...(raw.lower === undefined ? {} : { lower: raw.lower }),
+					...(raw.upper === undefined ? {} : { upper: raw.upper }),
+					...(raw.status === undefined ? {} : { status: raw.status }),
+				};
+		},
+		areaNames: () => names.values(),
+		areaKeys: () => keys.values(),
+		relationships: () => related.values(),
+		elections: () => elections,
+		...(config.election?.parties
+			? { parties: config.election.parties }
+			: {}),
+		...(config.election?.areas
+			? { contestAreas: config.election.areas }
+			: {}),
+		verify(database: DatabaseSync) {
+			const row = database
+				.prepare(
+					"SELECT count(*) AS n FROM observation o JOIN series s ON s.method = 'published' AND s.id = o.series_id WHERE s.key IN (SELECT value FROM json_each(?))",
+				)
+				.get(
+					JSON.stringify(
+						series.map((item) =>
+							canonicalSeriesKey(entry.output, item),
 						),
-					);
-				if (Number(row?.n) !== count)
-					throw new Error(
-						`${type}: ${Number(row?.n)} observation rows for ${count} values`,
-					);
-			},
-		};
+					),
+				);
+			if (Number(row?.n) !== count)
+				throw new Error(
+					`${type}: ${Number(row?.n)} observation rows for ${count} values`,
+				);
+		},
 	};
 }
