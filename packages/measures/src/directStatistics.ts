@@ -1,0 +1,200 @@
+import {
+	periods,
+	type DeclaredDataset,
+	type DeclaredField,
+	type DeclaredHeader,
+	type DeclaredRelease,
+	type DirectPart,
+} from "@uk-data-atlas/datasets";
+import type {
+	AreaIndex,
+	AreaRelease,
+	StatisticsDataset,
+	StatisticsPeriod,
+} from "./atlasStatistics.ts";
+import {
+	assembleStatistics,
+	declaredMemberCodes,
+	memberCode,
+	type DeclaredManifestEntry,
+} from "./declaredStatistics.ts";
+
+/**
+ * Statistics rows for a dataset read straight from its sources. The parts come
+ * from the declaration's `direct.read`; everything else is as for a compiled
+ * dataset: the same fields name the measures and dimensions, the same
+ * assembly plans the series and the same writer stores them.
+ *
+ * Only what a single table of areas needs is supported: one record set, no
+ * parents, keys, election text or discovered (undeclared) dimension parents.
+ */
+export function directStatistics(
+	config: DeclaredDataset,
+	parts: readonly DirectPart[],
+	entry: DeclaredManifestEntry,
+): (areas: AreaIndex) => StatisticsDataset {
+	const type = config.type;
+	if (!config.payload)
+		throw new Error(
+			`${type}: a direct dataset needs a payload declaration`,
+		);
+	if (
+		config.keys ||
+		config.parents ||
+		config.election ||
+		config.headerRelationships ||
+		(config.records && config.records.length !== 1) ||
+		typeof config.fields === "function"
+	)
+		throw new Error(
+			`${type}: a direct dataset has one record set and static fields`,
+		);
+	const set = config.records?.[0] ?? {
+		from: "data",
+		release: config.release,
+		alsoIn: config.alsoIn,
+	};
+	const fields = config.fields as DeclaredField[];
+	const measures = new Set(config.measures.map(({ slug }) => slug));
+	const dimensions = new Set(
+		(config.dimensions ?? []).map(({ slug }) => slug),
+	);
+	const declared = declaredMemberCodes(config);
+	/** The dimensions a field binds or fixes, in the form a value names them. */
+	const shapes = fields.map((field) => ({
+		measure: field.measure,
+		slugs: new Set([
+			...Object.keys(field.members ?? {}),
+			...field.path
+				.split(".")
+				.flatMap(
+					(part) => /^\{([a-z0-9-]+)\}$/.exec(part)?.slice(1) ?? [],
+				)
+				.filter((binding) => binding !== "period"),
+		]),
+		periods: field.path.includes("{period}"),
+	}));
+	const nameField =
+		typeof config.name === "string"
+			? config.name
+			: typeof config.name === "function" || config.name === undefined
+				? undefined
+				: config.name[set.from];
+
+	return (areas) => {
+		const headerOf = (key: string): DeclaredHeader => {
+			const found = config
+				.payload!.parts([key])
+				.find((part) => part.key === key);
+			if (!found)
+				throw new Error(`${type}: the payload has no part ${key}`);
+			return found.header;
+		};
+		const releasesOf = (header: DeclaredHeader): DeclaredRelease[] => [
+			set.release
+				? set.release(header)
+				: {
+						geography: String(header.boundaryType),
+						year: Number(header.boundaryYear),
+					},
+			...(typeof set.alsoIn === "function"
+				? set.alsoIn(header)
+				: (set.alsoIn ?? [])),
+		];
+		const heldOf = (releases: DeclaredRelease[], context: string) => {
+			const found = releases.flatMap((release) => {
+				const match = areas.find(release.geography, release.year);
+				return match ? [match] : [];
+			});
+			if (found.length === 0)
+				throw new Error(
+					`${context}: the atlas holds none of ${releases.map(({ geography, year }) => `${geography} ${year}`).join(", ")}`,
+				);
+			return found;
+		};
+
+		function* walk(
+			onMember?: (dimension: string, key: string) => void,
+			onName?: (release: AreaRelease, code: string, name: string) => void,
+		) {
+			for (const part of parts) {
+				const context = `${type} ${part.key}`;
+				const header = headerOf(part.key);
+				const topPeriod: StatisticsPeriod = config.period
+					? config.period(part.key, header)
+					: /^\d{4}$/.test(part.key)
+						? periods.year(Number(part.key))
+						: (() => {
+								throw new Error(
+									`${context}: ${part.key} is not a year; declare its period`,
+								);
+							})();
+				const candidates = heldOf(releasesOf(header), context);
+				for (const record of part.records) {
+					const release = candidates.find((candidate) =>
+						areas.has(candidate, record.code),
+					);
+					if (!release) {
+						if (
+							config.exclude?.some(({ codes }) =>
+								codes.test(record.code),
+							)
+						)
+							continue;
+						throw new Error(
+							`${context}: area ${record.code} is in no listed release`,
+						);
+					}
+					if (nameField !== undefined && record.name !== undefined)
+						onName?.(release, record.code, record.name);
+					for (const value of record.values) {
+						if (!measures.has(value.measure))
+							throw new Error(
+								`${context}: ${value.measure} is not a declared measure`,
+							);
+						const named = Object.keys(value.members ?? {});
+						const fits = shapes.some(
+							(shape) =>
+								shape.measure === value.measure &&
+								shape.slugs.size === named.length &&
+								named.every((slug) => shape.slugs.has(slug)),
+						);
+						if (!fits)
+							throw new Error(
+								`${context}: ${value.measure} on ${named.join(", ") || "no dimension"} fits none of the declared fields`,
+							);
+						const members: Record<string, string> = {};
+						for (const [slug, key] of Object.entries(
+							value.members ?? {},
+						)) {
+							if (!dimensions.has(slug))
+								throw new Error(
+									`${type}: ${slug} is not a declared dimension`,
+								);
+							const codes = declared.get(slug);
+							if (codes && !codes.has(key))
+								throw new Error(
+									`${context}: ${key} is not a declared ${slug}`,
+								);
+							onMember?.(slug, key);
+							members[slug] = codes?.get(key) ?? memberCode(key);
+						}
+						if (value.value === null) continue;
+						yield {
+							measure: value.measure,
+							members,
+							release,
+							code: record.code,
+							period: value.period ?? topPeriod,
+							value: value.value,
+							lower: value.lower,
+							upper: value.upper,
+							status: value.status,
+						};
+					}
+				}
+			}
+		}
+		return assembleStatistics(config, entry, walk);
+	};
+}
