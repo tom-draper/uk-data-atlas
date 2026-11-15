@@ -64,7 +64,6 @@ beforeEach(() => {
 					type: "sample",
 					output: "sample",
 					source: { source: "Publisher", licence: "Fixture licence" },
-					contract: {},
 					summary: {},
 					fingerprint: "v1",
 					compiled: { bytes: Buffer.byteLength(payload), sha256 },

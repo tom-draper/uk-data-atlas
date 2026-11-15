@@ -216,7 +216,6 @@ export const buildAtlasSqlite = (
 			type: string;
 			output: string;
 			source: unknown;
-			contract: unknown;
 			summary: unknown;
 			fingerprint: string;
 			compiled: { sha256: string; bytes: number };

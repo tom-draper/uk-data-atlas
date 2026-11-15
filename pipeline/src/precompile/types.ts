@@ -39,7 +39,6 @@ export type ExistingManifestDataset = {
 	type: string;
 	output: string;
 	source: unknown;
-	contract: unknown;
 	inputs: SourceArtifact[];
 	summary: unknown;
 	compiled: CompiledOutput;
