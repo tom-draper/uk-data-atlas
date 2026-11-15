@@ -140,17 +140,36 @@ payload part, each area's code, name and values with their measure and
 members). The `atlas-sqlite` stage reads these first (`readDirectParts`), then
 `directStatistics` plans the series and `statisticsTables` writes them: the
 assembly (`assembleStatistics`) and the writer are the ones a compiled dataset
-uses. The compiler still runs, because the manifest's hash, summary and inputs
-come from it, and because the build compares the payload generated from the
-rows with its JSON, which now proves the direct reader and the compiler agree.
-`land-area` and `fuel-poverty` are migrated.
+uses.
+
+A direct dataset either keeps its compiler or, with `direct.only`, has none.
+With a compiler, the manifest's hash, summary and inputs come from it, and the
+build compares the payload generated from the rows with its JSON, which proves
+the reader and the compiler agree. `land-area` is migrated this way.
+
+With `direct.only` there is no JSON. The declaration's `load` is
+`noCompiledPayload()`, which keeps its generated type and throws if called.
+The `datasets` stage (`compileDirectDataset`) reads the source once with a
+tracked reader and writes the manifest entry from the parts: `inputs` from the
+files read, `summary` from the same validation a compiled dataset gets, and
+`compiled.sha256` and `bytes` as the hash and size of the serialised parts
+(`directDigest`). The entry has `direct: true`, so `atlas-sqlite`,
+`verify-dataset-payloads`, `scripts/verify-data.mts` and
+`scripts/verify-atlas-datasets.mts` skip the file. `readDirectParts` refuses to
+run if the sources no longer hash to the entry. What the compiled JSON used to
+prove is held by a committed golden: `pipeline/src/checks/directPayloadGoldens.json`
+has the hash and size the payload generated from the rows must have. It was the
+hash of the compiler's last output, so the rows rebuild that JSON exactly.
+Change it only when the payload is meant to change. `fuel-poverty` is migrated
+this way, and its compiler is deleted.
 
 `pipeline/tests/built/directStatistics.test.ts` writes each migrated dataset by
 both paths onto the real area tables and compares them by natural key, not id:
 observations (values, bounds, status, periods, members, area codes and names,
 releases), series, dimension members with their parents and positions, and
 dataset area names. It then rebuilds the JSON from the direct rows and
-compares it with the compiled JSON. `tests/server/directStatistics.test.ts`
+compares it with the compiled JSON. It covers datasets that keep a compiler; a
+`direct.only` dataset is held to its golden by the dataset payload check. `tests/server/directStatistics.test.ts`
 covers what a declaration rejects.
 
 To port the next dataset:
@@ -166,6 +185,10 @@ To port the next dataset:
    A value that fits none of the declared fields, or names a measure or
    member the declaration lacks, fails the build.
 3. Run `directStatistics.test.ts` and the dataset payload check.
+4. To delete the compiler, add `only: true`, set `load` to
+   `noCompiledPayload<T>()`, move the source path and table options into a
+   module the reader imports, and add the hash and size of the old compiled
+   JSON to `directPayloadGoldens.json`.
 
 What fits: one table of areas read into one measure set, with static `fields`,
 declared dimension members, one release, no parents, keys, relationships or
@@ -177,15 +200,14 @@ relationships or keys. `directStatistics` refuses those declarations. A part
 is an array, so a dataset with millions of records needs `read` to yield
 instead.
 
-The compiled JSON is not yet a pure output of the rows. The manifest records
-its hash and size, its summary and its inputs before any row exists, and
-`scripts/verify-data.mts`, `scripts/verify-atlas-datasets.mts`, the data
-catalogue (`precompiled(...)`) and `compile-website-data` still read the
-files. Retiring it means producing those from the rows, which needs the
-`datasets` stage to run after `atlas-sqlite` for migrated datasets. Until a
-compiler is replaced, a migrated dataset costs a second reader to keep equal,
-which the check enforces. The gain comes when the compiler for a migrated
-dataset can be deleted, so port a dataset only with that in view.
+The compiled JSON of a dataset that keeps a compiler is not yet a pure output
+of the rows. The manifest records its hash and size, its summary and its
+inputs before any row exists, and `scripts/verify-data.mts`,
+`scripts/verify-atlas-datasets.mts` and `compile-website-data` still read the
+files. A dataset with `direct.only` avoids this by writing the manifest entry
+from its parts, so port a dataset with that in view: once its reader replaces
+the compiler, delete the compiler, record its last output's hash as the golden
+and set `direct.only`.
 
 ## Compressed columns
 
