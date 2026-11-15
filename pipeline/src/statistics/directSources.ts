@@ -2,10 +2,8 @@ import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import type { DirectPart } from "@uk-data-atlas/datasets";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { DirectParts } from "../atlas/buildAtlasSqlite.ts";
 import { createTrackedReader } from "../precompile/trackedReader.ts";
-
-/** The parts of each dataset that reads its sources directly, by type. */
-export type DirectParts = ReadonlyMap<string, readonly DirectPart[]>;
 
 /** The types whose statistics rows are read from their sources, not compiled JSON. */
 export const DIRECT_TYPES: readonly string[] = STATISTICS_DATASETS.filter(
