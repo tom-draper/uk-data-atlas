@@ -36,7 +36,7 @@ CREATE TABLE conversion_skip (
 	measure_id INTEGER NOT NULL${measure},
 	source_release_id INTEGER NOT NULL${release},
 	target_release_id INTEGER NOT NULL${release},
-	reason TEXT NOT NULL CHECK (reason IN ('refused-measure','no-route','published-on-target','missing-component','no-values')),
+	reason TEXT NOT NULL CHECK (reason IN ('refused-measure','no-route','published-on-target','missing-component','no-values','better-route')),
 	series INTEGER NOT NULL CHECK (series > 0),
 	PRIMARY KEY (dataset_id, measure_id, source_release_id, target_release_id, reason)) WITHOUT ROWID, STRICT;
 `;
