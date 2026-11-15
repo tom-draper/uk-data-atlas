@@ -151,15 +151,30 @@ interface SchemaRow {
 	sql: string;
 }
 
-/** Every table, index and view of a database, in the order it was created. */
-export const readSchema = (database: DatabaseSync, schema = "main") =>
-	(
+/**
+ * Every table, index and view of a database, in the order it was created.
+ * The shadow tables of a virtual table (such as the full-text `search`) are
+ * left out: creating the virtual table creates them again.
+ */
+export const readSchema = (database: DatabaseSync, schema = "main") => {
+	const rows = (
 		database
 			.prepare(
 				`SELECT type, name, tbl_name, sql FROM ${quote(schema)}.sqlite_schema WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' ORDER BY rowid`,
 			)
 			.all() as unknown as SchemaRow[]
 	).map((row) => ({ ...row }));
+	const shadows = new Set(
+		rows
+			.filter((row) => row.sql.startsWith("CREATE VIRTUAL TABLE"))
+			.flatMap((row) =>
+				["data", "idx", "content", "docsize", "config"].map(
+					(suffix) => `${row.name}_${suffix}`,
+				),
+			),
+	);
+	return rows.filter((row) => !shadows.has(row.name));
+};
 
 /** The module that owns a table, or `core` when none does. */
 export const tableOwner = (table: string): "dataset" | "postcodes" | "core" => {
