@@ -96,4 +96,4 @@ names distinguish the single inventory header from coverage rows.
 
 ## Implementation status
 
-The proposed renames are implemented with deprecated views except `area_releases`, `areas`, and `payloads`, which remain unchanged because of their broad use and overlap with other branches. For inventory and coverage tables already named in singular snake_case, the stored tables use `_metadata` or `_entry` so the old name can remain a compatibility view with its old column spellings.
+The proposed renames are implemented except `area_releases`, `areas`, and `payloads`, which remain unchanged because of their broad use and overlap with other branches. For inventory and coverage tables already named in singular snake_case, the stored tables use `_metadata` or `_entry`. The compatibility views that kept the old names were dropped once no reader used them (`refactor(pipeline): drop the unread compatibility views`).
