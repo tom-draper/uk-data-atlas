@@ -281,7 +281,6 @@ export async function compileStaleDataset(
 		type: definition.type,
 		output: definition.precompiledFile,
 		source: definition.source,
-		contract: definition.ingestion ?? {},
 		inputs: [...artifacts.values()].sort((left, right) =>
 			left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
 		),
