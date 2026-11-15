@@ -242,6 +242,38 @@ records contain areas from more than one release. Add unit tests for the
 declaration, and give it a `payload`. Run the built statistics and dataset
 payload tests after a data build.
 
+## A self-describing file
+
+`atlas.sqlite` explains itself, so a reader with only the file (a person in a
+SQLite shell, a script or a language model) can find what it holds without
+this repository. `assemble-atlas` writes these tables last, after every other
+table exists:
+
+- `schema_guide`: a few topics on how the file fits together.
+- `schema_table`: one row per table and view, with an audience of `core`
+  (enough for most questions), `reference` or `internal`.
+- `schema_column`: every column of a core or reference table.
+- `schema_example`: worked questions with SQL, run by
+  `pipeline/tests/built/schemaDocs.test.ts`, which fails on an example that
+  returns no rows.
+- `search`: an FTS5 index (porter stemming, so `household` finds `households`,
+  and `MATCH 'household*'` finds a prefix) over measures, datasets, dimension
+  members, areas and places. Each row has a `kind`, a `key` that finds the row
+  in its own table (a slug, `dimension:code`, an area code or a place id), a
+  `label` and a `body` of more searchable text. An area has one row, named as
+  on its latest release, not one per boundary change. Join `key` back to the
+  table to read the row, such as `search JOIN measure ON slug = key`.
+
+The text lives in `pipeline/src/storage/schemaDocs.ts`. The build fails on a
+table or view with no entry, or a core or reference column with no
+description, so the docs cannot fall behind the schema.
+
+Views join the core tables into readable rows: `v_observation`, `v_series`
+(what a dataset holds), `v_area_version` and `v_area_current` (each area at its
+latest version), `v_crosswalk_edge`, `v_crosswalk_weight`, `v_area_change`,
+`v_contest`, `v_candidacy`, `v_source_terms` and `v_election_terms`. A view
+adds no data and is not the API's read path: API readers query stored tables.
+
 ## Website assets
 
 `website_asset` stores the website’s compressed release assets in
