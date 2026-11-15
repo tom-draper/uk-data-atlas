@@ -2,6 +2,9 @@ import type { LandAreaDataset } from "../../../types/landArea.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { loadLandArea } from "../../../data/land-area/loader.ts";
+import { parseNum } from "../../../helpers/parseNumber.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const landArea = defineDataset<LandAreaDataset>({
 	id: "land-area",
@@ -75,6 +78,39 @@ export const landArea = defineDataset<LandAreaDataset>({
 			},
 		],
 		fields: [{ path: "{surface}", measure: "area" }],
+		// The rows come straight from the CSV; `load` above only feeds the manifest
+		// and the check that the rows rebuild its payload.
+		direct: {
+			read: async (reader) => {
+				const records = new Map<string, DirectRecord>();
+				await reader.csvRows(
+					sourceDir("land-area", "sam-lad-2024-12.csv"),
+					{},
+					(row) => {
+						const code = row["ladCode"]?.trim();
+						if (!code) return;
+						const value = (column: string, surface: string) => ({
+							measure: "area",
+							members: { surface },
+							value: parseNum(row[column]),
+						});
+						records.set(code, {
+							code,
+							name: row["ladName"]?.trim() || "",
+							values: [
+								value("landHectares", "landHectares"),
+								value("extentHectares", "extentHectares"),
+								value(
+									"inlandWaterHectares",
+									"inlandWaterHectares",
+								),
+							],
+						});
+					},
+				);
+				return [{ key: "2024", records: [...records.values()] }];
+			},
+		},
 		derived: { landSquareKm: "Land hectares in square kilometres." },
 		computed: {
 			landSquareKm: (record) => (record.landHectares as number) / 100,

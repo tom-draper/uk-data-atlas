@@ -6,7 +6,8 @@ import {
 	type DatasetTopic,
 } from "@uk-data-atlas/measures";
 import { statisticsTables } from "../storage/index.ts";
-import { declaredStatistics } from "@uk-data-atlas/measures";
+import { declaredStatistics, directStatistics } from "@uk-data-atlas/measures";
+import type { DirectParts } from "../statistics/directSources.ts";
 import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
@@ -93,6 +94,7 @@ const statisticsInputs = (
 		fingerprint: string;
 	}[],
 	unstored: Readonly<Record<string, { reason: string; topic: DatasetTopic }>>,
+	direct: DirectParts,
 ): StatisticsInput[] =>
 	entries.flatMap((entry): StatisticsInput[] => {
 		const read = () =>
@@ -102,7 +104,12 @@ const statisticsInputs = (
 			);
 		const config = declared.get(entry.type);
 		if (config) {
-			const statistics = declaredStatistics(config, read, entry);
+			// A dataset with direct parts has its rows from its sources; the
+			// compiled JSON is then only the manifest's and the check's.
+			const parts = direct.get(entry.type);
+			const statistics = parts
+				? directStatistics(config, parts, entry)
+				: declaredStatistics(config, read, entry);
 			if (
 				entry.type === "general-election" ||
 				entry.type === "local-election"
@@ -168,11 +175,14 @@ export const buildAtlasSqlite = (
 	{
 		unstored = {},
 		censusTables = CENSUS_SMALL_AREA_TABLES,
+		direct = new Map(),
 	}: {
 		unstored?: Readonly<
 			Record<string, { reason: string; topic: DatasetTopic }>
 		>;
 		censusTables?: readonly CensusTable[];
+		/** Rows read straight from sources, by type; see `readDirectParts`. */
+		direct?: DirectParts;
 	} = {},
 ) => {
 	const directory = join(repositoryRoot, "data/build");
@@ -315,10 +325,15 @@ export const buildAtlasSqlite = (
 			},
 			...statisticsTables(
 				[
-					...statisticsInputs(directory, manifest.datasets, {
-						...UNSTORED_DATASETS,
-						...unstored,
-					}),
+					...statisticsInputs(
+						directory,
+						manifest.datasets,
+						{
+							...UNSTORED_DATASETS,
+							...unstored,
+						},
+						direct,
+					),
 					// After the declared datasets, whose measures and members
 					// the census tables share.
 					...censusSmallAreaStatistics(repositoryRoot, censusTables),
