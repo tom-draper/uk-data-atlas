@@ -1,0 +1,258 @@
+import { DatabaseSync } from "node:sqlite";
+import { describe, expect, it } from "vitest";
+import {
+	declaredStatistics,
+	directStatistics,
+	measure,
+	yearParts,
+	type DeclaredDataset,
+	type DirectPart,
+	type StatisticsInput,
+} from "@uk-data-atlas/measures";
+import {
+	statisticsTables,
+	writeSqliteTables,
+	type SqliteTable,
+} from "../../pipeline/src/storage/index";
+
+const areas = (): Record<string, SqliteTable> => ({
+	area_releases: {
+		columns: [
+			"id INTEGER UNIQUE",
+			"geography TEXT",
+			"release TEXT",
+			"status TEXT",
+		],
+		key: ["geography", "release"],
+		rows: [
+			[0, "localAuthority", "2024-05-uk-bgc", "available"],
+			[1, "localAuthority", "2022-12-uk-bgc-v2", "available"],
+			[2, "region", "2025-12-en-bgc", "available"],
+		],
+	},
+	geography: {
+		rowid: true,
+		columns: ["id INTEGER", "slug TEXT"],
+		key: ["id"],
+		rows: [
+			[1, "localAuthority"],
+			[2, "region"],
+		],
+	},
+	area: {
+		rowid: true,
+		columns: [
+			"id INTEGER",
+			"geography_id INTEGER REFERENCES geography(id)",
+			"code TEXT",
+		],
+		key: ["id"],
+		rows: [
+			[1, 1, "E06000001"],
+			[2, 1, "E06000002"],
+			[3, 1, "E07000026"],
+			[4, 2, "E12000001"],
+		],
+	},
+	area_version: {
+		rowid: true,
+		columns: [
+			"id INTEGER",
+			"area_id INTEGER REFERENCES area(id)",
+			"release_id INTEGER REFERENCES area_releases(id)",
+			"name TEXT",
+		],
+		key: ["id"],
+		rows: [
+			[1, 1, 0, "Hartlepool"],
+			[2, 2, 0, "Middlesbrough"],
+			[3, 3, 1, "Allerdale"],
+			[4, 4, 2, "North East"],
+		],
+	},
+});
+
+const entry = {
+	output: "example",
+	fingerprint: "sha256:fixture",
+	source: {
+		name: "Example",
+		description: "An example dataset.",
+		source: "Office for National Statistics",
+		licence: "Open Government Licence v3.0",
+	},
+};
+
+const file = (data: Record<string, object>, header: object = {}) =>
+	JSON.stringify({
+		2024: {
+			id: "example2024",
+			type: "example",
+			year: 2024,
+			boundaryType: "localAuthority",
+			boundaryYear: 2024,
+			...header,
+			data,
+		},
+	});
+
+const write = (input: StatisticsInput) => {
+	const database = new DatabaseSync(":memory:");
+	database.exec("CREATE TABLE payloads (id TEXT PRIMARY KEY, payload BLOB)");
+	database.exec("PRAGMA foreign_keys = ON");
+	writeSqliteTables(database, { ...areas(), ...statisticsTables([input]) });
+	return database;
+};
+
+const config: DeclaredDataset = {
+	type: "example",
+	topic: "labour-market",
+	name: "ladName",
+	measures: [
+		measure("crimes", "Crimes", "offences", "count", "sum", "Offences."),
+	],
+	dimensions: [
+		{
+			slug: "offence",
+			label: "Offence",
+			members: [
+				{ key: "total", code: "all", label: "All offences" },
+				{ key: "theft", label: "Theft" },
+			],
+		},
+	],
+	fields: [{ path: "{offence}", measure: "crimes" }],
+	exclude: [{ codes: /^E07/, reason: "Districts are not in this release." }],
+	payload: {
+		parts: yearParts("example", "localAuthority", 2024),
+		code: "ladCode",
+	},
+};
+
+const parts = (...records: DirectPart["records"]): DirectPart[] => [
+	{ key: "2024", records },
+];
+const value = (offence: string, number: number | null) => ({
+	measure: "crimes",
+	members: { offence },
+	value: number,
+});
+const rows = (database: DatabaseSync) =>
+	database
+		.prepare(
+			"SELECT measure, members, area_code, area_name, period, value, status FROM v_observation ORDER BY members, area_code",
+		)
+		.all()
+		.map((row) => ({ ...row }));
+
+describe("directStatistics", () => {
+	const record = (
+		code: string,
+		name: string,
+		total: number,
+		theft: number,
+	) => ({
+		code,
+		name,
+		values: [value("total", total), value("theft", theft)],
+	});
+
+	it("stores the rows the compiled JSON of the same data stores", () => {
+		const data = {
+			E06000001: {
+				ladCode: "E06000001",
+				ladName: "Hartlepool",
+				total: 10,
+				theft: 4,
+			},
+			E06000002: {
+				ladCode: "E06000002",
+				ladName: "Middlesbrough",
+				total: 3,
+				theft: 1,
+			},
+		};
+		const json = JSON.stringify({
+			2024: {
+				id: "example2024",
+				type: "example",
+				year: 2024,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				data,
+			},
+		});
+		const compiled = write(declaredStatistics(config, () => json, entry));
+		const direct = write(
+			directStatistics(
+				config,
+				parts(
+					record("E06000001", "Hartlepool", 10, 4),
+					record("E06000002", "Middlesbrough", 3, 1),
+				),
+				entry,
+			),
+		);
+		try {
+			expect(rows(direct)).toEqual(rows(compiled));
+			expect(rows(direct)).toHaveLength(4);
+		} finally {
+			compiled.close();
+			direct.close();
+		}
+	});
+
+	it("skips an area the declaration excludes and stores no null value", () => {
+		const database = write(
+			directStatistics(
+				config,
+				parts(record("E07000026", "Allerdale", 1, 1), {
+					code: "E06000001",
+					name: "Hartlepool",
+					values: [value("total", 10), value("theft", null)],
+				}),
+				entry,
+			),
+		);
+		try {
+			expect(rows(database).map((row) => row.area_code)).toEqual([
+				"E06000001",
+			]);
+		} finally {
+			database.close();
+		}
+	});
+
+	it("rejects what the declaration does not describe", () => {
+		const build = (...records: DirectPart["records"]) =>
+			write(directStatistics(config, parts(...records), entry));
+		expect(() =>
+			build({
+				code: "E06000001",
+				values: [{ measure: "rate", members: {}, value: 1 }],
+			}),
+		).toThrow(/rate is not a declared measure/);
+		expect(() =>
+			build({ code: "E06000001", values: [value("arson", 1)] }),
+		).toThrow(/arson is not a declared offence/);
+		expect(() =>
+			build({
+				code: "E06000001",
+				values: [{ measure: "crimes", value: 1 }],
+			}),
+		).toThrow(/fits none of the declared fields/);
+		expect(() => build({ code: "E99999999", values: [] })).toThrow(
+			/E99999999 is in no listed release/,
+		);
+	});
+
+	it("refuses a declaration with more than one record set", () => {
+		expect(() =>
+			directStatistics(
+				{ ...config, parents: { from: "data" } as never },
+				[],
+				entry,
+			),
+		).toThrow(/one record set and static fields/);
+	});
+});
