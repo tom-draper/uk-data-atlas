@@ -1,13 +1,15 @@
 import type { FuelPovertyDataset } from "../../../types/fuelPoverty.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS, measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	FUEL_POVERTY_SOURCE,
 	TABLE_OPTIONS,
-	loadFuelPoverty,
-} from "../../../data/fuel-poverty/loader.ts";
+} from "../../../data/fuel-poverty/source.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const fuelPoverty = defineDataset<FuelPovertyDataset>({
@@ -34,7 +36,7 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			"Households in fuel poverty under the Low Income Low Energy Efficiency measure.",
 		],
 	},
-	load: ({ odsTableRows }) => loadFuelPoverty(odsTableRows),
+	load: noCompiledPayload<FuelPovertyDataset>(),
 	statistics: {
 		payload: {
 			parts: yearParts(
@@ -79,9 +81,11 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			},
 			{ path: "fuelPovertyRate", measure: "fuel-poverty-rate" },
 		],
-		// The rows come straight from the workbook; `load` above only feeds the
-		// manifest and the check that the rows rebuild its payload.
+		// The rows come straight from the workbook. There is no compiler: the
+		// 2024 workbook is keyed by the 2021 LSOAs (it has exactly the 33,755
+		// codes of that release, and 1,945 are not in the 2011 one).
 		direct: {
+			only: true,
 			read: async ({ odsTableRows }) => {
 				const records = new Map<string, DirectRecord>();
 				await odsTableRows(

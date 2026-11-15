@@ -1,4 +1,5 @@
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
+import { directPayloadProblem } from "../../../pipeline/src/checks/directPayloadGoldens";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
@@ -39,6 +40,7 @@ type ManifestEntry = {
 		boundaryYears: number[];
 	};
 	compiled: { sha256: string };
+	direct?: true;
 };
 
 const manifest = JSON.parse(
@@ -48,9 +50,13 @@ const manifestByType = new Map(
 	manifest.datasets.map((entry) => [entry.type, entry]),
 );
 
-const readCompiled = (file: string) => {
-	const content = readFileSync(`data/build/datasets/${file}.json`, "utf8");
+const readCompiled = (file: string, direct?: true) => {
+	// A dataset with no compiler is read from the payload its rows generate.
+	const content = direct
+		? readAtlasPayload(process.cwd(), `dataset:${file}`)
+		: readFileSync(`data/build/datasets/${file}.json`, "utf8");
 	return {
+		content,
 		data: JSON.parse(content) as Record<string, never>,
 		sha256: createHash("sha256").update(content).digest("hex"),
 	};
@@ -159,8 +165,15 @@ describe("chart dataset registry contract", () => {
 				expect(entry?.output).toBe(definition.precompiledFile);
 				expect(entry?.source).toMatchObject(definition.source);
 
-				const compiled = readCompiled(definition.precompiledFile);
-				expect(compiled.sha256).toBe(entry?.compiled.sha256);
+				const compiled = readCompiled(
+					definition.precompiledFile,
+					entry?.direct,
+				);
+				if (entry?.direct)
+					expect(
+						directPayloadProblem(definition.type, compiled.content),
+					).toBeUndefined();
+				else expect(compiled.sha256).toBe(entry?.compiled.sha256);
 				const summary = validatePrecompiledDataset(
 					definition,
 					compiled.data as never,
