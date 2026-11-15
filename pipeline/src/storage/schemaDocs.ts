@@ -1264,12 +1264,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description: "Version and hashes of the area inventory the build used.",
 		columns: {},
 	},
-	area_inventory: {
-		audience: "internal",
-		description:
-			"View: area_inventory_metadata with camelCase names for older readers.",
-		columns: {},
-	},
 	boundary_registry: {
 		audience: "internal",
 		description:
@@ -1282,37 +1276,15 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			"Version and hashes of the crosswalk inventory the build used.",
 		columns: {},
 	},
-	crosswalk_inventory: {
-		audience: "internal",
-		description: "View: crosswalk_inventory_metadata with camelCase names.",
-		columns: {},
-	},
 	crosswalk_coverage_entry: {
 		audience: "internal",
 		description:
 			"Per release, how many areas any crosswalk relates. Used by the API inventory.",
 		columns: {},
 	},
-	crosswalk_coverage: {
-		audience: "internal",
-		description: "View: crosswalk_coverage_entry with camelCase names.",
-		columns: {},
-	},
 	named_location_inventory_metadata: {
 		audience: "internal",
 		description: "Version and hashes of the named location inventory.",
-		columns: {},
-	},
-	named_location_geometries: {
-		audience: "internal",
-		description:
-			"View: named_location_geometry with camelCase names for older readers.",
-		columns: {},
-	},
-	named_location_partial_members: {
-		audience: "internal",
-		description:
-			"View: named_location_partial_member with camelCase names.",
 		columns: {},
 	},
 	schema_table: {

@@ -255,7 +255,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 		);
 		assert.equal(
 			database
-				.prepare("SELECT share FROM named_location_partial_members")
+				.prepare("SELECT share FROM named_location_partial_member")
 				.get()?.share,
 			0,
 		);
@@ -340,14 +340,14 @@ test("SQLite named location geometry is stored rounded and compressed", () =>
 		const database = new DatabaseSync(path, { readOnly: true });
 		const stored = database
 			.prepare(
-				"SELECT typeof(geometry) AS type, minX, minY, maxX, maxY FROM named_location_geometries",
+				"SELECT typeof(geometry) AS type, min_x, min_y, max_x, max_y FROM named_location_geometry",
 			)
 			.get();
 		database.close();
 		assert.equal(stored?.type, "blob");
 		const rounded = [-1.23457, 51.98765, -1.13457, 52.08765];
 		assert.deepEqual(
-			[stored?.minX, stored?.minY, stored?.maxX, stored?.maxY],
+			[stored?.min_x, stored?.min_y, stored?.max_x, stored?.max_y],
 			rounded,
 		);
 		const geometry = readNamedLocationInventory(join(root, "../.."))

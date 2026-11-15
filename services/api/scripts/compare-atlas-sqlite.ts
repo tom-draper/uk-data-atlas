@@ -108,9 +108,9 @@ export const compareAtlasSqlite = (
 			releases,
 		);
 		for (const table of [
-			"area_inventory",
-			"crosswalk_inventory",
-			"crosswalk_coverage",
+			"area_inventory_metadata",
+			"crosswalk_inventory_metadata",
+			"crosswalk_coverage_entry",
 		])
 			assert.deepEqual(
 				after.prepare(`SELECT * FROM ${table} ORDER BY position`).all(),

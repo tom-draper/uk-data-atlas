@@ -1,7 +1,3 @@
-import {
-	CROSSWALK_COVERAGE_VIEW,
-	CROSSWALK_INVENTORY_VIEW,
-} from "./deprecatedViews.ts";
 import { join } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
@@ -369,7 +365,6 @@ export const crosswalkTables = (
 		"FOREIGN KEY (crosswalk_id, from_version_id, to_version_id) REFERENCES crosswalk_edge (crosswalk_id, from_version_id, to_version_id)";
 	return {
 		crosswalk_inventory_metadata: {
-			views: { crosswalk_inventory: CROSSWALK_INVENTORY_VIEW },
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",
@@ -384,7 +379,6 @@ export const crosswalkTables = (
 			],
 		},
 		crosswalk_coverage_entry: {
-			views: { crosswalk_coverage: CROSSWALK_COVERAGE_VIEW },
 			columns: [
 				"geography TEXT NOT NULL",
 				"boundary_release TEXT NOT NULL",

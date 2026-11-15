@@ -184,14 +184,14 @@ describe("SQLite website assets", () => {
 			{ readOnly: true },
 		);
 		try {
-			// The retired name still reads the relocated table.
+			// The retired name is gone, so only the stored table remains.
 			expect(
 				assets
-					.prepare("SELECT count(*) AS n FROM website_assets")
+					.prepare(
+						"SELECT count(*) AS n FROM sqlite_schema WHERE name = 'website_assets'",
+					)
 					.get(),
-			).toEqual(
-				assets.prepare("SELECT count(*) AS n FROM website_asset").get(),
-			);
+			).toEqual({ n: 0 });
 			expect(
 				atlas
 					.prepare(
