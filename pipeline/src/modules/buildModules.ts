@@ -79,12 +79,12 @@ export const fileFact = async (
 	};
 };
 
-/** Rows per table of a finished file, in table-name order. */
+/** Rows per table of a finished file, in table-name order, without shadow tables. */
 export const countRows = (database: DatabaseSync): Record<string, number> => {
 	const counts: Record<string, number> = {};
 	const tables = database
 		.prepare(
-			"SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+			"SELECT name FROM pragma_table_list WHERE schema = 'main' AND type IN ('table', 'virtual') AND name NOT LIKE 'sqlite_%' ORDER BY name",
 		)
 		.all() as Array<{ name: string }>;
 	for (const { name } of tables)
