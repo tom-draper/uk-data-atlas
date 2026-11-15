@@ -31,6 +31,7 @@ inside it.
 | `election.id`                                 | `(dataset slug, label)`                                    |
 | `contest.id`                                  | `(dataset slug, election label, geography, release, code)` |
 | `party.id`                                    | `code`                                                     |
+| `place.id`                                    | `slug`                                                     |
 | `status.id`                                   | `slug`; a fixed list in `STATUSES`, only ever appended to  |
 
 Each natural key is unique and indexed. For an area, `v_area_version` gives it
@@ -157,5 +158,5 @@ These are internal layout. Do not store or join on them.
   postcode lookup's own layout (manifest order and first-seen postcode), not
   entities. Join through `area_version` instead.
 - `position` columns that order the rows of one parent (`candidacy.position`,
-  `dimension_member.position`, `named_location_*.position`).
+  `dimension_member.position`, `place_*.position`).
 - Ids in `atlas-cache.sqlite`, which is rebuilt from `atlas.sqlite`.

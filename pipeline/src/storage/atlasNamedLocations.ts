@@ -6,15 +6,42 @@ import type {
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import { packGeometry } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
+import type { IdRegistries } from "../ids/idRegistries.ts";
 
+/**
+ * The places of the gazetteer. A place has a stable integer id from
+ * `pipeline/ids/place.txt` and keeps its text id as `slug`, which is what the
+ * API and the artifacts call it. Its members point at `area`, so a place is
+ * joined to its areas, and a code that is not an area fails the build.
+ */
 export const namedLocationTables = (
 	directory: string,
+	ids: IdRegistries,
 ): Record<string, SqliteTable> => {
 	const inventory: NamedLocationInventory = readJsonSync(
 		join(directory, "named-locations.json"),
 	);
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.locations))
 		throw new Error("Invalid named location inventory");
+	const placeIds = new Map(
+		inventory.locations.map((location) => [
+			location.id,
+			ids.place.assign(location.id),
+		]),
+	);
+	const placeId = (slug: string) => {
+		const id = placeIds.get(slug);
+		if (id === undefined) throw new Error(`Unknown place ${slug}`);
+		return id;
+	};
+	const areaId = (location: NamedLocation, code: string) => {
+		const id = ids.area.id(location.memberGeography, code);
+		if (id === undefined)
+			throw new Error(
+				`Place ${location.id} names ${location.memberGeography} ${code}, which is not an area`,
+			);
+		return id;
+	};
 	return {
 		named_location_inventory_metadata: {
 			columns: [
@@ -32,9 +59,10 @@ export const namedLocationTables = (
 				],
 			],
 		},
-		named_location: {
+		place: {
 			columns: [
-				"id TEXT NOT NULL",
+				"id INTEGER NOT NULL",
+				"slug TEXT NOT NULL UNIQUE",
 				"position INTEGER NOT NULL UNIQUE",
 				"fields TEXT NOT NULL",
 				"label TEXT NOT NULL",
@@ -55,6 +83,7 @@ export const namedLocationTables = (
 				["member_geography", "position"],
 			],
 			rows: inventory.locations.map((location, position) => [
+				placeId(location.id),
 				location.id,
 				position,
 				JSON.stringify(Object.keys(location)),
@@ -70,65 +99,70 @@ export const namedLocationTables = (
 					: JSON.stringify(location.source),
 			]),
 		},
-		named_location_member: {
+		place_member: {
 			columns: [
-				"location_id TEXT NOT NULL REFERENCES named_location(id)",
+				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
-				"code TEXT NOT NULL",
+				"area_id INTEGER NOT NULL REFERENCES area(id)",
 			],
-			key: ["location_id", "position"],
-			indexes: [["code", "location_id"]],
-			rows: inventory.locations.flatMap((location) =>
-				location.memberCodes.map((code, position) => [
-					location.id,
-					position,
-					code,
-				]),
-			),
+			key: ["place_id", "position"],
+			indexes: [["area_id", "place_id"]],
+			rows: () =>
+				inventory.locations.flatMap((location) =>
+					location.memberCodes.map((code, position) => [
+						placeId(location.id),
+						position,
+						areaId(location, code),
+					]),
+				),
 		},
-		named_location_assertion: {
+		place_assertion: {
 			columns: [
-				"location_id TEXT NOT NULL REFERENCES named_location(id)",
+				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
-				"code TEXT NOT NULL",
+				"area_id INTEGER NOT NULL REFERENCES area(id)",
 				"valid_from TEXT",
 				"valid_to TEXT",
 			],
-			key: ["location_id", "position"],
-			indexes: [["location_id", "code", "valid_from", "valid_to"]],
-			rows: inventory.locations.flatMap((location) =>
-				(location.memberAssertions ?? []).map((member, position) => [
-					location.id,
-					position,
-					member.code,
-					member.validity.from,
-					member.validity.to,
-				]),
-			),
+			key: ["place_id", "position"],
+			indexes: [["place_id", "area_id", "valid_from", "valid_to"]],
+			rows: () =>
+				inventory.locations.flatMap((location) =>
+					(location.memberAssertions ?? []).map(
+						(member, position) => [
+							placeId(location.id),
+							position,
+							areaId(location, member.code),
+							member.validity.from,
+							member.validity.to,
+						],
+					),
+				),
 		},
-		named_location_partial_member: {
+		place_partial_member: {
 			columns: [
-				"location_id TEXT NOT NULL REFERENCES named_location(id)",
+				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
-				"code TEXT NOT NULL",
+				"area_id INTEGER NOT NULL REFERENCES area(id)",
 				"share REAL NOT NULL",
-				"member_of TEXT NOT NULL REFERENCES named_location(id)",
+				"member_of INTEGER NOT NULL REFERENCES place(id)",
 			],
-			key: ["location_id", "position"],
-			indexes: [["code", "location_id"]],
-			rows: inventory.locations.flatMap((location) =>
-				(location.partialMembers ?? []).map((member, position) => [
-					location.id,
-					position,
-					member.code,
-					member.share,
-					member.memberOf,
-				]),
-			),
+			key: ["place_id", "position"],
+			indexes: [["area_id", "place_id"]],
+			rows: () =>
+				inventory.locations.flatMap((location) =>
+					(location.partialMembers ?? []).map((member, position) => [
+						placeId(location.id),
+						position,
+						areaId(location, member.code),
+						member.share,
+						placeId(member.memberOf),
+					]),
+				),
 		},
-		named_location_geometry: {
+		place_geometry: {
 			columns: [
-				"location_id TEXT NOT NULL REFERENCES named_location(id)",
+				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"boundary_release TEXT NOT NULL",
 				"min_x REAL NOT NULL",
 				"min_y REAL NOT NULL",
@@ -136,7 +170,7 @@ export const namedLocationTables = (
 				"max_y REAL NOT NULL",
 				"geometry BLOB NOT NULL",
 			],
-			key: ["location_id"],
+			key: ["place_id"],
 			// Rounded to about a metre and compressed. The bounds are measured
 			// from the rounded shape so they match what readers return.
 			rows: inventory.locations.flatMap((location) => {
@@ -146,7 +180,7 @@ export const namedLocationTables = (
 				);
 				return [
 					[
-						location.id,
+						placeId(location.id),
 						location.geometry.boundaryRelease,
 						...bbox,
 						geometry,

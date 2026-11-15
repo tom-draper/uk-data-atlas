@@ -45,6 +45,8 @@ export const ID_NAMESPACES = {
 	party: { first: 1, fields: 1, segmented: false },
 	/** `(dataset slug, election label, geography, release id, code)`: `contest.id`. */
 	contest: { first: 1, fields: 5, segmented: false },
+	/** `(slug)`: `place.id`. */
+	place: { first: 1, fields: 1, segmented: false },
 } as const;
 
 export type IdNamespace = keyof typeof ID_NAMESPACES;
@@ -187,6 +189,9 @@ export class IdRegistries {
 	}
 	get contest() {
 		return this.registries.contest;
+	}
+	get place() {
+		return this.registries.place;
 	}
 
 	/** Whether any registry holds an id. */

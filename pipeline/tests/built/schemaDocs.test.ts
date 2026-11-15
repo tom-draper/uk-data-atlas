@@ -108,7 +108,7 @@ test("every area and place is searchable, and v_series lists every series", () =
 			"SELECT (SELECT count(*) FROM search WHERE kind = 'area') AS areas, (SELECT count(*) FROM search WHERE kind = 'place') AS places",
 		),
 		all(
-			"SELECT (SELECT count(*) FROM area) AS areas, (SELECT count(*) FROM named_location) AS places",
+			"SELECT (SELECT count(*) FROM area) AS areas, (SELECT count(*) FROM place) AS places",
 		),
 	);
 	assert.deepEqual(
