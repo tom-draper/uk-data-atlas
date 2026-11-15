@@ -577,7 +577,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			series_id: "The converted series (series.id).",
 			area_version_id: "The area with no value (area_version.id).",
 			period_id: "The period (period.id).",
-			reason: "missing-input (a source area had no observed value), no-weight (the crosswalk has no weight on the basis), unmeasured-split (the value would be split in a way the backtest has not measured for this measure), not-carried (no crosswalk on the route reaches this area), no-denominator (a rebuilt ratio's denominator is not above zero).",
+			reason: "missing-input (a source area had no observed value), no-weight (the crosswalk has no weight on the basis), unmeasured-split (the value would be split in a way the backtest has not measured for this measure), not-carried (no crosswalk on the route reaches this area), no-denominator (a rebuilt ratio's denominator is not above zero), better-route (a better source holds this area and period for the same measure and members, so this series' own value was dropped).",
 		},
 	},
 	measure_conversion: {
@@ -603,7 +603,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The release it is published on (area_releases.id).",
 			target_release_id:
 				"The standard release it was not moved to (area_releases.id).",
-			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be split and splitting is refused), published-on-target (already published there), missing-component (a ratio lacks its numerator, denominator or weight).",
+			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be split and splitting is refused), published-on-target (already published there), missing-component (a ratio lacks its numerator, denominator or weight), better-route (every value it would give for a target area and period came from a better source, kept in its place).",
 			series: "Number of published series affected.",
 		},
 	},

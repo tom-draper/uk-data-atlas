@@ -124,7 +124,7 @@ test("the skips name an allowed reason, and no series is both converted and skip
 		count(
 			database,
 			`SELECT count(*) n FROM conversion_skip
-			WHERE reason NOT IN ('refused-measure','no-route','published-on-target','missing-component','no-values')
+			WHERE reason NOT IN ('refused-measure','no-route','published-on-target','missing-component','no-values','better-route')
 				OR series < 1`,
 		),
 		0,

@@ -44,7 +44,9 @@ export type SeriesGapReason =
 	/** A source area's value that no crosswalk on the route carries anywhere. */
 	| "not-carried"
 	/** A rebuilt ratio or mean whose converted denominator or weight is not above zero. */
-	| "no-denominator";
+	| "no-denominator"
+	/** The area and period hold a value from a better route, so this series' own is not stored. */
+	| "better-route";
 
 export type ConvertedObservation = {
 	area: number;

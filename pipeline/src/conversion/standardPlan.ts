@@ -40,7 +40,14 @@ export type PlanSkipReason =
 	/** The measure's rule is `refuse`. The reason is in `measure_conversion`. */
 	| "refused-measure"
 	/** No chain of crosswalks carries the source's release to the target. */
-	| "no-route";
+	| "no-route"
+	/**
+	 * Every value of the series, converted, was already held for its target
+	 * area and period by a source ranked above it (see `betterRoute.ts`). The
+	 * planner cannot know this, since it needs the quality of the converted
+	 * series, so the converted-series stage records it.
+	 */
+	| "better-route";
 
 export type PlanSkip = {
 	dataset: string;
