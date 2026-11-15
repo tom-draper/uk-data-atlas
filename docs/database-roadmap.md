@@ -61,6 +61,23 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   something that does not exist. `search` adds 25 MB (774.2 vs 748.8 MB, the
   same inputs). Left: one schema definition in code shared by writer and reader
   (`SOURCE_FIELDS` is still duplicated) and generating the README tables.
+- Task 6 progress (2026-11-15): `area_change_event`, `area_change_member` and the
+  view `v_area_change` are written at assembly, after the crosswalks and weights
+  and before `ANALYZE`. Components of identity crosswalk edges are classified
+  as renamed, recoded, split, merged, redistributed, ended or created
+  (`pipeline/src/storage/areaChangeClassifier.ts`). 62,294 events and 71,858
+  members add 7.5 MB (`dbstat`, on a copy of the previous build). The dates are
+  edition dates (`date_basis = 'edition'`), not legal dates. LSOA 2011 to 2021
+  agrees with `crosswalk_edge.change` with no differences. Limits: extent
+  continuity crosswalks only link unchanged extents, so splits and merges of
+  wards, output areas and parishes show as ended plus created. Only the official
+  lookups (local authorities 2022-12 to 2023-05 and 2024-12 to 2025-05, LSOA
+  2011 to 2021) hold true splits and merges. Follow-ups:
+    1. Switch `area-lineage.json` readers to the table.
+    2. Legal effective dates from the ONS Code History Database.
+    3. Read the official lookups that have no crosswalk purpose (ward 2024-12 to
+       2025-05 `official-history`, constituency 2010 to 2024), or derive ward
+       successors from postcodes, so ward splits and merges appear.
 - Task 8 progress: the `areas` and `datasets` compatibility views have been removed; postcode and other readers query canonical area tables. Postcode area dictionaries and column-order tables are replaced by row-derived JSON and per-shard integrity hashes. Crosswalk endpoint fields and common metadata are derived by readers, labels come from area versions, and compiled output metadata is held on `dataset`.
 - Task 9 progress: selectors are derived from explicit rules and census declarations, and the build no longer writes or compares compiled observation artifacts. The catalogue, place profiles, map values and website regional chunks now read database-derived payloads; direct-to-rows ingestion and the remaining declaration migrations are still outstanding.
 - 1,643 series are `published` and 1,093 are `converted` (task 25: every convertible
@@ -88,7 +105,7 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
 | 3   | P0       | Make the database self-contained. Move `measure-dimensions.json`, `statistics-read-path.json`, `statistics-vocabulary.json` and the boundary-release JSON payload (dates, coverage, licence) into tables, e.g. `release(valid_from, valid_to, countries, resolution, source_id)`.  | "Which release was current on date X?" can't be answered in SQL today.             |
 | 4   | P0       | Complete each measure's aggregation rule. 26 rate, share and index measures have `aggregation = none` and no numerator or denominator. `weighted_mean` has no column naming its weight measure; add `weight_measure_id`. Mark measures that can't be converted, with a reason.     | Rates can't be converted or rebuilt over time correctly without this.              |
 | 5   | P0       | Store licences in the database: a normalised licence table with commercial-use and ShareAlike flags. Link boundary releases and crosswalks to `source` (today their provenance is JSON in `crosswalk.header`). Isolate the CC BY-SA 2016–19 local elections.                       | `DATA-LICENCES.md` promises a `licence` table per delivered file; none exists yet. |
-| 6   | P1       | Store code changes as dated events in an `area_change_event` table (split, merge, recode, effective date) instead of the JSON `area-lineage` lookup.                                                                                                                               | "What replaced Allerdale?" should be one SQL query.                                |
+| 6   | P1       | **Done** (see Task 6 progress). Store code changes as dated events in an `area_change_event` table (split, merge, recode, effective date) instead of the JSON `area-lineage` lookup.                                                                                               | "What replaced Allerdale?" should be one SQL query.                                |
 | 7   | P1       | Add a centroid, bounding box and representative point per area version. Offer GeoParquet boundaries as a module.                                                                                                                                                                   | Only named locations have geometry in the database.                                |
 
 ## Structure and maintainability
