@@ -116,8 +116,31 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
 | 9   | P1       | Collapse each dataset to one compiled form. Today: compiled JSON (`datasets/`, 76 MB), then rows, then a regenerated payload compared with the JSON, plus `compiled-observations/` (75 MB, 322 files) compared again. Finish the declaration migration (all datasets declared, see `docs/dataset-declarations.md`), make rows the only output, and use fixture tests instead of whole-build comparisons. | About 6k lines of second compilers, and build time.                 |
 | 10  | P1       | **Partly done** (the in-database docs, see Measured state). One schema definition in code, shared by writer and reader. `SOURCE_FIELDS` is duplicated in `pipeline/src/storage/atlasCrosswalks.ts` and `packages/atlas-db/src/atlasCrosswalks.ts`. Generate the README tables and an in-database `schema_doc` table (description per table and column) from it.                                          | Lets agents learn the database by querying it.                      |
 | 11  | P2       | Consistent naming. Newer tables are snake_case and `STRICT`; `area_releases`, `named_locations`, `postcodes` and `datasets` are camelCase and not `STRICT`. Postcode columns embed release ids (`"ward_2025-05-uk-bgc-v2DistanceCm"`) and need quoting.                                                                                                                                                  | Cheapest to fix during early access.                                |
-| 12  | P2       | Postcode table design: one column per release (29 area + 29 distance columns), so each new release changes the schema. Use a long table, or map postcodes to output areas only and derive the rest through output-area crosswalks (as the ONS NSPL does). Measure size first.                                                                                                                            | Largest table, 248 MB.                                              |
+| 12  | P2       | **Measured, keep the wide table** (see below). Postcode table design: one column per release (29 area + 29 distance columns), so each new release changes the schema. Use a long table, or map postcodes to output areas only and derive the rest through output-area crosswalks (as the ONS NSPL does). Measure size first.                                                                             | Largest table, 248 MB.                                              |
 | 13  | P2       | Store unchanged areas once: "unchanged from release A to B" as a span, not an edge per release. 1M area versions for 307k areas. Do after task 2.                                                                                                                                                                                                                                                        | Roughly 100 MB.                                                     |
+
+Task 12 measured (2026-11-15), on the 363,363 postcodes starting with S
+(13.6% of 2,665,797), scaled up and accurate to about 10%. The current file is
+268 MB: `postcodes` holds one distance per release that has its own value and
+shares one `postcode_area_set` row between the 63,452 distinct combinations of
+areas.
+
+| Shape                                                                      | Estimated size | Against today |
+| -------------------------------------------------------------------------- | -------------- | ------------- |
+| Wide `postcodes` plus `postcode_area_set` (today)                          | 268 MB         | 1×            |
+| Long `postcode_area`, every distance stored (9.8M rows per 363k postcodes) | 1,440 MB       | 5.4×          |
+| Long `postcode_area`, distance only where stored                           | 1,330 MB       | 5.0×          |
+| Sets and stored distances as long tables, postcodes keep `area_set_id`     | 680 MB         | 2.5×          |
+| Postcode to output area only (lower bound, not equivalent)                 | 104 MB         | 0.4×          |
+
+The one-row-per-postcode-per-release shapes cost 5 times the size because the
+wide table already shares areas between postcodes and leaves 25 of 29
+distances null. Output-area only is smaller but loses the containment and
+several-area matches the API returns, so it would change responses. The
+schema drift is real but small: a new release adds two columns to a generated
+table, and the layout marker (`postcodeAreaLayout`) already rejects stale
+files. Keep the wide table. If drift becomes a problem, the third shape is the
+cheapest way to remove it.
 
 ## Size and query performance
 
