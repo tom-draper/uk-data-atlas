@@ -7,7 +7,12 @@ import { sourceDir } from "../../declaration/sources.ts";
 
 const TABLE_NAME = "Table_4";
 
-const TABLE_OPTIONS: OdsTableOptions = {
+export const FUEL_POVERTY_SOURCE = sourceDir(
+	"fuel-poverty",
+	"fuel-poverty-2024.ods",
+);
+
+export const TABLE_OPTIONS: OdsTableOptions = {
 	table: TABLE_NAME,
 	label: "fuel-poverty",
 	maxColumns: 8,
@@ -22,7 +27,7 @@ export async function loadFuelPoverty(
 ): Promise<Record<string, FuelPovertyDataset>> {
 	const data: Record<string, FuelPovertyLSOAData> = {};
 	await readRows(
-		sourceDir("fuel-poverty", "fuel-poverty-2024.ods"),
+		FUEL_POVERTY_SOURCE,
 		TABLE_OPTIONS,
 		([lsoaCode, lsoaName, , , , households, fuelPoor, rate]) => {
 			if (!/^E01\d{6}$/.test(lsoaCode)) return;

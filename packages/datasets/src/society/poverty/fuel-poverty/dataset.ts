@@ -3,7 +3,12 @@ import { defineDataset } from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS, measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
-import { loadFuelPoverty } from "../../../data/fuel-poverty/loader.ts";
+import {
+	FUEL_POVERTY_SOURCE,
+	TABLE_OPTIONS,
+	loadFuelPoverty,
+} from "../../../data/fuel-poverty/loader.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 	id: "fuel-poverty",
@@ -74,5 +79,36 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			},
 			{ path: "fuelPovertyRate", measure: "fuel-poverty-rate" },
 		],
+		// The rows come straight from the workbook; `load` above only feeds the
+		// manifest and the check that the rows rebuild its payload.
+		direct: {
+			read: async ({ odsTableRows }) => {
+				const records = new Map<string, DirectRecord>();
+				await odsTableRows(
+					FUEL_POVERTY_SOURCE,
+					TABLE_OPTIONS,
+					([code, name, , , , households, fuelPoor, rate]) => {
+						if (!/^E01\d{6}$/.test(code!)) return;
+						const numbers = [households, fuelPoor, rate].map(
+							Number,
+						);
+						if (!numbers.every(Number.isFinite)) return;
+						records.set(code!, {
+							code: code!,
+							name,
+							values: [
+								"households",
+								"fuel-poor-households",
+								"fuel-poverty-rate",
+							].map((measure, index) => ({
+								measure,
+								value: numbers[index]!,
+							})),
+						});
+					},
+				);
+				return [{ key: "2024", records: [...records.values()] }];
+			},
+		},
 	},
 });
