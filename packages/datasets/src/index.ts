@@ -99,7 +99,7 @@ export * from "./data/election/local-election/load.ts";
 export * from "./data/election/local-election/servedWardCodes.ts";
 export * from "./data/election/parties.ts";
 export * from "./data/ethnicity/loader.ts";
-export * from "./data/fuel-poverty/loader.ts";
+export * from "./data/fuel-poverty/source.ts";
 export * from "./data/gazetteer/geometry.ts";
 export * from "./data/gazetteer/loader.ts";
 export * from "./data/gazetteer/places.ts";

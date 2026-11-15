@@ -46,9 +46,11 @@ const manifest: {
 		"utf8",
 	),
 );
-const directTypes = STATISTICS_DATASETS.filter(({ direct }) => direct).map(
-	({ type }) => type,
-);
+// Direct-only datasets have no compiled JSON to compare with; the dataset
+// payload check holds their rebuilt payload to a golden hash instead.
+const directTypes = STATISTICS_DATASETS.filter(
+	({ direct }) => direct && !direct.only,
+).map(({ type }) => type);
 
 /** Writes one dataset's rows, from either path, onto the real area tables. */
 function write(
