@@ -2,7 +2,6 @@ import {
 	cpSync,
 	mkdirSync,
 	mkdtempSync,
-	readFileSync,
 	rmSync,
 	statSync,
 	symlinkSync,
@@ -16,6 +15,9 @@ import { execFileSync } from "node:child_process";
 
 import { buildAreaInventory } from "../../pipeline/src/geographies/buildAreaInventory";
 import { buildAtlasSqlite } from "../../pipeline/src/atlas/buildAtlasSqlite";
+import { sha256Hex } from "../../pipeline/src/lib/hash";
+import { directPayloadProblem } from "../../pipeline/src/checks/directPayloadGoldens";
+import { readDirectParts } from "../../pipeline/src/statistics/directSources";
 import { buildTerrainCatalogue } from "../../pipeline/src/catalog/buildTerrainCatalogue";
 import {
 	readVersionedAtlasDataset,
@@ -39,7 +41,7 @@ const statisticsTableNames = [
 	"source",
 ];
 
-it("builds and serves every real fuel poverty value byte for byte from statistics rows and measures their size", () => {
+it("builds and serves every real fuel poverty value byte for byte from its source and measures their size", async () => {
 	const repositoryRoot = process.cwd();
 	mkdirSync("data/build/datasets", { recursive: true });
 	const compiled = execFileSync(
@@ -50,18 +52,21 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			"--input-type=module",
 			"-e",
 			`
-		import { compileDataset } from './pipeline/src/precompile/compileDataset.ts';
+		import { compileDirectDataset } from './pipeline/src/precompile/compileDirectDataset.ts';
 		import { definitionOf, fuelPoverty } from '@uk-data-atlas/datasets';
-		const entry = await compileDataset(definitionOf(fuelPoverty), new Map());
+		const entry = await compileDirectDataset(definitionOf(fuelPoverty), undefined);
 		process.stdout.write('MANIFEST_ENTRY=' + JSON.stringify(entry));
 	`,
 		],
 		{ encoding: "utf8" },
 	);
-	const entry: { compiled: { sha256: string; bytes: number } } = JSON.parse(
-		compiled.split("MANIFEST_ENTRY=")[1],
-	);
-	const text = readFileSync("data/build/datasets/fuel-poverty.json", "utf8");
+	const entry: {
+		inputs: { path: string }[];
+		direct: true;
+		compiled: { sha256: string; bytes: number };
+	} = JSON.parse(compiled.split("MANIFEST_ENTRY=")[1]);
+	// No compiled file: the source is read straight into rows.
+	const direct = await readDirectParts(() => entry, ["fuel-poverty"]);
 	mkdirSync(artifactDirectory(repositoryRoot), { recursive: true });
 	buildAreaInventory(repositoryRoot);
 	// Unrelated inventories are empty fixtures; dataset and LSOA inputs use the real compilers.
@@ -133,14 +138,16 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 			version: 1,
 			datasets: [{ ...entry, fingerprint: entry.compiled.sha256 }],
 		});
-		writeFileSync(join(output, "datasets/fuel-poverty.json"), text);
-		const path = buildAtlasSqlite(root, { censusTables: [] });
+		const path = buildAtlasSqlite(root, { censusTables: [], direct });
 		symlinkSync("atlas-base.sqlite", join(output, "atlas.sqlite"));
 		const database = new DatabaseSync(path);
 		try {
-			expect(
-				rebuildDatasetPayload(database, "fuel-poverty", "fuel-poverty"),
-			).toBe(text);
+			const text = rebuildDatasetPayload(
+				database,
+				"fuel-poverty",
+				"fuel-poverty",
+			);
+			expect(directPayloadProblem("fuel-poverty", text)).toBeUndefined();
 			expect(
 				database.prepare("SELECT count(*) AS n FROM observation").get()
 					?.n,
@@ -159,7 +166,7 @@ it("builds and serves every real fuel poverty value byte for byte from statistic
 				readVersionedAtlasDataset(
 					root,
 					"fuel-poverty",
-					entry.compiled.sha256,
+					sha256Hex(text),
 				),
 			).toBe(text);
 			const publisherNames = Number(

@@ -5,6 +5,8 @@ import { gunzipSync } from "node:zlib";
 import { expect, it } from "vitest";
 
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
+import { directPayloadProblem } from "../../pipeline/src/checks/directPayloadGoldens";
 import {
 	comparableCompiled,
 	rebuildDatasetPayload,
@@ -48,13 +50,27 @@ it("serves datasets from rows with the compiled values", () => {
 				String(row.type),
 				output,
 			);
-			const compiled = readFileSync(
-				`data/build/datasets/${output}.json`,
-				"utf8",
-			);
-			expect(JSON.parse(rebuilt), output).toEqual(
-				comparableCompiled(String(row.type), JSON.parse(compiled)),
-			);
+			// A dataset with no compiler has no file to compare with: its golden hash.
+			if (
+				STATISTICS_DATASETS.some(
+					(config) => config.type === row.type && config.direct?.only,
+				)
+			)
+				expect(
+					directPayloadProblem(String(row.type), rebuilt),
+				).toBeUndefined();
+			else
+				expect(JSON.parse(rebuilt), output).toEqual(
+					comparableCompiled(
+						String(row.type),
+						JSON.parse(
+							readFileSync(
+								`data/build/datasets/${output}.json`,
+								"utf8",
+							),
+						),
+					),
+				);
 			const entry = cached.get(output);
 			expect(entry?.source_sha256, output).toBe(row.sha256);
 			expect(entry?.sha256, output).toBe(digest(rebuilt));
