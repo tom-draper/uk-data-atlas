@@ -377,6 +377,11 @@ function memberShares(change: AreaChange) {
 export function writeAreaChangeEvents(
 	database: DatabaseSync,
 ): Map<ChangeKind, number> {
+	// A database with no crosswalks, such as a test fixture, has nothing to read.
+	const hasCrosswalks = database
+		.prepare("SELECT 1 FROM sqlite_schema WHERE name = 'crosswalk'")
+		.get();
+	if (!hasCrosswalks) return new Map();
 	database.exec(TABLES);
 	const addEvent = database.prepare(
 		`INSERT INTO area_change_event
