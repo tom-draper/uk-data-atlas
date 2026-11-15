@@ -268,6 +268,8 @@ export const canReuseDataset = async (
 			)
 				return undefined;
 		}
+		// A direct-only dataset has no file: its hash is of the parts.
+		if (definition.directOnly) return existing.compiled;
 		return cachedDatasetOutput(
 			definition.precompiledFile,
 			existing.compiled,

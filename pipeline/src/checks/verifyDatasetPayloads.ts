@@ -5,6 +5,7 @@ import {
 	comparableCompiled,
 	servedFromRows,
 } from "@uk-data-atlas/catalogue/node";
+import { directPayloadProblem } from "./directPayloadGoldens.ts";
 import { payloadDifference } from "./payloadComparison.ts";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
@@ -20,7 +21,7 @@ import { readJsonSync } from "../lib/json.ts";
 export function verifyDatasetPayloads(repositoryRoot: string): number {
 	const datasets = join(repositoryRoot, "data/build/datasets");
 	const manifest = readJsonSync(join(datasets, "dataset-manifest.json")) as {
-		datasets: { type: string; output: string }[];
+		datasets: { type: string; output: string; direct?: true }[];
 	};
 	const cache = new DatabaseSync(atlasCachePath(repositoryRoot), {
 		readOnly: true,
@@ -37,9 +38,15 @@ export function verifyDatasetPayloads(repositoryRoot: string): number {
 				throw new Error(
 					`${entry.type}: the atlas cache holds no payload for ${entry.output}`,
 				);
-			const generated: unknown = JSON.parse(
-				gunzipSync(row.gzip).toString("utf8"),
-			);
+			const text = gunzipSync(row.gzip).toString("utf8");
+			if (entry.direct) {
+				// No compiler to compare with: the committed golden stands in.
+				const problem = directPayloadProblem(entry.type, text);
+				if (problem) throw new Error(problem);
+				checked += 1;
+				continue;
+			}
+			const generated: unknown = JSON.parse(text);
 			const compiled: unknown = readJsonSync(
 				join(datasets, `${entry.output}.json`),
 			);
