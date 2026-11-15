@@ -3,6 +3,11 @@ import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { quantile } from "./backtest.ts";
 import {
+	BETTER_ROUTE,
+	chooseRoutes,
+	type RouteCandidate,
+} from "./betterRoute.ts";
+import {
 	convertEntry,
 	readErrorFactors,
 	STATUS_ESTIMATED,
@@ -341,26 +346,81 @@ export const buildConvertedSeries = (
 				}),
 		};
 		const summaries: EntrySummary[] = [];
+		const summaryOf = (entry: PlanEntry): EntrySummary => ({
+			entry,
+			series: 0,
+			periods: 0,
+			regrouped: 0,
+			estimated: 0,
+			gaps: {},
+			halfWidths: [],
+			notCarried: new Set(),
+			exactShares: [],
+			coverages: [],
+		});
+		// Entries for one dataset, measure and target, from different source
+		// releases, can reach the same area and period. Their series are
+		// converted together and one value is kept for each of them.
+		const targets = new Map<string, PlanEntry[]>();
 		for (const entry of entries) {
-			const started = performance.now();
-			const summary: EntrySummary = {
-				entry,
-				series: 0,
-				periods: 0,
-				regrouped: 0,
-				estimated: 0,
-				gaps: {},
-				halfWidths: [],
-				notCarried: new Set(),
-				exactShares: [],
-				coverages: [],
-			};
-			for (const converted of convertEntry(context, entry)) {
-				writer.add(converted);
-				summarise(summary, converted);
+			const key = `${entry.source.dataset}|${entry.source.measure}|${entry.target}`;
+			const held = targets.get(key);
+			if (held) held.push(entry);
+			else targets.set(key, [entry]);
+		}
+		for (const bucket of targets.values()) {
+			if (bucket.length === 1) {
+				const entry = bucket[0]!;
+				const started = performance.now();
+				const summary = summaryOf(entry);
+				for (const converted of convertEntry(context, entry)) {
+					writer.add(converted);
+					summarise(summary, converted);
+				}
+				summaries.push(summary);
+				onEntry?.(summary, performance.now() - started);
+				continue;
 			}
-			summaries.push(summary);
-			onEntry?.(summary, performance.now() - started);
+			const started = performance.now();
+			const candidates: RouteCandidate[] = [];
+			const entryOf = new Map<string, PlanEntry>();
+			for (const entry of bucket)
+				for (const series of convertEntry(context, entry)) {
+					const source = resolver.router.release(
+						series.inputs[0]!.series.releaseId,
+					);
+					entryOf.set(series.key, entry);
+					candidates.push({
+						series,
+						sourceGeography: source.geography,
+						sourceRelease: source.release,
+						targetGeography: resolver.router.release(
+							series.releaseId,
+						).geography,
+					});
+				}
+			const { kept, dropped } = chooseRoutes(candidates);
+			for (const series of dropped) {
+				const input = series.inputs[0]!.series;
+				addSkip({
+					dataset: input.dataset,
+					measure: input.measure,
+					source: entryOf.get(series.key)!.source.release,
+					target: entryOf.get(series.key)!.target,
+					reason: BETTER_ROUTE,
+				});
+			}
+			const elapsed = (performance.now() - started) / bucket.length;
+			for (const entry of bucket) {
+				const summary = summaryOf(entry);
+				for (const converted of kept)
+					if (entryOf.get(converted.key) === entry) {
+						writer.add(converted);
+						summarise(summary, converted);
+					}
+				summaries.push(summary);
+				onEntry?.(summary, elapsed);
+			}
 		}
 		writeMeasureConversions(writer.database, rules);
 		writeSkips(
