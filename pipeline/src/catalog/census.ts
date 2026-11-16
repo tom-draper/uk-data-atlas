@@ -1,5 +1,5 @@
 import { type DatasetInput } from "./input.ts";
-import type { Measure } from "@uk-data-atlas/measures";
+import { measureSeriesKey, type Measure } from "@uk-data-atlas/measures";
 import { onApril2023Authorities } from "./authorityChanges.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
@@ -9,6 +9,8 @@ import { sha256 } from "./values.ts";
 export const CENSUS_BREAKDOWNS = [
 	{
 		datasetId: "travel-to-work",
+		measure: "people-in-employment",
+		dimension: "travel-method",
 		field: "breakdown",
 		sourceBoundaryYear: 2025,
 		unit: "people in employment",
@@ -36,6 +38,8 @@ export const CENSUS_BREAKDOWNS = [
 	},
 	{
 		datasetId: "car-availability",
+		measure: "households",
+		dimension: "cars-or-vans",
 		field: "breakdown",
 		sourceBoundaryYear: 2025,
 		unit: "households",
@@ -58,6 +62,8 @@ export const CENSUS_BREAKDOWNS = [
 	},
 	{
 		datasetId: "qualification",
+		measure: "usual-residents-16-plus",
+		dimension: "highest-qualification",
 		field: "breakdown",
 		sourceBoundaryYear: 2025,
 		unit: "usual residents aged 16 and over",
@@ -93,6 +99,8 @@ export const CENSUS_BREAKDOWNS = [
 	},
 	{
 		datasetId: "ethnicity",
+		measure: "usual-residents",
+		dimension: "ethnic-group",
 		field: "",
 		sourceBoundaryYear: 2024,
 		unit: "usual residents",
@@ -158,11 +166,13 @@ export const CENSUS_BREAKDOWNS = [
 				"other-mixed",
 				"Mixed or Multiple ethnic groups.Other Mixed or Multiple ethnic groups.population",
 				"Ethnic group: Other Mixed or Multiple ethnic groups",
+				"other-mixed-or-multiple-ethnic-groups",
 			],
 			[
 				"white-british",
 				"White.English, Welsh, Scottish, Northern Irish or British.population",
 				"Ethnic group: English, Welsh, Scottish, Northern Irish or British",
+				"english-welsh-scottish-northern-irish-or-british",
 			],
 			["irish", "White.Irish.population", "Ethnic group: Irish"],
 			[
@@ -185,6 +195,7 @@ export const CENSUS_BREAKDOWNS = [
 				"any-other",
 				"Other ethnic group.Any other ethnic group.population",
 				"Ethnic group: Any other ethnic group",
+				"any-other-ethnic-group",
 			],
 		],
 		notes: [
@@ -239,8 +250,19 @@ export const compileCensus = (
 			);
 		}
 		const path = censusPaths[breakdown.datasetId];
-		return breakdown.categories.map(([suffix, field, label]) => {
+		return (
+			breakdown.categories as readonly (readonly [
+				string,
+				string,
+				string,
+				string?,
+			])[]
+		).map(([suffix, field, label, member]) => {
 			const measureId = `${breakdown.datasetId}-${suffix}`;
+			const seriesKey = measureSeriesKey({
+				measure: breakdown.measure,
+				dimensions: { [breakdown.dimension]: member ?? suffix },
+			});
 			const periods = localAuthorityFieldPeriods(
 				path,
 				breakdown.field ? `${breakdown.field}.${field}` : field,
@@ -256,7 +278,7 @@ export const compileCensus = (
 			});
 			const content = JSON.stringify({
 				schemaVersion: 1,
-				measureId,
+				measureId: seriesKey,
 				sourceGeography: {
 					type: "localAuthority",
 					boundaryYear: CENSUS_BOUNDARY_YEAR,
@@ -307,7 +329,7 @@ export const compileCensus = (
 				artifact: {
 					schemaVersion: 1 as const,
 					contentHash: sha256(content),
-					measureId,
+					measureId: seriesKey,
 					sourceGeography: {
 						type: "localAuthority" as const,
 						boundaryYear: CENSUS_BOUNDARY_YEAR,

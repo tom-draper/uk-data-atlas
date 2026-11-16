@@ -11,6 +11,7 @@ import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 const dataset = (
 	output: string,
@@ -1854,9 +1855,16 @@ test("publishes census qualifications and ethnic groups as counts on April 2023 
 		const result = compileDataCatalog(writeSources(directory));
 		const measure = (id: string) =>
 			result.catalog.measures.find((candidate) => candidate.id === id);
-		const values = (id: string) =>
+		const values = (measure: string, dimension: string, member: string) =>
 			result.censusObservations
-				.find((artifact) => artifact.measureId === id)
+				.find(
+					(artifact) =>
+						artifact.measureId ===
+						measureSeriesKey({
+							measure,
+							dimensions: { [dimension]: member },
+						}),
+				)
 				?.periods[0]?.records.map((record) => [
 					record.areaCode,
 					"value" in record ? record.value : undefined,
@@ -1866,24 +1874,41 @@ test("publishes census qualifications and ethnic groups as counts on April 2023 
 			measure("qualification-level-4-plus")?.unit,
 			"usual residents aged 16 and over",
 		);
-		assert.deepEqual(values("qualification-level-4-plus"), [
-			["E06000001", 35],
-			["W06000001", 25],
-		]);
-		assert.deepEqual(values("qualification-total"), [
-			["E06000001", 100],
-			["W06000001", 90],
-		]);
+		assert.deepEqual(
+			values(
+				"usual-residents-16-plus",
+				"highest-qualification",
+				"level-4-plus",
+			),
+			[
+				["E06000001", 35],
+				["W06000001", 25],
+			],
+		);
+		assert.deepEqual(
+			values("usual-residents-16-plus", "highest-qualification", "total"),
+			[
+				["E06000001", 100],
+				["W06000001", 90],
+			],
+		);
 
 		// Nineteen ethnic groups, and no separate total: they are exhaustive.
 		const ethnicMeasures = result.catalog.measures.filter((candidate) =>
 			candidate.id.startsWith("ethnicity-"),
 		);
 		assert.equal(ethnicMeasures.length, 19);
-		assert.deepEqual(values("ethnicity-white-british"), [
-			["E06000001", 900],
-			["W06000001", 700],
-		]);
+		assert.deepEqual(
+			values(
+				"usual-residents",
+				"ethnic-group",
+				"english-welsh-scottish-northern-irish-or-british",
+			),
+			[
+				["E06000001", 900],
+				["W06000001", 700],
+			],
+		);
 		for (const candidate of [
 			...ethnicMeasures,
 			measure("qualification-total"),
