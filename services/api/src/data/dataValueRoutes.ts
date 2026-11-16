@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { requireGeography } from "../runtime/index.ts";
 import { isCountryCode } from "../aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
@@ -179,7 +180,7 @@ export const handleDataValueRoutes = ({
 	);
 	if (outcome.outcome === "unavailable-source")
 		return invalidQuery(
-			`No published source matches geography=${requestedGeography ?? "any"}, codeYear=${requestedCodeYear ?? "any"}, datasetId=${requestedDataset ?? "any"}. GET /v1/measures/${measureId} lists the published partitions.`,
+			`No published source matches geography=${requestedGeography ?? "any"}, codeYear=${requestedCodeYear ?? "any"}, datasetId=${requestedDataset ?? "any"}. GET /v1/measures/${segments[2]} lists the published partitions.`,
 		);
 	if (outcome.outcome === "unmatched") {
 		return problem(
@@ -192,7 +193,7 @@ export const handleDataValueRoutes = ({
 		return problem(
 			422,
 			"Place Not Served",
-			`"${place}" matched ${outcome.attempts.length} place${outcome.attempts.length === 1 ? "" : "s"}, and ${measureId} answers none of them. Each candidate below says why.`,
+			`"${place}" matched ${outcome.attempts.length} place${outcome.attempts.length === 1 ? "" : "s"}, and ${segments[2]} answers none of them. Each candidate below says why.`,
 			{
 				code: "place_not_served",
 				candidates: outcome.attempts.map(describeAttempt),
@@ -200,14 +201,24 @@ export const handleDataValueRoutes = ({
 		);
 	}
 	const { chosen, attempts, placeDefaulted } = outcome;
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			measure: {
-				id: measure.id,
-				label: measure.label,
-				valueKind: measure.valueKind,
-				unit: measure.unit,
+				id: publicMeasure.id,
+				label: publicMeasure.label,
+				...("seriesLabel" in publicMeasure
+					? { seriesLabel: publicMeasure.seriesLabel }
+					: {}),
+				valueKind: publicMeasure.valueKind,
+				unit: publicMeasure.unit,
 			},
 			question: {
 				place,
