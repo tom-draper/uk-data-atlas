@@ -90,6 +90,23 @@ import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
 import {
+	areaContainsBatchContract,
+	areaContainsContract,
+	areaIntersectsContract,
+	areaNearContract,
+	areaValidateContract,
+	areaValidatePostContract,
+	areasContract,
+} from "../areas/areaCollectionContract";
+import { areaCollectionFastifyRoutes } from "../areas/areaCollectionFastifyRoutes";
+import { areaContainsBatchMetadata } from "../areas/areaContainsBatchMetadata";
+import { areaContainsMetadata } from "../areas/areaContainsMetadata";
+import { areaIntersectsMetadata } from "../areas/areaIntersectsMetadata";
+import { areaNearMetadata } from "../areas/areaNearMetadata";
+import { areaValidateMetadata } from "../areas/areaValidateMetadata";
+import { areaValidatePostMetadata } from "../areas/areaValidatePostMetadata";
+import { areasMetadata } from "../areas/areasMetadata";
+import {
 	dataChangeContract,
 	dataCompareContract,
 	dataConvertContract,
@@ -161,6 +178,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(crosswalkFastifyRoutes, { context });
 	await app.register(placeFastifyRoutes, { context });
 	await app.register(locationFastifyRoutes, { context });
+	await app.register(areaCollectionFastifyRoutes, { context });
 	await app.register(dataFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
@@ -338,6 +356,11 @@ export const generatedPaths = async () => {
 			locationParentsMetadata,
 			locationParentsContract,
 		],
+		["/areas", areasMetadata, areasContract],
+		["/areas:intersects", areaIntersectsMetadata, areaIntersectsContract],
+		["/areas:contains", areaContainsMetadata, areaContainsContract],
+		["/areas:near", areaNearMetadata, areaNearContract],
+		["/areas:validate", areaValidateMetadata, areaValidateContract],
 		[
 			"/data/{measure-id}/convert",
 			dataConvertMetadata,
@@ -407,6 +430,15 @@ export const generatedPaths = async () => {
 		throw new Error("Missing Fastify operation: postcode batch");
 	// The description names a request body and several error responses.
 	Object.assign(postcodeBatchOperation, postcodeBatchMetadata);
+	const validatePostOperation = paths["/areas:validate"]?.post;
+	if (!validatePostOperation)
+		throw new Error("Missing Fastify operation: area validation POST");
+	// The description names a request body and several error responses.
+	Object.assign(validatePostOperation, areaValidatePostMetadata);
+	const containsBatchOperation = paths["/areas:containsBatch"]?.post;
+	if (!containsBatchOperation)
+		throw new Error("Missing Fastify operation: area contains batch");
+	Object.assign(containsBatchOperation, areaContainsBatchMetadata);
 	// Bulk resources and measure tables are published as the description gives
 	// them: a manifest by reference, and downloads in several media types.
 	for (const [path, metadata] of [
