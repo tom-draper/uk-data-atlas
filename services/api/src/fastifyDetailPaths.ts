@@ -33,6 +33,17 @@ const detailRoutes: {
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
 	{
 		pattern:
+			/^\/v1\/map-resources\/([^/]+)\/([^/]+)(?:\/(?:tiles\.json|features))?$/,
+		// An archive needs a release name before its `.pmtiles` extension.
+		accepts: ([, release]) => release !== ".pmtiles",
+	},
+	{ pattern: /^\/v1\/map-resources\/([^/]+)\/([^/]+)\/join\/([^/]+)$/ },
+	{
+		pattern:
+			/^\/v1\/map-resources\/([^/]+)\/([^/]+)\/tiles\/([^/]+)\/([^/]+)\/([^/]+)\.mvt$/,
+	},
+	{
+		pattern:
 			/^\/v1\/areas\/([^/]+)\/([^/]+)\/([^/]+)(?:\/(?:relationships|history|parents|children|children\/geometry|neighbours|overlap|geometry))?$/,
 	},
 	{ pattern: /^\/v1\/(?:exports|lookups|terrain)\/([^/]+)$/ },

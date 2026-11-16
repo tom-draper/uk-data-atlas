@@ -27,6 +27,12 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/areas/ward/2025-01-en-ward/E05000001",
 		"/v1/areas/ward/2025-01-en-ward/E05000001/children/geometry",
 		"/v1/areas/ward/2025-01-en-ward/E05000001/overlap",
+		"/v1/map-resources/ward/2023-05-uk-bgc",
+		"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles",
+		"/v1/map-resources/ward/2023-05-uk-bgc/tiles.json",
+		"/v1/map-resources/ward/2023-05-uk-bgc/features",
+		"/v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt",
+		"/v1/map-resources/ward/2023-05-uk-bgc/join/population",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
@@ -44,6 +50,9 @@ test("detail paths the dispatcher must keep are not recognised", () => {
 		"/v1/exports",
 		"/v1/lookups/areas-ward-2025-05/",
 		"/v1/exports/..",
+		// A map resource archive or tile without a name before its extension.
+		"/v1/map-resources/ward/.pmtiles",
+		"/v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/.mvt",
 		// A dot segment, a malformed escape or an id past Fastify's limit.
 		"/v1/measures/..",
 		"/v1/measures/%E0%A4%A",
