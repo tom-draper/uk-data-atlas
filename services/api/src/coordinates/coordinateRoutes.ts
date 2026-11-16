@@ -6,17 +6,17 @@ import {
 	parseLookupCoordinate,
 	parseLookupCrs,
 	parseStatedAccuracy,
-} from "./pointLookup";
+} from "../pointLookup";
 import { fromWgs84Point } from "@uk-data-atlas/geography";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
-import { readWholeNumber } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { readWholeNumber } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 const CONVERT = QUERY_RULES["GET /coordinates:convert"];
 

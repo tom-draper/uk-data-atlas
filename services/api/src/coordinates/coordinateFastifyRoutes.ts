@@ -5,7 +5,7 @@ import {
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
 import { legacyHandler } from "../contract/legacyHandler";
-import { handleCoordinateRoutes } from "../coordinateRoutes";
+import { handleCoordinateRoutes } from "./coordinateRoutes";
 import { coordinateContract } from "./coordinateContract";
 
 export const coordinateFastifyRoutes: FastifyPluginAsync<{
