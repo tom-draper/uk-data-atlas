@@ -1,3 +1,8 @@
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
+import { authorityCode } from "../../../data/new-datasets/authorityCode.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -68,6 +73,44 @@ export const housingAffordability = defineDataset<
 			),
 		],
 		fields: [{ path: "value", measure: "house-price-to-earnings-ratio" }],
+		direct: {
+			read: async ({ xlsxSheet }) => {
+				const { data: rows } = await parseCsv<string[]>(
+					await xlsxSheet(
+						sourceDir(
+							"housing-affordability",
+							"ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
+						),
+						"5c",
+					),
+					{ header: false },
+				);
+				const header = rows.findIndex(
+					(row) => row[2]?.trim() === "Local authority code",
+				);
+				const column = (rows[header] ?? []).findIndex(
+					(value) => value?.trim() === "2025",
+				);
+				if (header < 0 || column < 0)
+					throw new Error(
+						"Housing affordability table 5c has no 2025 local authority column",
+					);
+				const records = new Map<string, DirectRecord>();
+				for (const row of rows.slice(header + 1)) {
+					const code = row[2]?.trim() ?? "";
+					const value = parseNullableNum(row[column]);
+					if (!authorityCode(code) || value === null) continue;
+					records.set(code, {
+						code,
+						name: row[3]?.trim() || code,
+						values: [
+							{ measure: "house-price-to-earnings-ratio", value },
+						],
+					});
+				}
+				return [{ key: "2025", records: [...records.values()] }];
+			},
+		},
 	},
 	display: {
 		label: "Housing Affordability [2025]",
