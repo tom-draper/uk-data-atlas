@@ -1,0 +1,1964 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`area listing keeps its HTTP responses 1`] = `
+{
+  "GET /v1/areas": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 566,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-M6UkbpWHI94X4rqVweyIGCFbvyG02NaLsZOGQBLM2po"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 566,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-M6UkbpWHI94X4rqVweyIGCFbvyG02NaLsZOGQBLM2po"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 389,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-auMz41lEk92IpLpTDCWlCLWViAu3UughRwo32uchF9g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=ward&release=1999-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as 1999-01-en-ward.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas?geography=ward&release=2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 389,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-auMz41lEk92IpLpTDCWlCLWViAu3UughRwo32uchF9g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=ward&release=2025-01-en-ward&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas?geography=ward&release=2025-01-en-ward&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]}],"meta":{"nextCursor":"d2FyZC8yMDI1LTAxLWVuLXdhcmQvRTA1MDAwMDAx"}}
+",
+    "bytes": 293,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IhcNUKNrOuvjBnX4rESGlzzcTjZKiLaW9vlHEumADMs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=ward&release=2025-01-en-ward&limit=1&cursor=bad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"cursor is invalid.","code":"invalid_cursor"}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas?geography=ward&release=2025-01-en-ward&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 389,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-auMz41lEk92IpLpTDCWlCLWViAu3UughRwo32uchF9g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=ward&release=latest": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 389,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-location: /v1/areas?geography=ward&release=2025-01-en-ward",
+      "content-type: application/json",
+      "etag: "sha256-auMz41lEk92IpLpTDCWlCLWViAu3UughRwo32uchF9g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas?geography=wardd": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography wardd.","code":"unsupported_geography","absence":"unknown-geography","links":{"boundaries":"/v1/boundaries"}}
+",
+    "bytes": 261,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas?q=manchester": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"/v1/areas lists areas and does not search them. Find an area by name, code or postcode with /v1/places?q=manchester."}
+",
+    "bytes": 227,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/areas?geography=ward&release=2025-01-en-ward": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-auMz41lEk92IpLpTDCWlCLWViAu3UughRwo32uchF9g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+}
+`;
+
+exports[`area lookups answer without geometry 1`] = `
+{
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,1,1&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before box lookup."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:near?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [no geometry batch]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`area lookups answer without the services they read 1`] = `
+{
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,1,1&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested geography and release."}
+",
+    "bytes": 172,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:near?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:validate?value=E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area inventory before serving geography data."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [bare batch]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/areas:validate [bare validate]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area inventory before serving geography data."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`area lookups keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/areas:intersects": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Areas": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:contains": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees are required for EPSG:4326, or give a postcode."}
+",
+    "bytes": 228,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:contains/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees are required for EPSG:4326, or give a postcode."}
+",
+    "bytes": 228,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:contains/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:contains?crs=EPSG:27700&easting=530000&northing=180000&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":-0.128354,"lat":51.503991,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"easting":0,"northing":0},"uncertaintyM":2.5,"basis":"decimal-places-and-transformation"}},"country":{"code":null,"determinedBy":"country-boundary","boundaryRelease":"2024-12-uk-bgc"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"outside-coverage","positionalToleranceM":22.5,"matches":[],"reason":"outside-uk-boundaries","detail":"No UK country in country/2024-12-uk-bgc contains the point: it lies offshore, outside the UK, or within that release's generalisation of the coast."}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1766,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HkZHIUpKMQm0f-9lbMpHSIZ_SqSwrZ8KOWuluL2-mo8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?crs=EPSG:27700&gridref=TQ3000080000&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":-0.128347,"lat":51.503995,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000.5,"northing":180000.5,"gridReference":{"value":"TQ 30000 80000","cellSizeM":1,"position":"cell-centre"},"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"gridReference":{"easting":5,"northing":5}},"uncertaintyM":2.71,"basis":"grid-reference-and-transformation"}},"country":{"code":null,"determinedBy":"country-boundary","boundaryRelease":"2024-12-uk-bgc"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"outside-coverage","positionalToleranceM":22.71,"matches":[],"reason":"outside-uk-boundaries","detail":"No UK country in country/2024-12-uk-bgc contains the point: it lies offshore, outside the UK, or within that release's generalisation of the coast."}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1872,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-0UknEs7AXSDqa7lRzyeG264pUMdlzgG_VmXX9I3wHGg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?crs=EPSG:3857&lng=0&lat=0&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid)."}
+",
+    "bytes": 211,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:contains?lat=0&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees are required for EPSG:4326, or give a postcode."}
+",
+    "bytes": 228,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:contains?lng=0&lat=0&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0,"lat":0,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":0,"lat":0},"uncertaintyM":55659.75,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":55679.75,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"boundary","distanceToBoundaryM":0,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":true}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1516,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-zgQU1TdLhojMBghO6smXCrvyKP8p1ClJpglBOqn96d8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"localAuthority/2025-05-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"localAuthority","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/localAuthority/2025-05-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"localAuthority/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]},{"geography":"ward","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]},{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc","href":"/v1/boundary-releases/constituency/2024-07-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"constituency/2024-07-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 3032,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-NxGYo31HCEjUmx15d_RWGpNg6IPN5Olo0d1nJmGNPyE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&geography=nowhere&date=2025-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography nowhere.","code":"unsupported_geography","absence":"unknown-geography","links":{"boundaries":"/v1/boundaries"}}
+",
+    "bytes": 263,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&geography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2025-05-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1534,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256--TraASZxZfZyQWBzFKavbD3J_OduV8t4J1Qw8zlX9wM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&geography=ward&geography=localHealthBoard&date=2025-06-15": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"date":"2025-06-15","country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2025-05-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc","selection":{"policy":"latest-release-dated-on-or-before","date":"2025-06-15","sameMonth":false,"next":null},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]},{"geography":"localHealthBoard","boundaryRelease":"2023-12-w-bgc","href":"/v1/boundary-releases/localHealthBoard/2023-12-w-bgc","selection":{"policy":"latest-release-dated-on-or-before","date":"2025-06-15","sameMonth":false,"next":null},"coverage":{"countries":["GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"outside-coverage","positionalToleranceM":75.66,"matches":[],"reason":"country-not-covered","detail":"localHealthBoard/2023-12-w-bgc covers GB-WLS, and the point lies in GB-ENG."}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 2333,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-x11X7eB8HSOc8EL2yPvUrn-G2ACf2MF4RzlHVLUMDqQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&geography=ward,localHealthBoard": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2025-05-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]},{"geography":"localHealthBoard","boundaryRelease":"2023-12-w-bgc","href":"/v1/boundary-releases/localHealthBoard/2023-12-w-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"outside-coverage","positionalToleranceM":75.66,"matches":[],"reason":"country-not-covered","detail":"localHealthBoard/2023-12-w-bgc covers GB-WLS, and the point lies in GB-ENG."}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 2179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-VG9iALKI3S6MYVyjm-JCFpk9kb-QcpK5AP66UfbjxF4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=region/2025-12-en-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":null,"determinedBy":"undetermined","detail":"No area matched the point with a country code, and no lookup needed its country."},"boundaryRule":"included","results":[{"geography":"region","boundaryRelease":"2025-12-en-bgc","href":"/v1/boundary-releases/region/2025-12-en-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"geometry-unavailable","detail":"No raw geometry source is available for region/2025-12-en-bgc.","matches":[]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1374,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-FW_bR1QfLmwLpkuIQNmOERp2rvX9RU_WStoKK5ob9Sc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2019-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as 2019-12-uk-bgc.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc"},{"id":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc"}]}
+",
+    "bytes": 384,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1524,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/json",
+      "etag: "sha256-MyCAkLNPEJboX_PLDH_f2JsFzjvwq_cH0aTZ32DtH2o-gzip"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc&accuracy=600": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":600,"basis":"stated-accuracy"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":620,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":true}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1520,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-dGVIz8qgAYcw1MGZgpDk3BQemOGHpJMC1xWFaJuiHVA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":false}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1524,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MyCAkLNPEJboX_PLDH_f2JsFzjvwq_cH0aTZ32DtH2o"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.01&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.01,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":2,"lat":3},"uncertaintyM":556.6,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"matched","positionalToleranceM":576.6,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"boundary","distanceToBoundaryM":0,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":true},{"id":"ward/2024-12-uk-bgc/E05000002","code":"E05000002","name":"East ward","containment":"boundary","distanceToBoundaryM":0,"geometrySource":{"sourceCrs":"EPSG:4326"},"nearBoundary":true}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1706,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-5tboLjfTTNKfBqek97UlJwpmnZSE2QDZM9SCTzmQ0Mw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=0.5&lat=0.5&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.5,"lat":0.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5565.76,"basis":"decimal-places"}},"country":{"code":null,"determinedBy":"country-boundary","boundaryRelease":"2024-12-uk-bgc"},"boundaryRule":"included","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"outside-coverage","positionalToleranceM":5585.76,"matches":[],"reason":"outside-uk-boundaries","detail":"No UK country in country/2024-12-uk-bgc contains the point: it lies offshore, outside the UK, or within that release's generalisation of the coast."}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-laqmS3HKxrtauE00XHOjnDPOI--8xume8ysDDfYsn5M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:contains?lng=bad&lat=0&release=ward/2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees are required for EPSG:4326, or give a postcode."}
+",
+    "bytes": 228,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:containsBatch": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"POST a JSON body with a points array to this batch lookup."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/areas:intersects": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:intersects/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=region&release=2025-12-en-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/geometry-unavailable","title":"Geometry Unavailable","status":503,"detail":"No raw geometry source is available for region/2025-12-en-bgc."}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2025-05-uk-bgc","releaseSelection":"latest-published","matched":3,"returned":3,"limit":200,"truncated":false,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2025-05-uk-bgc/E05000002","code":"E05000002","name":"East ward","relation":"within","boundingBox":[0.01,0,0.02,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2025-05-uk-bgc/W05000001","code":"W05000001","name":"Welsh ward","relation":"within","boundingBox":[0,0.01,0.02,0.02],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1090,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-cxvjE3mpyybLF3BfOuPDxISi4CE_hJYAXAmFaJblcrs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":3,"returned":3,"limit":200,"truncated":false,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2024-12-uk-bgc/E05000002","code":"E05000002","name":"East ward","relation":"within","boundingBox":[0.01,0,0.02,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2024-12-uk-bgc/W05000001","code":"W05000001","name":"Welsh ward","relation":"within","boundingBox":[0,0.01,0.02,0.02],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1052,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IvJRZPxBU-xAiITeGCI6rrsTBOVoMYkWJyju3VZo2OU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":3,"returned":1,"limit":1,"truncated":true,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":"RTA1MDAwMDAx"}}
+",
+    "bytes": 712,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IzQdoVH2uCsJQjX_RFFPI8AGkbpHuqIvA01H_iWyafk"",
+      "link: </v1/areas:intersects?bbox=0%2C0%2C0.02%2C0.02&geography=ward&release=2024-12-uk-bgc&limit=1&cursor=RTA1MDAwMDAx>; rel="next"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc&tier=interior": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-tier","title":"Unknown Tier","status":400,"detail":"No such generalisation tier: interior. Choose one of full, high, medium, low."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc&tier=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-tier","title":"Unknown Tier","status":400,"detail":"No such generalisation tier: nope. Choose one of full, high, medium, low."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":3,"returned":3,"limit":200,"truncated":false,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2024-12-uk-bgc/E05000002","code":"E05000002","name":"East ward","relation":"within","boundingBox":[0.01,0,0.02,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}},{"id":"ward/2024-12-uk-bgc/W05000001","code":"W05000001","name":"Welsh ward","relation":"within","boundingBox":[0,0.01,0.02,0.02],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1052,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IvJRZPxBU-xAiITeGCI6rrsTBOVoMYkWJyju3VZo2OU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:intersects?bbox=0.5,0.5,0.6,0.6&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0.5,0.5,0.6,0.6],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":0,"returned":0,"limit":200,"truncated":false,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 538,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-ICoD8aJpZF7FR54SbL9i8gQCcapBAon-yizTpy-p1jY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:intersects?bbox=1,2,3&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:intersects?bbox=2,0,0,2&geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:near": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:near/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:near?crs=EPSG:27700&easting=530000&northing=180000&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":-0.128354,"lat":51.503991,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"easting":0,"northing":0},"uncertaintyM":2.5,"basis":"decimal-places-and-transformation"}},"within":1000,"limit":1,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"none-within","matched":0,"truncated":false,"nearest":[]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1602,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-E15QTxtcrm9THGQ6kl1EFbJ_0RhBP8oSepSUqBZPYlI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:near?lng=0&lat=0&release=ward/2024-12-uk-bgc&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be a whole number from 1 to 10."}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:near?lng=0&lat=0&release=ward/2024-12-uk-bgc&within=-1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"within must be a whole number of metres from 1 to 50000."}
+",
+    "bytes": 167,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:near?lng=0.005&lat=0.005&geography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"within":1000,"limit":1,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2025-05-uk-bgc","href":"/v1/boundary-releases/ward/2025-05-uk-bgc","selection":{"policy":"latest-published"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"found","matched":3,"truncated":true,"nearest":[{"rank":1,"id":"ward/2025-05-uk-bgc/E05000001","code":"E05000001","name":"West ward","distanceM":0,"geometrySource":{"sourceCrs":"EPSG:4326"}}]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1510,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-ymlwrjlAaXhyQ1FlhgOhgGHivkR4PDixz4OfMR483GY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:near?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"within":1000,"limit":1,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"found","matched":3,"truncated":true,"nearest":[{"rank":1,"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","distanceM":0,"geometrySource":{"sourceCrs":"EPSG:4326"}}]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1500,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-p7o-4ZZ3ojXYSWARYInnxN_RrgLc4s2Yzax8InXDrXs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:near?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"within":1000,"limit":1,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"found","matched":3,"truncated":true,"nearest":[{"rank":1,"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","distanceM":0,"geometrySource":{"sourceCrs":"EPSG:4326"}}]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1500,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-p7o-4ZZ3ojXYSWARYInnxN_RrgLc4s2Yzax8InXDrXs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:near?lng=0.025&lat=0.005&release=ward/2024-12-uk-bgc&limit=2&within=2000": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.025,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"within":2000,"limit":2,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"found","matched":3,"truncated":true,"nearest":[{"rank":1,"id":"ward/2024-12-uk-bgc/E05000002","code":"E05000002","name":"East ward","distanceM":556.6,"geometrySource":{"sourceCrs":"EPSG:4326"}},{"rank":2,"id":"ward/2024-12-uk-bgc/W05000001","code":"W05000001","name":"Welsh ward","distanceM":784.5,"geometrySource":{"sourceCrs":"EPSG:4326"}}]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1652,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-lY1xy8H1nKgjtbxpiDrvIK1Dco7nTjnhAi0Gyp_5YMk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:near?lng=0.5&lat=0.5&release=ward/2024-12-uk-bgc&within=50000": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"point":{"lng":0.5,"lat":0.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5565.76,"basis":"decimal-places"}},"within":50000,"limit":1,"relation":"distance","distanceMethod":"Ground distance on the WGS 84 ellipsoid in a plane tangent at the point, scaled by the radii of curvature at its latitude. Within the 50 km a lookup reaches, this departs from the geodesic by less than a tenth of a percent.","results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}},"status":"none-within","matched":0,"truncated":false,"nearest":[]}],"note":"Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1364,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-ptfVSOUe07VHz1kqyscsDMiJcqaEEFRBIDLYZWgGRZo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:validate": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply at least one value to validate, as value=; it may be repeated."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas?geography=ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&release=2024-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&release=2024-12-uk-bgc&limit=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&release=2024-12-uk-bgc&limit=1&cursor=bad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&release=latest": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=ward&unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?geography=wardd": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area search index before searching areas."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas?q=west": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"/v1/areas lists areas and does not search them. Find an area by name, code or postcode with /v1/places?q=west."}
+",
+    "bytes": 221,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/areas": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "HEAD /v1/areas:contains?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MyCAkLNPEJboX_PLDH_f2JsFzjvwq_cH0aTZ32DtH2o"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch head]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "HEAD /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IvJRZPxBU-xAiITeGCI6rrsTBOVoMYkWJyju3VZo2OU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas:near?lng=0.005&lat=0.005&release=ward/2024-12-uk-bgc": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-p7o-4ZZ3ojXYSWARYInnxN_RrgLc4s2Yzax8InXDrXs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/areas": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas:contains": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas:containsBatch": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas:intersects": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas:near": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas:validate": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/areas:containsBatch": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas [list]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas:contains [contains]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas:containsBatch [batch no release]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name at least one geography, as geography= or release={geography}/{release}."}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch/ [batch slash]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"points\\":[\\"…\\"]}; points must be an array of strings."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?crs=EPSG:27700&release=ward/2024-12-uk-bgc [batch grid]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":2,"lookups":2,"matched":0,"noMatch":0,"outsideCoverage":2,"unresolved":0,"nearBoundary":0},"points":[{"index":0,"point":{"lng":-0.128354,"lat":51.503991,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"easting":0,"northing":0},"uncertaintyM":2.5,"basis":"decimal-places-and-transformation"}},"country":{"code":null,"determinedBy":"country-boundary","boundaryRelease":"2024-12-uk-bgc"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"outside-coverage","positionalToleranceM":22.5,"reason":"outside-uk-boundaries","detail":"No UK country in country/2024-12-uk-bgc contains the point: it lies offshore, outside the UK, or within that release's generalisation of the coast.","matches":[]}]},{"index":1,"point":{"lng":-0.128347,"lat":51.503995,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000.5,"northing":180000.5,"gridReference":{"value":"TQ 30000 80000","cellSizeM":1,"position":"cell-centre"},"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"gridReference":{"easting":5,"northing":5}},"uncertaintyM":2.71,"basis":"grid-reference-and-transformation"}},"country":{"code":null,"determinedBy":"country-boundary","boundaryRelease":"2024-12-uk-bgc"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"outside-coverage","positionalToleranceM":22.71,"reason":"outside-uk-boundaries","detail":"No UK country in country/2024-12-uk-bgc contains the point: it lies offshore, outside the UK, or within that release's generalisation of the coast.","matches":[]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 3010,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:containsBatch?geography=ward&geography=localHealthBoard&date=2025-01 [batch geographies]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"date":"2025-01","boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"latest-release-dated-on-or-before","date":"2025-01","sameMonth":false,"next":{"id":"2025-05-uk-bgc","month":"2025-05","title":"ward 2025-05-uk-bgc","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"href":"/v1/boundary-releases/ward/2025-05-uk-bgc"}},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}},{"geography":"localHealthBoard","boundaryRelease":"2023-12-w-bgc","href":"/v1/boundary-releases/localHealthBoard/2023-12-w-bgc","selection":{"policy":"latest-release-dated-on-or-before","date":"2025-01","sameMonth":false,"next":null},"coverage":{"countries":["GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":1,"lookups":2,"matched":1,"noMatch":0,"outsideCoverage":1,"unresolved":0,"nearBoundary":0},"points":[{"index":0,"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"nearBoundary":false}]},{"geography":"localHealthBoard","boundaryRelease":"2023-12-w-bgc","status":"outside-coverage","positionalToleranceM":75.66,"reason":"country-not-covered","detail":"localHealthBoard/2023-12-w-bgc covers GB-WLS, and the point lies in GB-ENG.","matches":[]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 2837,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch accuracy]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":1,"lookups":1,"matched":1,"noMatch":0,"outsideCoverage":0,"unresolved":0,"nearBoundary":1},"points":[{"index":0,"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":600,"basis":"stated-accuracy"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":620,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"nearBoundary":true}]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1798,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch bad point]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"point 0 (\\"bad\\") is not {lng},{lat}, optionally followed by ,{accuracy}; plain decimals are required except for an Ordnance Survey grid reference in EPSG:27700. Stated accuracy is in metres up to 100000."}
+",
+    "bytes": 315,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch empty body]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch empty]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply at least one point as point={lng},{lat}; it may be repeated."}
+",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch gzip]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":1,"lookups":1,"matched":1,"noMatch":0,"outsideCoverage":0,"unresolved":0,"nearBoundary":0},"points":[{"index":0,"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"nearBoundary":false}]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1802,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-encoding: gzip",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch large]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/content-too-large","title":"Content Too Large","status":413,"detail":"The request body is 9437184 bytes or more; at most 8388608 are read. Split the rows over several requests."}
+",
+    "bytes": 225,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 413,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch malformed]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch no points]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"points\\":[\\"…\\"]}; points must be an array of strings."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch no type]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the batch input as application/json."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch not array]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"points\\":[\\"…\\"]}; points must be an array of strings."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch oversize]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"At most 100 points can be looked up in one request; this one has 101."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch wrong type]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the batch input as application/json."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc [batch]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":3,"lookups":3,"matched":3,"noMatch":0,"outsideCoverage":0,"unresolved":0,"nearBoundary":1},"points":[{"index":0,"point":{"lng":0.005,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"interior","distanceToBoundaryM":552.87,"nearBoundary":false}]}]},{"index":1,"point":{"lng":0.015,"lat":0.005,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":3,"lat":3},"uncertaintyM":55.66,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000002"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":75.66,"matches":[{"id":"ward/2024-12-uk-bgc/E05000002","code":"E05000002","name":"East ward","containment":"interior","distanceToBoundaryM":552.87,"nearBoundary":false}]}]},{"index":2,"point":{"lng":0,"lat":0,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":0,"lat":0},"uncertaintyM":55659.75,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":55679.75,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"boundary","distanceToBoundaryM":0,"nearBoundary":true}]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 2858,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:containsBatch?release=ward/2024-12-uk-bgc&unexpected=1 [batch unexpected]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRule":"included","releases":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","href":"/v1/boundary-releases/ward/2024-12-uk-bgc","selection":{"policy":"pinned"},"coverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"boundaryResolution":{"generalisation":"generalised-20m","extent":"clipped-to-coastline","toleranceM":20,"basis":"ons-release-name"},"geometrySource":{"sourceCrs":"EPSG:4326"},"source":{"publisher":"ONS","licence":{"name":"Open Government Licence"}}}],"summary":{"points":1,"lookups":1,"matched":1,"noMatch":0,"outsideCoverage":0,"unresolved":0,"nearBoundary":1},"points":[{"index":0,"point":{"lng":0,"lat":0,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":0,"lat":0},"uncertaintyM":55659.75,"basis":"decimal-places"}},"country":{"code":"GB-ENG","determinedBy":"area-code","area":"ward/2024-12-uk-bgc/E05000001"},"results":[{"geography":"ward","boundaryRelease":"2024-12-uk-bgc","status":"matched","positionalToleranceM":55679.75,"matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","containment":"boundary","distanceToBoundaryM":0,"nearBoundary":true}]}]}],"note":"Containment is tested against each release's published geometry, not against surveyed ground. A point on an edge belongs to every area sharing it and is labelled boundary. nearBoundary marks a match whose edge lies within positionalToleranceM, the sum of the coordinate's written precision, the boundary's generalisation and the accuracy of any transformation to WGS 84; there, a more precise coordinate or boundary could change the answer. Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1794,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "PUT /v1/areas:near": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`area validation keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/areas:validate?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Areas:validate": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:validate": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply at least one value to validate, as value=; it may be repeated."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply at least one value to validate, as value=; it may be repeated."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:validate?geography=nowhere&value=E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release must be supplied together, or both omitted to infer a likely compiled release."}
+",
+    "bytes": 211,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply at least one value to validate, as value=; it may be repeated."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","values":["E05000001"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1197,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-If1vHicEIp6BZk69hvLFEzf7RG7hTwaxME1aT9H9x-g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&format=csv": {
+    "body": "atlasRelease,inputSha256,verdict,likelyGeography,likelyRelease,index,value,parent,kind,status,normalised,duplicateOf,areaId,areaCode,areaName,candidates
+"sha256:registry","sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","joinable","ward","2025-01-en-ward","0","E05000001","","code","valid","","","ward/2025-01-en-ward/E05000001","E05000001","Example ward",""
+",
+    "bytes": 384,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="area-match-report.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-r_Naa6GOyC70ShVRoao4Cvuzz9Ak0jnCvBTBm7mfaxk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&format=ndjson": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json or csv."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&format=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json or csv."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","values":["E05000001"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1197,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-If1vHicEIp6BZk69hvLFEzf7RG7hTwaxME1aT9H9x-g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&value=enghraifft%20ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":2,"byStatus":{"valid":1,"matched":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"enghraifft ward","kind":"name","status":"matched","match":"alias","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:4d9ce1e3af164dc87b2ad5095f7c51d8bb13a7123fda92e9c142b5650eb1d04f","values":["E05000001","enghraifft ward"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1402,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IMo2nswMV17b_8ySbcT-O1UUEqiV0Jz0XRCatmHazqU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=Shared%20ward&parent=North%20council": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"unmatched":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"values":[{"index":0,"value":"Shared ward","kind":"name","status":"unmatched","matchesIn":[]}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:a3c0b95f424888108fdb3eacdeb226a480ceea6fc042e893db20b9542c0b4636","values":["Shared ward"],"parents":["North council"]},"result":{"verdict":"incomplete","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":0},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1167,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-5RdPGePX44BwZ4fh3k0y8qvApHjdyv-VZyOmrC49vT8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?geography=ward&release=nowhere&value=E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as nowhere.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 304,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas:validate?value=": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"candidates":[],"values":[],"verdict":"unmatched","recommendations":[],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:8e187d235bc88e38b53e355bb8ca62cf4a713c785bd3ce80d220be5ee608eecc","values":[""]},"result":{"verdict":"unmatched","candidates":[],"recommendations":[]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 864,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-bbmzl_IcHsMeXTef1MrgaQ2T84cWc151d2ZKHOUOKjw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?value=E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"ambiguous":0,"summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"verdict":"joinable","recommendations":[],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","values":["E05000001"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"ambiguous":0,"summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"recommendations":[]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1765,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Fq7YvGFZH8DwJXY-5VlNv7FJYEuVZh1al0jMbkFeXAk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?value=E05000001&value=E05000002": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"E05000002","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward"}}],"verdict":"joinable","recommendations":[],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:e099b4a07dfaff5ccebb4e050c9f5b762b8dc7089a8ed19d047712ecb93ff907","values":["E05000001","E05000002"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"recommendations":[]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1926,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HfnQTTkZMGRc8DwaZLtAb2GdnPY9L2ddG72JvlVL9uA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?value=E05000001&value=E08000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"likely":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","resolved":1,"summary":{"valueCount":2,"byStatus":{"other-geography":1,"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"tiedWith":[{"geography":"ward","boundaryRelease":"2025-01-en-ward"}]},"candidates":[{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","resolved":1,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"other-geography":1,"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":false}},{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":1,"other-geography":1},"duplicateCount":0,"normalisedCount":0,"joinable":false}}],"values":[{"index":0,"value":"E05000001","kind":"code","status":"other-geography","heldBy":[{"geography":"ward","boundaryReleases":["2025-01-en-ward"]}]},{"index":1,"value":"E08000001","kind":"code","status":"valid","area":{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester"}}],"verdict":"mixed-code-systems","recommendations":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}]}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:5c0bb02aad56a71890da49d089646f2f08616f2943bfda3a870c1a0dfdf40273","values":["E05000001","E08000001"]},"result":{"verdict":"mixed-code-systems","likely":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","resolved":1,"summary":{"valueCount":2,"byStatus":{"other-geography":1,"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"tiedWith":[{"geography":"ward","boundaryRelease":"2025-01-en-ward"}]},"candidates":[{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","resolved":1,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"other-geography":1,"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":false}},{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":1,"other-geography":1},"duplicateCount":0,"normalisedCount":0,"joinable":false}}],"recommendations":["ward-to-local-authority-2025/forward/membership"]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 3082,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-PuHFPsW3LF7pTpTyu_IPsheKajVyHFqf3A9j0FrfJqE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas:validate?value=nope": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"candidates":[],"values":[],"verdict":"unmatched","recommendations":[],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:21ede5a8d29d8034a56692daf2098ec853a978dec0e719ff67fec3b227af4568","values":["nope"]},"result":{"verdict":"unmatched","candidates":[],"recommendations":[]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 868,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-bOweGnAM-dkwNxb_ltLzB2rRRjZSQtob8avleq2AwUE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-If1vHicEIp6BZk69hvLFEzf7RG7hTwaxME1aT9H9x-g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate [values no release]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"E05000002","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward"}}],"verdict":"joinable","recommendations":[],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:e099b4a07dfaff5ccebb4e050c9f5b762b8dc7089a8ed19d047712ecb93ff907","values":["E05000001","E05000002"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}},"candidates":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2,"ambiguous":0,"summary":{"valueCount":2,"byStatus":{"valid":2},"duplicateCount":0,"normalisedCount":0,"joinable":true}}],"recommendations":[]}},"note":"likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1926,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate/ [slash]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"values\\": [\\"E05000650\\", \\"Bristol\\"]}, {\\"rows\\": [{\\"area\\": \\"E05000650\\"}]}, or CSV with an area column."}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [csv body]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":3,"byStatus":{"valid":2,"unmatched":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"E05000002","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward"}},{"index":2,"value":"nope","kind":"name","status":"unmatched","matchesIn":[]}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:6ffde0940db1e588425506d5bba1f7ab23a2f12632c1df075b3f00d1a41328a5","values":["E05000001","E05000002","nope"]},"result":{"verdict":"incomplete","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":2},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1459,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [csv empty]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name the area column as area, code, name or value; it has no columns."}
+",
+    "bytes": 198,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [empty body]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [gzip]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","values":["E05000001"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1197,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-encoding: gzip",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [large]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/content-too-large","title":"Content Too Large","status":413,"detail":"The request body is 9437184 bytes or more; at most 8388608 are read. Split the rows over several requests."}
+",
+    "bytes": 225,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 413,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [malformed]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [no type]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [rows]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":2,"byStatus":{"valid":1,"unmatched":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"nope","kind":"name","status":"unmatched","matchesIn":[]}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:f89c7d879d1a56507e09baa4cfad597a89ac42fb90f2aa2e8abfbf31791b63bb","values":["E05000001","nope"],"parents":["North council",""]},"result":{"verdict":"incomplete","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1329,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [values empty]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body holds no rows."}
+",
+    "bytes": 132,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [values none]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"values\\": [\\"E05000650\\", \\"Bristol\\"]}, {\\"rows\\": [{\\"area\\": \\"E05000650\\"}]}, or CSV with an area column."}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [values not array]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"values\\": [\\"E05000650\\", \\"Bristol\\"]}, {\\"rows\\": [{\\"area\\": \\"E05000650\\"}]}, or CSV with an area column."}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [values parents]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:3a19f836d76777721ba898a46a126e343a7bf9628c5bd11100ae6a9b33faca7d","values":["E05000001"],"parents":["North council"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1225,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [values]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":4,"byStatus":{"valid":2,"matched":1,"unmatched":1},"duplicateCount":0,"normalisedCount":0,"joinable":false},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":1,"value":"E05000002","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward"}},{"index":2,"value":"enghraifft ward","kind":"name","status":"matched","match":"alias","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}},{"index":3,"value":"nope","kind":"name","status":"unmatched","matchesIn":[]}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:5043ca9e43240e853d5b43173f0e8df669cbd61f4d794ab6b43f7ecd59b03dc6","values":["E05000001","E05000002","enghraifft ward","nope"]},"result":{"verdict":"incomplete","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":3},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1664,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward [wrong type]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward&format=csv [values csv]": {
+    "body": "atlasRelease,inputSha256,verdict,likelyGeography,likelyRelease,index,value,parent,kind,status,normalised,duplicateOf,areaId,areaCode,areaName,candidates
+"sha256:registry","sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","joinable","ward","2025-01-en-ward","0","E05000001","","code","valid","","","ward/2025-01-en-ward/E05000001","E05000001","Example ward",""
+",
+    "bytes": 384,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-disposition: attachment; filename="area-match-report.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward&format=ndjson [values ndjson]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json or csv."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/areas:validate?geography=ward&release=2025-01-en-ward&unexpected=1 [values unexpected]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","summary":{"valueCount":1,"byStatus":{"valid":1},"duplicateCount":0,"normalisedCount":0,"joinable":true},"values":[{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}],"manifest":{"schemaVersion":1,"atlasRelease":"sha256:registry","input":{"sha256":"sha256:2ceb50328d284627a139a6325bfd406fccef88246c61969b2db659de5ff9a6eb","values":["E05000001"]},"result":{"verdict":"joinable","likely":{"geography":"ward","boundaryRelease":"2025-01-en-ward","resolved":1},"candidates":[],"recommendations":[]}},"note":"Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as \\"City of\\" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1197,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "PUT /v1/areas:validate?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
