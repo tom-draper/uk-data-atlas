@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { compareObservations } from "../comparison";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
@@ -194,17 +195,24 @@ export const handleDataTransformRoutes = ({
 			"Not Found",
 			"One or both requested area codes have no published source-exact observation.",
 		);
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
-			measure,
+			measure: publicMeasure,
 			source,
 			period,
 			...statedDefaults(defaults?.defaulted),
 			sourceGeography: source.sourceGeography,
 			provenance: sourceExactProvenance({
 				atlasRelease: releaseId,
-				measure,
+				measure: publicMeasure,
 				source,
 				period: period!,
 				observations,

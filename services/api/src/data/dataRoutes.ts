@@ -1,4 +1,4 @@
-import { dimensionCatalogue } from "@uk-data-atlas/measures";
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { requireGeography } from "../runtime/index.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
@@ -225,37 +225,13 @@ export const handleDataRoutes = ({
 	}
 	const canonicalUnit =
 		unitMode === "canonical" ? measureUnit(measure) : undefined;
-	const publicMeasure =
-		selectedSeries &&
-		(measure.id !== publicId ||
-			Object.keys(selectedSeries.dimensions).length > 0 ||
-			selectedSeries.datasetId)
-			? {
-					...measure,
-					id: publicId,
-					label: context.measureDimensions
-						? (dimensionCatalogue(
-								dataCatalog,
-								context.measureDimensions,
-							).measure(publicId)?.label ?? measure.label)
-						: measure.label,
-					seriesLabel: measure.label,
-					links: {
-						...measure.links,
-						data: `/v1/data/${publicId}${(() => {
-							const query = new URLSearchParams(
-								selectedSeries.dimensions,
-							);
-							if (selectedSeries.datasetId)
-								query.set(
-									"datasetId",
-									selectedSeries.datasetId,
-								);
-							return query.size ? `?${query}` : "";
-						})()}`,
-					},
-				}
-			: measure;
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		publicId,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	const provenance = sourceExactProvenance({
 		atlasRelease: releaseId,
 		measure: publicMeasure,
