@@ -9,6 +9,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import {
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableArtifactName,
@@ -122,7 +123,12 @@ test("compiles a census table into one shared artifact per small-area geography"
 		assert.equal(lsoa?.id, censusTableArtifactName("ts054", "lsoa"));
 		assert.deepEqual(
 			lsoa?.measures,
-			tenure.categories.map(([suffix]) => `tenure-${suffix}`),
+			tenure.categories.map(([suffix, , , member]) =>
+				measureSeriesKey({
+					measure: tenure.measure,
+					dimensions: { [tenure.dimension]: member ?? suffix },
+				}),
+			),
 		);
 		assert.deepEqual(
 			lsoa?.records.map(([code]) => code),

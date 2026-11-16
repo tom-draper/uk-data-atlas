@@ -1,6 +1,7 @@
 import { sha256Hex } from "../lib/hash.ts";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import type {
 	DatasetCatalogueEntry,
 	Measure,
@@ -176,7 +177,12 @@ export const compileCensusSmallArea = (
 					boundaryYear: BOUNDARY_YEAR,
 				},
 				period: PERIOD,
-				measures: measureIds,
+				measures: table.categories.map(([suffix, , , member]) =>
+					measureSeriesKey({
+						measure: table.measure,
+						dimensions: { [table.dimension]: member ?? suffix },
+					}),
+				),
 				records,
 			};
 			const artifact: MeasureTableArtifact = {

@@ -1,5 +1,6 @@
 import {
 	measureSeriesSourceKey,
+	measureSeriesKey,
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
@@ -32,6 +33,13 @@ export function validateObservationSeries(
 	const measures = new Map(
 		catalog.measures.map((measure) => [measure.id, measure]),
 	);
+	const series = new Map<string, Measure[]>();
+	for (const measure of catalog.measures) {
+		if (!measure.series)
+			throw new Error(`Missing series identity for ${measure.id}.`);
+		const id = measureSeriesKey(measure.series);
+		series.set(id, [...(series.get(id) ?? []), measure]);
+	}
 	const accept = (
 		measure: Measure | undefined,
 		source: MeasureSource | undefined,
@@ -62,17 +70,25 @@ export function validateObservationSeries(
 	}
 	for (const table of tables)
 		for (const id of table.measures) {
-			const measure = measures.get(id);
-			const source = measure?.sources.find(
-				(candidate) =>
-					candidate.datasetId === table.datasetId &&
-					candidate.sourceGeography.type ===
-						table.sourceGeography.type &&
-					candidate.sourceGeography.boundaryYear ===
-						table.sourceGeography.boundaryYear &&
-					observationArtifactName(id, candidate) === table.id,
-			);
-			accept(measure, source, `${id} in ${table.id}`);
+			const match = series
+				.get(id)
+				?.flatMap((measure) =>
+					measure.sources
+						.filter(
+							(candidate) =>
+								candidate.datasetId === table.datasetId &&
+								candidate.sourceGeography.type ===
+									table.sourceGeography.type &&
+								candidate.sourceGeography.boundaryYear ===
+									table.sourceGeography.boundaryYear &&
+								observationArtifactName(
+									measure.id,
+									candidate,
+								) === table.id,
+						)
+						.map((source) => ({ measure, source })),
+				)[0];
+			accept(match?.measure, match?.source, `${id} in ${table.id}`);
 		}
 	if (required.size)
 		throw new Error(
