@@ -72,6 +72,7 @@ const measure = (id: number, slug: string): MeasureRow => ({
 	slug,
 	unit: "count",
 	valueKind: "count",
+	statistic: "count",
 	aggregation: "sum",
 	numerator: null,
 	denominator: null,

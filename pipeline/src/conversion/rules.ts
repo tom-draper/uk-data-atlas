@@ -18,6 +18,7 @@ export type MeasureRow = {
 	slug: string;
 	unit: string;
 	valueKind: string;
+	statistic: string;
 	aggregation: string;
 	numerator: string | null;
 	denominator: string | null;
@@ -127,9 +128,9 @@ const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
 		"The lead of the winning candidate over the runner-up in one contest. It has no meaning for other areas.",
 };
 
-const summable = (measure: Pick<MeasureRow, "valueKind" | "aggregation">) =>
+const summable = (measure: Pick<MeasureRow, "statistic" | "aggregation">) =>
 	measure.aggregation === "sum" &&
-	(measure.valueKind === "count" || measure.valueKind === "amount");
+	(measure.statistic === "count" || measure.statistic === "total");
 
 export const conversionRule = (
 	measure: MeasureRow,
@@ -214,7 +215,7 @@ export const conversionRule = (
 export const readMeasures = (database: DatabaseSync): MeasureRow[] =>
 	database
 		.prepare(
-			`SELECT m.id, m.slug, m.unit, m.value_kind AS valueKind, m.aggregation,
+			`SELECT m.id, m.slug, m.unit, m.value_kind AS valueKind, m.statistic, m.aggregation,
 				n.slug AS numerator, d.slug AS denominator, w.slug AS weight
 			FROM measure m
 			LEFT JOIN measure n ON n.id = m.numerator_id
