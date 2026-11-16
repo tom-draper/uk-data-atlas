@@ -43,6 +43,8 @@ import {
 } from "./areas/areaCollectionContract";
 import { areaCollectionFastifyRoutes } from "./areas/areaCollectionFastifyRoutes";
 import { areaDetailFastifyRoutes } from "./areas/areaDetailFastifyRoutes";
+import { mapResourceFastifyRoutes } from "./mapResources/mapResourceFastifyRoutes";
+import { mapResourcesContract } from "./mapResources/mapResourceContract";
 import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
@@ -155,6 +157,7 @@ const fastifyPaths = new Set(
 		areaValidateContract,
 		locationsContract,
 		locationAlternativesContract,
+		mapResourcesContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -892,6 +895,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(dataFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(mapResourceFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,

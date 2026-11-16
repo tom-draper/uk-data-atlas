@@ -85,6 +85,13 @@ test("generated route contracts match the published description", async () => {
 		"/data/{measure-id}/value",
 		"/data/{measure-id}/change",
 		"/data/{measure-id}/compare",
+		"/map-resources",
+		"/map-resources/{geography}/{release}",
+		"/map-resources/{geography}/{release}/tiles.json",
+		"/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
+		"/map-resources/{geography}/{release}/join/{measure-id}",
+		"/map-resources/{geography}/{release}.pmtiles",
+		"/map-resources/{geography}/{release}/features",
 		"/data/{measure-id}/export",
 	]);
 	for (const [path, item] of Object.entries(paths)) {

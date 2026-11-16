@@ -556,19 +556,17 @@ paths:
   /map-resources:
     get:
       operationId: listMapResources
-      tags: ["Geography"]
       summary: List the boundary releases published as map resources
+      tags:
+        - Geography
+      description: >
+        A map resource is one boundary release prepared for drawing: tiles whose borders are compiled
+        once and shared, so neighbours cannot be drawn two different ways. Releases are published
+        deliberately rather than every release being tiled: most are, but a release served only as
+        area records, such as the 2022 Scottish data zones, is not listed.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without map
-          resources built."
-      description: >
-        A map resource is one boundary release prepared for drawing: tiles whose
-        borders are compiled once and shared, so neighbours cannot be drawn two
-        different ways. Releases are published deliberately rather than every
-        release being tiled: most are, but a release served only as area
-        records, such as the 2022 Scottish data zones, is not listed.
+        when: Takes no input. Refused only when the server was started without map resources built.
       responses:
         "200":
           description: One entry per published map resource.
@@ -576,29 +574,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MapResourceListEnvelope"
-              x-example-request: "/v1/map-resources"
+              x-example-request: /v1/map-resources
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
   /map-resources/{geography}/{release}:
     get:
       operationId: getMapResource
-      tags: ["Geography"]
       summary: Describe one map resource, its tiles and what they were made from
+      tags:
+        - Geography
+      description: >
+        The only document a client needs to read to draw this release. It carries the tile and archive
+        URLs, the zoom ladder and the tier behind each zoom, the content hash of the archive, the
+        publisher file the shapes were compiled from, and the attribution to display beside the map.
       x-likely-refusal:
         status: 404
         when:
-          "The boundary release is published but could not be compiled into a map
-          resource, for example because its areas overlap.
-          `/v1/boundary-releases/{geography}/{release}` says why under
-          `downloads`, and `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc"
-      description: >
-        The only document a client needs to read to draw this release. It
-        carries the tile and archive URLs, the zoom ladder and the tier behind
-        each zoom, the content hash of the archive, the publisher file the
-        shapes were compiled from, and the attribution to display beside the
-        map.
+          The boundary release is published but could not be compiled into a map resource, for example
+          because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under
+          `downloads`, and `/v1/map-resources` lists the ones that are.
+        x-example-request: /v1/map-resources/ward/2017-12-gb-bgc
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -609,7 +605,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MapResourceEnvelope"
-              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2"
+              x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -618,20 +614,20 @@ paths:
   /map-resources/{geography}/{release}/tiles.json:
     get:
       operationId: getMapResourceTileJson
-      tags: ["Geography"]
       summary: The TileJSON a renderer is configured with
+      tags:
+        - Geography
+      description: >
+        TileJSON 3.0 for this resource, including the attribution a map must display. A tile cannot
+        carry a licence, so a client handed only a tile URL would have nothing to show; this is the
+        document that supplies it.
       x-likely-refusal:
         status: 404
         when:
-          "The boundary release is published but could not be compiled into a map
-          resource, for example because its areas overlap.
-          `/v1/boundary-releases/{geography}/{release}` says why under
-          `downloads`, and `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc/tiles.json"
-      description: >
-        TileJSON 3.0 for this resource, including the attribution a map must
-        display. A tile cannot carry a licence, so a client handed only a tile
-        URL would have nothing to show; this is the document that supplies it.
+          The boundary release is published but could not be compiled into a map resource, for example
+          because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under
+          `downloads`, and `/v1/map-resources` lists the ones that are.
+        x-example-request: /v1/map-resources/ward/2017-12-gb-bgc/tiles.json
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -642,7 +638,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TileJsonEnvelope"
-              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles.json"
+              x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles.json
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -651,47 +647,39 @@ paths:
   /map-resources/{geography}/{release}/features:
     get:
       operationId: getMapResourceFeatures
-      tags: ["Geography"]
       summary: A whole boundary release as one GeoParquet or GeoJSON file
-      x-likely-refusal:
-        status: 400
-        when:
-          "No `tier` is given. The detail is the caller's to choose: `full`, `high`,
-          `medium` or `low`."
-        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features"
+      tags:
+        - Geography
       description: >
-        The flat form of the resource, for a warehouse or a GIS that holds
-        features rather than tiles: GeoParquet 1.1 with one row per area,
-        carrying the same `id`, `code` and `name` as the tiles, its shape as WKB
-        in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each
-        tier is compiled from the same shared-arc generalisation the tiles are
-        drawn from, so neighbours share their borders exactly, and the ids are
-        the ones a join table publishes, so values join by `id` or `code`
-        without reading a tile. Every tier is published, `full` included, and
-        its size and SHA-256 are listed under `features` in the descriptor.
-        Downloads are generated from the geometry store on request, checked
-        against their published hashes and cached within a bounded byte budget.
-        Cold requests for large releases can take longer; generation is
-        serialized. A coarse tier keeps every border shared but is not
-        guaranteed to be a valid polygon everywhere, as the descriptor's
-        `generalisation` says. The file's `uk-data-atlas` metadata names the
-        resource, tier, attribution and publisher file hash, so a copy loaded on
+        The flat form of the resource, for a warehouse or a GIS that holds features rather than tiles:
+        GeoParquet 1.1 with one row per area, carrying the same `id`, `code` and `name` as the tiles,
+        its shape as WKB in OGC:CRS84, and a `bbox` covering column a reader can filter on. Each tier
+        is compiled from the same shared-arc generalisation the tiles are drawn from, so neighbours
+        share their borders exactly, and the ids are the ones a join table publishes, so values join
+        by `id` or `code` without reading a tile. Every tier is published, `full` included, and its
+        size and SHA-256 are listed under `features` in the descriptor. Downloads are generated from
+        the geometry store on request, checked against their published hashes and cached within a
+        bounded byte budget. Cold requests for large releases can take longer; generation is
+        serialized. A coarse tier keeps every border shared but is not guaranteed to be a valid
+        polygon everywhere, as the descriptor's `generalisation` says. The file's `uk-data-atlas`
+        metadata names the resource, tier, attribution and publisher file hash, so a copy loaded on
         its own is still citable.
 
-        `format=geojson` returns the same features as an RFC 7946
-        FeatureCollection, for the tools that open GeoJSON directly. It is
-        published at the `medium` and `low` tiers only; `full` and `high` are
-        GeoParquet only, and asking for them as GeoJSON answers 404. Each
-        feature has the same `id`, and `code` and `name` properties; coordinates
-        are written to six decimal places, about 0.1 m. A client sending
-        `Accept-Encoding: gzip` receives it with `Content-Encoding: gzip` and
-        one that does not receives it decoded. The two encodings have different
-        `ETag`s, and the descriptor's `bytes` and `contentHash` describe the
-        decoded GeoJSON.
+        `format=geojson` returns the same features as an RFC 7946 FeatureCollection, for the tools
+        that open GeoJSON directly. It is published at the `medium` and `low` tiers only; `full` and
+        `high` are GeoParquet only, and asking for them as GeoJSON answers 404. Each feature has the
+        same `id`, and `code` and `name` properties; coordinates are written to six decimal places,
+        about 0.1 m. A client sending `Accept-Encoding: gzip` receives it with `Content-Encoding:
+        gzip` and one that does not receives it decoded. The two encodings have different `ETag`s, and
+        the descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
 
-        The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any
-        reader that fetches Parquet over HTTP can read its footer and only the
-        row groups it needs. The GeoJSON is always sent whole.
+        The GeoParquet file honours byte-range requests, so DuckDB, GDAL or any reader that fetches
+        Parquet over HTTP can read its footer and only the row groups it needs. The GeoJSON is always
+        sent whole.
+      x-likely-refusal:
+        status: 400
+        when: "No `tier` is given. The detail is the caller's to choose: `full`, `high`, `medium` or `low`."
+        x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -700,16 +688,22 @@ paths:
           required: true
           schema:
             type: string
-            enum: [full, high, medium, low]
+            enum:
+              - full
+              - high
+              - medium
+              - low
           description: >
-            The detail to download. `full` is the release's own geometry; each
-            coarser tier drops detail smaller than 10, 100 or 1,000 metres.
+            The detail to download. `full` is the release's own geometry; each coarser tier drops
+            detail smaller than 10, 100 or 1,000 metres.
         - name: format
           in: query
           required: false
           schema:
             type: string
-            enum: [geoparquet, geojson]
+            enum:
+              - geoparquet
+              - geojson
             default: geoparquet
           description: The representation, GeoParquet 1.1 or GeoJSON.
         - $ref: "#/components/parameters/ByteRange"
@@ -734,37 +728,34 @@ paths:
                 format: binary
         "206":
           $ref: "#/components/responses/PartialContent"
-        "416":
-          $ref: "#/components/responses/RangeNotSatisfiable"
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
+        "416":
+          $ref: "#/components/responses/RangeNotSatisfiable"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
   /map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt:
     get:
       operationId: getMapResourceTile
-      tags: ["Geography"]
       summary: One vector tile of a boundary release
+      tags:
+        - Geography
+      description: >
+        A Mapbox Vector Tile carrying the `boundaries` layer, gzipped as the archive stores it. Each
+        feature has the area's `code`, its `name` and a stable integer id a renderer can hold state
+        against. Values are not in the tile: one tileset serves every measure, and a value is joined
+        in the renderer. A tile inside the published zooms that covers no area is answered `204`,
+        which is an ordinary answer rather than a failure; a zoom the resource does not publish is
+        `404`, and a renderer should over-zoom past the last one instead.
       x-likely-refusal:
         status: 404
         when:
-          "The zoom is past the last one the descriptor publishes. A renderer should
-          over-zoom rather than request it."
-        x-example-request:
-          "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles/13\
-          /4000/2600.mvt"
-      description: >
-        A Mapbox Vector Tile carrying the `boundaries` layer, gzipped as the
-        archive stores it. Each feature has the area's `code`, its `name` and a
-        stable integer id a renderer can hold state against. Values are not in
-        the tile: one tileset serves every measure, and a value is joined in the
-        renderer. A tile inside the published zooms that covers no area is
-        answered `204`, which is an ordinary answer rather than a failure; a
-        zoom the resource does not publish is `404`, and a renderer should
-        over-zoom past the last one instead.
+          The zoom is past the last one the descriptor publishes. A renderer should over-zoom rather
+          than request it.
+        x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles/13/4000/2600.mvt
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -809,44 +800,37 @@ paths:
   /map-resources/{geography}/{release}/join/{measure-id}:
     get:
       operationId: getMapResourceJoin
-      tags: ["Geography"]
       summary: One measure's values, numbered to match this resource's tiles
+      tags:
+        - Geography
+      description: >
+        The values a renderer joins to the tiles, as `id`, `code` and `value`. The `id` is the same
+        integer the tile carries, so a renderer sets feature state by it without reading the geometry.
+        Values are joined to this release by matching area code and are never converted: a measure
+        whose source codes are not all in this release is refused with `incompatible_geometry`, and
+        the refusal names the releases that would carry it. Keeping values out of the tiles is what
+        lets one tileset serve every measure, and lets a corrected value invalidate a small table
+        rather than a whole pyramid.
+
+
+        With `format=parquet` the same table is served as a Parquet file with `id`, `code`, `value`
+        and `status` columns, for a warehouse to join to the GeoParquet `features`. Everything the
+        JSON envelope says about the table, from the Atlas release to the join rule and provenance,
+        travels in the file's `uk-data-atlas` metadata.
+
+        Both formats accept at most 250,000 source records and 16 MiB of uncompressed column payload.
+        The byte budget counts 20 bytes per numeric row for id, value and string-length prefixes, plus
+        the UTF-8 code and status bytes. Oversized joins return `422 Map Join Budget Exceeded` before
+        output rows or columns are built, with no partial table and a `links.data` URL for paginated
+        source observations. Source artifact parsing and record materialisation occur before this
+        check; this is not a heap or RSS ceiling.
       x-likely-refusal:
         status: 422
         code: incompatible_geometry
         when:
-          "The measure is published on areas this release does not hold, so its
-          values cannot be drawn on it. The refusal names the releases that
-          would carry it."
-        x-example-request:
-          "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd\
-          -rank?period=2025"
-      description: >
-        The values a renderer joins to the tiles, as `id`, `code` and `value`.
-        The `id` is the same integer the tile carries, so a renderer sets
-        feature state by it without reading the geometry. Values are joined to
-        this release by matching area code and are never converted: a measure
-        whose source codes are not all in this release is refused with
-        `incompatible_geometry`, and the refusal names the releases that would
-        carry it. Keeping values out of the tiles is what lets one tileset serve
-        every measure, and lets a corrected value invalidate a small table
-        rather than a whole pyramid.
-
-
-        With `format=parquet` the same table is served as a Parquet file with
-        `id`, `code`, `value` and `status` columns, for a warehouse to join to
-        the GeoParquet `features`. Everything the JSON envelope says about the
-        table, from the Atlas release to the join rule and provenance, travels
-        in the file's `uk-data-atlas` metadata.
-
-        Both formats accept at most 250,000 source records and 16 MiB of
-        uncompressed column payload. The byte budget counts 20 bytes per numeric
-        row for id, value and string-length prefixes, plus the UTF-8 code and
-        status bytes. Oversized joins return `422 Map Join Budget Exceeded`
-        before output rows or columns are built, with no partial table and a
-        `links.data` URL for paginated source observations. Source artifact
-        parsing and record materialisation occur before this check; this is not
-        a heap or RSS ceiling.
+          The measure is published on areas this release does not hold, so its values cannot be drawn on
+          it. The refusal names the releases that would carry it.
+        x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2025
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/Geography"
@@ -861,9 +845,9 @@ paths:
         - name: geography
           in: query
           description: >
-            The measure's source geography, where it publishes more than one
-            partition. Without it an ambiguous request is refused with the
-            partitions listed rather than one being chosen by catalogue order.
+            The measure's source geography, where it publishes more than one partition. Without it an
+            ambiguous request is refused with the partitions listed rather than one being chosen by
+            catalogue order.
           schema:
             type: string
         - name: codeYear
@@ -876,11 +860,12 @@ paths:
           required: false
           schema:
             type: string
-            enum: [json, parquet]
+            enum:
+              - json
+              - parquet
             default: json
-          description: >
-            `json` for the envelope a renderer reads, `parquet` for the same
-            rows as a Parquet file.
+          description: |
+            `json` for the envelope a renderer reads, `parquet` for the same rows as a Parquet file.
       responses:
         "200":
           description: The values, numbered as the tiles number their features.
@@ -892,17 +877,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MapResourceJoinEnvelope"
-              x-example-request:
-                "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/pop\
-                ulation?period=2022&geography=localAuthority&codeYear=2023"
+              x-example-request: /v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population?period=2022&geography=localAuthority&codeYear=2023
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
           description: >
-            The source codes cannot be drawn on this release, or the join
-            exceeds its record or uncompressed column-byte budget.
+            The source codes cannot be drawn on this release, or the join exceeds its record or
+            uncompressed column-byte budget.
           content:
             application/problem+json:
               schema:
@@ -915,25 +898,24 @@ paths:
   /map-resources/{geography}/{release}.pmtiles:
     get:
       operationId: getMapResourceArchive
-      tags: ["Geography"]
       summary: The whole tile pyramid as one PMTiles archive
+      tags:
+        - Geography
+      description: >
+        Every tile of the resource in a single PMTiles v3 file, for an offline map, a CDN or a
+        warehouse. Its SHA-256 is the `contentHash` the descriptor publishes, so a drawing made from
+        it can be tied to the Atlas release that produced it.
+
+        It can also be read in place: the archive honours byte-range requests, so a map library such
+        as MapLibre with the `pmtiles` protocol can draw from this URL directly, fetching only the
+        tiles in view.
       x-likely-refusal:
         status: 404
         when:
-          "The boundary release is published but could not be compiled into a map
-          resource, for example because its areas overlap.
-          `/v1/boundary-releases/{geography}/{release}` says why under
-          `downloads`, and `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc.pmtiles"
-      description: >
-        Every tile of the resource in a single PMTiles v3 file, for an offline
-        map, a CDN or a warehouse. Its SHA-256 is the `contentHash` the
-        descriptor publishes, so a drawing made from it can be tied to the Atlas
-        release that produced it.
-
-        It can also be read in place: the archive honours byte-range requests,
-        so a map library such as MapLibre with the `pmtiles` protocol can draw
-        from this URL directly, fetching only the tiles in view.
+          The boundary release is published but could not be compiled into a map resource, for example
+          because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under
+          `downloads`, and `/v1/map-resources` lists the ones that are.
+        x-example-request: /v1/map-resources/ward/2017-12-gb-bgc.pmtiles
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -955,10 +937,10 @@ paths:
                 format: binary
         "206":
           $ref: "#/components/responses/PartialContent"
-        "416":
-          $ref: "#/components/responses/RangeNotSatisfiable"
         "404":
           $ref: "#/components/responses/NotFound"
+        "416":
+          $ref: "#/components/responses/RangeNotSatisfiable"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
