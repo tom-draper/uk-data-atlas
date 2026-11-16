@@ -13,6 +13,8 @@ import {
 	analysisPlanContract,
 } from "./analysis/analysisContract";
 import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
+import { bulkExports, bulkLookups } from "./bulk/bulkContract";
+import { bulkFastifyRoutes } from "./bulk/bulkFastifyRoutes";
 import { relationshipsContract } from "./relationships/relationshipsContract";
 import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
 import { releaseJoinFastifyRoutes } from "./boundaries/releaseJoinFastifyRoutes";
@@ -116,6 +118,8 @@ const fastifyPaths = new Set(
 		analysisGeographiesContract,
 		analysisPlanContract,
 		relationshipsContract,
+		bulkExports,
+		bulkLookups,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -813,6 +817,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(releaseJoinFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(bulkFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,

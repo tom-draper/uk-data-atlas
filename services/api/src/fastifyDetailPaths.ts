@@ -16,6 +16,7 @@ const detailRoutes: {
 			!release!.endsWith(":join") || release!.length <= 5,
 	},
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
+	{ pattern: /^\/v1\/(?:exports|lookups)\/([^/]+)$/ },
 	// Fastify takes the whole segment, `.json` included, as one parameter.
 	{ pattern: /^\/v1\/documents\/([^/]+\.json)$/ },
 	{ pattern: /^\/v1\/atlas-lookups\/([^/]+\.json)$/ },

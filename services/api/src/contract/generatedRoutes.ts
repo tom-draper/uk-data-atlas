@@ -40,6 +40,11 @@ import { relationshipsFastifyRoutes } from "../relationships/relationshipsFastif
 import { relationshipsMetadata } from "../relationships/relationshipsMetadata";
 import { releaseJoinFastifyRoutes } from "../boundaries/releaseJoinFastifyRoutes";
 import { releaseJoinMetadata } from "../boundaries/releaseJoinMetadata";
+import { bulkFastifyRoutes } from "../bulk/bulkFastifyRoutes";
+import { exportDetailMetadata } from "../bulk/exportDetailMetadata";
+import { exportsMetadata } from "../bulk/exportsMetadata";
+import { lookupDetailMetadata } from "../bulk/lookupDetailMetadata";
+import { lookupsMetadata } from "../bulk/lookupsMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -94,6 +99,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(analysisFastifyRoutes, { context });
 	await app.register(relationshipsFastifyRoutes, { context });
 	await app.register(releaseJoinFastifyRoutes, { context });
+	await app.register(bulkFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -110,7 +116,9 @@ const openapiPath = (path: string) =>
 		.replace("{measureId}", "{measure-id}")
 		.replace("/documents/{documentId}", "/documents/{document-id}.json")
 		.replace("/atlas-lookups/{lookupId}", "/atlas-lookups/{lookup-id}.json")
-		.replace("/atlas-pages/{pageId}", "/atlas-pages/{page-id}.json");
+		.replace("/atlas-pages/{pageId}", "/atlas-pages/{page-id}.json")
+		.replace("{exportId}", "{export-id}")
+		.replace(/^\/lookups\/\{lookupId\}$/, "/lookups/{lookup-id}");
 
 /**
  * An object that declares no properties and allows any other is written
@@ -254,6 +262,18 @@ export const generatedPaths = async () => {
 		throw new Error("Missing Fastify operation: release join");
 	// The description names a second, GeoJSON media type and a request body.
 	Object.assign(joinOperation, releaseJoinMetadata);
+	// Bulk resources are published as the description gives them: a manifest by
+	// reference, and downloads in several media types.
+	for (const [path, metadata] of [
+		["/exports", exportsMetadata],
+		["/exports/{export-id}", exportDetailMetadata],
+		["/lookups", lookupsMetadata],
+		["/lookups/{lookup-id}", lookupDetailMetadata],
+	] as const) {
+		const operation = paths[path]?.get;
+		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
+		Object.assign(operation, metadata);
+	}
 	const exportOperation = paths["/data/{measure-id}/export"]?.get;
 	if (!exportOperation)
 		throw new Error("Missing Fastify operation: measure export");

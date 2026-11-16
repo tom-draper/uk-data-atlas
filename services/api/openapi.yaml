@@ -9226,22 +9226,19 @@ paths:
   /exports:
     get:
       operationId: listBulkExports
-      tags: ["Sync"]
       summary: List release-pinned whole observation artifacts
+      tags:
+        - Sync
+      description: >
+        Returns immutable JSON downloads for each published measure-source partition, under the Atlas
+        release that pins the manifest. Every entry names the artifact, its content hash and byte
+        size, and describes it as read from the artifact at build time: its record counts, layout,
+        record fields and the datasets to attribute. Field meanings and dataset attribution are listed
+        once in `fields` and `datasets`. Optional `formats` lists prebuilt CSV and Parquet files of
+        the named measure, with the byte size, content hash and download link for each format.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without the
-          export manifest built."
-      description: >
-        Returns immutable JSON downloads for each published measure-source
-        partition, under the Atlas release that pins the manifest. Every entry
-        names the artifact, its content hash and byte size, and describes it as
-        read from the artifact at build time: its record counts, layout, record
-        fields and the datasets to attribute. Field meanings and dataset
-        attribution are listed once in `fields` and `datasets`. Optional
-        `formats` lists prebuilt CSV and Parquet files of the named measure,
-        with the byte size, content hash and download link for each format.
+        when: Takes no input. Refused only when the server was started without the export manifest built.
       responses:
         "200":
           description: The bulk-export manifest.
@@ -9249,23 +9246,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExportManifestEnvelope"
-              x-example-request: "/v1/exports"
+              x-example-request: /v1/exports
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d17\
-                  2621eff"
+                atlasRelease: sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff
                 data:
                   schemaVersion: 1
-                  dataCatalogHash:
-                    "sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19\
-                    816e200ec4"
+                  dataCatalogHash: sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19816e200ec4
                   fields:
                     areaCode: The official code of the area in the served source partition.
                     value: The numeric value, in the measure's unit.
-                    status:
-                      "`observed` for a value the publisher reported, `derived` for one this
-                      API computed."
+                    status: "`observed` for a value the publisher reported, `derived` for one this API computed."
                   datasets:
                     land-area:
                       publisher: Office for National Statistics
@@ -9282,66 +9273,69 @@ paths:
                       measureId: population-density
                       datasetId: population-uk
                       periods:
-                        [
-                          "2011",
-                          "2012",
-                          "2013",
-                          "2014",
-                          "2015",
-                          "2016",
-                          "2017",
-                          "2018",
-                          "2019",
-                          "2020",
-                          "2021",
-                          "2022",
-                          "2023",
-                          "2024",
-                        ]
-                      sourceGeography: { type: localAuthority, codeYear: 2023 }
+                        - "2011"
+                        - "2012"
+                        - "2013"
+                        - "2014"
+                        - "2015"
+                        - "2016"
+                        - "2017"
+                        - "2018"
+                        - "2019"
+                        - "2020"
+                        - "2021"
+                        - "2022"
+                        - "2023"
+                        - "2024"
+                      sourceGeography:
+                        type: localAuthority
+                        codeYear: 2023
                       format: json
                       artifact: population-density-observations
-                      contentHash:
-                        "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe4\
-                        40e451"
+                      contentHash: sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451
                       bytes: 356302
                       href: /v1/exports/population-density-observations
                       recordCount: 5054
                       recordCountByPeriod:
-                        {
-                          "2011": 361,
-                          "2012": 361,
-                          "2013": 361,
-                          "2014": 361,
-                          "2015": 361,
-                          "2016": 361,
-                          "2017": 361,
-                          "2018": 361,
-                          "2019": 361,
-                          "2020": 361,
-                          "2021": 361,
-                          "2022": 361,
-                          "2023": 361,
-                          "2024": 361,
-                        }
+                        "2011": 361
+                        "2012": 361
+                        "2013": 361
+                        "2014": 361
+                        "2015": 361
+                        "2016": 361
+                        "2017": 361
+                        "2018": 361
+                        "2019": 361
+                        "2020": 361
+                        "2021": 361
+                        "2022": 361
+                        "2023": 361
+                        "2024": 361
                       schema:
                         version: 1
                         layout: periods
                         recordType: numeric
                         fields:
-                          - { name: areaCode, type: string, required: true }
-                          - { name: value, type: number, required: true }
-                          - { name: status, type: string, required: true }
+                          - name: areaCode
+                            type: string
+                            required: true
+                          - name: value
+                            type: number
+                            required: true
+                          - name: status
+                            type: string
+                            required: true
                       provenance:
                         measure: /v1/measures/population-density
                         datasets:
-                          - { id: population-uk, role: source }
-                          - { id: land-area, role: derived-from }
+                          - id: population-uk
+                            role: source
+                          - id: land-area
+                            role: derived-from
                   note:
-                    Each export is the immutable publisher-observation JSON artifact used by
-                    the API. Reviewed served corrections, if any, are recorded
-                    separately and retain the publisher code on the affected
-                    record.
+                    Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed
+                    served corrections, if any, are recorded separately and retain the publisher code
+                    on the affected record.
                 meta:
                   nextCursor: null
         "503":
@@ -9350,49 +9344,56 @@ paths:
   /exports/{export-id}:
     get:
       operationId: downloadBulkExport
-      tags: ["Sync"]
       summary: Download one immutable source observation artifact
+      tags:
+        - Sync
+      description: >
+        Defaults to the source JSON artifact. Use `format=csv` or `format=parquet` for a prebuilt flat
+        file of the named measure across all periods. Shared tables are projected to that measure,
+        preserving null cells. Rows carry measureId, unit, datasetId, geography, boundaryYear, period,
+        areaCode, sourceAreaCode, value, category, status, lowerBound and upperBound. Missing fields
+        are empty in CSV and null in Parquet. Sizes and hashes for the flat files are listed in each
+        export's `formats`. The response is not wrapped in the usual API envelope.
       x-likely-refusal:
         status: 404
         when:
-          "A measure id is given where an export id is asked for. An export is one
-          source partition; `/v1/exports` lists them."
-        x-example-request: "/v1/exports/population"
-      description: >
-        Defaults to the source JSON artifact. Use `format=csv` or
-        `format=parquet` for a prebuilt flat file of the named measure across
-        all periods. Shared tables are projected to that measure, preserving
-        null cells. Rows carry measureId, unit, datasetId, geography,
-        boundaryYear, period, areaCode, sourceAreaCode, value, category, status,
-        lowerBound and upperBound. Missing fields are empty in CSV and null in
-        Parquet. Sizes and hashes for the flat files are listed in each export's
-        `formats`. The response is not wrapped in the usual API envelope.
+          A measure id is given where an export id is asked for. An export is one source partition;
+          `/v1/exports` lists them.
+        x-example-request: /v1/exports/population
       parameters:
         - $ref: "#/components/parameters/ExportId"
         - name: format
           in: query
           schema:
             type: string
-            enum: [json, csv, parquet]
+            enum:
+              - json
+              - csv
+              - parquet
             default: json
       responses:
         "200":
           description: The complete source observation artifact.
           headers:
             Content-Disposition:
-              schema: { type: string }
+              schema:
+                type: string
               description: Suggested filename for the selected format.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/exports/total-jobs-observations"
+              schema:
+                type: object
+              x-example-request: /v1/exports/total-jobs-observations
               example:
                 schemaVersion: 1
                 measureId: total-jobs
             text/csv:
-              schema: { type: string }
+              schema:
+                type: string
             application/vnd.apache.parquet:
-              schema: { type: string, format: binary }
+              schema:
+                type: string
+                format: binary
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -9403,21 +9404,18 @@ paths:
   /lookups:
     get:
       operationId: listBulkLookups
-      tags: ["Sync"]
       summary: List whole lookup tables for download
+      tags:
+        - Sync
+      description: >
+        Returns every bulk lookup: each boundary release's area identities with their aliases, each
+        crosswalk flattened to one row per source and target (clean-containment crosswalks are the
+        published hierarchy), and named-location membership. Each lists its columns, row count, the
+        published artifact it is rendered from with that artifact's hash, and the byte size and hash
+        of every format, under the Atlas release that pins the manifest.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without the
-          lookup manifest built."
-      description: >
-        Returns every bulk lookup: each boundary release's area identities with
-        their aliases, each crosswalk flattened to one row per source and target
-        (clean-containment crosswalks are the published hierarchy), and
-        named-location membership. Each lists its columns, row count, the
-        published artifact it is rendered from with that artifact's hash, and
-        the byte size and hash of every format, under the Atlas release that
-        pins the manifest.
+        when: Takes no input. Refused only when the server was started without the lookup manifest built.
       responses:
         "200":
           description: The bulk-lookup manifest.
@@ -9425,66 +9423,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LookupManifestEnvelope"
-              x-example-request: "/v1/lookups"
+              x-example-request: /v1/lookups
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d17\
-                  2621eff"
+                atlasRelease: sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff
                 data:
                   schemaVersion: 1
-                  contentHash:
-                    "sha256:67f2e1de51b89868fc95bac3156b1f1818b364b4db0977e737be475c9f\
-                    7b69a3"
+                  contentHash: sha256:67f2e1de51b89868fc95bac3156b1f1818b364b4db0977e737be475c9f7b69a3
                   lookups:
                     - id: areas-ward-2024-12-uk-bgc
                       kind: area-identities
-                      title: "Area identities, ward 2024-12-uk-bgc"
+                      title: Area identities, ward 2024-12-uk-bgc
                       source:
                         artifact: areas/ward/2024-12-uk-bgc.json
-                        contentHash:
-                          "sha256:f82398b92702e504d468d6d9e51fe3bc6ccbb3acea467316e783c427cf\
-                          b0d360"
+                        contentHash: sha256:f82398b92702e504d468d6d9e51fe3bc6ccbb3acea467316e783c427cfb0d360
                       columns:
                         - name: geography
-                          type: "string"
+                          type: string
                           required: true
-                          description: "The geography the release publishes."
+                          description: The geography the release publishes.
                         - name: boundaryRelease
-                          type: "string"
+                          type: string
                           required: true
-                          description: "The boundary release."
+                          description: The boundary release.
                         - name: code
-                          type: "string"
+                          type: string
                           required: true
-                          description: "The official area code."
+                          description: The official area code.
                         - name: name
-                          type: "string"
+                          type: string
                           required: true
-                          description: "The area's name in the release."
+                          description: The area's name in the release.
                         - name: aliases
-                          type: "string[]"
+                          type: string[]
                           required: false
-                          description: "Other names the release gives the area, such as a Welsh name."
+                          description: Other names the release gives the area, such as a Welsh name.
                       rowCount: 8396
                       formats:
                         csv:
-                          contentType: "text/csv; charset=utf-8"
+                          contentType: text/csv; charset=utf-8
                           bytes: 392763
-                          contentHash:
-                            "sha256:a1b1055efab8ac2b8c04e89a55a4aad87bba6baeca46e27a7b2f658ee4\
-                            952ea0"
-                          href: "/v1/lookups/areas-ward-2024-12-uk-bgc?format=csv"
+                          contentHash: sha256:a1b1055efab8ac2b8c04e89a55a4aad87bba6baeca46e27a7b2f658ee4952ea0
+                          href: /v1/lookups/areas-ward-2024-12-uk-bgc?format=csv
                         ndjson:
-                          contentType: "application/x-ndjson; charset=utf-8"
+                          contentType: application/x-ndjson; charset=utf-8
                           bytes: 947293
-                          contentHash:
-                            "sha256:162c1889dfbccbc8a75db81e6c05c5a5972333e6bf3342a015fe3dd540\
-                            0162e5"
-                          href: "/v1/lookups/areas-ward-2024-12-uk-bgc?format=ndjson"
+                          contentHash: sha256:162c1889dfbccbc8a75db81e6c05c5a5972333e6bf3342a015fe3dd5400162e5
+                          href: /v1/lookups/areas-ward-2024-12-uk-bgc?format=ndjson
                   note:
-                    Each lookup is rendered from the published artifact its source names, and
-                    its bytes match the hash listed for the format.
+                    Each lookup is rendered from the published artifact its source names, and its bytes match the
+                    hash listed for the format.
                 meta:
                   nextCursor: null
         "503":
@@ -9493,55 +9481,61 @@ paths:
   /lookups/{lookup-id}:
     get:
       operationId: downloadBulkLookup
-      tags: ["Sync"]
       summary: Download one whole lookup table as CSV or NDJSON
+      tags:
+        - Sync
+      description: >
+        Renders the lookup from its source artifact and returns it only if the bytes match the hash
+        its manifest lists for the format. In CSV a list column is joined with " | " and a cell is
+        quoted only when it holds a comma, quote or line break; in NDJSON each line is one row with
+        every column, lists as arrays and empty values as null. This response is intentionally not
+        wrapped in the usual API envelope.
       x-likely-refusal:
         status: 400
         code: invalid_format
-        when: "The format is not `csv` or `ndjson`. A lookup is a table, and
-          `/v1/lookups` describes it as JSON."
-        x-example-request: "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=json"
-      description: >
-        Renders the lookup from its source artifact and returns it only if the
-        bytes match the hash its manifest lists for the format. In CSV a list
-        column is joined with " | " and a cell is quoted only when it holds a
-        comma, quote or line break; in NDJSON each line is one row with every
-        column, lists as arrays and empty values as null. This response is
-        intentionally not wrapped in the usual API envelope.
+        when:
+          The format is not `csv` or `ndjson`. A lookup is a table, and `/v1/lookups` describes it as
+          JSON.
+        x-example-request: /v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=json
       parameters:
         - name: lookup-id
           in: path
           required: true
-          schema: { type: string }
-          description: >
-            A lookup id from `GET /v1/lookups`, such as
-            `areas-ward-2024-12-uk-bgc`.
+          schema:
+            type: string
+          description: |
+            A lookup id from `GET /v1/lookups`, such as `areas-ward-2024-12-uk-bgc`.
         - name: format
           in: query
           required: false
           schema:
-            enum: [csv, ndjson]
+            enum:
+              - csv
+              - ndjson
             default: csv
           description: >
-            The representation to download. Both are rendered from the same
-            artifact and hashed in the lookup manifest.
+            The representation to download. Both are rendered from the same artifact and hashed in the
+            lookup manifest.
       responses:
         "200":
           description: The whole lookup table.
           headers:
             Content-Disposition:
-              schema: { type: string }
+              schema:
+                type: string
               description: Suggested filename, the lookup id with the format's extension.
           content:
             text/csv:
-              schema: { type: string }
-              x-example-request: "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=csv"
+              schema:
+                type: string
+              x-example-request: /v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=csv
               example: |
                 geography,boundaryRelease,code,name,aliases
                 combinedAuthority,2025-12-en-bgc,E47000001,Greater Manchester,
                 combinedAuthority,2025-12-en-bgc,E47000002,South Yorkshire,
             application/x-ndjson:
-              schema: { type: string }
+              schema:
+                type: string
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
