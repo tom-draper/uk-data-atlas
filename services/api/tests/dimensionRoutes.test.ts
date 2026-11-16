@@ -297,6 +297,23 @@ test("data handlers use the selected series with a public measure path", () => {
 		segments: ["v1", "data", "recorded-crimes"],
 	});
 	assert.equal(table?.status, 200);
+	const direct = (
+		table!.body as {
+			data: {
+				measure: { id: string; links: { data: string } };
+				provenance: { measure: { id: string; href: string } };
+			};
+		}
+	).data;
+	assert.equal(direct.measure.id, "recorded-crimes");
+	assert.equal(
+		direct.measure.links.data,
+		"/v1/data/recorded-crimes?offence=burglary",
+	);
+	assert.deepEqual(direct.provenance.measure, {
+		id: "recorded-crimes",
+		href: "/v1/measures/recorded-crimes",
+	});
 	assert.equal(
 		(table!.body as { data: { records: Array<{ value: number }> } }).data
 			.records[0]?.value,
