@@ -35,6 +35,9 @@ import {
 import { analysisFastifyRoutes } from "../analysis/analysisFastifyRoutes";
 import { analysisGeographiesMetadata } from "../analysis/analysisGeographiesMetadata";
 import { analysisPlanMetadata } from "../analysis/analysisPlanMetadata";
+import { relationshipsContract } from "../relationships/relationshipsContract";
+import { relationshipsFastifyRoutes } from "../relationships/relationshipsFastifyRoutes";
+import { relationshipsMetadata } from "../relationships/relationshipsMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -87,6 +90,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(translationFastifyRoutes, { context });
 	await app.register(attributionFastifyRoutes, { context });
 	await app.register(analysisFastifyRoutes, { context });
+	await app.register(relationshipsFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -204,6 +208,7 @@ export const generatedPaths = async () => {
 			analysisGeographiesContract,
 		],
 		["/analysis:plan", analysisPlanMetadata, analysisPlanContract],
+		["/relationships", relationshipsMetadata, relationshipsContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
