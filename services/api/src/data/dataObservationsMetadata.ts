@@ -54,7 +54,7 @@ export const dataObservationsMetadata = {
 				default: "json",
 			},
 			description:
-				'`json` returns the API envelope. `csv` and `ndjson` return one provenance-bearing row per observation, suitable for downloads and line-oriented processing. Each row carries the measure\'s `unit`, so a saved file cannot be read in the wrong one, and ends with `lowerBound` and `upperBound`, empty where no interval is published. Tabular responses are paginated like the JSON ones, but carry the next page as a `Link` header with `rel="next"` because they have no envelope to hold a cursor.\n',
+				'`json` returns the API envelope. `csv` and `ndjson` return one provenance-bearing row per observation, suitable for downloads and line-oriented processing. Each row carries the measure\'s `unit`, so a saved file cannot be read in the wrong one, and includes `lowerBound` and `upperBound`, empty where no interval is published. The `dimensions` field is a JSON object encoded as a string, identifying the selected members; it is `{}` for measures without dimensions. Tabular responses are paginated like the JSON ones, but carry the next page as a `Link` header with `rel="next"` because they have no envelope to hold a cursor.\n',
 		},
 		{
 			name: "units",
