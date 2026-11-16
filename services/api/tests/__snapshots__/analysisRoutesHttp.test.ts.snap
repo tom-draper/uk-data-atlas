@@ -1,0 +1,714 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`analysis geographies keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/analysis-geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Analysis-Geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/analysis-geographies": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/analysis-geographies?dataset=population": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?dataset=road-collisions": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=%E0%A4%A": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-X30IPnVk4CViv6gmaJVRKDvqGVTjLQg49NNRTrtgEeY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=a&measure=b": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-X30IPnVk4CViv6gmaJVRKDvqGVTjLQg49NNRTrtgEeY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=population": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-X30IPnVk4CViv6gmaJVRKDvqGVTjLQg49NNRTrtgEeY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=road-collisions&offence=x": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?measure=unknown": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-X30IPnVk4CViv6gmaJVRKDvqGVTjLQg49NNRTrtgEeY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis-geographies?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"analysisGeographies":[{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2","measureId":"road-collisions","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"basis":"derived","conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 475,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/analysis-geographies": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-n0EYFEkt7STO3XLaTAnkIQtDM_lVvQnG5gfWGU-7Gm4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/analysis-geographies": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/analysis-geographies?measure=road-collisions": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/analysis-geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/analysis-geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/analysis-geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`analysis plans keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/analysis": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/analysis%3Aplan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"measure and to=geography/release are required."}
+",
+    "bytes": 157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/analysis:plan/?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan/extra?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/analysis:plan?measure=%E0%A4%A&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"measure and to=geography/release are required."}
+",
+    "bytes": 157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&period=2025&to=localAuthority/2023-05-uk-bgc-v2": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and codeYear are required when planning an analysis, so the API never chooses between source partitions."}
+",
+    "bytes": 225,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2019&period=2025": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"not-comparable","reason":"No reviewed conversion is published from lsoa/2019 to localAuthority/2023-05-uk-bgc-v2 for road-collisions."},"meta":{"nextCursor":null}}
+",
+    "bytes": 369,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UrrbSzaYdPU-49a2CeqibrgjXNseDwYKqNXyEuueAQ4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2023","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"not-comparable","reason":"2023 is not published by the requested source partition; supported periods are 2024, 2025.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2023&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 555,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-VveW92XzF8KAN0-meZK7G0MhrG69ubZpqY-IAQ9xLDc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025&codeYear=abc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025&dataset=road-collisions": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025&offence=x": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025&period=2024": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"road-collisions","period":"2025","analysisGeography":{"geography":"localAuthority","boundaryRelease":"2023-05-uk-bgc-v2"},"status":"available","basis":"derived","source":{"datasetId":"road-collisions","geography":"lsoa","codeYear":2021,"periods":["2024","2025"]},"conversion":{"id":"lsoa-2021-to-local-authority-2023","method":"clean-containment","quality":"publisher-supplied"},"note":"Exact regrouping.","saferAlternatives":[{"kind":"source-exact","href":"/v1/data/road-collisions?period=2025&geography=lsoa&codeYear=2021","reason":"Keep the publisher's source partition when a conversion is not needed."}],"result":"/v1/data/road-collisions/convert?period=2025&geography=lsoa&codeYear=2021&crosswalk=lsoa-2021-to-local-authority-2023"},"meta":{"nextCursor":null}}
+",
+    "bytes": 840,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/analysis:plan?measure=unknown&period=2025&to=a/b&geography=lsoa&codeYear=2021": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measureId":"unknown","period":"2025","analysisGeography":{"geography":"a","boundaryRelease":"b"},"status":"not-comparable","reason":"No reviewed conversion is published from lsoa/2021 to a/b for unknown."},"meta":{"nextCursor":null}}
+",
+    "bytes": 295,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1XAleEnw01aMc6z5QyWrkvRmkZyiTgwSW3DjIpv97LM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rgMOmiww3sYDHLaonm5b7c7BCgpv16fmKbHXDrPoCac"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/analysis:plan": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`analysis routes are unavailable before the inventory is built 1`] = `
+{
+  "GET /v1/analysis-geographies": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the analysis geography inventory before planning an analysis."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/analysis-geographies?measure=road-collisions": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the analysis geography inventory before planning an analysis."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/analysis:plan": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the analysis geography inventory before planning an analysis."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&codeYear=2021&period=2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the analysis geography inventory before planning an analysis."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
