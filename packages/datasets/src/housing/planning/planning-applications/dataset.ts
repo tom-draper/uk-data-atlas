@@ -1,3 +1,10 @@
+import { mapAuthorityCode } from "../../../data/new-datasets/authorityCode.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type {
+	DirectRecord,
+	DirectValue,
+} from "../../../declaration/statistics.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -65,6 +72,52 @@ export const planningApplications = defineDataset<
 				],
 			},
 		],
+		direct: {
+			read: async ({ csvRows }) => {
+				const records = new Map<string, DirectRecord>();
+				await csvRows(
+					sourceDir("planning-applications", "ps1-full-2026-03.csv"),
+					{ skipLines: 3 },
+					(row) => {
+						const code = row.LPACD?.trim() ?? "";
+						const value = parseNullableNum(
+							row["Applications received"],
+						);
+						if (
+							row.Quarter !== "2026 Q1" ||
+							!mapAuthorityCode(code) ||
+							value === null
+						)
+							return;
+						const values: DirectValue[] = [
+							{
+								measure: "planning-applications",
+								members: { "application-stage": "received" },
+								value,
+							},
+						];
+						for (const [stage, column] of [
+							["decided", "Applications decided"],
+							["withdrawn", "Applications withdrawn"],
+						] as const) {
+							const number = parseNullableNum(row[column]);
+							if (number !== null)
+								values.push({
+									measure: "planning-applications",
+									members: { "application-stage": stage },
+									value: number,
+								});
+						}
+						records.set(code, {
+							code,
+							name: row.LPANM?.trim() || code,
+							values,
+						});
+					},
+				);
+				return [{ key: "2026", records: [...records.values()] }];
+			},
+		},
 		fields: [
 			{
 				path: "value",
