@@ -197,25 +197,29 @@ describe.each(directTypes)("%s read straight from its source", (type) => {
 	});
 });
 
-it("rebuilds the land area payload from direct source rows", async () => {
-	const type = "land-area";
-	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
-	const parts = await readDirectPartsFor(root);
-	const direct = write(`${type}-direct-only`, type, (entry) =>
-		directStatistics(config, parts.get(type)!, entry),
-	);
-	const database = new DatabaseSync(direct.path, { readOnly: true });
-	try {
-		const payload = rebuildDatasetPayload(
-			database,
-			type,
-			direct.entry.output,
+it.each(["land-area", "council-tax"])(
+	"rebuilds the %s payload from direct source rows",
+	async (type) => {
+		const config = STATISTICS_DATASETS.find(
+			(entry) => entry.type === type,
+		)!;
+		const parts = await readDirectPartsFor(root);
+		const direct = write(`${type}-direct-only`, type, (entry) =>
+			directStatistics(config, parts.get(type)!, entry),
 		);
-		expect(directPayloadProblem(type, payload)).toBeUndefined();
-		expect(
-			snapshot(direct.path, direct.entry.output).observations.length,
-		).toBeGreaterThan(0);
-	} finally {
-		database.close();
-	}
-});
+		const database = new DatabaseSync(direct.path, { readOnly: true });
+		try {
+			const payload = rebuildDatasetPayload(
+				database,
+				type,
+				direct.entry.output,
+			);
+			expect(directPayloadProblem(type, payload)).toBeUndefined();
+			expect(
+				snapshot(direct.path, direct.entry.output).observations.length,
+			).toBeGreaterThan(0);
+		} finally {
+			database.close();
+		}
+	},
+);
