@@ -38,9 +38,10 @@
 		"usage:report": "tsx scripts/usage-report.ts"
 	},
 	"dependencies": {
-		"@fastify/swagger": "^9.9.2",
+		"@fastify/swagger": "^9.9.3",
 		"@uk-data-atlas/areas": "workspace:*",
 		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
 		"@uk-data-atlas/atlas-loader": "workspace:*",
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/datasets": "workspace:*",
@@ -54,16 +55,15 @@
 		"@uk-data-atlas/search-index": "workspace:*",
 		"@uk-data-atlas/shapefile": "workspace:*",
 		"@uk-data-atlas/terrain": "workspace:*",
-		"fastify": "^5.12.7",
+		"fastify": "^5.12.8",
 		"polygon-clipping": "0.15.7",
 		"proj4": "2.22.0",
 		"tsx": "^4.23.15",
 		"yaml": "^2.9.1",
-		"zod": "^4.6.7",
-		"@uk-data-atlas/atlas-db": "workspace:*"
+		"zod": "^4.6.7"
 	},
 	"devDependencies": {
-		"@types/node": "^26.6.2",
+		"@types/node": "^26.6.6",
 		"esbuild": "^0.28.2",
 		"jsts": "2.12.1",
 		"prettier": "3.9.7",

@@ -19,12 +19,14 @@
 	"dependencies": {
 		"@duckdb/node-api": "1.4.5-r.1",
 		"@streamparser/json": "0.0.26",
-		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/areas": "workspace:*",
+		"@uk-data-atlas/artifacts": "workspace:*",
+		"@uk-data-atlas/atlas-db": "workspace:*",
 		"@uk-data-atlas/atlas-loader": "workspace:*",
 		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/geometry": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/measures": "workspace:*",
 		"@uk-data-atlas/places": "workspace:*",
@@ -43,12 +45,10 @@
 		"topojson-server": "^3.0.1",
 		"topojson-simplify": "^3.0.3",
 		"tsx": "^4.23.15",
-		"yaml": "^2.9.1",
-		"@uk-data-atlas/atlas-db": "workspace:*",
-		"@uk-data-atlas/geometry": "workspace:*"
+		"yaml": "^2.9.1"
 	},
 	"devDependencies": {
-		"@types/node": "^26.6.2",
+		"@types/node": "^26.6.6",
 		"@types/papaparse": "^5.5.2",
 		"typescript": "^7.0.2"
 	}

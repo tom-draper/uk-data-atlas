@@ -13,15 +13,15 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
-		"@uk-data-atlas/geography": "workspace:*",
-		"@uk-data-atlas/map-tiles": "workspace:*",
-		"polygon-clipping": "0.15.7",
 		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/atlas-db": "workspace:*",
-		"@uk-data-atlas/shapefile": "workspace:*"
+		"@uk-data-atlas/geography": "workspace:*",
+		"@uk-data-atlas/map-tiles": "workspace:*",
+		"@uk-data-atlas/shapefile": "workspace:*",
+		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {
-		"@types/node": "^26.6.2",
+		"@types/node": "^26.6.6",
 		"typescript": "^7.0.2"
 	}
 }
