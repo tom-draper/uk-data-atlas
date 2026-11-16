@@ -1,13 +1,13 @@
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
-import type { RouteRequestFor } from "./runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./runtime/index.ts";
-import { choices, readChoice } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+} from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 const TRANSLATIONS = QUERY_RULES["GET /translations"];
 
