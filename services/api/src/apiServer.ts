@@ -34,6 +34,7 @@ import {
 } from "./places/locationContract";
 import { locationFastifyRoutes } from "./places/locationFastifyRoutes";
 import { isFastifyDetailPath, isFastifyPostPath } from "./fastifyDetailPaths";
+import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
 	boundaries,
@@ -862,6 +863,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(locationFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(dataFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
