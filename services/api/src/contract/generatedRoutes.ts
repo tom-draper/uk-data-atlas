@@ -22,6 +22,12 @@ import { atlasPageMetadata } from "../atlas/atlasPageMetadata";
 import { coordinateContract } from "../coordinates/coordinateContract";
 import { coordinateFastifyRoutes } from "../coordinates/coordinateFastifyRoutes";
 import { coordinateMetadata } from "../coordinates/coordinateMetadata";
+import { translationContract } from "../crosswalks/translationContract";
+import { translationFastifyRoutes } from "../crosswalks/translationFastifyRoutes";
+import { translationMetadata } from "../crosswalks/translationMetadata";
+import { attributionContract } from "../attribution/attributionContract";
+import { attributionFastifyRoutes } from "../attribution/attributionFastifyRoutes";
+import { attributionMetadata } from "../attribution/attributionMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -71,6 +77,8 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(documentFastifyRoutes, { context });
 	await app.register(atlasAssetFastifyRoutes, { context });
 	await app.register(coordinateFastifyRoutes, { context });
+	await app.register(translationFastifyRoutes, { context });
+	await app.register(attributionFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -180,6 +188,8 @@ export const generatedPaths = async () => {
 		],
 		["/atlas-pages/{page-id}.json", atlasPageMetadata, atlasPageContract],
 		["/coordinates:convert", coordinateMetadata, coordinateContract],
+		["/translations", translationMetadata, translationContract],
+		["/attribution", attributionMetadata, attributionContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
