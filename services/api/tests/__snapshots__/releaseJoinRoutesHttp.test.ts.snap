@@ -1,0 +1,631 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`a release join keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/boundary-releases/ward/2025-01-en-ward:join": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/boundary-releases/ward/2025-01-en-ward:join": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"A join reads your rows from the request body, so it is a POST. Send JSON or CSV with an area column and a value column."}
+",
+    "bytes": 240,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/boundary-releases/ward/2025-01-en-ward:join?format=geojson": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"A join reads your rows from the request body, so it is a POST. Send JSON or CSV with an area column and a value column."}
+",
+    "bytes": 240,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "HEAD /v1/boundary-releases/ward/2025-01-en-ward:join": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "OPTIONS /v1/boundary-releases/ward/2025-01-en-ward:join": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/Boundary-Releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/boundary-releases/nowhere/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography nowhere.","code":"unsupported_geography","absence":"unknown-geography","links":{"boundaries":"/v1/boundaries"}}
+",
+    "bytes": 263,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/boundary-releases/ward/%E0%A4%A:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/1999-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as 1999-01-en-ward.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward%3Ajoin [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:Join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name the area column as area, code or name; it has no columns."}
+",
+    "bytes": 191,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [APPLICATION/JSON "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "[]"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"rows\\": [{\\"area\\": \\"E05000650\\", \\"value\\": 12}]}, or CSV with area and value columns."}
+",
+    "bytes": 205,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body holds no rows."}
+",
+    "bytes": 132,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":7,\\"value\\":1}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"rows[0] needs its area as a string, under area, code or name."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000001\\",\\"value\\":1},{\\"area\\":\\"example war"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":2,"joined":0,"unjoined":2,"duplicateAreas":1,"areasWithoutValue":2},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[],"unjoined":[{"index":0,"area":"E05000001","reason":"duplicate-area"},{"index":1,"area":"example ward","reason":"duplicate-area","sameAreaAs":0}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 748,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000001\\",\\"value\\":null},{\\"area\\":\\"E0500000"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":2,"joined":2,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":null},{"id":2,"code":"E05000002","name":"Other ward","value":true}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 740,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000001\\",\\"value\\":{}}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"rows[0].value must be a number, string, boolean or null."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":1}]}"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":1,"joined":1,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":1},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":1}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 676,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"name\\":\\"Example ward\\",\\"value\\":\\"high\\",\\"parent\\":\\"Nor"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":1,"joined":1,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":1},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":"high"}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 681,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"values\\":[\\"E05000001\\"]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"rows\\": [{\\"area\\": \\"E05000650\\", \\"value\\": 12}]}, or CSV with area and value columns."}
+",
+    "bytes": 205,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/json; charset=utf-8 "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/x-www-form-urlencoded "code,value\\nE05000001,1\\n"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":1,"joined":1,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":1},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":1}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 676,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [application/x-www-form-urlencoded "{\\"rows\\":[{\\"area\\":\\"E05000001\\",\\"value\\":1}]}"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":1,"joined":1,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":1},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":1}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 676,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [no type "{\\"rows\\":[{\\"area\\":\\"E05000001\\",\\"value\\":1}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [text/csv ""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name the area column as area, code or name; it has no columns."}
+",
+    "bytes": 191,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [text/csv "code,value,parent\\nE05000001,12.5,North\\n"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":1,"joined":1,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":1},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":12.5}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 679,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [text/csv "code,value\\nE05000001,1\\nE05000002,\\n"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":2,"joined":2,"unjoined":0,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":1},{"id":2,"code":"E05000002","name":"Other ward","value":null}],"unjoined":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 737,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [text/csv "code\\nE05000001\\n"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name a value column."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join [text/plain "E05000001"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join/ [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join/extra [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=csv [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json or geojson."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=geojson [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"No GeoJSON is built for ward/2025-01-en-ward at tier medium; the join table, without format=geojson, still numbers the values for its tiles."}
+",
+    "bytes": 267,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=geojson&tier=full [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/internal-server-error","title":"Internal Server Error","status":500,"detail":"The server failed to answer this request. It has been logged; quote requestId when reporting it.","requestId":"join-geojson-full"}
+",
+    "bytes": 255,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 500,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=geojson&tier=low [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"No GeoJSON is built for ward/2025-01-en-ward at tier low; the join table, without format=geojson, still numbers the values for its tiles."}
+",
+    "bytes": 264,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=geojson&tier=other [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"tier must be one of full, high, medium, low."}
+",
+    "bytes": 155,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?format=json [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?tier=high [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:join?unexpected=1 [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/2025-01-en-ward:joins [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/boundary-releases/ward/:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/boundary-releases/ward/latest:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","name":"Example ward","value":10},{"id":2,"code":"E05000002","name":"Other ward","value":20}],"unjoined":[{"index":2,"area":"Nowhere ward","reason":"unmatched","validation":{"kind":"name","status":"unmatched","matchesIn":[]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 855,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/boundary-releases/ward/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 447,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "PUT /v1/boundary-releases/ward/2025-01-en-ward:join [application/json "{\\"rows\\":[{\\"area\\":\\"E05000002\\",\\"value\\":20},{\\"area\\":\\"Example wa"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`a release join reads its body under the size limits 1`] = `
+{
+  "after oversize": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"boundaryRelease":{"geography":"ward","release":"2025-01-en-ward"},"method":"code-or-name-match","summary":{"rows":3,"joined":2,"unjoined":1,"duplicateAreas":0,"areasWithoutValue":0},"note":"Each row is read as in areas:validate: a code must be in this release, and a name must mean exactly one of its areas. Rows that do not are listed in unjoined with the reason, as is every row for an area given more than one value. Values are passed through as sent; nothing is converted, and nothing is stored.","values":[{"id":1,"code":"E05000001","",
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "oversize csv": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/content-too-large","title":"Content Too Large","status":413,"detail":"The request body is 9600011 bytes or more; at most 8388608 are read. Split the rows over several requests."}
+",
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 413,
+  },
+  "oversize json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/content-too-large","title":"Content Too Large","status":413,"detail":"At most 250000 rows are read from one body; this one has 250001."}
+",
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 413,
+  },
+}
+`;

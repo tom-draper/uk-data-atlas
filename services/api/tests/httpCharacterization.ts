@@ -31,6 +31,8 @@ export type CharacterizedRequest = {
 	method?: string;
 	headers?: Record<string, string>;
 	body?: string | Uint8Array;
+	/** Tells apart requests that share a method and path; a body names one. */
+	label?: string;
 };
 
 export type CharacterizedResponse = {
@@ -94,13 +96,29 @@ export const startCharacterization = async (
 	};
 };
 
+/** What tells a request apart from another to the same method and path. */
+const labelOf = (request: CharacterizedRequest) => {
+	if (request.label) return request.label;
+	const type = request.headers?.["content-type"];
+	if (request.body === undefined && !type) return undefined;
+	const text =
+		typeof request.body === "string"
+			? request.body.slice(0, 60)
+			: `${request.body?.length ?? 0} bytes`;
+	return `${type ?? "no type"} ${JSON.stringify(text)}`;
+};
+
 /** Send each request and key the result by `METHOD path` for a snapshot. */
 export const characterize = async (
 	send: Awaited<ReturnType<typeof startCharacterization>>,
 	requests: CharacterizedRequest[],
 ) => {
 	const out: Record<string, CharacterizedResponse> = {};
-	for (const request of requests)
-		out[`${request.method ?? "GET"} ${request.path}`] = await send(request);
+	for (const request of requests) {
+		const label = labelOf(request);
+		out[
+			`${request.method ?? "GET"} ${request.path}${label ? ` [${label}]` : ""}`
+		] = await send(request);
+	}
 	return out;
 };
