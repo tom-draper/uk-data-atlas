@@ -1,0 +1,1259 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`exports keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/exports": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/exports/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/exports/small-area-fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/exports": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:export-manifest","dataCatalogHash":"sha256:data-catalog","fields":{},"datasets":{},"exports":[{"id":"small-area-fixture","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"small-area-fixture","contentHash":"sha256:small-area-observations","bytes":123,"href":"/v1/exports/small-area-fixture","recordCount":2,"recordCountByPeriod":{"2019":2},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/fixture.csv","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=csv"},{"format":"parquet","artifact":"exports/fixture.parquet","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=parquet"}]},{"id":"unbuilt-export","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"unbuilt-export","contentHash":"sha256:unbuilt","bytes":1,"href":"/v1/exports/unbuilt-export","recordCount":0,"recordCountByPeriod":{},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/missing.csv","bytes":64,"contentHash":"sha256:missing","href":"/v1/exports/unbuilt-export?format=csv"}]}],"note":"Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1857,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:export-manifest","dataCatalogHash":"sha256:data-catalog","fields":{},"datasets":{},"exports":[{"id":"small-area-fixture","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"small-area-fixture","contentHash":"sha256:small-area-observations","bytes":123,"href":"/v1/exports/small-area-fixture","recordCount":2,"recordCountByPeriod":{"2019":2},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/fixture.csv","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=csv"},{"format":"parquet","artifact":"exports/fixture.parquet","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=parquet"}]},{"id":"unbuilt-export","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"unbuilt-export","contentHash":"sha256:unbuilt","bytes":1,"href":"/v1/exports/unbuilt-export","recordCount":0,"recordCountByPeriod":{},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/missing.csv","bytes":64,"contentHash":"sha256:missing","href":"/v1/exports/unbuilt-export?format=csv"}]}],"note":"Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1857,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/exports/Small-Area-Fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports/missing?format=xlsx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports/small%2Darea-fixture": {
+    "body": "{"schemaVersion":1,"contentHash":"sha256:small-area-observations","measureId":"small-area-fixture","sourceGeography":{"type":"lsoa","boundaryYear":2011},"periods":[{"period":"2019","records":[{"areaCode":"E01000001","value":1500,"status":"observed"},{"areaCode":"E01000002","value":1600,"status":"observed"}]}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.json"",
+      "content-type: application/json",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/small-area-fixture": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/exports/small-area-fixture/": {
+    "body": "{"schemaVersion":1,"contentHash":"sha256:small-area-observations","measureId":"small-area-fixture","sourceGeography":{"type":"lsoa","boundaryYear":2011},"periods":[{"period":"2019","records":[{"areaCode":"E01000001","value":1500,"status":"observed"},{"areaCode":"E01000002","value":1600,"status":"observed"}]}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.json"",
+      "content-type: application/json",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/small-area-fixture/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports/small-area-fixture?format=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json, csv or parquet."}
+",
+    "bytes": 147,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/exports/small-area-fixture?format=csv": {
+    "body": "areaCode,v",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.csv"",
+      "content-range: bytes 0-9/64",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/exports/small-area-fixture?format=csv&format=json": {
+    "body": "areaCode,value,status
+E05000001,1,observed
+E05000002,2,observed
+",
+    "bytes": 64,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/small-area-fixture?format=json": {
+    "body": "{"schemaVersion":1,"contentHash":"sha256:small-area-observations","measureId":"small-area-fixture","sourceGeography":{"type":"lsoa","boundaryYear":2011},"periods":[{"period":"2019","records":[{"areaCode":"E01000001","value":1500,"status":"observed"},{"areaCode":"E01000002","value":1600,"status":"observed"}]}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.json"",
+      "content-type: application/json",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/small-area-fixture?format=parquet": {
+    "body": "areaCode,value,status
+E05000001,1,observed
+E05000002,2,observed
+",
+    "bytes": 64,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/small-area-fixture?format=xlsx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json, csv or parquet."}
+",
+    "bytes": 147,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/exports/small-area-fixture?unexpected=1": {
+    "body": "{"schemaVersion":1,"contentHash":"sha256:small-area-observations","measureId":"small-area-fixture","sourceGeography":{"type":"lsoa","boundaryYear":2011},"periods":[{"period":"2019","records":[{"areaCode":"E01000001","value":1500,"status":"observed"},{"areaCode":"E01000002","value":1600,"status":"observed"}]}]}
+",
+    "bytes": 312,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.json"",
+      "content-type: application/json",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/unbuilt-export": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/export-unavailable","title":"Export Unavailable","status":503,"detail":"The catalogued export artifact is unavailable or does not match its manifest hash."}
+",
+    "bytes": 203,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/exports/unbuilt-export?format=csv": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/export-unavailable","title":"Export Unavailable","status":503,"detail":"Build the requested bulk export before downloading it."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/exports/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports?format=csv": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:export-manifest","dataCatalogHash":"sha256:data-catalog","fields":{},"datasets":{},"exports":[{"id":"small-area-fixture","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"small-area-fixture","contentHash":"sha256:small-area-observations","bytes":123,"href":"/v1/exports/small-area-fixture","recordCount":2,"recordCountByPeriod":{"2019":2},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/fixture.csv","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=csv"},{"format":"parquet","artifact":"exports/fixture.parquet","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=parquet"}]},{"id":"unbuilt-export","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"unbuilt-export","contentHash":"sha256:unbuilt","bytes":1,"href":"/v1/exports/unbuilt-export","recordCount":0,"recordCountByPeriod":{},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/missing.csv","bytes":64,"contentHash":"sha256:missing","href":"/v1/exports/unbuilt-export?format=csv"}]}],"note":"Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1857,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/exports": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/exports/missing": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/exports/small-area-fixture": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.json"",
+      "content-type: application/json",
+      "etag: "sha256-NVSx2aeIusRPhomq_SkxKDWJhZNU0OBVfGiFoeFQBms"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/exports/small-area-fixture?format=csv": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="small-area-fixture.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/exports": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/exports/missing": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/exports/small-area-fixture": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/exports": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/exports/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/exports/small-area-fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/exports": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/exports/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/exports/small-area-fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/exports": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/exports/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/exports/small-area-fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`exports keep their refusals without a built manifest or files 1`] = `
+{
+  "name": "bare",
+  "responses": {
+    "GET /v1/exports": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the export manifest before listing bulk exports."}
+",
+      "bytes": 181,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/missing": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and export manifest before downloading bulk exports."}
+",
+      "bytes": 204,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/small-area-fixture": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and export manifest before downloading bulk exports."}
+",
+      "bytes": 204,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/small-area-fixture?format=csv": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and export manifest before downloading bulk exports."}
+",
+      "bytes": 204,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/small-area-fixture?format=xlsx": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and export manifest before downloading bulk exports."}
+",
+      "bytes": 204,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+  },
+}
+`;
+
+exports[`exports keep their refusals without a built manifest or files 2`] = `
+{
+  "name": "drifted",
+  "responses": {
+    "GET /v1/exports": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:export-manifest","dataCatalogHash":"sha256:data-catalog","fields":{},"datasets":{},"exports":[{"id":"small-area-fixture","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"small-area-fixture","contentHash":"sha256:small-area-observations","bytes":123,"href":"/v1/exports/small-area-fixture","recordCount":2,"recordCountByPeriod":{"2019":2},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/fixture.csv","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=csv"},{"format":"parquet","artifact":"exports/fixture.parquet","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=parquet"}]},{"id":"unbuilt-export","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"unbuilt-export","contentHash":"sha256:unbuilt","bytes":1,"href":"/v1/exports/unbuilt-export","recordCount":0,"recordCountByPeriod":{},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/missing.csv","bytes":64,"contentHash":"sha256:missing","href":"/v1/exports/unbuilt-export?format=csv"}]}],"note":"Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record."},"meta":{"nextCursor":null}}
+",
+      "bytes": 1857,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/exports/missing": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+      "bytes": 140,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+    "GET /v1/exports/small-area-fixture": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/export-unavailable","title":"Export Unavailable","status":503,"detail":"The catalogued export artifact is unavailable or does not match its manifest hash."}
+",
+      "bytes": 203,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/small-area-fixture?format=csv": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/export-unavailable","title":"Export Unavailable","status":503,"detail":"Build the requested bulk export before downloading it."}
+",
+      "bytes": 175,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/exports/small-area-fixture?format=xlsx": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json, csv or parquet."}
+",
+      "bytes": 147,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 400,
+    },
+  },
+}
+`;
+
+exports[`lookups keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/lookups": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/lookups/areas-ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/lookups/unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/lookups": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:1358100b459e59417d42bd233facdfba4bb4ffcc2d540902983e7e8991de2fc1","lookups":[{"id":"areas-ward-2025-05","kind":"area-identities","title":"Area identities, ward 2025-05","source":{"artifact":"areas/ward/2025-05.json","contentHash":"sha256:wards"},"columns":[{"name":"geography","type":"string","required":true,"description":"The geography the release publishes."},{"name":"boundaryRelease","type":"string","required":true,"description":"The boundary release."},{"name":"code","type":"string","required":true,"description":"The official area code."},{"name":"name","type":"string","required":true,"description":"The area's name in the release."},{"name":"aliases","type":"string[]","required":false,"description":"Other names the release gives the area, such as a Welsh name."}],"rowCount":2,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":137,"contentHash":"sha256:77173b2b4e65c89310a5518b51d031da612b0214c4470ede12c8fd1eb2e17239","href":"/v1/lookups/areas-ward-2025-05?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":225,"contentHash":"sha256:3ba7a63a2ae024a26c172e294011bb9cb0c56b3ce2bbba8137387c70eb2c53bc","href":"/v1/lookups/areas-ward-2025-05?format=ndjson"}}},{"id":"crosswalk-ward-to-lad-area-overlap","kind":"crosswalk","title":"Crosswalk, ward-to-lad-area-overlap","source":{"artifact":"crosswalks/ward-to-lad-area-overlap.json","contentHash":"sha256:overlap"},"columns":[{"name":"crosswalkId","type":"string","required":true,"description":"The crosswalk the row belongs to."},{"name":"method","type":"string","required":true,"description":"How the relationship was established, such as clean-containment or area-overlap."},{"name":"fromGeography","type":"string","required":true,"description":"The source side's geography."},{"name":"fromBoundaryRelease","type":"string","required":true,"description":"The source side's release."},{"name":"sourceCode","type":"string","required":true,"description":"The source area's code."},{"name":"sourceLabels","type":"string[]","required":true,"description":"The source area's names in the input."},{"name":"toGeography","type":"string","required":true,"description":"The target side's geography."},{"name":"toBoundaryRelease","type":"string","required":true,"description":"The target side's release."},{"name":"targetCode","type":"string","required":true,"description":"The target area's code."},{"name":"targetLabels","type":"string[]","required":true,"description":"The target area's names in the input."},{"name":"weight","type":"number","required":true,"description":"The share of the source to apportion to this target, where the crosswalk provides weights."},{"name":"sourceShare","type":"number","required":true,"description":"The share of the source area inside the target, for a weighted overlap."},{"name":"targetShare","type":"number","required":true,"description":"The share of the target area inside the source, for a weighted overlap."},{"name":"overlapAreaM2","type":"number","required":true,"description":"The overlapping area in square metres, where available for a weighted overlap."},{"name":"population","type":"number","required":false,"description":"The people in the overlap, from the crosswalk's population building blocks or postcodes."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":313,"contentHash":"sha256:bf9d24528463b5b850b0770100ef77ceaf6704163e037f0f6489b56ea5567f71","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":373,"contentHash":"sha256:1122553c1e1db39b8f5eced585065efcfb130507376b30fea9debef9c93f8d09","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson"}}},{"id":"named-location-members","kind":"named-location-members","title":"Named location membership","source":{"artifact":"named-locations.json","contentHash":"sha256:locations"},"columns":[{"name":"locationId","type":"string","required":true,"description":"The named location's id."},{"name":"label","type":"string","required":true,"description":"The named location's label."},{"name":"kind","type":"string","required":true,"description":"How the location is defined: country, region, combined-authority or county for an area ONS defines, ceremonial-county or historic-county for a county built from Ordnance Survey boundaries, or editorial-grouping for a curated grouping that is not an official area."},{"name":"definitionRevision","type":"number","required":true,"description":"The curated definition revision for this location."},{"name":"memberGeography","type":"string","required":true,"description":"The geography whose area codes define the location."},{"name":"memberCode","type":"string","required":true,"description":"The official code of one member area."},{"name":"validFrom","type":"string","required":false,"description":"The first date this definition is known to apply, when supplied by the curator."},{"name":"validTo","type":"string","required":false,"description":"The first date this definition is known not to apply, when supplied by the curator."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":150,"contentHash":"sha256:efb09517e5903a2e8019e19bdbc4c34f4ca5d7d84eb2222a306759f94b2e5148","href":"/v1/lookups/named-location-members?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":186,"contentHash":"sha256:9c48e70cae7d3007de704b5a30449eab660e20350f6fba788f13326d471d40d6","href":"/v1/lookups/named-location-members?format=ndjson"}}}],"note":"Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format."},"meta":{"nextCursor":null}}
+",
+    "bytes": 5822,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:1358100b459e59417d42bd233facdfba4bb4ffcc2d540902983e7e8991de2fc1","lookups":[{"id":"areas-ward-2025-05","kind":"area-identities","title":"Area identities, ward 2025-05","source":{"artifact":"areas/ward/2025-05.json","contentHash":"sha256:wards"},"columns":[{"name":"geography","type":"string","required":true,"description":"The geography the release publishes."},{"name":"boundaryRelease","type":"string","required":true,"description":"The boundary release."},{"name":"code","type":"string","required":true,"description":"The official area code."},{"name":"name","type":"string","required":true,"description":"The area's name in the release."},{"name":"aliases","type":"string[]","required":false,"description":"Other names the release gives the area, such as a Welsh name."}],"rowCount":2,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":137,"contentHash":"sha256:77173b2b4e65c89310a5518b51d031da612b0214c4470ede12c8fd1eb2e17239","href":"/v1/lookups/areas-ward-2025-05?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":225,"contentHash":"sha256:3ba7a63a2ae024a26c172e294011bb9cb0c56b3ce2bbba8137387c70eb2c53bc","href":"/v1/lookups/areas-ward-2025-05?format=ndjson"}}},{"id":"crosswalk-ward-to-lad-area-overlap","kind":"crosswalk","title":"Crosswalk, ward-to-lad-area-overlap","source":{"artifact":"crosswalks/ward-to-lad-area-overlap.json","contentHash":"sha256:overlap"},"columns":[{"name":"crosswalkId","type":"string","required":true,"description":"The crosswalk the row belongs to."},{"name":"method","type":"string","required":true,"description":"How the relationship was established, such as clean-containment or area-overlap."},{"name":"fromGeography","type":"string","required":true,"description":"The source side's geography."},{"name":"fromBoundaryRelease","type":"string","required":true,"description":"The source side's release."},{"name":"sourceCode","type":"string","required":true,"description":"The source area's code."},{"name":"sourceLabels","type":"string[]","required":true,"description":"The source area's names in the input."},{"name":"toGeography","type":"string","required":true,"description":"The target side's geography."},{"name":"toBoundaryRelease","type":"string","required":true,"description":"The target side's release."},{"name":"targetCode","type":"string","required":true,"description":"The target area's code."},{"name":"targetLabels","type":"string[]","required":true,"description":"The target area's names in the input."},{"name":"weight","type":"number","required":true,"description":"The share of the source to apportion to this target, where the crosswalk provides weights."},{"name":"sourceShare","type":"number","required":true,"description":"The share of the source area inside the target, for a weighted overlap."},{"name":"targetShare","type":"number","required":true,"description":"The share of the target area inside the source, for a weighted overlap."},{"name":"overlapAreaM2","type":"number","required":true,"description":"The overlapping area in square metres, where available for a weighted overlap."},{"name":"population","type":"number","required":false,"description":"The people in the overlap, from the crosswalk's population building blocks or postcodes."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":313,"contentHash":"sha256:bf9d24528463b5b850b0770100ef77ceaf6704163e037f0f6489b56ea5567f71","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":373,"contentHash":"sha256:1122553c1e1db39b8f5eced585065efcfb130507376b30fea9debef9c93f8d09","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson"}}},{"id":"named-location-members","kind":"named-location-members","title":"Named location membership","source":{"artifact":"named-locations.json","contentHash":"sha256:locations"},"columns":[{"name":"locationId","type":"string","required":true,"description":"The named location's id."},{"name":"label","type":"string","required":true,"description":"The named location's label."},{"name":"kind","type":"string","required":true,"description":"How the location is defined: country, region, combined-authority or county for an area ONS defines, ceremonial-county or historic-county for a county built from Ordnance Survey boundaries, or editorial-grouping for a curated grouping that is not an official area."},{"name":"definitionRevision","type":"number","required":true,"description":"The curated definition revision for this location."},{"name":"memberGeography","type":"string","required":true,"description":"The geography whose area codes define the location."},{"name":"memberCode","type":"string","required":true,"description":"The official code of one member area."},{"name":"validFrom","type":"string","required":false,"description":"The first date this definition is known to apply, when supplied by the curator."},{"name":"validTo","type":"string","required":false,"description":"The first date this definition is known not to apply, when supplied by the curator."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":150,"contentHash":"sha256:efb09517e5903a2e8019e19bdbc4c34f4ca5d7d84eb2222a306759f94b2e5148","href":"/v1/lookups/named-location-members?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":186,"contentHash":"sha256:9c48e70cae7d3007de704b5a30449eab660e20350f6fba788f13326d471d40d6","href":"/v1/lookups/named-location-members?format=ndjson"}}}],"note":"Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format."},"meta":{"nextCursor":null}}
+",
+    "bytes": 5822,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/lookups/Areas-Ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups/areas%2Dward-2025-05": {
+    "body": "geography,boundaryRelease,code,name,aliases
+ward,2025-05,W05000001,Bishopston,Llandeilo
+ward,2025-05,E05000001,"Kings ""Cross"", North",
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/areas-ward-2025-05": {
+    "body": "geography,boundaryRelease,code,name,aliases
+ward,2025-05,W05000001,Bishopston,Llandeilo
+ward,2025-05,E05000001,"Kings ""Cross"", North",
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/areas-ward-2025-05/": {
+    "body": "geography,boundaryRelease,code,name,aliases
+ward,2025-05,W05000001,Bishopston,Llandeilo
+ward,2025-05,E05000001,"Kings ""Cross"", North",
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/areas-ward-2025-05/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups/areas-ward-2025-05?format=csv": {
+    "body": "geography,boundaryRelease,code,name,aliases
+ward,2025-05,W05000001,Bishopston,Llandeilo
+ward,2025-05,E05000001,"Kings ""Cross"", North",
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/areas-ward-2025-05?format=ndjson": {
+    "body": "{"geography":"ward","boundaryRelease":"2025-05","code":"W05000001","name":"Bishopston","aliases":["Llandeilo"]}
+{"geography":"ward","boundaryRelease":"2025-05","code":"E05000001","name":"Kings \\"Cross\\", North","aliases":[]}
+",
+    "bytes": 225,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.ndjson"",
+      "content-type: application/x-ndjson; charset=utf-8",
+      "etag: "sha256-O6emOirgJKJsFy4pQBG7nLDFazziu7qBNzh8cOssU7w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/areas-ward-2025-05?unexpected=1": {
+    "body": "geography,boundaryRelease,code,name,aliases
+ward,2025-05,W05000001,Bishopston,Llandeilo
+ward,2025-05,E05000001,"Kings ""Cross"", North",
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson": {
+    "body": "{"crosswalkId":"ward-to-lad-area-overlap","method":"area-overlap","fromGeography":"ward","fromBoundaryRelease":"2025-05","sourceCode":"E05000001","sourceLabels":["Kings Cross"],"toGeography":"localAuthority","toBoundaryRelease":"2025-05","targetCode":"E06000001","targetLabels":["Example"],"weight":1,"sourceShare":1,"targetShare":0.1,"overlapAreaM2":10,"population":null}
+",
+    "bytes": 373,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="crosswalk-ward-to-lad-area-overlap.ndjson"",
+      "content-type: application/x-ndjson; charset=utf-8",
+      "etag: "sha256-ESJVPB4ds5uPXs7VhQZe_PsTBQc3azD-qd6--ck_jQk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/named-location-members": {
+    "body": "locationId,label,kind,definitionRevision,memberGeography,memberCode,validFrom,validTo
+example,Example,editorial-grouping,1,localAuthority,E06000001,,
+",
+    "bytes": 150,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="named-location-members.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-77CVF-WQOi6AGeGb28TDT0yl19hOsiIqMGdZ-UsuUUg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/named-location-members?format=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be csv or ndjson.","code":"invalid_format"}
+",
+    "bytes": 164,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/lookups/named-location-members?format=csv&format=ndjson": {
+    "body": "locationId,label,kind,definitionRevision,memberGeography,memberCode,validFrom,validTo
+example,Example,editorial-grouping,1,localAuthority,E06000001,,
+",
+    "bytes": 150,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="named-location-members.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-77CVF-WQOi6AGeGb28TDT0yl19hOsiIqMGdZ-UsuUUg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/named-location-members?format=parquet": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be csv or ndjson.","code":"invalid_format"}
+",
+    "bytes": 164,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/lookups/unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups/unknown?format=json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups?format=csv": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:1358100b459e59417d42bd233facdfba4bb4ffcc2d540902983e7e8991de2fc1","lookups":[{"id":"areas-ward-2025-05","kind":"area-identities","title":"Area identities, ward 2025-05","source":{"artifact":"areas/ward/2025-05.json","contentHash":"sha256:wards"},"columns":[{"name":"geography","type":"string","required":true,"description":"The geography the release publishes."},{"name":"boundaryRelease","type":"string","required":true,"description":"The boundary release."},{"name":"code","type":"string","required":true,"description":"The official area code."},{"name":"name","type":"string","required":true,"description":"The area's name in the release."},{"name":"aliases","type":"string[]","required":false,"description":"Other names the release gives the area, such as a Welsh name."}],"rowCount":2,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":137,"contentHash":"sha256:77173b2b4e65c89310a5518b51d031da612b0214c4470ede12c8fd1eb2e17239","href":"/v1/lookups/areas-ward-2025-05?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":225,"contentHash":"sha256:3ba7a63a2ae024a26c172e294011bb9cb0c56b3ce2bbba8137387c70eb2c53bc","href":"/v1/lookups/areas-ward-2025-05?format=ndjson"}}},{"id":"crosswalk-ward-to-lad-area-overlap","kind":"crosswalk","title":"Crosswalk, ward-to-lad-area-overlap","source":{"artifact":"crosswalks/ward-to-lad-area-overlap.json","contentHash":"sha256:overlap"},"columns":[{"name":"crosswalkId","type":"string","required":true,"description":"The crosswalk the row belongs to."},{"name":"method","type":"string","required":true,"description":"How the relationship was established, such as clean-containment or area-overlap."},{"name":"fromGeography","type":"string","required":true,"description":"The source side's geography."},{"name":"fromBoundaryRelease","type":"string","required":true,"description":"The source side's release."},{"name":"sourceCode","type":"string","required":true,"description":"The source area's code."},{"name":"sourceLabels","type":"string[]","required":true,"description":"The source area's names in the input."},{"name":"toGeography","type":"string","required":true,"description":"The target side's geography."},{"name":"toBoundaryRelease","type":"string","required":true,"description":"The target side's release."},{"name":"targetCode","type":"string","required":true,"description":"The target area's code."},{"name":"targetLabels","type":"string[]","required":true,"description":"The target area's names in the input."},{"name":"weight","type":"number","required":true,"description":"The share of the source to apportion to this target, where the crosswalk provides weights."},{"name":"sourceShare","type":"number","required":true,"description":"The share of the source area inside the target, for a weighted overlap."},{"name":"targetShare","type":"number","required":true,"description":"The share of the target area inside the source, for a weighted overlap."},{"name":"overlapAreaM2","type":"number","required":true,"description":"The overlapping area in square metres, where available for a weighted overlap."},{"name":"population","type":"number","required":false,"description":"The people in the overlap, from the crosswalk's population building blocks or postcodes."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":313,"contentHash":"sha256:bf9d24528463b5b850b0770100ef77ceaf6704163e037f0f6489b56ea5567f71","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":373,"contentHash":"sha256:1122553c1e1db39b8f5eced585065efcfb130507376b30fea9debef9c93f8d09","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson"}}},{"id":"named-location-members","kind":"named-location-members","title":"Named location membership","source":{"artifact":"named-locations.json","contentHash":"sha256:locations"},"columns":[{"name":"locationId","type":"string","required":true,"description":"The named location's id."},{"name":"label","type":"string","required":true,"description":"The named location's label."},{"name":"kind","type":"string","required":true,"description":"How the location is defined: country, region, combined-authority or county for an area ONS defines, ceremonial-county or historic-county for a county built from Ordnance Survey boundaries, or editorial-grouping for a curated grouping that is not an official area."},{"name":"definitionRevision","type":"number","required":true,"description":"The curated definition revision for this location."},{"name":"memberGeography","type":"string","required":true,"description":"The geography whose area codes define the location."},{"name":"memberCode","type":"string","required":true,"description":"The official code of one member area."},{"name":"validFrom","type":"string","required":false,"description":"The first date this definition is known to apply, when supplied by the curator."},{"name":"validTo","type":"string","required":false,"description":"The first date this definition is known not to apply, when supplied by the curator."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":150,"contentHash":"sha256:efb09517e5903a2e8019e19bdbc4c34f4ca5d7d84eb2222a306759f94b2e5148","href":"/v1/lookups/named-location-members?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":186,"contentHash":"sha256:9c48e70cae7d3007de704b5a30449eab660e20350f6fba788f13326d471d40d6","href":"/v1/lookups/named-location-members?format=ndjson"}}}],"note":"Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format."},"meta":{"nextCursor":null}}
+",
+    "bytes": 5822,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/lookups": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/lookups/areas-ward-2025-05": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="areas-ward-2025-05.csv"",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-dxc7K05lyJMQpVGLUdAx2mErAhTERw7eEsj9HrLhcjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/lookups/unknown": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "OPTIONS /v1/lookups": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/lookups/areas-ward-2025-05": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/lookups/unknown": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/lookups": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/lookups/areas-ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/lookups/unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/lookups": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/lookups/areas-ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/lookups/unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/lookups": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/lookups/areas-ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/lookups/unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`lookups keep their refusals without a manifest or matching source 1`] = `
+{
+  "name": "bare",
+  "responses": {
+    "GET /v1/lookups": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the lookup manifest before listing bulk lookups."}
+",
+      "bytes": 181,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/lookups/areas-ward-2025-05": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the lookup manifest before downloading bulk lookups."}
+",
+      "bytes": 185,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/lookups/areas-ward-2025-05?format=json": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the lookup manifest before downloading bulk lookups."}
+",
+      "bytes": 185,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/lookups/unknown": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the lookup manifest before downloading bulk lookups."}
+",
+      "bytes": 185,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+  },
+}
+`;
+
+exports[`lookups keep their refusals without a manifest or matching source 2`] = `
+{
+  "name": "drifted",
+  "responses": {
+    "GET /v1/lookups": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:1358100b459e59417d42bd233facdfba4bb4ffcc2d540902983e7e8991de2fc1","lookups":[{"id":"areas-ward-2025-05","kind":"area-identities","title":"Area identities, ward 2025-05","source":{"artifact":"areas/ward/2025-05.json","contentHash":"sha256:wards"},"columns":[{"name":"geography","type":"string","required":true,"description":"The geography the release publishes."},{"name":"boundaryRelease","type":"string","required":true,"description":"The boundary release."},{"name":"code","type":"string","required":true,"description":"The official area code."},{"name":"name","type":"string","required":true,"description":"The area's name in the release."},{"name":"aliases","type":"string[]","required":false,"description":"Other names the release gives the area, such as a Welsh name."}],"rowCount":2,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":137,"contentHash":"sha256:77173b2b4e65c89310a5518b51d031da612b0214c4470ede12c8fd1eb2e17239","href":"/v1/lookups/areas-ward-2025-05?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":225,"contentHash":"sha256:3ba7a63a2ae024a26c172e294011bb9cb0c56b3ce2bbba8137387c70eb2c53bc","href":"/v1/lookups/areas-ward-2025-05?format=ndjson"}}},{"id":"crosswalk-ward-to-lad-area-overlap","kind":"crosswalk","title":"Crosswalk, ward-to-lad-area-overlap","source":{"artifact":"crosswalks/ward-to-lad-area-overlap.json","contentHash":"sha256:overlap"},"columns":[{"name":"crosswalkId","type":"string","required":true,"description":"The crosswalk the row belongs to."},{"name":"method","type":"string","required":true,"description":"How the relationship was established, such as clean-containment or area-overlap."},{"name":"fromGeography","type":"string","required":true,"description":"The source side's geography."},{"name":"fromBoundaryRelease","type":"string","required":true,"description":"The source side's release."},{"name":"sourceCode","type":"string","required":true,"description":"The source area's code."},{"name":"sourceLabels","type":"string[]","required":true,"description":"The source area's names in the input."},{"name":"toGeography","type":"string","required":true,"description":"The target side's geography."},{"name":"toBoundaryRelease","type":"string","required":true,"description":"The target side's release."},{"name":"targetCode","type":"string","required":true,"description":"The target area's code."},{"name":"targetLabels","type":"string[]","required":true,"description":"The target area's names in the input."},{"name":"weight","type":"number","required":true,"description":"The share of the source to apportion to this target, where the crosswalk provides weights."},{"name":"sourceShare","type":"number","required":true,"description":"The share of the source area inside the target, for a weighted overlap."},{"name":"targetShare","type":"number","required":true,"description":"The share of the target area inside the source, for a weighted overlap."},{"name":"overlapAreaM2","type":"number","required":true,"description":"The overlapping area in square metres, where available for a weighted overlap."},{"name":"population","type":"number","required":false,"description":"The people in the overlap, from the crosswalk's population building blocks or postcodes."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":313,"contentHash":"sha256:bf9d24528463b5b850b0770100ef77ceaf6704163e037f0f6489b56ea5567f71","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":373,"contentHash":"sha256:1122553c1e1db39b8f5eced585065efcfb130507376b30fea9debef9c93f8d09","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson"}}},{"id":"named-location-members","kind":"named-location-members","title":"Named location membership","source":{"artifact":"named-locations.json","contentHash":"sha256:locations"},"columns":[{"name":"locationId","type":"string","required":true,"description":"The named location's id."},{"name":"label","type":"string","required":true,"description":"The named location's label."},{"name":"kind","type":"string","required":true,"description":"How the location is defined: country, region, combined-authority or county for an area ONS defines, ceremonial-county or historic-county for a county built from Ordnance Survey boundaries, or editorial-grouping for a curated grouping that is not an official area."},{"name":"definitionRevision","type":"number","required":true,"description":"The curated definition revision for this location."},{"name":"memberGeography","type":"string","required":true,"description":"The geography whose area codes define the location."},{"name":"memberCode","type":"string","required":true,"description":"The official code of one member area."},{"name":"validFrom","type":"string","required":false,"description":"The first date this definition is known to apply, when supplied by the curator."},{"name":"validTo","type":"string","required":false,"description":"The first date this definition is known not to apply, when supplied by the curator."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":150,"contentHash":"sha256:efb09517e5903a2e8019e19bdbc4c34f4ca5d7d84eb2222a306759f94b2e5148","href":"/v1/lookups/named-location-members?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":186,"contentHash":"sha256:9c48e70cae7d3007de704b5a30449eab660e20350f6fba788f13326d471d40d6","href":"/v1/lookups/named-location-members?format=ndjson"}}}],"note":"Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format."},"meta":{"nextCursor":null}}
+",
+      "bytes": 5822,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/lookups/areas-ward-2025-05": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/lookup-unavailable","title":"Lookup Unavailable","status":503,"detail":"The lookup's source artifact is unavailable or no longer renders the bytes its manifest lists."}
+",
+      "bytes": 215,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/lookups/areas-ward-2025-05?format=json": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be csv or ndjson.","code":"invalid_format"}
+",
+      "bytes": 164,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 400,
+    },
+    "GET /v1/lookups/unknown": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+      "bytes": 140,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
