@@ -1,0 +1,1145 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`terrain discovery keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/terrain/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/terrain/terrain-contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-d_2ukWfB542EkalgjjnaqciTvLUupb94wK3uGCzG02g"",
+      "vary: accept-encoding",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/terrain/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:16b73bb47d164675fb2ff9572c6a7148f3607427b56be9e511557feaa4e481c5","publicationRequirements":["product version and immutable content hash","coverage extent and any gaps","source publisher, licence and source/capture date","horizontal CRS and coordinate epoch where applicable","vertical CRS or datum, including the geoid model where applicable","value units and no-data convention","cell resolution or contour interval","terrain model (bare earth or surface) and processing method","interpolation or derivation method and parameters","uncertainty or stated accuracy"],"products":[{"id":"terrain-elevation","label":"Bare-earth elevation","kind":"raster","measurement":"Elevation of the terrain surface after buildings and vegetation are removed.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital terrain model (DTM), not surface elevation.","Point values will declare their interpolation method."]},{"id":"surface-elevation","label":"Surface elevation","kind":"raster","measurement":"Elevation of the first-return surface, including buildings and vegetation where the source represents them.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital surface model (DSM) and must never be substituted for bare-earth elevation."]},{"id":"terrain-slope","label":"Terrain slope","kind":"raster","measurement":"Maximum local rate of terrain elevation change.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The derivative algorithm and neighbourhood must be published."]},{"id":"terrain-aspect","label":"Terrain aspect","kind":"raster","measurement":"Direction of steepest terrain descent, clockwise from true north.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The convention for flat cells must be published."]},{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},{"id":"terrain-hillshade","label":"Terrain hillshade","kind":"raster","measurement":"A rendered terrain-relief product for visual context, not a measurement layer.","unit":"relative intensity","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The illumination azimuth, altitude, z-factor and rendering method must be published."]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3674,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d_2ukWfB542EkalgjjnaqciTvLUupb94wK3uGCzG02g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/%74errain-contours": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},"meta":{"nextCursor":null}}
+",
+    "bytes": 556,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OWWOaGjzLSemZ2QSsOTy_d-hDxKTejk0uzCWhteKsEQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/.": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:16b73bb47d164675fb2ff9572c6a7148f3607427b56be9e511557feaa4e481c5","publicationRequirements":["product version and immutable content hash","coverage extent and any gaps","source publisher, licence and source/capture date","horizontal CRS and coordinate epoch where applicable","vertical CRS or datum, including the geoid model where applicable","value units and no-data convention","cell resolution or contour interval","terrain model (bare earth or surface) and processing method","interpolation or derivation method and parameters","uncertainty or stated accuracy"],"products":[{"id":"terrain-elevation","label":"Bare-earth elevation","kind":"raster","measurement":"Elevation of the terrain surface after buildings and vegetation are removed.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital terrain model (DTM), not surface elevation.","Point values will declare their interpolation method."]},{"id":"surface-elevation","label":"Surface elevation","kind":"raster","measurement":"Elevation of the first-return surface, including buildings and vegetation where the source represents them.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital surface model (DSM) and must never be substituted for bare-earth elevation."]},{"id":"terrain-slope","label":"Terrain slope","kind":"raster","measurement":"Maximum local rate of terrain elevation change.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The derivative algorithm and neighbourhood must be published."]},{"id":"terrain-aspect","label":"Terrain aspect","kind":"raster","measurement":"Direction of steepest terrain descent, clockwise from true north.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The convention for flat cells must be published."]},{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},{"id":"terrain-hillshade","label":"Terrain hillshade","kind":"raster","measurement":"A rendered terrain-relief product for visual context, not a measurement layer.","unit":"relative intensity","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The illumination azimuth, altitude, z-factor and rendering method must be published."]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3674,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d_2ukWfB542EkalgjjnaqciTvLUupb94wK3uGCzG02g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/..": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"name":"UK Data Atlas API","openapi":"/v1/openapi.yaml","documentation":"/v1/docs","links":["/v1/openapi.yaml","/v1/docs","/v1/boundaries","/v1/map-resources","/v1/map-resources/{geography}/{release}","/v1/map-resources/{geography}/{release}.pmtiles","/v1/map-resources/{geography}/{release}/tiles.json","/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt","/v1/map-resources/{geography}/{release}/features","/v1/map-resources/{geography}/{release}/join/{measure-id}","/v1/boundary-releases","/v1/boundary-releases:resolve","/v1/boundary-releases:compare","/v1/boundary-releases/{geography}/{release}","/v1/boundary-releases/{geography}/{release}:join","/v1/documents/{document-id}.json","/v1/atlas-lookups/{lookup-id}.json","/v1/atlas-pages/{page-id}.json","/v1/relationships","/v1/terrain","/v1/terrain/{terrain-id}","/v1/terrain/elevation/point","/v1/coordinates:convert","/v1/datasets","/v1/datasets/{dataset-id}","/v1/measures","/v1/measures/{measure-id}","/v1/themes","/v1/modules","/v1/analysis-geographies","/v1/analysis:plan","/v1/data/{measure-id}","/v1/data/{measure-id}/series","/v1/data/{measure-id}/rankings","/v1/data/{measure-id}/change","/v1/places","/v1/postcodes/{postcode}","/v1/postcodes:batch","/v1/data/{measure-id}/compare","/v1/data/{measure-id}/value","/v1/data/{measure-id}/convert","/v1/areas","/v1/areas:contains","/v1/areas:containsBatch","/v1/areas:near","/v1/areas:intersects","/v1/areas:validate","/v1/areas/{geography}/{code}/similar","/v1/areas/{geography}/{release}/{code}","/v1/areas/{geography}/{release}/{code}/history","/v1/areas/{geography}/{release}/{code}/parents","/v1/areas/{geography}/{release}/{code}/children","/v1/areas/{geography}/{release}/{code}/children/geometry","/v1/areas/{geography}/{release}/{code}/relationships","/v1/areas/{geography}/{release}/{code}/neighbours","/v1/areas/{geography}/{release}/{code}/overlap","/v1/areas/{geography}/{release}/{code}/geometry","/v1/translations","/v1/attribution","/v1/locations","/v1/locations/alternatives","/v1/locations/{location-id}","/v1/locations/{location-id}/comparison","/v1/locations/{location-id}/geometry","/v1/locations/{location-id}/members","/v1/locations/{location-id}/parents","/v1/crosswalks","/v1/crosswalks/{crosswalk-id}","/v1/crosswalks/{crosswalk-id}:convert","/v1/crosswalks/{crosswalk-id}/records","/v1/data/{measure-id}/export","/v1/exports","/v1/exports/{export-id}","/v1/lookups","/v1/lookups/{lookup-id}","/v1/atlas-release"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2552,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-eBXAe0IxIGbCf5A2HGmsLcHHyu601dMnxYocnYBw-ZY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/Terrain-Contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/a%2Fb": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/terrain-contours": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},"meta":{"nextCursor":null}}
+",
+    "bytes": 556,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OWWOaGjzLSemZ2QSsOTy_d-hDxKTejk0uzCWhteKsEQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/terrain-contours/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},"meta":{"nextCursor":null}}
+",
+    "bytes": 556,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OWWOaGjzLSemZ2QSsOTy_d-hDxKTejk0uzCWhteKsEQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/terrain-contours/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/terrain-elevation?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"terrain-elevation","label":"Bare-earth elevation","kind":"raster","measurement":"Elevation of the terrain surface after buildings and vegetation are removed.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital terrain model (DTM), not surface elevation.","Point values will declare their interpolation method."]},"meta":{"nextCursor":null}}
+",
+    "bytes": 606,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-2w4XYzbAB8dE9UY1ZyuaQ2A1Vas0tq5JCmLh9h-S5gk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:16b73bb47d164675fb2ff9572c6a7148f3607427b56be9e511557feaa4e481c5","publicationRequirements":["product version and immutable content hash","coverage extent and any gaps","source publisher, licence and source/capture date","horizontal CRS and coordinate epoch where applicable","vertical CRS or datum, including the geoid model where applicable","value units and no-data convention","cell resolution or contour interval","terrain model (bare earth or surface) and processing method","interpolation or derivation method and parameters","uncertainty or stated accuracy"],"products":[{"id":"terrain-elevation","label":"Bare-earth elevation","kind":"raster","measurement":"Elevation of the terrain surface after buildings and vegetation are removed.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital terrain model (DTM), not surface elevation.","Point values will declare their interpolation method."]},{"id":"surface-elevation","label":"Surface elevation","kind":"raster","measurement":"Elevation of the first-return surface, including buildings and vegetation where the source represents them.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"notes":["This is a digital surface model (DSM) and must never be substituted for bare-earth elevation."]},{"id":"terrain-slope","label":"Terrain slope","kind":"raster","measurement":"Maximum local rate of terrain elevation change.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The derivative algorithm and neighbourhood must be published."]},{"id":"terrain-aspect","label":"Terrain aspect","kind":"raster","measurement":"Direction of steepest terrain descent, clockwise from true north.","unit":"degrees","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The convention for flat cells must be published."]},{"id":"terrain-contours","label":"Terrain contours","kind":"vector","measurement":"Lines of equal bare-earth elevation.","unit":"metres","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The contour interval, index-contour rule and generalisation must be published."]},{"id":"terrain-hillshade","label":"Terrain hillshade","kind":"raster","measurement":"A rendered terrain-relief product for visual context, not a measurement layer.","unit":"relative intensity","availability":{"status":"not-published","reason":"No versioned terrain source has been ingested and validated for this product yet."},"intendedCoverage":{"countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"]},"dependsOn":["terrain-elevation"],"notes":["The illumination azimuth, altitude, z-factor and rendering method must be published."]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3674,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d_2ukWfB542EkalgjjnaqciTvLUupb94wK3uGCzG02g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/terrain": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d_2ukWfB542EkalgjjnaqciTvLUupb94wK3uGCzG02g"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/terrain/missing": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/terrain/terrain-contours": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OWWOaGjzLSemZ2QSsOTy_d-hDxKTejk0uzCWhteKsEQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/terrain": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/terrain/elevation/point": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/terrain/missing": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/terrain/terrain-contours": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/terrain/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/terrain/terrain-contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/terrain/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/terrain/terrain-contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/terrain/missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/terrain/terrain-contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`terrain discovery keeps its refusal without a catalogue 1`] = `
+{
+  "GET /v1/terrain": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-data-unavailable","title":"Terrain Data Unavailable","status":503,"detail":"No versioned terrain source has been installed for this environment."}
+",
+    "bytes": 201,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/terrain-contours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`terrain points keep their HTTP responses with a local provider 1`] = `
+{
+  "GET /v1/terrain/Elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No terrain product matches that id."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/%70oint?x=115&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 862,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/point?x=&y=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&x=116&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 862,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 862,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-interpolation","title":"Invalid Interpolation","status":400,"detail":"interpolation must be bilinear or nearest."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=bilinear": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 862,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=cubic": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-interpolation","title":"Invalid Interpolation","status":400,"detail":"interpolation must be bilinear or nearest."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=nearest": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"nearest","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 861,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-T6Zs69xqe5yg1RzZWm4fynm1MHqrJ-bojma5NaMRHng"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"ok","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":30,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 862,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&version=missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-version-not-found","title":"Terrain Version Not Found","status":404,"detail":"No terrain source matches the requested version."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&version=remote-preview": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-version-not-found","title":"Terrain Version Not Found","status":404,"detail":"No terrain source matches the requested version."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/point?x=99&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":99,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"fixture-england-lidar-dtm","version":"2026-01-fixture","tileHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","contentHash":"sha256:ba5087937617b465c438e3ad0715946f3bb213432c86ef48587c438c96ae8ba4","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":10,"noData":null,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[100,200,130,230],"footprintHash":"sha256:3ce755819229fb8105346a5abb7d0b7e2debeed4ca102acaab89f218f3ae3f9f"},"width":3,"height":3,"origin":{"x":100,"y":200},"values":[10,20,30,20,30,40,30,40,50]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 877,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-_8Ldp09v_fA-G5LUok3D5o7FmcTWEHgs7x6eFMoxt1c"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=Infinity&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=abc&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sRBs2asVwID6Kj6BuXWMWNLAQNR5fq-eutYikCZ2SIk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+}
+`;
+
+exports[`terrain points keep their HTTP responses with a remote provider 1`] = `
+{
+  "GET /v1/terrain/Elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/elevation": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/elevation/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/elevation/%70oint?x=115&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-catalogue-unavailable","title":"Terrain Catalogue Unavailable","status":503,"detail":"Build the terrain catalogue before discovering terrain products."}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/terrain/elevation/point?x=&y=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&x=116&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-interpolation","title":"Invalid Interpolation","status":400,"detail":"interpolation must be bilinear or nearest."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=bilinear": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=cubic": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-interpolation","title":"Invalid Interpolation","status":400,"detail":"interpolation must be bilinear or nearest."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&interpolation=nearest": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"nearest","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 789,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-ztsVshOfMYFpnXuxFEttlfg7PrH-o-q8zuadAD7FUD0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&version=missing": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/terrain-version-not-found","title":"Terrain Version Not Found","status":404,"detail":"No terrain source matches the requested version."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/terrain/elevation/point?x=115&y=215&version=remote-preview": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=99&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":99,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:cca3285317de37d97f983f64f73b7d71f49f890a3d310f9def74b1edaeb03628","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 789,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-5VbNNI-SPxZif0pNaZm8qowX79B9mtKFAb4xmfwveUs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=Infinity&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?x=abc&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/terrain/elevation/point?y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+}
+`;
+
+exports[`terrain points keep their refusal when the remote provider fails 1`] = `
+{
+  "GET /v1/terrain/elevation/point?x=115&y=215": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"status":"outside_coverage","x":115,"y":215,"interpolation":"bilinear","unit":"metres","value":null,"source":{"id":"ea-lidar-composite-dtm-2m","version":"remote-preview","provenance":"remote-preview","crs":"EPSG:27700","horizontalDatum":"OSGB36","horizontalTransformation":"OSTN15","verticalDatum":"ODN","verticalModel":"OSGM15","resolutionMetres":2,"noData":-3.4028235e+38,"uncertainty":{"metric":"rmse","valueMetres":0.15},"coverage":{"kind":"bbox","bbox":[80000,4000,658081.8635,666000],"footprintHash":"fixture-footprint"},"tileHash":"sha256:3ebe1c24556bc1aaadf48318a6a1fbc0556390d86ad44f7192d00c35bc7e049f","contentHash":"sha256:dcae9f7b6a6314ffd11412e2a799b2b27a335f4b44e0663910d8d9defe999d21"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 790,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SnR5mNtPRJl6hz0LHeT-n8HzKHS2DXAQEDUg_QyWbP0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/terrain/elevation/point?x=abc&y=215": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-terrain-point","title":"Invalid Terrain Point","status":400,"detail":"x and y must be finite EPSG:27700 coordinates."}
+",
+    "bytes": 173,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+}
+`;
