@@ -1,6 +1,5 @@
 export * from "./catalogueLoader.ts";
 export * from "./areaNotFound.ts";
-export * from "./analysisGeographyRoutes.ts";
 export * from "./governanceRoutes.ts";
 export * from "./operationTemplates.ts";
 export * from "./problemCodes.ts";
