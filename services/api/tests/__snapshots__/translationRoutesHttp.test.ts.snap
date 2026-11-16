@@ -1,0 +1,757 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`attribution is unavailable before the catalogue is built 1`] = `
+{
+  "GET /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and crosswalk inventory before generating attribution."}
+",
+    "bytes": 206,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and crosswalk inventory before generating attribution."}
+",
+    "bytes": 206,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "HEAD /v1/attribution?dataset=population": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`attribution keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated."}
+",
+    "bytes": 224,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/attribution/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated."}
+",
+    "bytes": 224,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/attribution/extra?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated."}
+",
+    "bytes": 224,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/attribution?boundaryRelease=constituency/2010": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches boundaryRelease=constituency/2010."}
+",
+    "bytes": 167,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?boundaryRelease=nowhere/2020": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches boundaryRelease=nowhere/2020."}
+",
+    "bytes": 162,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?crosswalk=constituency-2010-to-2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches crosswalk=constituency-2010-to-2024."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?crosswalk=unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches crosswalk=unknown."}
+",
+    "bytes": 151,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?dataset=%E0%A4%A": {
+    "body": "sha256:d86d82d4a653b2e73f3c01d5ff9047e8c3808c4de54f00a68c762c0a85156aaa",
+    "bytes": 147,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?dataset=population": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"atlasRelease":{"id":"sha256:atlas-release","href":"/v1/atlas-release"},"resources":[{"kind":"dataset","id":"population","label":"Population","href":"/v1/datasets/population","publisher":"ONS","sourceUrl":"https://example.com/population","licence":{"name":"Open Government Licence"}}],"licences":[{"name":"Open Government Licence"}],"text":"Data: Population — ONS.\\nLicence: Open Government Licence.\\nCompiled by the UK Data Atlas, release sha256:atlas-release.","note":"Licence names are reproduced as the publisher states them and are not interpreted here. Where several apply, check each before reusing the combined work."},"meta":{"nextCursor":null}}
+",
+    "bytes": 722,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-NbA7pv3jFIvFCKFO9SWvdyS1TanoZIlozeM1JoqfD3A"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/attribution?dataset=population&boundaryRelease=constituency/2010&crosswalk=constituency-2010-to-2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches boundaryRelease=constituency/2010, crosswalk=constituency-2010-to-2024."}
+",
+    "bytes": 204,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?dataset=population&measure=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches measure=population."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?dataset=population&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"atlasRelease":{"id":"sha256:atlas-release","href":"/v1/atlas-release"},"resources":[{"kind":"dataset","id":"population","label":"Population","href":"/v1/datasets/population","publisher":"ONS","sourceUrl":"https://example.com/population","licence":{"name":"Open Government Licence"}}],"licences":[{"name":"Open Government Licence"}],"text":"Data: Population — ONS.\\nLicence: Open Government Licence.\\nCompiled by the UK Data Atlas, release sha256:atlas-release.","note":"Licence names are reproduced as the publisher states them and are not interpreted here. Where several apply, check each before reusing the combined work."},"meta":{"nextCursor":null}}
+",
+    "bytes": 722,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-NbA7pv3jFIvFCKFO9SWvdyS1TanoZIlozeM1JoqfD3A"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/attribution?dataset=unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches dataset=unknown."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?measure=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches measure=population."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?measure=population&measure=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches measure=population."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?measure=unknown": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published resource matches measure=unknown."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/attribution?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated."}
+",
+    "bytes": 224,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/attribution?dataset=population": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-NbA7pv3jFIvFCKFO9SWvdyS1TanoZIlozeM1JoqfD3A"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/attribution": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/attribution?dataset=population": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/attribution": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/attribution?dataset=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`translations keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/translations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/translations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion."}
+",
+    "bytes": 245,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/translations%2F?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/translations/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion."}
+",
+    "bytes": 245,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/translations/extra?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/translations?from=%E0%A4%A&code=E1&to=a/b&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion."}
+",
+    "bytes": 245,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/translations?from=constituency%2F2010&code=E14000001&to=constituency%2F2024-07-uk-bgc&purpose=identity": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"source":{"geography":"constituency","boundaryRelease":"2010","code":"E14000001"},"target":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"purpose":"identity","paths":[{"id":"constituency-2010-to-2024/forward/identity","purpose":"identity","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"constituency-2010-to-2024","direction":"forward","method":"official-lookup","purpose":"identity"}]}],"matches":[{"crosswalk":{"id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"direction":"forward"},"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1014,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-is3_IQKYpSaotg9kRnVjZpZQOkMQB1Bu6bvDWldtAuo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/translations?from=constituency&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion."}
+",
+    "bytes": 245,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/conversion-unavailable","title":"Conversion Unavailable","status":422,"detail":"No published conversion path supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity."}
+",
+    "bytes": 275,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=apportion": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/conversion-unavailable","title":"Conversion Unavailable","status":422,"detail":"No published conversion path supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity."}
+",
+    "bytes": 275,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"source":{"geography":"constituency","boundaryRelease":"2010","code":"E14000001"},"target":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"purpose":"identity","paths":[{"id":"constituency-2010-to-2024/forward/identity","purpose":"identity","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"constituency-2010-to-2024","direction":"forward","method":"official-lookup","purpose":"identity"}]}],"matches":[{"crosswalk":{"id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"direction":"forward"},"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1014,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-is3_IQKYpSaotg9kRnVjZpZQOkMQB1Bu6bvDWldtAuo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity&code=E14000002": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"source":{"geography":"constituency","boundaryRelease":"2010","code":"E14000001"},"target":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"purpose":"identity","paths":[{"id":"constituency-2010-to-2024/forward/identity","purpose":"identity","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"constituency-2010-to-2024","direction":"forward","method":"official-lookup","purpose":"identity"}]}],"matches":[{"crosswalk":{"id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"direction":"forward"},"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1014,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-is3_IQKYpSaotg9kRnVjZpZQOkMQB1Bu6bvDWldtAuo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"source":{"geography":"constituency","boundaryRelease":"2010","code":"E14000001"},"target":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"purpose":"identity","paths":[{"id":"constituency-2010-to-2024/forward/identity","purpose":"identity","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"constituency-2010-to-2024","direction":"forward","method":"official-lookup","purpose":"identity"}]}],"matches":[{"crosswalk":{"id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"direction":"forward"},"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1014,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-is3_IQKYpSaotg9kRnVjZpZQOkMQB1Bu6bvDWldtAuo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=membership": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/conversion-unavailable","title":"Conversion Unavailable","status":422,"detail":"No published conversion path supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity."}
+",
+    "bytes": 275,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion."}
+",
+    "bytes": 245,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/translations?from=constituency/2010&code=E99999999&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/conversion-unavailable","title":"Conversion Unavailable","status":422,"detail":"No published conversion path supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity."}
+",
+    "bytes": 275,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/translations?from=constituency/2024-07-uk-bgc&code=E14001001&to=constituency/2010&purpose=identity": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"source":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc","code":"E14001001"},"target":{"geography":"constituency","boundaryRelease":"2010"},"purpose":"identity","paths":[{"id":"constituency-2010-to-2024/reverse/identity","purpose":"identity","from":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"to":{"geography":"constituency","boundaryRelease":"2010"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"constituency-2010-to-2024","direction":"reverse","method":"official-lookup","purpose":"identity"}]}],"matches":[{"crosswalk":{"id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"direction":"reverse"},"source":{"code":"E14001001","labels":["New seat A"]},"targets":[{"code":"E14000001","labels":["Old seat"]}]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1014,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MiwVmWaB6V750CQ1xi-EiW_Egg80mCNkZ2pioyNGINE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-is3_IQKYpSaotg9kRnVjZpZQOkMQB1Bu6bvDWldtAuo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/translations": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/translations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/translations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/translations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
