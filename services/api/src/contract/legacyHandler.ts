@@ -2,8 +2,10 @@ import type { FastifyRequest } from "fastify";
 import type {
 	ApiResponse,
 	RouteContextFor,
+	RouteDispatchContext,
 	RouteRequestFor,
 } from "../runtime/index.ts";
+import { route } from "../routes";
 
 /**
  * Run a handler written for the request shape the old dispatcher builds from
@@ -33,3 +35,32 @@ export const legacyHandler =
 		if (!answer) throw new Error(`No response for ${request.url}`);
 		return answer;
 	};
+
+/** What a route that reads the geography services is registered with. */
+export type ServiceContext = RouteContextFor<never> &
+	Partial<RouteDispatchContext>;
+
+/**
+ * Answer through the dispatcher's own `route`, for a route that reads the
+ * geography services or depends on the retired-id and dimension layers that
+ * run before its handler. A contract-only app has no services and never calls
+ * it.
+ */
+export const legacyRoute = (context: ServiceContext) => {
+	let services: RouteDispatchContext | undefined;
+	return (request: FastifyRequest): ApiResponse => {
+		if (
+			!context.geographyResolver ||
+			!context.areaValidation ||
+			!context.postcodes
+		)
+			throw new Error("Geography services are unavailable");
+		services ??= {
+			...context,
+			geographyResolver: context.geographyResolver,
+			areaValidation: context.areaValidation,
+			postcodes: context.postcodes,
+		} as RouteDispatchContext;
+		return route("GET", request.url, services);
+	};
+};
