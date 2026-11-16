@@ -61,7 +61,7 @@ import {
 	handleReleaseJoinRoutes,
 	handleReleaseJoinRoutesAsync,
 	joinRelease,
-} from "./releaseJoinRoutes";
+} from "./boundaries/releaseJoinRoutes";
 import {
 	canonicalGeographyRequest,
 	canonicalMeasureRequest,

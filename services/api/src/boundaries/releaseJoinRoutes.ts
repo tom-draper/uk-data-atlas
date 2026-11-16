@@ -1,21 +1,21 @@
 import { readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { GEOJSON_TIERS } from "@uk-data-atlas/map-tiles/node";
-import { areaNotFound } from "./runtime/index.ts";
+import { areaNotFound } from "../runtime/index.ts";
 import type { FullDetailSource } from "@uk-data-atlas/geometry";
 import type { ValidatedValue } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import { readPostedRows, type RowValue } from "./requestRows";
+import { readPostedRows, type RowValue } from "../requestRows";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./runtime/index.ts";
-import type { RouteRequest } from "./runtime/index.ts";
-import { choices, readChoice } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+} from "../runtime/index.ts";
+import type { RouteRequest } from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 /**
  * Join a caller's own rows to a boundary release: send a column of codes or
