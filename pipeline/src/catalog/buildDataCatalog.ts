@@ -6,16 +6,14 @@ import {
 	compileDataCatalog,
 	type DataCatalogInputs,
 } from "./compileDataCatalog.ts";
-import {
-	assertMeasureDimensions,
-	observationArtifactName,
-} from "@uk-data-atlas/measures";
+import { assertMeasureDimensions } from "@uk-data-atlas/measures";
 import {
 	artifactDirectory,
 	compiledObservationDirectory,
 } from "@uk-data-atlas/atlas-db";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/measures";
 import { catalogueWithSeries } from "./catalogueSeries.ts";
+import { validateObservationSeries } from "./observationSeries.ts";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
@@ -120,50 +118,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		...lifeExpectancyObservations,
 		...electionObservations,
 	];
-	function* observationEntries(): Generator<string> {
-		for (const observations of observationArtifacts) {
-			const measure = catalog.measures.find(
-				(candidate) => candidate.id === observations.measureId,
-			);
-			const source = measure?.sources.find(
-				(candidate) =>
-					candidate.sourceGeography.type ===
-						observations.sourceGeography.type &&
-					candidate.sourceGeography.boundaryYear ===
-						observations.sourceGeography.boundaryYear,
-			);
-			if (!measure || !source) {
-				throw new Error(
-					`No catalogue source matches ${observations.measureId} on ${observations.sourceGeography.type} ${observations.sourceGeography.boundaryYear}.`,
-				);
-			}
-			const name = observationArtifactName(
-				observations.measureId,
-				source,
-			);
-			yield name;
-		}
-		for (const table of censusTables) {
-			yield table.id;
-		}
-	}
-	const required = new Set(
-		catalog.measures.flatMap((measure) =>
-			measure.sources.map((source) =>
-				observationArtifactName(measure.id, source),
-			),
-		),
-	);
-	for (const name of observationEntries()) {
-		if (!required.delete(name))
-			throw new Error(
-				`Unexpected or duplicate observation artifact: ${name}`,
-			);
-	}
-	if (required.size)
-		throw new Error(
-			`Missing observation artifacts: ${[...required].join(", ")}`,
-		);
+	validateObservationSeries(catalog, observationArtifacts, censusTables);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	writeFileSync(
 		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
