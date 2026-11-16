@@ -1,4 +1,5 @@
 import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
+import type { Series } from "@uk-data-atlas/measures";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 import { describeCandidate } from "./placeResponses";
@@ -159,27 +160,34 @@ export const areaNamedBy = ({
 export const namedAreaRefusal = ({
 	parsedUrl,
 	measure,
+	publicId = measure.id,
+	series,
 	parameter,
 	text,
 	named,
 }: {
 	parsedUrl: URL;
 	measure: Measure;
+	publicId?: string;
+	series?: Series;
 	parameter: string;
 	text: string | null;
 	named: NamedArea | undefined;
 }): ApiResponse | undefined => {
-	if (named?.kind === "unknown")
+	if (named?.kind === "unknown") {
+		const query = new URLSearchParams({ place: "", ...series?.dimensions });
+		if (series?.datasetId) query.set("datasetId", series.datasetId);
 		return problem(
 			404,
 			"Unknown Place",
-			`"${text}" names no area ${measure.id} is published for. It is published for ${[...new Set(measure.sources.map((source) => source.sourceGeography.type))].join(", ")}; GET /v1/places?q= finds an area's code, and /v1/data/${measure.id}/value?place= answers a larger place where the measure can be summed.`,
+			`"${text}" names no area ${publicId} is published for. It is published for ${[...new Set(measure.sources.map((source) => source.sourceGeography.type))].join(", ")}; GET /v1/places?q= finds an area's code, and /v1/data/${publicId}/value?${query} answers a larger place where the measure can be summed.`,
 		);
+	}
 	if (named?.kind !== "ambiguous") return undefined;
 	return problem(
 		409,
 		"Ambiguous Place",
-		`"${text}" names ${named.candidates.length} areas ${measure.id} is published for. Ask again with the code of the one meant.`,
+		`"${text}" names ${named.candidates.length} areas ${publicId} is published for. Ask again with the code of the one meant.`,
 		{
 			code: "ambiguous_place",
 			choices: named.candidates.map((candidate) => {
