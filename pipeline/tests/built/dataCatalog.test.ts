@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
+import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 
 const dataset = (
 	output: string,
@@ -1931,9 +1932,19 @@ test("publishes a single-period indicator and names the authorities it has no va
 		const measure = (id: string) =>
 			result.catalog.measures.find((candidate) => candidate.id === id);
 		const records = (id: string) =>
-			result.indicatorObservations.find(
-				(artifact) => artifact.measureId === id,
-			)?.periods;
+			result.indicatorObservations.find((artifact) => {
+				const indicator = DATASET_DECLARATIONS.flatMap(
+					(declaration) => declaration.catalogue?.indicators ?? [],
+				).find((candidate) => candidate.id === id);
+				return (
+					indicator &&
+					artifact.measureId ===
+						measureSeriesKey({
+							measure: indicator.measure,
+							dimensions: indicator.members,
+						})
+				);
+			})?.periods;
 
 		assert.deepEqual(records("broadband-superfast-availability"), [
 			{
