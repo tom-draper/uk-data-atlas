@@ -11,6 +11,8 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/atlas-lookups/area-lineage.json",
 		"/v1/atlas-pages/places-index.json",
 		"/v1/documents/a%2Fb.json",
+		"/v1/exports/total-jobs-observations",
+		"/v1/lookups/areas-ward-2025-05",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
@@ -25,6 +27,9 @@ test("detail paths the dispatcher must keep are not recognised", () => {
 		"/v1/documents/geography-inventory",
 		"/v1/documents/geography-inventory.json/",
 		"/v1/documents/a/b.json",
+		"/v1/exports",
+		"/v1/lookups/areas-ward-2025-05/",
+		"/v1/exports/..",
 		// A dot segment, a malformed escape or an id past Fastify's limit.
 		"/v1/measures/..",
 		"/v1/measures/%E0%A4%A",
