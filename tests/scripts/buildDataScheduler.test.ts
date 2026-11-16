@@ -300,7 +300,11 @@ test("--jobs 1 runs the real graph in plan order and logs exactly as a default b
 	);
 	// Timings differ between runs, so compare the lines before the ranking.
 	const head = (lines: string[]) =>
-		lines.slice(0, lines.indexOf("Slowest stages:"));
+		lines
+			.slice(0, lines.indexOf("Slowest stages:"))
+			.map((line) =>
+				line.replace(/(Data build done in )\S+/, "$1<elapsed>"),
+			);
 	assert.deepEqual(head(single.log), head(defaults.log));
 	// One at a time also means no stage name prefix in the output.
 	assert.ok(!single.log.some((line) => line.startsWith("Running up to")));

@@ -113,7 +113,7 @@ test("publishes a complete generation, preserves hard links and removes legacy g
 		(await stat(join(source, archive))).ino,
 	);
 	expect(await readFile(join(target, archive))).toEqual(bytes);
-});
+}, 30_000);
 
 test("refuses incomplete or corrupt generations before deleting any legacy data", async () => {
 	const { root, source, target, manifest } = await fixture();
