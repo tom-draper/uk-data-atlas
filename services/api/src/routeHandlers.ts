@@ -45,7 +45,7 @@ import { handleAreaNeighbourRoutes } from "./areas/areaNeighbourRoutes";
 import { handleAreaOverlapRoutes } from "./areas/areaOverlapRoutes";
 import { handleAreaGeometryRoutes } from "./areas/areaGeometryRoutes";
 import { handleSimilarAreaRoutes } from "./areas/similarAreaRoutes";
-import { handleTranslationRoutes } from "./translationRoutes";
+import { handleTranslationRoutes } from "./crosswalks/translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleLocationRoutes } from "./places/locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalks/crosswalkRoutes";
