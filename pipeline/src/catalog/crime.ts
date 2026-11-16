@@ -1,6 +1,7 @@
 import { type DatasetInput, readDatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { crime } from "@uk-data-atlas/datasets";
 
 /**
  * Recorded crime, on the geography it is published for. Table C2 counts
@@ -13,20 +14,35 @@ export const compileCrime = (
 	manifest: CatalogManifest,
 	crimePath: DatasetInput,
 ): CompiledMeasure[] => {
+	const offences = crime.statistics!.dimensions!.find(
+		(dimension) => dimension.slug === "offence",
+	)!.members!;
 	const offence = (
 		id: string,
 		label: string,
 		field: string,
 		note: string | undefined,
-	): Indicator => ({
-		id,
-		label,
-		field,
-		valueKind: "count",
-		unit: "offences",
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		notes: note ? [note] : [],
-	});
+	): Indicator => {
+		const member = offences.find((candidate) => candidate.key === field);
+		if (!member) throw new Error(`No crime offence declared for ${field}`);
+		return {
+			id,
+			series: {
+				measure: "recorded-crimes",
+				dimensions: { offence: member.code ?? member.key },
+			},
+			label,
+			field,
+			valueKind: "count",
+			unit: "offences",
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: true,
+			},
+			notes: note ? [note] : [],
+		};
+	};
 	const crimeEdition = Object.values(
 		JSON.parse(readDatasetInput(crimePath)) as Record<
 			string,

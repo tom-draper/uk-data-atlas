@@ -2154,17 +2154,38 @@ test("publishes recorded crime by community safety partnership", () => {
 			result.indicatorObservations.find(
 				(artifact) => artifact.measureId === id,
 			)?.periods;
-		assert.deepEqual(records("crime-total"), [
-			{
-				period: "year-ending-2026-03",
-				records: [
-					{ areaCode: "E22000100", value: 20000, status: "observed" },
-					{ areaCode: "E22000362", value: 10997, status: "observed" },
-				],
-			},
-		]);
+		assert.deepEqual(
+			records(
+				measureSeriesKey({
+					measure: "recorded-crimes",
+					dimensions: { offence: "total" },
+				}),
+			),
+			[
+				{
+					period: "year-ending-2026-03",
+					records: [
+						{
+							areaCode: "E22000100",
+							value: 20000,
+							status: "observed",
+						},
+						{
+							areaCode: "E22000362",
+							value: 10997,
+							status: "observed",
+						},
+					],
+				},
+			],
+		);
 		assert.equal(
-			records("crime-public-order-offences")?.[0]?.records[0]?.value,
+			records(
+				measureSeriesKey({
+					measure: "recorded-crimes",
+					dimensions: { offence: "public-order-offences" },
+				}),
+			)?.[0]?.records[0]?.value,
 			-1,
 		);
 	} finally {
