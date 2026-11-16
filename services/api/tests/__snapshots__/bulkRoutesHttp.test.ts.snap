@@ -76,7 +76,45 @@ exports[`exports keep their HTTP responses 1`] = `
     ],
     "status": 400,
   },
+  "GET /v1/exports/.": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:export-manifest","dataCatalogHash":"sha256:data-catalog","fields":{},"datasets":{},"exports":[{"id":"small-area-fixture","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"small-area-fixture","contentHash":"sha256:small-area-observations","bytes":123,"href":"/v1/exports/small-area-fixture","recordCount":2,"recordCountByPeriod":{"2019":2},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/fixture.csv","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=csv"},{"format":"parquet","artifact":"exports/fixture.parquet","bytes":64,"contentHash":"sha256:download","href":"/v1/exports/small-area-fixture?format=parquet"}]},{"id":"unbuilt-export","measureId":"small-area-fixture","datasetId":"small-area","periods":["2019"],"sourceGeography":{"type":"lsoa","codeYear":2011},"format":"json","artifact":"unbuilt-export","contentHash":"sha256:unbuilt","bytes":1,"href":"/v1/exports/unbuilt-export","recordCount":0,"recordCountByPeriod":{},"schema":{"version":1,"layout":"periods","recordType":"numeric","fields":[]},"provenance":{"measure":"/v1/measures/small-area-fixture","datasets":[]},"formats":[{"format":"csv","artifact":"exports/missing.csv","bytes":64,"contentHash":"sha256:missing","href":"/v1/exports/unbuilt-export?format=csv"}]}],"note":"Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1857,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4iY_l-HRl56zs_dhlHF-jhtmn6d5QD4zwVqAMeWE3VA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/exports/..": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"name":"UK Data Atlas API","openapi":"/v1/openapi.yaml","documentation":"/v1/docs","links":["/v1/openapi.yaml","/v1/docs","/v1/boundaries","/v1/map-resources","/v1/map-resources/{geography}/{release}","/v1/map-resources/{geography}/{release}.pmtiles","/v1/map-resources/{geography}/{release}/tiles.json","/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt","/v1/map-resources/{geography}/{release}/features","/v1/map-resources/{geography}/{release}/join/{measure-id}","/v1/boundary-releases","/v1/boundary-releases:resolve","/v1/boundary-releases:compare","/v1/boundary-releases/{geography}/{release}","/v1/boundary-releases/{geography}/{release}:join","/v1/documents/{document-id}.json","/v1/atlas-lookups/{lookup-id}.json","/v1/atlas-pages/{page-id}.json","/v1/relationships","/v1/terrain","/v1/terrain/{terrain-id}","/v1/terrain/elevation/point","/v1/coordinates:convert","/v1/datasets","/v1/datasets/{dataset-id}","/v1/measures","/v1/measures/{measure-id}","/v1/themes","/v1/modules","/v1/analysis-geographies","/v1/analysis:plan","/v1/data/{measure-id}","/v1/data/{measure-id}/series","/v1/data/{measure-id}/rankings","/v1/data/{measure-id}/change","/v1/places","/v1/postcodes/{postcode}","/v1/postcodes:batch","/v1/data/{measure-id}/compare","/v1/data/{measure-id}/value","/v1/data/{measure-id}/convert","/v1/areas","/v1/areas:contains","/v1/areas:containsBatch","/v1/areas:near","/v1/areas:intersects","/v1/areas:validate","/v1/areas/{geography}/{code}/similar","/v1/areas/{geography}/{release}/{code}","/v1/areas/{geography}/{release}/{code}/history","/v1/areas/{geography}/{release}/{code}/parents","/v1/areas/{geography}/{release}/{code}/children","/v1/areas/{geography}/{release}/{code}/children/geometry","/v1/areas/{geography}/{release}/{code}/relationships","/v1/areas/{geography}/{release}/{code}/neighbours","/v1/areas/{geography}/{release}/{code}/overlap","/v1/areas/{geography}/{release}/{code}/geometry","/v1/translations","/v1/attribution","/v1/locations","/v1/locations/alternatives","/v1/locations/{location-id}","/v1/locations/{location-id}/comparison","/v1/locations/{location-id}/geometry","/v1/locations/{location-id}/members","/v1/locations/{location-id}/parents","/v1/crosswalks","/v1/crosswalks/{crosswalk-id}","/v1/crosswalks/{crosswalk-id}:convert","/v1/crosswalks/{crosswalk-id}/records","/v1/data/{measure-id}/export","/v1/exports","/v1/exports/{export-id}","/v1/lookups","/v1/lookups/{lookup-id}","/v1/atlas-release"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2552,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-eBXAe0IxIGbCf5A2HGmsLcHHyu601dMnxYocnYBw-ZY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
   "GET /v1/exports/Small-Area-Fixture": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/exports/a%2Fb": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk export matches that identity."}
 ",
     "bytes": 140,
@@ -723,7 +761,45 @@ exports[`lookups keep their HTTP responses 1`] = `
     ],
     "status": 400,
   },
+  "GET /v1/lookups/.": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:1358100b459e59417d42bd233facdfba4bb4ffcc2d540902983e7e8991de2fc1","lookups":[{"id":"areas-ward-2025-05","kind":"area-identities","title":"Area identities, ward 2025-05","source":{"artifact":"areas/ward/2025-05.json","contentHash":"sha256:wards"},"columns":[{"name":"geography","type":"string","required":true,"description":"The geography the release publishes."},{"name":"boundaryRelease","type":"string","required":true,"description":"The boundary release."},{"name":"code","type":"string","required":true,"description":"The official area code."},{"name":"name","type":"string","required":true,"description":"The area's name in the release."},{"name":"aliases","type":"string[]","required":false,"description":"Other names the release gives the area, such as a Welsh name."}],"rowCount":2,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":137,"contentHash":"sha256:77173b2b4e65c89310a5518b51d031da612b0214c4470ede12c8fd1eb2e17239","href":"/v1/lookups/areas-ward-2025-05?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":225,"contentHash":"sha256:3ba7a63a2ae024a26c172e294011bb9cb0c56b3ce2bbba8137387c70eb2c53bc","href":"/v1/lookups/areas-ward-2025-05?format=ndjson"}}},{"id":"crosswalk-ward-to-lad-area-overlap","kind":"crosswalk","title":"Crosswalk, ward-to-lad-area-overlap","source":{"artifact":"crosswalks/ward-to-lad-area-overlap.json","contentHash":"sha256:overlap"},"columns":[{"name":"crosswalkId","type":"string","required":true,"description":"The crosswalk the row belongs to."},{"name":"method","type":"string","required":true,"description":"How the relationship was established, such as clean-containment or area-overlap."},{"name":"fromGeography","type":"string","required":true,"description":"The source side's geography."},{"name":"fromBoundaryRelease","type":"string","required":true,"description":"The source side's release."},{"name":"sourceCode","type":"string","required":true,"description":"The source area's code."},{"name":"sourceLabels","type":"string[]","required":true,"description":"The source area's names in the input."},{"name":"toGeography","type":"string","required":true,"description":"The target side's geography."},{"name":"toBoundaryRelease","type":"string","required":true,"description":"The target side's release."},{"name":"targetCode","type":"string","required":true,"description":"The target area's code."},{"name":"targetLabels","type":"string[]","required":true,"description":"The target area's names in the input."},{"name":"weight","type":"number","required":true,"description":"The share of the source to apportion to this target, where the crosswalk provides weights."},{"name":"sourceShare","type":"number","required":true,"description":"The share of the source area inside the target, for a weighted overlap."},{"name":"targetShare","type":"number","required":true,"description":"The share of the target area inside the source, for a weighted overlap."},{"name":"overlapAreaM2","type":"number","required":true,"description":"The overlapping area in square metres, where available for a weighted overlap."},{"name":"population","type":"number","required":false,"description":"The people in the overlap, from the crosswalk's population building blocks or postcodes."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":313,"contentHash":"sha256:bf9d24528463b5b850b0770100ef77ceaf6704163e037f0f6489b56ea5567f71","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":373,"contentHash":"sha256:1122553c1e1db39b8f5eced585065efcfb130507376b30fea9debef9c93f8d09","href":"/v1/lookups/crosswalk-ward-to-lad-area-overlap?format=ndjson"}}},{"id":"named-location-members","kind":"named-location-members","title":"Named location membership","source":{"artifact":"named-locations.json","contentHash":"sha256:locations"},"columns":[{"name":"locationId","type":"string","required":true,"description":"The named location's id."},{"name":"label","type":"string","required":true,"description":"The named location's label."},{"name":"kind","type":"string","required":true,"description":"How the location is defined: country, region, combined-authority or county for an area ONS defines, ceremonial-county or historic-county for a county built from Ordnance Survey boundaries, or editorial-grouping for a curated grouping that is not an official area."},{"name":"definitionRevision","type":"number","required":true,"description":"The curated definition revision for this location."},{"name":"memberGeography","type":"string","required":true,"description":"The geography whose area codes define the location."},{"name":"memberCode","type":"string","required":true,"description":"The official code of one member area."},{"name":"validFrom","type":"string","required":false,"description":"The first date this definition is known to apply, when supplied by the curator."},{"name":"validTo","type":"string","required":false,"description":"The first date this definition is known not to apply, when supplied by the curator."}],"rowCount":1,"formats":{"csv":{"contentType":"text/csv; charset=utf-8","bytes":150,"contentHash":"sha256:efb09517e5903a2e8019e19bdbc4c34f4ca5d7d84eb2222a306759f94b2e5148","href":"/v1/lookups/named-location-members?format=csv"},"ndjson":{"contentType":"application/x-ndjson; charset=utf-8","bytes":186,"contentHash":"sha256:9c48e70cae7d3007de704b5a30449eab660e20350f6fba788f13326d471d40d6","href":"/v1/lookups/named-location-members?format=ndjson"}}}],"note":"Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format."},"meta":{"nextCursor":null}}
+",
+    "bytes": 5822,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pX3kaEWEtmrwpK06O-nkDQL38_zzgdbHPmd4iiHfACc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/lookups/..": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"name":"UK Data Atlas API","openapi":"/v1/openapi.yaml","documentation":"/v1/docs","links":["/v1/openapi.yaml","/v1/docs","/v1/boundaries","/v1/map-resources","/v1/map-resources/{geography}/{release}","/v1/map-resources/{geography}/{release}.pmtiles","/v1/map-resources/{geography}/{release}/tiles.json","/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt","/v1/map-resources/{geography}/{release}/features","/v1/map-resources/{geography}/{release}/join/{measure-id}","/v1/boundary-releases","/v1/boundary-releases:resolve","/v1/boundary-releases:compare","/v1/boundary-releases/{geography}/{release}","/v1/boundary-releases/{geography}/{release}:join","/v1/documents/{document-id}.json","/v1/atlas-lookups/{lookup-id}.json","/v1/atlas-pages/{page-id}.json","/v1/relationships","/v1/terrain","/v1/terrain/{terrain-id}","/v1/terrain/elevation/point","/v1/coordinates:convert","/v1/datasets","/v1/datasets/{dataset-id}","/v1/measures","/v1/measures/{measure-id}","/v1/themes","/v1/modules","/v1/analysis-geographies","/v1/analysis:plan","/v1/data/{measure-id}","/v1/data/{measure-id}/series","/v1/data/{measure-id}/rankings","/v1/data/{measure-id}/change","/v1/places","/v1/postcodes/{postcode}","/v1/postcodes:batch","/v1/data/{measure-id}/compare","/v1/data/{measure-id}/value","/v1/data/{measure-id}/convert","/v1/areas","/v1/areas:contains","/v1/areas:containsBatch","/v1/areas:near","/v1/areas:intersects","/v1/areas:validate","/v1/areas/{geography}/{code}/similar","/v1/areas/{geography}/{release}/{code}","/v1/areas/{geography}/{release}/{code}/history","/v1/areas/{geography}/{release}/{code}/parents","/v1/areas/{geography}/{release}/{code}/children","/v1/areas/{geography}/{release}/{code}/children/geometry","/v1/areas/{geography}/{release}/{code}/relationships","/v1/areas/{geography}/{release}/{code}/neighbours","/v1/areas/{geography}/{release}/{code}/overlap","/v1/areas/{geography}/{release}/{code}/geometry","/v1/translations","/v1/attribution","/v1/locations","/v1/locations/alternatives","/v1/locations/{location-id}","/v1/locations/{location-id}/comparison","/v1/locations/{location-id}/geometry","/v1/locations/{location-id}/members","/v1/locations/{location-id}/parents","/v1/crosswalks","/v1/crosswalks/{crosswalk-id}","/v1/crosswalks/{crosswalk-id}:convert","/v1/crosswalks/{crosswalk-id}/records","/v1/data/{measure-id}/export","/v1/exports","/v1/exports/{export-id}","/v1/lookups","/v1/lookups/{lookup-id}","/v1/atlas-release"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2552,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-eBXAe0IxIGbCf5A2HGmsLcHHyu601dMnxYocnYBw-ZY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
   "GET /v1/lookups/Areas-Ward-2025-05": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
+",
+    "bytes": 140,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/lookups/a%2Fb": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No bulk lookup matches that identity."}
 ",
     "bytes": 140,
