@@ -15,6 +15,12 @@ const detailRoutes: {
 		accepts: ([, release]) =>
 			!release!.endsWith(":join") || release!.length <= 5,
 	},
+	{
+		pattern: /^\/v1\/crosswalks\/([^/]+)$/,
+		// A crosswalk ending in `:convert` is the conversion, not a crosswalk.
+		accepts: ([id]) => !id!.endsWith(":convert"),
+	},
+	{ pattern: /^\/v1\/crosswalks\/([^/]+)\/records$/ },
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
 	{ pattern: /^\/v1\/(?:exports|lookups|terrain)\/([^/]+)$/ },
 	// Fastify takes the whole segment, `.json` included, as one parameter.
@@ -50,6 +56,7 @@ const postRoutes: { pattern: RegExp }[] = [
 	// A release is not itself named `:join`, and Fastify cannot route a colon
 	// inside the release, so the join suffix is the only one in the segment.
 	{ pattern: /^\/v1\/boundary-releases\/([^/]+)\/([^/:]+):join$/ },
+	{ pattern: /^\/v1\/crosswalks\/([^/:]+):convert$/ },
 ];
 
 export const isFastifyPostPath = (pathname: string) => {

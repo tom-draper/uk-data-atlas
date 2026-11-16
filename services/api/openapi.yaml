@@ -8775,13 +8775,14 @@ paths:
   /crosswalks:
     get:
       operationId: listCrosswalks
-      tags: ["Geography"]
       summary: List published crosswalks
+      tags:
+        - Geography
       x-likely-refusal:
         status: 503
         when:
-          "Takes no input. Refused only when the server was started without the
-          crosswalk inventory built."
+          Takes no input. Refused only when the server was started without the crosswalk inventory
+          built.
       responses:
         "200":
           description: The current crosswalk inventory.
@@ -8789,72 +8790,55 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CrosswalkSummaryListEnvelope"
-              x-example-request: "/v1/crosswalks"
+              x-example-request: /v1/crosswalks
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                  c8d0912"
+                atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                 data:
                   - id: constituency-2010-to-2024-official-lookup-v2
                     from:
-                      {
-                        geography: constituency,
-                        boundaryRelease: 2019-12-uk-bgc,
-                      }
+                      geography: constituency
+                      boundaryRelease: 2019-12-uk-bgc
                     to:
-                      {
-                        geography: constituency,
-                        boundaryRelease: 2024-07-uk-bgc,
-                      }
+                      geography: constituency
+                      boundaryRelease: 2024-07-uk-bgc
                     method: official-lookup
                     quality: publisher-supplied
-                    weighting: { status: not-provided }
+                    weighting:
+                      status: not-provided
                     recordCount: 650
                     artifact: crosswalks/constituency-2010-to-2024-official-lookup-v2.json
-                    contentHash:
-                      "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ec\
-                      e0cc82"
+                    contentHash: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
                   - id: ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment
                     from:
-                      { geography: ward, boundaryRelease: 2025-05-uk-bgc-v2 }
+                      geography: ward
+                      boundaryRelease: 2025-05-uk-bgc-v2
                     to:
-                      {
-                        geography: localAuthority,
-                        boundaryRelease: 2025-05-uk-bgc-v2,
-                      }
+                      geography: localAuthority
+                      boundaryRelease: 2025-05-uk-bgc-v2
                     method: clean-containment
                     quality: publisher-supplied
-                    weighting: { status: not-applicable }
+                    weighting:
+                      status: not-applicable
                     recordCount: 8405
                     artifact: crosswalks/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json
-                    contentHash:
-                      "sha256:4416aac5cac4b092189ed22665ad149bdd3b370a0dab1b75529993932f\
-                      51fab3"
+                    contentHash: sha256:4416aac5cac4b092189ed22665ad149bdd3b370a0dab1b75529993932f51fab3
                   - id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
                     from:
-                      {
-                        geography: constituency,
-                        boundaryRelease: 2024-07-uk-bgc,
-                      }
+                      geography: constituency
+                      boundaryRelease: 2024-07-uk-bgc
                     to:
-                      {
-                        geography: localAuthority,
-                        boundaryRelease: 2024-05-uk-bgc,
-                      }
+                      geography: localAuthority
+                      boundaryRelease: 2024-05-uk-bgc
                     method: area-overlap
                     quality: derived
                     weighting:
-                      {
-                        status: provided,
-                        basis: area,
-                        normalisation: per-source,
-                      }
+                      status: provided
+                      basis: area
+                      normalisation: per-source
                     recordCount: 650
                     artifact: crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json
-                    contentHash:
-                      "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fb\
-                      c3aca7"
+                    contentHash: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
                 meta:
                   nextCursor: null
         "503":
@@ -8863,17 +8847,19 @@ paths:
   /crosswalks/{crosswalk-id}:
     get:
       operationId: getCrosswalk
-      tags: ["Geography"]
       summary: Get one crosswalk's metadata
+      tags:
+        - Geography
+      description: >
+        Returns the crosswalk's method, quality, weighting, endpoints, provenance and validation
+        facts, but not its full record set. Fetch `/crosswalks/{crosswalk-id}/records` for the
+        mappings themselves.
       x-likely-refusal:
         status: 404
-        when: "The id is described rather than listed. A crosswalk id names both
-          releases and the method; `/v1/crosswalks` lists them."
-        x-example-request: "/v1/crosswalks/ward-to-local-authority"
-      description: >
-        Returns the crosswalk's method, quality, weighting, endpoints,
-        provenance and validation facts, but not its full record set. Fetch
-        `/crosswalks/{crosswalk-id}/records` for the mappings themselves.
+        when:
+          The id is described rather than listed. A crosswalk id names both releases and the method;
+          `/v1/crosswalks` lists them.
+        x-example-request: /v1/crosswalks/ward-to-local-authority
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
       responses:
@@ -8885,117 +8871,85 @@ paths:
                 $ref: "#/components/schemas/CrosswalkMetadataEnvelope"
               examples:
                 officialLookup:
-                  x-example-request: "/v1/crosswalks/constituency-2010-to-2024-official-lookup-v2"
+                  x-example-request: /v1/crosswalks/constituency-2010-to-2024-official-lookup-v2
                   value:
                     apiVersion: v1
-                    atlasRelease:
-                      "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                      c8d0912"
+                    atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                     data:
                       schemaVersion: 1
-                      contentHash:
-                        "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ec\
-                        e0cc82"
+                      contentHash: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
                       id: constituency-2010-to-2024-official-lookup-v2
                       method: official-lookup
                       quality: publisher-supplied
-                      weighting: { status: not-provided }
+                      weighting:
+                        status: not-provided
                       from:
-                        {
-                          geography: constituency,
-                          boundaryRelease: 2019-12-uk-bgc,
-                        }
+                        geography: constituency
+                        boundaryRelease: 2019-12-uk-bgc
                       to:
-                        {
-                          geography: constituency,
-                          boundaryRelease: 2024-07-uk-bgc,
-                        }
+                        geography: constituency
+                        boundaryRelease: 2024-07-uk-bgc
                       provenance:
-                        input:
-                          "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_futur\
-                          e_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojs\
-                          on"
-                        inputHash:
-                          "sha256:62e1ac00a3a6cce21055d623e7141e814e7212014a37fab0b0a3d693cf0e\
-                          82a3"
+                        input: boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson
+                        inputHash: sha256:62e1ac00a3a6cce21055d623e7141e814e7212014a37fab0b0a3d693cf0e82a3
                       validation:
                         sourceNameConflicts:
                           - code: N06000004
-                            names: [Belfast North, Belfast West]
+                            names:
+                              - Belfast North
+                              - Belfast West
                         endpoints:
                           from:
-                            {
-                              status: verified,
-                              availableAreaCount: 650,
-                              referencedCodeCount: 650,
-                            }
+                            status: verified
+                            availableAreaCount: 650
+                            referencedCodeCount: 650
                           to:
-                            {
-                              status: verified,
-                              availableAreaCount: 650,
-                              referencedCodeCount: 650,
-                            }
+                            status: verified
+                            availableAreaCount: 650
+                            referencedCodeCount: 650
                     meta:
                       nextCursor: null
                 areaOverlap:
-                  x-example-request:
-                    "/v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authori\
-                    ty-2024-05-uk-bgc-area-overlap"
+                  x-example-request: /v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
                   value:
                     apiVersion: v1
-                    atlasRelease:
-                      "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8\
-                      edd27a2"
+                    atlasRelease: sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2
                     data:
                       schemaVersion: 1
                       id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
                       method: area-overlap
                       quality: derived
                       weighting:
-                        {
-                          status: provided,
-                          basis: area,
-                          normalisation: per-source,
-                        }
+                        status: provided
+                        basis: area
+                        normalisation: per-source
                       from:
-                        {
-                          geography: constituency,
-                          boundaryRelease: 2024-07-uk-bgc,
-                        }
+                        geography: constituency
+                        boundaryRelease: 2024-07-uk-bgc
                       to:
-                        {
-                          geography: localAuthority,
-                          boundaryRelease: 2024-05-uk-bgc,
-                        }
+                        geography: localAuthority
+                        boundaryRelease: 2024-05-uk-bgc
                       provenance:
                         inputs:
                           - side: from
                             input: boundaries/constituency/2024-07-uk-bgc/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson
-                            inputHash:
-                              "sha256:d3ac7aea554e63864a030baf6b5b2069cb8b1870e16a611ae21df6ad23b0\
-                              4383"
+                            inputHash: sha256:d3ac7aea554e63864a030baf6b5b2069cb8b1870e16a611ae21df6ad23b04383
                           - side: to
                             input: boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson
-                            inputHash:
-                              "sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4a\
-                              fa3a"
+                            inputHash: sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4afa3a
                         areaProjection: EPSG:6933
                         clipping: polygon-clipping@0.15.7
                       validation:
                         sourceNameConflicts: []
                         endpoints:
                           from:
-                            {
-                              status: verified,
-                              availableAreaCount: 650,
-                              referencedCodeCount: 650,
-                            }
+                            status: verified
+                            availableAreaCount: 650
+                            referencedCodeCount: 650
                           to:
-                            {
-                              status: verified,
-                              availableAreaCount: 361,
-                              referencedCodeCount: 361,
-                            }
+                            status: verified
+                            availableAreaCount: 361
+                            referencedCodeCount: 361
                         overlap:
                           candidatePairCount: 3600
                           intersectingPairCount: 2329
@@ -9006,9 +8960,7 @@ paths:
                           minimumCoverage: 0.99
                           minimumSourceCoverage: 0.99606
                           minimumTargetCoverage: 0.997111
-                      contentHash:
-                        "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fb\
-                        c3aca7"
+                      contentHash: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
                     meta:
                       nextCursor: null
         "404":
@@ -9017,71 +8969,49 @@ paths:
   /crosswalks/{crosswalk-id}:convert:
     post:
       operationId: convertSuppliedCounts
-      x-rate-limit-cost: 10
-      tags: ["Geography"]
       summary: Convert your own counts through a named crosswalk
+      tags:
+        - Geography
       description: >
-        Send JSON rows or CSV with a code, area or name column and a numeric
-        value column. An optional parent column disambiguates names. At most
-        250,000 rows in an 8 MiB body. Nothing is stored or cached.
+        Send JSON rows or CSV with a code, area or name column and a numeric value column. An optional
+        parent column disambiguates names. At most 250,000 rows in an 8 MiB body. Nothing is stored or
+        cached.
 
-        The crosswalk fixes the exact source and target releases. Its source
-        identities must be compiled. semantics=count asserts that the values are
-        finite, non-negative counts that add over areas. Fractions are allowed.
-        A missing, invalid, ambiguous, duplicate or non-numeric row refuses the
-        entire request with 422. Code and name rows resolving to the same area
-        are duplicates. The first 1,000 rejected rows are listed, with
-        rejectedCount giving their full count.
+        The crosswalk fixes the exact source and target releases. Its source identities must be
+        compiled. semantics=count asserts that the values are finite, non-negative counts that add
+        over areas. Fractions are allowed. A missing, invalid, ambiguous, duplicate or non-numeric row
+        refuses the entire request with 422. Code and name rows resolving to the same area are
+        duplicates. The first 1,000 rejected rows are listed, with rejectedCount giving their full
+        count.
 
-        Omit weighting for exact regrouping. Splits require weighting=area or
-        weighting=population matching the published crosswalk. An unweighted
-        split or unmapped source refuses the entire request. Best-fit mappings
-        cannot convert counts. Weighted results are estimates, with no rounding.
+        Omit weighting for exact regrouping. Splits require weighting=area or weighting=population
+        matching the published crosswalk. An unweighted split or unmapped source refuses the entire
+        request. Best-fit mappings cannot convert counts. Weighted results are estimates, with no
+        rounding.
 
-        Each output states whether every source this crosswalk maps to it was
-        supplied. Complete coverage is relative to published crosswalk mappings,
-        not the whole geography. Unreached targets are absent, never zero. The
-        response pins the Atlas release, input text hash and crosswalk hash, and
-        reports input and output totals. Send a UTF-8 body to reproduce its
-        hash.
+        Each output states whether every source this crosswalk maps to it was supplied. Complete
+        coverage is relative to published crosswalk mappings, not the whole geography. Unreached
+        targets are absent, never zero. The response pins the Atlas release, input text hash and
+        crosswalk hash, and reports input and output totals. Send a UTF-8 body to reproduce its hash.
+      x-rate-limit-cost: 10
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
         - name: semantics
           in: query
           required: true
-          schema: { type: string, enum: [count] }
+          schema:
+            type: string
+            enum:
+              - count
           description: Assert that values are non-negative additive counts.
         - name: weighting
           in: query
-          schema: { type: string, enum: [area, population] }
+          schema:
+            type: string
+            enum:
+              - area
+              - population
           description: Opt in to this crosswalk's area or population weights for splits.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [rows]
-              properties:
-                rows:
-                  type: array
-                  minItems: 1
-                  maxItems: 250000
-                  items:
-                    type: object
-                    required: [value]
-                    properties:
-                      code: { type: string }
-                      area: { type: string }
-                      name: { type: string }
-                      parent: { type: string }
-                      value: { type: number, minimum: 0 }
-            example:
-              rows:
-                - { code: E05000650, value: 12 }
-          text/csv:
-            schema: { type: string }
-            example: "code,value\nE05000650,12\n"
       responses:
         "200":
           description: Converted counts and coverage against the named crosswalk.
@@ -9100,26 +9030,65 @@ paths:
         "415":
           description: Send application/json or text/csv.
         "422":
-          description:
-            No conversion was applied. Correct rejected rows or select
-            supported weighting.
+          description: No conversion was applied. Correct rejected rows or select supported weighting.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ConversionNotAvailableProblem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rows
+              properties:
+                rows:
+                  type: array
+                  minItems: 1
+                  maxItems: 250000
+                  items:
+                    type: object
+                    required:
+                      - value
+                    properties:
+                      code:
+                        type: string
+                      area:
+                        type: string
+                      name:
+                        type: string
+                      parent:
+                        type: string
+                      value:
+                        type: number
+                        minimum: 0
+            example:
+              rows:
+                - code: E05000650
+                  value: 12
+          text/csv:
+            schema:
+              type: string
+            example: |
+              code,value
+              E05000650,12
 
   /crosswalks/{crosswalk-id}/records:
     get:
       operationId: listCrosswalkRecords
-      tags: ["Geography"]
       summary: List (optionally filtered) records for one crosswalk
+      tags:
+        - Geography
       x-likely-refusal:
         status: 404
-        when: "The id is described rather than listed. A crosswalk id names both
-          releases and the method; `/v1/crosswalks` lists them."
-        x-example-request: "/v1/crosswalks/ward-to-local-authority/records"
+        when:
+          The id is described rather than listed. A crosswalk id names both releases and the method;
+          `/v1/crosswalks` lists them.
+        x-example-request: /v1/crosswalks/ward-to-local-authority/records
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
         - name: source
@@ -9128,9 +9097,8 @@ paths:
           schema:
             type: string
           description: >
-            Filter to the record whose source code matches exactly. Omit to
-            return a cursor-paginated list. A source lookup returns at most one
-            record and has no next cursor.
+            Filter to the record whose source code matches exactly. Omit to return a cursor-paginated
+            list. A source lookup returns at most one record and has no next cursor.
         - name: limit
           in: query
           required: false
@@ -9149,10 +9117,9 @@ paths:
       responses:
         "200":
           description: >
-            One page of matching records, or an empty array if `source` matched
-            nothing. Bulk consumers should prefer downloading the static
-            crosswalk artifact until an export endpoint exists. Records of an
-            `area-overlap` crosswalk also carry each source's area and coverage
+            One page of matching records, or an empty array if `source` matched nothing. Bulk
+            consumers should prefer downloading the static crosswalk artifact until an export endpoint
+            exists. Records of an `area-overlap` crosswalk also carry each source's area and coverage
             and each target's weight, overlap area and shares.
           content:
             application/json:
@@ -9160,56 +9127,60 @@ paths:
                 $ref: "#/components/schemas/CrosswalkRecordListEnvelope"
               examples:
                 officialLookup:
-                  x-example-request:
-                    "/v1/crosswalks/constituency-2010-to-2024-official-lookup-v2\
-                    /records?source=N06000004"
+                  x-example-request: /v1/crosswalks/constituency-2010-to-2024-official-lookup-v2/records?source=N06000004
                   value:
                     apiVersion: v1
-                    atlasRelease:
-                      "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                      c8d0912"
+                    atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                     data:
-                      - source: { code: N06000004, labels: [Belfast West] }
+                      - source:
+                          code: N06000004
+                          labels:
+                            - Belfast West
                         targets:
-                          - { code: N05000002, labels: [Belfast North] }
-                          - {
-                              code: N05000003,
-                              labels: [Belfast South and Mid Down],
-                            }
-                          - { code: N05000004, labels: [Belfast West] }
-                          - { code: N05000014, labels: [South Antrim] }
+                          - code: N05000002
+                            labels:
+                              - Belfast North
+                          - code: N05000003
+                            labels:
+                              - Belfast South and Mid Down
+                          - code: N05000004
+                            labels:
+                              - Belfast West
+                          - code: N05000014
+                            labels:
+                              - South Antrim
                     meta:
                       nextCursor: null
                 areaOverlap:
-                  x-example-request:
-                    "/v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authori\
-                    ty-2024-05-uk-bgc-area-overlap/records?source=E14001067"
+                  x-example-request: /v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap/records?source=E14001067
                   value:
                     apiVersion: v1
-                    atlasRelease:
-                      "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8\
-                      edd27a2"
+                    atlasRelease: sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2
                     data:
                       - source:
                           code: E14001067
-                          labels: [Arundel and South Downs]
+                          labels:
+                            - Arundel and South Downs
                           areaM2: 835415269
                           coverage: 0.999884
                         targets:
                           - code: E07000224
-                            labels: [Arun]
+                            labels:
+                              - Arun
                             weight: 0.122779
                             overlapAreaM2: 102559824
                             sourceShare: 0.122765
                             targetShare: 0.463915
                           - code: E07000225
-                            labels: [Chichester]
+                            labels:
+                              - Chichester
                             weight: 0.614952
                             overlapAreaM2: 513680634
                             sourceShare: 0.614881
                             targetShare: 0.652975
                           - code: E07000227
-                            labels: [Horsham]
+                            labels:
+                              - Horsham
                             weight: 0.262269
                             overlapAreaM2: 219077810
                             sourceShare: 0.262238

@@ -24,6 +24,8 @@ import { relationshipsContract } from "./relationships/relationshipsContract";
 import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
 import { releaseJoinFastifyRoutes } from "./boundaries/releaseJoinFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
+import { crosswalksContract } from "./crosswalks/crosswalkContract";
+import { crosswalkFastifyRoutes } from "./crosswalks/crosswalkFastifyRoutes";
 import { isFastifyDetailPath, isFastifyPostPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
@@ -127,6 +129,7 @@ const fastifyPaths = new Set(
 		bulkLookups,
 		terrainCatalogueContract,
 		terrainPointContract,
+		crosswalksContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -834,6 +837,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(terrainFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(crosswalkFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
