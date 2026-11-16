@@ -1,3 +1,6 @@
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { MobileCoverageDataset } from "../../../types/mobileCoverage.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { PREMISES, measure } from "../../../declaration/measures.ts";
@@ -96,6 +99,116 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 				],
 			},
 		],
+		direct: {
+			read: async ({ text }) => {
+				const { data } = await parseCsv<Record<string, string>>(
+					await text(
+						sourceDir(
+							"mobile-coverage",
+							"202507_mobile_coverage_laua_r01.csv",
+						),
+					),
+					{ header: true },
+				);
+				const share = (
+					row: Record<string, string>,
+					column: string,
+				): number | null => {
+					if (!(column in row)) return null;
+					const v = (row[column] ?? "").trim();
+					if (v === "" || v === "N/A" || v === "-") return 0;
+					const n = parseFloat(v.replace(/,/g, "").replace(/%/, ""));
+					return Number.isFinite(n) ? n : null;
+				};
+				const any = (row: Record<string, string>, family: string) => {
+					const none = share(row, `${family}_0`);
+					return none === null
+						? null
+						: Math.round((100 - none) * 100) / 100;
+				};
+				const records = new Map<string, DirectRecord>();
+				for (const row of data) {
+					const code = (row.laua ?? "").trim();
+					const name = (row.laua_name ?? "").trim();
+					if (!code || !name || !/^[EWSN][0-9]/.test(code)) continue;
+					const entries = [
+						[
+							"mobile-premises-coverage",
+							"4g",
+							"indoor",
+							"all",
+							share(row, "4G_prem_in_4"),
+						],
+						[
+							"mobile-premises-coverage",
+							"4g",
+							"indoor",
+							"any",
+							any(row, "4G_prem_in"),
+						],
+						[
+							"mobile-premises-coverage",
+							"5g",
+							"outdoor",
+							"all",
+							share(row, "5G_high_confidence_prem_out_4"),
+						],
+						[
+							"mobile-premises-coverage",
+							"5g",
+							"outdoor",
+							"any",
+							any(row, "5G_high_confidence_prem_out"),
+						],
+						[
+							"mobile-area-coverage",
+							"4g",
+							"outdoor",
+							"all",
+							share(row, "4G_geo_out_4"),
+						],
+						[
+							"mobile-area-coverage",
+							"5g",
+							"outdoor",
+							"any",
+							any(row, "5G_high_confidence_geo_out"),
+						],
+					] as const;
+					const n = parseFloat(
+						(row.prem_count ?? "").replace(/,/g, "").trim(),
+					);
+					records.set(code, {
+						code,
+						name,
+						values: [
+							...entries.map(
+								([
+									measure,
+									technology,
+									location,
+									operators,
+									value,
+								]) => ({
+									measure,
+									members: {
+										"mobile-technology": technology,
+										"coverage-location": location,
+										"mobile-operators": operators,
+									},
+									value,
+								}),
+							),
+							{
+								measure: "premises",
+								value: Number.isFinite(n) ? n : null,
+							},
+						],
+					});
+				}
+				return [{ key: "2025", records: [...records.values()] }];
+			},
+		},
 		fields: [
 			...[
 				[

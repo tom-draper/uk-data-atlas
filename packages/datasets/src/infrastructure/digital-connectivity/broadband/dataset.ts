@@ -1,3 +1,6 @@
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { BroadbandDataset } from "../../../types/broadband.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { PREMISES, measure } from "../../../declaration/measures.ts";
@@ -90,6 +93,61 @@ export const broadband = defineDataset<BroadbandDataset>({
 				],
 			},
 		],
+		direct: {
+			read: async ({ text }) => {
+				const { data } = await parseCsv<Record<string, string>>(
+					await text(
+						sourceDir(
+							"broadband",
+							"202507_fixed_laua_coverage_r01.csv",
+						),
+					),
+					{ header: true },
+				);
+				const parse = (v: string | undefined) => {
+					if (!v || v === "N/A" || v === "-" || v === "..")
+						return null;
+					const n = parseFloat(
+						v.replace(/,/g, "").replace(/%/, "").trim(),
+					);
+					return isNaN(n) ? null : n;
+				};
+				const records = new Map<string, DirectRecord>();
+				for (const row of data) {
+					const code = (row.laua ?? "").trim();
+					const name = (row.laua_name ?? "").trim();
+					if (!code || !name || !/^[EWSN][0-9]/.test(code)) continue;
+					const fields = [
+						["pctSuperfast", "SFBB availability (% premises)"],
+						[
+							"pctUltrafast",
+							"UFBB (100Mbit/s) availability (% premises)",
+						],
+						[
+							"pctFullFibre",
+							"Full Fibre availability (% premises)",
+						],
+						["pctGigabit", "Gigabit availability (% premises)"],
+					] as const;
+					records.set(code, {
+						code,
+						name,
+						values: [
+							...fields.map(([key, column]) => ({
+								measure: "broadband-availability",
+								members: { "broadband-speed": key },
+								value: parse(row[column]),
+							})),
+							{
+								measure: "premises",
+								value: parse(row["All Premises"]),
+							},
+						],
+					});
+				}
+				return [{ key: "2025", records: [...records.values()] }];
+			},
+		},
 		fields: [
 			{ path: "{broadband-speed}", measure: "broadband-availability" },
 			{ path: "premisesCount", measure: "premises" },
