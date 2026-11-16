@@ -5656,58 +5656,90 @@ paths:
   /places:
     get:
       operationId: resolvePlaces
-      tags: ["Start here"]
       summary: Find every place a name could mean
+      tags:
+        - Start here
+      description: >
+        Turns a name into candidate places, each saying what kind of place it is. A name is rarely one
+        area: "Manchester" is a local authority, a county and unitary authority, a major town, a
+        travel to work area and a ward, and "Newport" is thirteen codes across Wales, the Isle of
+        Wight and Shropshire. This never chooses among them.
+
+
+        Names match with case, accents, punctuation and the ampersand set aside, so "Brighton & Hove"
+        and "Ynys Mon" find what was published, and an alias matches as well as a name. An
+        administrative title is set aside too, so "Bristol" finds the authority published as "Bristol,
+        City of", reported as `exact-without-title`. Names that merely begin with the query follow, as
+        `prefix`, once equal names leave room: "Richmond" lists its wards and parish first, then
+        Richmond upon Thames. A bare area code, or a place reference, is looked up directly.
+
+
+        A place held in several releases is returned once, with its releases newest first. Equal
+        matches are listed headline geographies first, then wards and smaller areas; that is a
+        presentation order and asserts nothing about which was meant. Curated named locations appear
+        with their member codes, or the codes active on `asOf`.
+
+
+        A unit postcode, typed in any case and with or without its space, leads the candidates as a
+        place of its own: kind `postcode`, a place reference such as `postcode/SW1A1AA`, its centroid
+        as `point`, and an `href` to `/postcodes/{postcode}`, which places it in areas. Nothing is
+        placed here, so a search stays as fast as a name lookup. Pass the reference as `place` to
+        `/data/{measure-id}/value` to answer a measure for the postcode. A query that reads as a
+        postcode district or sector, or a unit postcode the directory does not hold or this API may
+        not serve, carries a `postcodeHint` saying so.
+
+
+        Add `geography` or `release` to resolve only exact area identities in that scope. `date`, with
+        a geography, selects the latest published release on or before that date; `country` can narrow
+        that selection.
       x-likely-refusal:
         status: 400
-        when: "No `q` is given."
-        x-example-request: "/v1/places"
-      description: >
-        Turns a name into candidate places, each saying what kind of place it
-        is. A name is rarely one area: "Manchester" is a local authority, a
-        county and unitary authority, a major town, a travel to work area and a
-        ward, and "Newport" is thirteen codes across Wales, the Isle of Wight
-        and Shropshire. This never chooses among them.
-
-
-        Names match with case, accents, punctuation and the ampersand set aside,
-        so "Brighton & Hove" and "Ynys Mon" find what was published, and an
-        alias matches as well as a name. An administrative title is set aside
-        too, so "Bristol" finds the authority published as "Bristol, City of",
-        reported as `exact-without-title`. Names that merely begin with the
-        query follow, as `prefix`, once equal names leave room: "Richmond" lists
-        its wards and parish first, then Richmond upon Thames. A bare area code,
-        or a place reference, is looked up directly.
-
-
-        A place held in several releases is returned once, with its releases
-        newest first. Equal matches are listed headline geographies first, then
-        wards and smaller areas; that is a presentation order and asserts
-        nothing about which was meant. Curated named locations appear with their
-        member codes, or the codes active on `asOf`.
-
-
-        A unit postcode, typed in any case and with or without its space, leads
-        the candidates as a place of its own: kind `postcode`, a place reference
-        such as `postcode/SW1A1AA`, its centroid as `point`, and an `href` to
-        `/postcodes/{postcode}`, which places it in areas. Nothing is placed
-        here, so a search stays as fast as a name lookup. Pass the reference as
-        `place` to `/data/{measure-id}/value` to answer a measure for the
-        postcode. A query that reads as a postcode district or sector, or a unit
-        postcode the directory does not hold or this API may not serve, carries
-        a `postcodeHint` saying so.
-
-
-        Add `geography` or `release` to resolve only exact area identities in
-        that scope. `date`, with a geography, selects the latest published
-        release on or before that date; `country` can narrow that selection.
+        when: No `q` is given.
+        x-example-request: /v1/places
+      responses:
+        "200":
+          description: The candidate places, best match first. Empty when nothing matches.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              x-example-request: /v1/places?q=Bristol
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
+                data:
+                  query: Bristol
+                  candidates:
+                    - place: localAuthority/E06000023
+                      kind: area
+                      name: Bristol, City of
+                      geography: localAuthority
+                      code: E06000023
+                      match: exact-without-title
+                      boundaryReleases:
+                        - 2025-12-uk-bgc
+                        - 2023-05-uk-bgc-v2
+                    - place: majorTownAndCity/J01000015
+                      kind: area
+                      name: Bristol
+                      geography: majorTownAndCity
+                      code: J01000015
+                      match: exact
+                      boundaryReleases:
+                        - 2015-12-ew-bgc
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
       parameters:
         - name: q
           in: query
           required: true
           description:
-            A place name, an area code, a unit postcode, or a place reference
-            such as `localAuthority/E08000003` or `postcode/SW1A1AA`.
+            A place name, an area code, a unit postcode, or a place reference such as
+            `localAuthority/E08000003` or `postcode/SW1A1AA`.
           schema:
             type: string
           example: Manchester
@@ -5723,115 +5755,88 @@ paths:
         - name: asOf
           in: query
           required: false
-          schema: { type: string, format: date }
+          schema:
+            type: string
+            format: date
           description:
-            Select the member codes effective on this date for curated named
-            locations. Omit it to return the complete dated definition.
+            Select the member codes effective on this date for curated named locations. Omit it to
+            return the complete dated definition.
         - name: geography
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description: Restrict an exact area lookup to one geography type.
         - name: release
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description: Restrict an exact area lookup to one boundary release.
         - name: date
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description:
-            Calendar date (`YYYY-MM-DD`) or month (`YYYY-MM`) that selects a
-            release. Requires `geography` and cannot be combined with `release`.
+            Calendar date (`YYYY-MM-DD`) or month (`YYYY-MM`) that selects a release. Requires
+            `geography` and cannot be combined with `release`.
         - name: country
           in: query
           required: false
-          schema: { enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS] }
+          schema:
+            enum:
+              - GB-ENG
+              - GB-NIR
+              - GB-SCT
+              - GB-WLS
           description: Restrict a date-selected release to one country.
-      responses:
-        "200":
-          description: The candidate places, best match first. Empty when nothing matches.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/places?q=Bristol"
-              example:
-                apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
-                data:
-                  query: Bristol
-                  candidates:
-                    - place: localAuthority/E06000023
-                      kind: area
-                      name: Bristol, City of
-                      geography: localAuthority
-                      code: E06000023
-                      match: exact-without-title
-                      boundaryReleases: [2025-12-uk-bgc, 2023-05-uk-bgc-v2]
-                    - place: majorTownAndCity/J01000015
-                      kind: area
-                      name: Bristol
-                      geography: majorTownAndCity
-                      code: J01000015
-                      match: exact
-                      boundaryReleases: [2015-12-ew-bgc]
-                meta:
-                  nextCursor: null
-        "400":
-          $ref: "#/components/responses/InvalidQuery"
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
 
   /postcodes/{postcode}:
     get:
       operationId: resolvePostcode
-      tags: ["Start here"]
       summary: Find where a postcode is and the areas containing it
+      tags:
+        - Start here
+      description: >
+        Looks a unit postcode up in the ONS Postcode Directory and places its centroid in each
+        requested geography, through the same point lookup as `/areas:contains`. The postcode is read
+        in any case, with or without its space.
+
+
+        With no `geography` or `release`, the postcode is placed in its local authority, ward and
+        Westminster constituency. With no `date`, each release is the latest dated on or before the
+        directory's edition, and `dateBasis` says which was used. Terminated postcodes are served,
+        with the month they were terminated.
+
+
+        A postcode is placed by a single centroid, and its addresses can fall on both sides of a
+        boundary. The centroid's positional quality comes from the directory; where the directory
+        states an accuracy it becomes the point's uncertainty and counts towards
+        `positionalToleranceM`. Where it does not, as for centroids ONS imputed or set at a postcode
+        sector's mean, `caution` says that `nearBoundary` may understate the risk. A postcode with no
+        grid reference, such as one in the Channel Islands or the Isle of Man, is described but placed
+        in no area.
+
+
+        Northern Ireland postcodes are licensed by Land and Property Services for internal business
+        use only and are refused with 451. The source's required attribution is returned with every
+        answer.
+
+
+        `view=compact` returns only the postcode, its WGS 84 point, each area it is placed in and the
+        attribution, for callers that do not need the provenance and tolerances; it is a fraction of
+        the size.
       x-likely-refusal:
         status: 400
-        when: "A postcode district or sector is given rather than a full unit postcode."
-        x-example-request: "/v1/postcodes/SW1A"
-      description: >
-        Looks a unit postcode up in the ONS Postcode Directory and places its
-        centroid in each requested geography, through the same point lookup as
-        `/areas:contains`. The postcode is read in any case, with or without its
-        space.
-
-
-        With no `geography` or `release`, the postcode is placed in its local
-        authority, ward and Westminster constituency. With no `date`, each
-        release is the latest dated on or before the directory's edition, and
-        `dateBasis` says which was used. Terminated postcodes are served, with
-        the month they were terminated.
-
-
-        A postcode is placed by a single centroid, and its addresses can fall on
-        both sides of a boundary. The centroid's positional quality comes from
-        the directory; where the directory states an accuracy it becomes the
-        point's uncertainty and counts towards `positionalToleranceM`. Where it
-        does not, as for centroids ONS imputed or set at a postcode sector's
-        mean, `caution` says that `nearBoundary` may understate the risk. A
-        postcode with no grid reference, such as one in the Channel Islands or
-        the Isle of Man, is described but placed in no area.
-
-
-        Northern Ireland postcodes are licensed by Land and Property Services
-        for internal business use only and are refused with 451. The source's
-        required attribution is returned with every answer.
-
-
-        `view=compact` returns only the postcode, its WGS 84 point, each area it
-        is placed in and the attribution, for callers that do not need the
-        provenance and tolerances; it is a fraction of the size.
+        when: A postcode district or sector is given rather than a full unit postcode.
+        x-example-request: /v1/postcodes/SW1A
       parameters:
         - name: postcode
           in: path
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: A full unit postcode, such as `SW1A 1AA` or `sw1a1aa`.
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
@@ -5844,14 +5849,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostcodeLookupEnvelope"
-              x-example-request: "/v1/postcodes/SW1A1AA"
+              x-example-request: /v1/postcodes/SW1A1AA
               example:
                 apiVersion: v1
                 atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                 data:
                   postcode: SW1A 1AA
                   status: live
-                  introduced: "1980-01"
+                  introduced: 1980-01
                   userType: large
                   country: E92000001
                   centroid:
@@ -5860,9 +5865,7 @@ paths:
                     northing: 179645
                     positionalQuality:
                       indicator: 1
-                      description:
-                        Within the building of the matched address closest to the postcode
-                        mean.
+                      description: Within the building of the matched address closest to the postcode mean.
                       accuracyM: 0.5
                   point:
                     lng: -0.141588
@@ -5871,7 +5874,7 @@ paths:
                     precision:
                       uncertaintyM: 2.5
                       basis: decimal-places-and-transformation
-                  date: "2026-08"
+                  date: 2026-08
                   dateBasis: directory-edition
                   pointCountry:
                     code: GB-ENG
@@ -5904,29 +5907,26 @@ paths:
                           nearBoundary: false
                   source:
                     title: ONS Postcode Directory (August 2026)
-                    edition: "2026-08"
+                    edition: 2026-08
                     publisher: Office for National Statistics
         "400":
           description: >
-            The postcode is not a UK postcode, or names a district or sector
-            rather than a unit; or the geography, release or date is malformed
-            as for `/areas:contains`.
+            The postcode is not a UK postcode, or names a district or sector rather than a unit; or
+            the geography, release or date is malformed as for `/areas:contains`.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: >
-            The postcode is not in the directory edition served, or a pinned
-            release or geography is unknown.
+            The postcode is not in the directory edition served, or a pinned release or geography is
+            unknown.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "451":
-          description:
-            The postcode is in Northern Ireland, which this API is not licensed
-            to serve.
+          description: The postcode is in Northern Ireland, which this API is not licensed to serve.
           content:
             application/problem+json:
               schema:
@@ -5937,56 +5937,33 @@ paths:
   /postcodes:batch:
     post:
       operationId: resolvePostcodes
-      x-rate-limit-cost: 5
-      tags: ["Start here"]
       summary: Find where each of a batch of postcodes is and the areas containing it
+      tags:
+        - Start here
+      description: >
+        The `/postcodes/{postcode}` lookup for up to 100 postcodes at once. Send them in the JSON
+        body's `postcodes` array. The releases are chosen once for the whole batch, as for a single
+        postcode: the default geographies as at the directory's edition unless query `geography`,
+        `release` or `date` say otherwise.
+
+
+        Each postcode has its own entry, in the order given, with a `status`: `placed`, with its
+        areas; `not-placed`, for a postcode the directory gives no grid reference; `invalid`, for text
+        that is not a unit postcode; `not-found`, for one the directory edition does not hold; and
+        `not-served`, for a Northern Ireland postcode, which this API is not licensed to serve. None
+        of these fails the batch. Only a problem with the request itself does, such as no postcodes,
+        too many, or a malformed date.
+
+
+        Placed centroids are tested together, so each release's geometry is read once for the batch,
+        and release-wide provenance is given once in `releases`. `summary` counts each postcode status
+        and each lookup outcome. `view=compact` keeps the entries and summary but gives each postcode
+        only its record, point and areas, as for a single postcode.
+      x-rate-limit-cost: 5
       x-likely-refusal:
         status: 400
-        when: "The body gives no postcode, or more than 100."
-        x-example-request: "/v1/postcodes:batch"
-      description: >
-        The `/postcodes/{postcode}` lookup for up to 100 postcodes at once. Send
-        them in the JSON body's `postcodes` array. The releases are chosen once
-        for the whole batch, as for a single postcode: the default geographies
-        as at the directory's edition unless query `geography`, `release` or
-        `date` say otherwise.
-
-
-        Each postcode has its own entry, in the order given, with a `status`:
-        `placed`, with its areas; `not-placed`, for a postcode the directory
-        gives no grid reference; `invalid`, for text that is not a unit
-        postcode; `not-found`, for one the directory edition does not hold; and
-        `not-served`, for a Northern Ireland postcode, which this API is not
-        licensed to serve. None of these fails the batch. Only a problem with
-        the request itself does, such as no postcodes, too many, or a malformed
-        date.
-
-
-        Placed centroids are tested together, so each release's geometry is read
-        once for the batch, and release-wide provenance is given once in
-        `releases`. `summary` counts each postcode status and each lookup
-        outcome. `view=compact` keeps the entries and summary but gives each
-        postcode only its record, point and areas, as for a single postcode.
-      parameters:
-        - $ref: "#/components/parameters/PointLookupGeography"
-        - $ref: "#/components/parameters/PointLookupRelease"
-        - $ref: "#/components/parameters/PointLookupDate"
-        - $ref: "#/components/parameters/PostcodeView"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [postcodes]
-              properties:
-                postcodes:
-                  type: array
-                  minItems: 1
-                  maxItems: 100
-                  items: { type: string }
-            example:
-              postcodes: [SW1A1AA, M11AE, CF101EP, BT11AA]
+        when: The body gives no postcode, or more than 100.
+        x-example-request: /v1/postcodes:batch
       responses:
         "200":
           description: Each postcode's entry, and a summary of the batch.
@@ -5994,12 +5971,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostcodeBatchEnvelope"
-              x-example-request: "/v1/postcodes:batch?geography=localAuthority"
+              x-example-request: /v1/postcodes:batch?geography=localAuthority
               example:
                 apiVersion: v1
                 atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                 data:
-                  date: "2026-08"
+                  date: 2026-08
                   dateBasis: directory-edition
                   boundaryRule: included
                   releases:
@@ -6055,13 +6032,12 @@ paths:
                       input: BT11AA
                       status: not-served
                       detail:
-                        Northern Ireland postcodes are licensed by Land and Property Services
-                        for internal business use only, so this API does not
-                        serve them.
+                        Northern Ireland postcodes are licensed by Land and Property Services for internal business
+                        use only, so this API does not serve them.
         "400":
           description: >
-            No postcode is given, more than 100 are, or the geography, release
-            or date is malformed as for `/areas:contains`.
+            No postcode is given, more than 100 are, or the geography, release or date is malformed as
+            for `/areas:contains`.
           content:
             application/problem+json:
               schema:
@@ -6074,6 +6050,32 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PostcodeView"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - postcodes
+              properties:
+                postcodes:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    type: string
+            example:
+              postcodes:
+                - SW1A1AA
+                - M11AE
+                - CF101EP
+                - BT11AA
 
   /data/{measure-id}/value:
     get:

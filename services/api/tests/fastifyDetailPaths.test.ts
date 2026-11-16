@@ -16,6 +16,8 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/terrain/terrain-contours",
 		"/v1/crosswalks/ward-to-local-authority-2025",
 		"/v1/crosswalks/ward-to-local-authority-2025/records",
+		"/v1/postcodes/EC1A1AA",
+		"/v1/postcodes/EC1A%201AA",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
