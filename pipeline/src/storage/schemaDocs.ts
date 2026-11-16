@@ -355,6 +355,19 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"Internal: payloads.id if the payload is stored whole, else null.",
 		},
 	},
+	unit: {
+		audience: "core",
+		description: "Reference units for measure values.",
+		columns: {
+			id: "Stable integer id.",
+			slug: "Unique unit identifier.",
+			label: "Published unit label.",
+			kind: "Count, currency, percent, per_n, ratio, duration, index or other.",
+			scale: "Multiplier to the unscaled unit, or denominator for a per_n unit.",
+			currency: "ISO 4217 currency code when applicable, otherwise null.",
+			symbol: "Display symbol when applicable, otherwise null.",
+		},
+	},
 	measure: {
 		audience: "core",
 		description:
@@ -364,7 +377,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			slug: "Measure name used across the atlas, such as recorded-crimes.",
 			label: "Human-readable name.",
 			description: "What the measure counts and over what population.",
-			unit: "Unit of the values, such as people, percent, gbp, per 1,000 households.",
+			unit: "Legacy published unit label. Use unit_id for structured metadata.",
+			unit_id: "Reference to the value unit (unit.id).",
 			value_kind:
 				"Kind of number: count, amount, rate, share, mean, median, index, rank or category.",
 			aggregation:

@@ -140,6 +140,7 @@ export * from "./declaration/dataset.ts";
 export * from "./declaration/display.ts";
 export * from "./declaration/guides.ts";
 export * from "./declaration/measures.ts";
+export * from "./declaration/measureUnits.ts";
 export * from "./declaration/sources.ts";
 export * from "./declaration/statistics.ts";
 export * from "./declaration/taxonomy.ts";
