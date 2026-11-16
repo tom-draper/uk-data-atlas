@@ -67,6 +67,7 @@ const postRoutes: { pattern: RegExp }[] = [
 	{ pattern: /^\/v1\/boundary-releases\/([^/]+)\/([^/:]+):join$/ },
 	{ pattern: /^\/v1\/crosswalks\/([^/:]+):convert$/ },
 	{ pattern: /^\/v1\/postcodes:batch$/ },
+	{ pattern: /^\/v1\/areas:(?:validate|containsBatch)$/ },
 ];
 
 export const isFastifyPostPath = (pathname: string) => {
