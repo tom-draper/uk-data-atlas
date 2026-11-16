@@ -11,6 +11,8 @@ import { type StatisticsInput } from "@uk-data-atlas/measures";
 import {
 	DATASET_HOME_MODULE_IDS,
 	MEASURE_UNITS,
+	MEASURE_UNIVERSES,
+	measureSemantics,
 	isDatasetTopic,
 	moduleOfDataset,
 } from "@uk-data-atlas/datasets";
@@ -215,49 +217,6 @@ export function statisticsTables(
 				unit.symbol,
 			]),
 		},
-		measure: {
-			strict: true,
-			rowid: true,
-			columns: [
-				"id INTEGER NOT NULL",
-				"slug TEXT NOT NULL UNIQUE",
-				"label TEXT NOT NULL",
-				"description TEXT NOT NULL",
-				"unit TEXT NOT NULL",
-				"unit_id INTEGER NOT NULL REFERENCES unit(id)",
-				"value_kind TEXT NOT NULL CHECK (value_kind IN ('count','rate','share','median','mean','index','rank','amount','category'))",
-				"aggregation TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none'))",
-				"numerator_id INTEGER REFERENCES measure(id)",
-				"denominator_id INTEGER REFERENCES measure(id)",
-				"weight_id INTEGER REFERENCES measure(id)",
-			],
-			key: ["id"],
-			constraints: [
-				"CHECK ((aggregation = 'ratio') = (numerator_id IS NOT NULL AND denominator_id IS NOT NULL))",
-				"CHECK (weight_id IS NULL OR aggregation = 'weighted_mean')",
-			],
-			rows: rows(({ measures }) =>
-				measures.entries.map(({ id, item: measure }) => [
-					id,
-					measure.slug,
-					measure.label,
-					measure.description,
-					measure.unit,
-					unitId(measure.unit),
-					measure.valueKind,
-					measure.aggregation,
-					measure.numerator === undefined
-						? null
-						: measures.id(measure.numerator, measure.slug),
-					measure.denominator === undefined
-						? null
-						: measures.id(measure.denominator, measure.slug),
-					measure.weight === undefined
-						? null
-						: measures.id(measure.weight, measure.slug),
-				]),
-			),
-		},
 		dimension: {
 			strict: true,
 			rowid: true,
@@ -273,6 +232,79 @@ export function statisticsTables(
 					dimension.slug,
 					dimension.label,
 				]),
+			),
+		},
+		universe: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"slug TEXT NOT NULL UNIQUE",
+				"label TEXT NOT NULL",
+			],
+			key: ["id"],
+			rows: MEASURE_UNIVERSES.map(([id, slug, label]) => [
+				id,
+				slug,
+				label,
+			]),
+		},
+		measure: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"slug TEXT NOT NULL UNIQUE",
+				"label TEXT NOT NULL",
+				"description TEXT NOT NULL",
+				"unit TEXT NOT NULL",
+				"unit_id INTEGER NOT NULL REFERENCES unit(id)",
+				"statistic TEXT NOT NULL CHECK (statistic IN ('count','total','mean','median','quantile','rate','share','index','rank','category','ratio','difference','interval','by-dimension'))",
+				"statistic_dimension_id INTEGER REFERENCES dimension(id)",
+				"universe_id INTEGER NOT NULL REFERENCES universe(id)",
+				"value_kind TEXT NOT NULL CHECK (value_kind IN ('count','rate','share','median','mean','index','rank','amount','category'))",
+				"aggregation TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none'))",
+				"numerator_id INTEGER REFERENCES measure(id)",
+				"denominator_id INTEGER REFERENCES measure(id)",
+				"weight_id INTEGER REFERENCES measure(id)",
+			],
+			key: ["id"],
+			constraints: [
+				"CHECK ((statistic = 'by-dimension') = (statistic_dimension_id IS NOT NULL))",
+				"CHECK ((aggregation = 'ratio') = (numerator_id IS NOT NULL AND denominator_id IS NOT NULL))",
+				"CHECK (weight_id IS NULL OR aggregation = 'weighted_mean')",
+			],
+			rows: rows(({ measures, dimensions }) =>
+				measures.entries.map(({ id, item: measure }) => {
+					const semantics = measureSemantics(measure);
+					return [
+						id,
+						measure.slug,
+						measure.label,
+						measure.description,
+						measure.unit,
+						unitId(measure.unit),
+						semantics.statistic,
+						semantics.statisticDimension
+							? dimensions.id(
+									semantics.statisticDimension,
+									measure.slug,
+								)
+							: null,
+						semantics.universeId,
+						measure.valueKind,
+						measure.aggregation,
+						measure.numerator === undefined
+							? null
+							: measures.id(measure.numerator, measure.slug),
+						measure.denominator === undefined
+							? null
+							: measures.id(measure.denominator, measure.slug),
+						measure.weight === undefined
+							? null
+							: measures.id(measure.weight, measure.slug),
+					];
+				}),
 			),
 		},
 		dimension_member: {

@@ -368,6 +368,16 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			symbol: "Display symbol when applicable, otherwise null.",
 		},
 	},
+	universe: {
+		audience: "core",
+		description:
+			"Population or entity base of a measure. Unknown and not applicable are explicit entries.",
+		columns: {
+			id: "Stable integer id.",
+			slug: "Unique universe identifier.",
+			label: "Description of the population or entity base.",
+		},
+	},
 	measure: {
 		audience: "core",
 		description:
@@ -379,8 +389,14 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			description: "What the measure counts and over what population.",
 			unit: "Legacy published unit label. Use unit_id for structured metadata.",
 			unit_id: "Reference to the value unit (unit.id).",
+			statistic:
+				"Statistic represented by the value. By-dimension means the statistic is selected by statistic_dimension_id.",
+			statistic_dimension_id:
+				"Dimension selecting the statistic, or null when statistic is fixed.",
+			universe_id:
+				"Population or entity base (universe.id), including explicit unknown or not applicable.",
 			value_kind:
-				"Kind of number: count, amount, rate, share, mean, median, index, rank or category.",
+				"Legacy mixed number and statistic classification, retained for compatibility. Use statistic and unit_id.",
 			aggregation:
 				"How values combine across areas: sum, ratio (rebuild from numerator and denominator), weighted_mean (average weighted by weight_id) or none (cannot be combined).",
 			numerator_id: "For a ratio, the measure on top (measure.id).",
