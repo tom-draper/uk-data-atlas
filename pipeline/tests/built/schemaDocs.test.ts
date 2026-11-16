@@ -116,3 +116,32 @@ test("every area and place is searchable, and v_series lists every series", () =
 		all("SELECT count(*) AS n FROM series"),
 	);
 });
+
+test("measure semantics describe units, universes and dimension-selected pay", () => {
+	assert.deepEqual(
+		all(`SELECT m.statistic, u.kind, u.scale, p.slug AS universe
+			FROM measure m JOIN unit u ON u.id = m.unit_id
+			JOIN universe p ON p.id = m.universe_id
+			WHERE m.slug = 'fuel-poverty-rate'`).map((row) => [
+			row.statistic,
+			row.kind,
+			row.scale,
+			row.universe,
+		]),
+		[["rate", "percent", 100, "households"]],
+	);
+	assert.deepEqual(
+		all(`SELECT m.statistic, d.slug AS dimension FROM measure m
+			JOIN dimension d ON d.id = m.statistic_dimension_id
+			WHERE m.slug = 'gross-annual-pay'`).map((row) => [
+			row.statistic,
+			row.dimension,
+		]),
+		[["by-dimension", "pay-statistic"]],
+	);
+	assert.deepEqual(
+		all(`SELECT m.slug FROM measure m JOIN measure_conversion c ON c.measure_id = m.id
+			WHERE c.rule = 'sum' AND m.statistic NOT IN ('count', 'total')`),
+		[],
+	);
+});
