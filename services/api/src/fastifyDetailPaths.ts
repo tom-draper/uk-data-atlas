@@ -18,6 +18,8 @@ const detailRoutes: {
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
 	// Fastify takes the whole segment, `.json` included, as one parameter.
 	{ pattern: /^\/v1\/documents\/([^/]+\.json)$/ },
+	{ pattern: /^\/v1\/atlas-lookups\/([^/]+\.json)$/ },
+	{ pattern: /^\/v1\/atlas-pages\/([^/]+\.json)$/ },
 ];
 
 /** Fastify limits a parameter to 100 characters and normalises dot segments. */

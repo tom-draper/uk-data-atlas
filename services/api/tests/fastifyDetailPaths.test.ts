@@ -8,6 +8,8 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/boundary-releases/ward/2024",
 		"/v1/data/population/export",
 		"/v1/documents/geography-inventory.json",
+		"/v1/atlas-lookups/area-lineage.json",
+		"/v1/atlas-pages/places-index.json",
 		"/v1/documents/a%2Fb.json",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
@@ -17,6 +19,9 @@ test("detail paths the dispatcher must keep are not recognised", () => {
 	for (const path of [
 		// Not a detail shape.
 		"/v1/documents",
+		"/v1/atlas-lookups",
+		"/v1/atlas-lookups/area-lineage",
+		"/v1/atlas-pages/places-index.json/",
 		"/v1/documents/geography-inventory",
 		"/v1/documents/geography-inventory.json/",
 		"/v1/documents/a/b.json",
