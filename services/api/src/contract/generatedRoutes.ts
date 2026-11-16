@@ -143,6 +143,23 @@ import { dataObservationsMetadata } from "../data/dataObservationsMetadata";
 import { dataRankingsMetadata } from "../data/dataRankingsMetadata";
 import { dataSeriesMetadata } from "../data/dataSeriesMetadata";
 import { dataValueMetadata } from "../data/dataValueMetadata";
+import { mapResourcesMetadata } from "../mapResources/mapResourcesMetadata";
+import { mapResourceMetadata } from "../mapResources/mapResourceMetadata";
+import { mapResourceTileJsonMetadata } from "../mapResources/mapResourceTileJsonMetadata";
+import { mapResourceFeaturesMetadata } from "../mapResources/mapResourceFeaturesMetadata";
+import { mapResourceTileMetadata } from "../mapResources/mapResourceTileMetadata";
+import { mapResourceJoinMetadata } from "../mapResources/mapResourceJoinMetadata";
+import { mapResourceArchiveMetadata } from "../mapResources/mapResourceArchiveMetadata";
+import {
+	mapResourcesContract,
+	mapResourceContract,
+	mapResourceTileJsonContract,
+	mapResourceFeaturesContract,
+	mapResourceTileContract,
+	mapResourceJoinContract,
+	mapResourceArchiveContract,
+} from "../mapResources/mapResourceContract";
+import { mapResourceFastifyRoutes } from "../mapResources/mapResourceFastifyRoutes";
 import { measureExportRoutes } from "../data/measureExportRoutes";
 import { measureExportMetadata } from "../data/measureExportContract";
 import Fastify from "fastify";
@@ -202,6 +219,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(areaCollectionFastifyRoutes, { context });
 	await app.register(areaDetailFastifyRoutes, { context });
 	await app.register(dataFastifyRoutes, { context });
+	await app.register(mapResourceFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -510,6 +528,28 @@ export const generatedPaths = async () => {
 		["/lookups", lookupsMetadata],
 		["/lookups/{lookup-id}", lookupDetailMetadata],
 		["/data/{measure-id}", dataObservationsMetadata],
+		["/map-resources", mapResourcesMetadata],
+		["/map-resources/{geography}/{release}", mapResourceMetadata],
+		[
+			"/map-resources/{geography}/{release}/tiles.json",
+			mapResourceTileJsonMetadata,
+		],
+		[
+			"/map-resources/{geography}/{release}/features",
+			mapResourceFeaturesMetadata,
+		],
+		[
+			"/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
+			mapResourceTileMetadata,
+		],
+		[
+			"/map-resources/{geography}/{release}/join/{measure-id}",
+			mapResourceJoinMetadata,
+		],
+		[
+			"/map-resources/{geography}/{release}.pmtiles",
+			mapResourceArchiveMetadata,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
