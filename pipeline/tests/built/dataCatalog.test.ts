@@ -2003,7 +2003,11 @@ test("publishes final annual road collisions for Great Britain by severity", () 
 		assert.deepEqual(
 			result.indicatorObservations.find(
 				(artifact) =>
-					artifact.measureId === "road-collisions-fatal" &&
+					artifact.measureId ===
+						measureSeriesKey({
+							measure: "road-collisions",
+							dimensions: { "collision-severity": "fatal" },
+						}) &&
 					artifact.sourceGeography.type === "localAuthority",
 			)?.periods,
 			[
@@ -2058,8 +2062,11 @@ test("publishes final annual road collisions for Great Britain by severity", () 
 		assert.deepEqual(
 			result.indicatorObservations.find(
 				(artifact) =>
-					artifact.measureId === "road-collisions-serious" &&
-					artifact.sourceGeography.type === "lsoa",
+					artifact.measureId ===
+						measureSeriesKey({
+							measure: "road-collisions",
+							dimensions: { "collision-severity": "serious" },
+						}) && artifact.sourceGeography.type === "lsoa",
 			)?.periods,
 			[
 				{
