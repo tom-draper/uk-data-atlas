@@ -99,6 +99,27 @@ import {
 	areasContract,
 } from "../areas/areaCollectionContract";
 import { areaCollectionFastifyRoutes } from "../areas/areaCollectionFastifyRoutes";
+import { areaChildrenGeometryMetadata } from "../areas/areaChildrenGeometryMetadata";
+import { areaChildrenMetadata } from "../areas/areaChildrenMetadata";
+import { areaGeometryMetadata } from "../areas/areaGeometryMetadata";
+import { areaHistoryMetadata } from "../areas/areaHistoryMetadata";
+import { areaMetadata } from "../areas/areaMetadata";
+import { areaNeighboursMetadata } from "../areas/areaNeighboursMetadata";
+import { areaOverlapMetadata } from "../areas/areaOverlapMetadata";
+import { areaParentsMetadata } from "../areas/areaParentsMetadata";
+import { areaRelationshipsMetadata } from "../areas/areaRelationshipsMetadata";
+import {
+	areaChildrenContract,
+	areaChildrenGeometryContract,
+	areaContract,
+	areaGeometryContract,
+	areaHistoryContract,
+	areaNeighboursContract,
+	areaOverlapContract,
+	areaParentsContract,
+	areaRelationshipsContract,
+} from "../areas/areaDetailContract";
+import { areaDetailFastifyRoutes } from "../areas/areaDetailFastifyRoutes";
 import { areaContainsBatchMetadata } from "../areas/areaContainsBatchMetadata";
 import { areaContainsMetadata } from "../areas/areaContainsMetadata";
 import { areaIntersectsMetadata } from "../areas/areaIntersectsMetadata";
@@ -179,6 +200,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(placeFastifyRoutes, { context });
 	await app.register(locationFastifyRoutes, { context });
 	await app.register(areaCollectionFastifyRoutes, { context });
+	await app.register(areaDetailFastifyRoutes, { context });
 	await app.register(dataFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
@@ -361,6 +383,47 @@ export const generatedPaths = async () => {
 		["/areas:contains", areaContainsMetadata, areaContainsContract],
 		["/areas:near", areaNearMetadata, areaNearContract],
 		["/areas:validate", areaValidateMetadata, areaValidateContract],
+		["/areas/{geography}/{release}/{code}", areaMetadata, areaContract],
+		[
+			"/areas/{geography}/{release}/{code}/relationships",
+			areaRelationshipsMetadata,
+			areaRelationshipsContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/history",
+			areaHistoryMetadata,
+			areaHistoryContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/parents",
+			areaParentsMetadata,
+			areaParentsContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/children",
+			areaChildrenMetadata,
+			areaChildrenContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/children/geometry",
+			areaChildrenGeometryMetadata,
+			areaChildrenGeometryContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/neighbours",
+			areaNeighboursMetadata,
+			areaNeighboursContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/overlap",
+			areaOverlapMetadata,
+			areaOverlapContract,
+		],
+		[
+			"/areas/{geography}/{release}/{code}/geometry",
+			areaGeometryMetadata,
+			areaGeometryContract,
+		],
 		[
 			"/data/{measure-id}/convert",
 			dataConvertMetadata,

@@ -42,6 +42,7 @@ import {
 	areasContract,
 } from "./areas/areaCollectionContract";
 import { areaCollectionFastifyRoutes } from "./areas/areaCollectionFastifyRoutes";
+import { areaDetailFastifyRoutes } from "./areas/areaDetailFastifyRoutes";
 import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
@@ -881,6 +882,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(areaCollectionFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(areaDetailFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
