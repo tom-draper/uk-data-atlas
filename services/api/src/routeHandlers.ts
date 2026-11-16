@@ -14,7 +14,10 @@ import type {
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";
-import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
+import {
+	handleTerrainRoutes,
+	handleTerrainRoutesAsync,
+} from "./terrain/terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinates/coordinateRoutes";
 import { handleDataRoutes } from "./data/dataRoutes";
 import { handleDataSeriesRoutes } from "./data/dataSeriesRoutes";
