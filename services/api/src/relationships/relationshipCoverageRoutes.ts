@@ -3,10 +3,10 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
-import { choices, readChoice, readWholeNumber } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { choices, readChoice, readWholeNumber } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 const { limit: LIMIT, relation: RELATION } = QUERY_RULES["GET /relationships"];
 

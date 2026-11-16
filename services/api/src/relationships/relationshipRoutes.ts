@@ -1,7 +1,7 @@
-import { invalidQuery, type ApiResponse } from "./runtime/index.ts";
+import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
-import type { RouteRequest } from "./runtime/index.ts";
+import type { RouteRequest } from "../runtime/index.ts";
 
 /**
  * The public seam for discovering the relationships held by the geography
