@@ -1,0 +1,1635 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`data reads keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/data/population/rankings": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Data/population/value?place=Hartlepool": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/%E0%A4%A/value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/../value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/POPULATION/value?place=Hartlepool": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Hartlepool\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 242,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-location: /v1/data/population/value?place=Hartlepool",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/a.b/value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure a.b. GET /v1/measures lists them."}
+",
+    "bytes": 157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/bad%20id/value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure bad id. GET /v1/measures lists them."}
+",
+    "bytes": 160,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves data at that path."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/change": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves change at that path."}
+",
+    "bytes": 151,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/compare": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves comparisons at that path."}
+",
+    "bytes": 156,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves conversion at that path."}
+",
+    "bytes": 155,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/rankings": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves rankings at that path."}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/series": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves a series at that path."}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/no-such-measure/value?place=Hartlepool": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure no-such-measure. GET /v1/measures lists them."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/not-a-measure?period=2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves data at that path."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: geography=ward&codeYear=2023 (1 period); geography=localAuthority&codeYear=2023 (3 periods)."}
+",
+    "bytes": 415,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: geography=ward&codeYear=2023 (1 period); geography=localAuthority&codeYear=2023 (3 periods)."}
+",
+    "bytes": 415,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/change": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: geography=ward&codeYear=2023 (1 period); geography=localAuthority&codeYear=2023 (3 periods)."}
+",
+    "bytes": 405,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/change?geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"sourceGeography":{"type":"localAuthority","codeYear":2023},"startPeriod":"2023","endPeriod":"2024","defaults":{"codeYear":2023,"startPeriod":"2023","endPeriod":"2024"},"note":"No boundaryYear, startPeriod or endPeriod was given, so the current published boundaryYear=2023, startPeriod=2023 and endPeriod=2024 were used.","provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2023","2024"]}}},"change":{"direction":"end-minus-start","basis":"absolute","order":"desc","unit":"people","interpretation":"Change in the source-published unit.","ranking":{"method":"competition","note":"Equal changes share a rank; the following rank accounts for every preceding area (for example 1, 1, 3)."}},"coverage":{"areasRanked":2,"areasWithBothPeriods":2,"onlyAtStart":[],"onlyAtEnd":[],"withoutRelativeChange":0,"note":"Change is measured only for areas with a value in both periods. Areas in one period only are listed, not paired with anything."},"records":[{"areaCode":"E06000001","rank":1,"tieCount":2,"start":{"period":"2023","areaCode":"E06000001","value":290,"status":"observed"},"end":{"period":"2024","areaCode":"E06000001","value":300,"status":"observed"},"absoluteChange":10,"relativeChange":0.034482758620689655},{"areaCode":"N09000001","rank":1,"tieCount":2,"start":{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},"end":{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"},"absoluteChange":10,"relativeChange":0.02564102564102564}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3376,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-xwCr-RJt3ulfLXm8qrX6qfqOs95EFxNMWM5fL6L5D68"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/change?place=N09000001&geography=localAuthority&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"sourceGeography":{"type":"localAuthority","codeYear":2023},"startPeriod":"2023","endPeriod":"2024","defaults":{"startPeriod":"2023","endPeriod":"2024"},"note":"No startPeriod or endPeriod was given, so the current published startPeriod=2023 and endPeriod=2024 were used.","provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2023","2024"]}}},"change":{"direction":"end-minus-start","basis":"absolute","order":"desc","unit":"people","interpretation":"Change in the source-published unit.","ranking":{"method":"competition","note":"Equal changes share a rank; the following rank accounts for every preceding area (for example 1, 1, 3)."}},"coverage":{"areasRanked":2,"areasWithBothPeriods":2,"onlyAtStart":[],"onlyAtEnd":[],"withoutRelativeChange":0,"note":"Change is measured only for areas with a value in both periods. Areas in one period only are listed, not paired with anything."},"records":[{"areaCode":"N09000001","rank":1,"tieCount":2,"start":{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},"end":{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"},"absoluteChange":10,"relativeChange":0.02564102564102564}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3062,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4dPVHz7CSYZP2RNYDGU1xlpuwJeBRreCW42JWsmyxag"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/compare": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"baselinePlace and comparisonPlace are required."}
+",
+    "bytes": 158,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/compare?geography=localAuthority&baselinePlace=E06000001&comparisonPlace=N09000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"period":"2024","defaults":{"period":"2024","codeYear":2023},"note":"No period or boundaryYear was given, so the current published period=2024 and boundaryYear=2023 were used.","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","period":"2024"}}},"comparison":{"baseline":{"areaCode":"E06000001","value":300,"status":"observed"},"comparison":{"areaCode":"N09000001","value":400,"status":"observed"},"difference":{"direction":"comparison-minus-baseline","value":100,"unit":"people","interpretation":"Difference in the source-published unit."},"relativeDifference":{"value":0.3333333333333333,"basis":"(comparison - baseline) / baseline"}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2588,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1ALyIOxYzLTDU5PF6xz-EOWQ1dDU_tsZfBnS0chgkTY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000001&comparisonPlace=E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"baselinePlace and comparisonPlace must differ."}
+",
+    "bytes": 157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000001&comparisonPlace=W05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"comparison":{"baseline":{"areaCode":"E05000001","value":100,"status":"observed"},"comparison":{"areaCode":"W05000001","value":200,"status":"observed"},"difference":{"direction":"comparison-minus-baseline","value":100,"unit":"people","interpretation":"Difference in the source-published unit."},"relativeDifference":{"value":1,"basis":"(comparison - baseline) / baseline"}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2243,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-AIvCNKaZDWhtkxdh9cGqzjDrp1Lr322-NNvu-e3-D9I"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000001&comparisonPlace=W05000001&release=2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"This source-exact comparison endpoint does not select geometry releases, convert observations or aggregate them."}
+",
+    "bytes": 243,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationships discovers the published paths."}
+",
+    "bytes": 299,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationships discovers the published paths."}
+",
+    "bytes": 299,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=constituency-2010-to-2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"That crosswalk starts at constituency, but this source partition is published on ward areas.","code":"conversion_not_available","absence":"crosswalk-geography-mismatch"}
+",
+    "bytes": 298,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=not-published": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk matches that id."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-to-authority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"targetGeography":{"type":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"applied","note":"Input observations are source-exact; the values below were regrouped onto the crosswalk's target areas."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":{"crosswalk":{"id":"ward-to-authority","href":"/v1/crosswalks/ward-to-authority","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"},"contentHash":"sha256:containment-artifact"},"method":"exact","inputRecordCount":2,"outputRecordCount":2,"note":"Every source area sits wholly within one target, so this is a regrouping and the partition total is unchanged."},"aggregation":null,"records":[{"areaCode":"E08000001","value":100,"status":"derived","inputAreaCount":1},{"areaCode":"W06000001","value":200,"status":"derived","inputAreaCount":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2564,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sHXpBdYhhS-HFvEf0GpquekWHpWFxxMgCaG35Rn0a3M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-to-authority&aggregate=sum": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"targetGeography":{"type":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"applied","note":"Input observations are source-exact; the values below were regrouped onto the crosswalk's target areas."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":{"crosswalk":{"id":"ward-to-authority","href":"/v1/crosswalks/ward-to-authority","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"},"contentHash":"sha256:containment-artifact"},"method":"exact","inputRecordCount":2,"outputRecordCount":2,"note":"Every source area sits wholly within one target, so this is a regrouping and the partition total is unchanged."},"aggregation":null,"records":[{"areaCode":"E08000001","value":100,"status":"derived","inputAreaCount":1},{"areaCode":"W06000001","value":200,"status":"derived","inputAreaCount":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2564,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sHXpBdYhhS-HFvEf0GpquekWHpWFxxMgCaG35Rn0a3M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The crosswalk does not carry 1 of the source partition's area codes, starting with W05000001. No partial conversion was applied.","code":"conversion_not_available","absence":"source-areas-not-mapped","areaCount":1,"areaSample":["W05000001"]}
+",
+    "bytes": 370,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&path=ward-to-health-area": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published relationship path matches that id."}
+",
+    "bytes": 150,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/rankings": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population ranks areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: geography=ward&codeYear=2023 (1 period); geography=localAuthority&codeYear=2023 (3 periods)."}
+",
+    "bytes": 415,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/rankings?geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"period":"2024","defaults":{"period":"2024","codeYear":2023},"note":"No period or boundaryYear was given, so the current published period=2024 and boundaryYear=2023 were used.","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","period":"2024"}}},"ranking":{"order":"desc","method":"competition","note":"Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3)."},"records":[{"areaCode":"N09000001","value":400,"status":"observed","rank":1,"tieCount":1},{"areaCode":"E06000001","value":300,"status":"observed","rank":2,"tieCount":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2536,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-8V0a0zGQcGP6KcbB2sTzy2Y-9I0YxPsEFZvND46Ihiw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"ranking":{"order":"desc","method":"competition","note":"Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3)."},"records":[{"areaCode":"W05000001","value":200,"status":"observed","rank":1,"tieCount":1},{"areaCode":"E05000001","value":100,"status":"observed","rank":2,"tieCount":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-29yd5OvCpudiaB-s6vmOumcfgAyDJJlJtKDGlhDBnAA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"ranking":{"order":"desc","method":"competition","note":"Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3)."},"records":[{"areaCode":"W05000001","value":200,"status":"observed","rank":1,"tieCount":1}]},"meta":{"nextCursor":"VzA1MDAwMDAx"}}
+",
+    "bytes": 2139,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-02eU0WAtJtgHEJjMzZg4BROt033cwHs3AF6qInPz6K4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&order=asc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"ranking":{"order":"asc","method":"competition","note":"Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3)."},"records":[{"areaCode":"E05000001","value":100,"status":"observed","rank":1,"tieCount":1},{"areaCode":"W05000001","value":200,"status":"observed","rank":2,"tieCount":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-dDbc737QpjrF6Vxd6DM0ZnzanPunoHJpIO3Zk7kQK-A"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&order=sideways": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"order must be asc or desc."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"This source-exact ranking endpoint does not select geometry releases, convert observations or aggregate them."}
+",
+    "bytes": 240,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/series": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place is required: an area name, an area code, or a place reference such as localAuthority/E08000035."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/series?place=N09000001&geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"areaCode":"N09000001","defaults":{"codeYear":2023},"note":"No boundaryYear was given, so the current published boundaryYear=2023 was used.","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2022","2023","2024"]}}},"series":[{"period":"2022","areaCode":"N09000001","value":380,"status":"observed"},{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2408,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-x_WWfwSPuVxoxqii0qrkTJ6a0xvLsduPw71NtPGluuc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"areaCode":"N09000001","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2022","2023","2024"]}}},"series":[{"period":"2022","areaCode":"N09000001","value":380,"status":"observed"},{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2290,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256--O7O0OrcT26aVC36_JLsuZIXcQrLhoxC4p7YjO_rwWk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023&release=2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"This source-exact series endpoint does not select geometry releases, convert observations or aggregate them."}
+",
+    "bytes": 239,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/series?place=localAuthority/N09000001&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"areaCode":"N09000001","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2022","2023","2024"]}}},"series":[{"period":"2022","areaCode":"N09000001","value":380,"status":"observed"},{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2290,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256--O7O0OrcT26aVC36_JLsuZIXcQrLhoxC4p7YjO_rwWk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/series?place=unknown&geography=localAuthority&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"\\"unknown\\" names no area population is published for. It is published for ward, localAuthority; GET /v1/places?q= finds an area's code, and /v1/data/population/value?place= answers a larger place where the measure can be summed."}
+",
+    "bytes": 340,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place or postcode is required: a place name such as North West, an area code, a place reference from /v1/places, or a unit postcode such as SW1A 1AA."}
+",
+    "bytes": 260,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/value/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place or postcode is required: a place name such as North West, an area code, a place reference from /v1/places, or a unit postcode such as SW1A 1AA."}
+",
+    "bytes": 260,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/value/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=Atlantis": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Atlantis\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 240,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&codeYear=1999": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"No published source matches geography=any, codeYear=1999, datasetId=any. GET /v1/measures/population lists the published partitions."}
+",
+    "bytes": 243,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/value?place=Hartlepool": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Hartlepool\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 242,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=Hartlepool&period=2022": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Hartlepool\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 242,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=Leeds&period=2022": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Leeds\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 237,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=N09000001&geography=localAuthority&codeYear=2023&period=2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"N09000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=N92000002&geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"period":"2024","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Input observations are source-exact; no geographic conversion was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","period":"2024"}}},"aggregation":{"operation":"sum","membership":"gss-country-code","inputRecordCount":1,"coverage":{"status":"not-assessed","reason":"No compiled boundary release is assessed as a matching code set for this source partition, so the areas it should hold for this country are not known.","href":"/v1/documents/measure-population.json","note":"The sum covers every area of this country published in this source partition. Each assessment compares those areas with the country's areas in a boundary release the partition is assessed to match; \`partial\` means the release holds areas the partition publishes no value for, so the total is not a national one."},"note":"Country membership follows the first character of the GSS area code, which the coding scheme assigns by country."},"record":{"value":400,"status":"derived"},"defaults":{"period":"2024","codeYear":2023},"note":"No period or boundaryYear was given, so the current published period=2024 and boundaryYear=2023 were used."},"meta":{"nextCursor":null}}
+",
+    "bytes": 3005,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-xeB_3dvPqHuNamXyWff7TWIywBoCYjBI8fSBRVB-Jg4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"period":"2024","defaults":{"period":"2024","codeYear":2023},"note":"No period or boundaryYear was given, so the current published period=2024 and boundaryYear=2023 were used.","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","period":"2024"}}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E06000001","value":300,"status":"observed"},{"areaCode":"N09000001","value":400,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2360,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-73D6sfdaXRpJKLrWZJzUh3ObY5oHZFfKG5BTpwhbqoU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=1999&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population publishes no source for 1999.","alternatives":{"periods":["2022","2023","2024"],"partitions":[{"geography":"ward","codeYear":2023,"periods":["2022"]},{"geography":"localAuthority","codeYear":2023,"periods":["2022","2023","2024"]}]}}
+",
+    "bytes": 352,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E05000001","value":100,"status":"observed"},{"areaCode":"W05000001","value":200,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2032,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-KleCLd3dSqxGHw4H6dCMnhwafYr7X3g0gD-lPGrQ7_w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&aggregate=sum": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"This source-exact endpoint does not yet convert observations or aggregate them."}
+",
+    "bytes": 210,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=csv": {
+    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","",""
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","W05000001","","","","200","observed","","",""
+",
+    "bytes": 496,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-xRhz9ddX9CaiadG3KpczuB5xwqFPaD5jTVQubyOZGxM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=ndjson": {
+    "body": "{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"E05000001","areaId":"","areaName":"","areaAliases":"","value":100,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":""}
+{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"W05000001","areaId":"","areaName":"","areaAliases":"","value":200,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":""}
+",
+    "bytes": 782,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/x-ndjson; charset=utf-8",
+      "etag: "sha256-QzRkG8--cf0QWQY3wAJa8OlI3-POjpZG-8UZxaNK76E"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be one of json, csv or ndjson.","code":"invalid_format"}
+",
+    "bytes": 177,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=parquet": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be one of json, csv or ndjson.","code":"invalid_format"}
+",
+    "bytes": 177,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&include=area": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"include=area requires a caller-selected compatible release."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E05000001","value":100,"status":"observed"}]},"meta":{"nextCursor":"RTA1MDAwMDAx"}}
+",
+    "bytes": 1985,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-0pf5IEdU46lIQyWTqzgY6sWQKwQTIpR0iFi0J8c4oDs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&limit=1&cursor=bad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"cursor is invalid.","code":"invalid_cursor"}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E05000001","value":100,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1975,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EgGFZrXgkrrDk-s3UbKS1pLXHF3OUhE6uijBu-6yv78"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000001&format=csv": {
+    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","",""
+",
+    "bytes": 355,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: text/csv; charset=utf-8",
+      "etag: "sha256-W5oAaSr3vDV-A2NZh2W6UXOBw23Yhz5MOQcgCkCzjjk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc&place=E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"geometry":{"boundaryRelease":"2023-05-uk-bgc","selection":"caller-specified","compatibility":"code-set-compatible","areaIdentityTemplate":"ward/2023-05-uk-bgc/{areaCode}","note":"Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry."},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"caller-selected-code-join","boundaryRelease":"2023-05-uk-bgc","compatibility":"code-set-compatible","href":"/v1/documents/measure-population.json","note":"Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E05000001","value":100,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2510,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-XngIshR-JLXQ1q0mwwDmo0W7kuj-KHWtTZh4uVIDV5w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&release=2023-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"2023-12-uk-bgc does not hold every source area code for this partition of population, so its values cannot be drawn on it. Inspect /v1/documents/measure-population.json.","code":"incompatible_geometry","alternatives":{"releases":["2023-05-uk-bgc"]}}
+",
+    "bytes": 378,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&units=canonical": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"ward","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population","href":"/v1/datasets/population"},"observations":{"artifact":"population-observations","contentHash":"sha256:population-observations","period":"2022"}}},"valueRepresentation":{"mode":"canonical","sourceUnit":"people","unit":{"code":"1","scaleToCanonical":1},"calculation":{"method":"unit-normalisation","scaleToCanonical":1,"note":"Each numeric value and any publisher-supplied interval bound was multiplied by the declared scale. Source observations remain unchanged."}},"conversion":null,"aggregation":null,"records":[{"areaCode":"E05000001","value":100,"status":"observed"},{"areaCode":"W05000001","value":200,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2351,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-DCEdKRGtdZzm7_qFg9T8mK6e3cLLb5Z5nyAvf398dVA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&units=not-a-unit-mode": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"units must be source or canonical."}
+",
+    "bytes": 145,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population publishes no source on ward 2024 for 2022.","alternatives":{"partitions":[{"geography":"ward","codeYear":2023,"periods":["2022"]},{"geography":"localAuthority","codeYear":2023,"periods":["2022","2023","2024"]}]}}
+",
+    "bytes": 332,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: geography=ward&codeYear=2023 (1 period); geography=localAuthority&codeYear=2023 (3 periods)."}
+",
+    "bytes": 415,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure serves data at that path."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/value": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published measure xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx. GET /v1/measures lists them."}
+",
+    "bytes": 304,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/data/population/change": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/data/population/compare": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/data/population/convert": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-29yd5OvCpudiaB-s6vmOumcfgAyDJJlJtKDGlhDBnAA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/data/population/series": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/data/population/value": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/data/population/value?place=Hartlepool": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/data/population?period=2022&geography=ward&codeYear=2023": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-KleCLd3dSqxGHw4H6dCMnhwafYr7X3g0gD-lPGrQ7_w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/data/population": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/data/population/value": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/data/population/change": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/data/population [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/data/population/compare [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/data/population/convert [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/data/population/value [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/data/population/series": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`data routes answer without the data they read 1`] = `
+{
+  "GET /v1/data/population/change": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before measuring change."}
+",
+    "bytes": 176,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population/compare": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before comparing source-exact observations."}
+",
+    "bytes": 195,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population/convert?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue and crosswalks before converting observations."}
+",
+    "bytes": 198,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before retrieving source-exact rankings."}
+",
+    "bytes": 192,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population/series?place=N09000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before retrieving source-exact series."}
+",
+    "bytes": 190,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population/value?place=Hartlepool": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before answering for a place."}
+",
+    "bytes": 181,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/data/population?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the data catalogue before retrieving observations."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`measure values for a place keep their HTTP responses 1`] = `
+{
+  "GET /v1/data/population/change?place=N09000001&geography=localAuthority&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"sourceGeography":{"type":"localAuthority","codeYear":2023},"startPeriod":"2023","endPeriod":"2024","defaults":{"startPeriod":"2023","endPeriod":"2024"},"note":"No startPeriod or endPeriod was given, so the current published startPeriod=2023 and endPeriod=2024 were used.","provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2023","2024"]}}},"change":{"direction":"end-minus-start","basis":"absolute","order":"desc","unit":"people","interpretation":"Change in the source-published unit.","ranking":{"method":"competition","note":"Equal changes share a rank; the following rank accounts for every preceding area (for example 1, 1, 3)."}},"coverage":{"areasRanked":2,"areasWithBothPeriods":2,"onlyAtStart":[],"onlyAtEnd":[],"withoutRelativeChange":0,"note":"Change is measured only for areas with a value in both periods. Areas in one period only are listed, not paired with anything."},"records":[{"areaCode":"N09000001","rank":1,"tieCount":2,"start":{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},"end":{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"},"absoluteChange":10,"relativeChange":0.02564102564102564}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 3062,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-4dPVHz7CSYZP2RNYDGU1xlpuwJeBRreCW42JWsmyxag"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people","aggregation":{"kind":"extensive","operation":"sum","available":true},"sources":[{"datasetId":"population","periods":["2022"],"sourceGeography":{"type":"ward","codeYear":2023},"coverage":{"kind":"partial","countries":["GB-ENG","GB-WLS"],"recordCount":2,"note":"England and Wales only."}},{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}}],"availability":{"sourceExact":true,"conversion":false,"aggregation":true},"links":{"data":"/v1/data/population"}},"source":{"datasetId":"population-uk","observationArtifact":"population-local-authority-observations","periods":["2022","2023","2024"],"sourceGeography":{"type":"localAuthority","codeYear":2023},"coverage":{"kind":"source-reported","countries":["GB-ENG","GB-NIR","GB-SCT","GB-WLS"],"recordCount":4,"note":"All UK nations."}},"areaCode":"N09000001","sourceGeography":{"type":"localAuthority","codeYear":2023},"provenance":{"atlasRelease":{"id":"sha256:registry","href":"/v1/atlas-release"},"measure":{"id":"population","href":"/v1/measures/population"},"geography":{"source":{"type":"localAuthority","codeYear":2023},"match":{"status":"no-boundary-release-selected","note":"The published observations declare a geography type and code vintage, but not a boundary release."}},"transformation":{"status":"not-applied","note":"Values are served source-exact; no geographic conversion or aggregation was applied."},"source":{"dataset":{"id":"population-uk","href":"/v1/datasets/population-uk"},"observations":{"artifact":"population-local-authority-observations","contentHash":"sha256:population-local-authority-observations","periods":["2022","2023","2024"]}}},"series":[{"period":"2022","areaCode":"N09000001","value":380,"status":"observed"},{"period":"2023","areaCode":"N09000001","value":390,"status":"observed"},{"period":"2024","areaCode":"N09000001","value":400,"status":"observed"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2290,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256--O7O0OrcT26aVC36_JLsuZIXcQrLhoxC4p7YjO_rwWk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place or postcode is required: a place name such as North West, an area code, a place reference from /v1/places, or a unit postcode such as SW1A 1AA."}
+",
+    "bytes": 260,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/data/population/value?place=Antrim%20%26%20Newtownabbey": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"Antrim & Newtownabbey","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":400,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/N09000001","kind":"area","name":"Antrim and Newtownabbey","geography":"localAuthority","code":"N09000001","match":"exact"},"method":"source-exact","via":"/v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 762,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-qXRKpPlgA6EIA_nvMQXCHwTGYLbMr8Bml88t_YvVikU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=Atlantis": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Atlantis\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 240,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&format=csv": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&include=area": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&include=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&release=2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"Select the source code year for a value. A geometry release does not convert or reassign observations."}
+",
+    "bytes": 233,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&release=2023-12-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"Select the source code year for a value. A geometry release does not convert or reassign observations."}
+",
+    "bytes": 233,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&units=canonical": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&period=2022&geography=ward&codeYear=2023&units=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05000001&place=W05000001&period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=E05999999&period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"E05999999\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=Hartlepool": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"Hartlepool","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":300,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/E06000001","kind":"area","name":"Hartlepool","geography":"localAuthority","code":"E06000001","match":"exact"},"method":"source-exact","via":"/v1/data/population/series?place=E06000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 738,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Vu3ytp8xi-hHrGdpVlE0hdN9lrgN0zMYA6TjZ72AN8w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=Hartlepool&period=2022": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"Hartlepool","period":"2022","placeDefaulted":false},"answer":{"period":"2022","value":280,"status":"observed","periodDefaulted":false,"unit":"people"},"place":{"place":"localAuthority/E06000001","kind":"area","name":"Hartlepool","geography":"localAuthority","code":"E06000001","match":"exact"},"method":"source-exact","via":"/v1/data/population/series?place=E06000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 679,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-9WBiFMds99SRSQPBoM8BrMSP-ZsQD8T1DYkeXzbWWEs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=Hartlepool&period=2024": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"Hartlepool","period":"2024","placeDefaulted":false},"answer":{"period":"2024","value":300,"status":"observed","periodDefaulted":false,"unit":"people"},"place":{"place":"localAuthority/E06000001","kind":"area","name":"Hartlepool","geography":"localAuthority","code":"E06000001","match":"exact"},"method":"source-exact","via":"/v1/data/population/series?place=E06000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 679,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-JDsrjwp8y1eK8A2MsOKHGeFuO26AgqYHGaEqR14TrsM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=Leeds&period=2022": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"Leeds\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 237,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=N09000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"N09000001","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":400,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/N09000001","kind":"area","name":"Antrim and Newtownabbey","geography":"localAuthority","code":"N09000001","match":"exact","matchedLabel":"N09000001"},"method":"source-exact","via":"/v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 777,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-V8HYbZxTk4M7LwJtjAhOH0JjekcIiQtZ0IM5nEAKei4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=N09000001&geography=localAuthority": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"N09000001","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":400,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/N09000001","kind":"area","name":"Antrim and Newtownabbey","geography":"localAuthority","code":"N09000001","match":"exact","matchedLabel":"N09000001"},"method":"source-exact","via":"/v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 777,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-V8HYbZxTk4M7LwJtjAhOH0JjekcIiQtZ0IM5nEAKei4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=W05000001&period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-place","title":"Unknown Place","status":404,"detail":"No place is called or coded \\"W05000001\\". GET /v1/places?q= searches names, and matches the start of a name as well as the whole."}
+",
+    "bytes": 241,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/data/population/value?place=hartlepool": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"hartlepool","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":300,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/E06000001","kind":"area","name":"Hartlepool","geography":"localAuthority","code":"E06000001","match":"exact"},"method":"source-exact","via":"/v1/data/population/series?place=E06000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 738,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256--YHlTFoqogiZCv9r8l0FMBdiujnwTgfT5hWtDJn_Plo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=localAuthority/N09000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"localAuthority/N09000001","period":null,"placeDefaulted":false},"answer":{"period":"2024","value":400,"status":"observed","periodDefaulted":true,"unit":"people"},"place":{"place":"localAuthority/N09000001","kind":"area","name":"Antrim and Newtownabbey","geography":"localAuthority","code":"N09000001","match":"exact","matchedLabel":"localAuthority/N09000001"},"method":"source-exact","via":"/v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"No period was given, so the latest published, 2024, was used. The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 807,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-kUfDuH_iXvkOognWpOXx6CYluncudYfZtrZvjP3LZEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/data/population/value?place=localAuthority/N09000001&codeYear=2023&period=2024": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate","valueKind":"count","unit":"people"},"question":{"place":"localAuthority/N09000001","period":"2024","placeDefaulted":false},"answer":{"period":"2024","value":400,"status":"observed","periodDefaulted":false,"unit":"people"},"place":{"place":"localAuthority/N09000001","kind":"area","name":"Antrim and Newtownabbey","geography":"localAuthority","code":"N09000001","match":"exact","matchedLabel":"localAuthority/N09000001"},"method":"source-exact","via":"/v1/data/population/series?place=N09000001&geography=localAuthority&codeYear=2023","otherMatches":[],"note":"The value as published for this area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 748,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rvHI5rSusF2puO2-Dl3BhN50evRwAjbmmJKTXYducmk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/data/population/value?place=Hartlepool": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Vu3ytp8xi-hHrGdpVlE0hdN9lrgN0zMYA6TjZ72AN8w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+}
+`;
