@@ -2,7 +2,7 @@ import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { requireGeography } from "../runtime/index.ts";
 import { isCountryCode } from "../aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
-import type { Measure } from "@uk-data-atlas/measures";
+import type { Measure, Series } from "@uk-data-atlas/measures";
 import { CONTAINMENT_NOTE, countryOfCode } from "../pointLookup";
 import {
 	findPostcode,
@@ -26,6 +26,16 @@ import {
 	problem,
 	type ApiResponse,
 } from "../runtime/index.ts";
+
+/** Add selected members to links that a caller can follow independently. */
+const seriesHref = (href: string, series?: Series) => {
+	if (!series) return href;
+	const url = new URL(href, "http://localhost");
+	for (const [dimension, member] of Object.entries(series.dimensions))
+		url.searchParams.set(dimension, member);
+	if (series.datasetId) url.searchParams.set("datasetId", series.datasetId);
+	return url.pathname + url.search;
+};
 
 /** A measure's value for one named place, reporting each candidate meaning that was tried. */
 export const handleDataValueRoutes = ({
@@ -106,7 +116,14 @@ export const handleDataValueRoutes = ({
 			: undefined);
 	if (postcodeText)
 		return postcodeValue(
-			{ context, releaseId, parsedUrl, segments, dispatch },
+			{
+				context,
+				releaseId,
+				parsedUrl,
+				segments,
+				dispatch,
+				series: selectedSeries,
+			},
 			measure,
 			postcodeText,
 		);
@@ -230,10 +247,18 @@ export const handleDataValueRoutes = ({
 			method: chosen.method,
 			// The call that gives this answer directly, with its full
 			// provenance, for a caller that wants to cite or repeat it.
-			via: chosen.via,
+			via: seriesHref(chosen.via, selectedSeries),
 			otherMatches: attempts
 				.filter((attempt) => attempt !== chosen)
-				.map(describeAttempt),
+				.map((attempt) => {
+					const described = describeAttempt(attempt);
+					return "via" in described
+						? {
+								...described,
+								via: seriesHref(described.via, selectedSeries),
+							}
+						: described;
+				}),
 			note: [
 				chosen.answer.periodDefaulted
 					? `No period was given, so the latest published, ${chosen.answer.period}, was used.`
@@ -266,6 +291,7 @@ const postcodeValue = (
 		parsedUrl,
 		segments,
 		dispatch,
+		series: selectedSeries,
 	}: RouteRequestFor<
 		| "places"
 		| "releaseAreas"
@@ -334,7 +360,10 @@ const postcodeValue = (
 		return {
 			geography: other.source.sourceGeography.type,
 			boundaryYear: other.source.sourceGeography.boundaryYear,
-			ask: `/v1/data/${encodeURIComponent(segments[2] as string)}/value?${query}`,
+			ask: seriesHref(
+				`/v1/data/${encodeURIComponent(segments[2] as string)}/value?${query}`,
+				selectedSeries,
+			),
 		};
 	};
 	// The finest geography holds the most areas in the release it is placed in.
@@ -436,21 +465,33 @@ const postcodeValue = (
 					area: entry.match.id,
 					name: entry.match.name,
 					answer: { ...entry.answer, unit: measure.unit },
-					via: entry.via,
+					via: seriesHref(entry.via, selectedSeries),
 				})),
 			},
 		);
 	}
 	const { match, answer, via, result, release } = attempt;
+	const publicMeasure = context.dataCatalog
+		? publicSeriesMeasure(
+				measure,
+				selectedSeries,
+				segments[2]!,
+				context.dataCatalog,
+				context.measureDimensions,
+			)
+		: measure;
 	const chosen = available.find((entry) => entry.source === attempt.source)!;
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			measure: {
-				id: measure.id,
-				label: measure.label,
-				valueKind: measure.valueKind,
-				unit: measure.unit,
+				id: publicMeasure.id,
+				label: publicMeasure.label,
+				...("seriesLabel" in publicMeasure
+					? { seriesLabel: publicMeasure.seriesLabel }
+					: {}),
+				valueKind: publicMeasure.valueKind,
+				unit: publicMeasure.unit,
 			},
 			question: {
 				postcode: record.postcode,
@@ -479,7 +520,7 @@ const postcodeValue = (
 			},
 			postcode: record,
 			point,
-			via,
+			via: seriesHref(via, selectedSeries),
 			otherGeographies: available
 				.filter((entry) => entry !== chosen)
 				.map(askFor),
