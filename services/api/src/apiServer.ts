@@ -1,6 +1,7 @@
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
 import { similarAreasContract } from "./areas/similarAreasContract";
+import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
 import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
@@ -744,6 +745,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(similarAreasFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(documentFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,

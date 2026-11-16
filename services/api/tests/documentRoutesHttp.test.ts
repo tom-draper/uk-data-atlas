@@ -1,7 +1,11 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "vitest";
 import { createOperationMatcher } from "../src/runtime/index.ts";
-import { characterize, startCharacterization } from "./httpCharacterization";
+import {
+	characterize,
+	startCharacterization,
+	type CharacterizedRequest,
+} from "./httpCharacterization";
 import { compileOperations } from "./pipelineFixtures";
 import { atlasRelease, testContext } from "./routeFixtures";
 
@@ -30,12 +34,15 @@ const plain = {
 test("evidence documents keep their HTTP responses", async (t) => {
 	const send = await startCharacterization(t, context);
 	const fixture = await send({ path: "/v1/documents/fixture.json" });
-	const requests = [
+	const etag =
+		fixture.headers.find((line) => line.startsWith("etag: "))?.slice(6) ??
+		"";
+	const requests: CharacterizedRequest[] = [
 		{ path: "/v1/documents/fixture.json", headers: plain },
 		{ path: "/v1/documents/fixture.json", method: "HEAD" },
 		{
 			path: "/v1/documents/fixture.json",
-			headers: { "if-none-match": fixture.headers.etag ?? "" },
+			headers: { "if-none-match": etag },
 		},
 		{
 			path: "/v1/documents/fixture.json",

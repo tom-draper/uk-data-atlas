@@ -16,6 +16,8 @@ const detailRoutes: {
 			!release!.endsWith(":join") || release!.length <= 5,
 	},
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
+	// Fastify takes the whole segment, `.json` included, as one parameter.
+	{ pattern: /^\/v1\/documents\/([^/]+\.json)$/ },
 ];
 
 /** Fastify limits a parameter to 100 characters and normalises dot segments. */
