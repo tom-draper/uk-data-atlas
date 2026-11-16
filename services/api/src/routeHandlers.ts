@@ -11,7 +11,7 @@ import type {
 	FullDetailResult,
 	FullDetailSource,
 } from "@uk-data-atlas/geometry";
-import { handleMapResourceRoutes } from "./mapResourceRoutes";
+import { handleMapResourceRoutes } from "./mapResources/mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";
 import {
