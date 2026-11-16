@@ -14,6 +14,11 @@ import {
 import { boundaryReleaseMetadata } from "../boundaries/boundaryReleaseMetadata";
 import { boundaryReleasesMetadata } from "../boundaries/boundaryReleasesMetadata";
 import { boundariesMetadata } from "../boundaries/boundariesMetadata";
+import { atlasAssetFastifyRoutes } from "../atlas/atlasAssetFastifyRoutes";
+import { atlasLookupContract } from "../atlas/atlasLookupContract";
+import { atlasLookupMetadata } from "../atlas/atlasLookupMetadata";
+import { atlasPageContract } from "../atlas/atlasPageContract";
+import { atlasPageMetadata } from "../atlas/atlasPageMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -61,6 +66,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(boundaryFastifyRoutes, { context });
 	await app.register(similarAreasFastifyRoutes, { context });
 	await app.register(documentFastifyRoutes, { context });
+	await app.register(atlasAssetFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -74,7 +80,9 @@ const openapiPath = (path: string) =>
 	path
 		.replace("{datasetId}", "{dataset-id}")
 		.replace("{measureId}", "{measure-id}")
-		.replace("/documents/{documentId}", "/documents/{document-id}.json");
+		.replace("/documents/{documentId}", "/documents/{document-id}.json")
+		.replace("/atlas-lookups/{lookupId}", "/atlas-lookups/{lookup-id}.json")
+		.replace("/atlas-pages/{pageId}", "/atlas-pages/{page-id}.json");
 
 /**
  * An object that declares no properties and allows any other is written
@@ -161,6 +169,12 @@ export const generatedPaths = async () => {
 			similarAreasContract,
 		],
 		["/documents/{document-id}.json", documentMetadata, documentContract],
+		[
+			"/atlas-lookups/{lookup-id}.json",
+			atlasLookupMetadata,
+			atlasLookupContract,
+		],
+		["/atlas-pages/{page-id}.json", atlasPageMetadata, atlasPageContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
