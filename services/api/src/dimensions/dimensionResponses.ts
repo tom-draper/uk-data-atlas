@@ -72,7 +72,11 @@ const restate = (
 		}
 		restated[name] = restate(item, series, reading, name);
 	}
-	if (key === "measure" && value.id === series.catalogueMeasure.id) {
+	if (
+		key === "measure" &&
+		value.id === series.catalogueMeasure.id &&
+		!("seriesLabel" in value)
+	) {
 		restated.id = reading.measure.id;
 		if (typeof value.label === "string") {
 			restated.label = reading.measure.label;
