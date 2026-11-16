@@ -20,6 +20,7 @@ export type MeasureExportRecord = {
 type MeasureExportInput = {
 	atlasRelease: string;
 	measureId: string;
+	dimensions?: Record<string, string>;
 	/** Carried per row so a downloaded file cannot be read in the wrong unit. */
 	unit: string;
 	source: MeasureSource;
@@ -34,6 +35,7 @@ const csvValue = (value: string | number) =>
 const exportRows = ({
 	atlasRelease,
 	measureId,
+	dimensions,
 	unit,
 	source,
 	period,
@@ -61,6 +63,13 @@ const exportRows = ({
 		upperBound: record.confidenceInterval?.upper ?? "",
 		// Appended to the table shape below, preserving existing CSV positions.
 		sourceAreaCode: record.sourceAreaCode ?? "",
+		dimensions: JSON.stringify(
+			Object.fromEntries(
+				Object.entries(dimensions ?? {}).sort(([a], [b]) =>
+					a < b ? -1 : a > b ? 1 : 0,
+				),
+			),
+		),
 	}));
 
 const columns = [
@@ -85,6 +94,7 @@ const columns = [
 	"lowerBound",
 	"upperBound",
 	"sourceAreaCode",
+	"dimensions",
 ] as const;
 
 /**

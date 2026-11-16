@@ -300,7 +300,8 @@ export const handleDataRoutes = ({
 			requestedFormat as TabularFormat,
 			{
 				atlasRelease: releaseId,
-				measureId: measure.id,
+				measureId: selectedSeries ? segments[2]! : measure.id,
+				dimensions: selectedSeries?.dimensions,
 				unit: measure.unit,
 				source,
 				period: period as string,

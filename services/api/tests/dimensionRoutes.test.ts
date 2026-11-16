@@ -494,6 +494,15 @@ test("pages dimensional tables without mixing series", () => {
 	assert.equal(other.status, 400);
 	assert.equal((other.body as { code?: string }).code, "invalid_cursor");
 	const csv = get(`${base}&format=csv`);
+	assert.match(String(csv.representation?.body), /"recorded-crimes"/);
+	assert.doesNotMatch(String(csv.representation?.body), /crime-burglary/);
+	assert.match(String(csv.representation?.body), /offence/);
+	const ndjson = get(`${base}&format=ndjson`);
+	const row = JSON.parse(
+		String(ndjson.representation?.body).trim().split("\n")[0]!,
+	);
+	assert.equal(row.measureId, "recorded-crimes");
+	assert.deepEqual(JSON.parse(row.dimensions), { offence: "burglary" });
 	const link = csv.representation?.headers?.link;
 	assert.ok(link);
 	assert.match(link, /^<\/v1\/data\/recorded-crimes\?/);
