@@ -45,6 +45,10 @@ export type SchemaDocs = {
 
 export const schemaGuide: readonly GuideTopic[] = [
 	{
+		topic: "measure-semantics",
+		body: "Join measure.unit_id to unit for kind, scale, currency and symbol, and universe_id to universe for the population or entity base. The unit scale multiplies a published value to its unscaled unit except for per_n, where scale is the denominator. Unknown means the common base has not been established; not-applicable means a population base does not apply. statistic describes the statistic; value_kind and unit are retained as legacy text. When statistic is by-dimension, join statistic_dimension_id to dimension and inspect series_member for the member. In the pay measures this is pay-statistic: mean, median or a percentile. For pay-change measures it selects the underlying pay statistic whose percentage change is reported. Five published weighted means lack their weights and conversion refuses them; measure_conversion gives the reasons.",
+	},
+	{
 		topic: "start-here",
 		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation for statistics, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
@@ -1414,6 +1418,13 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 };
 
 export const schemaExamples: readonly SchemaExample[] = [
+	{
+		id: "measure-semantics",
+		question:
+			"What statistic, unit and population does the fuel poverty rate use?",
+		sql: "SELECT m.slug, m.statistic, u.label AS unit, u.kind, u.scale, p.label AS population FROM measure m JOIN unit u ON u.id = m.unit_id JOIN universe p ON p.id = m.universe_id WHERE m.slug = 'fuel-poverty-rate'",
+		expect: "One rate, in percent, for households.",
+	},
 	{
 		id: "unemployment-over-time",
 		question: "What was the unemployment rate in Manchester each year?",
