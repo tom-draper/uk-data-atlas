@@ -50,12 +50,23 @@ const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 const catalogueSeries = new Map(
 	catalog.measures.map((measure) => [measure.id, measure.series]),
 );
-const censusSeries = new Map(CENSUS_SMALL_AREA_TABLES.flatMap((table) =>
-	table.categories.map(([suffix, , , member]) => [
-		`${table.measurePrefix}-${suffix}`,
-		{ measure: table.measure, dimensions: { [table.dimension]: member ?? suffix } },
-	] as const),
-));
+const censusSeries = new Map<
+	string,
+	{ measure: string; dimensions: Record<string, string> }
+>(
+	CENSUS_SMALL_AREA_TABLES.flatMap((table) =>
+		table.categories.map(
+			([suffix, , , member]) =>
+				[
+					`${table.measurePrefix}-${suffix}`,
+					{
+						measure: table.measure,
+						dimensions: { [table.dimension]: member ?? suffix },
+					},
+				] as const,
+		),
+	),
+);
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */
@@ -271,8 +282,16 @@ for (const measure of catalog.measures)
 				throw new Error(`Census table ${name} must have one period`);
 			if (!tables.has(name)) {
 				for (const column of table.columns)
-					if (!seriesDimensions(table.datasetId, column.measure, table.geography).length)
-						throw new Error(`Census table ${name} has no ${column.measure} series`);
+					if (
+						!seriesDimensions(
+							table.datasetId,
+							column.measure,
+							table.geography,
+						).length
+					)
+						throw new Error(
+							`Census table ${name} has no ${column.measure} series`,
+						);
 				tables.add(name);
 			}
 			plan.series[key] = table;

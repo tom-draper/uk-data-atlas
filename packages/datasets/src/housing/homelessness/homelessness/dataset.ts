@@ -172,7 +172,10 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 });
 
 export const homelessnessSeries = () =>
-	homelessness.statistics!.fields!
+	(
+		homelessness.statistics!
+			.fields as import("../../../declaration/statistics.ts").DeclaredField[]
+	)
 		.filter((field) =>
 			[
 				"households-in-temporary-accommodation",
@@ -187,4 +190,3 @@ export const homelessnessSeries = () =>
 			measure: field.measure,
 			...(field.members ? { dimensions: field.members } : {}),
 		}));
-

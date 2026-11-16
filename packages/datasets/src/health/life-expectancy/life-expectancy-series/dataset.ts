@@ -96,9 +96,8 @@ const range = (text: unknown) => {
 };
 
 export const declaredLifeExpectancySeries = () =>
-	lifeExpectancySeries.statistics!.dimensions!.find(
-		(dimension) => dimension.slug === "sex",
-	)!
+	lifeExpectancySeries
+		.statistics!.dimensions!.find((dimension) => dimension.slug === "sex")!
 		.members!.filter(({ key }) => key !== "all")
 		.map(({ code, key }) => {
 			const member = code ?? key;
@@ -108,4 +107,3 @@ export const declaredLifeExpectancySeries = () =>
 				dimensions: { sex: member },
 			};
 		});
-

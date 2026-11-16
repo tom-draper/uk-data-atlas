@@ -41,20 +41,27 @@ test("census table selector follows the declared category order", () => {
 		geography: "lsoa",
 		boundaryYear: 2021,
 		period: "2021",
-		measures: ["usual-residents-in-households", "usual-residents-in-communal-establishments", "usual-residents-total"],
+		measures: [
+			"usual-residents-in-households",
+			"usual-residents-in-communal-establishments",
+			"usual-residents-total",
+		],
 		columns: [
-			{ measure: "usual-residents", dimensions: { "residence-type": "household" } },
-			{ measure: "usual-residents", dimensions: { "residence-type": "communal-establishment" } },
-			{ measure: "usual-residents", dimensions: { "residence-type": "total" } },
+			{
+				measure: "usual-residents",
+				dimensions: { "residence-type": "household" },
+			},
+			{
+				measure: "usual-residents",
+				dimensions: { "residence-type": "communal-establishment" },
+			},
+			{
+				measure: "usual-residents",
+				dimensions: { "residence-type": "total" },
+			},
 		],
 	});
 	expect(
-		censusTableSelector(
-			"other",
-			"income",
-			"localAuthority",
-			2024,
-			"2024",
-		),
+		censusTableSelector("other", "income", "localAuthority", 2024, "2024"),
 	).toBeUndefined();
 });

@@ -27,7 +27,7 @@ test("declares the same census series as the existing mapping", () => {
 	const config = JSON.parse(
 		readFileSync(
 			new URL(
-				"../../services/api/config/measure-dimensions.json",
+				"../../../services/api/config/measure-dimensions.json",
 				import.meta.url,
 			),
 			"utf8",
