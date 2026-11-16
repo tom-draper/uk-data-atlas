@@ -170,7 +170,7 @@ export const conversionRule = (
 		if (scale === undefined)
 			return {
 				rule: "refuse",
-				reason: `No scale is known for a ratio in the unit "${measure.unit}".`,
+				reason: `No ratio rebuild rule is supported for the unit "${measure.unit}".`,
 			};
 		return {
 			rule: "rebuild",
