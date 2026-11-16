@@ -69,6 +69,23 @@ import { placeFastifyRoutes } from "../places/placeFastifyRoutes";
 import { placesMetadata } from "../places/placesMetadata";
 import { postcodeBatchMetadata } from "../places/postcodeBatchMetadata";
 import { postcodeMetadata } from "../places/postcodeMetadata";
+import {
+	locationAlternativesContract,
+	locationComparisonContract,
+	locationContract,
+	locationGeometryContract,
+	locationMembersContract,
+	locationParentsContract,
+	locationsContract,
+} from "../places/locationContract";
+import { locationFastifyRoutes } from "../places/locationFastifyRoutes";
+import { locationAlternativesMetadata } from "../places/locationAlternativesMetadata";
+import { locationComparisonMetadata } from "../places/locationComparisonMetadata";
+import { locationGeometryMetadata } from "../places/locationGeometryMetadata";
+import { locationMembersMetadata } from "../places/locationMembersMetadata";
+import { locationMetadata } from "../places/locationMetadata";
+import { locationParentsMetadata } from "../places/locationParentsMetadata";
+import { locationsMetadata } from "../places/locationsMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -127,6 +144,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(bulkFastifyRoutes, { context });
 	await app.register(crosswalkFastifyRoutes, { context });
 	await app.register(placeFastifyRoutes, { context });
+	await app.register(locationFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -148,6 +166,7 @@ const openapiPath = (path: string) =>
 		.replace("{terrainId}", "{terrain-id}")
 		.replace("{crosswalkId}:{convert}", "{crosswalk-id}:convert")
 		.replace("{crosswalkId}", "{crosswalk-id}")
+		.replace("{locationId}", "{location-id}")
 		.replace(/^\/lookups\/\{lookupId\}$/, "/lookups/{lookup-id}");
 
 /**
@@ -275,6 +294,33 @@ export const generatedPaths = async () => {
 		],
 		["/places", placesMetadata, placesContract],
 		["/postcodes/{postcode}", postcodeMetadata, postcodeContract],
+		["/locations", locationsMetadata, locationsContract],
+		[
+			"/locations/alternatives",
+			locationAlternativesMetadata,
+			locationAlternativesContract,
+		],
+		["/locations/{location-id}", locationMetadata, locationContract],
+		[
+			"/locations/{location-id}/comparison",
+			locationComparisonMetadata,
+			locationComparisonContract,
+		],
+		[
+			"/locations/{location-id}/geometry",
+			locationGeometryMetadata,
+			locationGeometryContract,
+		],
+		[
+			"/locations/{location-id}/members",
+			locationMembersMetadata,
+			locationMembersContract,
+		],
+		[
+			"/locations/{location-id}/parents",
+			locationParentsMetadata,
+			locationParentsContract,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
