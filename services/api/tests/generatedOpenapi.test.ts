@@ -38,6 +38,8 @@ test("generated route contracts match the published description", async () => {
 		"/coordinates:convert",
 		"/translations",
 		"/attribution",
+		"/analysis-geographies",
+		"/analysis:plan",
 		"/data/{measure-id}/export",
 	]);
 	for (const [path, item] of Object.entries(paths)) {

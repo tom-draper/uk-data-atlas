@@ -28,6 +28,13 @@ import { translationMetadata } from "../crosswalks/translationMetadata";
 import { attributionContract } from "../attribution/attributionContract";
 import { attributionFastifyRoutes } from "../attribution/attributionFastifyRoutes";
 import { attributionMetadata } from "../attribution/attributionMetadata";
+import {
+	analysisGeographiesContract,
+	analysisPlanContract,
+} from "../analysis/analysisContract";
+import { analysisFastifyRoutes } from "../analysis/analysisFastifyRoutes";
+import { analysisGeographiesMetadata } from "../analysis/analysisGeographiesMetadata";
+import { analysisPlanMetadata } from "../analysis/analysisPlanMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -79,6 +86,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(coordinateFastifyRoutes, { context });
 	await app.register(translationFastifyRoutes, { context });
 	await app.register(attributionFastifyRoutes, { context });
+	await app.register(analysisFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -190,9 +198,20 @@ export const generatedPaths = async () => {
 		["/coordinates:convert", coordinateMetadata, coordinateContract],
 		["/translations", translationMetadata, translationContract],
 		["/attribution", attributionMetadata, attributionContract],
+		[
+			"/analysis-geographies",
+			analysisGeographiesMetadata,
+			analysisGeographiesContract,
+		],
+		["/analysis:plan", analysisPlanMetadata, analysisPlanContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
+		// A response described only in words publishes no body schema.
+		if (!("content" in metadata.responses[200])) {
+			Object.assign(operation, metadata);
+			continue;
+		}
 		const { $schema, ...described } = openObjectAsPlain(
 			z.toJSONSchema(
 				definition.responses[200].content["application/json"].schema,
