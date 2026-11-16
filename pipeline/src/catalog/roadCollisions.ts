@@ -18,6 +18,12 @@ export const compileRoadCollisions = (
 		note: string,
 	): Indicator => ({
 		id,
+		series: {
+			measure: "road-collisions",
+			dimensions: {
+				"collision-severity": field === "collisions" ? "all" : field,
+			},
+		},
 		label,
 		field,
 		valueKind: "count",
