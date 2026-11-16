@@ -10,6 +10,7 @@ import {
 import { type StatisticsInput } from "@uk-data-atlas/measures";
 import {
 	DATASET_HOME_MODULE_IDS,
+	MEASURE_UNITS,
 	isDatasetTopic,
 	moduleOfDataset,
 } from "@uk-data-atlas/datasets";
@@ -17,6 +18,12 @@ import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
+
+const unitId = (label: string): number => {
+	const unit = MEASURE_UNITS.find((item) => item.label === label);
+	if (!unit) throw new Error(`Unknown measure unit: ${label}`);
+	return unit.id;
+};
 
 /** Every id the `dataset.module` column accepts: themes, foundation parts and split modules that hold datasets. */
 const MODULE_IDS: readonly string[] = DATASET_HOME_MODULE_IDS;
@@ -185,6 +192,29 @@ export function statisticsTables(
 				]);
 			}),
 		},
+		unit: {
+			strict: true,
+			rowid: true,
+			columns: [
+				"id INTEGER NOT NULL",
+				"slug TEXT NOT NULL UNIQUE",
+				"label TEXT NOT NULL",
+				"kind TEXT NOT NULL CHECK (kind IN ('count','currency','percent','per_n','ratio','duration','index','other'))",
+				"scale REAL NOT NULL CHECK (scale > 0)",
+				"currency TEXT",
+				"symbol TEXT",
+			],
+			key: ["id"],
+			rows: MEASURE_UNITS.map((unit) => [
+				unit.id,
+				unit.slug,
+				unit.label,
+				unit.kind,
+				unit.scale,
+				unit.currency,
+				unit.symbol,
+			]),
+		},
 		measure: {
 			strict: true,
 			rowid: true,
@@ -194,6 +224,7 @@ export function statisticsTables(
 				"label TEXT NOT NULL",
 				"description TEXT NOT NULL",
 				"unit TEXT NOT NULL",
+				"unit_id INTEGER NOT NULL REFERENCES unit(id)",
 				"value_kind TEXT NOT NULL CHECK (value_kind IN ('count','rate','share','median','mean','index','rank','amount','category'))",
 				"aggregation TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none'))",
 				"numerator_id INTEGER REFERENCES measure(id)",
@@ -212,6 +243,7 @@ export function statisticsTables(
 					measure.label,
 					measure.description,
 					measure.unit,
+					unitId(measure.unit),
 					measure.valueKind,
 					measure.aggregation,
 					measure.numerator === undefined
