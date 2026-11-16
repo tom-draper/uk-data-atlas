@@ -136,14 +136,14 @@ tries.
 
 Settled 2026-11-10.
 
-| Question          | Decision                                                                                                                           |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Centre of gravity | The conversion engine on `/fix` and place pages. The database is the engine underneath.                                            |
-| Modules           | No per-module packaging for now.                                                                                                   |
-| Vintages          | Start archiving raw source files with hashes and retrieval dates now. Defer the vintage schema.                                    |
-| The freeze        | No schema restructuring, API growth or new datasets until Now items 1 and 2 are live. Exceptions: Price Paid and source archiving. |
-| Selling           | Parked. Open versus paid for the derived data is undecided, see [Open questions](#open-questions).                                 |
-| Website role      | The website is the product for people who do not write code. Only the `/atlas` explorer is a showcase.                             |
+| Question          | Decision                                                                                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Centre of gravity | The conversion engine on `/fix` and place pages. The database is the engine underneath.                                                                                                           |
+| Modules           | No per-module packaging for now.                                                                                                                                                                  |
+| Vintages          | Start archiving raw source files with hashes and retrieval dates now. Defer the vintage schema.                                                                                                   |
+| The freeze        | No schema restructuring, API growth or new datasets until Now items 1 and 2 are live. Exceptions: Price Paid, source archiving, and compiling dataset sources directly to statistics rows (#528). |
+| Selling           | Parked. Open versus paid for the derived data is undecided, see [Open questions](#open-questions).                                                                                                |
+| Website role      | The website is the product for people who do not write code. Only the `/atlas` explorer is a showcase.                                                                                            |
 
 Vintages are the one place the reviews still differ. The second review would
 defer them entirely. The case for archiving now: publishers overwrite revised
