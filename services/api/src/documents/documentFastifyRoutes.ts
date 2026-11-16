@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
-import { handleDocumentRoutes } from "../documentRoutes";
+import { handleDocumentRoutes } from "./documentRoutes";
 import {
 	registerGetRoute,
 	type ContractDispatch,
