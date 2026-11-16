@@ -6,5 +6,9 @@
 	"land-area": {
 		"sha256": "1ab9a3209ef9737cbb3afd51d2f6c231e4fcf3a103d4c841e07139d9a85e2738",
 		"bytes": 58477
+	},
+	"council-tax": {
+		"sha256": "6009f45dda8072a1bfe49763be9caba45a167a5f8411a0cd8c88e6175addf617",
+		"bytes": 20828
 	}
 }

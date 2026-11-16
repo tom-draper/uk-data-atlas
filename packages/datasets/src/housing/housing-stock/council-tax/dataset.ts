@@ -1,10 +1,12 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadCouncilTax } from "../../../data/new-datasets/loader.ts";
 import { mapAuthorityCode } from "../../../data/new-datasets/authorityCode.ts";
 import { odsTableRows } from "../../../data/spreadsheet/ods.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
@@ -39,9 +41,8 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 	ingestion: {
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2026],
-		requiredDataFields: ["value"],
 	},
-	load: ({ odsContent }) => loadCouncilTax(odsContent),
+	load: noCompiledPayload<IndicatorDataset<"council-tax">>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 70,
@@ -73,6 +74,7 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 		],
 		fields: [{ path: "value", measure: "band-d-council-tax" }],
 		direct: {
+			only: true,
 			read: async ({ odsContent }) => {
 				const rows = odsTableRows(
 					await odsContent(
