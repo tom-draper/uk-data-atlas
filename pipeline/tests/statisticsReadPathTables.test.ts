@@ -17,7 +17,7 @@ test("round trips each selector kind and optional transformation", () => {
 		schemaVersion: 1,
 		dataCatalogHash: "hash",
 		observations: { missing: "reason" },
-		statistics: {
+		series: {
 			series: {
 				datasetId: "d",
 				geography: "ward",
