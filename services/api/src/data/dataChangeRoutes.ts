@@ -83,7 +83,7 @@ export const handleDataChangeRoutes = ({
 			"Change is measured within one source partition. It does not select geometry releases, convert observations or aggregate them.",
 		);
 	}
-	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	const place = parsePlaceParameter(parsedUrl.searchParams, segments[2]!);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
 		return invalidQuery(
@@ -152,7 +152,7 @@ export const handleDataChangeRoutes = ({
 		!endPeriod
 	) {
 		return invalidQuery(
-			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
+			`${segments[2]} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	}
 	// The partition is chosen by geography and boundary year alone. Which
@@ -160,7 +160,7 @@ export const handleDataChangeRoutes = ({
 	// positions anyway to say which way round the change runs.
 	if (partition.kind === "refusal")
 		return invalidQuery(
-			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
+			`${segments[2]} measures change within one source partition, and this query does not pick one: give geography, with codeYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	const {
 		plan: { source },
@@ -169,7 +169,7 @@ export const handleDataChangeRoutes = ({
 		return problem(
 			422,
 			"Operation Not Supported",
-			`${measureId} publishes a single period (${source.periods[0]}) for this partition, so there is no change to measure.`,
+			`${segments[2]} publishes a single period (${source.periods[0]}) for this partition, so there is no change to measure.`,
 		);
 	}
 	const startIndex = source.periods.indexOf(startPeriod);
@@ -228,7 +228,7 @@ export const handleDataChangeRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain both declared periods.`,
+			`The observation artifact for ${segments[2]} is missing, or does not contain both declared periods.`,
 		);
 	}
 	const startRecords = startObservations.records.filter(isNumericObservation);
@@ -240,7 +240,7 @@ export const handleDataChangeRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain numeric records required for change.`,
+			`The observation artifact for ${segments[2]} does not contain numeric records required for change.`,
 		);
 	}
 	const changeSet = computeChanges(measure, startRecords, endRecords);

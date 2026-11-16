@@ -158,7 +158,7 @@ export const handleDataConversionRoutes = ({
 	// is the resolver's to decide.
 	if (period === null || geography === null || boundaryYear === null)
 		return invalidQuery(
-			`${measureId} has no published source for that period, geography and boundary year.`,
+			`${segments[2]} has no published source for that period, geography and boundary year.`,
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
@@ -189,14 +189,14 @@ export const handleDataConversionRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			`The observation artifact for ${segments[2]} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	const numericRecords = observations.records.filter(isNumericObservation);
 	if (numericRecords.length !== observations.records.length) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain numeric records required for conversion.`,
+			`The observation artifact for ${segments[2]} does not contain numeric records required for conversion.`,
 		);
 	}
 	const converted = convertThroughSteps(route.steps, numericRecords);
