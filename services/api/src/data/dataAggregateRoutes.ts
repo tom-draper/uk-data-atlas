@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { problem, type ApiResponse, type Envelope } from "../runtime/index.ts";
 import { readWeightedSource } from "../weightedSource";
@@ -167,8 +168,14 @@ export const aggregateValue = ({
 	}
 	const response = buildAggregateResponse({
 		releaseId,
-		measure,
-		measureId,
+		measure: publicSeriesMeasure(
+			measure,
+			series,
+			segments[2]!,
+			availableDataCatalog,
+			context.measureDimensions,
+		),
+		measureId: series ? segments[2]! : measureId,
 		source,
 		period: period as string,
 		observations,
