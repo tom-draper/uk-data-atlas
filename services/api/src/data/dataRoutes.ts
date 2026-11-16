@@ -1,3 +1,4 @@
+import { dimensionCatalogue } from "@uk-data-atlas/measures";
 import { requireGeography } from "../runtime/index.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
@@ -62,6 +63,7 @@ export const handleDataRoutes = ({
 	}
 	const measureId =
 		selectedSeries?.catalogueMeasure.id ?? (segments[2] as string);
+	const publicId = segments[2]!;
 	const measure =
 		selectedSeries?.catalogueMeasure ??
 		dataCatalog.measures.find((candidate) => candidate.id === measureId);
@@ -72,11 +74,11 @@ export const handleDataRoutes = ({
 			"No published measure serves data at that path.",
 		);
 	}
-	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	const place = parsePlaceParameter(parsedUrl.searchParams, publicId);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
 		return invalidQuery(
-			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/value sums it from its members.`,
+			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${publicId}/value sums it from its members.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
 	const named = areaNamedBy({
@@ -113,7 +115,7 @@ export const handleDataRoutes = ({
 	// is the resolver's to decide rather than this route's.
 	if (period === null || geography === null || boundaryYear === null) {
 		return invalidQuery(
-			`${measureId} lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${publicId} lists the areas of one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	}
 	const requestedRelease = parsedUrl.searchParams.get("release");
@@ -207,7 +209,7 @@ export const handleDataRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			`The observation artifact for ${publicId} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	}
 	const sourceRecords = observations.records;
@@ -223,9 +225,40 @@ export const handleDataRoutes = ({
 	}
 	const canonicalUnit =
 		unitMode === "canonical" ? measureUnit(measure) : undefined;
+	const publicMeasure =
+		selectedSeries &&
+		(measure.id !== publicId ||
+			Object.keys(selectedSeries.dimensions).length > 0 ||
+			selectedSeries.datasetId)
+			? {
+					...measure,
+					id: publicId,
+					label: context.measureDimensions
+						? (dimensionCatalogue(
+								dataCatalog,
+								context.measureDimensions,
+							).measure(publicId)?.label ?? measure.label)
+						: measure.label,
+					seriesLabel: measure.label,
+					links: {
+						...measure.links,
+						data: `/v1/data/${publicId}${(() => {
+							const query = new URLSearchParams(
+								selectedSeries.dimensions,
+							);
+							if (selectedSeries.datasetId)
+								query.set(
+									"datasetId",
+									selectedSeries.datasetId,
+								);
+							return query.size ? `?${query}` : "";
+						})()}`,
+					},
+				}
+			: measure;
 	const provenance = sourceExactProvenance({
 		atlasRelease: releaseId,
-		measure,
+		measure: publicMeasure,
 		source,
 		period: period as string,
 		observations,
@@ -236,7 +269,7 @@ export const handleDataRoutes = ({
 		: sourceRecords;
 	const page = paginate(parsedUrl, matches, {
 		keyOf: (record) => record.areaCode,
-		subject: `${measureId} query`,
+		subject: `${publicId} query`,
 		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
@@ -300,7 +333,7 @@ export const handleDataRoutes = ({
 			requestedFormat as TabularFormat,
 			{
 				atlasRelease: releaseId,
-				measureId: selectedSeries ? segments[2]! : measure.id,
+				measureId: selectedSeries ? publicId : measure.id,
 				dimensions: selectedSeries?.dimensions,
 				unit: measure.unit,
 				source,
@@ -339,7 +372,7 @@ export const handleDataRoutes = ({
 		body: envelope(
 			releaseId,
 			{
-				measure,
+				measure: publicMeasure,
 				source,
 				period,
 				...statedDefaults(defaults?.defaulted),
