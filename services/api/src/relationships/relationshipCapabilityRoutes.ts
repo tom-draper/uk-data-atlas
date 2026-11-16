@@ -37,7 +37,7 @@ const measureReadiness = (
 		};
 	if (!compatibilityInventory)
 		return {
-			measure: { id: measure.id, unit: measure.unit },
+			measure: { id: measureId, unit: measure.unit },
 			status: "not-built" as const,
 			reason: "Build measure compatibility before assessing whether the source partition's codes fit the requested release.",
 		};
@@ -72,12 +72,12 @@ const measureReadiness = (
 			source.candidates.map((candidate) => candidate.status),
 		);
 		return {
-			measure: { id: measure.id, unit: measure.unit },
+			measure: { id: measureId, unit: measure.unit },
 			status: "unsupported" as const,
 			reason:
 				statuses.length > 0
-					? `${measure.id} has ${[...new Set(statuses)].join(" and ")} source-code compatibility with ${from.geography}/${from.boundaryRelease}; a complete code set is required.`
-					: `${measure.id} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
+					? `${measureId} has ${[...new Set(statuses)].join(" and ")} source-code compatibility with ${from.geography}/${from.boundaryRelease}; a complete code set is required.`
+					: `${measureId} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
 			publishedSourcePartitions: publishedSourcePartitionsFor(
 				measure,
 				from.geography,
@@ -93,7 +93,7 @@ const measureReadiness = (
 	}));
 	if (purpose === "identity")
 		return {
-			measure: { id: measure.id, unit: measure.unit },
+			measure: { id: measureId, unit: measure.unit },
 			sourcePartitions,
 			status: "available" as const,
 			operation: "identity-join",
@@ -102,7 +102,7 @@ const measureReadiness = (
 	if (purpose === "membership" && measure.aggregation.kind === "intensive")
 		return measure.aggregation.available
 			? {
-					measure: { id: measure.id, unit: measure.unit },
+					measure: { id: measureId, unit: measure.unit },
 					sourcePartitions,
 					status: "requires-conversion" as const,
 					operation: "weighted-mean",
@@ -110,7 +110,7 @@ const measureReadiness = (
 					reason: "This intensive measure requires the declared denominator; it must not be summed across members.",
 				}
 			: {
-					measure: { id: measure.id, unit: measure.unit },
+					measure: { id: measureId, unit: measure.unit },
 					sourcePartitions,
 					status: "unsupported" as const,
 					reason: "This intensive measure requires a weighted mean, but no published aggregation operation is available.",
@@ -120,7 +120,7 @@ const measureReadiness = (
 		measure.aggregation.available
 	)
 		return {
-			measure: { id: measure.id, unit: measure.unit },
+			measure: { id: measureId, unit: measure.unit },
 			sourcePartitions,
 			status: "available" as const,
 			operation:
@@ -130,7 +130,7 @@ const measureReadiness = (
 			reason: "This extensive measure may be summed or allocated using the declared relationship operation.",
 		};
 	return {
-		measure: { id: measure.id, unit: measure.unit },
+		measure: { id: measureId, unit: measure.unit },
 		sourcePartitions,
 		status: "unsupported" as const,
 		reason: `This measure is ${measure.aggregation.kind}; ${purpose === "membership" ? "containment aggregation" : "weighted allocation"} is not published as a safe operation.`,

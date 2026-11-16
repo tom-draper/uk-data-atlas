@@ -12,7 +12,6 @@ import { resolveDimensionRequest } from "./dimensions/dimensionRequests";
 import type { Series } from "@uk-data-atlas/measures";
 import {
 	breakdownResponse,
-	restatedResponse,
 	seriesResponse,
 } from "./dimensions/dimensionResponses";
 
@@ -181,19 +180,16 @@ const routeResolved = (
 			return resolved.response;
 		case "rewritten":
 			return withLocation(
-				restatedResponse(
-					routeSeries(
-						method,
-						resolved.url,
-						context,
-						body,
-						undefined,
-						resolved.read.map(({ measure, series }) => ({
-							measureId: measure.id,
-							series,
-						})),
-					),
-					resolved.read,
+				routeSeries(
+					method,
+					resolved.url,
+					context,
+					body,
+					undefined,
+					resolved.read.map(({ measure, series }) => ({
+						measureId: measure.id,
+						series,
+					})),
 				),
 				resolved.location,
 			);
@@ -240,19 +236,16 @@ const routeResolvedAsync = async (
 			return resolved.response;
 		case "rewritten":
 			return withLocation(
-				restatedResponse(
-					await routeSeriesAsync(
-						method,
-						resolved.url,
-						context,
-						body,
-						undefined,
-						resolved.read.map(({ measure, series }) => ({
-							measureId: measure.id,
-							series,
-						})),
-					),
-					resolved.read,
+				await routeSeriesAsync(
+					method,
+					resolved.url,
+					context,
+					body,
+					undefined,
+					resolved.read.map(({ measure, series }) => ({
+						measureId: measure.id,
+						series,
+					})),
 				),
 				resolved.location,
 			);

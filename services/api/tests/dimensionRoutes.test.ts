@@ -892,6 +892,7 @@ test("resolves relationship readiness from the selected dimensional series", () 
 	};
 	assert.equal(readiness.measure.id, "recorded-crimes");
 	assert.equal(readiness.publishedSourcePartitions[0]?.datasetId, "crime");
+	assert.doesNotMatch(JSON.stringify(response.body), /crime-burglary/);
 });
 
 test("applies a filter to each listed measure that has the dimension", () => {

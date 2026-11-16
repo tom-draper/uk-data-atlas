@@ -82,35 +82,6 @@ const restate = (
 	return restated;
 };
 
-/** A problem's `measure=crime-burglary`, restated as the measure and members. */
-const restateTerms = (
-	value: unknown,
-	series: Series,
-	measure: DimensionalMeasure,
-): unknown => {
-	if (typeof value === "string") {
-		const members = Object.entries(series.dimensions)
-			.map(([dimension, member]) => `&${dimension}=${member}`)
-			.join("");
-		return value.replace(
-			new RegExp(
-				`measure=${series.catalogueMeasure.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`,
-				"g",
-			),
-			() => `measure=${measure.id}${members}`,
-		);
-	}
-	if (Array.isArray(value))
-		return value.map((item) => restateTerms(item, series, measure));
-	if (!isObject(value)) return value;
-	return Object.fromEntries(
-		Object.entries(value).map(([name, item]) => [
-			name,
-			restateTerms(item, series, measure),
-		]),
-	);
-};
-
 /** The members a series was read with, marking those the API chose. */
 const membersRead = (series: Series, reading: DimensionReading) => {
 	const members = describeMembers(reading.measure, series.dimensions);
@@ -214,24 +185,6 @@ export const seriesResponse = (
 			data: withReading(response.body.data, series, reading),
 		},
 	};
-};
-
-/**
- * A route's answer to a request that named series in `measure` query
- * parameters, with its links and measure ids restated for the measures. The
- * route answers as it does without dimensions, so nothing is added.
- */
-export const restatedResponse = (
-	response: ApiResponse,
-	read: Array<{ series: Series; measure: DimensionalMeasure }>,
-): ApiResponse => {
-	if (response.representation) return response;
-	let body: unknown = response.body;
-	for (const { series, measure } of read) {
-		body = restate(body, series, { measure, defaulted: {} });
-		body = restateTerms(body, series, measure);
-	}
-	return { ...response, body: body as typeof response.body };
 };
 
 /**
