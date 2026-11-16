@@ -38,6 +38,7 @@ export const compileObservationDownloads = (
 	entry: BulkExport,
 	artifact: DownloadArtifact,
 	unit: string,
+	seriesKey = entry.measureId,
 ): ObservationDownload[] => {
 	const values: Array<Array<string | number | null>> = [];
 	const add = (
@@ -68,7 +69,7 @@ export const compileObservationDownloads = (
 		]);
 	};
 	if (isMeasureTable(artifact)) {
-		const index = artifact.measures.indexOf(entry.measureId);
+		const index = artifact.measures.indexOf(seriesKey);
 		if (index === -1)
 			throw new Error(`${artifact.id} does not serve ${entry.measureId}`);
 		for (const [areaCode, ...cells] of artifact.records)

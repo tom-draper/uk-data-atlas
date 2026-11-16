@@ -13,6 +13,7 @@ import {
 	type StatisticsReadPath,
 	measureSeriesKey,
 	observationsFor,
+	observationTextOf,
 } from "@uk-data-atlas/measures";
 
 test("indexes each shared table column by its series and source", () => {
@@ -177,6 +178,36 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		})?.recordFor("E1"),
 		{ areaCode: "E1", value: 42, status: "observed" },
 	);
+	assert.equal(
+		JSON.parse(observationTextOf(canonical!)!).measureId,
+		measureSeriesKey(identity),
+	);
+	const tableSelector = {
+		kind: "measure-table" as const,
+		id: "census-table",
+		datasetId: "fixture",
+		geography: "ward",
+		boundaryYear: 2024,
+		period: "2024",
+		measures: [measureSeriesKey(identity)],
+		columns: [{ measure: "count", dimensions: {} }],
+	};
+	const tableViews = readMeasureObservations(
+		root,
+		catalog,
+		4096,
+		{
+			...canonicalReadPath,
+			series: { [key]: tableSelector },
+		},
+		{ count: identity },
+	);
+	assert.deepEqual(tableViews[0]!.periods[0]!.records, [
+		{ areaCode: "E1", value: 42, status: "observed" },
+	]);
+	assert.deepEqual(JSON.parse(observationTextOf(tableViews[0]!)!).measures, [
+		measureSeriesKey(identity),
+	]);
 	const cache = new ObservationCache();
 	const databasePath = join(root, "data/build/atlas.sqlite");
 	cache.bindCatalogue(databasePath, catalog, canonicalReadPath, {

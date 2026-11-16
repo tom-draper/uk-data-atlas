@@ -3,6 +3,7 @@ import {
 	type MeasureSource,
 	type MeasureObservation,
 	observationArtifactName,
+	measureSeriesKey,
 	type ExportField,
 	type ExportDataset,
 	type BulkExport,
@@ -162,6 +163,9 @@ export const compileExportManifest = (
 						entry,
 						table,
 						measure.unit,
+						measure.series
+							? measureSeriesKey(measure.series)
+							: measure.id,
 					);
 					return entry;
 				}

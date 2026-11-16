@@ -5,6 +5,7 @@ import {
 } from "@uk-data-atlas/catalogue/node";
 import {
 	tableMeasureObservations,
+	measureSeriesKey,
 	readMeasureDimensionsMapping,
 } from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
@@ -59,9 +60,15 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 					const artifact: unknown = JSON.parse(
 						readArtifact(measure.id, source),
 					);
-					return isMeasureTable(artifact)
-						? tableMeasureObservations(artifact, measure.id)
+					const selected = isMeasureTable(artifact)
+						? tableMeasureObservations(
+								artifact,
+								measure.series
+									? measureSeriesKey(measure.series)
+									: measure.id,
+							)
 						: (artifact as AnyMeasureObservationArtifact);
+					return { ...selected, measureId: measure.id };
 				}),
 			),
 			dataCatalog.measures.some((measure) => !measure.series)

@@ -16,6 +16,7 @@ import { gunzipSync } from "node:zlib";
 import { test } from "vitest";
 import {
 	observationArtifactName,
+	measureSeriesKey,
 	type DataCatalog,
 } from "@uk-data-atlas/catalogue/node";
 import { compileExportManifest as compileManifest } from "../../src/atlas/exportManifest";
@@ -355,6 +356,41 @@ test("projects shared tables to the named measure without losing null or zero", 
 					["fixture", "B", null],
 				],
 			);
+		},
+	);
+});
+
+test("projects canonical shared-table columns for each catalogue series", () => {
+	const identity = { measure: "households", dimensions: { tenure: "owned" } };
+	const canonicalCatalog = {
+		...catalog,
+		measures: catalog.measures.map((measure) => ({
+			...measure,
+			series: identity,
+		})),
+	};
+	withArtifact(
+		{
+			schemaVersion: 1,
+			kind: "measure-table",
+			id: "fixture-observations",
+			datasetId: "fixture-dataset",
+			sourceGeography: { type: "ward", boundaryYear: 2024 },
+			period: "2024",
+			measures: [measureSeriesKey(identity)],
+			records: [["A", 7]],
+			contentHash: "sha256:table",
+		},
+		(directory) => {
+			const entry = compileExportManifest(
+				directory,
+				canonicalCatalog,
+				fixtureObservationDatabase(directory),
+			).exports[0]!;
+			const rows = readParquet(
+				readFileSync(join(directory, entry.formats![1]!.artifact)),
+			).rows;
+			assert.equal(rows[0]!.value, 7);
 		},
 	);
 });

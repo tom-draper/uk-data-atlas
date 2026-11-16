@@ -1,6 +1,7 @@
 import {
 	isNumericObservation,
 	observationArtifactName,
+	measureSeriesKey,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 } from "@uk-data-atlas/measures";
@@ -92,7 +93,12 @@ export const validateAnalysisGeographies = (
 		const stored = observationsByArtifact.get(artifactName);
 		const observations =
 			stored && isMeasureTable(stored)
-				? tableMeasureObservations(stored, measure.id)
+				? tableMeasureObservations(
+						stored,
+						measure.series
+							? measureSeriesKey(measure.series)
+							: measure.id,
+					)
 				: stored;
 		if (!observations)
 			throw new Error(
