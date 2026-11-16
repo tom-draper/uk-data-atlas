@@ -16,10 +16,12 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 			.get();
 		if (!metadata || metadata.schema_version !== 1)
 			throw new Error(`Invalid statistics read path in ${path}`);
-		const result: StatisticsReadPath = {
+		const result: StatisticsReadPath & {
+			series: NonNullable<StatisticsReadPath["series"]>;
+		} = {
 			schemaVersion: 1,
 			dataCatalogHash: String(metadata.data_catalog_hash),
-			statistics: {},
+			series: {},
 			observations: {},
 		};
 		for (const r of db
@@ -27,7 +29,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 			.all()) {
 			const name = String(r.artifact);
 			if (r.kind === "measure-table")
-				result.statistics[name] = {
+				result.series[name] = {
 					kind: "measure-table",
 					id: String(r.table_id),
 					datasetId: String(r.dataset),
@@ -73,13 +75,13 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 						measure: String(r.half_width_measure),
 						digits: Number(r.half_width_digits),
 					};
-				result.statistics[name] = s;
+				result.series[name] = s;
 			}
 		}
 		for (const row of db
 			.prepare("SELECT * FROM statistics_selector_option")
 			.all()) {
-			const selector = result.statistics[
+			const selector = result.series[
 				String(row.artifact)
 			] as StatisticsSelector;
 			if (row.option === "sum") selector.sum = [];
@@ -94,9 +96,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 				"SELECT * FROM statistics_selector_member ORDER BY artifact, role, dimension",
 			)
 			.all()) {
-			const s = result.statistics[
-				String(r.artifact)
-			] as StatisticsSelector;
+			const s = result.series[String(r.artifact)] as StatisticsSelector;
 			(r.role === "ratio" ? (s.ratio!.dimensions ??= {}) : s.dimensions)[
 				String(r.dimension)
 			] = String(r.member);
@@ -106,7 +106,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 				"SELECT * FROM statistics_selector_list ORDER BY artifact, role, position",
 			)
 			.all()) {
-			const s = result.statistics[String(r.artifact)]!;
+			const s = result.series[String(r.artifact)]!;
 			const v = String(r.value);
 			if (r.role === "table_measure")
 				(s as StatisticsTableSelector).measures.push(v);
@@ -123,9 +123,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 				"SELECT * FROM statistics_selector_code ORDER BY artifact, stored_code",
 			)
 			.all()) {
-			const s = result.statistics[
-				String(r.artifact)
-			] as StatisticsSelector;
+			const s = result.series[String(r.artifact)] as StatisticsSelector;
 			(s.servedCodes ??= {})[String(r.stored_code)] = {
 				areaCode: String(r.area_code),
 				...(r.source_area_code === null
@@ -139,7 +137,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 			)
 			.all())
 			(
-				result.statistics[String(r.artifact)] as StatisticsTableSelector
+				result.series[String(r.artifact)] as StatisticsTableSelector
 			).columns.push({ measure: String(r.measure), dimensions: {} });
 		for (const r of db
 			.prepare(
@@ -147,7 +145,7 @@ export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
 			)
 			.all())
 			(
-				result.statistics[String(r.artifact)] as StatisticsTableSelector
+				result.series[String(r.artifact)] as StatisticsTableSelector
 			).columns[Number(r.position)]!.dimensions[String(r.dimension)] =
 				String(r.member);
 		for (const r of db

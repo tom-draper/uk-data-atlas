@@ -9,7 +9,7 @@ import type {
 export function statisticsReadPathTables(
 	plan: StatisticsReadPath,
 ): Record<string, SqliteTable> {
-	const selectors = Object.entries(plan.statistics);
+	const selectors = Object.entries(plan.series ?? plan.statistics ?? {});
 	const regular = selectors.filter(
 		(entry): entry is [string, StatisticsSelector] => !("kind" in entry[1]),
 	);
