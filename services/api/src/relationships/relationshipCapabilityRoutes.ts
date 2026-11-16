@@ -7,10 +7,10 @@ import {
 	type MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
-import { envelope, invalidQuery, type ApiResponse } from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
-import { readChoice } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { readChoice } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 const RELATIONSHIPS = QUERY_RULES["GET /relationships"];
 
