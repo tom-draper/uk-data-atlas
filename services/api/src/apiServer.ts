@@ -1,6 +1,7 @@
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
 import { similarAreasContract } from "./areas/similarAreasContract";
+import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
 	boundaries,
@@ -771,37 +772,7 @@ export const createApiServer = (
 				.map(decodeURIComponent);
 			rootPath = parts.length === 1 && parts[0] === "v1";
 		} catch {}
-		const catalogueDetail = /^\/v1\/(datasets|measures)\/([^/]+)$/.exec(
-			pathname,
-		);
-		const boundaryDetail =
-			/^\/v1\/boundary-releases\/([^/]+)\/([^/]+)$/.exec(pathname);
-		const measureExportDetail = /^\/v1\/data\/([^/]+)\/export$/.exec(
-			pathname,
-		);
-		let fastifyDetail = false;
-		const parameters = catalogueDetail
-			? [catalogueDetail[2]!]
-			: (boundaryDetail?.slice(1) ?? measureExportDetail?.slice(1));
-		if (parameters) {
-			try {
-				fastifyDetail =
-					(!boundaryDetail ||
-						!decodeURIComponent(boundaryDetail[2]!).endsWith(
-							":join",
-						) ||
-						decodeURIComponent(boundaryDetail[2]!).length <= 5) &&
-					parameters.every((raw) => {
-						const id = decodeURIComponent(raw);
-						return (
-							id !== "." &&
-							id !== ".." &&
-							id.length <= 100 &&
-							raw.length <= 100
-						);
-					});
-			} catch {}
-		}
+		const fastifyDetail = isFastifyDetailPath(pathname);
 		if (
 			(request.method !== "GET" &&
 				request.method !== "HEAD" &&
