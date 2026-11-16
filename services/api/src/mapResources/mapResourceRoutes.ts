@@ -8,16 +8,16 @@ import { writeParquet } from "@uk-data-atlas/artifacts";
 import {
 	refused,
 	resolveObservations,
-} from "./observationResolution/observationPlan";
+} from "../observationResolution/observationPlan";
 import {
 	envelope,
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
-import { choices, readChoice } from "./runtime/index.ts";
-import { QUERY_RULES } from "./queryRules";
+} from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
+import { choices, readChoice } from "../runtime/index.ts";
+import { QUERY_RULES } from "../queryRules";
 
 /**
  * The map resources: what is published, what each one is, and the tiles

@@ -6,7 +6,7 @@ import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
 import {
 	MAX_MAP_JOIN_ROWS,
 	MAX_MAP_JOIN_COLUMN_BYTES,
-} from "../src/mapResourceRoutes";
+} from "../src/mapResources/mapResourceRoutes";
 import { route } from "../src/routes";
 import { readParquet } from "./parquetFixtures";
 import {
