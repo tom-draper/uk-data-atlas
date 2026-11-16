@@ -18,6 +18,9 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/crosswalks/ward-to-local-authority-2025/records",
 		"/v1/postcodes/EC1A1AA",
 		"/v1/postcodes/EC1A%201AA",
+		"/v1/locations/greater-manchester",
+		"/v1/locations/greater-manchester/members",
+		"/v1/locations/greater-manchester/parents",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });

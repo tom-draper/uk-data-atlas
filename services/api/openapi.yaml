@@ -9855,70 +9855,50 @@ paths:
   /locations:
     get:
       operationId: listNamedLocations
-      tags: ["Geography"]
       summary: List the curated area collections
+      tags:
+        - Geography
+      description: >
+        A named location is a curated area collection. Most are editorial groupings of area codes
+        (`kind: editorial-grouping`), kept because people ask for places the official geographies do
+        not name. Countries, English regions, Greater Manchester and some counties are official areas
+        (`kind: country`, `region`, `combined-authority` or `county`), and all but countries name the
+        ONS lookup their current members come from in `source`.
+
+
+        The ceremonial counties of England and preserved counties of Wales, which is what most people
+        mean by Lancashire or Kent, are `kind: ceremonial-county`. No ONS lookup defines them, so
+        `source` names Ordnance Survey's Boundary-Line polygons and the method: each local authority
+        of every compiled release is a member of the county holding most of its area, and dated by the
+        releases it appears in, so a county keeps the councils it had before a reorganisation. An
+        authority split between counties, as Stockton-on-Tees is between County Durham and North
+        Yorkshire, is a member of the one holding most of it and listed with its share in the other's
+        `partialMembers`. A county that shares its name with a different official area, as the West
+        Midlands shares the region's, is `{id}-ceremonial-county`; one with the same councils as an
+        official county is that county. Scotland's lieutenancy areas do not follow council boundaries
+        and are not included.
+
+
+        None is a generic geographic location, and membership holds only through a crosswalk the
+        caller names. `q` matches an id or label prefix. `definitionRevision` identifies the curated
+        definition used; `validity` gives its known bounds, with null bounds when the curator has not
+        supplied dates. `memberAssertions` gives each member code's half-open effective interval;
+        `asOf` selects the definition active on one date. Geometry is deliberately omitted from this
+        paginated listing; fetch a selected location's geometry from
+        `/v1/locations/{location-id}/geometry`.
       x-likely-refusal:
         status: 503
         when:
-          "A search that matches nothing is an empty list, not a refusal. Refused
-          only when the server was started without named locations built."
-      description: >
-        A named location is a curated area collection. Most are editorial
-        groupings of area codes (`kind: editorial-grouping`), kept because
-        people ask for places the official geographies do not name. Countries,
-        English regions, Greater Manchester and some counties are official areas
-        (`kind: country`, `region`, `combined-authority` or `county`), and all
-        but countries name the ONS lookup their current members come from in
-        `source`.
-
-
-        The ceremonial counties of England and preserved counties of Wales,
-        which is what most people mean by Lancashire or Kent, are `kind:
-        ceremonial-county`. No ONS lookup defines them, so `source` names
-        Ordnance Survey's Boundary-Line polygons and the method: each local
-        authority of every compiled release is a member of the county holding
-        most of its area, and dated by the releases it appears in, so a county
-        keeps the councils it had before a reorganisation. An authority split
-        between counties, as Stockton-on-Tees is between County Durham and North
-        Yorkshire, is a member of the one holding most of it and listed with its
-        share in the other's `partialMembers`. A county that shares its name
-        with a different official area, as the West Midlands shares the
-        region's, is `{id}-ceremonial-county`; one with the same councils as an
-        official county is that county. Scotland's lieutenancy areas do not
-        follow council boundaries and are not included.
-
-
-        None is a generic geographic location, and membership holds only through
-        a crosswalk the caller names. `q` matches an id or label prefix.
-        `definitionRevision` identifies the curated definition used; `validity`
-        gives its known bounds, with null bounds when the curator has not
-        supplied dates. `memberAssertions` gives each member code's half-open
-        effective interval; `asOf` selects the definition active on one date.
-        Geometry is deliberately omitted from this paginated listing; fetch a
-        selected location's geometry from
-        `/v1/locations/{location-id}/geometry`.
-      parameters:
-        - name: q
-          in: query
-          schema: { type: string }
-          description: >
-            Matches a named location's label, case and punctuation aside. Omit
-            it to list every curated location.
-        - name: asOf
-          in: query
-          schema: { type: string, format: date }
-          description:
-            Select the member codes effective on this date. Omit it to return
-            the complete dated definition.
-        - $ref: "#/components/parameters/PageCursor"
-        - $ref: "#/components/parameters/PageLimit"
+          A search that matches nothing is an empty list, not a refusal. Refused only when the server
+          was started without named locations built.
       responses:
         "200":
           description: Named location definitions.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/locations?q=york"
+              schema:
+                type: object
+              x-example-request: /v1/locations?q=york
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -9930,59 +9910,81 @@ paths:
                     memberGeography: localAuthority
                     memberCodes:
                       - E06000014
-                    validity: { from: null, to: null }
+                    validity:
+                      from: null
+                      to: null
                     bbox:
                       - -1.15
                 meta:
                   nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: >
+            Matches a named location's label, case and punctuation aside. Omit it to list every
+            curated location.
+        - name: asOf
+          in: query
+          schema:
+            type: string
+            format: date
+          description:
+            Select the member codes effective on this date. Omit it to return the complete dated
+            definition.
+        - $ref: "#/components/parameters/PageCursor"
+        - $ref: "#/components/parameters/PageLimit"
 
   /locations/alternatives:
     get:
       operationId: getNamedLocationAlternatives
-      tags: ["Geography"]
       summary: List competing named-location definitions for a real-world name
+      tags:
+        - Geography
       x-likely-refusal:
         status: 400
-        when:
-          "No name is given. The route lists the definitions of one name, so `q` is
-          required."
-        x-example-request: "/v1/locations/alternatives"
-      parameters:
-        - name: q
-          in: query
-          required: true
-          schema: { type: string }
-          description: Case-insensitive real-world name, for example Devon.
+        when: No name is given. The route lists the definitions of one name, so `q` is required.
+        x-example-request: /v1/locations/alternatives
       responses:
         "200":
           description: Definitions distinguished by kind and source.
           content:
             application/json:
-              schema: { type: object }
+              schema:
+                type: object
         "400":
           $ref: "#/components/responses/InvalidQuery"
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Case-insensitive real-world name, for example Devon.
 
   /locations/{location-id}:
     get:
       operationId: getNamedLocation
-      tags: ["Geography"]
       summary: Get one curated area collection's definition
+      tags:
+        - Geography
       x-likely-refusal:
         status: 404
-        when:
-          "The id is guessed rather than listed. `/v1/locations?q=` searches them by
-          name."
-        x-example-request: "/v1/locations/wessex"
+        when: The id is guessed rather than listed. `/v1/locations?q=` searches them by name.
+        x-example-request: /v1/locations/wessex
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: asOf
           in: query
-          schema: { type: string, format: date }
+          schema:
+            type: string
+            format: date
           description:
-            Select the member codes effective on this date. Omit it to return
-            the complete dated definition.
+            Select the member codes effective on this date. Omit it to return the complete dated
+            definition.
         - name: include
           in: query
           required: false
@@ -9990,25 +9992,25 @@ paths:
             type: array
             items:
               type: string
-              enum: [capabilities]
+              enum:
+                - capabilities
           style: form
           explode: false
           description: >
-            `capabilities` lists, under `capabilities`, the compiled releases
-            where the location's member codes can be read directly (`direct`),
-            plus each materialised crosswalk view into those members (`members`)
-            and out to its parents (`parents`). A view is a link with the exact
-            geography, release and crosswalk to request; the API never chooses a
-            crosswalk silently. A `partial` direct view contains some, but not
-            all, listed member codes. A `not-built` result identifies a
-            deployment that has not loaded the projection inventory.
+            `capabilities` lists, under `capabilities`, the compiled releases where the location's
+            member codes can be read directly (`direct`), plus each materialised crosswalk view into
+            those members (`members`) and out to its parents (`parents`). A view is a link with the
+            exact geography, release and crosswalk to request; the API never chooses a crosswalk
+            silently. A `partial` direct view contains some, but not all, listed member codes. A
+            `not-built` result identifies a deployment that has not loaded the projection inventory.
       responses:
         "200":
           description: The location's definition, source codes and bounds.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/locations/london"
+              schema:
+                type: object
+              x-example-request: /v1/locations/london
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -10024,7 +10026,9 @@ paths:
                   memberGeography: localAuthority
                   memberCodes:
                     - E09000001
-                  validity: { from: null, to: null }
+                  validity:
+                    from: null
+                    to: null
                   bbox:
                     - -0.5
                 meta:
@@ -10035,30 +10039,36 @@ paths:
   /locations/{location-id}/comparison:
     get:
       operationId: compareNamedLocationMembership
-      tags: ["Geography"]
       summary: Compare a named location's direct membership between two dates
+      tags:
+        - Geography
       x-likely-refusal:
         status: 400
         when:
-          "A date is missing or is a year rather than a calendar date. `from` and
-          `to` are both YYYY-MM-DD."
-        x-example-request: "/v1/locations/lancashire/comparison?from=1974&to=2026-01-01"
+          A date is missing or is a year rather than a calendar date. `from` and `to` are both
+          YYYY-MM-DD.
+        x-example-request: /v1/locations/lancashire/comparison?from=1974&to=2026-01-01
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: from
           in: query
           required: true
-          schema: { type: string, format: date }
+          schema:
+            type: string
+            format: date
         - name: to
           in: query
           required: true
-          schema: { type: string, format: date }
+          schema:
+            type: string
+            format: date
       responses:
         "200":
           description: Retained, added and removed direct member codes.
           content:
             application/json:
-              schema: { type: object }
+              schema:
+                type: object
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -10067,16 +10077,16 @@ paths:
   /locations/{location-id}/geometry:
     get:
       operationId: getNamedLocationGeometry
-      tags: ["Geography"]
       summary: Get a curated area's compiled GeoJSON geometry
+      tags:
+        - Geography
+      description: >
+        Returns the compiled union geometry for the location's fully resolved member release. It is
+        unavailable rather than estimated when no such geometry has been built.
       x-likely-refusal:
         status: 404
-        when: "The location id is not listed by `/v1/locations`."
-        x-example-request: "/v1/locations/nowhere/geometry"
-      description: >
-        Returns the compiled union geometry for the location's fully resolved
-        member release. It is unavailable rather than estimated when no such
-        geometry has been built.
+        when: The location id is not listed by `/v1/locations`.
+        x-example-request: /v1/locations/nowhere/geometry
       parameters:
         - $ref: "#/components/parameters/LocationId"
       responses:
@@ -10084,8 +10094,9 @@ paths:
           description: The location as a GeoJSON Feature.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/locations/greater-manchester/geometry"
+              schema:
+                type: object
+              x-example-request: /v1/locations/greater-manchester/geometry
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -10097,20 +10108,22 @@ paths:
                     label: Greater Manchester
                     memberGeography: localAuthority
                     boundaryRelease: 2026-05-uk-bgc
-                    bbox: [-2.73, 53.33, -1.91, 53.69]
+                    bbox:
+                      - -2.73
+                      - 53.33
+                      - -1.91
+                      - 53.69
                   geometry:
                     type: MultiPolygon
                     coordinates:
-                      [
-                        [
-                          [
-                            [-2.73, 53.33],
-                            [-1.91, 53.33],
-                            [-1.91, 53.69],
-                            [-2.73, 53.33],
-                          ],
-                        ],
-                      ]
+                      - - - - -2.73
+                            - 53.33
+                          - - -1.91
+                            - 53.33
+                          - - -1.91
+                            - 53.69
+                          - - -2.73
+                            - 53.33
                 meta:
                   nextCursor: null
         "404":
@@ -10121,57 +10134,49 @@ paths:
   /locations/{location-id}/members:
     get:
       operationId: getNamedLocationMembers
-      tags: ["Geography"]
       summary: Resolve a named location's members in one geography and release
+      tags:
+        - Geography
+      description: >
+        `release` is required because location definitions may include legacy codes. Missing members
+        are returned explicitly; this route never applies an implicit historical conversion. A
+        `coverage` object counts resolved and unresolved members and classifies each unresolved code
+        against the compiled releases of its geography as `superseded`, `not-yet-current`,
+        `absent-from-release` or `unknown`, naming the releases that are the evidence. The
+        classification is relative to the requested release and reports code membership only; it
+        asserts nothing about geometry.
+
+
+        A location declares the geography of its member codes, so asking for that geography matches
+        them directly and `membership` is `direct-code-match`. Any other geography has to be reached
+        through a published crosswalk, named with `via`: the wards of North Wales, the constituencies
+        of Merseyside. Asking without `via` returns a 400 that lists the crosswalks published for that
+        geography and release, so the choice is the caller's and is made from what exists.
+
+
+        What membership means depends on the crosswalk named, and the response says which. Through a
+        `clean-containment` crosswalk it is `fully-contained`: the publisher places each area wholly
+        inside one parent, so no area is counted in part. Through an `area-overlap` crosswalk it is
+        `weighted-overlap`: an area straddling the edge of the location carries the `weight` lying
+        inside and is marked `partial`, and `partialMembers` counts them. Shares in two members of the
+        same location are added, so an area split between them is whole and not partial.
+
+
+        Each member names the defining area it was found `through`, and `parentBoundaryRelease` names
+        the release the location's own codes were resolved against, which is the release the crosswalk
+        ends at rather than the one asked for. Each member's `relation` is `within` when the whole
+        area lies inside the location and `partly-within` when only its `weight` does; only the first
+        may be counted whole.
+
+
+        `reach` says which of the location's authorities the crosswalk places any area under. A
+        crosswalk covering fewer countries than the location spans, such as LSOAs for a Scottish city,
+        leaves authorities in `unreached`, and the members under them are missing from the answer
+        rather than absent from the ground.
       x-likely-refusal:
         status: 400
-        when:
-          "No `release` is given. Members are resolved in one named release, never
-          the latest by default."
-        x-example-request: "/v1/locations/north-west/members"
-      description: >
-        `release` is required because location definitions may include legacy
-        codes. Missing members are returned explicitly; this route never applies
-        an implicit historical conversion. A `coverage` object counts resolved
-        and unresolved members and classifies each unresolved code against the
-        compiled releases of its geography as `superseded`, `not-yet-current`,
-        `absent-from-release` or `unknown`, naming the releases that are the
-        evidence. The classification is relative to the requested release and
-        reports code membership only; it asserts nothing about geometry.
-
-
-        A location declares the geography of its member codes, so asking for
-        that geography matches them directly and `membership` is
-        `direct-code-match`. Any other geography has to be reached through a
-        published crosswalk, named with `via`: the wards of North Wales, the
-        constituencies of Merseyside. Asking without `via` returns a 400 that
-        lists the crosswalks published for that geography and release, so the
-        choice is the caller's and is made from what exists.
-
-
-        What membership means depends on the crosswalk named, and the response
-        says which. Through a `clean-containment` crosswalk it is
-        `fully-contained`: the publisher places each area wholly inside one
-        parent, so no area is counted in part. Through an `area-overlap`
-        crosswalk it is `weighted-overlap`: an area straddling the edge of the
-        location carries the `weight` lying inside and is marked `partial`, and
-        `partialMembers` counts them. Shares in two members of the same location
-        are added, so an area split between them is whole and not partial.
-
-
-        Each member names the defining area it was found `through`, and
-        `parentBoundaryRelease` names the release the location's own codes were
-        resolved against, which is the release the crosswalk ends at rather than
-        the one asked for. Each member's `relation` is `within` when the whole
-        area lies inside the location and `partly-within` when only its `weight`
-        does; only the first may be counted whole.
-
-
-        `reach` says which of the location's authorities the crosswalk places
-        any area under. A crosswalk covering fewer countries than the location
-        spans, such as LSOAs for a Scottish city, leaves authorities in
-        `unreached`, and the members under them are missing from the answer
-        rather than absent from the ground.
+        when: No `release` is given. Members are resolved in one named release, never the latest by default.
+        x-example-request: /v1/locations/north-west/members
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: geography
@@ -10179,52 +10184,41 @@ paths:
           schema:
             type: string
           description: >
-            The geography to resolve members in. Omit it to use the location's
-            declared `memberGeography`; any other geography requires `via`.
+            The geography to resolve members in. Omit it to use the location's declared
+            `memberGeography`; any other geography requires `via`.
         - name: release
           in: query
           required: true
-          schema: { type: string }
-          description: >
-            The boundary release to resolve members in, which fixes the vintage
-            of the codes returned.
+          schema:
+            type: string
+          description: |
+            The boundary release to resolve members in, which fixes the vintage of the codes returned.
         - name: via
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description: >
-            The published crosswalk to resolve through, required for any
-            geography other than the location's `memberGeography`. Omit it to be
-            told which are available.
+            The published crosswalk to resolve through, required for any geography other than the
+            location's `memberGeography`. Omit it to be told which are available.
           example: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
         - name: asOf
           in: query
-          schema: { type: string, format: date }
+          schema:
+            type: string
+            format: date
           description: >
-            Select member codes effective on this date. Date selection is
-            currently available for direct member-code matches only, not a
-            crosswalk projection.
+            Select member codes effective on this date. Date selection is currently available for
+            direct member-code matches only, not a crosswalk projection.
       responses:
-        "400":
-          description: >
-            `release` is missing, or a geography other than the location's
-            `memberGeography` was asked for without `via`. The detail lists the
-            crosswalks published for that geography and release.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "200":
-          description: >
-            Resolved members, explicitly unresolved codes, and the coverage that
-            explains each one.
+          description: |
+            Resolved members, explicitly unresolved codes, and the coverage that explains each one.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request:
-                "/v1/locations/north-wales/members?geography=ward&release=20\
-                24-12-uk-bgc&via=ward-2024-12-uk-bgc-to-local-authority-2024-12\
-                -uk-bgc-clean-containment"
+              schema:
+                type: object
+              x-example-request: /v1/locations/north-wales/members?geography=ward&release=2024-12-uk-bgc&via=ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -10237,7 +10231,9 @@ paths:
                     memberGeography: localAuthority
                     memberCodes:
                       - W06000001
-                    validity: { from: null, to: null }
+                    validity:
+                      from: null
+                      to: null
                     bbox:
                       - -4.8
                   geography: ward
@@ -10249,79 +10245,83 @@ paths:
                     complete: true
                 meta:
                   nextCursor: null
+        "400":
+          description: >
+            `release` is missing, or a geography other than the location's `memberGeography` was asked
+            for without `via`. The detail lists the crosswalks published for that geography and
+            release.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "404":
           $ref: "#/components/responses/NotFound"
 
   /locations/{location-id}/parents:
     get:
       operationId: getNamedLocationParents
-      tags: ["Geography"]
       summary: Find the areas of a coarser geography a named location covers or meets
+      tags:
+        - Geography
+      description: >
+        The other direction from `members`: which regions, counties, combined authorities or countries
+        a location lies in, and whether it takes in each one whole. A location is defined by codes in
+        its declared `memberGeography`, so a parent geography is reached through a published crosswalk
+        out of that geography, named with `via`; asking without it lists the crosswalks published for
+        that geography and release.
+
+
+        Each parent's `relation` is `covers` when the location takes in all of it and `intersects`
+        when it takes in only part. Through a containment or membership lookup that is decided by
+        count, and `parentMemberCount` says how many authorities the publisher places in the parent.
+        Through an area-overlap crosswalk it is decided by area, and `coveredShare` is the share of
+        the parent the location's members cover, with 0.99 or more counting as cover. `members` lists
+        the location's own authorities in each parent.
+
+
+        `locationWithin` names the single parent holding every member, and is null when the members
+        fall in several parents or the crosswalk places any of them in none. Those are listed in
+        `unplaced`: a Welsh authority under an English region lookup, or a district outside every
+        combined authority. `coverage` classifies the location's codes against the authority release
+        the crosswalk starts from, exactly as on `members`.
+
+
+        Every answer is compiled in advance for each location and crosswalk, so this reads a
+        projection rather than walking a crosswalk per request.
       x-likely-refusal:
         status: 400
         when: "`geography` is given without `release`."
-        x-example-request: "/v1/locations/north-west/parents?geography=localAuthority"
-      description: >
-        The other direction from `members`: which regions, counties, combined
-        authorities or countries a location lies in, and whether it takes in
-        each one whole. A location is defined by codes in its declared
-        `memberGeography`, so a parent geography is reached through a published
-        crosswalk out of that geography, named with `via`; asking without it
-        lists the crosswalks published for that geography and release.
-
-
-        Each parent's `relation` is `covers` when the location takes in all of
-        it and `intersects` when it takes in only part. Through a containment or
-        membership lookup that is decided by count, and `parentMemberCount` says
-        how many authorities the publisher places in the parent. Through an
-        area-overlap crosswalk it is decided by area, and `coveredShare` is the
-        share of the parent the location's members cover, with 0.99 or more
-        counting as cover. `members` lists the location's own authorities in
-        each parent.
-
-
-        `locationWithin` names the single parent holding every member, and is
-        null when the members fall in several parents or the crosswalk places
-        any of them in none. Those are listed in `unplaced`: a Welsh authority
-        under an English region lookup, or a district outside every combined
-        authority. `coverage` classifies the location's codes against the
-        authority release the crosswalk starts from, exactly as on `members`.
-
-
-        Every answer is compiled in advance for each location and crosswalk, so
-        this reads a projection rather than walking a crosswalk per request.
+        x-example-request: /v1/locations/north-west/parents?geography=localAuthority
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: geography
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: The coarser geography to find parents in, such as `region`.
         - name: release
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: The boundary release of that geography.
         - name: via
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description: >
-            The published crosswalk from the location's declared
-            `memberGeography` to that geography. Omit it to be told which are
-            available.
+            The published crosswalk from the location's declared `memberGeography` to that geography.
+            Omit it to be told which are available.
       responses:
         "200":
-          description:
-            The parents the location covers or meets, and any members placed in
-            none.
+          description: The parents the location covers or meets, and any members placed in none.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request:
-                "/v1/locations/greater-manchester/parents?geography=combined\
-                Authority&release=2025-12-en-bgc&via=local-authority-2025-12-uk\
-                -bgc-to-combined-authority-2025-12-en-bgc-official-lookup"
+              schema:
+                type: object
+              x-example-request: /v1/locations/greater-manchester/parents?geography=combinedAuthority&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -10353,9 +10353,8 @@ paths:
                   nextCursor: null
         "400":
           description: >
-            `geography` or `release` is missing, or `via` is not given; the
-            detail lists the crosswalks published for that geography and
-            release.
+            `geography` or `release` is missing, or `via` is not given; the detail lists the
+            crosswalks published for that geography and release.
           content:
             application/problem+json:
               schema:
