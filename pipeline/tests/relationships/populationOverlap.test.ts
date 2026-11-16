@@ -85,7 +85,7 @@ const geometrySources: GeometrySourceLookup = new Map([
 const areaLookup = createAreaLookup(
 	(
 		[
-			["ward", ["S"]],
+			["ward", ["S", "S2"]],
 			["localAuthority", ["T1", "T2"]],
 		] as const
 	).map(([geography, codes]) => ({
@@ -239,6 +239,28 @@ test("names a conversion through it population-weighted", () => {
 				["T1", 500],
 				["T2", 100],
 			],
+		);
+	});
+});
+
+test("shares a block's population when source boundaries overlap", () => {
+	withFixture((root) => {
+		writeCollection(root, "sources.geojson", [
+			["S", box(0, 2 * D)],
+			["S2", box(0, 2 * D)],
+		]);
+		const [, people] = compileCrosswalks(
+			root,
+			[areaOverlap, populationOverlap()],
+			areaLookup,
+			geometrySources,
+		).artifacts;
+		assert.equal(people?.method, "population-overlap");
+		if (people?.method !== "population-overlap") return;
+		assert.equal(people.validation.population.assignedPopulation, 1200);
+		assert.deepEqual(
+			people.records.map((record) => record.source.population),
+			[600, 600],
 		);
 	});
 });

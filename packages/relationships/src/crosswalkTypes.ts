@@ -164,6 +164,7 @@ export type PopulationOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		areaProjection: "EPSG:6933";
 		clipping: string;
 		boundedClipping?: number;
+		populationAllocationVersion?: number;
 	};
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;

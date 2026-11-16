@@ -29,6 +29,8 @@ import type {
 import { validateEndpoint } from "@uk-data-atlas/relationships";
 import { sha256 } from "@uk-data-atlas/artifacts";
 
+export const POPULATION_ALLOCATION_VERSION = 1;
+
 // About a millimetre, for a retry when polygon-clipping's sweep line fails.
 const RETRY_PRECISION = 1e8;
 
@@ -249,6 +251,8 @@ export const compilePopulationOverlapCrosswalk = (
 			blockPopulation += count;
 			if (count === 0 || block.areaM2 <= 0) continue;
 			const blockGeometry = areaMultiPolygon(block);
+			const blockSources = new Map<string, number>();
+			const blockPairs = new Map<string, Map<string, number>>();
 			let placed = 0;
 			let failure: string | undefined;
 			for (const sourceCode of sourceIndex.query(block.bounds)) {
@@ -265,10 +269,7 @@ export const compilePopulationOverlapCrosswalk = (
 				if (inSource.areaM2 <= 0) continue;
 				const share = Math.min(1, inSource.areaM2 / block.areaM2);
 				placed += share;
-				sourcePopulation.set(
-					sourceCode,
-					(sourcePopulation.get(sourceCode) ?? 0) + count * share,
-				);
+				blockSources.set(sourceCode, count * share);
 				const pieceBounds = boundsOf(inSource.geometry);
 				for (const targetCode of keptTargets.get(sourceCode)!.keys()) {
 					const target = targets.geometries.get(targetCode)!;
@@ -283,14 +284,13 @@ export const compilePopulationOverlapCrosswalk = (
 					}
 					if (inPair.areaM2 <= 0) continue;
 					const byTarget =
-						pairPopulation.get(sourceCode) ??
-						new Map<string, number>();
+						blockPairs.get(sourceCode) ?? new Map<string, number>();
 					byTarget.set(
 						targetCode,
 						(byTarget.get(targetCode) ?? 0) +
 							count * Math.min(1, inPair.areaM2 / block.areaM2),
 					);
-					pairPopulation.set(sourceCode, byTarget);
+					blockPairs.set(sourceCode, byTarget);
 				}
 				if (failure) break;
 			}
@@ -301,6 +301,25 @@ export const compilePopulationOverlapCrosswalk = (
 					reason: failure,
 				});
 				continue;
+			}
+			// Boundary overlaps can put more than one block's population in the
+			// source set. Share that block proportionally and commit only after all
+			// its intersections have succeeded.
+			const scale = 1 / Math.max(1, placed);
+			for (const [sourceCode, people] of blockSources)
+				sourcePopulation.set(
+					sourceCode,
+					(sourcePopulation.get(sourceCode) ?? 0) + people * scale,
+				);
+			for (const [sourceCode, targets] of blockPairs) {
+				const totals =
+					pairPopulation.get(sourceCode) ?? new Map<string, number>();
+				for (const [targetCode, people] of targets)
+					totals.set(
+						targetCode,
+						(totals.get(targetCode) ?? 0) + people * scale,
+					);
+				pairPopulation.set(sourceCode, totals);
 			}
 			outsidePopulation += count * Math.max(0, 1 - placed);
 		}
@@ -422,6 +441,7 @@ export const compilePopulationOverlapCrosswalk = (
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
 			boundedClipping: BOUNDED_CLIPPING_VERSION,
+			populationAllocationVersion: POPULATION_ALLOCATION_VERSION,
 		},
 		validation: {
 			sourceNameConflicts: [],

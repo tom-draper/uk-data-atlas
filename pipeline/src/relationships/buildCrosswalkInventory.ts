@@ -1,4 +1,5 @@
 import { sourceInput } from "@uk-data-atlas/datasets";
+import { POPULATION_ALLOCATION_VERSION } from "./populationOverlap.ts";
 import { writeCrosswalkArtifact } from "./crosswalkArtifact.ts";
 import {
 	compileCrosswalksInWorkers,
@@ -190,6 +191,11 @@ const reusablePopulationOverlap = (
 	try {
 		const artifact = JSON.parse(readStoredText(path)) as CrosswalkArtifact;
 		if (artifact.method !== "population-overlap") return undefined;
+		if (
+			artifact.provenance.populationAllocationVersion !==
+			POPULATION_ALLOCATION_VERSION
+		)
+			return undefined;
 		if (artifact.provenance.boundedClipping !== BOUNDED_CLIPPING_VERSION)
 			return undefined;
 		const { contentHash, ...withoutHash } = artifact;
