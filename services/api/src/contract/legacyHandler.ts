@@ -91,3 +91,26 @@ export const legacyPostRoute = (context: ServiceContext) => {
 		return routeAsync("POST", request.url, services, body);
 	};
 };
+
+/**
+ * Answer a GET through the dispatcher's own `routeAsync`, for a route whose
+ * handler may wait, such as one that samples a remote provider.
+ */
+export const legacyRouteAsync = (context: ServiceContext) => {
+	let services: RouteDispatchContext | undefined;
+	return (request: FastifyRequest): Promise<ApiResponse> => {
+		if (
+			!context.geographyResolver ||
+			!context.areaValidation ||
+			!context.postcodes
+		)
+			throw new Error("Geography services are unavailable");
+		services ??= {
+			...context,
+			geographyResolver: context.geographyResolver,
+			areaValidation: context.areaValidation,
+			postcodes: context.postcodes,
+		} as RouteDispatchContext;
+		return routeAsync("GET", request.url, services);
+	};
+};

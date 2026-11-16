@@ -2581,22 +2581,19 @@ paths:
   /terrain:
     get:
       operationId: getTerrainCatalogue
-      tags: ["Terrain"]
       summary: Discover terrain product families and their availability
+      tags:
+        - Terrain
       description: >
-        The terrain catalogue distinguishes bare-earth elevation (a digital
-        terrain model) from surface elevation (a digital surface model), and
-        declares slope, aspect, contours and hillshade separately. A product
-        marked `not-published` has no values, tiles or contours to fetch; it
-        exists so a client can discover the service boundary without treating a
-        planned layer as data. Before a product becomes available, its version
-        must state its CRS, vertical datum, resolution, processing, uncertainty,
-        licence and immutable content hash.
+        The terrain catalogue distinguishes bare-earth elevation (a digital terrain model) from
+        surface elevation (a digital surface model), and declares slope, aspect, contours and
+        hillshade separately. A product marked `not-published` has no values, tiles or contours to
+        fetch; it exists so a client can discover the service boundary without treating a planned
+        layer as data. Before a product becomes available, its version must state its CRS, vertical
+        datum, resolution, processing, uncertainty, licence and immutable content hash.
       x-likely-refusal:
         status: 503
-        when:
-          "Takes no input. Refused only when the server was started without the
-          terrain catalogue built."
+        when: Takes no input. Refused only when the server was started without the terrain catalogue built.
       responses:
         "200":
           description: Versioned terrain product definitions and their required metadata.
@@ -2604,7 +2601,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/terrain"
+              x-example-request: /v1/terrain
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -2612,25 +2609,24 @@ paths:
                   schemaVersion: 1
                   contentHash: sha256:4c7869c07f9e3e20de6f2b1af8a2a9a20e6cde1d4b68fdfeee3fb712f73b6611
                   publicationRequirements:
-                    - vertical CRS or datum, including the geoid model where
-                      applicable
+                    - vertical CRS or datum, including the geoid model where applicable
                     - cell resolution or contour interval
                     - uncertainty or stated accuracy
                   products:
                     - id: terrain-elevation
                       label: Bare-earth elevation
                       kind: raster
-                      measurement:
-                        Elevation of the terrain surface after buildings and vegetation are
-                        removed.
+                      measurement: Elevation of the terrain surface after buildings and vegetation are removed.
                       unit: metres
                       availability:
                         status: not-published
-                        reason:
-                          No versioned terrain source has been ingested and validated for this
-                          product yet.
+                        reason: No versioned terrain source has been ingested and validated for this product yet.
                       intendedCoverage:
-                        countries: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+                        countries:
+                          - GB-ENG
+                          - GB-NIR
+                          - GB-SCT
+                          - GB-WLS
                 meta:
                   nextCursor: null
         "503":
@@ -2639,23 +2635,20 @@ paths:
   /terrain/{terrain-id}:
     get:
       operationId: getTerrainProduct
-      tags: ["Terrain"]
       summary: Get one terrain product definition
+      tags:
+        - Terrain
       x-likely-refusal:
         status: 404
-        when:
-          "The id is guessed rather than listed. `GET /v1/terrain` gives the product
-          ids."
-        x-example-request: "/v1/terrain/not-a-product"
+        when: The id is guessed rather than listed. `GET /v1/terrain` gives the product ids.
+        x-example-request: /v1/terrain/not-a-product
       parameters:
         - name: terrain-id
           in: path
           required: true
           schema:
             type: string
-          description:
-            "A product id from `GET /v1/terrain`, such as `terrain-elevation`
-            or `terrain-contours`."
+          description: A product id from `GET /v1/terrain`, such as `terrain-elevation` or `terrain-contours`.
       responses:
         "200":
           description: One terrain product definition and availability state.
@@ -2663,7 +2656,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/terrain/terrain-contours"
+              x-example-request: /v1/terrain/terrain-contours
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -2672,43 +2665,19 @@ paths:
   /terrain/elevation/point:
     get:
       operationId: getTerrainElevationPoint
-      tags: ["Terrain"]
       summary: Get one terrain elevation point
+      tags:
+        - Terrain
       description: >
-        Returns a bare-earth elevation sampled in British National Grid metres.
-        The answer identifies the exact source version and tile hash used. An
-        outside-coverage or no-data point is a successful response with an
-        explicit status; neither is converted into a plausible elevation. This
-        endpoint requires a configured terrain provider and does not imply that
-        the catalogue's planned products are published.
+        Returns a bare-earth elevation sampled in British National Grid metres. The answer identifies
+        the exact source version and tile hash used. An outside-coverage or no-data point is a
+        successful response with an explicit status; neither is converted into a plausible elevation.
+        This endpoint requires a configured terrain provider and does not imply that the catalogue's
+        planned products are published.
       x-likely-refusal:
         status: 400
-        when: "x or y is missing or is not a finite EPSG:27700 coordinate."
-        x-example-request: "/v1/terrain/elevation/point?x=not-a-number&y=180000"
-      parameters:
-        - name: x
-          in: query
-          required: true
-          schema: { type: number }
-          description: Easting in EPSG:27700 metres.
-        - name: y
-          in: query
-          required: true
-          schema: { type: number }
-          description: Northing in EPSG:27700 metres.
-        - name: interpolation
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [bilinear, nearest]
-            default: bilinear
-          description: Interpolation method applied to the source raster.
-        - name: version
-          in: query
-          required: false
-          schema: { type: string }
-          description: Exact source version; omitted selects the provider default.
+        when: x or y is missing or is not a finite EPSG:27700 coordinate.
+        x-example-request: /v1/terrain/elevation/point?x=not-a-number&y=180000
       responses:
         "200":
           description: Elevation value or explicit coverage/data absence.
@@ -2716,15 +2685,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TerrainPointEnvelope"
-              x-example-request:
-                "/v1/terrain/elevation/point?x=530000&y=180000&interpolation\
-                =bilinear"
+              x-example-request: /v1/terrain/elevation/point?x=530000&y=180000&interpolation=bilinear
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: x
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Easting in EPSG:27700 metres.
+        - name: y
+          in: query
+          required: true
+          schema:
+            type: number
+          description: Northing in EPSG:27700 metres.
+        - name: interpolation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - bilinear
+              - nearest
+            default: bilinear
+          description: Interpolation method applied to the source raster.
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Exact source version; omitted selects the provider default.
 
   /coordinates:convert:
     get:

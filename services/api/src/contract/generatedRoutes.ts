@@ -45,6 +45,15 @@ import { exportDetailMetadata } from "../bulk/exportDetailMetadata";
 import { exportsMetadata } from "../bulk/exportsMetadata";
 import { lookupDetailMetadata } from "../bulk/lookupDetailMetadata";
 import { lookupsMetadata } from "../bulk/lookupsMetadata";
+import {
+	terrainCatalogueContract,
+	terrainPointContract,
+	terrainProductContract,
+} from "../terrain/terrainContract";
+import { terrainFastifyRoutes } from "../terrain/terrainFastifyRoutes";
+import { terrainMetadata } from "../terrain/terrainMetadata";
+import { terrainPointMetadata } from "../terrain/terrainPointMetadata";
+import { terrainProductMetadata } from "../terrain/terrainProductMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -99,6 +108,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(analysisFastifyRoutes, { context });
 	await app.register(relationshipsFastifyRoutes, { context });
 	await app.register(releaseJoinFastifyRoutes, { context });
+	await app.register(terrainFastifyRoutes, { context });
 	await app.register(bulkFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
@@ -118,6 +128,7 @@ const openapiPath = (path: string) =>
 		.replace("/atlas-lookups/{lookupId}", "/atlas-lookups/{lookup-id}.json")
 		.replace("/atlas-pages/{pageId}", "/atlas-pages/{page-id}.json")
 		.replace("{exportId}", "{export-id}")
+		.replace("{terrainId}", "{terrain-id}")
 		.replace(/^\/lookups\/\{lookupId\}$/, "/lookups/{lookup-id}");
 
 /**
@@ -221,6 +232,17 @@ export const generatedPaths = async () => {
 		],
 		["/analysis:plan", analysisPlanMetadata, analysisPlanContract],
 		["/relationships", relationshipsMetadata, relationshipsContract],
+		["/terrain", terrainMetadata, terrainCatalogueContract],
+		[
+			"/terrain/{terrain-id}",
+			terrainProductMetadata,
+			terrainProductContract,
+		],
+		[
+			"/terrain/elevation/point",
+			terrainPointMetadata,
+			terrainPointContract,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
