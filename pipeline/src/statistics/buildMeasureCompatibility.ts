@@ -3,7 +3,10 @@ import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { tableMeasureObservations, readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
+import {
+	tableMeasureObservations,
+	readMeasureDimensionsMapping,
+} from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";

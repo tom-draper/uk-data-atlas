@@ -14,7 +14,10 @@ import { readParquet } from "../fixtures/parquetFixtures";
 import { bindStatisticsField } from "../../src/statistics/bindStatisticsField";
 import { bindCensusStatistics } from "../../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../../src/statistics/bindReviewedStatistics";
-import { measureSeriesSourceKey, observationArtifactName } from "@uk-data-atlas/measures";
+import {
+	measureSeriesSourceKey,
+	observationArtifactName,
+} from "@uk-data-atlas/measures";
 import { type StatisticsReadPath } from "@uk-data-atlas/measures";
 import { bindCompiledFields } from "../../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../../src/statistics/measureDownloads";
