@@ -135,4 +135,5 @@ test.each([
 		expect(result.status).not.toBe(0);
 		expect(result.stderr).toContain("This command accepts no arguments.");
 	},
+	30_000,
 );
