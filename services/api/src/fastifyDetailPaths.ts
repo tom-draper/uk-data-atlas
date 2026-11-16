@@ -21,6 +21,7 @@ const detailRoutes: {
 		accepts: ([id]) => !id!.endsWith(":convert"),
 	},
 	{ pattern: /^\/v1\/crosswalks\/([^/]+)\/records$/ },
+	{ pattern: /^\/v1\/postcodes\/([^/]+)$/ },
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
 	{ pattern: /^\/v1\/(?:exports|lookups|terrain)\/([^/]+)$/ },
 	// Fastify takes the whole segment, `.json` included, as one parameter.
@@ -57,6 +58,7 @@ const postRoutes: { pattern: RegExp }[] = [
 	// inside the release, so the join suffix is the only one in the segment.
 	{ pattern: /^\/v1\/boundary-releases\/([^/]+)\/([^/:]+):join$/ },
 	{ pattern: /^\/v1\/crosswalks\/([^/:]+):convert$/ },
+	{ pattern: /^\/v1\/postcodes:batch$/ },
 ];
 
 export const isFastifyPostPath = (pathname: string) => {

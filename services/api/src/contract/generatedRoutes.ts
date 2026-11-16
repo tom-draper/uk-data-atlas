@@ -64,6 +64,11 @@ import { crosswalkConvertMetadata } from "../crosswalks/crosswalkConvertMetadata
 import { crosswalkDetailMetadata } from "../crosswalks/crosswalkDetailMetadata";
 import { crosswalkRecordsMetadata } from "../crosswalks/crosswalkRecordsMetadata";
 import { crosswalksMetadata } from "../crosswalks/crosswalksMetadata";
+import { placesContract, postcodeContract } from "../places/placeContract";
+import { placeFastifyRoutes } from "../places/placeFastifyRoutes";
+import { placesMetadata } from "../places/placesMetadata";
+import { postcodeBatchMetadata } from "../places/postcodeBatchMetadata";
+import { postcodeMetadata } from "../places/postcodeMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -121,6 +126,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(terrainFastifyRoutes, { context });
 	await app.register(bulkFastifyRoutes, { context });
 	await app.register(crosswalkFastifyRoutes, { context });
+	await app.register(placeFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -267,6 +273,8 @@ export const generatedPaths = async () => {
 			crosswalkRecordsMetadata,
 			crosswalkRecordsContract,
 		],
+		["/places", placesMetadata, placesContract],
+		["/postcodes/{postcode}", postcodeMetadata, postcodeContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
@@ -313,6 +321,11 @@ export const generatedPaths = async () => {
 		throw new Error("Missing Fastify operation: crosswalk conversion");
 	// The description names a request body and several error responses.
 	Object.assign(convertOperation, crosswalkConvertMetadata);
+	const postcodeBatchOperation = paths["/postcodes:batch"]?.post;
+	if (!postcodeBatchOperation)
+		throw new Error("Missing Fastify operation: postcode batch");
+	// The description names a request body and several error responses.
+	Object.assign(postcodeBatchOperation, postcodeBatchMetadata);
 	// Bulk resources are published as the description gives them: a manifest by
 	// reference, and downloads in several media types.
 	for (const [path, metadata] of [
