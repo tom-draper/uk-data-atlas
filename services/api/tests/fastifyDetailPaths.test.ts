@@ -24,6 +24,9 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/data/population",
 		"/v1/data/population/value",
 		"/v1/data/population/compare",
+		"/v1/areas/ward/2025-01-en-ward/E05000001",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/children/geometry",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/overlap",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
@@ -51,6 +54,10 @@ test("detail paths the dispatcher must keep are not recognised", () => {
 		// The conversion is not a crosswalk.
 		"/v1/crosswalks/ward-to-local-authority-2025:convert",
 		"/v1/crosswalks/ward-to-local-authority-2025/records/",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/other",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/children/other",
+		"/v1/areas/ward/2025-01-en-ward",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(false);
 });
