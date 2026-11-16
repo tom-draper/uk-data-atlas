@@ -145,3 +145,17 @@ test("measure semantics describe units, universes and dimension-selected pay", (
 		[],
 	);
 });
+
+test("published weighted means without weights refuse conversion", () => {
+	assert.deepEqual(
+		all(`SELECT m.slug FROM measure m JOIN measure_conversion c ON c.measure_id = m.id
+			WHERE m.aggregation = 'weighted_mean' AND m.weight_id IS NULL AND c.rule <> 'refuse'`),
+		[],
+	);
+	assert.equal(
+		all(
+			"SELECT id FROM measure WHERE aggregation = 'weighted_mean' AND weight_id IS NULL",
+		).length,
+		5,
+	);
+});
