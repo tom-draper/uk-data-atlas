@@ -64,7 +64,7 @@ test("validates individual and shared table observations by canonical series and
 	expect(() =>
 		validateObservationSeries(
 			catalog(first, second, third),
-			[observed(third.id)],
+			[observed(measureSeriesKey(third.series!))],
 			[table],
 		),
 	).not.toThrow();

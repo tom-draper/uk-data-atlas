@@ -54,17 +54,30 @@ export function validateObservationSeries(
 			);
 	};
 	for (const artifact of observations) {
-		const measure = measures.get(artifact.measureId);
-		const source = measure?.sources.find(
-			(candidate) =>
-				candidate.sourceGeography.type ===
-					artifact.sourceGeography.type &&
-				candidate.sourceGeography.boundaryYear ===
-					artifact.sourceGeography.boundaryYear,
+		const candidates =
+			series.get(artifact.measureId) ??
+			(measures.has(artifact.measureId)
+				? [measures.get(artifact.measureId)!]
+				: []);
+		const matches = candidates.flatMap((measure) =>
+			measure.sources
+				.filter(
+					(source) =>
+						source.sourceGeography.type ===
+							artifact.sourceGeography.type &&
+						source.sourceGeography.boundaryYear ===
+							artifact.sourceGeography.boundaryYear,
+				)
+				.map((source) => ({ measure, source })),
 		);
+		if (matches.length > 1)
+			throw new Error(
+				`Ambiguous observation source: ${artifact.measureId}`,
+			);
+		const match = matches[0];
 		accept(
-			measure,
-			source,
+			match?.measure,
+			match?.source,
 			`${artifact.measureId} on ${artifact.sourceGeography.type} ${artifact.sourceGeography.boundaryYear}`,
 		);
 	}
