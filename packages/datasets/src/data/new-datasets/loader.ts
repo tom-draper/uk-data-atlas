@@ -23,7 +23,7 @@ type IndicatorType =
 
 const source = (path: string) => path;
 const numeric = (value: unknown) => parseNullableNum(value) ?? null;
-import { authorityCode, mapAuthorityCode } from "./authorityCode.ts";
+import { mapAuthorityCode } from "./authorityCode.ts";
 
 const dataset = <T extends IndicatorType>(
 	type: T,
@@ -134,54 +134,6 @@ export async function loadWaste(
 	return dataset("waste", 2025, "localAuthority", 2025, records);
 }
 
-export async function loadPlanningApplications(
-	readRows: (
-		path: string,
-		options: { skipLines?: number },
-		visit: (row: Readonly<Record<string, string>>) => void,
-	) => Promise<void>,
-) {
-	const records: Record<string, IndicatorRecord> = {};
-	await readRows(
-		source(sourceDir("planning-applications", "ps1-full-2026-03.csv")),
-		{ skipLines: 3 },
-		(row) => {
-			const code = row.LPACD?.trim() ?? "";
-			const value = numeric(row["Applications received"]);
-			if (
-				row.Quarter !== "2026 Q1" ||
-				!mapAuthorityCode(code) ||
-				value === null
-			)
-				return;
-			const metrics = Object.fromEntries(
-				(
-					[
-						["decided", "Applications decided"],
-						["withdrawn", "Applications withdrawn"],
-					] as const
-				).flatMap(([key, column]) => {
-					const number = numeric(row[column]);
-					return number === null ? [] : [[key, number]];
-				}),
-			);
-			records[code] = {
-				code,
-				name: row.LPANM?.trim() || code,
-				value,
-				metrics,
-			};
-		},
-	);
-	return dataset(
-		"planning-applications",
-		2026,
-		"localAuthority",
-		2025,
-		records,
-	);
-}
-
 export async function loadElectricVehicleChargers(
 	read: (path: string) => Promise<string>,
 	readPopulation: (path: string, sheet: string) => Promise<string>,
@@ -220,45 +172,3 @@ export async function loadElectricVehicleChargers(
  * (year ending September) to median gross annual residence-based earnings.
  * Authorities ONS suppresses for the year ("[x]") are left out.
  */
-export async function loadHousingAffordability(
-	read: (path: string, sheet: string) => Promise<string>,
-) {
-	const year = 2025;
-	const { data: rows } = await parseCsv<string[]>(
-		await read(
-			source(
-				sourceDir(
-					"housing-affordability",
-					"ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
-				),
-			),
-			"5c",
-		),
-		{ header: false },
-	);
-	const headerIndex = rows.findIndex(
-		(row) => row[2]?.trim() === "Local authority code",
-	);
-	const headers = rows[headerIndex] ?? [];
-	const valueColumn = headers.findIndex(
-		(header) => header?.trim() === String(year),
-	);
-	if (headerIndex < 0 || valueColumn < 0)
-		throw new Error(
-			`Housing affordability table 5c has no ${year} local authority column`,
-		);
-	const records: Record<string, IndicatorRecord> = {};
-	for (const row of rows.slice(headerIndex + 1)) {
-		const code = row[2]?.trim() ?? "";
-		const value = numeric(row[valueColumn]);
-		if (!authorityCode(code) || value === null) continue;
-		records[code] = { code, name: row[3]?.trim() || code, value };
-	}
-	return dataset(
-		"housing-affordability",
-		year,
-		"localAuthority",
-		year,
-		records,
-	);
-}

@@ -1,6 +1,4 @@
 import { join } from "node:path";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { DuckDBInstance } from "@duckdb/node-api";
 import { PUBLIC_HEALTH_MEASURES } from "../../../packages/datasets/src/data/public-health/loader.ts";
 import { trackDuckdbSource } from "./duckdbSource.ts";
@@ -50,25 +48,6 @@ export async function withDuckdbCensusLsoa<T>(
 	);
 }
 
-export async function withDuckdbPlanningApplications<T>(
-	reader: DatasetReader,
-	artifacts: ReturnType<
-		typeof import("./trackedReader.ts").createTrackedReader
-	>["artifacts"],
-	compile: (reader: DatasetReader) => Promise<T>,
-	sourceRoot = SOURCE_DATA,
-): Promise<T> {
-	return withDuckdbRows(
-		reader,
-		artifacts,
-		compile,
-		sourceRoot,
-		`"Quarter" = '2026 Q1'`,
-		3,
-		true,
-	);
-}
-
 async function withDuckdbRows<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
@@ -77,32 +56,21 @@ async function withDuckdbRows<T>(
 	compile: (reader: DatasetReader) => Promise<T>,
 	sourceRoot: string,
 	where: string,
-	skipLines = 0,
-	normalizeUtf8 = false,
 ): Promise<T> {
 	const instance = await DuckDBInstance.create(":memory:");
 	const connection = await instance.connect();
-	let temp: string | undefined;
 	try {
 		return await compile({
 			...reader,
 			csvRows: async (path, options, visit) => {
-				if ((options.skipLines ?? 0) !== skipLines)
-					throw new Error(
-						`Expected ${skipLines} lines before the CSV header`,
-					);
+				if ((options.skipLines ?? 0) !== 0)
+					throw new Error("Expected no lines before the CSV header");
 				const file = join(sourceRoot, path);
 				const finishSource = await trackDuckdbSource(file);
-				let csvFile = file;
-				if (normalizeUtf8) {
-					temp ??= await mkdtemp(join(tmpdir(), "atlas-csv-"));
-					csvFile = join(temp, "source.csv");
-					await writeFile(csvFile, await readFile(file, "utf8"));
-				}
 				const rows = (
 					await connection.runAndReadAll(`
     SELECT * EXCLUDE (ordinal) FROM (
-    SELECT *, row_number() OVER () AS ordinal FROM read_csv(${quote(csvFile)}, header=true, skip=${skipLines}, all_varchar=true, nullstr='')
+    SELECT *, row_number() OVER () AS ordinal FROM read_csv(${quote(file)}, header=true, skip=0, all_varchar=true, nullstr='')
     WHERE ${where}
     ) ORDER BY ordinal
    `)
@@ -127,6 +95,5 @@ async function withDuckdbRows<T>(
 	} finally {
 		connection.closeSync();
 		instance.closeSync();
-		if (temp) await rm(temp, { recursive: true, force: true });
 	}
 }

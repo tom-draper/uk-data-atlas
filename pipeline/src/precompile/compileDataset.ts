@@ -14,7 +14,6 @@ import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.ts";
 import { createTrackedReader } from "./trackedReader.ts";
 import {
 	withDuckdbCensusLsoa,
-	withDuckdbPlanningApplications,
 	withDuckdbPublicHealth,
 } from "./duckdbPublicHealth.ts";
 import { compileDirectDataset } from "./compileDirectDataset.ts";
@@ -131,27 +130,28 @@ export async function compileStaleDataset(
 					? await withDuckdbCensusLsoa(reader, artifacts, (input) =>
 							compileDatasetContents(definition, input),
 						)
-					: definition.type === "planning-applications"
-						? await withDuckdbPlanningApplications(
+					: definition.type === "road-collisions"
+						? await compileDatasetContents(
+								{
+									...definition,
+									precompile: () =>
+										compileDuckdbRoadCollisions(artifacts),
+								},
 								reader,
-								artifacts,
-								(input) =>
-									compileDatasetContents(definition, input),
 							)
-						: definition.type === "road-collisions"
-							? await compileDatasetContents(
-									{
-										...definition,
-										precompile: () =>
-											compileDuckdbRoadCollisions(
-												artifacts,
-											),
-									},
+						: definition.type === "electricity-consumption" ||
+							  definition.type === "gas-consumption"
+							? await withDuckdbEnergyConsumption(
 									reader,
+									artifacts,
+									(input) =>
+										compileDatasetContents(
+											definition,
+											input,
+										),
 								)
-							: definition.type === "electricity-consumption" ||
-								  definition.type === "gas-consumption"
-								? await withDuckdbEnergyConsumption(
+							: definition.type === "local-election"
+								? await withDuckdbLocalElection(
 										reader,
 										artifacts,
 										(input) =>
@@ -160,8 +160,8 @@ export async function compileStaleDataset(
 												input,
 											),
 									)
-								: definition.type === "local-election"
-									? await withDuckdbLocalElection(
+								: definition.type === "imd"
+									? await withDuckdbImd(
 											reader,
 											artifacts,
 											(input) =>
@@ -170,37 +170,27 @@ export async function compileStaleDataset(
 													input,
 												),
 										)
-									: definition.type === "imd"
-										? await withDuckdbImd(
+									: definition.type ===
+												"school-performance" ||
+										  definition.type ===
+												"school-performance-disadvantage"
+										? await withDuckdbSchoolPerformance(
 												reader,
 												artifacts,
+												definition.type ===
+													"school-performance"
+													? "Total"
+													: "Disadvantage status",
 												(input) =>
 													compileDatasetContents(
 														definition,
 														input,
 													),
 											)
-										: definition.type ===
-													"school-performance" ||
-											  definition.type ===
-													"school-performance-disadvantage"
-											? await withDuckdbSchoolPerformance(
-													reader,
-													artifacts,
-													definition.type ===
-														"school-performance"
-														? "Total"
-														: "Disadvantage status",
-													(input) =>
-														compileDatasetContents(
-															definition,
-															input,
-														),
-												)
-											: await compileDatasetContents(
-													definition,
-													reader,
-												);
+										: await compileDatasetContents(
+												definition,
+												reader,
+											);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&

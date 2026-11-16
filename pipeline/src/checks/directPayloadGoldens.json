@@ -26,5 +26,13 @@
 	"adult-social-care-outcomes": {
 		"sha256": "d3b48882f8bd448431cb997644db2e1dae9d3329d5de40e1f8376a5bcad62eab",
 		"bytes": 8807
+	},
+	"housing-affordability": {
+		"sha256": "b2a5c9db16dd67550ccb1c2c59e3be8059963a66236de27aeb7991d1e234888f",
+		"bytes": 21380
+	},
+	"planning-applications": {
+		"sha256": "619418c88bbd4ffbb3dd1eb52cc06703ff6bdd44ab13f62115dc759d5fb62a8e",
+		"bytes": 31651
 	}
 }
