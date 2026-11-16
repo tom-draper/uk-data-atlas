@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
-import { handleMeasureExport } from "../bulkRoutes";
+import { handleMeasureExport } from "../bulk/bulkRoutes";
 import { resolveDimensionRequest } from "../dimensions/dimensionRequests";
 import { seriesResponse } from "../dimensions/dimensionResponses";
 import { canonicalMeasureRequest } from "../canonicalRequests";
