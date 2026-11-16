@@ -26,6 +26,10 @@ const detailRoutes: {
 		pattern:
 			/^\/v1\/locations\/([^/]+)(?:\/(?:comparison|geometry|members|parents))?$/,
 	},
+	{
+		pattern:
+			/^\/v1\/data\/([^/]+)(?:\/(?:convert|series|rankings|value|change|compare))?$/,
+	},
 	{ pattern: /^\/v1\/data\/([^/]+)\/export$/ },
 	{ pattern: /^\/v1\/(?:exports|lookups|terrain)\/([^/]+)$/ },
 	// Fastify takes the whole segment, `.json` included, as one parameter.

@@ -21,6 +21,9 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/locations/greater-manchester",
 		"/v1/locations/greater-manchester/members",
 		"/v1/locations/greater-manchester/parents",
+		"/v1/data/population",
+		"/v1/data/population/value",
+		"/v1/data/population/compare",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
