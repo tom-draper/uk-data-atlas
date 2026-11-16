@@ -97,7 +97,7 @@ test("a ratio is rebuilt from an additive numerator and denominator, or refused"
 	for (const [slug, said] of [
 		["unnamed-rate", /does not name both/],
 		["income-ratio", /median-income is not additive/],
-		["per-thousand", /No scale is known/],
+		["per-thousand", /No ratio rebuild rule is supported/],
 	] as const) {
 		const rule = rules.get(slug)!;
 		assert.equal(rule.rule, "refuse");
