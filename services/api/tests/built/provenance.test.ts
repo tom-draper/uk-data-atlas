@@ -14,7 +14,10 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
-import { measureSeriesSourceKey } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+} from "@uk-data-atlas/measures";
 
 /**
  * Provenance as a client receives it.
@@ -120,7 +123,11 @@ test("names an artifact that exists and hashes to what it says", () => {
 				atlasDatabasePath(repositoryRoot),
 				selector,
 				{
-					measureId: partition.measure,
+					measureId: measureSeriesKey(
+						catalogues.measureDimensions.config.ids[
+							partition.measure
+						]!,
+					),
 					sourceGeography: partition.geography,
 					periods: partition.periods,
 				},
