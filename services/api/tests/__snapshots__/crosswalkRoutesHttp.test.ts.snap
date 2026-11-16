@@ -1,0 +1,1161 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`crosswalk conversion keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"Send counts as a POST body with code and value columns, as JSON or CSV."}
+",
+    "bytes": 192,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "HEAD /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "OPTIONS /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "POST /v1/Crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/crosswalks/%E0%A4%A:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk matches that id."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/crosswalks/constituency-2010-to-2024:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"The crosswalk's exact source release must have compiled area identities before supplied rows can be validated."}
+",
+    "bytes": 237,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "POST /v1/crosswalks/nowhere:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk matches that id."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/crosswalks/test-counts%3Aconvert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:Convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/crosswalks/test-counts:convert [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"semantics=count is required: the supplied values must be non-negative counts that add over areas."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert/?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert/extra?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name the area column as area, code or name; it has no columns."}
+",
+    "bytes": 191,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [APPLICATION/JSON "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "[]"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"rows\\": [{\\"area\\": \\"E05000650\\", \\"value\\": 12}]}, or CSV with area and value columns."}
+",
+    "bytes": 205,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body is not valid JSON."}
+",
+    "bytes": 136,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The body holds no rows."}
+",
+    "bytes": 132,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":7,\\"value\\":1}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"rows[0] needs its area as a string, under area, code or name."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":-1}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/rows-rejected","title":"Rows Rejected","status":422,"detail":"Every row must name one source area and carry a finite non-negative count. No conversion was applied. The first 1,000 rejected rows are listed.","code":"conversion_not_available","absence":"invalid-rows","rejectedCount":1,"rejected":[{"index":0,"area":"E05000001","reason":"not-a-count","validation":{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}}]}
+",
+    "bytes": 562,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":1.5}]}"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:e4147a1b3bf3299299fbe80de933fdf128dc85e781746516d59c58dcfa4f7058","rowCount":1,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":1,"targetsComplete":0,"targetsPartial":1,"targetsNotReached":0,"sourceAreas":2},"inputTotal":1.5,"outputTotal":1.5,"records":[{"areaCode":"E08000001","value":1.5,"status":"derived","inputAreaCount":1,"coverage":{"status":"partial","sourceCount":2,"suppliedSourceCount":1}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1237,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":\\"high\\"}]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/rows-rejected","title":"Rows Rejected","status":422,"detail":"Every row must name one source area and carry a finite non-negative count. No conversion was applied. The first 1,000 rejected rows are listed.","code":"conversion_not_available","absence":"invalid-rows","rejectedCount":1,"rejected":[{"index":0,"area":"E05000001","reason":"not-a-count","validation":{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}}]}
+",
+    "bytes": 562,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"name\\":\\"Example ward\\",\\"value\\":30}]}"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:5b67557e8021ba6a1316980285b55849c4dc1c717cb4bdb438bf0473b3d93525","rowCount":1,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":1,"targetsComplete":0,"targetsPartial":1,"targetsNotReached":0,"sourceAreas":2},"inputTotal":30,"outputTotal":30,"records":[{"areaCode":"E08000001","value":30,"status":"derived","inputAreaCount":1,"coverage":{"status":"partial","sourceCount":2,"suppliedSourceCount":1}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1234,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"values\\":[]}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"Send {\\"rows\\": [{\\"area\\": \\"E05000650\\", \\"value\\": 12}]}, or CSV with area and value columns."}
+",
+    "bytes": 205,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/json; charset=utf-8 "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [application/x-www-form-urlencoded "code,value\\nE05000001,1\\n"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:c2ceda9054f78e306e92fa65069e278312991b7c0717d0299d5500d5821a2333","rowCount":1,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":1,"targetsComplete":0,"targetsPartial":1,"targetsNotReached":0,"sourceAreas":2},"inputTotal":1,"outputTotal":1,"records":[{"areaCode":"E08000001","value":1,"status":"derived","inputAreaCount":1,"coverage":{"status":"partial","sourceCount":2,"suppliedSourceCount":1}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1231,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [no type "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/csv ""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name the area column as area, code or name; it has no columns."}
+",
+    "bytes": 191,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/csv "code,value\\nE05000001,12\\nE05000002,30\\n"]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:b0bfa01d8cb615cb0b6bf8d05ec0ecde427bf051af69d0f933ec2b7752ddf5ad","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/csv "code,value\\nE05000001,12\\nExample ward,30\\n"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/rows-rejected","title":"Rows Rejected","status":422,"detail":"Every row must name one source area and carry a finite non-negative count. No conversion was applied. The first 1,000 rejected rows are listed.","code":"conversion_not_available","absence":"invalid-rows","rejectedCount":2,"rejected":[{"index":0,"area":"E05000001","reason":"duplicate-area","validation":{"index":0,"value":"E05000001","kind":"code","status":"valid","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}},{"index":1,"area":"Example ward","reason":"duplicate-area","validation":{"index":1,"value":"Example ward","kind":"name","status":"matched","match":"exact","area":{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward"}}}]}
+",
+    "bytes": 810,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/csv "code,value\\nE05000001,12\\nNowhere,1\\n"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/rows-rejected","title":"Rows Rejected","status":422,"detail":"Every row must name one source area and carry a finite non-negative count. No conversion was applied. The first 1,000 rejected rows are listed.","code":"conversion_not_available","absence":"invalid-rows","rejectedCount":1,"rejected":[{"index":1,"area":"Nowhere","reason":"unmatched","validation":{"index":1,"value":"Nowhere","kind":"name","status":"unmatched","matchesIn":[]}}]}
+",
+    "bytes": 487,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 422,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/csv "code\\nE05000001\\n"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-body","title":"Invalid Body","status":400,"detail":"The CSV header must name a value column."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count [text/plain "E05000001"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unsupported-media-type","title":"Unsupported Media Type","status":415,"detail":"Send the rows as application/json or text/csv."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 415,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count&format=csv [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count&unexpected=1 [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"published-crosswalk","crosswalkSourceAreas":2,"sourceAreasSupplied":2,"targetsComplete":1,"targetsPartial":0,"targetsNotReached":0,"sourceAreas":2},"inputTotal":42,"outputTotal":42,"records":[{"areaCode":"E08000001","value":42,"status":"derived","inputAreaCount":2,"coverage":{"status":"complete","sourceCount":2,"suppliedSourceCount":2}}],"note":"Only supplied source areas contribute. Complete means every source this crosswalk maps to that target was supplied, not that the crosswalk covers the whole geography. Unreached targets are absent, never zero. Weighted values are estimates and are not rounded."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1235,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count&weighting=none [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"weighting must be area or population, or omitted for an exact regrouping."}
+",
+    "bytes": 184,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count&weighting=nonsense [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"weighting must be area or population, or omitted for an exact regrouping."}
+",
+    "bytes": 184,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=count&weighting=population [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"The requested weighting does not match this crosswalk's published weighting basis."}
+",
+    "bytes": 193,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=nonsense [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"semantics=count is required: the supplied values must be non-negative counts that add over areas."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=rate [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"semantics=count is required: the supplied values must be non-negative counts that add over areas."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:convert?semantics=share [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"semantics=count is required: the supplied values must be non-negative counts that add over areas."}
+",
+    "bytes": 208,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "POST /v1/crosswalks/test-counts:converts?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/crosswalks/ward-to-local-authority-2025:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk matches that id."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "POST /v1/crosswalks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk matches that id."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "PUT /v1/crosswalks/test-counts:convert?semantics=count [application/json "{\\"rows\\":[{\\"code\\":\\"E05000001\\",\\"value\\":12},{\\"code\\":\\"E05000002\\""]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`crosswalk conversion reads its body under the size limits 1`] = `
+{
+  "after oversize": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"semantics":"count","input":{"contentHash":"sha256:6ddf0ecc7960451d4ff4cd3fe36592668e7f094d79a92803bee2bc47c03af9cc","rowCount":2,"normalisedCount":0},"crosswalk":{"id":"test-counts","href":"/v1/crosswalks/test-counts","contentHash":"sha256:containment-artifact","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"method":"exact","coverage":{"scope":"pub",
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/json",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "oversize csv": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/content-too-large","title":"Content Too Large","status":413,"detail":"The request body is 9600011 bytes or more; at most 8388608 are read. Split the rows over several requests."}
+",
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 413,
+  },
+}
+`;
+
+exports[`crosswalk reads keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/crosswalks/constituency-2010-to-2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Crosswalks": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw-gzip"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/crosswalks/%E0%A4%A/records": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/crosswalks/CONSTITUENCY-2010-TO-2024": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/a.b": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/bad%20id": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:crosswalk-artifact","id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"validation":{"sourceNameConflicts":[],"endpoints":{"from":{"status":"not-available","reason":"No compiled area release is available for constituency/2010."},"to":{"status":"verified","availableAreaCount":650,"referencedCodeCount":650}}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 713,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Ukb7PLOvqzogiQenyMvTDvoDLV7Hm5d6M1xH0r2g3sg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:crosswalk-artifact","id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"validation":{"sourceNameConflicts":[],"endpoints":{"from":{"status":"not-available","reason":"No compiled area release is available for constituency/2010."},"to":{"status":"verified","availableAreaCount":650,"referencedCodeCount":650}}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 713,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Ukb7PLOvqzogiQenyMvTDvoDLV7Hm5d6M1xH0r2g3sg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024/records": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 200,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OVJBwl9p6tjx1atSXJQm7jAZmhfySiyf9Ra7E9NUbR0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024/records/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000001","labels":["Old seat"]},"targets":[{"code":"E14001001","labels":["New seat A"]}]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 200,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OVJBwl9p6tjx1atSXJQm7jAZmhfySiyf9Ra7E9NUbR0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024/records/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/constituency-2010-to-2024?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"schemaVersion":1,"contentHash":"sha256:crosswalk-artifact","id":"constituency-2010-to-2024","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"provenance":{"input":"lookup.geojson","inputHash":"sha256:input"},"validation":{"sourceNameConflicts":[],"endpoints":{"from":{"status":"not-available","reason":"No compiled area release is available for constituency/2010."},"to":{"status":"verified","availableAreaCount":650,"referencedCodeCount":650}}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 713,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Ukb7PLOvqzogiQenyMvTDvoDLV7Hm5d6M1xH0r2g3sg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/crosswalks/many-records/records?limit=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000","labels":["Seat 0"]},"targets":[{"code":"E15000","labels":[]}]},{"source":{"code":"E14001","labels":["Seat 1"]},"targets":[{"code":"E15001","labels":[]}]}],"meta":{"nextCursor":"RTE0MDAx"}}
+",
+    "bytes": 277,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-hNB7_-OtaTHFEP1TDsp0DXiaHmY1gRjZdyuaTEHHwa0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?limit=2&cursor=bad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"cursor is invalid.","code":"invalid_cursor"}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/crosswalks/many-records/records?limit=9999": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/crosswalks/many-records/records?source=": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[],"meta":{"nextCursor":null}}
+",
+    "bytes": 90,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WJTTV_YuJFN9y29UbP-flNbsN8kzuDtmrpMasw4sH7s"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?source=E14002": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14002","labels":["Seat 2"]},"targets":[{"code":"E15002","labels":[]}]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-c8MJNZuxWxzlQYW9Cvc1iDfkpAoABVIlISZebxa1Ubs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?source=E14002&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14002","labels":["Seat 2"]},"targets":[{"code":"E15002","labels":[]}]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-c8MJNZuxWxzlQYW9Cvc1iDfkpAoABVIlISZebxa1Ubs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?source=E99999": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[],"meta":{"nextCursor":null}}
+",
+    "bytes": 90,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WJTTV_YuJFN9y29UbP-flNbsN8kzuDtmrpMasw4sH7s"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/many-records/records?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000","labels":["Seat 0"]},"targets":[{"code":"E15000","labels":[]}]},{"source":{"code":"E14001","labels":["Seat 1"]},"targets":[{"code":"E15001","labels":[]}]},{"source":{"code":"E14002","labels":["Seat 2"]},"targets":[{"code":"E15002","labels":[]}]},{"source":{"code":"E14003","labels":["Seat 3"]},"targets":[{"code":"E15003","labels":[]}]},{"source":{"code":"E14004","labels":["Seat 4"]},"targets":[{"code":"E15004","labels":[]}]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 544,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WObvhtIAPov-Oh8TzgPA4C_KG1FrnTnsXMTLJv3ZtP8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks/nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/nowhere/records": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/test-counts:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"Send counts as a POST body with code and value columns, as JSON or CSV."}
+",
+    "bytes": 192,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/crosswalks/test-counts:convert?semantics=count": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"Send counts as a POST body with code and value columns, as JSON or CSV."}
+",
+    "bytes": 192,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/crosswalks/ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No crosswalk matches that identity."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/crosswalks?limit=0": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks?limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks?limit=1&cursor=nope": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks?limit=1000": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/crosswalks?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"constituency-2010-to-2024","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":1,"artifact":"crosswalks/constituency-2010-to-2024.json","contentHash":"sha256:crosswalk-artifact"},{"id":"many-records","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":5,"artifact":"crosswalks/many-records.json","contentHash":"sha256:crosswalk-artifact"},{"id":"test-counts","from":{"geography":"constituency","boundaryRelease":"2010"},"to":{"geography":"constituency","boundaryRelease":"2024-07-uk-bgc"},"method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"recordCount":2,"artifact":"crosswalks/test-counts.json","contentHash":"sha256:crosswalk-artifact"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 1157,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/crosswalks": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rghrTI7djqi2JIRSBCPrH_pm50F_oATxrVMhK7ygaMw"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/crosswalks/constituency-2010-to-2024": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Ukb7PLOvqzogiQenyMvTDvoDLV7Hm5d6M1xH0r2g3sg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/crosswalks/constituency-2010-to-2024/records": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-OVJBwl9p6tjx1atSXJQm7jAZmhfySiyf9Ra7E9NUbR0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/crosswalks/test-counts:convert": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "OPTIONS /v1/crosswalks": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/crosswalks/constituency-2010-to-2024/records": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/crosswalks/constituency-2010-to-2024/records": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/crosswalks [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/crosswalks/constituency-2010-to-2024 [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/crosswalks": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
