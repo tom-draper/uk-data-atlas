@@ -38,6 +38,8 @@ import { analysisPlanMetadata } from "../analysis/analysisPlanMetadata";
 import { relationshipsContract } from "../relationships/relationshipsContract";
 import { relationshipsFastifyRoutes } from "../relationships/relationshipsFastifyRoutes";
 import { relationshipsMetadata } from "../relationships/relationshipsMetadata";
+import { releaseJoinFastifyRoutes } from "../boundaries/releaseJoinFastifyRoutes";
+import { releaseJoinMetadata } from "../boundaries/releaseJoinMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -91,6 +93,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(attributionFastifyRoutes, { context });
 	await app.register(analysisFastifyRoutes, { context });
 	await app.register(relationshipsFastifyRoutes, { context });
+	await app.register(releaseJoinFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -102,6 +105,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
  */
 const openapiPath = (path: string) =>
 	path
+		.replace("{release}:{join}", "{release}:join")
 		.replace("{datasetId}", "{dataset-id}")
 		.replace("{measureId}", "{measure-id}")
 		.replace("/documents/{documentId}", "/documents/{document-id}.json")
@@ -244,6 +248,12 @@ export const generatedPaths = async () => {
 			},
 		});
 	}
+	const joinOperation =
+		paths["/boundary-releases/{geography}/{release}:join"]?.post;
+	if (!joinOperation)
+		throw new Error("Missing Fastify operation: release join");
+	// The description names a second, GeoJSON media type and a request body.
+	Object.assign(joinOperation, releaseJoinMetadata);
 	const exportOperation = paths["/data/{measure-id}/export"]?.get;
 	if (!exportOperation)
 		throw new Error("Missing Fastify operation: measure export");
