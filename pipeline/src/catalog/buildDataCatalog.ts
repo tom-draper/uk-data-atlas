@@ -15,7 +15,7 @@ import {
 	compiledObservationDirectory,
 } from "@uk-data-atlas/atlas-db";
 import { readMeasureDimensionsConfig } from "@uk-data-atlas/measures";
-import { catalogueWithSeries } from "./catalog/catalogueSeries.ts";
+import { catalogueWithSeries } from "./catalogueSeries.ts";
 
 export const datasetCatalogInputs = (
 	repositoryRoot: string,

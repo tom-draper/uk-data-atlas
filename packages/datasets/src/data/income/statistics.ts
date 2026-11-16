@@ -153,4 +153,3 @@ export const medianPaySeries = () =>
 				dimensions: field.members!,
 			})),
 	);
-

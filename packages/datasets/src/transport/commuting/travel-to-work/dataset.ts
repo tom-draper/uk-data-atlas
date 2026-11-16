@@ -202,14 +202,15 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 });
 
 export const travelToWorkSeries = () =>
-	travelToWork.statistics!.dimensions!.find(
-		(dimension) => dimension.slug === "travel-method",
-	)!.members!.map(({ code, key }) => {
-		const member = code ?? key;
-		return {
-			id: `travel-to-work-${member}`,
-			measure: "people-in-employment",
-			dimensions: { "travel-method": member },
-		};
-	});
-
+	travelToWork
+		.statistics!.dimensions!.find(
+			(dimension) => dimension.slug === "travel-method",
+		)!
+		.members!.map(({ code, key }) => {
+			const member = code ?? key;
+			return {
+				id: `travel-to-work-${member}`,
+				measure: "people-in-employment",
+				dimensions: { "travel-method": member },
+			};
+		});

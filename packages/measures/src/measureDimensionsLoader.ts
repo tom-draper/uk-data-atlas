@@ -1,6 +1,16 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { DATASET_DECLARATIONS, energyConsumptionSeries, crimeSeries, roadCollisionSeries, airQualitySeries, declaredLifeExpectancySeries as lifeExpectancySeries, medianPaySeries, homelessnessSeries, travelToWorkSeries } from "@uk-data-atlas/datasets";
+import {
+	DATASET_DECLARATIONS,
+	energyConsumptionSeries,
+	crimeSeries,
+	roadCollisionSeries,
+	airQualitySeries,
+	declaredLifeExpectancySeries as lifeExpectancySeries,
+	medianPaySeries,
+	homelessnessSeries,
+	travelToWorkSeries,
+} from "@uk-data-atlas/datasets";
 import {
 	configDirectory,
 	atlasDatabasePath,

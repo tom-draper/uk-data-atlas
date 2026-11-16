@@ -10,7 +10,7 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
-import { handleMeasureExport } from "../src/bulkRoutes";
+import { handleMeasureExport } from "../src/bulk/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
