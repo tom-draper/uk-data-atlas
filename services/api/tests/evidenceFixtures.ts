@@ -1,7 +1,5 @@
-import {
-	handleAnalysisGeographyRoutes,
-	handleGovernanceRoutes,
-} from "../src/runtime/index.ts";
+import { handleGovernanceRoutes } from "../src/runtime/index.ts";
+import { handleAnalysisGeographyRoutes } from "../src/analysis/analysisGeographyRoutes";
 import { route } from "../src/routes";
 import type {
 	RouteDispatchContext,

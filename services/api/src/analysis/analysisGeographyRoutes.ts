@@ -8,8 +8,8 @@ import {
 	invalidQuery,
 	problem,
 	type ApiResponse,
-} from "./routeResponse.ts";
-import type { RouteRequest } from "./routing.ts";
+} from "../runtime/routeResponse.ts";
+import type { RouteRequest } from "../runtime/routing.ts";
 
 const supportFor = (
 	inventory: NonNullable<

@@ -28,7 +28,7 @@ import {
 } from "./places/postcodeRoutes";
 import { handleDataTransformRoutes } from "./data/dataTransformRoutes";
 import { handleDataConversionRoutes } from "./data/dataConversionRoutes";
-import { handleAnalysisGeographyRoutes } from "./runtime/index.ts";
+import { handleAnalysisGeographyRoutes } from "./analysis/analysisGeographyRoutes";
 import { handleAreaSearchRoutes } from "./areas/areaSearchRoutes";
 import {
 	handleAreaContainsBatchRoutes,
