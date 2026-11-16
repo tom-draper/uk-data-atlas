@@ -9,6 +9,7 @@ import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * Metered electricity and gas consumption by local authority.
@@ -43,17 +44,25 @@ const FUELS = [
 ] as const;
 
 const SEGMENTS = [
-	{ id: "", label: "", field: "allMetersGwh", segment: "every meter" },
+	{
+		id: "",
+		label: "",
+		field: "allMetersGwh",
+		member: "all",
+		segment: "every meter",
+	},
 	{
 		id: "-domestic",
 		label: " (domestic)",
 		field: "domesticGwh",
+		member: "domestic",
 		segment: "domestic meters",
 	},
 	{
 		id: "-non-domestic",
 		label: " (non-domestic)",
 		field: "nonDomesticGwh",
+		member: "non-domestic",
 		segment: "non-domestic meters",
 	},
 ] as const;
@@ -80,6 +89,10 @@ export const compileEnergyConsumption = (
 		const path = paths[fuel.dataset];
 		for (const segment of SEGMENTS) {
 			const measureId = `${fuel.fuel}-consumption${segment.id}`;
+			const seriesKey = measureSeriesKey({
+				measure: fuel.dataset,
+				dimensions: { "meter-type": segment.member },
+			});
 			const periods = localAuthorityFieldPeriods(
 				path,
 				segment.field,
@@ -127,14 +140,14 @@ export const compileEnergyConsumption = (
 			};
 			const content = JSON.stringify({
 				schemaVersion: 1,
-				measureId,
+				measureId: seriesKey,
 				sourceGeography: SOURCE_GEOGRAPHY,
 				periods,
 			});
 			artifacts.push({
 				schemaVersion: 1,
 				contentHash: sha256(content),
-				measureId,
+				measureId: seriesKey,
 				sourceGeography: SOURCE_GEOGRAPHY,
 				periods,
 			});
