@@ -8,6 +8,11 @@ import { translationContract } from "./crosswalks/translationContract";
 import { translationFastifyRoutes } from "./crosswalks/translationFastifyRoutes";
 import { attributionContract } from "./attribution/attributionContract";
 import { attributionFastifyRoutes } from "./attribution/attributionFastifyRoutes";
+import {
+	analysisGeographiesContract,
+	analysisPlanContract,
+} from "./analysis/analysisContract";
+import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
 import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
@@ -105,6 +110,8 @@ const fastifyPaths = new Set(
 		coordinateContract,
 		translationContract,
 		attributionContract,
+		analysisGeographiesContract,
+		analysisPlanContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -780,6 +787,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(attributionFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(analysisFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
