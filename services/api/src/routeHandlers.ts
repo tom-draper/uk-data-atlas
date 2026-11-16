@@ -6,7 +6,7 @@ import { handleDocumentRoutes } from "./documents/documentRoutes";
 import {
 	handleAtlasPageRoutes,
 	handleAtlasLookupRoutes,
-} from "./atlasAssetRoutes";
+} from "./atlas/atlasAssetRoutes";
 import type {
 	FullDetailResult,
 	FullDetailSource,

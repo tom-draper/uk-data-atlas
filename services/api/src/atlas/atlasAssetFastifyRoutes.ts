@@ -3,7 +3,7 @@ import type { RouteContextFor } from "../runtime/index.ts";
 import {
 	handleAtlasLookupRoutes,
 	handleAtlasPageRoutes,
-} from "../atlasAssetRoutes";
+} from "./atlasAssetRoutes";
 import {
 	registerGetRoute,
 	type ContractDispatch,
