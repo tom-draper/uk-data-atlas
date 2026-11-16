@@ -53,7 +53,7 @@ import {
 	crosswalkConversionId,
 	handleCrosswalkConversionRoutes,
 } from "./crosswalks/crosswalkConversionRoutes";
-import { handleBulkRoutes } from "./bulkRoutes";
+import { handleBulkRoutes } from "./bulk/bulkRoutes";
 import { handleGovernanceRoutes } from "./runtime/index.ts";
 import { handleSyncRoutes } from "./runtime/index.ts";
 import { releaseInPath, withReleaseHeaders } from "./releaseDeprecation";
