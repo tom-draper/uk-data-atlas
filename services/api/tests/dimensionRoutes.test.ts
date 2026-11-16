@@ -350,6 +350,29 @@ test("routes a dimensional time series to the selected members", () => {
 	);
 });
 
+test("constructs a place refusal with the public measure before response decoration", () => {
+	const url =
+		"/v1/data/recorded-crimes/series?place=NotARealPlace&offence=burglary";
+	const resolved = resolveDimensionRequest(url, context);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	const response = handleDataSeriesRoutes({
+		context,
+		releaseId: "2023-05-uk-bgc",
+		parsedUrl: new URL(resolved.url, "http://localhost"),
+		segments: ["v1", "data", "recorded-crimes", "series"],
+		series: resolved.series,
+		dispatch: () => {
+			throw new Error("Unexpected dispatch");
+		},
+	});
+	assert.equal(response?.status, 404);
+	const body = JSON.stringify(response?.body);
+	assert.match(body, /recorded-crimes/);
+	assert.match(body, /offence=burglary/);
+	assert.doesNotMatch(body, /crime-burglary/);
+});
+
 test("routes comparisons by public measure and selected members", () => {
 	const url =
 		"/v1/data/recorded-crimes/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000001&comparisonPlace=W05000001&offence=burglary";

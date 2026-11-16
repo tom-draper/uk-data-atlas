@@ -120,6 +120,8 @@ export const handleDataTransformRoutes = ({
 		const refusal = namedAreaRefusal({
 			parsedUrl,
 			measure,
+			publicId: segments[2],
+			series: selectedSeries,
 			parameter,
 			text,
 			named,

@@ -91,6 +91,8 @@ export const handleDataRoutes = ({
 	const namedRefusal = namedAreaRefusal({
 		parsedUrl,
 		measure,
+		publicId: segments[2],
+		series: selectedSeries,
 		parameter: "place",
 		text: placeText,
 		named,
