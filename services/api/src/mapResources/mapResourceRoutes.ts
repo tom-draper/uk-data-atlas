@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
@@ -371,7 +372,7 @@ export const handleMapResourceRoutes = ({
 		// which moment is the caller's to say.
 		if (period === null)
 			return invalidQuery(
-				`Ask for the period to draw with period=; /v1/measures/${measureId} lists the ones ${measureId} publishes.`,
+				`Ask for the period to draw with period=; /v1/measures/${publicMeasureId} lists the ones ${publicMeasureId} publishes.`,
 			);
 		const resolved = resolveObservations(context, {
 			measureId,
@@ -392,7 +393,7 @@ export const handleMapResourceRoutes = ({
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				`The observations for ${measureId} ${period} are not loaded.`,
+				`The observations for ${publicMeasureId} ${period} are not loaded.`,
 			);
 		// The ids must be the tiles' ids, so they come from the release's own
 		// codes. Numbering the observations instead would drift the moment a
@@ -413,14 +414,21 @@ export const handleMapResourceRoutes = ({
 				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
 			);
 		const records = observations.records;
+		const publicMeasure = publicSeriesMeasure(
+			plan.measure,
+			series,
+			publicMeasureId,
+			context.dataCatalog!,
+			context.measureDimensions,
+		);
 		const budgetFailure = () =>
 			problem(
 				422,
 				"Map Join Budget Exceeded",
-				`Map joins accept at most ${MAX_MAP_JOIN_ROWS} source records and ${MAX_MAP_JOIN_COLUMN_BYTES} uncompressed column bytes. Retrieve source observations in pages from /v1/data/${plan.measure.id} using JSON, CSV or NDJSON. No partial join is returned.`,
+				`Map joins accept at most ${MAX_MAP_JOIN_ROWS} source records and ${MAX_MAP_JOIN_COLUMN_BYTES} uncompressed column bytes. Retrieve source observations in pages from /v1/data/${publicMeasureId} using JSON, CSV or NDJSON. No partial join is returned.`,
 				{
 					links: {
-						data: `/v1/data/${encodeURIComponent(plan.measure.id)}?${new URLSearchParams({ period, geography: plan.source.sourceGeography.type, codeYear: String(plan.source.sourceGeography.boundaryYear), datasetId: plan.source.datasetId })}`,
+						data: `/v1/data/${encodeURIComponent(publicMeasureId)}?${new URLSearchParams({ period, geography: plan.source.sourceGeography.type, codeYear: String(plan.source.sourceGeography.boundaryYear), datasetId: plan.source.datasetId, ...series?.dimensions })}`,
 					},
 				},
 			);
@@ -436,7 +444,10 @@ export const handleMapResourceRoutes = ({
 		}
 		const numbered = featureIds(areaCodes);
 		const join = {
-			measure: { id: plan.measure.id, label: plan.measure.label },
+			measure: { id: publicMeasure.id, label: publicMeasure.label },
+			...(series && Object.keys(series.dimensions).length
+				? { dimensions: series.dimensions }
+				: {}),
 			period,
 			sourceGeography: plan.source.sourceGeography,
 			join: {
@@ -451,7 +462,7 @@ export const handleMapResourceRoutes = ({
 		const provenance = {
 			artifact: observations.artifact,
 			contentHash: observations.contentHash,
-			measure: `/v1/measures/${plan.measure.id}`,
+			measure: `/v1/measures/${publicMeasure.id}`,
 		};
 		if (format === "json") {
 			const values = records.flatMap((record) =>
