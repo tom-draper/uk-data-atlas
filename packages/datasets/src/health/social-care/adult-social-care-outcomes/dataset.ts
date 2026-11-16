@@ -1,12 +1,14 @@
 import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
 import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadAdultSocialCareOutcomes } from "../../../data/new-datasets/loader.ts";
 
 export const adultSocialCareOutcomes = defineDataset<
 	IndicatorDataset<"adult-social-care-outcomes">
@@ -37,9 +39,8 @@ export const adultSocialCareOutcomes = defineDataset<
 	ingestion: {
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2025],
-		requiredDataFields: ["value"],
 	},
-	load: ({ odsContent }) => loadAdultSocialCareOutcomes(odsContent),
+	load: noCompiledPayload<IndicatorDataset<"adult-social-care-outcomes">>(),
 	statistics: {
 		payload: {
 			parts: yearParts(
@@ -65,6 +66,7 @@ export const adultSocialCareOutcomes = defineDataset<
 		],
 		fields: [{ path: "value", measure: "social-care-quality-of-life" }],
 		direct: {
+			only: true,
 			read: (reader) =>
 				directIndicator(reader, {
 					id: "adult-social-care-outcomes",

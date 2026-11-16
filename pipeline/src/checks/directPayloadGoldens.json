@@ -10,5 +10,21 @@
 	"council-tax": {
 		"sha256": "6009f45dda8072a1bfe49763be9caba45a167a5f8411a0cd8c88e6175addf617",
 		"bytes": 20828
+	},
+	"net-additional-dwellings": {
+		"sha256": "510df05a6927610d28a528a02395f32c9b95f31961d1573de6c3ac4bb2c47c31",
+		"bytes": 19024
+	},
+	"local-government-finance": {
+		"sha256": "bf9ee24c5c242c2c9484f9f3a3741df0d1b53a93ab0984f4da74044cd1d73a42",
+		"bytes": 18856
+	},
+	"adult-social-care-activity": {
+		"sha256": "71ea38e2d99bc137d902248f648b94f54abf8d163edfe4dfa86f6edbbc286b83",
+		"bytes": 8894
+	},
+	"adult-social-care-outcomes": {
+		"sha256": "d3b48882f8bd448431cb997644db2e1dae9d3329d5de40e1f8376a5bcad62eab",
+		"bytes": 8807
 	}
 }

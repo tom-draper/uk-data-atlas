@@ -1,12 +1,14 @@
 import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
 import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadNetAdditionalDwellings } from "../../../data/new-datasets/loader.ts";
 
 export const netAdditionalDwellings = defineDataset<
 	IndicatorDataset<"net-additional-dwellings">
@@ -37,9 +39,8 @@ export const netAdditionalDwellings = defineDataset<
 	ingestion: {
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2025],
-		requiredDataFields: ["value"],
 	},
-	load: ({ odsContent }) => loadNetAdditionalDwellings(odsContent),
+	load: noCompiledPayload<IndicatorDataset<"net-additional-dwellings">>(),
 	statistics: {
 		payload: {
 			parts: yearParts(
@@ -65,6 +66,7 @@ export const netAdditionalDwellings = defineDataset<
 		],
 		fields: [{ path: "value", measure: "net-additional-dwellings" }],
 		direct: {
+			only: true,
 			read: (reader) =>
 				directIndicator(reader, {
 					id: "net-additional-dwellings",
