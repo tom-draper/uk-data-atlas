@@ -1,0 +1,1994 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`location routes answer without the locations they read 1`] = `
+{
+  "GET /v1/locations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the named location inventory before serving locations."}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/locations/alternatives?q=greater": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the named location inventory before serving locations."}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/locations/greater-manchester": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2020-01-01&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+}
+`;
+
+exports[`named location reads keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/locations/greater-manchester/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Locations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/%E0%A4%A": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/%E0%A4%A/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-path","title":"Invalid Path","status":400,"detail":"The request path contains invalid encoding."}
+",
+    "bytes": 152,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/..": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"name":"UK Data Atlas API","openapi":"/v1/openapi.yaml","documentation":"/v1/docs","links":["/v1/openapi.yaml","/v1/docs","/v1/boundaries","/v1/map-resources","/v1/map-resources/{geography}/{release}","/v1/map-resources/{geography}/{release}.pmtiles","/v1/map-resources/{geography}/{release}/tiles.json","/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt","/v1/map-resources/{geography}/{release}/features","/v1/map-resources/{geography}/{release}/join/{measure-id}","/v1/boundary-releases","/v1/boundary-releases:resolve","/v1/boundary-releases:compare","/v1/boundary-releases/{geography}/{release}","/v1/boundary-releases/{geography}/{release}:join","/v1/documents/{document-id}.json","/v1/atlas-lookups/{lookup-id}.json","/v1/atlas-pages/{page-id}.json","/v1/relationships","/v1/terrain","/v1/terrain/{terrain-id}","/v1/terrain/elevation/point","/v1/coordinates:convert","/v1/datasets","/v1/datasets/{dataset-id}","/v1/measures","/v1/measures/{measure-id}","/v1/themes","/v1/modules","/v1/analysis-geographies","/v1/analysis:plan","/v1/data/{measure-id}","/v1/data/{measure-id}/series","/v1/data/{measure-id}/rankings","/v1/data/{measure-id}/change","/v1/places","/v1/postcodes/{postcode}","/v1/postcodes:batch","/v1/data/{measure-id}/compare","/v1/data/{measure-id}/value","/v1/data/{measure-id}/convert","/v1/areas","/v1/areas:contains","/v1/areas:containsBatch","/v1/areas:near","/v1/areas:intersects","/v1/areas:validate","/v1/areas/{geography}/{code}/similar","/v1/areas/{geography}/{release}/{code}","/v1/areas/{geography}/{release}/{code}/history","/v1/areas/{geography}/{release}/{code}/parents","/v1/areas/{geography}/{release}/{code}/children","/v1/areas/{geography}/{release}/{code}/children/geometry","/v1/areas/{geography}/{release}/{code}/relationships","/v1/areas/{geography}/{release}/{code}/neighbours","/v1/areas/{geography}/{release}/{code}/overlap","/v1/areas/{geography}/{release}/{code}/geometry","/v1/translations","/v1/attribution","/v1/locations","/v1/locations/alternatives","/v1/locations/{location-id}","/v1/locations/{location-id}/comparison","/v1/locations/{location-id}/geometry","/v1/locations/{location-id}/members","/v1/locations/{location-id}/parents","/v1/crosswalks","/v1/crosswalks/{crosswalk-id}","/v1/crosswalks/{crosswalk-id}:convert","/v1/crosswalks/{crosswalk-id}/records","/v1/data/{measure-id}/export","/v1/exports","/v1/exports/{export-id}","/v1/lookups","/v1/lookups/{lookup-id}","/v1/atlas-release"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2552,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-eBXAe0IxIGbCf5A2HGmsLcHHyu601dMnxYocnYBw-ZY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/GREATER-MANCHESTER": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/a.b": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/alternatives": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"q is required to find named-location alternatives."}
+",
+    "bytes": 161,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/alternatives/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"q is required to find named-location alternatives."}
+",
+    "bytes": 161,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/alternatives/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/alternatives?q=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"q is required to find named-location alternatives."}
+",
+    "bytes": 161,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/alternatives?q=GREATER%20MANCHESTER": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"query":"greater manchester","alternatives":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping"},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 302,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-uYknlGh1fRxmdJC1yht196Tth5yoUAazDemUgT0Rd8U"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/alternatives?q=a&q=b": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"query":"a","alternatives":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 119,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-bw52VEsgGqtS9UIKXF0SBmaaodqM6r1ILeCwMeEZCTM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/alternatives?q=greater%20manchester": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"query":"greater manchester","alternatives":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping"},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county"}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 302,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-uYknlGh1fRxmdJC1yht196Tth5yoUAazDemUgT0Rd8U"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/alternatives?q=nowhere": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"query":"nowhere","alternatives":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 125,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-pmAYKVMyQjaJx_sViJ4wGrxD8ubk4CsD0OBrAagg0tc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/bad%20id": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/comparison": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=1974&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2020-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2020-01-01&to=2026-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester"},"from":"2020-01-01","to":"2026-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 280,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-wPaktKc2Rg-qNWL87s533kHGfp0MGynnDJBKdaeEYBU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2026-01-01&to=2020-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester"},"from":"2026-01-01","to":"2020-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 280,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-yIBZKUsznMzOVlbCY_O4maPpf3PHGpLTgnDeNDQyuvk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"greater-manchester","properties":{"id":"greater-manchester","label":"Greater Manchester","memberGeography":"localAuthority","boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7]},"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 398,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-KF3VmkUgPKw5t42BDUhvt6srahpqujRc9OCOVUo3Dhc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/members/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/members/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&limit=0": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"No published crosswalk runs from localAuthority to region/2025-12-en, so a location's parents there cannot be resolved."}
+",
+    "bytes": 230,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk local-authority-to-region-2025 runs from localAuthority to region/2025-12-en."}
+",
+    "bytes": 203,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk nowhere runs from localAuthority to region/2025-12-en."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester?asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester?asOf=soon": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"asOf must be a calendar date in YYYY-MM-DD form."}
+",
+    "bytes": 159,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester?include=capabilities": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"capabilities":{"direct":{"status":"available","views":[{"geography":"localAuthority","boundaryRelease":"2019-12-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2019-12-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2025-01-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2026-05-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2026-05-uk-lad"}]},"members":{"status":"not-built","reason":"Build the location projection inventory before serving location projections."},"parents":{"status":"not-built","reason":"Build the location projection inventory before serving location projections."}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1437,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-nFbzskdGc5BIkDX8daAZZFNLXOeJvWIy0MjV71KcDC0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester?include=geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester?include=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/comparison": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere/comparison?from=1974&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere/comparison?from=2020-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere/comparison?from=2020-01-01&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/comparison?from=2026-01-01&to=2020-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?geography=ward&release=2025-01-en-ward&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?release=2025-01-uk-lad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?release=2025-01-uk-lad&asOf=2024-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?release=2025-01-uk-lad&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?release=2025-01-uk-lad&limit=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?release=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/members?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/parents?geography=region": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/parents?geography=region&release=2025-12-en": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere/parents?geography=region&release=2025-12-en&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere?asOf=2024-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere?asOf=soon": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"asOf must be a calendar date in YYYY-MM-DD form."}
+",
+    "bytes": 159,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere?include=capabilities": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/nowhere?include=geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/nowhere?include=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 511,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-8EOFES475Fa-Kl8EuFr2GzvXhIzlgqcJN7xkjb1Bhb4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/comparison": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/comparison?from=1974&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/comparison?from=2020-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/comparison?from=2020-01-01&to=2026-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area"},"from":"2020-01-01","to":"2026-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 261,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-0gWkIWwVmFAlW9L_1dau6kvILqOxm0fqsvN5WmiV_4Q"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/comparison?from=2026-01-01&to=2020-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area"},"from":"2026-01-01","to":"2020-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 261,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-7-9mUyAqjONP2kWBwCiAtFxekzvhhSxC8JmrhypfuQ4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"second","properties":{"id":"second","label":"Second area","memberGeography":"localAuthority","boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7]},"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 367,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-zhfB0aatPhQ7uIBANjeBLJSOk1kCi_mDF9bH4VPZ-E4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/members?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second/members?geography=ward&release=2025-01-en-ward&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second/members?release=2025-01-uk-lad": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2103,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HE4sMxrc6MJA6n-f0vPuwHihluVS80IwNehmfgN8dtU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/members?release=2025-01-uk-lad&asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2103,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HE4sMxrc6MJA6n-f0vPuwHihluVS80IwNehmfgN8dtU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/members?release=2025-01-uk-lad&limit=0": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2103,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HE4sMxrc6MJA6n-f0vPuwHihluVS80IwNehmfgN8dtU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/members?release=2025-01-uk-lad&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2103,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HE4sMxrc6MJA6n-f0vPuwHihluVS80IwNehmfgN8dtU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second/members?release=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second/members?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/parents?geography=region": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/parents?geography=region&release=2025-12-en": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"No published crosswalk runs from localAuthority to region/2025-12-en, so a location's parents there cannot be resolved."}
+",
+    "bytes": 230,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk local-authority-to-region-2025 runs from localAuthority to region/2025-12-en."}
+",
+    "bytes": 203,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second/parents?geography=region&release=2025-12-en&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk nowhere runs from localAuthority to region/2025-12-en."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/second?asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 511,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-8EOFES475Fa-Kl8EuFr2GzvXhIzlgqcJN7xkjb1Bhb4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second?asOf=soon": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"asOf must be a calendar date in YYYY-MM-DD form."}
+",
+    "bytes": 159,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second?include=capabilities": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"capabilities":{"direct":{"status":"available","views":[{"geography":"localAuthority","boundaryRelease":"2019-12-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/second/members?release=2019-12-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/second/members?release=2025-01-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2026-05-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/second/members?release=2026-05-uk-lad"}]},"members":{"status":"not-built","reason":"Build the location projection inventory before serving location projections."},"parents":{"status":"not-built","reason":"Build the location projection inventory before serving location projections."}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1382,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-yQfVQBWpgFAb9u_kbRFnwwB8ls7odYKHXDGJRxjnOIU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/second?include=geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/second?include=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No named location matches that identity."}
+",
+    "bytes": 143,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations?asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?asOf=soon": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"asOf must be a calendar date in YYYY-MM-DD form."}
+",
+    "bytes": 159,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations?kind=county": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?kind=nope": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations?limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":"Z3JlYXRlci1tYW5jaGVzdGVy"}}
+",
+    "bytes": 380,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Y5xTEaywMeMnYXSLdeXIx9sGGXKM24vzBWHIxdd-15U"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?limit=1&cursor=bad": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"cursor is invalid.","code":"invalid_cursor"}
+",
+    "bytes": 153,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations?limit=1000": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"limit must be an integer between 1 and 500."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations?q=greater": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 624,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Y0jEegJrJ7CHwp1xtL7mQgjO9hBNvvRN3hdHh7_qtXY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?q=nowhere": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[],"meta":{"nextCursor":null}}
+",
+    "bytes": 90,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WJTTV_YuJFN9y29UbP-flNbsN8kzuDtmrpMasw4sH7s"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"second","label":"Second area","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]},{"id":"greater-manchester-historic","label":"Greater Manchester","kind":"county","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":null}}
+",
+    "bytes": 874,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/locations": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Nb9ayWioweTEeDVi9_qmy_CA91cf-hzSh9OSq1sgk_4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/locations/alternatives": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/locations/greater-manchester": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/locations/greater-manchester/members": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "OPTIONS /v1/locations": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/locations/greater-manchester/parents": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/locations/greater-manchester/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/locations [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/locations/alternatives [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/locations/greater-manchester [no type "{}"]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/locations": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`named locations with compiled projections keep their HTTP responses 1`] = `
+{
+  "GET /v1/locations/greater-manchester": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/comparison": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=1974&to=2026-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2020-01-01": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from and to must be calendar dates in YYYY-MM-DD form."}
+",
+    "bytes": 165,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2020-01-01&to=2026-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester"},"from":"2020-01-01","to":"2026-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 280,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-wPaktKc2Rg-qNWL87s533kHGfp0MGynnDJBKdaeEYBU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/comparison?from=2026-01-01&to=2020-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester"},"from":"2026-01-01","to":"2020-01-01","retained":["E08000000","E08000001","E08000998","E08000999"],"added":[],"removed":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 280,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-yIBZKUsznMzOVlbCY_O4maPpf3PHGpLTgnDeNDQyuvk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"greater-manchester","properties":{"id":"greater-manchester","label":"Greater Manchester","memberGeography":"localAuthority","boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7]},"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 398,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-KF3VmkUgPKw5t42BDUhvt6srahpqujRc9OCOVUo3Dhc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&limit=0": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=2025-01-uk-lad&limit=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"partial","note":"This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members."},"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","membership":"direct-code-match","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester","aliases":["GM"]}],"unresolvedMemberCodes":["E08000000","E08000998","E08000999"],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"not-yet-current","name":"Recoded authority","presentIn":["2026-05-uk-lad"]},{"code":"E08000999","status":"superseded","name":"Legacy authority","presentIn":["2019-12-uk-lad"]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2122,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jWIMGOmuxP6Jxabg-HXA4KSkGb-lEqaAKj4jjHyLmEI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/members?release=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No compiled area release matches the requested member geography and release."}
+",
+    "bytes": 179,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester/members?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"release is required to resolve a named location's members."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required to find the areas a location lies in."}
+",
+    "bytes": 183,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Name the crosswalk to resolve parents through, with via=. Published for region/2025-12-en: local-authority-to-region-2025."}
+",
+    "bytes": 233,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"location":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"composition":{"kind":"declared-member-composite","officialGeography":false,"status":"complete","note":"This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas."},"geography":"region","boundaryRelease":"2025-12-en","via":{"id":"local-authority-to-region-2025","method":"official-lookup","quality":"publisher-supplied","weighting":{"status":"not-provided"},"from":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"to":{"geography":"region","boundaryRelease":"2025-12-en"},"contentHash":"sha256:authority-to-region"},"memberGeography":"localAuthority","memberBoundaryRelease":"2025-01-uk-lad","relationRule":"A parent is covered when the location takes in all of it: for a containment lookup, every area the publisher places in the parent is a member; for an area-overlap crosswalk, the members cover at least 0.99 of its area. Otherwise the location only intersects it. locationWithin names the single parent holding every member, and is null when members fall in several parents or any is placed in none.","locationWithin":{"id":"region/2025-12-en/E12000002","code":"E12000002","name":"North West"},"parents":[{"id":"region/2025-12-en/E12000002","code":"E12000002","name":"North West","relation":"intersects","members":[{"id":"localAuthority/2025-01-uk-lad/E08000001","code":"E08000001","name":"Greater Manchester"}],"parentMemberCount":2}],"unplaced":[],"coverage":{"memberCodeCount":4,"resolvedCount":1,"unresolvedCount":3,"complete":false,"coversLocation":true,"legacy":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"unknown","presentIn":[]},{"code":"E08000999","status":"unknown","presentIn":[]}],"unexplained":[],"unresolved":[{"code":"E08000000","status":"unknown","presentIn":[]},{"code":"E08000998","status":"unknown","presentIn":[]},{"code":"E08000999","status":"unknown","presentIn":[]}],"note":"Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. \`complete\` means every listed code resolved, which a location spanning several vintages never does; \`coversLocation\` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in \`legacy\`."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 3058,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-FR9RU-QKemDlK4os-IPsMBxCnsaY28YTBa78eTdRMXs"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published crosswalk nowhere runs from localAuthority to region/2025-12-en."}
+",
+    "bytes": 180,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/locations/greater-manchester?asOf=2024-01-01": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 530,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-l3VbKFk1y68FmwEGOdo0VYTqK-eXZ5ZHxDeUB1kPcr4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester?asOf=soon": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"asOf must be a calendar date in YYYY-MM-DD form."}
+",
+    "bytes": 159,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester?include=capabilities": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7],"geometry":{"boundaryRelease":"2025-01-uk-lad","bbox":[-2.5,53.3,-2,53.7],"geometry":{"type":"MultiPolygon","coordinates":[[[[-2.5,53.3],[-2,53.3],[-2,53.7],[-2.5,53.3]]]]}},"capabilities":{"direct":{"status":"available","views":[{"geography":"localAuthority","boundaryRelease":"2019-12-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2019-12-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2025-01-uk-lad"},{"geography":"localAuthority","boundaryRelease":"2026-05-uk-lad","status":"partial","memberCodeCount":4,"resolvedMemberCount":1,"href":"/v1/locations/greater-manchester/members?release=2026-05-uk-lad"}]},"members":{"status":"available","views":[{"geography":"ward","boundaryRelease":"2025-01-en-ward","via":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied"},"href":"/v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025"}]},"parents":{"status":"available","views":[{"geography":"region","boundaryRelease":"2025-12-en","via":{"id":"local-authority-to-region-2025","method":"official-lookup","quality":"publisher-supplied"},"href":"/v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025"}]}}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1843,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-HiW5G2T20-iMBEbC14cyddHnIIBGYnniKhbuV7ne9uI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/locations/greater-manchester?include=geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/locations/greater-manchester?include=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-include","title":"Invalid Include","status":400,"detail":"The location resource supports \`include=capabilities\`."}
+",
+    "bytes": 169,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+}
+`;
