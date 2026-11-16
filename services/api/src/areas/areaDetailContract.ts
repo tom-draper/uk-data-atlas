@@ -1,6 +1,6 @@
+import { route } from "../contract/servedContract";
 import { areaChildrenGeometryMetadata } from "./areaChildrenGeometryMetadata";
 import { areaChildrenMetadata } from "./areaChildrenMetadata";
-import { route } from "./areaCollectionContract";
 import { areaGeometryMetadata } from "./areaGeometryMetadata";
 import { areaHistoryMetadata } from "./areaHistoryMetadata";
 import { areaMetadata } from "./areaMetadata";
