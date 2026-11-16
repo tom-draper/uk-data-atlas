@@ -11,7 +11,12 @@ import type { DatasetTopic } from "@uk-data-atlas/datasets";
  * leaves, and a caller who wants one can aggregate them without the risk of
  * adding a subtotal to its own parts.
  */
-export type Category = readonly [suffix: string, column: string, label: string, member?: string];
+export type Category = readonly [
+	suffix: string,
+	column: string,
+	label: string,
+	member?: string,
+];
 
 export type CensusTable = {
 	table: string;

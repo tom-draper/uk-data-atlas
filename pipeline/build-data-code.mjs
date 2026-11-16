@@ -10,7 +10,9 @@ const { buildSync } = require("esbuild");
 const runtimeConfig = {
 	"pipeline/src/stages/build-atlas-sqlite.ts": ["measure-dimensions.json"],
 	"pipeline/src/stages/build-data-catalog.ts": ["measure-dimensions.json"],
-	"pipeline/src/stages/build-measure-compatibility.ts": ["measure-dimensions.json"],
+	"pipeline/src/stages/build-measure-compatibility.ts": [
+		"measure-dimensions.json",
+	],
 	"pipeline/src/stages/build-derived-boundaries.ts": [
 		"area-source-adapters.json",
 	],
