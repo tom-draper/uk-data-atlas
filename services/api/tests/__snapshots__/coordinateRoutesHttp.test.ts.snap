@@ -1,0 +1,499 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`coordinate conversion keeps its HTTP responses 1`] = `
+{
+  "DELETE /v1/coordinates:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/coordinates%3Aconvert?lng=-0.1&lat=51.5": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1,"lat":51.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5562.89,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 396,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-J6BRkSJSLDBkqtVoBYT83GgDCi3URAh7fkN1Zpc0q8M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert/extra?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/coordinates:convert?crs=EPSG:27700&easting=530000&northing=180000": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.128354,"lat":51.503991,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"easting":0,"northing":0},"uncertaintyM":2.5,"basis":"decimal-places-and-transformation"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 633,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-9nCAq89e_AucU_my4WfPgLZLUyAjlrv6cZwNHowew_0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.128347,"lat":51.503995,"crs":"EPSG:4326","input":{"crs":"EPSG:27700","easting":530000.5,"northing":180000.5,"gridReference":{"value":"TQ 30000 80000","cellSizeM":1,"position":"cell-centre"},"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man."}},"precision":{"decimalPlaces":{"gridReference":{"easting":5,"northing":5}},"uncertaintyM":2.71,"basis":"grid-reference-and-transformation"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 738,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-IMWfkhvSzYhkRXwYkAUjZbJWMzeXXtc-ekm0ZH90s_w"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000&easting=530000&northing=180000": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"easting and northing, or gridref as an Ordnance Survey National Grid reference, are required for EPSG:27700."}
+",
+    "bytes": 219,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?crs=EPSG:29902&easting=333500&northing=373500": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-5.935443,"lat":54.592113,"crs":"EPSG:4326","input":{"crs":"EPSG:29902","easting":333500,"northing":373500,"transformation":{"name":"TM65 to WGS 84 (2)","epsg":"EPSG:1641","accuracyM":1,"areaOfUse":"Ireland and Northern Ireland onshore."}},"precision":{"decimalPlaces":{"easting":0,"northing":0},"uncertaintyM":1.5,"basis":"decimal-places-and-transformation"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 626,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-a9ctNGfAuvX9TM1oXBqXzXvUqZbzeUhD3gx6xf1-y7Y"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?crs=EPSG:3857&lng=0&lat=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid)."}
+",
+    "bytes": 211,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=%E0%A4%A&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5#frag": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1,"lat":51.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5562.89,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 396,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-J6BRkSJSLDBkqtVoBYT83GgDCi3URAh7fkN1Zpc0q8M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&accuracy=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"accuracy must be a positive number of metres, at most 100000."}
+",
+    "bytes": 172,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&accuracy=25": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1,"lat":51.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":25,"basis":"stated-accuracy"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 392,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-QOhDMAjVdjrfA-CTaNMLHaVMYFPRCwT2MFMT-xHwvZM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&crs=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid)."}
+",
+    "bytes": 211,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&gridrefDigits=2": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"gridrefDigits can only be used with to=EPSG:27700."}
+",
+    "bytes": 161,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&to=EPSG:27700&gridrefDigits=99": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"gridrefDigits must be an integer from 1 to 5."}
+",
+    "bytes": 156,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&to=EPSG:29902": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/outside-target-crs","title":"Outside Target CRS","status":400,"detail":"The WGS 84 point cannot be represented within this API's supported EPSG:29902 lookup range."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lat=51.5&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1,"lat":51.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5562.89,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 396,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-J6BRkSJSLDBkqtVoBYT83GgDCi3URAh7fkN1Zpc0q8M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1&lng=-0.2&lat=51.5": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1,"lat":51.5,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":1,"lat":1},"uncertaintyM":5562.89,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 396,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-J6BRkSJSLDBkqtVoBYT83GgDCi3URAh7fkN1Zpc0q8M"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.12835394&lat=51.503990828&to=EPSG:27700": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.12835394,"lat":51.503990828,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":8,"lat":9},"uncertaintyM":0,"basis":"decimal-places"}},"targetCrs":"EPSG:27700","target":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man.","direction":"inverse"},"uncertaintyM":2,"gridReference":{"value":"TQ 3000 8000","digits":4,"cellSizeM":10,"position":"containing-cell"}},"note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 745,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-GaMdxCKAmDczwSdxVqOKwok8gFU5ueesmZqf_JfDLhM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.12835394&lat=51.503990828&to=EPSG:27700&gridrefDigits=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.12835394,"lat":51.503990828,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":8,"lat":9},"uncertaintyM":0,"basis":"decimal-places"}},"targetCrs":"EPSG:27700","target":{"crs":"EPSG:27700","easting":530000,"northing":180000,"transformation":{"name":"OSGB36 to WGS 84 (6)","epsg":"EPSG:1314","accuracyM":2,"areaOfUse":"Great Britain onshore and the Isle of Man.","direction":"inverse"},"uncertaintyM":2,"gridReference":{"value":"TQ 30 80","digits":2,"cellSizeM":1000,"position":"containing-cell"}},"note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 743,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-SzZsrSAl1VpAooiNBOZt68eMAR0PYdOZ50bqkaCL_04"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=-0.1284&lat=51.504": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1284,"lat":51.504,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":4,"lat":3},"uncertaintyM":55.63,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 399,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Qpd7v7uZUI72IbKtejSM2_idWcdJBFAeAJEjqv0W_Fk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?lng=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=0&lat=0&to=EPSG:27700": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/outside-target-crs","title":"Outside Target CRS","status":400,"detail":"The WGS 84 point cannot be represented within this API's supported EPSG:27700 lookup range."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lng=0&lat=0&to=EPSG:3857": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"to must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid)."}
+",
+    "bytes": 210,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convert?lon=-0.1284&lat=51.504": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:atlas-release","data":{"point":{"lng":-0.1284,"lat":51.504,"crs":"EPSG:4326","precision":{"decimalPlaces":{"lng":4,"lat":3},"uncertaintyM":55.63,"basis":"decimal-places"}},"targetCrs":"EPSG:4326","note":"This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area."},"meta":{"nextCursor":null}}
+",
+    "bytes": 399,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Qpd7v7uZUI72IbKtejSM2_idWcdJBFAeAJEjqv0W_Fk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/coordinates:convert?long=-0.1284&lat=51.504": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/coordinates:convertxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/coordinates?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/coordinates:convert?lng=-0.1284&lat=51.504": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Qpd7v7uZUI72IbKtejSM2_idWcdJBFAeAJEjqv0W_Fk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/coordinates:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/coordinates:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/coordinates:convert": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/coordinates:convert?lng=-0.1&lat=51.5": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
