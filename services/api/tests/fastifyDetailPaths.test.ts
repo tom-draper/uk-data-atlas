@@ -14,6 +14,8 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/exports/total-jobs-observations",
 		"/v1/lookups/areas-ward-2025-05",
 		"/v1/terrain/terrain-contours",
+		"/v1/crosswalks/ward-to-local-authority-2025",
+		"/v1/crosswalks/ward-to-local-authority-2025/records",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
@@ -38,6 +40,9 @@ test("detail paths the dispatcher must keep are not recognised", () => {
 		`/v1/documents/${"x".repeat(96)}.json`,
 		// The join operation is not a release.
 		"/v1/boundary-releases/ward/2024:join",
+		// The conversion is not a crosswalk.
+		"/v1/crosswalks/ward-to-local-authority-2025:convert",
+		"/v1/crosswalks/ward-to-local-authority-2025/records/",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(false);
 });

@@ -54,6 +54,16 @@ import { terrainFastifyRoutes } from "../terrain/terrainFastifyRoutes";
 import { terrainMetadata } from "../terrain/terrainMetadata";
 import { terrainPointMetadata } from "../terrain/terrainPointMetadata";
 import { terrainProductMetadata } from "../terrain/terrainProductMetadata";
+import {
+	crosswalkDetailContract,
+	crosswalkRecordsContract,
+	crosswalksContract,
+} from "../crosswalks/crosswalkContract";
+import { crosswalkFastifyRoutes } from "../crosswalks/crosswalkFastifyRoutes";
+import { crosswalkConvertMetadata } from "../crosswalks/crosswalkConvertMetadata";
+import { crosswalkDetailMetadata } from "../crosswalks/crosswalkDetailMetadata";
+import { crosswalkRecordsMetadata } from "../crosswalks/crosswalkRecordsMetadata";
+import { crosswalksMetadata } from "../crosswalks/crosswalksMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -110,6 +120,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(releaseJoinFastifyRoutes, { context });
 	await app.register(terrainFastifyRoutes, { context });
 	await app.register(bulkFastifyRoutes, { context });
+	await app.register(crosswalkFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -129,6 +140,8 @@ const openapiPath = (path: string) =>
 		.replace("/atlas-pages/{pageId}", "/atlas-pages/{page-id}.json")
 		.replace("{exportId}", "{export-id}")
 		.replace("{terrainId}", "{terrain-id}")
+		.replace("{crosswalkId}:{convert}", "{crosswalk-id}:convert")
+		.replace("{crosswalkId}", "{crosswalk-id}")
 		.replace(/^\/lookups\/\{lookupId\}$/, "/lookups/{lookup-id}");
 
 /**
@@ -243,6 +256,17 @@ export const generatedPaths = async () => {
 			terrainPointMetadata,
 			terrainPointContract,
 		],
+		["/crosswalks", crosswalksMetadata, crosswalksContract],
+		[
+			"/crosswalks/{crosswalk-id}",
+			crosswalkDetailMetadata,
+			crosswalkDetailContract,
+		],
+		[
+			"/crosswalks/{crosswalk-id}/records",
+			crosswalkRecordsMetadata,
+			crosswalkRecordsContract,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
@@ -284,6 +308,11 @@ export const generatedPaths = async () => {
 		throw new Error("Missing Fastify operation: release join");
 	// The description names a second, GeoJSON media type and a request body.
 	Object.assign(joinOperation, releaseJoinMetadata);
+	const convertOperation = paths["/crosswalks/{crosswalk-id}:convert"]?.post;
+	if (!convertOperation)
+		throw new Error("Missing Fastify operation: crosswalk conversion");
+	// The description names a request body and several error responses.
+	Object.assign(convertOperation, crosswalkConvertMetadata);
 	// Bulk resources are published as the description gives them: a manifest by
 	// reference, and downloads in several media types.
 	for (const [path, metadata] of [
