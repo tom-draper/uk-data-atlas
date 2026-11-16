@@ -15,7 +15,7 @@ import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaries/boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogue/catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
-import { handleCoordinateRoutes } from "./coordinateRoutes";
+import { handleCoordinateRoutes } from "./coordinates/coordinateRoutes";
 import { handleDataRoutes } from "./data/dataRoutes";
 import { handleDataSeriesRoutes } from "./data/dataSeriesRoutes";
 import { handleDataRankingRoutes } from "./data/dataRankingRoutes";
