@@ -20,6 +20,7 @@ import { IdRegistries } from "../ids/idRegistries.ts";
 import { createStatisticsAreaLookup } from "./statisticsAreaLookup.ts";
 import { collectParties } from "./statisticsParties.ts";
 import { registerStatistics, sourceKey } from "./statisticsRegistry.ts";
+import { validateMeasureSemantics } from "./validateMeasureSemantics.ts";
 
 const unitId = (label: string): number => {
 	const unit = MEASURE_UNITS.find((item) => item.label === label);
@@ -276,6 +277,7 @@ export function statisticsTables(
 			],
 			rows: rows(({ measures, dimensions }) =>
 				measures.entries.map(({ id, item: measure }) => {
+					validateMeasureSemantics(measure);
 					const semantics = measureSemantics(measure);
 					return [
 						id,

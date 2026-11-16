@@ -19,6 +19,11 @@ const measure = (
 	denominator: null,
 	weight: null,
 	...fields,
+	statistic:
+		fields.statistic ??
+		(fields.valueKind === "amount"
+			? "total"
+			: (fields.valueKind ?? "count")),
 });
 
 const ratio = (id: number, slug: string, fields: Partial<MeasureRow> = {}) =>
@@ -163,4 +168,11 @@ test("everything that is not additive or a rebuildable ratio is refused with a r
 		reasons.add(rule.reason);
 	}
 	assert.equal(reasons.size, refused.length);
+});
+
+test("conversion never sums a non-additive statistic", () => {
+	const rule = rulesOf([
+		measure(1, "inconsistent", { valueKind: "count", statistic: "median" }),
+	]).get("inconsistent")!;
+	assert.notEqual(rule.rule, "sum");
 });

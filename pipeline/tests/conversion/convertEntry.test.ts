@@ -81,6 +81,11 @@ const measure = (
 	denominator: null,
 	weight: null,
 	...fields,
+	statistic:
+		fields.statistic ??
+		(fields.valueKind === "amount"
+			? "total"
+			: (fields.valueKind ?? "count")),
 });
 const measures = [
 	measure(1, "people"),
