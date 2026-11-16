@@ -7451,95 +7451,79 @@ paths:
   /areas/{geography}/{release}/{code}:
     get:
       operationId: getArea
-      tags: ["Geography"]
       summary: Get one compiled area by its full identity
+      tags:
+        - Geography
       description: >
-        Where precompiled postcode placements cover this boundary release, the
-        area also includes live and terminated unit-postcode counts from the ONS
-        Postcode Directory edition shown in `postcodes.edition`.
+        Where precompiled postcode placements cover this boundary release, the area also includes live
+        and terminated unit-postcode counts from the ONS Postcode Directory edition shown in
+        `postcodes.edition`.
 
 
-        `include` expands the area with any of four reports, each under its own
-        key:
+        `include` expands the area with any of four reports, each under its own key:
 
 
-        `capabilities` reports geometry, published relationship and crosswalk
-        edges, direct-code named-location membership, and every measure's
-        capability for this exact area, each in the capability vocabulary
-        described by `CapabilityStatus`: `available`, `partial`,
-        `requires-conversion`, `unsupported` or `not-built`, with a `reason` on
-        every status but `available`. A measure is `available` when a source
-        partition published on this release has a value for the area in every
-        period, and `partial` when it has one in only some periods or its codes
-        only partly join the release. It `requires-conversion` when no partition
-        is published on the release but a published crosswalk converts one onto
-        it: each entry in `conversions` names the crosswalk, the source
-        partition and period, and a ready `href` to the convert route. A
-        conversion is only offered after that exact conversion has been run on
-        the source's latest period and accepted, and only if it reaches this
-        area. A measure whose values do not add over areas is never offered a
-        conversion. `capabilities.data.measures` lists the available, partial
-        and convertible measures; `capabilities.data.counts` counts every
-        measure by status, the unsupported ones included. Compatibility is based
-        on area-code membership only and does not assert equal geometry.
+        `capabilities` reports geometry, published relationship and crosswalk edges, direct-code
+        named-location membership, and every measure's capability for this exact area, each in the
+        capability vocabulary described by `CapabilityStatus`: `available`, `partial`,
+        `requires-conversion`, `unsupported` or `not-built`, with a `reason` on every status but
+        `available`. A measure is `available` when a source partition published on this release has a
+        value for the area in every period, and `partial` when it has one in only some periods or its
+        codes only partly join the release. It `requires-conversion` when no partition is published on
+        the release but a published crosswalk converts one onto it: each entry in `conversions` names
+        the crosswalk, the source partition and period, and a ready `href` to the convert route. A
+        conversion is only offered after that exact conversion has been run on the source's latest
+        period and accepted, and only if it reaches this area. A measure whose values do not add over
+        areas is never offered a conversion. `capabilities.data.measures` lists the available, partial
+        and convertible measures; `capabilities.data.counts` counts every measure by status, the
+        unsupported ones included. Compatibility is based on area-code membership only and does not
+        assert equal geometry.
 
 
-        `citation` returns what a caller needs to cite the area as served by
-        this Atlas release: the immutable Atlas release, the content hash of the
-        area identity artifact, the boundary release's publisher, licence and
-        metadata hash, geometry provenance, the validation results for the
-        release and any cited crosswalk, and an attribution block. Name a
-        `measure` to cite the observation artifacts, with their content hashes,
-        that hold a value for this area in a source partition assessed against
-        this exact boundary release. Only those partitions' datasets are
-        attributed, together with any dataset a derived measure is calculated
-        from. Name a `crosswalk` to cite one that publishes a relationship for
-        this area. A resource that supplies nothing for the area is refused with
-        `422` rather than cited. The citation hashes the whole geometry source
-        file; `include=metrics` supplies the per-area `geometryHash`. The
-        boundary release's `metadataHash` pins its metadata, which names the
-        source file but does not hash its contents. The envelope's top-level
-        `atlasRelease` is the release of the API response itself: use
-        `citation.identity.contentHash` for the compiled area identity,
-        `citation.boundary.metadataHash` for the boundary metadata, and the
-        hashes under `citation.measures`, `citation.crosswalks` and
-        `citation.geometry` for the other artifacts that support a cited result.
+        `citation` returns what a caller needs to cite the area as served by this Atlas release: the
+        immutable Atlas release, the content hash of the area identity artifact, the boundary
+        release's publisher, licence and metadata hash, geometry provenance, the validation results
+        for the release and any cited crosswalk, and an attribution block. Name a `measure` to cite
+        the observation artifacts, with their content hashes, that hold a value for this area in a
+        source partition assessed against this exact boundary release. Only those partitions' datasets
+        are attributed, together with any dataset a derived measure is calculated from. Name a
+        `crosswalk` to cite one that publishes a relationship for this area. A resource that supplies
+        nothing for the area is refused with `422` rather than cited. The citation hashes the whole
+        geometry source file; `include=metrics` supplies the per-area `geometryHash`. The boundary
+        release's `metadataHash` pins its metadata, which names the source file but does not hash its
+        contents. The envelope's top-level `atlasRelease` is the release of the API response itself:
+        use `citation.identity.contentHash` for the compiled area identity,
+        `citation.boundary.metadataHash` for the boundary metadata, and the hashes under
+        `citation.measures`, `citation.crosswalks` and `citation.geometry` for the other artifacts
+        that support a cited result.
 
 
-        `metrics` measures the area's geometry without transferring its
-        coordinates: its bounding box, centroid, label point, area and
-        perimeter. The same source, reprojection and declared grid corrections
-        apply as for the geometry itself, and `metrics.geometrySource` records
-        them. Area is ellipsoidal, taken through EPSG:6933 (WGS 84 / NSIDC
-        EASE-Grid 2.0 Global), a Lambert cylindrical equal-area projection on
-        the WGS 84 ellipsoid, so projected area is area on the ellipsoid and no
-        correction is applied; holes are subtracted. Perimeter sums every ring,
-        holes included, each edge's ground length coming from the ellipsoid's
-        radii of curvature at its mid-latitude. The centroid is the centre of
-        area in that same projection, inverted back to WGS 84. `labelPoint` is
-        guaranteed to lie inside the geometry: the centroid where that falls
-        within the area, otherwise the midpoint of the widest run of interior
-        found on latitudes sampled across the bounding box; `labelPointMethod`
-        says which was used. These figures describe the boundary as that release
-        publishes it, at its own generalisation. They are not a published
-        land-area statistic: a coastline-clipped boundary still encloses inland
-        water, so they differ from the ONS Standard Area Measurement that
-        `population-density` uses as its denominator. The `method` block repeats
-        this with every response. An area whose geometry carries no polygon to
-        measure, such as a release held only as points, is refused with `422`
-        rather than measured as zero. `geometrySource.validity` carries the
-        build-time validity report for the full WGS84 geometry. Invalid geometry
-        is not repaired; measurements from it may be unreliable. An unmeasurable
-        geometry's `422` response also carries `geometrySource` and its report.
-        If measurement throws after geometry is loaded, the `503` problem
-        retains that provenance and report too.
+        `metrics` measures the area's geometry without transferring its coordinates: its bounding box,
+        centroid, label point, area and perimeter. The same source, reprojection and declared grid
+        corrections apply as for the geometry itself, and `metrics.geometrySource` records them. Area
+        is ellipsoidal, taken through EPSG:6933 (WGS 84 / NSIDC EASE-Grid 2.0 Global), a Lambert
+        cylindrical equal-area projection on the WGS 84 ellipsoid, so projected area is area on the
+        ellipsoid and no correction is applied; holes are subtracted. Perimeter sums every ring, holes
+        included, each edge's ground length coming from the ellipsoid's radii of curvature at its
+        mid-latitude. The centroid is the centre of area in that same projection, inverted back to WGS
+        84. `labelPoint` is guaranteed to lie inside the geometry: the centroid where that falls
+        within the area, otherwise the midpoint of the widest run of interior found on latitudes
+        sampled across the bounding box; `labelPointMethod` says which was used. These figures
+        describe the boundary as that release publishes it, at its own generalisation. They are not a
+        published land-area statistic: a coastline-clipped boundary still encloses inland water, so
+        they differ from the ONS Standard Area Measurement that `population-density` uses as its
+        denominator. The `method` block repeats this with every response. An area whose geometry
+        carries no polygon to measure, such as a release held only as points, is refused with `422`
+        rather than measured as zero. `geometrySource.validity` carries the build-time validity report
+        for the full WGS84 geometry. Invalid geometry is not repaired; measurements from it may be
+        unreliable. An unmeasurable geometry's `422` response also carries `geometrySource` and its
+        report. If measurement throws after geometry is loaded, the `503` problem retains that
+        provenance and report too.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830"
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7556,25 +7540,28 @@ paths:
             type: array
             items:
               type: string
-              enum: [dossier, capabilities, citation, metrics]
+              enum:
+                - dossier
+                - capabilities
+                - citation
+                - metrics
           style: form
           explode: false
           description: >
-            Optional comma-separated expansions. `dossier` adds boundary
-            evidence, availability and verified-resource links without repeating
-            the area identity; `capabilities`, `citation` and `metrics` are
-            described above.
+            Optional comma-separated expansions. `dossier` adds boundary evidence, availability and
+            verified-resource links without repeating the area identity; `capabilities`, `citation`
+            and `metrics` are described above.
         - name: measure
           in: query
           required: false
           schema:
             type: array
-            items: { type: string }
+            items:
+              type: string
           description: >
-            With `include=citation`, a measure id from `GET /v1/measures`, or
-            one of its aliases, to cite. Repeatable. Dimension filters such as
-            `offence=burglary` apply to each listed measure that has the
-            dimension; an old series id such as `crime-burglary` returns a 404
+            With `include=citation`, a measure id from `GET /v1/measures`, or one of its aliases, to
+            cite. Repeatable. Dimension filters such as `offence=burglary` apply to each listed
+            measure that has the dimension; an old series id such as `crime-burglary` returns a 404
             naming the measure and members that replace it.
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureDataset"
@@ -7583,10 +7570,10 @@ paths:
           required: false
           schema:
             type: array
-            items: { type: string }
-          description: >
-            With `include=citation`, a crosswalk id from `GET /crosswalks` to
-            cite. Repeatable.
+            items:
+              type: string
+          description: |
+            With `include=citation`, a crosswalk id from `GET /crosswalks` to cite. Repeatable.
       responses:
         "200":
           description: The matching compiled area.
@@ -7601,12 +7588,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaEnvelope"
-              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001262"
+              x-example-request: /v1/areas/constituency/2024-07-uk-bgc/E14001262
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0a\
-                  c8d0912"
+                atlasRelease: sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912
                 data:
                   id: constituency/2024-07-uk-bgc/E14001262
                   geography: constituency
@@ -7617,27 +7602,24 @@ paths:
                     live: 3412
                     terminated: 1412
                     largeUser: 123
-                    edition: "2026-08"
+                    edition: 2026-08
                 meta:
                   nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
           description: >
-            With `include=citation`, a named measure holds no observation for
-            this area in a source assessed against this boundary release, or a
-            named crosswalk publishes no relationship for it. With
-            `include=metrics`, the area's geometry carries no polygon to
-            measure.
+            With `include=citation`, a named measure holds no observation for this area in a source
+            assessed against this boundary release, or a named crosswalk publishes no relationship for
+            it. With `include=metrics`, the area's geometry carries no polygon to measure.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           description: >
-            An `include` needs an artifact this deployment has not built: the
-            data catalogue and crosswalk inventory for `citation`, or geometry
-            for `metrics`.
+            An `include` needs an artifact this deployment has not built: the data catalogue and
+            crosswalk inventory for `citation`, or geometry for `metrics`.
           content:
             application/problem+json:
               schema:
@@ -7646,25 +7628,22 @@ paths:
   /areas/{geography}/{release}/{code}/relationships:
     get:
       operationId: getAreaRelationships
-      tags: ["Geography"]
       summary: Get published relationships for one compiled area
+      tags:
+        - Geography
+      description: >
+        Returns only relationships from published crosswalks. A clean-containment mapping is
+        represented as within from child to parent and contains in reverse. An official historical
+        lookup is represented as successor from source to target and predecessor in reverse; a
+        one-to-many lookup is split-from on each new area and a many-to-one lookup is merged-from on
+        the new area. An extent-continuity crosswalk is equivalent-to in both directions. An
+        area-overlap mapping is represented as overlaps in both directions, with the shared area and
+        its share of each side.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/relationships"
-      description: >
-        Returns only relationships from published crosswalks. A
-        clean-containment mapping is represented as within from child to parent
-        and contains in reverse. An official historical lookup is represented as
-        successor from source to target and predecessor in reverse; a
-        one-to-many lookup is split-from on each new area and a many-to-one
-        lookup is merged-from on the new area. An extent-continuity crosswalk is
-        equivalent-to in both directions. An area-overlap mapping is represented
-        as overlaps in both directions, with the shared area and its share of
-        each side.
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/relationships
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7681,9 +7660,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
-              x-example-request:
-                "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/relati\
-                onships"
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/relationships
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -7718,24 +7695,20 @@ paths:
   /areas/{geography}/{release}/{code}/history:
     get:
       operationId: getAreaHistory
-      tags: ["Geography"]
-      summary: Explain a code's published historical relationships and same-code
-        continuity
+      summary: Explain a code's published historical relationships and same-code continuity
+      tags:
+        - Geography
+      description: >
+        Returns a bounded traversal of published historical relationships plus every other release of
+        the same geography that contains the same code. Each lineage entry names the area the walk
+        stood on as `from` and the area it reached as `counterpart`. A link a crosswalk publishes from
+        both ends is one edge and is reported once, whichever end the walk reaches it from. Same-code
+        continuity is not evidence of unchanged geometry or a one-to-one historical equivalent.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/history"
-      description: >
-        Returns a bounded traversal of published historical relationships plus
-        every other release of the same geography that contains the same code.
-        Each lineage entry names the area the walk stood on as `from` and the
-        area it reached as `counterpart`. A link a crosswalk publishes from both
-        ends is one edge and is reported once, whichever end the walk reaches it
-        from. Same-code continuity is not evidence of unchanged geometry or a
-        one-to-one historical equivalent.
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/history
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7743,15 +7716,20 @@ paths:
         - name: depth
           in: query
           required: false
-          schema: { type: integer, minimum: 1, maximum: 20, default: 8 }
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 8
           description: Maximum number of declared historical edges to follow.
       responses:
         "200":
           description: Area history, including a warning about same-code continuity.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/history"
+              schema:
+                type: object
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/history
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -7768,7 +7746,8 @@ paths:
                         geography: localAuthority
                         boundaryRelease: 2022-12-uk-bgc-v2
                         code: E08000025
-                        labels: [Birmingham]
+                        labels:
+                          - Birmingham
                       crosswalk:
                         id: local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup
                         method: official-lookup
@@ -7789,12 +7768,10 @@ paths:
                       name: Birmingham
                       status: same-code-continuity
                   note:
-                    Lineage follows only published historical edges and never infers a
-                    connection from a reused code. equivalent-to is published
-                    only for extent continuity. Same-code continuity only
-                    reports that the identifier appears in another release; it
-                    does not assert unchanged geometry or an exact historical
-                    equivalent.
+                    Lineage follows only published historical edges and never infers a connection from a reused
+                    code. equivalent-to is published only for extent continuity. Same-code continuity
+                    only reports that the identifier appears in another release; it does not assert
+                    unchanged geometry or an exact historical equivalent.
                 meta:
                   nextCursor: null
         "404":
@@ -7803,15 +7780,14 @@ paths:
   /areas/{geography}/{release}/{code}/parents:
     get:
       operationId: getAreaParents
-      tags: ["Geography"]
       summary: List published clean-containment parents for an area
+      tags:
+        - Geography
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/parents"
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/parents
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7819,11 +7795,13 @@ paths:
         - name: depth
           in: query
           required: false
-          schema: { type: integer, minimum: 1, maximum: 20 }
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
           description: >
-            Follow declared containment ancestors up to this many hops. Each
-            entry in `ancestors` names the area the hop left as `from`, so a
-            multi-hop chain can be read back in order.
+            Follow declared containment ancestors up to this many hops. Each entry in `ancestors`
+            names the area the hop left as `from`, so a multi-hop chain can be read back in order.
       responses:
         "200":
           description: The area and its `within` relationships.
@@ -7831,7 +7809,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/parents"
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/parents
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -7852,15 +7830,14 @@ paths:
   /areas/{geography}/{release}/{code}/children:
     get:
       operationId: getAreaChildren
-      tags: ["Geography"]
       summary: List published clean-containment children for an area
+      tags:
+        - Geography
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/children"
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/children
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7868,28 +7845,32 @@ paths:
         - name: depth
           in: query
           required: false
-          schema: { type: integer, minimum: 1, maximum: 20 }
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
           description: >
-            Follow declared containment descendants up to this many hops. Each
-            entry in `descendants` names the area the hop left as `from`, so a
-            multi-hop chain can be read back in order.
+            Follow declared containment descendants up to this many hops. Each entry in `descendants`
+            names the area the hop left as `from`, so a multi-hop chain can be read back in order.
         - name: childGeography
           in: query
           required: false
-          schema: { type: string }
+          schema:
+            type: string
           description: >
-            Restrict children to one geography, such as `ward`, or one exact
-            geography/release pair. Without it, the newest child release
-            contemporary with the parent is selected for each geography.
+            Restrict children to one geography, such as `ward`, or one exact geography/release pair.
+            Without it, the newest child release contemporary with the parent is selected for each
+            geography.
       responses:
         "200":
-          description: The area and its contemporary `contains` relationships.
-            `childSelection` records the filter or default policy used.
+          description:
+            The area and its contemporary `contains` relationships. `childSelection` records the
+            filter or default policy used.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children"
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -7924,53 +7905,44 @@ paths:
   /areas/{geography}/{release}/{code}/children/geometry:
     get:
       operationId: getAreaChildrenGeometry
-      x-rate-limit-cost: 10
-      tags: ["Map"]
       summary: Get every child of an area as one GeoJSON FeatureCollection
-      x-likely-refusal:
-        status: 409
-        when:
-          "The children are published in several overlapping releases. Choose one
-          with `childGeography` rather than having shapes from different
-          vintages drawn together."
-        x-example-request:
-          "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/childr\
-          en/geometry"
+      tags:
+        - Map
       description: >
-        Returns the geometry of every area a published crosswalk names as
-        contained by this one, as a single FeatureCollection: all the wards in a
-        local authority in one request rather than one request each. Each
-        feature carries its own identity, the crosswalk that places it in the
+        Returns the geometry of every area a published crosswalk names as contained by this one, as a
+        single FeatureCollection: all the wards in a local authority in one request rather than one
+        request each. Each feature carries its own identity, the crosswalk that places it in the
         collection, and its geometry provenance.
 
 
-        Membership is a published crosswalk's claim, not a geometric test run at
-        request time, so this returns what the Atlas has published rather than
-        what a point-in-polygon sweep would find. An area with no published
-        containment relationship is a 404, not an empty collection.
+        Membership is a published crosswalk's claim, not a geometric test run at request time, so this
+        returns what the Atlas has published rather than what a point-in-polygon sweep would find. An
+        area with no published containment relationship is a 404, not an empty collection.
 
 
-        `tier` generalises every member, exactly as on the geometry route, and
-        is the reason this endpoint is usable at all for a large authority. The
-        method is reported once for the collection rather than on each member;
-        each member reports only what the tier cost it, so one that lost an
-        island can be told from one that did not. Note the caveat that travels
-        with it: members are generalised one at a time, so above `full`
-        neighbours in the same collection may disagree along a shared border.
+        `tier` generalises every member, exactly as on the geometry route, and is the reason this
+        endpoint is usable at all for a large authority. The method is reported once for the
+        collection rather than on each member; each member reports only what the tier cost it, so one
+        that lost an island can be told from one that did not. Note the caveat that travels with it:
+        members are generalised one at a time, so above `full` neighbours in the same collection may
+        disagree along a shared border.
 
 
-        A member that is published as a relationship but has no servable
-        geometry is listed in `withoutGeometry` with the reason, rather than
-        being passed over. `collection.members` and `collection.withGeometry`
-        disagreeing is how a caller tells a partial collection from a complete
-        one; the response is still a 200. At most 1,000 children may be
-        requested in one collection. Geometry collections process at most
-        250,000 source vertices per request, counted before simplification. A
-        larger request returns 422 without a partial collection. Reduce the page
-        size for a box query, omit its tier to retrieve identities, or follow
-        the problem's `links.downloads` to the boundary release metadata and its
-        whole-release downloads.
-
+        A member that is published as a relationship but has no servable geometry is listed in
+        `withoutGeometry` with the reason, rather than being passed over. `collection.members` and
+        `collection.withGeometry` disagreeing is how a caller tells a partial collection from a
+        complete one; the response is still a 200. At most 1,000 children may be requested in one
+        collection. Geometry collections process at most 250,000 source vertices per request, counted
+        before simplification. A larger request returns 422 without a partial collection. Reduce the
+        page size for a box query, omit its tier to retrieve identities, or follow the problem's
+        `links.downloads` to the boundary release metadata and its whole-release downloads.
+      x-rate-limit-cost: 10
+      x-likely-refusal:
+        status: 409
+        when:
+          The children are published in several overlapping releases. Choose one with `childGeography`
+          rather than having shapes from different vintages drawn together.
+        x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/children/geometry
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -7985,39 +7957,36 @@ paths:
           required: false
           schema:
             type: string
-            enum: [full, high, medium, low]
+            enum:
+              - full
+              - high
+              - medium
+              - low
             default: full
-          description: >
-            The generalisation tier applied to every member, as on the geometry
-            route.
+          description: |
+            The generalisation tier applied to every member, as on the geometry route.
         - name: childGeography
           in: query
           required: false
           schema:
             type: string
           description: >
-            Which children to draw, as a geography such as `ward` or as
-            `{geography}/{release}`. Required when the area's children are
-            published in more than one geography release, such as a district's
-            wards and its LSOAs, since those overlap one another; the 409 lists
-            the choices.
+            Which children to draw, as a geography such as `ward` or as `{geography}/{release}`.
+            Required when the area's children are published in more than one geography release, such
+            as a district's wards and its LSOAs, since those overlap one another; the 409 lists the
+            choices.
       responses:
         "200":
-          description: >
-            The children as a FeatureCollection, with any that could not be
-            drawn listed beside it.
+          description: |
+            The children as a FeatureCollection, with any that could not be drawn listed beside it.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaChildrenGeometryEnvelope"
-              x-example-request:
-                "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/childr\
-                en/geometry?tier=low&childGeography=ward"
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children/geometry?tier=low&childGeography=ward
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
                 data:
                   type: FeatureCollection
                   id: localAuthority/2023-05-uk-bgc-v2/E08000025/children
@@ -8054,16 +8023,18 @@ paths:
                           parts: 1
                           partsAtFullResolution: 1
                         geometrySource:
-                          sourceCrs: "EPSG:27700"
+                          sourceCrs: EPSG:27700
                           transformation:
-                            {
-                              name: "OSGB36 to WGS 84 (6)",
-                              epsg: "EPSG:1314",
-                              accuracyM: 2,
-                            }
+                            name: OSGB36 to WGS 84 (6)
+                            epsg: EPSG:1314
+                            accuracyM: 2
                       geometry:
                         type: Polygon
-                        coordinates: [[[-1.8, 52.44], [-1.82, 52.45]]]
+                        coordinates:
+                          - - - -1.8
+                              - 52.44
+                            - - -1.82
+                              - 52.45
                 meta:
                   nextCursor: null
         "400":
@@ -8074,25 +8045,25 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: >
-            Either no compiled area matches that identity, or no published
-            relationship names anything as contained by it.
+            Either no compiled area matches that identity, or no published relationship names anything
+            as contained by it.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "409":
           description: >
-            The area's children are published in more than one geography release
-            and `childGeography` does not choose one; `choices` lists them.
+            The area's children are published in more than one geography release and `childGeography`
+            does not choose one; `choices` lists them.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
           description: >
-            The geometry collection exceeds the source vertex budget or child
-            count limit. No partial collection is returned. The problem includes
-            links.downloads for the release metadata and its bulk downloads.
+            The geometry collection exceeds the source vertex budget or child count limit. No partial
+            collection is returned. The problem includes links.downloads for the release metadata and
+            its bulk downloads.
           content:
             application/problem+json:
               schema:
@@ -8103,53 +8074,46 @@ paths:
   /areas/{geography}/{release}/{code}/neighbours:
     get:
       operationId: getAreaNeighbours
-      x-rate-limit-cost: 5
-      tags: ["Map"]
       summary: List the areas whose boundary meets this one's
+      tags:
+        - Map
+      description: >
+        Returns the areas next to this one within the same geography and release, each with the length
+        of the border they share. This supports local comparison, map navigation and spatial
+        modelling: "how does this ward compare with the ones around it" needs to know which those are.
+
+
+        Neighbours are found from shared vertices, not from a distance threshold. Adjacent areas in
+        one published release are drawn from the same vertices, so a common border is the same
+        coordinates on both sides and matches exactly; the shared length is summed over those edges,
+        each counted once, with ground length from the ellipsoid's radii of curvature. Nobody picks a
+        tolerance, and nothing is approximate.
+
+
+        `touches` decides whether areas meeting at a single point count. `edge`, the default, returns
+        only areas sharing a border with length; `any` also returns those meeting at a corner, whose
+        `sharedBorderM` is zero. Four areas at a crossroads are not neighbours of each other in any
+        sense useful for comparison or for colouring a map, so they are excluded unless asked for;
+        `border.pointOnlyTouches` counts them either way, so their exclusion is visible rather than
+        silent. They are real: none occur between local authorities, while about 3% of ward
+        adjacencies are corners.
+
+
+        `border` totals the perimeter, the border shared with the neighbours returned, and the
+        remainder. For a landlocked area the remainder is nothing; otherwise it is coastline, a
+        national boundary, or a border with an area outside this release. Birmingham shares 100% of
+        its perimeter across seven neighbours; the Isle of Wight has none, and all 188.7 km of its
+        boundary is its own.
+
+
+        Within one geography and release only. Two areas that genuinely touch on the ground but were
+        drawn from different vertices are not found, which is why this is not offered across releases.
+      x-rate-limit-cost: 5
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/neighbours"
-      description: >
-        Returns the areas next to this one within the same geography and
-        release, each with the length of the border they share. This supports
-        local comparison, map navigation and spatial modelling: "how does this
-        ward compare with the ones around it" needs to know which those are.
-
-
-        Neighbours are found from shared vertices, not from a distance
-        threshold. Adjacent areas in one published release are drawn from the
-        same vertices, so a common border is the same coordinates on both sides
-        and matches exactly; the shared length is summed over those edges, each
-        counted once, with ground length from the ellipsoid's radii of
-        curvature. Nobody picks a tolerance, and nothing is approximate.
-
-
-        `touches` decides whether areas meeting at a single point count. `edge`,
-        the default, returns only areas sharing a border with length; `any` also
-        returns those meeting at a corner, whose `sharedBorderM` is zero. Four
-        areas at a crossroads are not neighbours of each other in any sense
-        useful for comparison or for colouring a map, so they are excluded
-        unless asked for; `border.pointOnlyTouches` counts them either way, so
-        their exclusion is visible rather than silent. They are real: none occur
-        between local authorities, while about 3% of ward adjacencies are
-        corners.
-
-
-        `border` totals the perimeter, the border shared with the neighbours
-        returned, and the remainder. For a landlocked area the remainder is
-        nothing; otherwise it is coastline, a national boundary, or a border
-        with an area outside this release. Birmingham shares 100% of its
-        perimeter across seven neighbours; the Isle of Wight has none, and all
-        188.7 km of its boundary is its own.
-
-
-        Within one geography and release only. Two areas that genuinely touch on
-        the ground but were drawn from different vertices are not found, which
-        is why this is not offered across releases.
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/neighbours
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -8164,11 +8128,13 @@ paths:
           required: false
           schema:
             type: string
-            enum: [edge, any]
+            enum:
+              - edge
+              - any
             default: edge
           description: >
-            `edge` for areas sharing a border with length; `any` to include
-            areas meeting only at a point.
+            `edge` for areas sharing a border with length; `any` to include areas meeting only at a
+            point.
       responses:
         "200":
           description: The neighbouring areas, ordered by shared border, longest first.
@@ -8176,12 +8142,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaNeighboursEnvelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/neighbours"
+              x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/neighbours
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
                 data:
                   id: localAuthority/2023-05-uk-bgc-v2/E08000025
                   geography: localAuthority
@@ -8213,8 +8177,8 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: >
-            Either no compiled area matches that identity, or the area exists
-            but no feature for its code was found in the raw geometry source.
+            Either no compiled area matches that identity, or the area exists but no feature for its
+            code was found in the raw geometry source.
           content:
             application/problem+json:
               schema:
@@ -8225,34 +8189,31 @@ paths:
   /areas/{geography}/{release}/{code}/overlap:
     get:
       operationId: getAreaOverlap
-      x-rate-limit-cost: 5
-      tags: ["Map"]
       summary: Measure how one area overlaps another
+      tags:
+        - Map
+      description: >
+        Intersects this area with the area named in `place`, which may be of another geography or
+        boundary release, and returns the shared area, each area's share of it, and a relation, so a
+        constituency and a local authority can be compared without downloading either geometry.
+
+        The relation follows the rules the published area-overlap crosswalks are compiled with, stated
+        in `method`. The intersection is judged by its widest piece: narrower than `sliverWidthM` it
+        is where two independently generalised borders disagree, and the relation is `boundary-only`;
+        within a factor of two of that width it is `indeterminate`, because a crosswalk compile would
+        refuse to decide. Otherwise an area covered to `minimumCoverage` is `within` the other, the
+        other `contains` it, both covered is `same-extent`, and anything else `overlaps`. Areas that
+        do not meet are `disjoint`.
+
+        This measures the generalised boundaries as published and is not an official statement of how
+        the areas relate. `publishedRelationships` lists any published crosswalk relationship between
+        the two, with its method and quality. The other release may be `latest`; the response records
+        that selection beside the second area.
+      x-rate-limit-cost: 5
       x-likely-refusal:
         status: 400
-        when: "No `place` names the other area as `{geography}/{release}/{code}`."
-        x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/overlap"
-      description: >
-        Intersects this area with the area named in `place`, which may be of
-        another geography or boundary release, and returns the shared area, each
-        area's share of it, and a relation, so a constituency and a local
-        authority can be compared without downloading either geometry.
-
-        The relation follows the rules the published area-overlap crosswalks are
-        compiled with, stated in `method`. The intersection is judged by its
-        widest piece: narrower than `sliverWidthM` it is where two independently
-        generalised borders disagree, and the relation is `boundary-only`;
-        within a factor of two of that width it is `indeterminate`, because a
-        crosswalk compile would refuse to decide. Otherwise an area covered to
-        `minimumCoverage` is `within` the other, the other `contains` it, both
-        covered is `same-extent`, and anything else `overlaps`. Areas that do
-        not meet are `disjoint`.
-
-        This measures the generalised boundaries as published and is not an
-        official statement of how the areas relate. `publishedRelationships`
-        lists any published crosswalk relationship between the two, with its
-        method and quality. The other release may be `latest`; the response
-        records that selection beside the second area.
+        when: No `place` names the other area as `{geography}/{release}/{code}`.
+        x-example-request: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/overlap
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -8260,11 +8221,12 @@ paths:
         - name: place
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: >
             The other area as `{geography}/{release}/{code}`, such as
-            `localAuthority/2024-05-uk-bgc/E07000092`. Use `latest` as the
-            release for its newest unambiguous published boundary release.
+            `localAuthority/2024-05-uk-bgc/E07000092`. Use `latest` as the release for its newest
+            unambiguous published boundary release.
       responses:
         "200":
           description: Both areas, the overlap, its relation and the method.
@@ -8272,9 +8234,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/areas/constituency/2024-07-uk-bgc/E14001063/overlap?pla\
-                ce=localAuthority/2024-05-uk-bgc/E07000089"
+              x-example-request: /v1/areas/constituency/2024-07-uk-bgc/E14001063/overlap?place=localAuthority/2024-05-uk-bgc/E07000089
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -8329,9 +8289,8 @@ paths:
                     areaProjection: EPSG:6933
                     clipping: polygon-clipping@0.15.7
                     area:
-                      Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84
-                      ellipsoid, so no correction is applied. A piece's width is
-                      twice its area over its perimeter.
+                      Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no
+                      correction is applied. A piece's width is twice its area over its perimeter.
                 meta:
                   nextCursor: null
         "400":
@@ -8344,52 +8303,44 @@ paths:
   /areas/{geography}/{release}/{code}/geometry:
     get:
       operationId: getAreaGeometry
-      tags: ["Map"]
       summary: Get one compiled area's raw geometry as a GeoJSON Feature
+      tags:
+        - Map
+      description: >
+        Serves the area's own geometry from its raw, cached source GeoJSON, not a generalised or
+        simplified derivative, always in WGS84. A source in British National Grid (EPSG:27700) is
+        reprojected per area through EPSG:1314, OSGB36 to WGS 84 (6), a Helmert transformation EPSG
+        states as accurate to 2 m in Great Britain; `properties.geometrySource` records the source CRS
+        and any transformation applied. Northern Ireland areas in the releases that declare
+        `northern-ireland-offset` are first moved by that correction, which the ONS's grid files need
+        there, and `geometrySource.corrections` names it when applied. A code that maps to more than
+        one feature fragment in the source (e.g. an area split across islands) is returned as a single
+        GeometryCollection rather than picking one fragment. Coordinates keep seven decimal places of
+        a degree, about a centimetre; most publishers' WGS84 files carry fifteen, which is float noise
+        from their own reprojection. A few areas whose parts lie less than a centimetre apart keep
+        their source precision, because rounding would make their valid boundary invalid.
+
+
+        `tier` generalises the geometry before it is served, for callers that do not need every
+        vertex: Highland is 45,124 of them. A tier is the side of the smallest square of detail kept,
+        and the rule is Visvalingam-Whyatt, dropping the vertex whose triangle with its neighbours is
+        smallest until none below the tier's threshold remains. Triangles are measured in the
+        EPSG:6933 equal-area projection, so a tier means the same thing anywhere in the country. A
+        part or hole smaller than the threshold is dropped whole rather than left as a triangle, and
+        `properties.generalisation` reports the vertex and part counts both before and after.
+
+
+        A tier bounds the size of feature dropped; it does not promise that no vertex moves further
+        than its tolerance, since the same deviation spans a larger triangle the further apart its
+        neighbours lie. Each area is generalised on its own, so above `full` two neighbours drawn
+        together may disagree along the border they share. Ask for `full` where borders must meet
+        exactly. This is still per-request simplification, not the vector tiles the full proposal
+        describes.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
-        when:
-          "The code is real but not in this release. `presentIn` lists the releases
-          that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/geometry"
-      description: >
-        Serves the area's own geometry from its raw, cached source GeoJSON, not
-        a generalised or simplified derivative, always in WGS84. A source in
-        British National Grid (EPSG:27700) is reprojected per area through
-        EPSG:1314, OSGB36 to WGS 84 (6), a Helmert transformation EPSG states as
-        accurate to 2 m in Great Britain; `properties.geometrySource` records
-        the source CRS and any transformation applied. Northern Ireland areas in
-        the releases that declare `northern-ireland-offset` are first moved by
-        that correction, which the ONS's grid files need there, and
-        `geometrySource.corrections` names it when applied. A code that maps to
-        more than one feature fragment in the source (e.g. an area split across
-        islands) is returned as a single GeometryCollection rather than picking
-        one fragment. Coordinates keep seven decimal places of a degree, about a
-        centimetre; most publishers' WGS84 files carry fifteen, which is float
-        noise from their own reprojection. A few areas whose parts lie less than
-        a centimetre apart keep their source precision, because rounding would
-        make their valid boundary invalid.
-
-
-        `tier` generalises the geometry before it is served, for callers that do
-        not need every vertex: Highland is 45,124 of them. A tier is the side of
-        the smallest square of detail kept, and the rule is Visvalingam-Whyatt,
-        dropping the vertex whose triangle with its neighbours is smallest until
-        none below the tier's threshold remains. Triangles are measured in the
-        EPSG:6933 equal-area projection, so a tier means the same thing anywhere
-        in the country. A part or hole smaller than the threshold is dropped
-        whole rather than left as a triangle, and `properties.generalisation`
-        reports the vertex and part counts both before and after.
-
-
-        A tier bounds the size of feature dropped; it does not promise that no
-        vertex moves further than its tolerance, since the same deviation spans
-        a larger triangle the further apart its neighbours lie. Each area is
-        generalised on its own, so above `full` two neighbours drawn together
-        may disagree along the border they share. Ask for `full` where borders
-        must meet exactly. This is still per-request simplification, not the
-        vector tiles the full proposal describes.
+        when: The code is real but not in this release. `presentIn` lists the releases that hold it.
+        x-example-request: /v1/areas/ward/2016-12-gb-bgc/E05013830/geometry
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -8404,12 +8355,15 @@ paths:
           required: false
           schema:
             type: string
-            enum: [full, high, medium, low]
+            enum:
+              - full
+              - high
+              - medium
+              - low
             default: full
           description: >
-            The generalisation tier, as the side in metres of the smallest
-            square of detail kept: `full` (every vertex), `high` (10 m),
-            `medium` (100 m), `low` (1000 m).
+            The generalisation tier, as the side in metres of the smallest square of detail kept:
+            `full` (every vertex), `high` (10 m), `medium` (100 m), `low` (1000 m).
       responses:
         "200":
           description: The matching area as a GeoJSON Feature.
@@ -8417,12 +8371,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaGeometryEnvelope"
-              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001262/geometry"
+              x-example-request: /v1/areas/constituency/2024-07-uk-bgc/E14001262/geometry
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
                 data:
                   type: Feature
                   id: constituency/2024-07-uk-bgc/E14001262
@@ -8440,10 +8392,15 @@ paths:
                       verticesAtFullResolution: 1204
                       parts: 1
                       partsAtFullResolution: 1
-                    geometrySource: { sourceCrs: "EPSG:4326" }
+                    geometrySource:
+                      sourceCrs: EPSG:4326
                   geometry:
                     type: Polygon
-                    coordinates: [[[-1.9269, 53.7874], [-1.9146, 53.7815]]]
+                    coordinates:
+                      - - - -1.9269
+                          - 53.7874
+                        - - -1.9146
+                          - 53.7815
                 meta:
                   nextCursor: null
         "400":
@@ -8454,9 +8411,9 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "404":
           description: >
-            Either no compiled area matches that identity, the area exists but
-            no feature for its code was found in the raw geometry source, or
-            every part of it is smaller than the requested tier keeps.
+            Either no compiled area matches that identity, the area exists but no feature for its code
+            was found in the raw geometry source, or every part of it is smaller than the requested
+            tier keeps.
           content:
             application/problem+json:
               schema:

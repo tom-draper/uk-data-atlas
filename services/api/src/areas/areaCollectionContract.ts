@@ -12,7 +12,7 @@ import { areasMetadata } from "./areasMetadata";
  * A page of areas, a validated column or a batch of points can run to many
  * entries, so the body is not parsed per request to check it.
  */
-const servedAsBuilt = (answer: ApiResponse) => answer;
+export const servedAsBuilt = (answer: ApiResponse) => answer;
 
 type Metadata = {
 	operationId: string;
@@ -24,7 +24,7 @@ type Metadata = {
 	responses: { "200": { description: string } };
 };
 
-const route = <Method extends "get" | "post", Path extends string>(
+export const route = <Method extends "get" | "post", Path extends string>(
 	method: Method,
 	path: Path,
 	metadata: Metadata,
