@@ -1,0 +1,3325 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`map resources behind a CDN keep their HTTP responses > assets 1`] = `
+{
+  "assets": {
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 2864,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles"},"meta":{"nextCursor":null}}
+",
+      "bytes": 144,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-H3Qz03GltZvKWsUppllD1l65ORW6aCe-8cpptSuMtW8"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc.pmtiles",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full"},"meta":{"nextCursor":null}}
+",
+      "bytes": 155,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-o0rNGZ5BWZJv0i9fmFxQGQc9cf-zVikK3lUgQJeVn38"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "PAR1 built PAR1",
+      "bytes": 15,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson"},"meta":{"nextCursor":null}}
+",
+      "bytes": 169,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-uDWu_NedXzEB42xtTHuV7Z1e9NAHd0NHoNDAKNac6_A"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 750,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/tile-service-unavailable","title":"Tile Service Unavailable","status":503,"detail":"Use the PMTiles archive at /v1/map-resources/ward/2023-05-uk-bgc.pmtiles, or configure ATLAS_MAP_TILE_BASE_URL."}
+",
+      "bytes": 244,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "vector tile 1/0/0",
+      "bytes": 17,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-encoding: gzip",
+        "content-type: application/vnd.mapbox-vector-tile",
+        "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/3/0/0.mvt": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"This resource publishes zoom 0 to 2, not 3. A renderer should over-zoom past the last one."}
+",
+      "bytes": 193,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
+
+exports[`map resources behind a CDN keep their HTTP responses > both 1`] = `
+{
+  "both": {
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 2864,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles"},"meta":{"nextCursor":null}}
+",
+      "bytes": 144,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-H3Qz03GltZvKWsUppllD1l65ORW6aCe-8cpptSuMtW8"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc.pmtiles",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full"},"meta":{"nextCursor":null}}
+",
+      "bytes": 155,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-o0rNGZ5BWZJv0i9fmFxQGQc9cf-zVikK3lUgQJeVn38"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "PAR1 built PAR1",
+      "bytes": 15,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson"},"meta":{"nextCursor":null}}
+",
+      "bytes": 169,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-uDWu_NedXzEB42xtTHuV7Z1e9NAHd0NHoNDAKNac6_A"",
+        "location: /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 750,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["https://tiles.example.com/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+      "bytes": 559,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-k3k-vYAj372pehuQjuAYzguO3A1OvM2gm9Gb8Kuhwes"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"https://tiles.example.com/ward/2023-05-uk-bgc/tiles/1/0/0.mvt"},"meta":{"nextCursor":null}}
+",
+      "bytes": 160,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-j1kofIEM5diDt3csD1LMlB8pKr3eRQOePSyKglrmIcc"",
+        "location: https://tiles.example.com/ward/2023-05-uk-bgc/tiles/1/0/0.mvt",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/3/0/0.mvt": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"This resource publishes zoom 0 to 2, not 3. A renderer should over-zoom past the last one."}
+",
+      "bytes": 193,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
+
+exports[`map resources behind a CDN keep their HTTP responses > tiles 1`] = `
+{
+  "tiles": {
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 2864,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+      "bytes": 43,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+        "content-type: application/vnd.pmtiles",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "PAR1 full detail wards 0123456789 PAR1",
+      "bytes": 38,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "PAR1 built PAR1",
+      "bytes": 15,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson": {
+      "body": "{"type":"FeatureCollection","features":[]}",
+      "bytes": 42,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+        "content-type: application/geo+json",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 750,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["https://tiles.example.com/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+      "bytes": 559,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-k3k-vYAj372pehuQjuAYzguO3A1OvM2gm9Gb8Kuhwes"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"href":"https://tiles.example.com/ward/2023-05-uk-bgc/tiles/1/0/0.mvt"},"meta":{"nextCursor":null}}
+",
+      "bytes": 160,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-j1kofIEM5diDt3csD1LMlB8pKr3eRQOePSyKglrmIcc"",
+        "location: https://tiles.example.com/ward/2023-05-uk-bgc/tiles/1/0/0.mvt",
+        "vary: accept-encoding",
+      ],
+      "status": 307,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/3/0/0.mvt": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"This resource publishes zoom 0 to 2, not 3. A renderer should over-zoom past the last one."}
+",
+      "bytes": 193,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
+
+exports[`map resources keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/map-resources": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc/features": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc/join/population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Map-Resources/ward/2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","href":"/v1/map-resources/ward/2023-05-uk-bgc"},{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","href":"/v1/map-resources/ward/2024-05-tiled"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 423,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-tkYY5VwYZ0dusidBt73YldXbpTE0DUasJxfT1zyarmo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","href":"/v1/map-resources/ward/2023-05-uk-bgc"},{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","href":"/v1/map-resources/ward/2024-05-tiled"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 423,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-tkYY5VwYZ0dusidBt73YldXbpTE0DUasJxfT1zyarmo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/nowhere/2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for nowhere/2023-05-uk-bgc. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 204,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2022-05-untiled": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/2022-05-untiled. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 202,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2022-05-untiled.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/2022-05-untiled. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 202,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2022-05-untiled/features?tier=full": {
+    "body": "PAR1 built PAR1",
+    "bytes": 15,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2022-05-untiled-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2022-05-untiled/features?tier=low": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"ward/2022-05-untiled is downloadable at full only: its areas are not a coverage, so they cannot be generalised together without opening gaps between them."}
+",
+    "bytes": 257,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2022-05-untiled/tiles.json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/2022-05-untiled. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 202,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2864,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.PMTILES": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/2023-05-uk-bgc.PMTILES. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 209,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"accept-encoding":"gzip"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"accept-encoding":"identity"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"if-none-match":"*"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-"",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"if-none-match":"\\"unknown\\""}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"if-range":"\\"unknown\\"","range":"bytes=0-3"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"origin":"https://example.test"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=-5"}]": {
+    "body": "lmnop",
+    "bytes": 5,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 38-42/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=0-0"}]": {
+    "body": "P",
+    "bytes": 1,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 0-0/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=0-1,3-4"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=0-9","accept-encoding":"gzip"}]": {
+    "body": "PMTiles ar",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 0-9/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=0-9"}]": {
+    "body": "PMTiles ar",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 0-9/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=2-2000"}]": {
+    "body": "Tiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 41,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 2-42/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=5-"}]": {
+    "body": "es archive: 0123456789abcdefghijklmnop",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 5-42/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=9-3"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=900-1000"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-range: bytes */43",
+      "!x-content-type-options",
+    ],
+    "status": 416,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=abc"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"items=0-1"}]": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/2023-05-uk-bgc.pmtiles. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 209,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles/": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles?unexpected=1": {
+    "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+    "bytes": 43,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2864,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Ask for the detail to download with tier=, one of full, high, medium, low."}
+",
+    "bytes": 185,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Ask for the detail to download with tier=, one of full, high, medium, low."}
+",
+    "bytes": 185,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"accept-encoding":"gzip"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"accept-encoding":"identity"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"if-none-match":"*"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-"",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"if-none-match":"\\"unknown\\""}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"if-range":"\\"unknown\\"","range":"bytes=0-3"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"origin":"https://example.test"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=-5"}]": {
+    "body": " PAR1",
+    "bytes": 5,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 33-37/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=0-0"}]": {
+    "body": "P",
+    "bytes": 1,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 0-0/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=0-1,3-4"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=0-9","accept-encoding":"gzip"}]": {
+    "body": "PAR1 full ",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 0-9/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=0-9"}]": {
+    "body": "PAR1 full ",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 0-9/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=2-2000"}]": {
+    "body": "R1 full detail wards 0123456789 PAR1",
+    "bytes": 36,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 2-37/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=5-"}]": {
+    "body": "full detail wards 0123456789 PAR1",
+    "bytes": 33,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 5-37/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=9-3"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=900-1000"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-range: bytes */38",
+      "!x-content-type-options",
+    ],
+    "status": 416,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=abc"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"items=0-1"}]": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full&format=geojson": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"ward/2023-05-uk-bgc at tier full is published as GeoParquet only. GeoJSON is published at low, medium of this release."}
+",
+    "bytes": 221,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full&format=geoparquet": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full&format=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be geoparquet or geojson.","code":"invalid_format"}
+",
+    "bytes": 172,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full&unexpected=1": {
+    "body": "PAR1 full detail wards 0123456789 PAR1",
+    "bytes": 38,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+    "body": "PAR1 built PAR1",
+    "bytes": 15,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"accept-encoding":"gzip"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"accept-encoding":"identity"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"if-none-match":"*"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-"",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"if-none-match":"\\"unknown\\""}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"if-range":"\\"unknown\\"","range":"bytes=0-3"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"origin":"https://example.test"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=-5"}]": {
+    "body": "":[]}",
+    "bytes": 5,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 37-41/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=0-0"}]": {
+    "body": "{",
+    "bytes": 1,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 0-0/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=0-1,3-4"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=0-9","accept-encoding":"gzip"}]": {
+    "body": "{"type":"F",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 0-9/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=0-9"}]": {
+    "body": "{"type":"F",
+    "bytes": 10,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 0-9/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=2-2000"}]": {
+    "body": "type":"FeatureCollection","features":[]}",
+    "bytes": 40,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 2-41/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=5-"}]": {
+    "body": "e":"FeatureCollection","features":[]}",
+    "bytes": 37,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 5-41/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=9-3"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=900-1000"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-range: bytes */42",
+      "!x-content-type-options",
+    ],
+    "status": 416,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=abc"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"items=0-1"}]": {
+    "body": "{"type":"FeatureCollection","features":[]}",
+    "bytes": 42,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"ward/2023-05-uk-bgc at tier medium is published as GeoParquet only. GeoJSON is published at full, low of this release."}
+",
+    "bytes": 221,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson": {
+    "body": "PAR1 built PAR1",
+    "bytes": 15,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-medium.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Ask for the detail to download with tier=, one of full, high, medium, low."}
+",
+    "bytes": 185,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/nothing?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No measure is published as nothing. Inspect /v1/measures for the ones that are."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Ask for the period to draw with period=; /v1/measures/population lists the ones population publishes."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Ask for the period to draw with period=; /v1/measures/population lists the ones population publishes."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=1900&geography=ward&codeYear=2023": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"population publishes no source for 1900.","alternatives":{"periods":["2022","2023","2024"],"partitions":[{"geography":"ward","codeYear":2023,"periods":["2022"]},{"geography":"localAuthority","codeYear":2023,"periods":["2022","2023","2024"]}]}}
+",
+    "bytes": 352,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/ambiguous-source","title":"Ambiguous Source","status":400,"detail":"population publishes 2 sources for 2022; name the geography and boundary year, or the datasetId, to choose one.","alternatives":{"partitions":[{"geography":"ward","codeYear":2023,"periods":["2022"]},{"geography":"localAuthority","codeYear":2023,"periods":["2022","2023","2024"]}]}}
+",
+    "bytes": 396,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 750,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=json": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 750,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be json or parquet.","code":"invalid_format"}
+",
+    "bytes": 166,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"accept-encoding":"gzip"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"accept-encoding":"identity"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"if-none-match":"*"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"if-none-match":"\\"unknown\\""}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"if-range":"\\"unknown\\"","range":"bytes=0-3"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"origin":"https://example.test"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=-5"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=0-0"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=0-1,3-4"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=0-9","accept-encoding":"gzip"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=0-9"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=2-2000"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=5-"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=9-3"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=900-1000"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=abc"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"items=0-1"}]": {
+    "body": "sha256:d00a6ed389a2311ae5c369eb8c05f9c2bbbee247d941d6111ad76d7312cad291",
+    "bytes": 1138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 750,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["/v1/map-resources/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+    "bytes": 551,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["/v1/map-resources/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+    "bytes": 551,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["/v1/map-resources/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+    "bytes": 551,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/0/0/0.mvt": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "vary: accept-encoding",
+    ],
+    "status": 204,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/-1/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-tile","title":"Invalid Tile","status":400,"detail":"A tile address is three whole numbers, z/x/y."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-tile","title":"Invalid Tile","status":400,"detail":"A tile address is three whole numbers, z/x/y."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"A tile is served as .mvt, not as 0."}
+",
+    "bytes": 138,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"accept-encoding":"gzip"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"accept-encoding":"identity"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"if-none-match":"*"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"if-none-match":"\\"unknown\\""}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"if-range":"\\"unknown\\"","range":"bytes=0-3"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"origin":"https://example.test"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=-5"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=0-0"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=0-1,3-4"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=0-9","accept-encoding":"gzip"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=0-9"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=2-2000"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=5-"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=9-3"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=900-1000"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=abc"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"items=0-1"}]": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt/": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt?unexpected=1": {
+    "body": "vector tile 1/0/0",
+    "bytes": 17,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.png": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"A tile is served as .mvt, not as 0.png."}
+",
+    "bytes": 142,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/x.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-tile","title":"Invalid Tile","status":400,"detail":"A tile address is three whole numbers, z/x/y."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/2/3/3.mvt": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "vary: accept-encoding",
+    ],
+    "status": 204,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/3/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"This resource publishes zoom 0 to 2, not 3. A renderer should over-zoom past the last one."}
+",
+    "bytes": 193,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/a/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-tile","title":"Invalid Tile","status":400,"detail":"A tile address is three whole numbers, z/x/y."}
+",
+    "bytes": 154,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/map-resources/ward/2023-05-uk-bgc?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2864,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2024-05-tiled": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2024-05-tiled.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 2303,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Y4o7WRvraBYyLpjVZcJe_7ZpjS-hem6w4VVX_AU-f_A"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/map-resources/ward/2024-05-tiled.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+    "bytes": 174,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/map-resources/ward/2024-05-tiled/tiles/1/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+    "bytes": 174,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/map-resources/ward/nowhere": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/nowhere.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/nowhere/features?tier=full": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/nowhere/join/population?period=2022": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/nowhere/tiles.json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources/ward/nowhere/tiles/1/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No map resource is published for ward/nowhere. Ask /v1/map-resources for the ones that are."}
+",
+    "bytes": 194,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/map-resources?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","href":"/v1/map-resources/ward/2023-05-uk-bgc"},{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","href":"/v1/map-resources/ward/2024-05-tiled"}],"meta":{"nextCursor":null}}
+",
+    "bytes": 423,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-tkYY5VwYZ0dusidBt73YldXbpTE0DUasJxfT1zyarmo"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"range":"bytes=0-9"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+      "content-range: bytes 0-9/43",
+      "content-type: application/vnd.pmtiles",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full [{"range":"bytes=0-9"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+      "content-range: bytes 0-9/38",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson [{"range":"bytes=0-9"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "accept-ranges: bytes",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.geojson"",
+      "content-range: bytes 0-9/42",
+      "content-type: application/geo+json",
+      "etag: "sha256-"",
+    ],
+    "status": 206,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023&format=parquet [{"range":"bytes=0-9"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-disposition: attachment; filename="ward-2023-05-uk-bgc-population-2022.parquet"",
+      "content-type: application/vnd.apache.parquet",
+      "etag: "sha256-0Apu04miMRrlw2nrjAX5wru-4kfZQdYRGtdtcxLK0pE"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/tiles/0/0/0.mvt": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "vary: accept-encoding",
+    ],
+    "status": 204,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"range":"bytes=0-9"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/vnd.mapbox-vector-tile",
+      "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/map-resources [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc/features [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc/join/population [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc/tiles.json [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [{"origin":"https://example.test","access-control-request-method":"GET"}]": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/map-resources": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc/features": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc/join/population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc.pmtiles [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc/features [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc/join/population [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc/tiles.json [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc/features": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc/join/population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`map resources without their files or catalogue keep their HTTP responses > no archives 1`] = `
+{
+  "no archives": {
+    "GET /v1/map-resources": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","href":"/v1/map-resources/ward/2023-05-uk-bgc"},{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","href":"/v1/map-resources/ward/2024-05-tiled"}],"meta":{"nextCursor":null}}
+",
+      "bytes": 423,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-tkYY5VwYZ0dusidBt73YldXbpTE0DUasJxfT1zyarmo"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 2864,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "PAR1 built PAR1",
+      "bytes": 15,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-low.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 750,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/other": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+      "bytes": 137,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["/v1/map-resources/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+      "bytes": 551,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.png": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"A tile is served as .mvt, not as 0.png."}
+",
+      "bytes": 142,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
+
+exports[`map resources without their files or catalogue keep their HTTP responses > no downloads 1`] = `
+{
+  "no downloads": {
+    "GET /v1/map-resources": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","href":"/v1/map-resources/ward/2023-05-uk-bgc"},{"id":"ward/2024-05-tiled","geography":"ward","boundaryRelease":"2024-05-tiled","title":"Fixture wards 2024-05-tiled","href":"/v1/map-resources/ward/2024-05-tiled"}],"meta":{"nextCursor":null}}
+",
+      "bytes": 423,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-tkYY5VwYZ0dusidBt73YldXbpTE0DUasJxfT1zyarmo"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2023-05-uk-bgc","geography":"ward","boundaryRelease":"2023-05-uk-bgc","title":"Fixture wards 2023-05-uk-bgc","topology":"shared-arc","areaCount":3,"arcCount":0,"bounds":[-1,50,1,54],"tiles":{"artifact":"fixture.pmtiles","href":"/v1/map-resources/ward/2023-05-uk-bgc.pmtiles","format":"pmtiles-3","tileFormat":"mvt-2.1","layer":"areas","minZoom":0,"maxZoom":2,"zooms":[],"tileCount":1,"bytes":43,"contentHash":"sha256:fixture"},"tiers":[],"features":[{"tier":"full","format":"geoparquet-1.1","contentHash":"sha256:full-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=full","artifact":"features/full.parquet"},{"tier":"low","format":"geoparquet-1.1","contentHash":"sha256:low-geoparquet-1.1","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low"},{"tier":"low","format":"geojson","contentHash":"sha256:low-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=low&format=geojson","artifact":"features/low.geojson"},{"tier":"medium","format":"geojson","contentHash":"sha256:medium-geojson","bytes":10,"href":"/v1/map-resources/ward/2023-05-uk-bgc/features?tier=medium&format=geojson"}],"generalisation":{"rule":"Visvalingam-Whyatt over shared arcs. The release is split into arcs at every junction where the pair of areas a boundary separates changes, each arc is simplified once, and every area is rebuilt from the simplified arcs.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area, measured in the EPSG:6933 equal-area projection. It bounds the size of feature dropped, not the distance any vertex moves.","sharedBorders":"A border between two areas is one arc, simplified once, so both areas carry identical coordinates along it at every tier. Neighbours cannot crack apart or diverge, however coarse the tier.","junctions":"A vertex where the boundary changes which pair of areas it separates is kept at every tier. Three areas that meet at a point still meet at that point.","parts":"No part is dropped. An arc is never reduced below the two coordinates that connect its junctions, or the three that enclose a ring, and where a ring built from those would enclose nothing its arcs are simplified again at a finer threshold until it does. A small island stays on the map as a coarse shape rather than disappearing from it.","validity":"Arcs are simplified independently of each other. Shared borders stay shared, but a generalised arc can cross another arc it does not touch, so a coarse tier is not guaranteed to be a topologically valid coverage."},"geometrySource":{},"attribution":{"text":"Fixture","publisher":"Fixture","sourceUrl":"https://example.com","licence":{"name":"Fixture"},"href":"/v1/attribution"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 2864,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-1FMX2bsmsfVHwhQqkge59SBakYJXVNFFzE5fuZObdjM"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "PMTiles archive: 0123456789abcdefghijklmnop",
+      "bytes": 43,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc.pmtiles"",
+        "content-type: application/vnd.pmtiles",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "PAR1 full detail wards 0123456789 PAR1",
+      "bytes": 38,
+      "headers": [
+        "accept-ranges: bytes",
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-disposition: attachment; filename="ward-2023-05-uk-bgc-full.parquet"",
+        "content-type: application/vnd.apache.parquet",
+        "etag: "sha256-"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"measure":{"id":"population","label":"Population estimate"},"period":"2022","sourceGeography":{"type":"ward","codeYear":2023},"join":{"boundaryRelease":"2023-05-uk-bgc","method":"code-match","compatibility":"code-set-compatible","note":"Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal."},"layer":"areas","areasWithoutValue":1,"values":[{"id":1,"code":"E05000001","value":5,"status":"observed"},{"id":2,"code":"W05000001","value":9,"status":"observed"}],"provenance":{"artifact":"population-observations","contentHash":"sha256:population-observations","measure":"/v1/measures/population"}},"meta":{"nextCursor":null}}
+",
+      "bytes": 750,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-vsYyGmbAUAqdqxpN_Y9i6G2JtsTwtn_loKx8TEMCJFU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/other": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+      "bytes": 137,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"tilejson":"3.0.0","name":"ward/2023-05-uk-bgc","description":"Fixture wards 2023-05-uk-bgc","attribution":"Fixture","scheme":"xyz","format":"pbf","tiles":["/v1/map-resources/ward/2023-05-uk-bgc/tiles/{z}/{x}/{y}.mvt"],"minzoom":0,"maxzoom":2,"bounds":[-1,50,1,54],"center":[0,52,0],"vector_layers":[{"id":"areas","description":"Fixture wards 2023-05-uk-bgc","minzoom":0,"maxzoom":2,"fields":{"code":"String","name":"String"}}],"x-content-hash":"sha256:fixture"},"meta":{"nextCursor":null}}
+",
+      "bytes": 551,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-type: application/json",
+        "etag: "sha256-kwUmgNsBiwEphySFRoH_oTjJDBMbrB8XogLvlvymRyU"",
+        "vary: accept-encoding",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "vector tile 1/0/0",
+      "bytes": 17,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: public, max-age=300, must-revalidate",
+        "content-encoding: gzip",
+        "content-type: application/vnd.mapbox-vector-tile",
+        "etag: "sha256-vBZVMH7uADWWiYie2gt1-lDu_vQgvnJ-IK2A7mIIEE4"",
+      ],
+      "status": 200,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.png": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"A tile is served as .mvt, not as 0.png."}
+",
+      "bytes": 142,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+  },
+}
+`;
+
+exports[`map resources without their files or catalogue keep their HTTP responses > no resources 1`] = `
+{
+  "no resources": {
+    "GET /v1/map-resources": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc.pmtiles": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=full": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/features?tier=low": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/other": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+      "bytes": 137,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 404,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles.json": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.mvt": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+    "GET /v1/map-resources/ward/2023-05-uk-bgc/tiles/1/0/0.png": {
+      "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the map resources before requesting them."}
+",
+      "bytes": 174,
+      "headers": [
+        "atlas-release: sha256:registry",
+        "cache-control: no-store",
+        "content-type: application/problem+json",
+        "vary: accept-encoding",
+      ],
+      "status": 503,
+    },
+  },
+}
+`;
