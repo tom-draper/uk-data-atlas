@@ -16,6 +16,11 @@ type GetRoute = {
 		};
 	};
 	operationId: string;
+	/**
+	 * Replaces the default check that a 200 body parses as the declared schema,
+	 * for bodies served as stored bytes that are too large to parse per request.
+	 */
+	validate?: (answer: ApiResponse) => ApiResponse;
 };
 
 export type ContractDispatch = (
@@ -31,8 +36,10 @@ export const registerGetRoute = (
 	handle: (request: FastifyRequest) => ApiResponse,
 	dispatch?: ContractDispatch,
 ) => {
-	const { method, path, responses, ...metadata } = route;
+	const { method, path, responses, validate, ...metadata } = route;
 	const [mediaType, media] = Object.entries(responses[200].content)[0]!;
+	const check = (answer: ApiResponse) =>
+		validate ? validate(answer) : validateResponse(media.schema, answer);
 	app.get(
 		path,
 		{
@@ -54,9 +61,7 @@ export const registerGetRoute = (
 		},
 		async (request, reply) => {
 			if (dispatch)
-				return dispatch(request, reply, () =>
-					validateResponse(media.schema, handle(request)),
-				);
+				return dispatch(request, reply, () => check(handle(request)));
 			const url = new URL(request.url, "http://localhost");
 			const unexpected = unexpectedQueryParameter(
 				context.operationMatcher?.(url.pathname).operation,
@@ -71,7 +76,7 @@ export const registerGetRoute = (
 						`This operation does not accept the query parameter ${unexpected.parameter}.`,
 						{ code: "unknown_query_parameter", ...unexpected },
 					);
-				return validateResponse(media.schema, handle(request));
+				return check(handle(request));
 			});
 			return sendFastifyResponse(reply, response);
 		},
