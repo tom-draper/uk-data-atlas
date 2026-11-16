@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { requireGeography } from "../runtime/index.ts";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
@@ -213,12 +214,19 @@ export const handleDataConversionRoutes = ({
 		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	return {
 		status: 200,
 		body: envelope(
 			releaseId,
 			{
-				measure,
+				measure: publicMeasure,
 				source,
 				period,
 				sourceGeography: source.sourceGeography,
@@ -229,7 +237,7 @@ export const handleDataConversionRoutes = ({
 				provenance: {
 					...sourceExactProvenance({
 						atlasRelease: releaseId,
-						measure,
+						measure: publicMeasure,
 						source,
 						period: period as string,
 						observations,

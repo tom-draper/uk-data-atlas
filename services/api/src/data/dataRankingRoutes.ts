@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { refused } from "../observationResolution/observationPlan";
@@ -129,19 +130,26 @@ export const handleDataRankingRoutes = ({
 		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	return {
 		status: 200,
 		body: envelope(
 			releaseId,
 			{
-				measure,
+				measure: publicMeasure,
 				source,
 				period,
 				...statedDefaults(defaults?.defaulted),
 				sourceGeography: source.sourceGeography,
 				provenance: sourceExactProvenance({
 					atlasRelease: releaseId,
-					measure,
+					measure: publicMeasure,
 					source,
 					period: period as string,
 					observations,

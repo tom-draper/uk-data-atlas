@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { rankObservations } from "../ranking";
@@ -312,12 +313,19 @@ export const handleDataChangeRoutes = ({
 		...(defaults?.defaulted ?? {}),
 		...(changePeriods?.defaulted ?? {}),
 	};
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	return {
 		status: 200,
 		body: envelope(
 			releaseId,
 			{
-				measure,
+				measure: publicMeasure,
 				source,
 				sourceGeography: source.sourceGeography,
 				startPeriod,
@@ -325,7 +333,7 @@ export const handleDataChangeRoutes = ({
 				...statedDefaults(changeDefaulted),
 				provenance: sourceSeriesProvenance({
 					atlasRelease: releaseId,
-					measure,
+					measure: publicMeasure,
 					source,
 					periods: [startPeriod, endPeriod],
 					observations: endObservations,

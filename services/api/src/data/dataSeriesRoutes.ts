@@ -1,3 +1,4 @@
+import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { analysisConversion } from "@uk-data-atlas/relationships";
 import {
@@ -164,6 +165,13 @@ export const handleDataSeriesRoutes = ({
 			"The measure source declares no observation periods.",
 		);
 	}
+	const publicMeasure = publicSeriesMeasure(
+		measure,
+		selectedSeries,
+		segments[2]!,
+		dataCatalog,
+		context.measureDimensions,
+	);
 	if (toParameter !== null) {
 		const analysisGeography = parseExactReleaseReference(toParameter);
 		if (!analysisGeography)
@@ -258,7 +266,7 @@ export const handleDataSeriesRoutes = ({
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				measure,
+				measure: publicMeasure,
 				areaCode,
 				...statedDefaults(defaults?.defaulted),
 				analysisGeography,
@@ -304,14 +312,14 @@ export const handleDataSeriesRoutes = ({
 	return {
 		status: 200,
 		body: envelope(releaseId, {
-			measure,
+			measure: publicMeasure,
 			source,
 			areaCode,
 			...statedDefaults(defaults?.defaulted),
 			sourceGeography: source.sourceGeography,
 			provenance: sourceSeriesProvenance({
 				atlasRelease: releaseId,
-				measure,
+				measure: publicMeasure,
 				source,
 				periods: source.periods,
 				observations: firstObservations,

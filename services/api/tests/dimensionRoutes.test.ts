@@ -327,6 +327,16 @@ test("data handlers use the selected series with a public measure path", () => {
 		segments: ["v1", "data", "recorded-crimes", "series"],
 	});
 	assert.equal(temporal?.status, 200);
+	const directSeries = (
+		temporal!.body as {
+			data: {
+				measure: { id: string };
+				provenance: { measure: { id: string } };
+			};
+		}
+	).data;
+	assert.equal(directSeries.measure.id, "recorded-crimes");
+	assert.equal(directSeries.provenance.measure.id, "recorded-crimes");
 });
 
 test("routes a dimensional time series to the selected members", () => {
