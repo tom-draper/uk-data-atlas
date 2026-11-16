@@ -4,6 +4,7 @@ import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
 	observationArtifactName,
 	measureSeriesSourceKey,
+	measureSeriesKey,
 	registerSeriesObservations,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
@@ -48,6 +49,7 @@ export const readMeasureObservations = (
 				measure.id,
 				source.sourceGeography,
 				tables,
+				canonical && identity ? measureSeriesKey(identity) : measure.id,
 			);
 			if (identity)
 				bySeriesSource.set(

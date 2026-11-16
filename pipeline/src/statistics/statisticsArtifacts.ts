@@ -3,6 +3,7 @@ import { join } from "node:path";
 import {
 	observationArtifactName,
 	measureSeriesSourceKey,
+	measureSeriesKey,
 	type DataCatalog,
 	type MeasureSource,
 	type MeasureSeriesIdentity,
@@ -77,8 +78,10 @@ export const statisticsArtifactReader = (
 		throw new Error(`Artifact ${name} has no statistics read path.`);
 	return (measureId: string, source: MeasureSource) => {
 		const selector = selectorFor(measureId, source);
+		const identity = byId.get(measureId)?.series ?? identities?.[measureId];
 		return rebuildStatisticsObservationText(database, selector, {
-			measureId,
+			measureId:
+				canonical && identity ? measureSeriesKey(identity) : measureId,
 			sourceGeography: source.sourceGeography,
 			periods: source.periods,
 		});

@@ -14,7 +14,10 @@ import {
 	type AnyMeasureObservationArtifact,
 	type ExportManifest,
 } from "@uk-data-atlas/catalogue/node";
-import { tableMeasureObservations } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	tableMeasureObservations,
+} from "@uk-data-atlas/measures";
 import { compileValidationReport } from "./compileValidationReport.ts";
 import { readMeasureTotals, readValidationWaivers } from "./inputs.ts";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
@@ -89,7 +92,12 @@ export const buildValidationReport = (repositoryRoot: string) => {
 					return [
 						entry.id,
 						isMeasureTable(artifact)
-							? tableMeasureObservations(artifact, measure.id)
+							? tableMeasureObservations(
+									artifact,
+									measure.series
+										? measureSeriesKey(measure.series)
+										: measure.id,
+								)
 							: (artifact as AnyMeasureObservationArtifact),
 					];
 				}),

@@ -9,7 +9,11 @@ import {
 	databaseGeneration,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
-import { measureSeriesSourceKey, observationArtifactName } from "./index.ts";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+	observationArtifactName,
+} from "./index.ts";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
@@ -202,7 +206,10 @@ export class ObservationCache {
 				this.statistics.set(`${databasePath}:${cacheKey}`, {
 					selector,
 					artifact: {
-						measureId: measure.id,
+						measureId:
+							canonical && identity
+								? measureSeriesKey(identity)
+								: measure.id,
 						sourceGeography: source.sourceGeography,
 						periods: source.periods,
 					},
@@ -318,15 +325,20 @@ export const lazySourceObservations = (
 	measureId: string,
 	sourceGeography: SourceGeography,
 	cache: ObservationCache = new ObservationCache(),
+	storedMeasureId = measureId,
 ): AnyMeasureObservationArtifact => {
 	const path = `${databasePath}:${artifactName}`;
 	if (!cache.has(databasePath, artifactName))
 		throw new Error(`Missing measure observations at ${path}`);
 	const load = () => {
-		const observations = cache.read(databasePath, artifactName, measureId);
+		const observations = cache.read(
+			databasePath,
+			artifactName,
+			storedMeasureId,
+		);
 		if (
 			observations.schemaVersion !== 1 ||
-			observations.measureId !== measureId ||
+			observations.measureId !== storedMeasureId ||
 			observations.sourceGeography.type !== sourceGeography.type ||
 			observations.sourceGeography.boundaryYear !==
 				sourceGeography.boundaryYear ||

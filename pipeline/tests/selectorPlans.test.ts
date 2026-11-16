@@ -1,3 +1,4 @@
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import { expect, test } from "vitest";
 import {
 	censusTableSelector,
@@ -42,9 +43,18 @@ test("census table selector follows the declared category order", () => {
 		boundaryYear: 2021,
 		period: "2021",
 		measures: [
-			"usual-residents-in-households",
-			"usual-residents-in-communal-establishments",
-			"usual-residents-total",
+			measureSeriesKey({
+				measure: "usual-residents",
+				dimensions: { "residence-type": "household" },
+			}),
+			measureSeriesKey({
+				measure: "usual-residents",
+				dimensions: { "residence-type": "communal-establishment" },
+			}),
+			measureSeriesKey({
+				measure: "usual-residents",
+				dimensions: { "residence-type": "total" },
+			}),
 		],
 		columns: [
 			{

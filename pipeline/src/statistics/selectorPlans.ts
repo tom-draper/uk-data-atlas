@@ -1,6 +1,7 @@
-import type {
-	StatisticsSelector,
-	StatisticsTableSelector,
+import {
+	measureSeriesKey,
+	type StatisticsSelector,
+	type StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
 import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
 
@@ -38,9 +39,10 @@ export function censusTableSelector(
 		(table) => datasetId === `census-2021-${table.table}`,
 	);
 	if (!census) return undefined;
-	const measures = census.categories.map(
-		([suffix]) => `${census.measurePrefix}-${suffix}`,
-	);
+	const columns = census.categories.map(([suffix, , , member]) => ({
+		measure: census.measure,
+		dimensions: { [census.dimension]: member ?? suffix },
+	}));
 	return {
 		kind: "measure-table",
 		id: name,
@@ -48,10 +50,7 @@ export function censusTableSelector(
 		geography,
 		boundaryYear,
 		period,
-		measures,
-		columns: census.categories.map(([suffix, , , member]) => ({
-			measure: census.measure,
-			dimensions: { [census.dimension]: member ?? suffix },
-		})),
+		measures: columns.map(measureSeriesKey),
+		columns,
 	};
 }

@@ -4,7 +4,7 @@ import { countryForCode, type BulkExport } from "@uk-data-atlas/catalogue/node";
 
 import { type Finding, sha256, listed, check } from "./findings.ts";
 import type { MeasureTotal, ValidationInputs } from "./inputs.ts";
-import { observationTableOf } from "@uk-data-atlas/measures";
+import { measureSeriesKey, observationTableOf } from "@uk-data-atlas/measures";
 import {
 	sameGeography,
 	describeGeography,
@@ -195,7 +195,9 @@ export const measureSourceFindings = (
 		)
 			? undefined
 			: "its record counts differ from the export manifest",
-		artifact.measureId === measure.id &&
+		(artifact.measureId === measure.id ||
+			(measure.series &&
+				artifact.measureId === measureSeriesKey(measure.series))) &&
 		sameGeography(artifact.sourceGeography, source.sourceGeography)
 			? undefined
 			: `it holds ${artifact.measureId} on ${describeGeography(artifact.sourceGeography)}`,
