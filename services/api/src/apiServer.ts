@@ -13,6 +13,8 @@ import {
 	analysisPlanContract,
 } from "./analysis/analysisContract";
 import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
+import { relationshipsContract } from "./relationships/relationshipsContract";
+import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
 import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
@@ -112,6 +114,7 @@ const fastifyPaths = new Set(
 		attributionContract,
 		analysisGeographiesContract,
 		analysisPlanContract,
+		relationshipsContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -792,6 +795,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(analysisFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(relationshipsFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
