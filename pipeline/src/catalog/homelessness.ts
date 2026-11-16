@@ -1,6 +1,7 @@
 import { type DatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { homelessness } from "@uk-data-atlas/datasets";
 
 /** Households and children in temporary accommodation, by English authority. */
 export const compileHomelessness = (
@@ -8,21 +9,33 @@ export const compileHomelessness = (
 	homelessnessPath: DatasetInput,
 	england2025: string[],
 ): CompiledMeasure[] => {
+	const fields = homelessness.statistics!.fields!;
+	if (!Array.isArray(fields)) throw new Error("Expected homelessness fields");
 	const inTemporaryAccommodation = (
 		id: string,
 		label: string,
 		field: string,
 		unit: string,
 		note: string,
-	): Indicator => ({
-		id,
-		label,
-		field,
-		valueKind: "count",
-		unit,
-		aggregation: { kind: "extensive", operation: "sum", available: true },
-		notes: [note],
-	});
+	): Indicator => {
+		const declared = fields.find((candidate) => candidate.path === field);
+		if (!declared)
+			throw new Error(`No homelessness series declared for ${field}`);
+		return {
+			id,
+			series: { measure: declared.measure, dimensions: declared.members },
+			label,
+			field,
+			valueKind: "count",
+			unit,
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: true,
+			},
+			notes: [note],
+		};
+	};
 	return publishIndicators(manifest, {
 		datasetId: "homelessness",
 		path: homelessnessPath,
