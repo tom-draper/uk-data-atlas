@@ -13,6 +13,7 @@ test("detail paths Fastify can route are recognised", () => {
 		"/v1/documents/a%2Fb.json",
 		"/v1/exports/total-jobs-observations",
 		"/v1/lookups/areas-ward-2025-05",
+		"/v1/terrain/terrain-contours",
 	])
 		expect(isFastifyDetailPath(path), path).toBe(true);
 });
