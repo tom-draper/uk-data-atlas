@@ -6,11 +6,13 @@ import type {
 	DirectValue,
 } from "../../../declaration/statistics.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
-import { loadPlanningApplications } from "../../../data/new-datasets/loader.ts";
 import { sumPlanningRecords } from "../../../data/planning-applications/aggregate.ts";
 
 export const planningApplications = defineDataset<
@@ -39,9 +41,8 @@ export const planningApplications = defineDataset<
 	ingestion: {
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2025],
-		requiredDataFields: ["value"],
 	},
-	load: ({ csvRows }) => loadPlanningApplications(csvRows),
+	load: noCompiledPayload<IndicatorDataset<"planning-applications">>(),
 	statistics: {
 		payload: {
 			parts: yearParts("planning-applications", "localAuthority", 2025, {
@@ -73,6 +74,7 @@ export const planningApplications = defineDataset<
 			},
 		],
 		direct: {
+			only: true,
 			read: async ({ csvRows }) => {
 				const records = new Map<string, DirectRecord>();
 				await csvRows(

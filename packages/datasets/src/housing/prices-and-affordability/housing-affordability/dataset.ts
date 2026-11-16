@@ -4,12 +4,14 @@ import { authorityCode } from "../../../data/new-datasets/authorityCode.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadHousingAffordability } from "../../../data/new-datasets/loader.ts";
 
 export const housingAffordability = defineDataset<
 	IndicatorDataset<"housing-affordability">
@@ -39,9 +41,8 @@ export const housingAffordability = defineDataset<
 	ingestion: {
 		minimumDataRecords: 300,
 		expectedBoundaryYears: [2025],
-		requiredDataFields: ["value"],
 	},
-	load: ({ xlsxSheet }) => loadHousingAffordability(xlsxSheet),
+	load: noCompiledPayload<IndicatorDataset<"housing-affordability">>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 20,
@@ -74,6 +75,7 @@ export const housingAffordability = defineDataset<
 		],
 		fields: [{ path: "value", measure: "house-price-to-earnings-ratio" }],
 		direct: {
+			only: true,
 			read: async ({ xlsxSheet }) => {
 				const { data: rows } = await parseCsv<string[]>(
 					await xlsxSheet(

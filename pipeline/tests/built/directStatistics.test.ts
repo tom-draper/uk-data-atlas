@@ -207,6 +207,8 @@ it.each([
 	"local-government-finance",
 	"adult-social-care-activity",
 	"adult-social-care-outcomes",
+	"housing-affordability",
+	"planning-applications",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts();
