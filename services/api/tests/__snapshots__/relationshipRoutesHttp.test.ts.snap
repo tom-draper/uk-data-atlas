@@ -1,0 +1,643 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`relationships answer without the path inventory 1`] = `
+{
+  "GET /v1/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"status":"unsupported","reason":"No declared conversion paths start at ward/2025-01-en-ward.","capabilities":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 265,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-u9J54ANRRGS-MSZFHuVumg7i4H9zgtY-2TpvH6Nj0wA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"unsupported","reason":"No declared membership path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad.","paths":[],"missingPrerequisites":[{"id":"relationship-path","status":"unsupported","reason":"No declared membership path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 580,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-TR7VZfCx6wRSbswLrsBwM8x7s4ypx4U0avE032v-vE8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area identity and relationship artifacts for this release before reporting relationship coverage."}
+",
+    "bytes": 234,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+}
+`;
+
+exports[`relationships keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/Relationships?from=ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/relationships%2F": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/relationships/": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/relationships?": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=%E0%A4%A": {
+    "body": "sha256:1a092e82410628b54ba4664841de129ed707ee985bd9270f67abc7aae779b814",
+    "bytes": 178,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=localAuthority/2025-01-uk-lad&to=ward/2025-01-en-ward&purpose=membership": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"to":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/reverse/membership","purpose":"membership","from":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"to":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"reverse","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"reverse","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1400,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-ysidZnZPHF-yT55cIcAJEryV7Lk1AJ7Zt1DiDtgq5fk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=nowhere/2020&to=ward/2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"nowhere","boundaryRelease":"2020"},"to":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"purpose":"membership","status":"not-built","reason":"No compiled area identity artifact is available for nowhere/2020.","paths":[],"missingPrerequisites":[{"id":"source-areas","status":"not-built","reason":"No compiled area identity artifact is available for nowhere/2020."},{"id":"relationship-path","status":"unsupported","reason":"No declared membership path is published from nowhere/2020 to ward/2025-01-en-ward."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 629,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-E2uPmt-J5M3lJAr2p7pmAjjoHHCn8tZb_1Qtvf-txC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"from must be one exact release, as geography/release; ward is not."}
+",
+    "bytes": 177,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward%2F2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"status":"available","capabilities":[{"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1440,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sU9DZZGqVdb0xExPDMIfyUyNKSlpjJzfPghs_DbSpzE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "etag: "sha256-sU9DZZGqVdb0xExPDMIfyUyNKSlpjJzfPghs_DbSpzE"",
+      "vary: accept-encoding",
+      "!x-content-type-options",
+    ],
+    "status": 304,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&from=ward/2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"status":"available","capabilities":[{"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1440,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sU9DZZGqVdb0xExPDMIfyUyNKSlpjJzfPghs_DbSpzE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&geography=ward&release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"Supply either a conversion query (from/to) or a release-coverage query (geography/release), not both."}
+",
+    "bytes": 212,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=apportion": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"apportion","status":"unsupported","reason":"No declared apportion path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad.","paths":[],"missingPrerequisites":[{"id":"relationship-path","status":"unsupported","reason":"No declared apportion path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 577,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-q6hd_EnWOVIVDvfCL76-t_8JGL_6hYIXYndxFRc46Ew"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=identity": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"identity","status":"unsupported","reason":"No declared identity path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad.","paths":[],"missingPrerequisites":[{"id":"relationship-path","status":"unsupported","reason":"No declared identity path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad."}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 574,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WsnEMXk66oLvQfYMpTggjZk2gQyiPwPcAec47QjgphE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1400,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-encoding: gzip",
+      "content-type: application/json",
+      "etag: "sha256-VJS6mzBntGG9jI4YwjEbhItr94evJd8v0vPDowFIw0I-gzip"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&dataset=population": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1400,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-VJS6mzBntGG9jI4YwjEbhItr94evJd8v0vPDowFIw0I"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&measure=population": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[],"measureReadiness":{"status":"not-built","reason":"Build the data catalogue before assessing a measure's conversion semantics."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1529,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jSAlEKWLmN4SI2muY-hJWrwKj9CYDcX5oq39ejZqY7s"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&measure=unknown": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[],"measureReadiness":{"status":"not-built","reason":"Build the data catalogue before assessing a measure's conversion semantics."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1529,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-jSAlEKWLmN4SI2muY-hJWrwKj9CYDcX5oq39ejZqY7s"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&operation=containment-aggregation": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"status":"available","purpose":"membership","operation":"containment-aggregation","selectedPath":{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}},"alternatives":[],"missingPrerequisites":[],"note":"This plan chooses among published paths only. It does not translate codes, allocate values or treat matching identifiers as proof of geographic continuity."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1626,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-_4_zhUdTXyJ9YFFZrSW2D6a7BSULsfEMZ-VbjFQxVpc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&operation=identity-join": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"status":"unsupported","purpose":"membership","operation":"identity-join","selectedPath":{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}},"alternatives":[],"missingPrerequisites":[],"reason":"identity-join is not permitted for a membership conversion; the selected path permits containment-aggregation and membership-join instead.","note":"This plan chooses among published paths only. It does not translate codes, allocate values or treat matching identifiers as proof of geographic continuity."},"meta":{"nextCursor":null}}
+",
+    "bytes": 1768,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-lnPIUJ-WLNf4NYeT5iFm69mCqM6q-ZrxCmzlldehTPQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership&operation=other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"operation must be one of identity-join, code-translation, containment-aggregation, membership-join, weighted-allocation."}
+",
+    "bytes": 231,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"purpose must be one of identity, membership, apportion."}
+",
+    "bytes": 166,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&to=ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"to must be one exact release, as geography/release; ward is not."}
+",
+    "bytes": 175,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?from=ward/2025-01-en-ward&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"status":"available","capabilities":[{"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"purpose":"membership","status":"available","paths":[{"id":"ward-to-local-authority-2025/forward/membership","purpose":"membership","from":{"geography":"ward","boundaryRelease":"2025-01-en-ward"},"to":{"geography":"localAuthority","boundaryRelease":"2025-01-uk-lad"},"quality":"publisher-supplied","origin":"crosswalk","steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","method":"clean-containment","purpose":"membership"}],"operations":{"permitted":["containment-aggregation","membership-join"],"prohibited":["weighted-allocation"],"note":"Use this path to group members under a parent. It does not allocate a source value across overlapping targets."},"trust":{"level":"verified","reasons":["Every path step is publisher-supplied and has complete compiled coverage."]},"coverage":{"status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1,"steps":[{"crosswalkId":"ward-to-local-authority-2025","direction":"forward","status":"complete","mappedSourceAreaCount":1,"sourceAreaCount":1,"share":1}]},"rank":{"position":1,"reasons":["complete source coverage","verified evidence","crosswalk path","1 step"]}}],"missingPrerequisites":[]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1440,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sU9DZZGqVdb0xExPDMIfyUyNKSlpjJzfPghs_DbSpzE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?geography=nowhere&release=2020": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the area identity and relationship artifacts for this release before reporting relationship coverage."}
+",
+    "bytes": 234,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/relationships?geography=ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","relation":null,"status":"available","areaCount":1,"relatedAreaCount":1,"relationshipCount":1,"byRelation":{"within":1},"crosswalkIds":["ward-to-local-authority-2025"],"uncoveredAreas":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 332,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-7jW4xUuX3ZxW23Sghc1OWd2kB-9JHh-Pff-zEzfdIQk"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&limit=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&limit=101": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&limit=abc": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&relation=adjacent": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&relation=contains&limit=5": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","relation":"contains","status":"unsupported","reason":"No published contains relationships cover this release.","areaCount":1,"relatedAreaCount":0,"relationshipCount":0,"byRelation":{},"crosswalkIds":[],"uncoveredAreas":[{"id":"ward/2025-01-en-ward/E05000001","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 477,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-1rOiN6P5XkQRTqj5gdeMAcDZuW-nikWQbJapT_rVEQ8"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?geography=ward&release=2025-01-en-ward&relation=within": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"geography":"ward","boundaryRelease":"2025-01-en-ward","relation":"within","status":"available","areaCount":1,"relatedAreaCount":1,"relationshipCount":1,"byRelation":{"within":1},"crosswalkIds":["ward-to-local-authority-2025"],"uncoveredAreas":[]},"meta":{"nextCursor":null}}
+",
+    "bytes": 336,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-wuR7xi87zlvE8U8D6Whn3nDFZLcLFPCVZg4XfhM5Ezc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/relationships?release=2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/relationships?unexpected=1": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"geography and release are required; relation must be within, contains, successor, predecessor, split-from, merged-from, equivalent-to or overlaps; limit must be an integer from 1 to 100."}
+",
+    "bytes": 297,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-sU9DZZGqVdb0xExPDMIfyUyNKSlpjJzfPghs_DbSpzE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/relationships": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "PATCH /v1/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PATCH /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/relationships?from=ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
