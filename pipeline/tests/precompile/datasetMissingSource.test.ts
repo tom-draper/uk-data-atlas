@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, expect, test, vi } from "vitest";
 import { landArea, definitionOf, sourceDir } from "@uk-data-atlas/datasets";
@@ -38,6 +38,31 @@ test("preserved datasets record missing inputs and rebuild when they return", as
 	);
 	const definition = {
 		...landAreaDatasetDefinition,
+		directOnly: undefined,
+		precompile: async (
+			reader: Parameters<typeof landAreaDatasetDefinition.precompile>[0],
+		) => {
+			await reader.text(sourceDir("land-area", "sam-lad-2024-12.csv"));
+			return {
+				"2024": {
+					id: "land-area2024",
+					type: "land-area" as const,
+					year: 2024,
+					boundaryType: "localAuthority" as const,
+					boundaryYear: 2024,
+					data: {
+						E06000001: {
+							ladCode: "E06000001",
+							ladName: "Example",
+							landHectares: 100,
+							landSquareKm: 1,
+							extentHectares: 100,
+							inlandWaterHectares: 0,
+						},
+					},
+				},
+			};
+		},
 		ingestion: {
 			...landAreaDatasetDefinition.ingestion,
 			minimumDataRecords: 1,
@@ -90,4 +115,35 @@ test("preserved datasets record missing inputs and rebuild when they return", as
 	expect(
 		await canReuseDataset(rebuilt, updated, undefined, "fingerprint"),
 	).toBeDefined();
+});
+
+test("direct land area records its source without a compiled payload", async () => {
+	const source = join(paths.SOURCE_DATA, sourceDir("land-area"));
+	mkdirSync(source, { recursive: true });
+	mkdirSync(paths.COMPILED_DATASETS, { recursive: true });
+	writeFileSync(
+		join(source, "sam-lad-2024-12.csv"),
+		"ladCode,ladName,landHectares,extentHectares,inlandWaterHectares\nE06000001,Example,100,100,0\n",
+	);
+	const definition = {
+		...landAreaDatasetDefinition,
+		ingestion: {
+			...landAreaDatasetDefinition.ingestion,
+			minimumDataRecords: 1,
+		},
+	};
+	const result = await compileStaleDataset(
+		definition,
+		new Map(),
+		undefined,
+		"fingerprint",
+	);
+	expect(result.direct).toBe(true);
+	expect(result.summary).toMatchObject({ dataRecordCount: 1 });
+	expect(result.inputs.map((input) => input.path)).toContain(
+		sourceDir("land-area", "sam-lad-2024-12.csv"),
+	);
+	expect(existsSync(join(paths.COMPILED_DATASETS, "land-area.json"))).toBe(
+		false,
+	);
 });
