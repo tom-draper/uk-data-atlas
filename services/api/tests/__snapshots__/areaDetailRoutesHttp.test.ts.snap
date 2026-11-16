@@ -1,0 +1,1657 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`area detail routes keep their HTTP responses 1`] = `
+{
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/children": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/overlap": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "DELETE /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 264,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-3ENQP7rdOEeoErjbQaHOV9BtiL0I3nyh_cVICtQ2MC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"contemporary"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 651,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MXaeYaERHk0Rx-oTn5SXINbETHHfaChUH_Sav8OTuT0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"FeatureCollection","id":"localAuthority/2025-01-uk-lad/E08000001/children","parent":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"collection":{"members":1,"withGeometry":1,"vertices":5,"tier":"full","toleranceM":0,"minEffectiveAreaM2":0},"withoutGeometry":[],"features":[{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"membership":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"generalisation":{"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Bz5daM4fw7HTG-N3NsRA0phWDYR4G9qCUtTaN3sndJI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?childGeography=a/b/c": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"childGeography must be a geography or geography/release pair.","choices":["ward/2025-01-en-ward"]}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?childGeography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"FeatureCollection","id":"localAuthority/2025-01-uk-lad/E08000001/children","parent":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"collection":{"members":1,"withGeometry":1,"vertices":5,"tier":"full","toleranceM":0,"minEffectiveAreaM2":0},"withoutGeometry":[],"features":[{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"membership":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"generalisation":{"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Bz5daM4fw7HTG-N3NsRA0phWDYR4G9qCUtTaN3sndJI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?childGeography=ward/2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"FeatureCollection","id":"localAuthority/2025-01-uk-lad/E08000001/children","parent":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"collection":{"members":1,"withGeometry":1,"vertices":5,"tier":"full","toleranceM":0,"minEffectiveAreaM2":0},"withoutGeometry":[],"features":[{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"membership":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"generalisation":{"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Bz5daM4fw7HTG-N3NsRA0phWDYR4G9qCUtTaN3sndJI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?tier=low": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"FeatureCollection","id":"localAuthority/2025-01-uk-lad/E08000001/children","parent":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"collection":{"members":1,"withGeometry":1,"vertices":5,"tier":"low","toleranceM":1000,"minEffectiveAreaM2":1000000,"generalisationMethod":{"rule":"Visvalingam-Whyatt. The vertex whose triangle with its two neighbours is smallest is dropped, repeatedly, until the smallest remaining triangle exceeds the tier's threshold. Triangles are measured in the EPSG:6933 equal-area projection, so the threshold is real square metres anywhere in the country.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area. It bounds the size of feature dropped. It is not a promise that no vertex moves further than the tolerance: the same deviation spans a larger triangle the further apart its neighbours are.","parts":"A part or hole whose own area falls below the threshold is dropped whole, rather than surviving as a triangle. An area keeps its geometry type, so a MultiPolygon reduced to one part is still a MultiPolygon.","sharedBorders":"Each area is generalised alone, from its own vertices. Above the full tier, neighbours drawn together may disagree along a shared border. Ask for the full tier where borders must meet exactly."}},"withoutGeometry":[],"features":[{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"membership":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"generalisation":{"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 2187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-3cMQziTs_T74BpzCbkflVhyqqOzIZqw5A1T9gA77xBA"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?tier=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-tier","title":"Unknown Tier","status":400,"detail":"No such generalisation tier: nope. Choose one of full, high, medium, low."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"FeatureCollection","id":"localAuthority/2025-01-uk-lad/E08000001/children","parent":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"]},"collection":{"members":1,"withGeometry":1,"vertices":5,"tier":"full","toleranceM":0,"minEffectiveAreaM2":0},"withoutGeometry":[],"features":[{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"membership":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"generalisation":{"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1114,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Bz5daM4fw7HTG-N3NsRA0phWDYR4G9qCUtTaN3sndJI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?childGeography=a/b/c": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"childGeography must be a geography or geography/release pair.","choices":["ward/2025-01-en-ward"]}
+",
+    "bytes": 207,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?childGeography=ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"contemporary","geography":"ward"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 670,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-2U91U5XK_N-OvdduBuT6xGBbBndvPVPttg9Xm8PUy0Y"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?childGeography=ward/2025-01-en-ward": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"release","geography":"ward","release":"2025-01-en-ward"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 693,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-u3icKreL8qscv8gNpOvUB6H29RsfjBfqcvs-w0AdceU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?depth=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"contemporary"},"descendants":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"from":"localAuthority/2025-01-uk-lad/E08000001","depth":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1054,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-aK3dTaRO0_qpWpDWW4_HXmLjgsBDS_x-JcmK-qT616I"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"contemporary"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 651,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MXaeYaERHk0Rx-oTn5SXINbETHHfaChUH_Sav8OTuT0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"localAuthority/2025-01-uk-lad/E08000001","properties":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"generalisation":{"tier":"full","toleranceM":0,"minEffectiveAreaM2":0,"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[1,54],[1,55],[-1,55],[-1,54]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-WnZSYCJ7pkP0xvD4wPs7OULsZGh5RRk0qB8l0OgLWC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/history": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[],"lineage":[],"sameCodeReleases":[],"note":"Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent."},"meta":{"nextCursor":null}}
+",
+    "bytes": 635,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BTYEW_IMFmitNK6XyvOO_zUZc2BaR5m5-jfmZowa0yg"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/relationships": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 610,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-DrKbpGUCWgjs0sR89PIEzB74a2VRscu9z7jErSp8ctc"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/nowhere/2025-01-en-ward/E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography nowhere.","code":"unsupported_geography","absence":"unknown-geography","links":{"boundaries":"/v1/boundaries"}}
+",
+    "bytes": 263,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/nowhere/2025-01-en-ward/E05000001/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography nowhere.","code":"unsupported_geography","absence":"unknown-geography","links":{"boundaries":"/v1/boundaries"}}
+",
+    "bytes": 263,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 253,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001%20": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05000001  is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 227,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 253,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/a/b/c": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/children": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"No published contemporary child release matches childGeography.","choices":[]}
+",
+    "bytes": 187,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No published relationship names anything as contained by that area."}
+",
+    "bytes": 170,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/children/other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"generalisation":{"tier":"full","toleranceM":0,"minEffectiveAreaM2":0,"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 601,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-JBAcFN1MiZYKAbaP9jAZd78GJKwF5Cn2i2HAogucRTE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry/extra": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry?tier=full": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"generalisation":{"tier":"full","toleranceM":0,"minEffectiveAreaM2":0,"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 601,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-JBAcFN1MiZYKAbaP9jAZd78GJKwF5Cn2i2HAogucRTE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry?tier=low": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"generalisation":{"tier":"low","toleranceM":1000,"minEffectiveAreaM2":1000000,"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1,"method":{"rule":"Visvalingam-Whyatt. The vertex whose triangle with its two neighbours is smallest is dropped, repeatedly, until the smallest remaining triangle exceeds the tier's threshold. Triangles are measured in the EPSG:6933 equal-area projection, so the threshold is real square metres anywhere in the country.","threshold":"A tier is the side of the smallest square of detail kept, and its threshold is that square's area. It bounds the size of feature dropped. It is not a promise that no vertex moves further than the tolerance: the same deviation spans a larger triangle the further apart its neighbours are.","parts":"A part or hole whose own area falls below the threshold is dropped whole, rather than surviving as a triangle. An area keeps its geometry type, so a MultiPolygon reduced to one part is still a MultiPolygon.","sharedBorders":"Each area is generalised alone, from its own vertices. Above the full tier, neighbours drawn together may disagree along a shared border. Ask for the full tier where borders must meet exactly."}},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1660,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-Z5FCWy_Yx1SNc8CIEandvHAKRFN4L9rLLN1WNvFnJMY"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry?tier=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/unknown-tier","title":"Unknown Tier","status":400,"detail":"No such generalisation tier: nope. Choose one of full, high, medium, low."}
+",
+    "bytes": 182,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"type":"Feature","id":"ward/2025-01-en-ward/E05000001","properties":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"generalisation":{"tier":"full","toleranceM":0,"minEffectiveAreaM2":0,"vertices":5,"verticesAtFullResolution":5,"parts":1,"partsAtFullResolution":1},"geometrySource":{"sourceCrs":"EPSG:4326"}},"geometry":{"type":"Polygon","coordinates":[[[-1,54],[0,54],[0,55],[-1,55],[-1,54]]]}},"meta":{"nextCursor":null}}
+",
+    "bytes": 601,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-JBAcFN1MiZYKAbaP9jAZd78GJKwF5Cn2i2HAogucRTE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[],"lineage":[],"sameCodeReleases":[],"note":"Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent."},"meta":{"nextCursor":null}}
+",
+    "bytes": 624,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UbwqvKyOBX3_E9Pq4RyEHDG6BTVWqUAw7fnwiefHUZU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/history?depth=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[],"lineage":[],"sameCodeReleases":[],"note":"Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent."},"meta":{"nextCursor":null}}
+",
+    "bytes": 624,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UbwqvKyOBX3_E9Pq4RyEHDG6BTVWqUAw7fnwiefHUZU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/history?depth=x": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"depth must be an integer from 1 to 20."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/history?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[],"lineage":[],"sameCodeReleases":[],"note":"Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent."},"meta":{"nextCursor":null}}
+",
+    "bytes": 624,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UbwqvKyOBX3_E9Pq4RyEHDG6BTVWqUAw7fnwiefHUZU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"touches":"edge","border":{"perimeterM":352198.4906256242,"sharedBorderM":111314.29378689441,"unsharedBorderM":240884.19683872978,"pointOnlyTouches":1},"method":{"rule":"Two areas are neighbours where their boundaries share vertices. Adjacent areas in one release are drawn from the same vertices, so a shared border is the same coordinates on both sides and matches exactly. No distance threshold decides who is a neighbour.","sharedBorder":"Summed over the edges the two areas have in common, each counted once, with ground length from the ellipsoid's radii of curvature at the edge's mid-latitude.","unshared":"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.","limits":"Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases."},"neighbours":[{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward","touch":"edge","sharedBorderM":111314.29378689441,"shareOfPerimeter":0.31605556738520485,"sharedEdges":1,"sharedVertices":2}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1483,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BaTqp9RUhZhnC9ZTnIxs5vAusp07Qz_EmsKjgl3BYC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours?touches=any": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"touches":"any","border":{"perimeterM":352198.4906256242,"sharedBorderM":111314.29378689441,"unsharedBorderM":240884.19683872978,"pointOnlyTouches":1},"method":{"rule":"Two areas are neighbours where their boundaries share vertices. Adjacent areas in one release are drawn from the same vertices, so a shared border is the same coordinates on both sides and matches exactly. No distance threshold decides who is a neighbour.","sharedBorder":"Summed over the edges the two areas have in common, each counted once, with ground length from the ellipsoid's radii of curvature at the edge's mid-latitude.","unshared":"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.","limits":"Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases."},"neighbours":[{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward","touch":"edge","sharedBorderM":111314.29378689441,"shareOfPerimeter":0.31605556738520485,"sharedEdges":1,"sharedVertices":2},{"id":"ward/2025-01-en-ward/E05000003","code":"E05000003","touch":"point","sharedBorderM":0,"shareOfPerimeter":0,"sharedEdges":0,"sharedVertices":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1631,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BMRfyL1N9A8YK0UMw4MAhNlc2f4RWhicGHaiAd7jbdQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours?touches=edge": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"touches":"edge","border":{"perimeterM":352198.4906256242,"sharedBorderM":111314.29378689441,"unsharedBorderM":240884.19683872978,"pointOnlyTouches":1},"method":{"rule":"Two areas are neighbours where their boundaries share vertices. Adjacent areas in one release are drawn from the same vertices, so a shared border is the same coordinates on both sides and matches exactly. No distance threshold decides who is a neighbour.","sharedBorder":"Summed over the edges the two areas have in common, each counted once, with ground length from the ellipsoid's radii of curvature at the edge's mid-latitude.","unshared":"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.","limits":"Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases."},"neighbours":[{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward","touch":"edge","sharedBorderM":111314.29378689441,"shareOfPerimeter":0.31605556738520485,"sharedEdges":1,"sharedVertices":2}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1483,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BaTqp9RUhZhnC9ZTnIxs5vAusp07Qz_EmsKjgl3BYC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours?touches=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"touches must be edge, for areas sharing a border, or any, which also returns areas meeting at a single point."}
+",
+    "bytes": 220,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"touches":"edge","border":{"perimeterM":352198.4906256242,"sharedBorderM":111314.29378689441,"unsharedBorderM":240884.19683872978,"pointOnlyTouches":1},"method":{"rule":"Two areas are neighbours where their boundaries share vertices. Adjacent areas in one release are drawn from the same vertices, so a shared border is the same coordinates on both sides and matches exactly. No distance threshold decides who is a neighbour.","sharedBorder":"Summed over the edges the two areas have in common, each counted once, with ground length from the ellipsoid's radii of curvature at the edge's mid-latitude.","unshared":"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.","limits":"Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases."},"neighbours":[{"id":"ward/2025-01-en-ward/E05000002","code":"E05000002","name":"Other ward","touch":"edge","sharedBorderM":111314.29378689441,"shareOfPerimeter":0.31605556738520485,"sharedEdges":1,"sharedVertices":2}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1483,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BaTqp9RUhZhnC9ZTnIxs5vAusp07Qz_EmsKjgl3BYC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/other": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092."}
+",
+    "bytes": 223,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092."}
+",
+    "bytes": 223,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=a/b/c/d": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092."}
+",
+    "bytes": 223,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=localAuthority/2025-01-uk-lad/E08000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"first":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"second":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"areaM2":14423346385,"geometry":{"sourceCrs":"EPSG:4326"}},"relation":"within","overlap":{"areaM2":7211673192,"shareOfFirst":1,"shareOfSecond":0.5,"pieceCount":1,"widestPieceWidthM":40952.3},"publishedRelationships":[{"relation":"within","crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"},"href":"/v1/crosswalks/ward-to-local-authority-2025"}}],"method":{"sliverWidthM":100,"minimumCoverage":0.99,"areaProjection":"EPSG:6933","clipping":"polygon-clipping@0.15.7","rule":"The two geometries are intersected and the intersection judged by its widest piece, as the published area-overlap crosswalks are compiled. Under sliverWidthM it is where two independently generalised borders disagree, and the relation is boundary-only; within a factor of two of it the relation is indeterminate, because a crosswalk compile would refuse to decide. Otherwise an area is within the other once minimumCoverage of it is covered.","area":"Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no correction is applied. A piece's width is twice its area over its perimeter.","limits":"Computed from the generalised boundaries as published, which trace coastlines and borders approximately. This measures those shapes and is not an official statement of how the two areas relate; publishedRelationships lists any crosswalk that is."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1949,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-6xaIkAo4qdADNiT1OXO88IzinO1M42dCUAY1knCqMIQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=localAuthority/2025-01-uk-lad/E08000001&unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"first":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"second":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"areaM2":14423346385,"geometry":{"sourceCrs":"EPSG:4326"}},"relation":"within","overlap":{"areaM2":7211673192,"shareOfFirst":1,"shareOfSecond":0.5,"pieceCount":1,"widestPieceWidthM":40952.3},"publishedRelationships":[{"relation":"within","crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"},"href":"/v1/crosswalks/ward-to-local-authority-2025"}}],"method":{"sliverWidthM":100,"minimumCoverage":0.99,"areaProjection":"EPSG:6933","clipping":"polygon-clipping@0.15.7","rule":"The two geometries are intersected and the intersection judged by its widest piece, as the published area-overlap crosswalks are compiled. Under sliverWidthM it is where two independently generalised borders disagree, and the relation is boundary-only; within a factor of two of it the relation is indeterminate, because a crosswalk compile would refuse to decide. Otherwise an area is within the other once minimumCoverage of it is covered.","area":"Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no correction is applied. A piece's width is twice its area over its perimeter.","limits":"Computed from the generalised boundaries as published, which trace coastlines and borders approximately. This measures those shapes and is not an official statement of how the two areas relate; publishedRelationships lists any crosswalk that is."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1949,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-6xaIkAo4qdADNiT1OXO88IzinO1M42dCUAY1knCqMIQ"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092."}
+",
+    "bytes": 223,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=ward/2025-01-en-ward/E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"first":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"second":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"relation":"same-extent","overlap":{"areaM2":7211673192,"shareOfFirst":1,"shareOfSecond":1,"pieceCount":1,"widestPieceWidthM":40952.3},"publishedRelationships":[],"method":{"sliverWidthM":100,"minimumCoverage":0.99,"areaProjection":"EPSG:6933","clipping":"polygon-clipping@0.15.7","rule":"The two geometries are intersected and the intersection judged by its widest piece, as the published area-overlap crosswalks are compiled. Under sliverWidthM it is where two independently generalised borders disagree, and the relation is boundary-only; within a factor of two of it the relation is indeterminate, because a crosswalk compile would refuse to decide. Otherwise an area is within the other once minimumCoverage of it is covered.","area":"Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no correction is applied. A piece's width is twice its area over its perimeter.","limits":"Computed from the generalised boundaries as published, which trace coastlines and borders approximately. This measures those shapes and is not an official statement of how the two areas relate; publishedRelationships lists any crosswalk that is."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1716,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-CfuvXAl0B0RTKjUKs10-w82HfLvPq4NiWLASIdciBSU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=ward/2025-01-en-ward/E05000002": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"first":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"second":{"id":"ward/2025-01-en-ward/E05000002","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000002","name":"Other ward","areaM2":7211673192,"geometry":{"sourceCrs":"EPSG:4326"}},"relation":"disjoint","overlap":{"areaM2":0,"shareOfFirst":0,"shareOfSecond":0,"pieceCount":0,"widestPieceWidthM":null},"publishedRelationships":[],"method":{"sliverWidthM":100,"minimumCoverage":0.99,"areaProjection":"EPSG:6933","clipping":"polygon-clipping@0.15.7","rule":"The two geometries are intersected and the intersection judged by its widest piece, as the published area-overlap crosswalks are compiled. Under sliverWidthM it is where two independently generalised borders disagree, and the relation is boundary-only; within a factor of two of it the relation is indeterminate, because a crosswalk compile would refuse to decide. Otherwise an area is within the other once minimumCoverage of it is covered.","area":"Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no correction is applied. A piece's width is twice its area over its perimeter.","limits":"Computed from the generalised boundaries as published, which trace coastlines and borders approximately. This measures those shapes and is not an official statement of how the two areas relate; publishedRelationships lists any crosswalk that is."}},"meta":{"nextCursor":null}}
+",
+    "bytes": 1669,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-rQEv8YL9cA6Tgi0b2JgKY85icaoMZxz2k1EhRXROHos"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=ward/2025-01-en-ward/E05099999": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/parents": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/parents?depth=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"ancestors":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}},"from":"ward/2025-01-en-ward/E05000001","depth":1}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 1035,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-nmm5GCuVymJCQ5NGgzCsQw3L7jluByvgDxPZb8TVlZM"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/parents?depth=99": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"depth must be an integer from 1 to 20."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/parents?depth=x": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"depth must be an integer from 1 to 20."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/parents?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/relationships?depth=0": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"depth must be an integer from 1 to 20."}
+",
+    "bytes": 149,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/relationships?depth=2": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/relationships?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/similar": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
+",
+    "bytes": 137,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001?crosswalk=ward-to-local-authority-2025": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-parameter","title":"Invalid Parameter","status":400,"detail":"\`measure\` and \`crosswalk\` name what to cite, so they need \`include=citation\`."}
+",
+    "bytes": 196,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001?measure=population": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-parameter","title":"Invalid Parameter","status":400,"detail":"\`measure\` and \`crosswalk\` name what to cite, so they need \`include=citation\`."}
+",
+    "bytes": 196,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001?unexpected=1": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 253,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/children": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/children/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/history": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/neighbours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/overlap": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092."}
+",
+    "bytes": 223,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05099999/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05099999 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/e05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"e05000001 is held by no compiled release of this geography.","code":"area_not_in_release","absence":"unknown","presentIn":[]}
+",
+    "bytes": 226,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/nowhere/E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as nowhere.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 304,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/ward/nowhere/E05000001/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No ward boundary release is published as nowhere.","code":"unknown_release","absence":"unknown-release","availableReleases":[{"id":"2025-01-en-ward","href":"/v1/boundary-releases/ward/2025-01-en-ward"}]}
+",
+    "bytes": 304,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "GET /v1/areas/wd/2025-01-en-ward/E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 253,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-location: /v1/areas/ward/2025-01-en-ward/E05000001",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/children": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 404,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-JBAcFN1MiZYKAbaP9jAZd78GJKwF5Cn2i2HAogucRTE"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UbwqvKyOBX3_E9Pq4RyEHDG6BTVWqUAw7fnwiefHUZU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-BaTqp9RUhZhnC9ZTnIxs5vAusp07Qz_EmsKjgl3BYC4"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/overlap": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 400,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/parents": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "HEAD /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/children": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/overlap": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/parents": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "OPTIONS /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "",
+    "bytes": 0,
+    "headers": [
+      "access-control-allow-headers: if-none-match, if-range, range, accept, content-type, x-request-id",
+      "access-control-allow-methods: GET, HEAD, POST, OPTIONS",
+      "access-control-max-age: 86400",
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "!x-content-type-options",
+    ],
+    "status": 204,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001 [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/children [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/geometry [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/history [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/neighbours [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/overlap [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/parents [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "POST /v1/areas/ward/2025-01-en-ward/E05000001/relationships [post]": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
+",
+    "bytes": 317,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/children": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/children/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/overlap": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/parents": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+  "PUT /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
+",
+    "bytes": 262,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 405,
+  },
+}
+`;
+
+exports[`area detail routes without geometry keep their HTTP responses 1`] = `
+{
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","name":"Greater Manchester","aliases":["GM"],"relationships":[{"relation":"contains","counterpart":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","labels":["Example ward"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}],"childSelection":{"kind":"contemporary"}},"meta":{"nextCursor":null}}
+",
+    "bytes": 651,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-MXaeYaERHk0Rx-oTn5SXINbETHHfaChUH_Sav8OTuT0"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]},"meta":{"nextCursor":null}}
+",
+    "bytes": 253,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-EkrGLhaCgFXT8M0flVHdn7xEdz6TFPxCElkDIbBBPWI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/geometry?tier=nope": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/history": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[],"lineage":[],"sameCodeReleases":[],"note":"Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent."},"meta":{"nextCursor":null}}
+",
+    "bytes": 624,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-UbwqvKyOBX3_E9Pq4RyEHDG6BTVWqUAw7fnwiefHUZU"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/neighbours": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/overlap?place=localAuthority/2025-01-uk-lad/E08000001": {
+    "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the geometry source registry before serving geometry."}
+",
+    "bytes": 186,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
+    ],
+    "status": 503,
+  },
+  "GET /v1/areas/ward/2025-01-en-ward/E05000001/relationships": {
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"],"relationships":[{"relation":"within","counterpart":{"id":"localAuthority/2025-01-uk-lad/E08000001","geography":"localAuthority","boundaryRelease":"2025-01-uk-lad","code":"E08000001","labels":["Greater Manchester"]},"crosswalk":{"id":"ward-to-local-authority-2025","method":"clean-containment","quality":"publisher-supplied","weighting":{"status":"not-applicable"}}}]},"meta":{"nextCursor":null}}
+",
+    "bytes": 621,
+    "headers": [
+      "atlas-release: sha256:registry",
+      "cache-control: public, max-age=300, must-revalidate",
+      "content-type: application/json",
+      "etag: "sha256-d0kruJxXVqRd5N0WpmN69KU9tT7m-wTniCsltNL2CZI"",
+      "vary: accept-encoding",
+    ],
+    "status": 200,
+  },
+}
+`;
