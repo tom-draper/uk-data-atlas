@@ -1,7 +1,10 @@
 import type { LandAreaDataset } from "../../../types/landArea.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
-import { loadLandArea } from "../../../data/land-area/loader.ts";
+import { yearParts } from "../../../declaration/yearParts.ts";
 import { parseNum } from "../../../helpers/parseNumber.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
@@ -31,14 +34,19 @@ export const landArea = defineDataset<LandAreaDataset>({
 	ingestion: {
 		minimumDataRecords: 361,
 		expectedBoundaryYears: [2024],
-		requiredDataFields: ["landHectares", "landSquareKm"],
 	},
-	load: ({ text }) => loadLandArea(text),
+	load: noCompiledPayload<LandAreaDataset>(),
 	statistics: {
 		payload: {
-			header: {
-				coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
-			},
+			parts: yearParts(
+				"land-area",
+				"localAuthority",
+				2024,
+				{
+					coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+				},
+				["2024"],
+			),
 			code: "ladCode",
 		},
 		name: "ladName",
@@ -78,9 +86,9 @@ export const landArea = defineDataset<LandAreaDataset>({
 			},
 		],
 		fields: [{ path: "{surface}", measure: "area" }],
-		// The rows come straight from the CSV; `load` above only feeds the manifest
-		// and the check that the rows rebuild its payload.
+		// Read the statistics directly from the source CSV.
 		direct: {
+			only: true,
 			read: async (reader) => {
 				const records = new Map<string, DirectRecord>();
 				await reader.csvRows(
