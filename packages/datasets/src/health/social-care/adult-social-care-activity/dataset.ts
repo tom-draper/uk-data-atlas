@@ -1,3 +1,5 @@
+import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -62,6 +64,28 @@ export const adultSocialCareActivity = defineDataset<
 			),
 		],
 		fields: [{ path: "value", measure: "long-term-support-clients" }],
+		direct: {
+			read: (reader) =>
+				directIndicator(reader, {
+					id: "adult-social-care-activity",
+					file: "asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+					table: "Table_2",
+					columns: 20,
+					key: "2025",
+					measure: "long-term-support-clients",
+					read: (rows) => {
+						return rows.slice(4).map((row) => {
+							const a = parseNullableNum(row[9]);
+							const b = parseNullableNum(row[10]);
+							return {
+								code: row[0]?.trim() ?? "",
+								name: row[2]?.trim() ?? "",
+								value: a === null || b === null ? null : a + b,
+							};
+						});
+					},
+				}),
+		},
 	},
 	catalogue: {
 		kind: "indicators",
