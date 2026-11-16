@@ -19,6 +19,9 @@ import { atlasLookupContract } from "../atlas/atlasLookupContract";
 import { atlasLookupMetadata } from "../atlas/atlasLookupMetadata";
 import { atlasPageContract } from "../atlas/atlasPageContract";
 import { atlasPageMetadata } from "../atlas/atlasPageMetadata";
+import { coordinateContract } from "../coordinates/coordinateContract";
+import { coordinateFastifyRoutes } from "../coordinates/coordinateFastifyRoutes";
+import { coordinateMetadata } from "../coordinates/coordinateMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
@@ -67,6 +70,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(similarAreasFastifyRoutes, { context });
 	await app.register(documentFastifyRoutes, { context });
 	await app.register(atlasAssetFastifyRoutes, { context });
+	await app.register(coordinateFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -175,14 +179,20 @@ export const generatedPaths = async () => {
 			atlasLookupContract,
 		],
 		["/atlas-pages/{page-id}.json", atlasPageMetadata, atlasPageContract],
+		["/coordinates:convert", coordinateMetadata, coordinateContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
-		const { $schema, ...schema } = openObjectAsPlain(
+		const { $schema, ...described } = openObjectAsPlain(
 			z.toJSONSchema(
 				definition.responses[200].content["application/json"].schema,
 			),
 		);
+		// A schema the description shares by reference keeps that reference.
+		const published = metadata.responses[200].content[
+			"application/json"
+		] as { schema?: { $ref?: string } };
+		const schema = published.schema?.$ref ? published.schema : described;
 		Object.assign(operation, metadata, {
 			responses: {
 				...metadata.responses,
