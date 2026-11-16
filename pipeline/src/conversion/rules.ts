@@ -1,4 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
+import { MEASURE_UNITS } from "@uk-data-atlas/datasets";
 import type { ConversionBasis } from "./crosswalkSteps.ts";
 
 /**
@@ -62,7 +63,12 @@ const BACKTESTED_SPLITS: Readonly<Record<string, ConversionBasis>> = {
 };
 
 /** The units a ratio can be rebuilt in, and what each multiplies the ratio by. */
-const RATIO_SCALES: Readonly<Record<string, number>> = { percent: 100 };
+const percentUnit = MEASURE_UNITS.find((unit) => unit.label === "percent");
+if (!percentUnit || percentUnit.kind !== "percent")
+	throw new Error("The percent unit is missing from the measure vocabulary");
+const RATIO_SCALES: Readonly<Record<string, number>> = {
+	percent: percentUnit.scale,
+};
 
 const REFUSALS: Readonly<Record<string, string>> = {
 	median: "A median of a whole is not a function of the medians of its parts. It needs the distribution underneath, which is not held.",
