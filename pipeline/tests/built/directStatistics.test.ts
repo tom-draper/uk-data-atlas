@@ -49,6 +49,9 @@ const manifest: {
 );
 // Direct-only datasets have no compiled JSON to compare with; the dataset
 // payload check holds their rebuilt payload to a golden hash instead.
+let directParts: ReturnType<typeof readDirectPartsFor> | undefined;
+const readParts = () => (directParts ??= readDirectPartsFor(root));
+
 const directTypes = STATISTICS_DATASETS.filter(
 	({ direct }) => direct && !direct.only,
 ).map(({ type }) => type);
@@ -162,7 +165,7 @@ describe.each(directTypes)("%s read straight from its source", (type) => {
 	let direct: ReturnType<typeof write>;
 
 	it("stores the rows its compiled JSON stores", async () => {
-		const parts = await readDirectPartsFor(root);
+		const parts = await readParts();
 		direct = write(`${type}-direct`, type, (entry) =>
 			directStatistics(config, parts.get(type)!, entry),
 		);
@@ -206,7 +209,7 @@ it.each([
 	"adult-social-care-outcomes",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
-	const parts = await readDirectPartsFor(root);
+	const parts = await readParts();
 	const direct = write(`${type}-direct-only`, type, (entry) =>
 		directStatistics(config, parts.get(type)!, entry),
 	);
