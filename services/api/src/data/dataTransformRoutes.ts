@@ -154,7 +154,7 @@ export const handleDataTransformRoutes = ({
 		return invalidQuery("baselinePlace and comparisonPlace must differ.");
 	if (period === null || geography === null || boundaryYear === null)
 		return invalidQuery(
-			`${measureId} compares two areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${segments[2]} compares two areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
@@ -174,14 +174,14 @@ export const handleDataTransformRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			`The observation artifact for ${segments[2]} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	const numericRecords = observations.records.filter(isNumericObservation);
 	if (numericRecords.length !== observations.records.length)
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain numeric records required for comparison.`,
+			`The observation artifact for ${segments[2]} does not contain numeric records required for comparison.`,
 		);
 	const baseline = numericRecords.find(
 		(record) => record.areaCode === baselineAreaCode,

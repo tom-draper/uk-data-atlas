@@ -391,8 +391,8 @@ const postcodeValue = (
 			422,
 			"Place Not Served",
 			geography
-				? `${measure.id} is not published for ${geography}${period ? ` in ${period}` : ""}${boundaryYear ? ` on ${boundaryYear} boundaries` : ""}; it is published for ${published}.`
-				: `${measure.id} has no source${period ? ` for ${period}` : ""}${boundaryYear ? ` on ${boundaryYear} boundaries` : ""}; GET /v1/measures/${measure.id} lists its periods.`,
+				? `${segments[2]} is not published for ${geography}${period ? ` in ${period}` : ""}${boundaryYear ? ` on ${boundaryYear} boundaries` : ""}; it is published for ${published}.`
+				: `${segments[2]} has no source${period ? ` for ${period}` : ""}${boundaryYear ? ` on ${boundaryYear} boundaries` : ""}; GET /v1/measures/${segments[2]} lists its periods.`,
 		);
 	}
 	// A source is only tried where it covers the postcode's country; the rest
@@ -414,7 +414,7 @@ const postcodeValue = (
 			passedOver.push({
 				...entry.source.sourceGeography,
 				geography: entry.source.sourceGeography.type,
-				reason: `${measure.id} for ${entry.source.sourceGeography.type} covers ${entry.source.coverage.countries.join(", ")}, and ${record.postcode} is in ${country}.`,
+				reason: `${segments[2]} for ${entry.source.sourceGeography.type} covers ${entry.source.coverage.countries.join(", ")}, and ${record.postcode} is in ${country}.`,
 			});
 			return false;
 		});
@@ -449,7 +449,7 @@ const postcodeValue = (
 		return problem(
 			422,
 			"Place Not Served",
-			`No geography ${measure.id} is published for (${published}) answers for ${record.postcode}. Each candidate below says why.`,
+			`No geography ${segments[2]} is published for (${published}) answers for ${record.postcode}. Each candidate below says why.`,
 			{ candidates: describePassed },
 		);
 	}
@@ -458,7 +458,7 @@ const postcodeValue = (
 		return problem(
 			409,
 			"Ambiguous Place",
-			`${record.postcode}'s centroid lies on the boundary between ${attempt.choices.length} ${sourceGeography.type} areas that ${measure.id} answers. Each choice carries its answer.`,
+			`${record.postcode}'s centroid lies on the boundary between ${attempt.choices.length} ${sourceGeography.type} areas that ${segments[2]} answers. Each choice carries its answer.`,
 			{
 				code: "ambiguous_place",
 				choices: attempt.choices.map((entry) => ({
@@ -537,7 +537,7 @@ const postcodeValue = (
 					: undefined,
 				geography
 					? undefined
-					: `No geography was given, so the finest ${measure.id} answers here, ${sourceGeography.type}, was used; otherGeographies lists the others${describePassed.length > 0 ? " and passedOver says why finer ones did not answer" : ""}.`,
+					: `No geography was given, so the finest ${segments[2]} answers here, ${sourceGeography.type}, was used; otherGeographies lists the others${describePassed.length > 0 ? " and passedOver says why finer ones did not answer" : ""}.`,
 				`The postcode was placed in ${sourceGeography.type} areas as drawn for the data's ${sourceGeography.boundaryYear} boundaries, not today's.`,
 				match.nearBoundary
 					? "The centroid lies near the area's edge, so a neighbouring area's value may be the right one for some addresses."

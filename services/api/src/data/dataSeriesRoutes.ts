@@ -72,11 +72,11 @@ export const handleDataSeriesRoutes = ({
 			"This source-exact series endpoint does not select geometry releases, convert observations or aggregate them.",
 		);
 	}
-	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	const place = parsePlaceParameter(parsedUrl.searchParams, segments[2]!);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
 		return invalidQuery(
-			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/value, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
+			`A series is one area's. A curated location is summed from its members by /v1/data/${segments[2]}/value, or answered by /v1/data/${segments[2]}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
 	const named = areaNamedBy({
@@ -123,7 +123,7 @@ export const handleDataSeriesRoutes = ({
 	) {
 		return invalidQuery(
 			areaCode
-				? `${measureId} is published on more than one partition, so give geography and boundaryYear, or a place reference such as localAuthority/E08000035 that carries its geography. Published partitions: ${publishedPartitions(measure)}.`
+				? `${segments[2]} is published on more than one partition, so give geography and boundaryYear, or a place reference such as localAuthority/E08000035 that carries its geography. Published partitions: ${publishedPartitions(measure)}.`
 				: "place is required: an area name, an area code, or a place reference such as localAuthority/E08000035.",
 		);
 	}
@@ -134,7 +134,7 @@ export const handleDataSeriesRoutes = ({
 		return invalidQuery(
 			partition.resolution.refusal.title === "Ambiguous Source"
 				? "datasetId is required because more than one source matches that geography and boundary year."
-				: `${measureId} has no published source for that geography, boundary year and dataset.`,
+				: `${segments[2]} has no published source for that geography, boundary year and dataset.`,
 		);
 	const {
 		defaults,
@@ -153,7 +153,7 @@ export const handleDataSeriesRoutes = ({
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				`The observation artifact for ${measureId} does not contain every period declared by the catalogue.`,
+				`The observation artifact for ${segments[2]} does not contain every period declared by the catalogue.`,
 			);
 		available.push({ period, observations });
 	}
@@ -199,7 +199,7 @@ export const handleDataSeriesRoutes = ({
 			return {
 				status: 200,
 				body: envelope(releaseId, {
-					measureId,
+					measureId: segments[2]!,
 					areaCode,
 					analysisGeography,
 					status: "not-comparable" as const,
@@ -234,12 +234,12 @@ export const handleDataSeriesRoutes = ({
 		const series = available.flatMap(({ period, observations }) => {
 			if (!support.source.periods.includes(period)) return [];
 			if (!observations.records.every(isNumericObservation)) {
-				conversionFailure = `${measureId}/${period} has non-numeric records despite its reviewed extensive conversion.`;
+				conversionFailure = `${segments[2]}/${period} has non-numeric records despite its reviewed extensive conversion.`;
 				return [];
 			}
 			const converted = convertThroughSteps(steps, observations.records);
 			if (converted.status !== "converted") {
-				conversionFailure = `${measureId}/${period} no longer satisfies reviewed conversion ${conversion.id}: ${converted.reason}`;
+				conversionFailure = `${segments[2]}/${period} no longer satisfies reviewed conversion ${conversion.id}: ${converted.reason}`;
 				return [];
 			}
 			const record = converted.records.find(

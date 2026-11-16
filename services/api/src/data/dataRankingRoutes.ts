@@ -89,7 +89,7 @@ export const handleDataRankingRoutes = ({
 		(partition.kind === "selected" && partition.period === null)
 	)
 		return invalidQuery(
-			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
+			`${segments[2]} ranks areas within one source partition, and this query does not pick one: give geography, with codeYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	if (partition.kind === "refusal")
 		return refused(partition.resolution.refusal);
@@ -106,7 +106,7 @@ export const handleDataRankingRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			`The observation artifact for ${segments[2]} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	}
 	const numericRecords = observations.records;
@@ -114,7 +114,7 @@ export const handleDataRankingRoutes = ({
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain numeric records required for ranking.`,
+			`The observation artifact for ${segments[2]} does not contain numeric records required for ranking.`,
 		);
 	}
 	const order = readChoice(
@@ -126,7 +126,7 @@ export const handleDataRankingRoutes = ({
 	}
 	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
 		keyOf: (record) => record.areaCode,
-		subject: `${measureId} ranking`,
+		subject: `${segments[2]} ranking`,
 		scope: selectedSeries?.id,
 	});
 	if ("problem" in page) return page.problem;
