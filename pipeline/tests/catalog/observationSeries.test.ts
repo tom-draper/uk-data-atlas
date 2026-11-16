@@ -7,6 +7,7 @@ import type {
 	AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/measures";
 import { validateObservationSeries } from "../../src/catalog/observationSeries.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 const source = (
 	datasetId: string,
@@ -43,7 +44,9 @@ const table: MeasureTableArtifact = {
 	datasetId: "census",
 	sourceGeography: { type: "lsoa", boundaryYear: 2021 },
 	period: "2021",
-	measures: ["old-young", "old-older"],
+	measures: ["young", "older"].map((age) =>
+		measureSeriesKey({ measure: "residents", dimensions: { age } }),
+	),
 	records: [],
 };
 const observed = (id: string): AnyMeasureObservationArtifact => ({
@@ -72,7 +75,7 @@ test("validates individual and shared table observations by canonical series and
 		validateObservationSeries(
 			catalog(first, second),
 			[],
-			[{ ...table, measures: [first.id, first.id] }],
+			[{ ...table, measures: [table.measures[0]!, table.measures[0]!] }],
 		),
 	).toThrow(/duplicate observation series/);
 });
