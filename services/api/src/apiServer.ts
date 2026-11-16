@@ -2,6 +2,8 @@ import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
 import { similarAreasContract } from "./areas/similarAreasContract";
 import { atlasAssetFastifyRoutes } from "./atlas/atlasAssetFastifyRoutes";
+import { coordinateContract } from "./coordinates/coordinateContract";
+import { coordinateFastifyRoutes } from "./coordinates/coordinateFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
 import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
@@ -96,6 +98,7 @@ const fastifyPaths = new Set(
 		resolveBoundary,
 		compareBoundary,
 		similarAreasContract,
+		coordinateContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -756,6 +759,11 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(atlasAssetFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(coordinateFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,
