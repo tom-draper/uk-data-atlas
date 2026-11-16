@@ -89,6 +89,22 @@ import { locationsMetadata } from "../places/locationsMetadata";
 import { documentContract } from "../documents/documentContract";
 import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
 import { documentMetadata } from "../documents/documentMetadata";
+import {
+	dataChangeContract,
+	dataCompareContract,
+	dataConvertContract,
+	dataRankingsContract,
+	dataSeriesContract,
+	dataValueContract,
+} from "../data/dataContract";
+import { dataFastifyRoutes } from "../data/dataFastifyRoutes";
+import { dataChangeMetadata } from "../data/dataChangeMetadata";
+import { dataCompareMetadata } from "../data/dataCompareMetadata";
+import { dataConvertMetadata } from "../data/dataConvertMetadata";
+import { dataObservationsMetadata } from "../data/dataObservationsMetadata";
+import { dataRankingsMetadata } from "../data/dataRankingsMetadata";
+import { dataSeriesMetadata } from "../data/dataSeriesMetadata";
+import { dataValueMetadata } from "../data/dataValueMetadata";
 import { measureExportRoutes } from "../data/measureExportRoutes";
 import { measureExportMetadata } from "../data/measureExportContract";
 import Fastify from "fastify";
@@ -145,6 +161,7 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(crosswalkFastifyRoutes, { context });
 	await app.register(placeFastifyRoutes, { context });
 	await app.register(locationFastifyRoutes, { context });
+	await app.register(dataFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
@@ -321,6 +338,24 @@ export const generatedPaths = async () => {
 			locationParentsMetadata,
 			locationParentsContract,
 		],
+		[
+			"/data/{measure-id}/convert",
+			dataConvertMetadata,
+			dataConvertContract,
+		],
+		["/data/{measure-id}/series", dataSeriesMetadata, dataSeriesContract],
+		[
+			"/data/{measure-id}/rankings",
+			dataRankingsMetadata,
+			dataRankingsContract,
+		],
+		["/data/{measure-id}/value", dataValueMetadata, dataValueContract],
+		["/data/{measure-id}/change", dataChangeMetadata, dataChangeContract],
+		[
+			"/data/{measure-id}/compare",
+			dataCompareMetadata,
+			dataCompareContract,
+		],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
@@ -372,13 +407,14 @@ export const generatedPaths = async () => {
 		throw new Error("Missing Fastify operation: postcode batch");
 	// The description names a request body and several error responses.
 	Object.assign(postcodeBatchOperation, postcodeBatchMetadata);
-	// Bulk resources are published as the description gives them: a manifest by
-	// reference, and downloads in several media types.
+	// Bulk resources and measure tables are published as the description gives
+	// them: a manifest by reference, and downloads in several media types.
 	for (const [path, metadata] of [
 		["/exports", exportsMetadata],
 		["/exports/{export-id}", exportDetailMetadata],
 		["/lookups", lookupsMetadata],
 		["/lookups/{lookup-id}", lookupDetailMetadata],
+		["/data/{measure-id}", dataObservationsMetadata],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);

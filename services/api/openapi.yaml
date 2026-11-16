@@ -4783,133 +4783,106 @@ paths:
   /data/{measure-id}:
     get:
       operationId: getMeasureObservations
-      x-refused-query-parameters: [conversion, aggregate]
-      tags: ["Map"]
-      summary: Retrieve source-exact observations, or an opt-in canonical-unit
-        representation
+      summary: Retrieve source-exact observations, or an opt-in canonical-unit representation
+      tags:
+        - Map
+      description: >
+        Serves observed values for one published measure and source partition. `population` covers
+        2022 Ward 2023 codes in England and Wales, 2011–2024 Local Authority 2023 codes across all
+        four UK nations, and ONS's own mid-2021 and mid-2022 estimates for the July 2024 Westminster
+        constituencies in England and Wales. `ghg-emissions` covers 2005–2024 Local Authority 2025
+        codes across all four nations, as net territorial emissions in kt CO2e; emissions per resident
+        are not served, because a ratio cannot be summed over areas. `total-jobs` covers 2011–2024
+        Local Authority 2023 codes, as jobs counted at the workplace and rounded by ONS to the nearest
+        thousand. Great Britain is published for every year and Northern Ireland for 2020 to 2022
+        only; in the other years Northern Ireland has no records rather than zero jobs, so a sum over
+        it is refused, not reported as 0. `mobile-4g-coverage` and `mobile-5g-coverage` cover 2025
+        Local Authority 2024 codes across all four nations, as the share of premises reached by all
+        four mobile network operators. Both are declared intensive: a share does not add over areas,
+        and combining authorities needs the premises weight the measure names. `house-price-median`
+        covers ward-level median price paid for England and Wales, 1995-2022, each period the year
+        ending December, under the ward codes the publisher used except for one reviewed, code-only
+        correction: Temple Newsam's E05013831 is served as the geometrically identical December 2020
+        code E05011412, with the publisher code carried as `sourceAreaCode`. It is declared
+        `non-aggregatable` with `statistic: median`: a median of medians is not the median of the
+        underlying sales, so aggregation and conversion both refuse it.
+
+        `imd-rank` and `imd-decile` cover the English Index of Multiple Deprivation 2019 for 32,844
+        LSOAs on 2011 codes. Both are ordinal and `non-aggregatable`, and both are positions within
+        England alone: the other nations' indices use different methods and cannot be compared.
+
+        `wimd-rank` and `wimd-decile` cover the Welsh Index of Multiple Deprivation 2019 for 1,909
+        LSOAs on 2011 codes, as published.
+
+        `simd-rank` and `simd-decile` cover the Scottish Index of Multiple Deprivation 2020v2 for
+        6,976 data zones on 2011 codes, as published.
+
+        `nimdm-rank` covers the Northern Ireland Multiple Deprivation Measure 2017 for 890 super
+        output areas, identified by NISRA codes such as `95AA01S1` rather than GSS codes.
+
+        `life-expectancy-male` and `life-expectancy-female` cover life expectancy at birth in England,
+        Wales and Northern Ireland for every three-year period from 2001 to 2003 to 2020 to 2022, on
+        December 2021 local-authority codes. They are `non-aggregatable`: a combined population's life
+        expectancy has to be recalculated from deaths and population, not averaged.
+
+        A measure that declares `uncertainty` carries the publisher's interval on each record as
+        `confidenceInterval` (`lower`, `upper`), at the level the measure states. Intervals are never
+        computed by this API.
+
+        `population-density` is the one derived measure: mid-year population divided by ONS Standard
+        Area Measurement land area, which excludes inland water. Its values carry `status: "derived"`
+        rather than `observed`, no publisher is answerable for the quotient, and the measure names
+        both input datasets in `derivedFrom` so attribution covers the denominator. It is intensive,
+        so it neither aggregates nor converts.
+
+        The `travel-to-work-*` and `car-availability-*` measures cover Census 2021 Local Authority
+        April 2023 codes for England and Wales, as counts rather than shares; the four authorities
+        created in April 2023 are summed from their predecessors, which are not served, so no resident
+        is counted twice: a count of people or households adds over areas, and each breakdown
+        publishes its own `-total` denominator so a caller can derive a share and know what it is a
+        share of. `qualification-*` covers the same authorities' usual residents aged 16 and over by
+        highest qualification, with its own `-total`, and `ethnicity-*` their usual residents in each
+        of the nineteen census ethnic groups, which are exhaustive and so need no separate total.
+        `broadband-*-availability` covers July 2025 Local Authority 2024 codes across all four
+        nations, as the share of premises able to receive each service; like mobile coverage it is
+        weighted by premises and is not offered for aggregation. `claimant-count` and
+        `claimant-count-16-to-24` cover April 2026 Local Authority 2024 codes across all four nations,
+        as counts of Universal Credit and Jobseeker's Allowance claimants rounded to the nearest five.
+        `temporary-accommodation-households`, `-households-with-children` and `-children` cover
+        January to March 2026 Local Authority 2025 codes for England; authorities that submitted no
+        return have no record, so an England total over them is reported with partial coverage.
+        `median-annual-pay` and `median-hourly-pay` cover 2025 provisional Local Authority 2025 codes
+        for England, as median gross pay of employee jobs by where the employee lives; a median is not
+        aggregatable. The `crime-*` measures cover the year ending March 2026 on Community Safety
+        Partnership 2023 codes for England and Wales, as offence counts excluding fraud; offences
+        unassigned to a partnership are not included, so partnership sums fall short of force and
+        national totals. `unemployment-rate` and `unemployment-level` are ONS's final model-based
+        estimates for Great Britain with 95% confidence intervals, on Local Authority 2019 codes for
+        every period from 1996-97 to 2021 and on Local Authority 2021 codes for 2020 and 2021; periods
+        to 2003-04 are financial years. `no2-background-mean`, `pm10-background-mean` and
+        `pm25-background-mean` cover 2024 Local Authority 2024 codes across all four nations, as area
+        means of Defra's 1x1 km PCM background maps, derived by this Atlas and aggregated weighted by
+        `air-quality-grid-cells`; `pm25-population-weighted` and its `-anthropogenic` part are Defra's
+        published population-weighted concentrations. This route never selects a May/December boundary
+        release, converts values between geographies, or aggregates them. By default, it serves
+        publisher-reported values and any reviewed, documented code-only repairs. A caller may ask for
+        `units=canonical` to multiply numeric values and any published interval bounds by the
+        measure's declared canonical scale. That response identifies the calculation and canonical
+        unit; it never changes an observation artifact. A caller may supply `release` only when the
+        compatibility report proves that every source code is present; the response identifies that
+        caller-selected code join. `GET /measures/{measure-id}` declares valid period/geography
+        combinations, and `GET /documents/measure-{measure-id}.json` declares eligible releases. The
+        geography may be left out when `place` names an area, by name or code, or the measure is
+        published on one; the boundary year and period then default to the newest partition and its
+        latest period, stated in `defaults`. Every response includes compact provenance linking the
+        immutable Atlas release, measure, source dataset and observation artifact, along with the
+        selected geography match and an explicit statement that no transformation has been applied.
       x-likely-refusal:
         status: 400
         when:
-          "The measure is published on several geographies and neither `geography`
-          nor `place` names one, so no partition is chosen for the caller."
-        x-example-request: "/v1/data/population?period=2022"
-      description: >
-        Serves observed values for one published measure and source partition.
-        `population` covers 2022 Ward 2023 codes in England and Wales, 2011–2024
-        Local Authority 2023 codes across all four UK nations, and ONS's own
-        mid-2021 and mid-2022 estimates for the July 2024 Westminster
-        constituencies in England and Wales. `ghg-emissions` covers 2005–2024
-        Local Authority 2025 codes across all four nations, as net territorial
-        emissions in kt CO2e; emissions per resident are not served, because a
-        ratio cannot be summed over areas. `total-jobs` covers 2011–2024 Local
-        Authority 2023 codes, as jobs counted at the workplace and rounded by
-        ONS to the nearest thousand. Great Britain is published for every year
-        and Northern Ireland for 2020 to 2022 only; in the other years Northern
-        Ireland has no records rather than zero jobs, so a sum over it is
-        refused, not reported as 0. `mobile-4g-coverage` and
-        `mobile-5g-coverage` cover 2025 Local Authority 2024 codes across all
-        four nations, as the share of premises reached by all four mobile
-        network operators. Both are declared intensive: a share does not add
-        over areas, and combining authorities needs the premises weight the
-        measure names. `house-price-median` covers ward-level median price paid
-        for England and Wales, 1995-2022, each period the year ending December,
-        under the ward codes the publisher used except for one reviewed,
-        code-only correction: Temple Newsam's E05013831 is served as the
-        geometrically identical December 2020 code E05011412, with the publisher
-        code carried as `sourceAreaCode`. It is declared `non-aggregatable` with
-        `statistic: median`: a median of medians is not the median of the
-        underlying sales, so aggregation and conversion both refuse it.
-
-        `imd-rank` and `imd-decile` cover the English Index of Multiple
-        Deprivation 2019 for 32,844 LSOAs on 2011 codes. Both are ordinal and
-        `non-aggregatable`, and both are positions within England alone: the
-        other nations' indices use different methods and cannot be compared.
-
-        `wimd-rank` and `wimd-decile` cover the Welsh Index of Multiple
-        Deprivation 2019 for 1,909 LSOAs on 2011 codes, as published.
-
-        `simd-rank` and `simd-decile` cover the Scottish Index of Multiple
-        Deprivation 2020v2 for 6,976 data zones on 2011 codes, as published.
-
-        `nimdm-rank` covers the Northern Ireland Multiple Deprivation Measure
-        2017 for 890 super output areas, identified by NISRA codes such as
-        `95AA01S1` rather than GSS codes.
-
-        `life-expectancy-male` and `life-expectancy-female` cover life
-        expectancy at birth in England, Wales and Northern Ireland for every
-        three-year period from 2001 to 2003 to 2020 to 2022, on December 2021
-        local-authority codes. They are `non-aggregatable`: a combined
-        population's life expectancy has to be recalculated from deaths and
-        population, not averaged.
-
-        A measure that declares `uncertainty` carries the publisher's interval
-        on each record as `confidenceInterval` (`lower`, `upper`), at the level
-        the measure states. Intervals are never computed by this API.
-
-        `population-density` is the one derived measure: mid-year population
-        divided by ONS Standard Area Measurement land area, which excludes
-        inland water. Its values carry `status: "derived"` rather than
-        `observed`, no publisher is answerable for the quotient, and the measure
-        names both input datasets in `derivedFrom` so attribution covers the
-        denominator. It is intensive, so it neither aggregates nor converts.
-
-        The `travel-to-work-*` and `car-availability-*` measures cover Census
-        2021 Local Authority April 2023 codes for England and Wales, as counts
-        rather than shares; the four authorities created in April 2023 are
-        summed from their predecessors, which are not served, so no resident is
-        counted twice: a count of people or households adds over areas, and each
-        breakdown publishes its own `-total` denominator so a caller can derive
-        a share and know what it is a share of. `qualification-*` covers the
-        same authorities' usual residents aged 16 and over by highest
-        qualification, with its own `-total`, and `ethnicity-*` their usual
-        residents in each of the nineteen census ethnic groups, which are
-        exhaustive and so need no separate total. `broadband-*-availability`
-        covers July 2025 Local Authority 2024 codes across all four nations, as
-        the share of premises able to receive each service; like mobile coverage
-        it is weighted by premises and is not offered for aggregation.
-        `claimant-count` and `claimant-count-16-to-24` cover April 2026 Local
-        Authority 2024 codes across all four nations, as counts of Universal
-        Credit and Jobseeker's Allowance claimants rounded to the nearest five.
-        `temporary-accommodation-households`, `-households-with-children` and
-        `-children` cover January to March 2026 Local Authority 2025 codes for
-        England; authorities that submitted no return have no record, so an
-        England total over them is reported with partial coverage.
-        `median-annual-pay` and `median-hourly-pay` cover 2025 provisional Local
-        Authority 2025 codes for England, as median gross pay of employee jobs
-        by where the employee lives; a median is not aggregatable. The `crime-*`
-        measures cover the year ending March 2026 on Community Safety
-        Partnership 2023 codes for England and Wales, as offence counts
-        excluding fraud; offences unassigned to a partnership are not included,
-        so partnership sums fall short of force and national totals.
-        `unemployment-rate` and `unemployment-level` are ONS's final model-based
-        estimates for Great Britain with 95% confidence intervals, on Local
-        Authority 2019 codes for every period from 1996-97 to 2021 and on Local
-        Authority 2021 codes for 2020 and 2021; periods to 2003-04 are financial
-        years. `no2-background-mean`, `pm10-background-mean` and
-        `pm25-background-mean` cover 2024 Local Authority 2024 codes across all
-        four nations, as area means of Defra's 1x1 km PCM background maps,
-        derived by this Atlas and aggregated weighted by
-        `air-quality-grid-cells`; `pm25-population-weighted` and its
-        `-anthropogenic` part are Defra's published population-weighted
-        concentrations. This route never selects a May/December boundary
-        release, converts values between geographies, or aggregates them. By
-        default, it serves publisher-reported values and any reviewed,
-        documented code-only repairs. A caller may ask for `units=canonical` to
-        multiply numeric values and any published interval bounds by the
-        measure's declared canonical scale. That response identifies the
-        calculation and canonical unit; it never changes an observation
-        artifact. A caller may supply `release` only when the compatibility
-        report proves that every source code is present; the response identifies
-        that caller-selected code join. `GET /measures/{measure-id}` declares
-        valid period/geography combinations, and `GET
-        /documents/measure-{measure-id}.json` declares eligible releases. The
-        geography may be left out when `place` names an area, by name or code,
-        or the measure is published on one; the boundary year and period then
-        default to the newest partition and its latest period, stated in
-        `defaults`. Every response includes compact provenance linking the
-        immutable Atlas release, measure, source dataset and observation
-        artifact, along with the selected geography match and an explicit
-        statement that no transformation has been applied.
+          The measure is published on several geographies and neither `geography` nor `place` names one,
+          so no partition is chosen for the caller.
+        x-example-request: /v1/data/population?period=2022
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - name: measure-id
@@ -4918,9 +4891,8 @@ paths:
           schema:
             type: string
           description: >
-            A published measure id, for example `population`, `ghg-emissions` or
-            `mobile-5g-coverage`. `GET /measures` lists them, each with the
-            aggregation its values permit.
+            A published measure id, for example `population`, `ghg-emissions` or `mobile-5g-coverage`.
+            `GET /measures` lists them, each with the aggregation its values permit.
         - $ref: "#/components/parameters/OptionalSourcePeriod"
         - $ref: "#/components/parameters/OptionalSourceGeography"
         - $ref: "#/components/parameters/OptionalSourceCodeYear"
@@ -4930,67 +4902,66 @@ paths:
           schema:
             type: string
           description: >
-            Caller-selected geometry release. Accepted only when every source
-            code is present in a published compatibility candidate; it does not
-            convert values or assert equal geometry.
+            Caller-selected geometry release. Accepted only when every source code is present in a
+            published compatibility candidate; it does not convert values or assert equal geometry.
         - $ref: "#/components/parameters/Place"
         - name: include
           in: query
           required: false
           schema:
-            enum: [area]
+            enum:
+              - area
           description: >
-            Add the selected release's canonical area identity, name and aliases
-            to each record. Requires a compatible `release`.
+            Add the selected release's canonical area identity, name and aliases to each record.
+            Requires a compatible `release`.
         - name: format
           in: query
           required: false
           schema:
-            enum: [json, csv, ndjson]
+            enum:
+              - json
+              - csv
+              - ndjson
             default: json
           description: >
-            `json` returns the API envelope. `csv` and `ndjson` return one
-            provenance-bearing row per observation, suitable for downloads and
-            line-oriented processing. Each row carries the measure's `unit`, so
-            a saved file cannot be read in the wrong one, and ends with
-            `lowerBound` and `upperBound`, empty where no interval is published.
-            Tabular responses are paginated like the JSON ones, but carry the
-            next page as a `Link` header with `rel="next"` because they have no
-            envelope to hold a cursor.
+            `json` returns the API envelope. `csv` and `ndjson` return one provenance-bearing row per
+            observation, suitable for downloads and line-oriented processing. Each row carries the
+            measure's `unit`, so a saved file cannot be read in the wrong one, and ends with
+            `lowerBound` and `upperBound`, empty where no interval is published. Tabular responses are
+            paginated like the JSON ones, but carry the next page as a `Link` header with `rel="next"`
+            because they have no envelope to hold a cursor.
         - name: units
           in: query
           required: false
           schema:
-            enum: [source, canonical]
+            enum:
+              - source
+              - canonical
             default: source
           description: >
-            `source` (the default) returns the published values and display unit
-            unchanged. `canonical` returns JSON numeric values multiplied by the
-            measure's declared `unitDefinition.scaleToCanonical`, plus a
-            `valueRepresentation` calculation receipt. It is unavailable for
-            categorical observations and tabular formats.
+            `source` (the default) returns the published values and display unit unchanged.
+            `canonical` returns JSON numeric values multiplied by the measure's declared
+            `unitDefinition.scaleToCanonical`, plus a `valueRepresentation` calculation receipt. It is
+            unavailable for categorical observations and tabular formats.
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description:
-            A cursor-paginated JSON page or a source-exact tabular export.
-            Canonical values are an opt-in JSON representation.
+            A cursor-paginated JSON page or a source-exact tabular export. Canonical values are an
+            opt-in JSON representation.
           headers:
             Link:
               description: >
-                Present on a tabular page that is not the last. An RFC 8288
-                `rel="next"` relation holding the same query with its cursor
-                advanced.
+                Present on a tabular page that is not the last. An RFC 8288 `rel="next"` relation
+                holding the same query with its cursor advanced.
               schema:
                 type: string
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population?period=2022&geography=ward&codeYear=202\
-                3&place=E05000932"
+              x-example-request: /v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000932
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -5017,9 +4988,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -5039,9 +5009,8 @@ paths:
                         - GB-ENG
                       recordCount: 7608
                       note:
-                        Published source records are available for England and Wales only; this
-                        endpoint does not infer Scottish or Northern Irish
-                        values.
+                        Published source records are available for England and Wales only; this endpoint does not
+                        infer Scottish or Northern Irish values.
                   period: "2022"
                   sourceGeography:
                     type: ward
@@ -5060,13 +5029,11 @@ paths:
                       match:
                         status: no-boundary-release-selected
                         note:
-                          The published observations declare a geography type and code vintage, but
-                          not a boundary release.
+                          The published observations declare a geography type and code vintage, but not a boundary
+                          release.
                     transformation:
                       status: not-applied
-                      note:
-                        Values are served source-exact; no geographic conversion or aggregation
-                        was applied.
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
                     source:
                       dataset:
                         id: population
@@ -5096,69 +5063,62 @@ paths:
         "409":
           $ref: "#/components/responses/AmbiguousArea"
         "422":
-          description:
-            The requested operation is not supported for this source-exact
-            measure.
+          description: The requested operation is not supported for this source-exact measure.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - conversion
+        - aggregate
 
   /data/{measure-id}/convert:
     get:
       operationId: convertSourceExactMeasure
-      x-refused-query-parameters: [release]
-      tags: ["Trend"]
-      summary: Regroup an extensive measure through a published crosswalk or
-        relationship path
+      summary: Regroup an extensive measure through a published crosswalk or relationship path
+      tags:
+        - Trend
+      description: >
+        Converts a source partition onto another geography or code vintage using the crosswalk, or the
+        published relationship path, the caller names. Exactly one of `crosswalk` and `path` is
+        required. The route never selects a conversion path: `GET /crosswalks` lists the published
+        crosswalks and `GET /relationships` the published paths, and the response repeats each
+        crosswalk's method, quality, weighting and content hash.
+
+
+        A `path` carries values through every one of its steps in order, in the direction each step
+        declares. Weights multiply along the path, so a source split at one step and split again at
+        the next is apportioned by the product of the two published weights. A path is refused as a
+        whole if any step would drop a value or split one without a weight.
+
+
+        The crosswalk decides the target areas, so this route selects no geometry release: passing
+        `release` is refused rather than ignored. Ask `/data/{measure-id}` with a compatible `release`
+        to join geometry to source-exact values instead.
+
+        Only a measure declared extensive may be converted, because conversion works by adding values
+        up. An intensive measure is rejected: a share or a rank cannot be regrouped by summing, and
+        weighting one by area produces a number with no meaning.
+
+        The reported `method` distinguishes the outcomes. Across a path it describes every step
+        together: `exact` only if no step splits a source, and `population-weighted` only if every
+        splitting step is. `exact` means every source area sits wholly within one target, so the
+        conversion is a regrouping and the partition total is unchanged. `area-weighted` means some
+        sources were split in proportion to overlapping area, which is an estimate that assumes the
+        measure is spread evenly across each source. `population-weighted` means they were split by
+        where each source's residents live, counted from the crosswalk's population building blocks,
+        which assumes the measure follows resident population.
+
+        A source code the crosswalk does not carry, or a split source with no published weight, is
+        rejected rather than partially converted.
       x-likely-refusal:
         status: 400
         when:
-          "Neither `crosswalk` nor `path` is named. This route never chooses a
-          conversion path; `/v1/relationships` finds the published ones."
-        x-example-request: "/v1/data/population/convert?period=2022&geography=ward&codeYear=2023"
-      description: >
-        Converts a source partition onto another geography or code vintage using
-        the crosswalk, or the published relationship path, the caller names.
-        Exactly one of `crosswalk` and `path` is required. The route never
-        selects a conversion path: `GET /crosswalks` lists the published
-        crosswalks and `GET /relationships` the published paths, and the
-        response repeats each crosswalk's method, quality, weighting and content
-        hash.
-
-
-        A `path` carries values through every one of its steps in order, in the
-        direction each step declares. Weights multiply along the path, so a
-        source split at one step and split again at the next is apportioned by
-        the product of the two published weights. A path is refused as a whole
-        if any step would drop a value or split one without a weight.
-
-
-        The crosswalk decides the target areas, so this route selects no
-        geometry release: passing `release` is refused rather than ignored. Ask
-        `/data/{measure-id}` with a compatible `release` to join geometry to
-        source-exact values instead.
-
-        Only a measure declared extensive may be converted, because conversion
-        works by adding values up. An intensive measure is rejected: a share or
-        a rank cannot be regrouped by summing, and weighting one by area
-        produces a number with no meaning.
-
-        The reported `method` distinguishes the outcomes. Across a path it
-        describes every step together: `exact` only if no step splits a source,
-        and `population-weighted` only if every splitting step is. `exact` means
-        every source area sits wholly within one target, so the conversion is a
-        regrouping and the partition total is unchanged. `area-weighted` means
-        some sources were split in proportion to overlapping area, which is an
-        estimate that assumes the measure is spread evenly across each source.
-        `population-weighted` means they were split by where each source's
-        residents live, counted from the crosswalk's population building blocks,
-        which assumes the measure follows resident population.
-
-        A source code the crosswalk does not carry, or a split source with no
-        published weight, is rejected rather than partially converted.
+          Neither `crosswalk` nor `path` is named. This route never chooses a conversion path;
+          `/v1/relationships` finds the published ones.
+        x-example-request: /v1/data/population/convert?period=2022&geography=ward&codeYear=2023
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -5168,17 +5128,16 @@ paths:
           schema:
             type: string
           description: >
-            A crosswalk id returned by `GET /crosswalks`, applied forward.
-            Required unless `path` is named; naming both is refused.
+            A crosswalk id returned by `GET /crosswalks`, applied forward. Required unless `path` is
+            named; naming both is refused.
         - name: path
           in: query
           required: false
           schema:
             type: string
           description: >
-            A relationship path id returned by `GET /relationships`, applied
-            through every step. Required unless `crosswalk` is named; naming
-            both is refused.
+            A relationship path id returned by `GET /relationships`, applied through every step.
+            Required unless `crosswalk` is named; naming both is refused.
         - $ref: "#/components/parameters/SourcePeriod"
         - $ref: "#/components/parameters/SourceGeography"
         - $ref: "#/components/parameters/SourceCodeYear"
@@ -5187,16 +5146,13 @@ paths:
       responses:
         "200":
           description: >
-            Cursor-paginated derived values on the crosswalk's target areas,
-            with the conversion method and the crosswalk's own provenance.
+            Cursor-paginated derived values on the crosswalk's target areas, with the conversion
+            method and the crosswalk's own provenance.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population/convert?period=2022&geography=ward&code\
-                Year=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023\
-                -05-uk-bgc-v2-clean-containment&limit=1"
+              x-example-request: /v1/data/population/convert?period=2022&geography=ward&codeYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment&limit=1
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -5223,9 +5179,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -5245,9 +5200,8 @@ paths:
                         - GB-ENG
                       recordCount: 7608
                       note:
-                        Published source records are available for England and Wales only; this
-                        endpoint does not infer Scottish or Northern Irish
-                        values.
+                        Published source records are available for England and Wales only; this endpoint does not
+                        infer Scottish or Northern Irish values.
                   period: "2022"
                   sourceGeography:
                     type: ward
@@ -5269,13 +5223,13 @@ paths:
                       match:
                         status: no-boundary-release-selected
                         note:
-                          The published observations declare a geography type and code vintage, but
-                          not a boundary release.
+                          The published observations declare a geography type and code vintage, but not a boundary
+                          release.
                     transformation:
                       status: applied
                       note:
-                        Input observations are source-exact; the values below were regrouped onto
-                        the crosswalk's target areas.
+                        Input observations are source-exact; the values below were regrouped onto the crosswalk's
+                        target areas.
                     source:
                       dataset:
                         id: population
@@ -5297,8 +5251,8 @@ paths:
                     inputRecordCount: 7608
                     outputRecordCount: 318
                     note:
-                      Every source area sits wholly within one target, so this is a regrouping
-                      and the partition total is unchanged.
+                      Every source area sits wholly within one target, so this is a regrouping and the partition
+                      total is unchanged.
                   aggregation: null
                   records:
                     - areaCode: E06000001
@@ -5313,45 +5267,44 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           description: >
-            The measure is intensive, the crosswalk starts at another geography,
-            or the partition cannot be converted completely.
+            The measure is intensive, the crosswalk starts at another geography, or the partition
+            cannot be converted completely.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
 
   /data/{measure-id}/series:
     get:
       operationId: getSourceExactMeasureSeries
-      x-refused-query-parameters: [release, conversion, aggregate]
-      tags: ["Trend"]
       summary: Retrieve a source-exact or reviewed derived time series
+      tags:
+        - Trend
+      description: >
+        A measure with dimensions answers for the members its filters name, such as
+        `?offence=burglary`; a dimension left out takes its total where one is published, and several
+        members or `*` answer one `breakdown` entry per series, as `/value` does.
+
+
+        Returns all published observations for one area code within one source geography and code
+        vintage. `place` accepts an area name, code or reference. With no source partition, the
+        current published partition for that place is selected and returned as `defaults`. Without
+        `to`, the result is source-exact: it does not select a boundary release, convert values or
+        aggregate them. With `to`, the result is available only where the exact source partition has a
+        reviewed conversion; every returned value is then labelled `derived` on that named frame.
+        Supply `datasetId` when a measure has more than one source for the requested geography and
+        boundary year.
       x-likely-refusal:
         status: 409
         code: ambiguous_place
         when:
-          "The name means more than one area the measure is published for. Each
-          choice carries the request that asks about it alone."
-        x-example-request: "/v1/data/population/series?place=Newport"
-      description: >
-        A measure with dimensions answers for the members its filters name, such
-        as `?offence=burglary`; a dimension left out takes its total where one
-        is published, and several members or `*` answer one `breakdown` entry
-        per series, as `/value` does.
-
-
-        Returns all published observations for one area code within one source
-        geography and code vintage. `place` accepts an area name, code or
-        reference. With no source partition, the current published partition for
-        that place is selected and returned as `defaults`. Without `to`, the
-        result is source-exact: it does not select a boundary release, convert
-        values or aggregate them. With `to`, the result is available only where
-        the exact source partition has a reviewed conversion; every returned
-        value is then labelled `derived` on that named frame. Supply `datasetId`
-        when a measure has more than one source for the requested geography and
-        boundary year.
+          The name means more than one area the measure is published for. Each choice carries the
+          request that asks about it alone.
+        x-example-request: /v1/data/population/series?place=Newport
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -5364,29 +5317,24 @@ paths:
           schema:
             type: string
           description: >
-            One `geography/release` pair for a reviewed analysis frame. The
-            source geography and boundary year select a particular partition;
-            omit them to use the current one for `place`.
+            One `geography/release` pair for a reviewed analysis frame. The source geography and
+            boundary year select a particular partition; omit them to use the current one for `place`.
         - name: datasetId
           in: query
           required: false
           schema:
             type: string
           description: >
-            Narrows the partition to one dataset where a measure has several on
-            the same geography and vintage.
+            Narrows the partition to one dataset where a measure has several on the same geography and
+            vintage.
       responses:
         "200":
-          description:
-            Source-exact or reviewed derived observations in ascending source
-            period order.
+          description: Source-exact or reviewed derived observations in ascending source period order.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population/series?place=E08000025&geography=localA\
-                uthority&codeYear=2023"
+              x-example-request: /v1/data/population/series?place=E08000025&geography=localAuthority&codeYear=2023
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -5413,9 +5361,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -5435,9 +5382,8 @@ paths:
                         - GB-ENG
                       recordCount: 361
                       note:
-                        Published source records cover all four UK nations for every available
-                        period. Historic values remain keyed to the source's
-                        2023 local-authority code vintage.
+                        Published source records cover all four UK nations for every available period. Historic values
+                        remain keyed to the source's 2023 local-authority code vintage.
                   areaCode: E08000025
                   sourceGeography:
                     type: localAuthority
@@ -5456,13 +5402,11 @@ paths:
                       match:
                         status: no-boundary-release-selected
                         note:
-                          The published observations declare a geography type and code vintage, but
-                          not a boundary release.
+                          The published observations declare a geography type and code vintage, but not a boundary
+                          release.
                     transformation:
                       status: not-applied
-                      note:
-                        Values are served source-exact; no geographic conversion or aggregation
-                        was applied.
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
                     source:
                       dataset:
                         id: population-uk
@@ -5486,35 +5430,36 @@ paths:
         "409":
           $ref: "#/components/responses/AmbiguousArea"
         "422":
-          description:
-            The requested conversion, aggregation or geometry release is not
-            supported.
+          description: The requested conversion, aggregation or geometry release is not supported.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
+        - conversion
+        - aggregate
 
   /data/{measure-id}/rankings:
     get:
       operationId: getSourceExactMeasureRankings
-      x-refused-query-parameters: [release, conversion, aggregate]
-      tags: ["Trend"]
       summary: Rank areas within one source-exact measure partition
+      tags:
+        - Trend
+      description: >
+        Ranks only the observations published for one period, geography and code vintage. Omitting any
+        of those selects the current published partition and latest period, recorded in `defaults`.
+        Uses competition ranking: tied values share a rank and the following rank accounts for all
+        preceding observations (1, 1, 3). It does not select a boundary release, convert values or
+        aggregate them.
       x-likely-refusal:
         status: 400
         when:
-          "The measure is published on several geographies and none is named, so
-          there is no one set of areas to rank."
-        x-example-request: "/v1/data/population/rankings"
-      description: >
-        Ranks only the observations published for one period, geography and code
-        vintage. Omitting any of those selects the current published partition
-        and latest period, recorded in `defaults`. Uses competition ranking:
-        tied values share a rank and the following rank accounts for all
-        preceding observations (1, 1, 3). It does not select a boundary release,
-        convert values or aggregate them.
+          The measure is published on several geographies and none is named, so there is no one set of
+          areas to rank.
+        x-example-request: /v1/data/population/rankings
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -5525,7 +5470,9 @@ paths:
           in: query
           required: false
           schema:
-            enum: [asc, desc]
+            enum:
+              - asc
+              - desc
             default: desc
           description: Whether the highest or the lowest value ranks first.
         - $ref: "#/components/parameters/PageLimit"
@@ -5537,9 +5484,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population/rankings?period=2022&geography=ward&cod\
-                eYear=2023&limit=1"
+              x-example-request: /v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&limit=1
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -5566,9 +5511,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -5588,9 +5532,8 @@ paths:
                         - GB-ENG
                       recordCount: 7608
                       note:
-                        Published source records are available for England and Wales only; this
-                        endpoint does not infer Scottish or Northern Irish
-                        values.
+                        Published source records are available for England and Wales only; this endpoint does not
+                        infer Scottish or Northern Irish values.
                   period: "2022"
                   sourceGeography:
                     type: ward
@@ -5609,13 +5552,11 @@ paths:
                       match:
                         status: no-boundary-release-selected
                         note:
-                          The published observations declare a geography type and code vintage, but
-                          not a boundary release.
+                          The published observations declare a geography type and code vintage, but not a boundary
+                          release.
                     transformation:
                       status: not-applied
-                      note:
-                        Values are served source-exact; no geographic conversion or aggregation
-                        was applied.
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
                     source:
                       dataset:
                         id: population
@@ -5628,8 +5569,8 @@ paths:
                     order: desc
                     method: competition
                     note:
-                      Equal values share a rank; the following rank accounts for every preceding
-                      observation (for example 1, 1, 3).
+                      Equal values share a rank; the following rank accounts for every preceding observation (for
+                      example 1, 1, 3).
                   records:
                     - areaCode: E05011403
                       value: 34637
@@ -5643,15 +5584,17 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
-          description:
-            The requested conversion, aggregation or geometry release is not
-            supported.
+          description: The requested conversion, aggregation or geometry release is not supported.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
+        - conversion
+        - aggregate
 
   /places:
     get:
@@ -6080,84 +6023,70 @@ paths:
   /data/{measure-id}/value:
     get:
       operationId: getMeasureValueForPlace
-      tags: ["Start here"]
       summary: Answer a measure for a place by name (by-place dispatcher)
-      x-likely-refusal:
-        status: 422
-        code: place_not_served
-        when:
-          "The name matches places, but the measure answers none. Each candidate
-          says why."
-        x-example-request: "/v1/data/house-price-median/value?place=North%20West"
+      tags:
+        - Start here
       description: >
-        A deliberately narrow convenience for a place-name question, not the
-        primary way to fetch one observation: it resolves the name and
-        dispatches to a route that already serves that kind of place. Ask
-        `/data/{measure-id}` for observations, or `/data/{measure-id}/series`
-        for one area's values, when the area is already known.
+        A deliberately narrow convenience for a place-name question, not the primary way to fetch one
+        observation: it resolves the name and dispatches to a route that already serves that kind of
+        place. Ask `/data/{measure-id}` for observations, or `/data/{measure-id}/series` for one
+        area's values, when the area is already known.
 
 
-        It answers "what is the population of the North West?" in one call. The
-        place may be a name, an area code or a place reference from `/places`;
-        the period may be omitted, in which case the latest the chosen partition
-        publishes is used and the answer says so. Where a name may mean several
-        places, `GET /v1/places?q=Newport` lists them first, and a candidate's
-        place reference asks about that one alone: `GET
-        /v1/data/population/value?place=localAuthority/W06000022`.
+        It answers "what is the population of the North West?" in one call. The place may be a name,
+        an area code or a place reference from `/places`; the period may be omitted, in which case the
+        latest the chosen partition publishes is used and the answer says so. Where a name may mean
+        several places, `GET /v1/places?q=Newport` lists them first, and a candidate's place reference
+        asks about that one alone: `GET /v1/data/population/value?place=localAuthority/W06000022`.
 
 
-        Nothing is computed here. Each place the name could mean is put to the
-        route that already serves that kind of place: `series` for an area,
-        `aggregate` for a curated location or a country. The value, its
-        provenance and every refusal are exactly what that route gives, and
-        `via` names the call that gives the answer directly, for citing or
-        repeating.
+        Nothing is computed here. Each place the name could mean is put to the route that already
+        serves that kind of place: `series` for an area, `aggregate` for a curated location or a
+        country. The value, its provenance and every refusal are exactly what that route gives, and
+        `via` names the call that gives the answer directly, for citing or repeating.
 
 
-        The candidate is chosen by what the measure can answer rather than by
-        guessing what was meant. Places matching the name exactly are tried
-        first; names merely beginning with it only when no exact match answers.
-        Answers resting on the same partition, period and area codes are the
-        same ground reached two ways and count once, keeping the publisher's own
-        observation over an aggregate of one member: Manchester the authority
-        and Manchester the curated location of that authority give one answer.
-        The other places the name matched are listed in `otherMatches`, answered
-        or not.
+        The candidate is chosen by what the measure can answer rather than by guessing what was meant.
+        Places matching the name exactly are tried first; names merely beginning with it only when no
+        exact match answers. Answers resting on the same partition, period and area codes are the same
+        ground reached two ways and count once, keeping the publisher's own observation over an
+        aggregate of one member: Manchester the authority and Manchester the curated location of that
+        authority give one answer. The other places the name matched are listed in `otherMatches`,
+        answered or not.
 
 
-        When the name gives more than one distinct answer, the usual geography
-        tier chooses the most likely match. `question.placeDefaulted` says this
-        happened and `otherMatches` lists every alternative with its answer or
-        refusal. "Newport", for example, defaults to the Welsh authority over
-        wards of the same name. When the name matches places but the measure
-        answers none, the response is a 422 with a `candidates` member saying
-        why for each, such as a median, which cannot be summed over a region.
+        When the name gives more than one distinct answer, the usual geography tier chooses the most
+        likely match. `question.placeDefaulted` says this happened and `otherMatches` lists every
+        alternative with its answer or refusal. "Newport", for example, defaults to the Welsh
+        authority over wards of the same name. When the name matches places but the measure answers
+        none, the response is a 422 with a `candidates` member saying why for each, such as a median,
+        which cannot be summed over a region.
 
 
         A measure with dimensions answers for the members its filters name: `GET
-        /v1/data/party-vote-share/value?place=Holborn and St Pancras&party=lab`.
-        A dimension left out takes its total where one is published, and
-        `defaults` and `dimensions` say which member was used. Several members,
-        or `*`, answer every matching series at once: `data.breakdown` holds one
-        entry per series, each with its `dimensions` and the answer (`data`) or
-        refusal (`problem`) that series gives, so `GET
-        /v1/data/recorded-crimes/value?place=Leeds&offence=*` is every crime
-        type for Leeds. Retired path ids such as `crime-burglary` return a 404
-        with the canonical measure and members.
+        /v1/data/party-vote-share/value?place=Holborn and St Pancras&party=lab`. A dimension left out
+        takes its total where one is published, and `defaults` and `dimensions` say which member was
+        used. Several members, or `*`, answer every matching series at once: `data.breakdown` holds
+        one entry per series, each with its `dimensions` and the answer (`data`) or refusal
+        (`problem`) that series gives, so `GET /v1/data/recorded-crimes/value?place=Leeds&offence=*`
+        is every crime type for Leeds. Retired path ids such as `crime-burglary` return a 404 with the
+        canonical measure and members.
 
 
-        Give `postcode` instead of `place` to answer for where a unit postcode
-        is: `GET /v1/data/imd-decile/value?postcode=M1 1AE`. The postcode's
-        centroid is placed in the areas the data was published for, as drawn for
-        the data's own boundary year rather than today's, in a boundary release
-        holding that partition's codes; `boundaryMatch` names it. With no
-        `geography`, the finest geography the measure is published on is tried
-        first, and a coarser one only where a finer does not cover the
-        postcode's country or has no value there; `passedOver` says why, and
-        `otherGeographies` gives the request for each other geography. A
-        centroid on a shared boundary whose areas answer differently is a 409
-        with `choices`, and a postcode no geography answers is a 422 with a
-        `candidates` member saying why for each.
+        Give `postcode` instead of `place` to answer for where a unit postcode is: `GET
+        /v1/data/imd-decile/value?postcode=M1 1AE`. The postcode's centroid is placed in the areas the
+        data was published for, as drawn for the data's own boundary year rather than today's, in a
+        boundary release holding that partition's codes; `boundaryMatch` names it. With no
+        `geography`, the finest geography the measure is published on is tried first, and a coarser
+        one only where a finer does not cover the postcode's country or has no value there;
+        `passedOver` says why, and `otherGeographies` gives the request for each other geography. A
+        centroid on a shared boundary whose areas answer differently is a 409 with `choices`, and a
+        postcode no geography answers is a 422 with a `candidates` member saying why for each.
+      x-likely-refusal:
+        status: 422
+        code: place_not_served
+        when: The name matches places, but the measure answers none. Each candidate says why.
+        x-example-request: /v1/data/house-price-median/value?place=North%20West
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -6168,9 +6097,9 @@ paths:
             type: string
           example: North West
           description: >
-            A place name, an area code, a unit postcode, or a place reference
-            such as `localAuthority/E08000003` or `postcode/SW1A1AA` from `GET
-            /v1/places`. One of `place` or `postcode` is required.
+            A place name, an area code, a unit postcode, or a place reference such as
+            `localAuthority/E08000003` or `postcode/SW1A1AA` from `GET /v1/places`. One of `place` or
+            `postcode` is required.
         - name: postcode
           in: query
           required: false
@@ -6178,24 +6107,24 @@ paths:
             type: string
           example: SW1A 1AA
           description: >
-            A full unit postcode, in any case and with or without its space.
-            Refused as `/postcodes/{postcode}` refuses it.
+            A full unit postcode, in any case and with or without its space. Refused as
+            `/postcodes/{postcode}` refuses it.
         - name: geography
           in: query
           required: false
           schema:
             type: string
           description: >
-            The source geography to answer from, or with `postcode`, the
-            geography to answer in, such as `lsoa` or `localAuthority`. Omit for
-            the finest that answers.
+            The source geography to answer from, or with `postcode`, the geography to answer in, such
+            as `lsoa` or `localAuthority`. Omit for the finest that answers.
         - name: codeYear
           in: query
           required: false
-          schema: { type: string, pattern: "^\\d{4}$" }
-          description: >
-            With `postcode`, the boundary year of the partition to answer from.
-            Omit for the newest.
+          schema:
+            type: string
+            pattern: ^\d{4}$
+          description: |
+            With `postcode`, the boundary year of the partition to answer from. Omit for the newest.
         - name: period
           in: query
           required: false
@@ -6204,21 +6133,24 @@ paths:
             type: string
         - name: datasetId
           in: query
-          schema: { type: string }
+          schema:
+            type: string
           description: Select the published dataset to answer from.
         - name: from
           in: query
-          schema: { type: string }
+          schema:
+            type: string
           description: Exact source geography/release for a membership crosswalk.
         - name: crosswalk
           in: query
-          schema: { type: string }
+          schema:
+            type: string
           description: Membership crosswalk to sum values onto an area.
         - name: path
           in: query
-          schema: { type: string }
+          schema:
+            type: string
           description: Membership relationship path, in place of crosswalk.
-      x-refused-query-parameters: [release, conversion, aggregate]
       responses:
         "200":
           description: The answer, the place it is for, and the route that gives it.
@@ -6226,12 +6158,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population/value?place=North%20West&period=2022"
+              x-example-request: /v1/data/population/value?place=North%20West&period=2022
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
                 data:
                   measure:
                     id: population
@@ -6239,7 +6169,9 @@ paths:
                     valueKind: count
                     unit: people
                   question:
-                    { place: North West, period: "2022", placeDefaulted: false }
+                    place: North West
+                    period: "2022"
+                    placeDefaulted: false
                   answer:
                     period: "2022"
                     periodDefaulted: false
@@ -6269,89 +6201,83 @@ paths:
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
-          description:
-            No published measure has that id, or no place is called or coded
-            that.
+          description: No published measure has that id, or no place is called or coded that.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "409":
           description: >
-            The name gives more than one distinct answer. `choices` lists each
-            place with its answer and the request that asks about it alone.
+            The name gives more than one distinct answer. `choices` lists each place with its answer
+            and the request that asks about it alone.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
           description: >
-            The name matches places, but the measure answers none of them.
-            `candidates` says why for each.
+            The name matches places, but the measure answers none of them. `candidates` says why for
+            each.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/PlaceNotServedProblem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
+        - conversion
+        - aggregate
 
   /data/{measure-id}/change:
     get:
       operationId: getSourceExactMeasureChange
-      x-refused-query-parameters: [release, conversion, aggregate]
-      tags: ["Trend"]
       summary: Rank areas by change between two periods of one measure partition
+      tags:
+        - Trend
+      description: >
+        Returns how each area changed between two periods, ranked: the question "where did population
+        grow fastest between 2011 and 2022?" Pass `place` for one area, which keeps its rank among all
+        of them, so "Manchester grew 13.2%, 42nd of 361" is a single call.
+
+
+        Change is measured inside one source partition, never across two. The publisher restates every
+        period of a partition on a single set of codes, so an area code names the same ground at the
+        start and the end. Pairing periods from partitions on different codes would pair areas that
+        are not the same place, so it is not offered. A partition that cannot be chosen returns a 400
+        listing the partitions and how many periods each has.
+
+
+        The geography may be left out when `place` names an area, by name or code, or the measure is
+        published on one geography. The boundary year and periods may be left out too: the newest
+        partition is used, ending at its latest period and starting at the latest one before the end
+        that does not overlap it. What was chosen is returned in `defaults`.
+
+
+        `by=absolute` ranks the end value less the start, in the measure's unit. `by=relative` ranks
+        that as a proportion of the start, and is refused for a ratio: change in a share is read in
+        points, and a rise in coverage from 2% to 3% is not usefully called 50%. An area whose start
+        is zero has no relative change and is left out of a relative ranking, counted in
+        `coverage.withoutRelativeChange`. Currency is nominal and not adjusted for inflation.
+
+
+        Some changes are refused outright. A rank or decile is a position among the other areas rather
+        than a quantity, so a move in it is not change in the area. A partition publishing one period
+        has nothing to change between. Rolling windows that share years, such as life expectancy for
+        2017-2019 and 2018-2020, are refused because most of the apparent change is the same data
+        counted twice.
+
+
+        Where the publisher gives intervals, each record says whether the start and end intervals
+        overlap. Intervals that do not overlap mean the change is unlikely to be chance; intervals
+        that do overlap do not show that it is. Areas with a value in only one period are listed in
+        `coverage.onlyAtStart` and `coverage.onlyAtEnd` rather than paired with anything.
       x-likely-refusal:
         status: 400
         when:
-          "The partition cannot be chosen: the measure is published on several
-          geographies and neither `geography` nor `place` picks one."
-        x-example-request: "/v1/data/population/change?startPeriod=2011"
-      description: >
-        Returns how each area changed between two periods, ranked: the question
-        "where did population grow fastest between 2011 and 2022?" Pass `place`
-        for one area, which keeps its rank among all of them, so "Manchester
-        grew 13.2%, 42nd of 361" is a single call.
-
-
-        Change is measured inside one source partition, never across two. The
-        publisher restates every period of a partition on a single set of codes,
-        so an area code names the same ground at the start and the end. Pairing
-        periods from partitions on different codes would pair areas that are not
-        the same place, so it is not offered. A partition that cannot be chosen
-        returns a 400 listing the partitions and how many periods each has.
-
-
-        The geography may be left out when `place` names an area, by name or
-        code, or the measure is published on one geography. The boundary year
-        and periods may be left out too: the newest partition is used, ending at
-        its latest period and starting at the latest one before the end that
-        does not overlap it. What was chosen is returned in `defaults`.
-
-
-        `by=absolute` ranks the end value less the start, in the measure's unit.
-        `by=relative` ranks that as a proportion of the start, and is refused
-        for a ratio: change in a share is read in points, and a rise in coverage
-        from 2% to 3% is not usefully called 50%. An area whose start is zero
-        has no relative change and is left out of a relative ranking, counted in
-        `coverage.withoutRelativeChange`. Currency is nominal and not adjusted
-        for inflation.
-
-
-        Some changes are refused outright. A rank or decile is a position among
-        the other areas rather than a quantity, so a move in it is not change in
-        the area. A partition publishing one period has nothing to change
-        between. Rolling windows that share years, such as life expectancy for
-        2017-2019 and 2018-2020, are refused because most of the apparent change
-        is the same data counted twice.
-
-
-        Where the publisher gives intervals, each record says whether the start
-        and end intervals overlap. Intervals that do not overlap mean the change
-        is unlikely to be chance; intervals that do overlap do not show that it
-        is. Areas with a value in only one period are listed in
-        `coverage.onlyAtStart` and `coverage.onlyAtEnd` rather than paired with
-        anything.
+          "The partition cannot be chosen: the measure is published on several geographies and neither
+          `geography` nor `place` picks one."
+        x-example-request: /v1/data/population/change?startPeriod=2011
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -6361,8 +6287,8 @@ paths:
           schema:
             type: string
           description: >
-            The geography of the source partition the change is measured inside.
-            Both periods come from that one partition.
+            The geography of the source partition the change is measured inside. Both periods come
+            from that one partition.
         - $ref: "#/components/parameters/OptionalSourceCodeYear"
         - name: startPeriod
           in: query
@@ -6371,14 +6297,14 @@ paths:
             type: string
           example: "2011"
           description: >
-            The period the change is measured from. Left out, the latest period
-            before `endPeriod` that does not overlap it.
+            The period the change is measured from. Left out, the latest period before `endPeriod`
+            that does not overlap it.
         - name: endPeriod
           in: query
           required: false
           description: >
-            A published period of the partition after `startPeriod`. Left out,
-            the partition's latest period.
+            A published period of the partition after `startPeriod`. Left out, the partition's latest
+            period.
           schema:
             type: string
           example: "2022"
@@ -6386,38 +6312,36 @@ paths:
           in: query
           required: false
           schema:
-            enum: [absolute, relative]
+            enum:
+              - absolute
+              - relative
             default: absolute
           description: >
-            Whether change is the difference in the published unit, or that
-            difference as a proportion of the start value.
+            Whether change is the difference in the published unit, or that difference as a proportion
+            of the start value.
         - name: order
           in: query
           required: false
           description: "`desc` puts the largest rise first, `asc` the largest fall."
           schema:
-            enum: [asc, desc]
+            enum:
+              - asc
+              - desc
             default: desc
         - $ref: "#/components/parameters/Place"
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
-          description:
-            Cursor-paginated competition ranks of change for the source
-            partition.
+          description: Cursor-paginated competition ranks of change for the source partition.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population/change?geography=localAuthority&codeYea\
-                r=2023&startPeriod=2011&endPeriod=2022&by=relative&limit=1"
+              x-example-request: /v1/data/population/change?geography=localAuthority&codeYear=2023&startPeriod=2011&endPeriod=2022&by=relative&limit=1
               example:
                 apiVersion: v1
-                atlasRelease:
-                  "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91\
-                  f2c4857"
+                atlasRelease: sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857
                 data:
                   startPeriod: "2011"
                   endPeriod: "2022"
@@ -6438,23 +6362,19 @@ paths:
                       rank: 1
                       tieCount: 1
                       start:
-                        {
-                          period: "2011",
-                          areaCode: E09000001,
-                          value: 7412,
-                          status: observed,
-                        }
+                        period: "2011"
+                        areaCode: E09000001
+                        value: 7412
+                        status: observed
                       end:
-                        {
-                          period: "2022",
-                          areaCode: E09000001,
-                          value: 11615,
-                          status: observed,
-                        }
+                        period: "2022"
+                        areaCode: E09000001
+                        value: 11615
+                        status: observed
                       absoluteChange: 4203
                       relativeChange: 0.567
                 meta:
-                  nextCursor: "RTA5MDAwMDAx"
+                  nextCursor: RTA5MDAwMDAx
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -6463,39 +6383,36 @@ paths:
           $ref: "#/components/responses/AmbiguousArea"
         "422":
           description: >
-            The measure is a rank, decile or category; its partition publishes a
-            single period; the two periods overlap; or a geometry release,
-            conversion or aggregation was asked for.
+            The measure is a rank, decile or category; its partition publishes a single period; the
+            two periods overlap; or a geometry release, conversion or aggregation was asked for.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
+        - conversion
+        - aggregate
 
   /data/{measure-id}/compare:
     get:
       operationId: compareSourceExactMeasureAreas
-      x-refused-query-parameters: [release, conversion, aggregate]
-      tags: ["Trend"]
       summary: Compare two areas within one source-exact measure partition
+      tags:
+        - Trend
+      description: >
+        Returns the comparison observation minus the baseline observation for one published period,
+        geography and code vintage. Area codes may be replaced by unambiguous place names. Omitting
+        source selectors uses the current published partition and latest period, recorded in
+        `defaults`. The two named areas must be in the same source partition. Ratios report a
+        difference on their source scale rather than a misleading relative change. The route does not
+        select a boundary release, convert values or aggregate them.
       x-likely-refusal:
         status: 400
-        when:
-          "The two areas are of different geographies, so no one source partition
-          holds both."
-        x-example-request:
-          "/v1/data/population/compare?baselinePlace=E05000932&compari\
-          sonPlace=W06000022"
-      description: >
-        Returns the comparison observation minus the baseline observation for
-        one published period, geography and code vintage. Area codes may be
-        replaced by unambiguous place names. Omitting source selectors uses the
-        current published partition and latest period, recorded in `defaults`.
-        The two named areas must be in the same source partition. Ratios report
-        a difference on their source scale rather than a misleading relative
-        change. The route does not select a boundary release, convert values or
-        aggregate them.
+        when: The two areas are of different geographies, so no one source partition holds both.
+        x-example-request: /v1/data/population/compare?baselinePlace=E05000932&comparisonPlace=W06000022
       parameters:
         - $ref: "#/components/parameters/Dimensions"
         - $ref: "#/components/parameters/MeasureId"
@@ -6521,9 +6438,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/data/population/compare?period=2022&geography=ward&code\
-                Year=2023&baselinePlace=E05000932&comparisonPlace=W05001039"
+              x-example-request: /v1/data/population/compare?period=2022&geography=ward&codeYear=2023&baselinePlace=E05000932&comparisonPlace=W05001039
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -6550,9 +6465,8 @@ paths:
                             - GB-ENG
                           recordCount: 7608
                           note:
-                            Published source records are available for England and Wales only; this
-                            endpoint does not infer Scottish or Northern Irish
-                            values.
+                            Published source records are available for England and Wales only; this endpoint does not
+                            infer Scottish or Northern Irish values.
                     availability:
                       sourceExact: true
                       conversion: false
@@ -6572,9 +6486,8 @@ paths:
                         - GB-ENG
                       recordCount: 7608
                       note:
-                        Published source records are available for England and Wales only; this
-                        endpoint does not infer Scottish or Northern Irish
-                        values.
+                        Published source records are available for England and Wales only; this endpoint does not
+                        infer Scottish or Northern Irish values.
                   period: "2022"
                   sourceGeography:
                     type: ward
@@ -6593,13 +6506,11 @@ paths:
                       match:
                         status: no-boundary-release-selected
                         note:
-                          The published observations declare a geography type and code vintage, but
-                          not a boundary release.
+                          The published observations declare a geography type and code vintage, but not a boundary
+                          release.
                     transformation:
                       status: not-applied
-                      note:
-                        Values are served source-exact; no geographic conversion or aggregation
-                        was applied.
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
                     source:
                       dataset:
                         id: population
@@ -6634,15 +6545,17 @@ paths:
         "409":
           $ref: "#/components/responses/AmbiguousArea"
         "422":
-          description:
-            The requested conversion, aggregation or geometry release is not
-            supported.
+          description: The requested conversion, aggregation or geometry release is not supported.
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      x-refused-query-parameters:
+        - release
+        - conversion
+        - aggregate
 
   /areas:
     get:

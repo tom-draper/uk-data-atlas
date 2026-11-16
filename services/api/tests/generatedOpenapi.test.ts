@@ -63,6 +63,13 @@ test("generated route contracts match the published description", async () => {
 		"/locations/{location-id}/geometry",
 		"/locations/{location-id}/members",
 		"/locations/{location-id}/parents",
+		"/data/{measure-id}",
+		"/data/{measure-id}/convert",
+		"/data/{measure-id}/series",
+		"/data/{measure-id}/rankings",
+		"/data/{measure-id}/value",
+		"/data/{measure-id}/change",
+		"/data/{measure-id}/compare",
 		"/data/{measure-id}/export",
 	]);
 	for (const [path, item] of Object.entries(paths)) {
