@@ -1,11 +1,12 @@
 import type { FastifyRequest } from "fastify";
 import type {
 	ApiResponse,
+	RequestBody,
 	RouteContextFor,
 	RouteDispatchContext,
 	RouteRequestFor,
 } from "../runtime/index.ts";
-import { route } from "../routes";
+import { route, routeAsync } from "../routes";
 
 /**
  * Run a handler written for the request shape the old dispatcher builds from
@@ -62,5 +63,31 @@ export const legacyRoute = (context: ServiceContext) => {
 			postcodes: context.postcodes,
 		} as RouteDispatchContext;
 		return route("GET", request.url, services);
+	};
+};
+
+/**
+ * Answer a POST through the dispatcher's own `routeAsync`, with the body the
+ * pipeline has read, so the same layers run before the handler as for a GET.
+ */
+export const legacyPostRoute = (context: ServiceContext) => {
+	let services: RouteDispatchContext | undefined;
+	return (
+		request: FastifyRequest,
+		body?: RequestBody,
+	): Promise<ApiResponse> => {
+		if (
+			!context.geographyResolver ||
+			!context.areaValidation ||
+			!context.postcodes
+		)
+			throw new Error("Geography services are unavailable");
+		services ??= {
+			...context,
+			geographyResolver: context.geographyResolver,
+			areaValidation: context.areaValidation,
+			postcodes: context.postcodes,
+		} as RouteDispatchContext;
+		return routeAsync("POST", request.url, services, body);
 	};
 };
