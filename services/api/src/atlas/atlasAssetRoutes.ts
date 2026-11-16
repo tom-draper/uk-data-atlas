@@ -1,5 +1,5 @@
-import { envelope, problem, type ApiResponse } from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
+import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 
 export const handleAtlasPageRoutes = ({
 	context,
