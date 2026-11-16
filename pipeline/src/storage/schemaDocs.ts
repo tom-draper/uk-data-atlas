@@ -46,7 +46,7 @@ export type SchemaDocs = {
 export const schemaGuide: readonly GuideTopic[] = [
 	{
 		topic: "measure-semantics",
-		body: "Join measure.unit_id to unit for kind, scale, currency and symbol, and universe_id to universe for the population or entity base. The unit scale multiplies a published value to its unscaled unit except for per_n, where scale is the denominator. Unknown means the common base has not been established; not-applicable means a population base does not apply. statistic describes the statistic; value_kind and unit are retained as legacy text. When statistic is by-dimension, join statistic_dimension_id to dimension and inspect series_member for the member. In the pay measures this is pay-statistic: mean, median or a percentile. For pay-change measures it selects the underlying pay statistic whose percentage change is reported. Five published weighted means lack their weights and conversion refuses them; measure_conversion gives the reasons.",
+		body: "Join measure.unit_id to unit for kind, scale, currency and symbol, and universe_id to universe for the population or entity base. For percent and per_n, unit scale is the denominator (100 for percent). For count and currency units expressed in thousands or millions it multiplies the published value; otherwise it is 1. Unknown means the common base has not been established; not-applicable means a population base does not apply. statistic describes the statistic; value_kind and unit are retained as legacy text. When statistic is by-dimension, join statistic_dimension_id to dimension and inspect series_member for the member. In the pay measures this is pay-statistic: mean, median or a percentile. For pay-change measures it selects the underlying pay statistic whose percentage change is reported. Five published weighted means lack their weights and conversion refuses them; measure_conversion gives the reasons.",
 	},
 	{
 		topic: "start-here",
@@ -367,7 +367,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			slug: "Unique unit identifier.",
 			label: "Published unit label.",
 			kind: "Count, currency, percent, per_n, ratio, duration, index or other.",
-			scale: "Multiplier to the unscaled unit, or denominator for a per_n unit.",
+			scale: "Denominator for percent and per_n; multiplier for count and currency units expressed in thousands or millions; otherwise 1.",
 			currency: "ISO 4217 currency code when applicable, otherwise null.",
 			symbol: "Display symbol when applicable, otherwise null.",
 		},

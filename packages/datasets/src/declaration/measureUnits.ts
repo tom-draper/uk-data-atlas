@@ -1,5 +1,5 @@
-/** Units used by the statistics declarations. Scale is the multiplier for a
- * published value, except for per_n units, where it is the denominator. */
+/** Scale is the denominator for percent and per_n, and the multiplier for
+ * counts and currency expressed in thousands or millions. */
 export type MeasureUnit = {
 	id: number;
 	slug: string;
@@ -286,7 +286,7 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		slug: "percent",
 		label: "percent",
 		kind: "percent",
-		scale: 1,
+		scale: 100,
 		currency: null,
 		symbol: "%",
 	},
@@ -295,7 +295,7 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		slug: "percent-of-area",
 		label: "percent of area",
 		kind: "percent",
-		scale: 1,
+		scale: 100,
 		currency: null,
 		symbol: "%",
 	},
@@ -304,7 +304,7 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		slug: "percent-of-premises",
 		label: "percent of premises",
 		kind: "percent",
-		scale: 1,
+		scale: 100,
 		currency: null,
 		symbol: "%",
 	},
@@ -313,7 +313,7 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		slug: "percent-of-pupils",
 		label: "percent of pupils",
 		kind: "percent",
-		scale: 1,
+		scale: 100,
 		currency: null,
 		symbol: "%",
 	},

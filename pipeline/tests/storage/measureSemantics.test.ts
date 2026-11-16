@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { StatisticsMeasure } from "@uk-data-atlas/measures";
-import { measureSemantics } from "@uk-data-atlas/datasets";
+import { MEASURE_UNITS, measureSemantics } from "@uk-data-atlas/datasets";
 import { validateMeasureSemantics } from "../../src/storage/validateMeasureSemantics.ts";
 
 const base: StatisticsMeasure = {
@@ -60,5 +60,21 @@ test("pay names its statistic dimension and missing-weight exceptions stay speci
 				aggregation: "weighted_mean",
 			}),
 		/requires a weight/,
+	);
+});
+
+test("unit scales distinguish percent and per-thousand values", () => {
+	assert.equal(
+		MEASURE_UNITS.find((unit) => unit.label === "percent")?.scale,
+		100,
+	);
+	assert.equal(
+		MEASURE_UNITS.find((unit) => unit.label === "per 1,000 households")
+			?.scale,
+		1000,
+	);
+	assert.equal(
+		MEASURE_UNITS.find((unit) => unit.label === "gbp million")?.scale,
+		1_000_000,
 	);
 });
