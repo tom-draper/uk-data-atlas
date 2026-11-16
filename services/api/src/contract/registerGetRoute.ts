@@ -42,13 +42,21 @@ export const registerGetRoute = (
 	app: FastifyInstance,
 	context: RouteContextFor<never>,
 	route: GetRoute,
-	handle: (request: FastifyRequest) => ApiResponse,
+	handle: (request: FastifyRequest) => ApiResponse | Promise<ApiResponse>,
 	dispatch?: ContractDispatch,
 ) => {
 	const { method, path, responses, validate, ...metadata } = route;
 	const [mediaType, media] = Object.entries(responses[200].content)[0]!;
 	const check = (answer: ApiResponse) =>
 		validate ? validate(answer) : validateResponse(media.schema, answer);
+	const answerNow = (request: FastifyRequest) => {
+		const answer = handle(request);
+		if (answer instanceof Promise)
+			throw new Error(
+				"An asynchronous route is answered through the dispatcher",
+			);
+		return answer;
+	};
 	app.get(
 		path,
 		{
@@ -70,7 +78,9 @@ export const registerGetRoute = (
 		},
 		async (request, reply) => {
 			if (dispatch)
-				return dispatch(request, reply, () => check(handle(request)));
+				return dispatch(request, reply, async () =>
+					check(await handle(request)),
+				);
 			const url = new URL(request.url, "http://localhost");
 			const unexpected = unexpectedQueryParameter(
 				context.operationMatcher?.(url.pathname).operation,
@@ -85,7 +95,7 @@ export const registerGetRoute = (
 						`This operation does not accept the query parameter ${unexpected.parameter}.`,
 						{ code: "unknown_query_parameter", ...unexpected },
 					);
-				return check(handle(request));
+				return check(answerNow(request));
 			});
 			return sendFastifyResponse(reply, response);
 		},
