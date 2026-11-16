@@ -5,6 +5,7 @@ import {
 	registerGetRoute,
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
+import { legacyHandler } from "../contract/legacyHandler";
 import { documentContract } from "./documentContract";
 
 export const documentFastifyRoutes: FastifyPluginAsync<{
@@ -15,25 +16,7 @@ export const documentFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		documentContract,
-		(request) => {
-			const parsedUrl = new URL(request.url, "http://localhost");
-			const answer = handleDocumentRoutes({
-				context,
-				releaseId:
-					context.atlasRelease?.releaseId ??
-					context.boundaryRegistry.contentHash,
-				parsedUrl,
-				segments: parsedUrl.pathname
-					.split("/")
-					.filter(Boolean)
-					.map(decodeURIComponent),
-				dispatch: () => {
-					throw new Error("Unexpected dispatch");
-				},
-			});
-			if (!answer) throw new Error(`No response for ${request.url}`);
-			return answer;
-		},
+		legacyHandler(context, handleDocumentRoutes),
 		dispatch,
 	);
 };
