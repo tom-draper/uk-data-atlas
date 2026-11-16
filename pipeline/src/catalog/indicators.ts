@@ -11,9 +11,14 @@ import { onApril2023Authorities } from "./authorityChanges.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { createHash } from "node:crypto";
+import {
+	measureSeriesKey,
+	type MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
 
 export type Indicator = {
 	id: string;
+	series?: MeasureSeriesIdentity;
 	label: string;
 	field: string;
 	valueKind: Measure["valueKind"];
@@ -117,6 +122,9 @@ export const publishIndicators = (
 			.filter((code) => !published.has(code))
 			.sort();
 		const periods = [{ period: spec.period, records }];
+		const seriesKey = indicator.series
+			? measureSeriesKey(indicator.series)
+			: indicator.id;
 		const recordHash = createHash("sha256");
 		for (const record of records)
 			recordHash.update(
@@ -124,7 +132,7 @@ export const publishIndicators = (
 			);
 		const content = JSON.stringify({
 			schemaVersion: 1,
-			measureId: indicator.id,
+			measureId: seriesKey,
 			sourceGeography: {
 				type: geography,
 				boundaryYear: partitionBoundaryYear,
@@ -191,7 +199,7 @@ export const publishIndicators = (
 			artifact: {
 				schemaVersion: 1,
 				contentHash: sha256(content),
-				measureId: indicator.id,
+				measureId: seriesKey,
 				sourceGeography: {
 					type: geography,
 					boundaryYear: partitionBoundaryYear,

@@ -13,6 +13,7 @@ import { type Indicator, publishIndicators } from "./indicators.ts";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /** The code sets a declared catalogue may check its records against. */
 export type DeclaredCodeSets = { authorities: Iterable<string> };
@@ -65,6 +66,10 @@ export const compileDeclaredIndicators = (
 		notes: [...declaration.source.notes],
 		indicators: catalogue.indicators.map((indicator): Indicator => ({
 			id: indicator.id,
+			series: {
+				measure: indicator.measure,
+				dimensions: indicator.members,
+			},
 			label: indicator.label,
 			field: indicator.field,
 			valueKind: indicator.valueKind,
@@ -98,16 +103,20 @@ export const compileYearlyIndicators = (
 		);
 	const published = catalogue.indicators.map((indicator) => {
 		const periods = localAuthorityFieldPeriods(path, indicator.field, year);
+		const seriesKey = measureSeriesKey({
+			measure: indicator.measure,
+			dimensions: indicator.members,
+		});
 		const content = JSON.stringify({
 			schemaVersion: 1,
-			measureId: indicator.id,
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: year },
 			periods,
 		});
 		const artifact: MeasureObservationArtifact = {
 			schemaVersion: 1,
 			contentHash: sha256(content),
-			measureId: indicator.id,
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: year },
 			periods,
 		};
