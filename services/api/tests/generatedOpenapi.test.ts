@@ -36,6 +36,8 @@ test("generated route contracts match the published description", async () => {
 		"/atlas-lookups/{lookup-id}.json",
 		"/atlas-pages/{page-id}.json",
 		"/coordinates:convert",
+		"/translations",
+		"/attribution",
 		"/data/{measure-id}/export",
 	]);
 	for (const [path, item] of Object.entries(paths)) {

@@ -4,6 +4,10 @@ import { similarAreasContract } from "./areas/similarAreasContract";
 import { atlasAssetFastifyRoutes } from "./atlas/atlasAssetFastifyRoutes";
 import { coordinateContract } from "./coordinates/coordinateContract";
 import { coordinateFastifyRoutes } from "./coordinates/coordinateFastifyRoutes";
+import { translationContract } from "./crosswalks/translationContract";
+import { translationFastifyRoutes } from "./crosswalks/translationFastifyRoutes";
+import { attributionContract } from "./attribution/attributionContract";
+import { attributionFastifyRoutes } from "./attribution/attributionFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
 import { isFastifyDetailPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
@@ -99,6 +103,8 @@ const fastifyPaths = new Set(
 		compareBoundary,
 		similarAreasContract,
 		coordinateContract,
+		translationContract,
+		attributionContract,
 	].map(({ path }) => `/v1${path.replace("::", ":")}`),
 );
 
@@ -764,6 +770,16 @@ export const createApiServer = (
 		dispatch,
 	});
 	void fastify.register(coordinateFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(translationFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
+	void fastify.register(attributionFastifyRoutes, {
 		prefix: "/v1",
 		context: catalogues,
 		dispatch,

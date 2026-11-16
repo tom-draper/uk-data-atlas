@@ -9666,70 +9666,36 @@ paths:
   /translations:
     get:
       operationId: translateAreaCode
-      tags: ["Geography"]
-      summary: Translate one code through a published conversion path in either
-        direction
+      summary: Translate one code through a published conversion path in either direction
+      tags:
+        - Geography
+      description: >
+        `identity` permits publisher-supplied historical lookups only, `membership` permits clean
+        containment only, and `apportion` permits area-overlap crosswalks only. The resolver selects
+        every published path with that purpose, ranking direct paths before reviewed and then
+        discovered compositions. `paths` records every step used. A direct result retains its
+        directional crosswalk and provenance; a composed result carries its full `path` instead, so it
+        cannot be mistaken for a direct lookup. A composed result's targets carry only their code,
+        labels and, for `apportion`, the weight multiplied along the path: a step's shares, overlap
+        area and population describe the areas that step joins, not the queried one. Reverse
+        area-overlap weights are normalised against the queried target and report its source coverage.
+        A composed apportion result retains that first-step `sourceCoverage` and reports
+        `resolvedCoverage`, the share of the queried source its final targets represent. The route
+        does not treat a shared code across releases as proof of unchanged geography.
       x-likely-refusal:
         status: 422
         when:
-          "No crosswalk is published for this source, target and purpose. A shared
-          code is never taken as proof of the same area."
-        x-example-request:
-          "/v1/translations?from=ward/2023-05-uk-bgc&code=E05000932&to\
-          =constituency/2024-07-uk-bgc"
-      description: >
-        `identity` permits publisher-supplied historical lookups only,
-        `membership` permits clean containment only, and `apportion` permits
-        area-overlap crosswalks only. The resolver selects every published path
-        with that purpose, ranking direct paths before reviewed and then
-        discovered compositions. `paths` records every step used. A direct
-        result retains its directional crosswalk and provenance; a composed
-        result carries its full `path` instead, so it cannot be mistaken for a
-        direct lookup. A composed result's targets carry only their code, labels
-        and, for `apportion`, the weight multiplied along the path: a step's
-        shares, overlap area and population describe the areas that step joins,
-        not the queried one. Reverse area-overlap weights are normalised against
-        the queried target and report its source coverage. A composed apportion
-        result retains that first-step `sourceCoverage` and reports
-        `resolvedCoverage`, the share of the queried source its final targets
-        represent. The route does not treat a shared code across releases as
-        proof of unchanged geography.
-      parameters:
-        - name: from
-          in: query
-          required: true
-          schema: { type: string }
-          description: The code's exact source release, as `{geography}/{release}`.
-        - name: code
-          in: query
-          required: true
-          schema: { type: string }
-          description: >
-            The area code to translate, as published in `from`.
-        - name: to
-          in: query
-          required: true
-          schema: { type: string }
-          description: The exact target release, as `{geography}/{release}`.
-        - name: purpose
-          in: query
-          schema:
-            type: string
-            enum: [identity, membership, apportion]
-            default: membership
-          description: >
-            What the translation is for: official historical `identity`, clean
-            `membership`, or area-overlap `apportion`. A crosswalk is used only
-            where its method suits the purpose.
+          No crosswalk is published for this source, target and purpose. A shared code is never taken as
+          proof of the same area.
+        x-example-request: /v1/translations?from=ward/2023-05-uk-bgc&code=E05000932&to=constituency/2024-07-uk-bgc
       responses:
         "200":
           description: Matching published crosswalk records.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request:
-                "/v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to\
-                =localAuthority/2024-12-uk-bgc&purpose=membership"
+              schema:
+                type: object
+              x-example-request: /v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to=localAuthority/2024-12-uk-bgc&purpose=membership
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -9745,12 +9711,12 @@ paths:
                   paths:
                     - id: ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment/forward/membership
                       purpose: membership
-                      from: { geography: ward, boundaryRelease: 2024-12-uk-bgc }
+                      from:
+                        geography: ward
+                        boundaryRelease: 2024-12-uk-bgc
                       to:
-                        {
-                          geography: localAuthority,
-                          boundaryRelease: 2024-12-uk-bgc,
-                        }
+                        geography: localAuthority
+                        boundaryRelease: 2024-12-uk-bgc
                       quality: publisher-supplied
                       origin: crosswalk
                       steps:
@@ -9787,82 +9753,73 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The code's exact source release, as `{geography}/{release}`.
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The area code to translate, as published in `from`.
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The exact target release, as `{geography}/{release}`.
+        - name: purpose
+          in: query
+          schema:
+            type: string
+            enum:
+              - identity
+              - membership
+              - apportion
+            default: membership
+          description: >
+            What the translation is for: official historical `identity`, clean `membership`, or
+            area-overlap `apportion`. A crosswalk is used only where its method suits the purpose.
 
   /attribution:
     get:
       operationId: getAttribution
-      tags: ["Governance"]
       summary: Assemble the attribution and licence block for named resources
+      tags:
+        - Governance
+      description: >
+        Collects the publisher, source and licence of every resource behind an answer, and returns a
+        plain-text block suitable for a map corner, a report footer or a bulk-download README. Name at
+        least one of `dataset`, `measure`, `boundaryRelease` or `crosswalk`; each may be repeated, and
+        a resource named more than one way is listed once.
+
+        A measure is attributed through the datasets its observations come from. A crosswalk is
+        compiled by the Atlas rather than obtained, so it carries no licence of its own and the
+        boundary releases at its endpoints are attributed instead, with the crosswalk listing them in
+        `derivedFrom`.
+
+        Licence names are reproduced exactly as the publisher states them and are not interpreted. One
+        catalogue source already carries two licences across its date range, so which terms govern a
+        combined work is the caller's judgement rather than this API's.
       x-likely-refusal:
         status: 400
-        when: "No resource is named to attribute."
-        x-example-request: "/v1/attribution"
-      description: >
-        Collects the publisher, source and licence of every resource behind an
-        answer, and returns a plain-text block suitable for a map corner, a
-        report footer or a bulk-download README. Name at least one of `dataset`,
-        `measure`, `boundaryRelease` or `crosswalk`; each may be repeated, and a
-        resource named more than one way is listed once.
-
-        A measure is attributed through the datasets its observations come from.
-        A crosswalk is compiled by the Atlas rather than obtained, so it carries
-        no licence of its own and the boundary releases at its endpoints are
-        attributed instead, with the crosswalk listing them in `derivedFrom`.
-
-        Licence names are reproduced exactly as the publisher states them and
-        are not interpreted. One catalogue source already carries two licences
-        across its date range, so which terms govern a combined work is the
-        caller's judgement rather than this API's.
-      parameters:
-        - name: dataset
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: A dataset id from `GET /datasets`. Repeatable.
-        - name: measure
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: >
-            A measure id from `GET /v1/measures`, or one of its aliases.
-            Repeatable. Dimension filters such as `offence=burglary` apply to
-            each listed measure that has the dimension; an old series id such as
-            `crime-burglary` returns a 404 naming the measure and members that
-            replace it.
-        - $ref: "#/components/parameters/Dimensions"
-        - $ref: "#/components/parameters/MeasureDataset"
-        - name: boundaryRelease
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: >
-            A `{geography}/{release}` identity, such as
-            `localAuthority/2025-05-uk-bgc-v2`. Repeatable.
-        - name: crosswalk
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: A crosswalk id from `GET /crosswalks`. Repeatable.
+        when: No resource is named to attribute.
+        x-example-request: /v1/attribution
       responses:
         "200":
           description: >
-            The resources, the distinct licences that apply, and a ready-to-use
-            plain-text attribution block.
+            The resources, the distinct licences that apply, and a ready-to-use plain-text attribution
+            block.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request:
-                "/v1/attribution?measure=ghg-emissions&boundaryRelease=local\
-                Authority/2025-05-uk-bgc-v2"
+              x-example-request: /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -9884,9 +9841,8 @@ paths:
                     - name: Open Government Licence v3.0
                       url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
                   note:
-                    Licence names are reproduced as the publisher states them and are not
-                    interpreted here. Where several apply, check each before
-                    reusing the combined work.
+                    Licence names are reproduced as the publisher states them and are not interpreted here. Where
+                    several apply, check each before reusing the combined work.
                 meta:
                   nextCursor: null
         "400":
@@ -9895,6 +9851,46 @@ paths:
           $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+      parameters:
+        - name: dataset
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: A dataset id from `GET /datasets`. Repeatable.
+        - name: measure
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: >
+            A measure id from `GET /v1/measures`, or one of its aliases. Repeatable. Dimension filters
+            such as `offence=burglary` apply to each listed measure that has the dimension; an old
+            series id such as `crime-burglary` returns a 404 naming the measure and members that
+            replace it.
+        - $ref: "#/components/parameters/Dimensions"
+        - $ref: "#/components/parameters/MeasureDataset"
+        - name: boundaryRelease
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: >
+            A `{geography}/{release}` identity, such as `localAuthority/2025-05-uk-bgc-v2`. Repeatable.
+        - name: crosswalk
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: A crosswalk id from `GET /crosswalks`. Repeatable.
 
   /locations:
     get:
