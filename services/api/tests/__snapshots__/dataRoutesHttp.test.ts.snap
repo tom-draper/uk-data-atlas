@@ -788,30 +788,30 @@ exports[`data reads keep their HTTP responses 1`] = `
     "status": 422,
   },
   "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=csv": {
-    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode
-"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","",""
-"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","W05000001","","","","200","observed","","",""
+    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode,dimensions
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","","","{}"
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","W05000001","","","","200","observed","","","","{}"
 ",
-    "bytes": 496,
+    "bytes": 517,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: text/csv; charset=utf-8",
-      "etag: "sha256-xRhz9ddX9CaiadG3KpczuB5xwqFPaD5jTVQubyOZGxM"",
+      "etag: "sha256-SEdfHONpgTzTDLIy7Igq5S3fk-I4DTXeFXjIKqhmzWE"",
       "vary: accept-encoding",
     ],
     "status": 200,
   },
   "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&format=ndjson": {
-    "body": "{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"E05000001","areaId":"","areaName":"","areaAliases":"","value":100,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":""}
-{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"W05000001","areaId":"","areaName":"","areaAliases":"","value":200,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":""}
+    "body": "{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"E05000001","areaId":"","areaName":"","areaAliases":"","value":100,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":"","dimensions":"{}"}
+{"atlasRelease":"sha256:registry","measureId":"population","unit":"people","datasetId":"population","period":"2022","geography":"ward","boundaryYear":2023,"boundaryRelease":"","geometryCompatibility":"","transformationStatus":"not-applied","areaCode":"W05000001","areaId":"","areaName":"","areaAliases":"","value":200,"status":"observed","lowerBound":"","upperBound":"","sourceAreaCode":"","dimensions":"{}"}
 ",
-    "bytes": 782,
+    "bytes": 818,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/x-ndjson; charset=utf-8",
-      "etag: "sha256-QzRkG8--cf0QWQY3wAJa8OlI3-POjpZG-8UZxaNK76E"",
+      "etag: "sha256-h5skJup-9pO7w6bpgJDExGs5vjScNbJNo2yCxSqoaT0"",
       "vary: accept-encoding",
     ],
     "status": 200,
@@ -903,15 +903,15 @@ exports[`data reads keep their HTTP responses 1`] = `
     "status": 200,
   },
   "GET /v1/data/population?period=2022&geography=ward&codeYear=2023&place=E05000001&format=csv": {
-    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode
-"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","",""
+    "body": "atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound,sourceAreaCode,dimensions
+"sha256:registry","population","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","","","","{}"
 ",
-    "bytes": 355,
+    "bytes": 371,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: text/csv; charset=utf-8",
-      "etag: "sha256-W5oAaSr3vDV-A2NZh2W6UXOBw23Yhz5MOQcgCkCzjjk"",
+      "etag: "sha256-iB5_kqUM43_rwBZ-zYpDkrCEjmBHSpd10s1r0BHzZdo"",
       "vary: accept-encoding",
     ],
     "status": 200,
