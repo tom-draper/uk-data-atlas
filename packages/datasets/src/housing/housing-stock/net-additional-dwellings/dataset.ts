@@ -1,3 +1,5 @@
+import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -62,6 +64,27 @@ export const netAdditionalDwellings = defineDataset<
 			),
 		],
 		fields: [{ path: "value", measure: "net-additional-dwellings" }],
+		direct: {
+			read: (reader) =>
+				directIndicator(reader, {
+					id: "net-additional-dwellings",
+					file: "Live_Table_122.ods",
+					table: "LT_122",
+					columns: 40,
+					key: "2025",
+					measure: "net-additional-dwellings",
+					read: (rows) => {
+						const target = (rows[4] ?? []).findIndex((header) =>
+							header.startsWith("2024-25"),
+						);
+						return rows.slice(5).map((row) => ({
+							code: row[2]?.trim() ?? "",
+							name: row[3]?.trim() ?? "",
+							value: parseNullableNum(row[target]),
+						}));
+					},
+				}),
+		},
 	},
 	catalogue: {
 		kind: "indicators",

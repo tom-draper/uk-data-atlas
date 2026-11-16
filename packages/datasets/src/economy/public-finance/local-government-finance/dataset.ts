@@ -1,3 +1,5 @@
+import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -62,6 +64,27 @@ export const localGovernmentFinance = defineDataset<
 			),
 		],
 		fields: [{ path: "value", measure: "education-services-budget" }],
+		direct: {
+			read: (reader) =>
+				directIndicator(reader, {
+					id: "local-government-finance",
+					file: "RA_2026-27_data_Part_1.ods",
+					table: "RA_LA_Data_2026-27",
+					columns: 128,
+					key: "2026",
+					measure: "education-services-budget",
+					read: (rows) => {
+						const target = (rows[9] ?? []).indexOf(
+							"TOTAL EDUCATION SERVICES",
+						);
+						return rows.slice(10).map((row) => ({
+							code: row[1]?.trim() ?? "",
+							name: row[2]?.trim() ?? "",
+							value: parseNullableNum(row[target]),
+						}));
+					},
+				}),
+		},
 	},
 	catalogue: {
 		kind: "indicators",

@@ -1,3 +1,5 @@
+import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -62,6 +64,32 @@ export const adultSocialCareOutcomes = defineDataset<
 			),
 		],
 		fields: [{ path: "value", measure: "social-care-quality-of-life" }],
+		direct: {
+			read: (reader) =>
+				directIndicator(reader, {
+					id: "adult-social-care-outcomes",
+					file: "dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+					table: "Table_1a",
+					columns: 16,
+					key: "2025",
+					measure: "social-care-quality-of-life",
+					read: (rows) => {
+						return rows
+							.slice(6)
+							.filter(
+								(row) =>
+									row[3] === "Local Authority" &&
+									row[4] === "Total" &&
+									row[5] === "Total",
+							)
+							.map((row) => ({
+								code: row[1]?.trim() ?? "",
+								name: row[0]?.trim() ?? "",
+								value: parseNullableNum(row[8]),
+							}));
+					},
+				}),
+		},
 	},
 	catalogue: {
 		kind: "indicators",
