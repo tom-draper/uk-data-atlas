@@ -14,6 +14,9 @@ import {
 import { boundaryReleaseMetadata } from "../boundaries/boundaryReleaseMetadata";
 import { boundaryReleasesMetadata } from "../boundaries/boundaryReleasesMetadata";
 import { boundariesMetadata } from "../boundaries/boundariesMetadata";
+import { documentContract } from "../documents/documentContract";
+import { documentFastifyRoutes } from "../documents/documentFastifyRoutes";
+import { documentMetadata } from "../documents/documentMetadata";
 import { measureExportRoutes } from "../data/measureExportRoutes";
 import { measureExportMetadata } from "../data/measureExportContract";
 import Fastify from "fastify";
@@ -57,9 +60,42 @@ export const createContractApp = async (context: RouteContextFor<never>) => {
 	await app.register(catalogueFastifyRoutes, { context });
 	await app.register(boundaryFastifyRoutes, { context });
 	await app.register(similarAreasFastifyRoutes, { context });
+	await app.register(documentFastifyRoutes, { context });
 	await app.register(measureExportRoutes, { context });
 	await app.ready();
 	return app;
+};
+
+/**
+ * Fastify names path parameters in camel case and cannot spell a suffix after
+ * one, so a few paths are renamed to the form the description publishes.
+ */
+const openapiPath = (path: string) =>
+	path
+		.replace("{datasetId}", "{dataset-id}")
+		.replace("{measureId}", "{measure-id}")
+		.replace("/documents/{documentId}", "/documents/{document-id}.json");
+
+/**
+ * An object that declares no properties and allows any other is written
+ * `type: object`, which says the same and is how the description reads it.
+ */
+const openObjectAsPlain = <T extends Record<string, unknown>>(schema: T) => {
+	const { properties, additionalProperties, ...rest } = schema as Record<
+		string,
+		unknown
+	>;
+	const isEmpty = (value: unknown) =>
+		typeof value === "object" &&
+		value !== null &&
+		Object.keys(value).length === 0;
+	if (
+		properties !== undefined &&
+		isEmpty(properties) &&
+		isEmpty(additionalProperties)
+	)
+		return rest as Omit<T, "$schema">;
+	return schema as Omit<T, "$schema">;
 };
 
 export const generatedPaths = async () => {
@@ -68,9 +104,7 @@ export const generatedPaths = async () => {
 	});
 	const paths = Object.fromEntries(
 		Object.entries(app.swagger().paths ?? {}).map(([path, operation]) => [
-			path
-				.replace("{datasetId}", "{dataset-id}")
-				.replace("{measureId}", "{measure-id}"),
+			openapiPath(path),
 			operation,
 		]),
 	);
@@ -126,11 +160,14 @@ export const generatedPaths = async () => {
 			similarAreasMetadata,
 			similarAreasContract,
 		],
+		["/documents/{document-id}.json", documentMetadata, documentContract],
 	] as const) {
 		const operation = paths[path]?.get;
 		if (!operation) throw new Error(`Missing Fastify operation: ${path}`);
-		const { $schema, ...schema } = z.toJSONSchema(
-			definition.responses[200].content["application/json"].schema,
+		const { $schema, ...schema } = openObjectAsPlain(
+			z.toJSONSchema(
+				definition.responses[200].content["application/json"].schema,
+			),
 		);
 		Object.assign(operation, metadata, {
 			responses: {
