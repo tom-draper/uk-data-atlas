@@ -5,6 +5,11 @@ import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
 import { loadCouncilTax } from "../../../data/new-datasets/loader.ts";
+import { mapAuthorityCode } from "../../../data/new-datasets/authorityCode.ts";
+import { odsTableRows } from "../../../data/spreadsheet/ods.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import { parseNullableNum } from "../../../helpers/parseNumber.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 	id: "council-tax",
@@ -67,6 +72,33 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 			),
 		],
 		fields: [{ path: "value", measure: "band-d-council-tax" }],
+		direct: {
+			read: async ({ odsContent }) => {
+				const rows = odsTableRows(
+					await odsContent(
+						sourceDir("council-tax", "Tables_1-9_2026-27.ods"),
+					),
+					{ table: "Table_9", label: "Table_9", maxColumns: 16 },
+				);
+				const column = (rows[2] ?? []).indexOf("Band D");
+				if (column < 0)
+					throw new Error(
+						"Could not find the Band D column in council-tax Table 9",
+					);
+				const records = new Map<string, DirectRecord>();
+				for (const row of rows.slice(3)) {
+					const code = row[1]?.trim() ?? "";
+					const value = parseNullableNum(row[column]);
+					if (!mapAuthorityCode(code) || value === null) continue;
+					records.set(code, {
+						code,
+						name: row[2]?.trim() || code,
+						values: [{ measure: "band-d-council-tax", value }],
+					});
+				}
+				return [{ key: "2026", records: [...records.values()] }];
+			},
+		},
 	},
 	catalogue: {
 		kind: "indicators",
