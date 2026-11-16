@@ -1,7 +1,11 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { problem, unexpectedQueryParameter } from "../runtime/index.ts";
-import type { ApiResponse, RouteContextFor } from "../runtime/index.ts";
+import type {
+	ApiResponse,
+	RequestBody,
+	RouteContextFor,
+} from "../runtime/index.ts";
 import { httpResponse } from "../httpResponse";
 import { sendFastifyResponse } from "../fastifyResponse";
 import { validateResponse } from "./validateResponse";
@@ -23,10 +27,15 @@ type GetRoute = {
 	validate?: (answer: ApiResponse) => ApiResponse;
 };
 
+/**
+ * Hands a request to the production pipeline, which applies its limits, reads
+ * a POST body, and then asks `handle` for the answer. A POST route's `handle`
+ * is given the body the pipeline read.
+ */
 export type ContractDispatch = (
 	request: FastifyRequest,
 	reply: FastifyReply,
-	handle: () => ApiResponse,
+	handle: (body?: RequestBody) => ApiResponse | Promise<ApiResponse>,
 ) => Promise<unknown>;
 
 export const registerGetRoute = (

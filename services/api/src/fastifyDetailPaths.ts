@@ -43,3 +43,24 @@ export const isFastifyDetailPath = (pathname: string) => {
 	}
 	return false;
 };
+
+/** POST routes Fastify serves, in the same form as the detail routes above. */
+const postRoutes: { pattern: RegExp }[] = [
+	// A release is not itself named `:join`, and Fastify cannot route a colon
+	// inside the release, so the join suffix is the only one in the segment.
+	{ pattern: /^\/v1\/boundary-releases\/([^/]+)\/([^/:]+):join$/ },
+];
+
+export const isFastifyPostPath = (pathname: string) => {
+	for (const { pattern } of postRoutes) {
+		const match = pattern.exec(pathname);
+		if (!match) continue;
+		const raws = match.slice(1) as string[];
+		try {
+			return raws.every((raw) => routable(raw, decodeURIComponent(raw)));
+		} catch {
+			return false;
+		}
+	}
+	return false;
+};

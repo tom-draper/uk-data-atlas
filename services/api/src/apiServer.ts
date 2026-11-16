@@ -15,8 +15,9 @@ import {
 import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
 import { relationshipsContract } from "./relationships/relationshipsContract";
 import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
+import { releaseJoinFastifyRoutes } from "./boundaries/releaseJoinFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
-import { isFastifyDetailPath } from "./fastifyDetailPaths";
+import { isFastifyDetailPath, isFastifyPostPath } from "./fastifyDetailPaths";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import {
 	boundaries,
@@ -69,7 +70,7 @@ import { ResponseCache } from "./responseCache";
 import { isStoredFile, problem, type ApiResponse } from "./runtime/index.ts";
 import { routeAsync } from "./routes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
-import type { RouteContext } from "./runtime/index.ts";
+import type { RequestBody, RouteContext } from "./runtime/index.ts";
 import {
 	DEFAULT_MAX_URL_LENGTH,
 	DEFAULT_MAX_CONCURRENT_REQUESTS,
@@ -385,7 +386,9 @@ export const createApiServer = (
 		request: IncomingMessage,
 		response: ServerResponse,
 		overloaded = false,
-		contractHandler?: () => ApiResponse,
+		contractHandler?: (
+			body?: RequestBody,
+		) => ApiResponse | Promise<ApiResponse>,
 	) => {
 		const startedAt = performance.now();
 		const incomingId = request.headers["x-request-id"];
@@ -497,17 +500,22 @@ export const createApiServer = (
 								`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
 							),
 						);
-					else
-						result = await answerAsync(() =>
+					else {
+						const posted = {
+							contentType: request.headers["content-type"] ?? "",
+							text: read.text,
+						};
+						result = await answerAsync(async () =>
 							contractHandler
-								? Promise.resolve(contractHandler())
-								: routeAsync("POST", target, catalogues, {
-										contentType:
-											request.headers["content-type"] ??
-											"",
-										text: read.text,
-									}),
+								? contractHandler(posted)
+								: routeAsync(
+										"POST",
+										target,
+										catalogues,
+										posted,
+									),
 						);
+					}
 				} else {
 					// An answer is a function of the release and the request, except
 					// a remote terrain sample, which is the provider's to change.
@@ -804,6 +812,11 @@ export const createApiServer = (
 		context: catalogues,
 		dispatch,
 	});
+	void fastify.register(releaseJoinFastifyRoutes, {
+		prefix: "/v1",
+		context: catalogues,
+		dispatch,
+	});
 	void fastify.register(measureExportRoutes, {
 		prefix: "/v1",
 		context: catalogues,
@@ -829,11 +842,17 @@ export const createApiServer = (
 			rootPath = parts.length === 1 && parts[0] === "v1";
 		} catch {}
 		const fastifyDetail = isFastifyDetailPath(pathname);
+		const fastifyPost =
+			request.method === "POST" && isFastifyPostPath(pathname);
 		if (
-			(request.method !== "GET" &&
-				request.method !== "HEAD" &&
-				!(request.method === "POST" && rootPath)) ||
-			(!rootPath && !isFastifyStaticPath(pathname) && !fastifyDetail)
+			fastifyPost
+				? false
+				: (request.method !== "GET" &&
+						request.method !== "HEAD" &&
+						!(request.method === "POST" && rootPath)) ||
+					(!rootPath &&
+						!isFastifyStaticPath(pathname) &&
+						!fastifyDetail)
 		)
 			return handle(request, response, overloaded);
 		await ready;
