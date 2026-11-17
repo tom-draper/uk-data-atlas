@@ -139,6 +139,7 @@ export const compileDataCatalog = ({
 	jobsObservations: MeasureObservationArtifact;
 	yearlyIndicatorObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
+	observationDatasets: ReadonlyMap<MeasureObservationArtifact, string>;
 	statisticsFields: Array<{
 		measureId: string;
 		field: NonNullable<CompiledMeasure["statisticsField"]>;
@@ -362,6 +363,12 @@ export const compileDataCatalog = ({
 			...indicatorObservations.map(({ artifact }) => artifact),
 			...unemployment.artifacts,
 		],
+		observationDatasets: new Map(
+			indicatorObservations.map(({ measure, artifact }) => [
+				artifact,
+				measure.sources[0]!.datasetId,
+			]),
+		),
 		statisticsFields: indicatorObservations.flatMap(
 			({ measure, statisticsField }) =>
 				statisticsField

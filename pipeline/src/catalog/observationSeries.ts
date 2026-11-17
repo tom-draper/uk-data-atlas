@@ -14,6 +14,7 @@ export function validateObservationSeries(
 	catalog: DataCatalog,
 	observations: readonly AnyMeasureObservationArtifact[],
 	tables: readonly MeasureTableArtifact[],
+	datasets: ReadonlyMap<AnyMeasureObservationArtifact, string> = new Map(),
 ): void {
 	const key = (measure: Measure, source: MeasureSource) => {
 		if (!measure.series)
@@ -56,6 +57,8 @@ export function validateObservationSeries(
 			measure.sources
 				.filter(
 					(source) =>
+						(!datasets.has(artifact) ||
+							source.datasetId === datasets.get(artifact)) &&
 						source.sourceGeography.type ===
 							artifact.sourceGeography.type &&
 						source.sourceGeography.boundaryYear ===
