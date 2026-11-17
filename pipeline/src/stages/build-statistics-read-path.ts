@@ -8,6 +8,7 @@ import {
 	totalMember,
 	type DataCatalog,
 	type MeasureSeriesIdentity,
+	type StatisticsVocabulary,
 } from "@uk-data-atlas/measures";
 import {
 	SERVED_LOCAL_ELECTION_WARD_CODES,
@@ -18,14 +19,13 @@ import {
 	SALFORD_WARD_CODE_REMAP,
 } from "@uk-data-atlas/datasets";
 import {
-	readMeasureDimensionsConfig,
 	type StatisticsReadPath,
 	type StatisticsSelector,
 } from "@uk-data-atlas/measures";
-import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
 import {
 	artifactDirectory,
 	statisticsReadPathPath,
+	statisticsVocabularyPath,
 	buildDirectory,
 } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
@@ -46,27 +46,9 @@ const databasePath = join(buildDirectory(repositoryRoot), "atlas-base.sqlite");
 const catalog = readJsonSync(
 	join(artifactDirectory(repositoryRoot), "data-catalog.json"),
 ) as DataCatalog;
-const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
-const catalogueSeries = new Map(
-	catalog.measures.map((measure) => [measure.id, measure.series]),
-);
-const censusSeries = new Map<
-	string,
-	{ measure: string; dimensions: Record<string, string> }
->(
-	CENSUS_SMALL_AREA_TABLES.flatMap((table) =>
-		table.categories.map(
-			([suffix, , , member]) =>
-				[
-					`${table.measurePrefix}-${suffix}`,
-					{
-						measure: table.measure,
-						dimensions: { [table.dimension]: member ?? suffix },
-					},
-				] as const,
-		),
-	),
-);
+const vocabulary = readJsonSync(
+	statisticsVocabularyPath(repositoryRoot),
+) as StatisticsVocabulary;
 const database = new DatabaseSync(databasePath, { readOnly: true });
 
 /** The dimensions each statistics series of a dataset and measure carries. */
@@ -259,10 +241,7 @@ const tables = new Set<string>();
 const keys = new Set<string>();
 for (const measure of catalog.measures)
 	for (const source of measure.sources) {
-		const identity =
-			measure.series ??
-			config.ids[measure.id] ??
-			censusSeries.get(measure.id);
+		const identity = measure.series;
 		if (!identity)
 			throw new Error(`Missing series identity for ${measure.id}.`);
 		const key = measureSeriesSourceKey(identity, source);
