@@ -1,16 +1,16 @@
 import type { UnemploymentDataset } from "../../../types/unemployment.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { type Json, periods } from "../../../declaration/statistics.ts";
 import { APRIL_2023_LAD_MERGERS } from "../../../data/localAuthority/reorganisations.ts";
 import { aggregateUnemployment } from "../../../data/unemployment/aggregate.ts";
-import { loadUnemployment } from "../../../data/unemployment/loader.ts";
-
-/** Years to 2003 are April to March; later ones are calendar years. */
-const unemploymentPeriod = (key: string) =>
-	Number(key) <= 2003
-		? periods.financialYear(Number(key))
-		: periods.year(Number(key));
+import {
+	unemploymentPeriod,
+	unemploymentStatisticsPart,
+} from "../../../data/unemployment/source.ts";
 
 /** The most districts any 2023 unitary was formed from. */
 const MOST_PREDECESSORS = Math.max(
@@ -45,9 +45,7 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
-	// The local authority rates and levels sheets; the workbook also holds
-	// the same pair on 2010 constituencies.
-	load: async ({ xlsSheet }) => loadUnemployment(xlsSheet),
+	load: noCompiledPayload<UnemploymentDataset>(),
 	statistics: {
 		payload: {
 			parts: () => [
@@ -142,6 +140,11 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 				"Half-width of the published 95% confidence interval around unemployed people.",
 			),
 		],
+		/** The local authority rates and levels sheets of the workbook, which also holds the same pair on 2010 constituencies. */
+		direct: {
+			only: true,
+			read: ({ xlsSheet }) => unemploymentStatisticsPart(xlsSheet),
+		},
 		fields: [
 			["rates", "unemployment-rate"],
 			["rateIntervals", "unemployment-rate-interval"],

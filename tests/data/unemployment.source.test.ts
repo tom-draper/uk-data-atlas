@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
-import { annualPeriod, loadUnemployment } from "@uk-data-atlas/datasets";
+import {
+	annualPeriod,
+	unemploymentStatisticsPart,
+} from "@uk-data-atlas/datasets";
 
 // The loader builds the April 2023 authorities, so their districts are needed.
 const districts = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
@@ -48,23 +51,56 @@ describe("loadUnemployment", () => {
 	});
 
 	it("reads rates and levels with their intervals, keeping unavailable figures as null", async () => {
-		const [dataset] = Object.values(await loadUnemployment(read));
+		const [part] = await unemploymentStatisticsPart(read);
+		const values = (code: string, measure: string) =>
+			Object.fromEntries(
+				part.records
+					.find((record) => record.code === code)!
+					.values.filter((value) => value.measure === measure)
+					.map((value) => [value.period?.label, value.value]),
+			);
 
-		expect(dataset.years).toEqual([2003, 2004]);
-		expect(dataset.periodLabels).toEqual({
-			2003: "April 2003 to March 2004",
-			2004: "January to December 2004",
-		});
 		// Fife is keyed by its current code.
-		expect(dataset.data.S12000047).toMatchObject({
-			rates: { 2003: 6.6, 2004: 6 },
-			rateIntervals: { 2003: 1.2, 2004: 1.1 },
-			levels: { 2003: 11000, 2004: 10000 },
-			levelIntervals: { 2003: 2000, 2004: 1900 },
+		expect(part.records.some((record) => record.code === "S12000015")).toBe(
+			false,
+		);
+		expect(values("S12000047", "unemployment-rate")).toEqual({
+			"2003-04": 6.6,
+			"2004": 6,
 		});
-		expect(dataset.data.E06000060).toMatchObject({
-			rates: { 2003: null, 2004: 3.6 },
-			rateIntervals: { 2003: null, 2004: null },
+		expect(values("S12000047", "unemployment-rate-interval")).toEqual({
+			"2003-04": 1.2,
+			"2004": 1.1,
 		});
+		expect(values("S12000047", "unemployed-people")).toEqual({
+			"2003-04": 11000,
+			"2004": 10000,
+		});
+		expect(values("S12000047", "unemployed-people-interval")).toEqual({
+			"2003-04": 2000,
+			"2004": 1900,
+		});
+		expect(values("E06000060", "unemployment-rate")).toEqual({
+			"2003-04": null,
+			"2004": 3.6,
+		});
+		expect(values("E06000060", "unemployment-rate-interval")).toEqual({
+			"2003-04": null,
+			"2004": null,
+		});
+	});
+
+	it("gives a merged authority its predecessors' figures and no intervals", async () => {
+		const [part] = await unemploymentStatisticsPart(read);
+		const cumberland = part.records.find(
+			(record) => record.code === "E06000063",
+		)!;
+
+		expect(Object.values(cumberland.parents ?? {})).toHaveLength(3);
+		expect(
+			cumberland.values.some((value) =>
+				value.measure.endsWith("-interval"),
+			),
+		).toBe(false);
 	});
 });
