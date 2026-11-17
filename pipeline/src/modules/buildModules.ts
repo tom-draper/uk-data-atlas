@@ -376,7 +376,11 @@ export const buildCoreDatabase = (
 					row.name,
 					row.name === "payloads"
 						? `NOT (${isPostcodePayload})`
-						: undefined,
+						: row.name === "schema_table"
+							? "name != 'crosswalk_edge_check'"
+							: row.name === "schema_column"
+								? "table_name != 'crosswalk_edge_check'"
+								: undefined,
 				);
 		const views = classifyViews(schema);
 		for (const view of views.core) database.exec(view.sql);

@@ -282,7 +282,7 @@ them, so the API's release stays to what the API serves.
 
 `crosswalk_edge_check` and `payloads` stay in `atlas.sqlite`. The API reads
 both at request time (see "What `atlas.sqlite` keeps" in `data/build/README.md`),
-so neither is build-only output.
+so neither is build-only output. The sold modules exclude `crosswalk_edge_check`; their assemblies are not complete API-serving databases.
 
 The deprecated read-only views for legacy table names and camelCase columns
 are no longer written (see `data/build/README.md`). No reader used them. The
