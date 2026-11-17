@@ -9,6 +9,7 @@ import {
 	type Piece,
 } from "../../src/notional/estimate.ts";
 import type { NotionalInputs } from "../../src/notional/inputs.ts";
+import { parseScottishLocal } from "../../src/notional/scotland.ts";
 
 const piece = (
 	unit: number,
@@ -125,4 +126,22 @@ test("fits weighted least squares", () => {
 	const { beta, r2 } = fitLinear(rows, 0);
 	assert.ok(Math.abs(beta[0]! - 2) < 1e-9 && Math.abs(beta[1]! - 3) < 1e-9);
 	assert.ok(Math.abs(r2 - 1) < 1e-9);
+});
+
+test("sums Scottish first preferences by party and skips other nations", () => {
+	const wards = parseScottishLocal(
+		[
+			`"Aberdeen","S12000033","Ward A","S13000001","A","SNP","900","1"`,
+			`"Aberdeen","S12000033","Ward A","S13000001","B","SNP","600","1"`,
+			`"Aberdeen","S12000033","Ward A","S13000001","C","C","1000","1"`,
+			`"Aberdeen","S12000033","Ward A","S13000001","D","Sol","50","0"`,
+			`"Leeds","E08000035","Ward B","E05000001","E","Lab","700","1"`,
+		].join("\n"),
+	);
+	assert.deepEqual([...wards.keys()], ["S13000001"]);
+	assert.deepEqual(wards.get("S13000001"), {
+		snp: 1500,
+		con: 1000,
+		other: 50,
+	});
 });
