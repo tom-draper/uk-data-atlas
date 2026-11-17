@@ -119,13 +119,26 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 	display: {
 		label: "Fuel Poverty [2024]",
 		year: 2024,
-		component:
-			"@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart",
+		card: {
+			heading: "Fuel Poverty",
+			source: "DESNZ. Fuel poverty (LILEE), England, 2024.",
+			coverage: "England",
+			summariseLsoas: "localAuthority",
+		},
 		measures: [
 			{
 				id: "rate",
 				label: "Percentage",
 				field: "fuelPovertyRate",
+				card: {
+					unit: "% households",
+					digits: 1,
+					maximum: 20,
+					secondary: {
+						field: "fuelPoorHouseholdCount",
+						format: { kind: "compact", suffix: " affected" },
+					},
+				},
 				colorRange: { min: 5, max: 15 },
 				legend: {
 					min: 0,
@@ -141,6 +154,14 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 				id: "count",
 				label: "Total",
 				field: "fuelPoorHouseholdCount",
+				card: {
+					unit: "households",
+					maximum: 1000,
+					secondary: {
+						field: "fuelPovertyRate",
+						format: { kind: "decimal", digits: 1, suffix: "%" },
+					},
+				},
 				colorRange: { min: 0, max: 300 },
 				legend: {
 					min: 0,
