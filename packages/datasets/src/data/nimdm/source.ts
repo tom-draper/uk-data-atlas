@@ -1,0 +1,38 @@
+export const LGD_CODES: Record<string, string> = {
+	"Antrim and Newtownabbey": "N09000001",
+	"Armagh City, Banbridge and Craigavon": "N09000002",
+	Belfast: "N09000003",
+	"Causeway Coast and Glens": "N09000004",
+	"Derry City and Strabane": "N09000005",
+	"Fermanagh and Omagh": "N09000006",
+	"Lisburn and Castlereagh": "N09000007",
+	"Mid and East Antrim": "N09000008",
+	"Mid Ulster": "N09000009",
+	"Newry, Mourne and Down": "N09000010",
+	"Ards and North Down": "N09000011",
+};
+
+export function pick(row: Record<string, any>, ...keys: string[]): string {
+	for (const k of keys) {
+		const v = row[k];
+		if (v !== undefined && v !== null && v !== "") return String(v).trim();
+	}
+	return "";
+}
+
+export function pickBySubstring(
+	row: Record<string, any>,
+	substring: string,
+): string {
+	for (const [k, v] of Object.entries(row)) {
+		if (
+			k.replace(/\s+/g, " ").includes(substring) &&
+			v !== undefined &&
+			v !== null &&
+			v !== ""
+		) {
+			return String(v).trim();
+		}
+	}
+	return "";
+}

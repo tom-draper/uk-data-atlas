@@ -1,16 +1,18 @@
 import type { NIMDMDataset } from "../../../types/nimdm.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { summariseNIMDM } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
 	deprivationStatistics,
 	rankDisplay,
 } from "../../../data/deprivation/declaration.ts";
 import {
-	loadNIMDM,
 	LGD_CODES,
 	pick,
 	pickBySubstring,
-} from "../../../data/nimdm/loader.ts";
+} from "../../../data/nimdm/source.ts";
 import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { parseNumInt } from "../../../helpers/parseNumber.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
@@ -36,7 +38,7 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: ({ text }) => loadNIMDM(text),
+	load: noCompiledPayload<NIMDMDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 43,
@@ -66,6 +68,7 @@ export const nimdm = defineDataset<NIMDMDataset>({
 			mostDeprived: (record) => (record.nimdmRank as number) <= 89,
 		}),
 		direct: {
+			only: true,
 			read: async ({ text }) => {
 				const { data } = await parseCsv<Record<string, string>>(
 					await text(sourceDir("nimdm", "NIMDM17_SOAresults.csv")),
