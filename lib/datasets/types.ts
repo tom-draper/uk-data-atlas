@@ -6,6 +6,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { DatasetDefinition } from "../data/catalog";
+import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
 import type { ValueCardConfig } from "./valueCard";
 
 /**
@@ -90,6 +91,9 @@ export interface ChartDefinition<
 	// (`@/components/ValueCard`) rather than a component of their own.
 	card?: ValueCardConfig;
 	cardForOptions?(options: MapOptions): ValueCardConfig;
+	// Declares the history card for charts rendered by the shared series
+	// chart (`@/components/measures/MeasureSeriesChart`).
+	seriesForOptions?(options: MapOptions): SeriesCardConfig;
 }
 
 export type ChartDatasetLegendAggregation<

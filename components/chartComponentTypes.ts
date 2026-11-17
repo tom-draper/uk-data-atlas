@@ -1,5 +1,6 @@
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
+import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@uk-data-atlas/datasets";
@@ -19,4 +20,6 @@ export interface ChartComponentProps {
 	/** The declarative card, for charts rendered by the shared value card. */
 	card?: ValueCardConfig;
 	cardForOptions?(options: MapOptions): ValueCardConfig;
+	/** The declarative history card, for charts drawn by the shared series chart. */
+	seriesForOptions?(options: MapOptions): SeriesCardConfig;
 }
