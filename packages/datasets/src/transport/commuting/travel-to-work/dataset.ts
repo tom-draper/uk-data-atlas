@@ -140,8 +140,31 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 	display: {
 		label: "Travel to Work [2021]",
 		year: 2021,
-		component:
-			"@/components/datasets/transport/commuting/travel-to-work/TravelToWorkChart",
+		component: "@/components/measures/MeasureBreakdownChart",
+		breakdown: {
+			heading: "Travel to Work",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Method used to travel to workplace, England and Wales. TS061.",
+			coverage: "England & Wales",
+			measure: "people-in-employment",
+			dimension: "travel-method",
+			total: "total",
+			parts: [
+				{ code: "car", color: "#ef4444", label: "Car or van" },
+				{ code: "home", color: "#3b82f6", label: "Work from home" },
+				{
+					code: "public-transport",
+					color: "#8b5cf6",
+					label: "Public transport",
+				},
+				{ code: "on-foot", color: "#22c55e", label: "On foot" },
+				{ code: "bicycle", color: "#84cc16", label: "Bicycle" },
+				{ code: "taxi", color: "#eab308", label: "Taxi" },
+				{ code: "motorcycle", color: "#f97316", label: "Motorcycle" },
+				{ code: "other", color: "#9ca3af", label: "Other" },
+			],
+			accent: "car",
+		},
 		measures: [
 			{
 				// Car share: the widest spread of any mode, and the one that

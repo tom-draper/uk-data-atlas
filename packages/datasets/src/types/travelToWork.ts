@@ -31,27 +31,3 @@ export interface TravelToWorkDataset {
 export interface AggregatedTravelToWorkData {
 	breakdown: TravelToWorkBreakdown;
 }
-
-export const TRAVEL_TO_WORK_MODES = [
-	{ key: "car", label: "Car or van" },
-	{ key: "workFromHome", label: "Work from home" },
-	{ key: "publicTransport", label: "Public transport" },
-	{ key: "onFoot", label: "On foot" },
-	{ key: "bicycle", label: "Bicycle" },
-	{ key: "taxi", label: "Taxi" },
-	{ key: "motorcycle", label: "Motorcycle" },
-	{ key: "other", label: "Other" },
-] as const;
-
-export type TravelToWorkMode = (typeof TRAVEL_TO_WORK_MODES)[number]["key"];
-
-export const TRAVEL_TO_WORK_COLORS: Record<TravelToWorkMode, string> = {
-	car: "#ef4444",
-	workFromHome: "#3b82f6",
-	publicTransport: "#8b5cf6",
-	onFoot: "#22c55e",
-	bicycle: "#84cc16",
-	taxi: "#eab308",
-	motorcycle: "#f97316",
-	other: "#9ca3af",
-};
