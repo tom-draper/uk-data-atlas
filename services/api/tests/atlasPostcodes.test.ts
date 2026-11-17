@@ -181,6 +181,42 @@ test("SQLite retains every postcode field, exact shard bytes, positions and rout
 	assert.equal(result.record.status, "live");
 });
 
+test("atlas postcode indexes reject missing layouts while standalone indexes remain readable", (t) => {
+	const { root, path } = fixture(t);
+	const before = postcodeIndexFor(rows);
+	storePostcodeIndex(root, before.artifact, (name) =>
+		before.texts.get(name)!,
+	);
+	const component = join(root, "data/build/postcode-index.sqlite");
+	assert.equal(
+		readPostcodeIndex(root, component, { standalone: true }).artifact
+			.contentHash,
+		before.artifact.contentHash,
+	);
+	copyFileSync(component, path);
+	assert.throws(() => readPostcodeIndex(root), /postcode area layout/);
+});
+
+test("postcode lookups reject altered stored coordinates", (t) => {
+	const { root, path } = fixture(t);
+	const before = postcodeIndexFor(rows);
+	storePostcodeIndex(root, before.artifact, (name) =>
+		before.texts.get(name)!,
+	);
+	const database = new DatabaseSync(path);
+	database.exec(
+		"UPDATE postcodes SET latitudeMicrodegrees = latitudeMicrodegrees + 1 WHERE postcode = 'M11AE'",
+	);
+	database.close();
+	const index = readPostcodeIndex(root);
+	const parsed = parsePostcode("M1 1AE");
+	assert.ok(parsed && parsed.kind === "unit");
+	assert.throws(
+		() => index.lookup(parsed),
+		/Invalid SQLite postcode coordinates for district M1/,
+	);
+});
+
 test("replacement removes old rows and corrupt shards preserve published data and legacy files", (t) => {
 	const { root, apiRoot, path } = fixture(t);
 	const original = postcodeIndexFor(rows);

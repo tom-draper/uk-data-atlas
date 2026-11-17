@@ -17,7 +17,9 @@ export const readPostcodeCoordinates = (repositoryRoot: string) => {
 		repositoryRoot,
 		"data/build/postcode-index.sqlite",
 	);
-	const postcodeIndex = readPostcodeIndex(repositoryRoot, databasePath);
+	const postcodeIndex = readPostcodeIndex(repositoryRoot, databasePath, {
+		standalone: true,
+	});
 	const postcodeArtifact = postcodeIndex.artifact;
 	const count = postcodeArtifact.counts.postcodes;
 	const longitudes = new SharedArrayBuffer(count * 8);

@@ -164,6 +164,7 @@ test("postcode index readers work from the component without an atlas database",
 	const count = readPostcodeIndex(
 		root,
 		join(root, "data/build/postcode-index.sqlite"),
+		{ standalone: true },
 	).artifact.counts.postcodes;
 	assert.equal(count, 3);
 });
@@ -228,11 +229,11 @@ test("readers refuse a database built before postcode area sets", (t) => {
 		{ ...coordinates[2] },
 		{ latitude: null, longitude: null },
 	);
-	db.exec("UPDATE meta SET value = '5' WHERE key = 'postcodeAreaLayout'");
+	db.exec("UPDATE meta SET value = '6' WHERE key = 'postcodeAreaLayout'");
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 5 but this code needs 6/,
+		/postcode area layout 6 but this code needs 7/,
 	);
 });
 

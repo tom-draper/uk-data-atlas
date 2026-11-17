@@ -1248,7 +1248,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	},
 	postcode_area_shard_hash: {
 		audience: "internal",
-		description: "Integrity hashes of the API's postcode shards.",
+		description:
+			"Integrity hashes of postcode area shards and stored coordinates.",
 		columns: {},
 	},
 	meta: {
