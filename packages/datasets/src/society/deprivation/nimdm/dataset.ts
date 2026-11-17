@@ -5,7 +5,16 @@ import {
 	deprivationStatistics,
 	rankDisplay,
 } from "../../../data/deprivation/declaration.ts";
-import { loadNIMDM } from "../../../data/nimdm/loader.ts";
+import {
+	loadNIMDM,
+	LGD_CODES,
+	pick,
+	pickBySubstring,
+} from "../../../data/nimdm/loader.ts";
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import { parseNumInt } from "../../../helpers/parseNumber.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const nimdm = defineDataset<NIMDMDataset>({
 	id: "nimdm",
@@ -34,27 +43,77 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		label: "Deprivation",
 		about: "Share of its neighbourhoods in Northern Ireland's most deprived 10%",
 	},
-	statistics: deprivationStatistics({
-		id: "nimdm",
-		prefix: "nimdm",
-		index: "Northern Ireland Multiple Deprivation Measure",
-		area: "super output areas in Northern Ireland",
-		fields: {},
-		boundary: { type: "superOutputArea", year: 2011 },
-		edition: "2017",
-		metadata: {
-			source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
-			notes: [
-				"Northern Ireland only. NISRA publishes ranks, not deciles, for Super Output Areas; rank 1 is the most deprived.",
-			],
+	statistics: {
+		...deprivationStatistics({
+			id: "nimdm",
+			prefix: "nimdm",
+			index: "Northern Ireland Multiple Deprivation Measure",
+			area: "super output areas in Northern Ireland",
+			fields: {},
+			boundary: { type: "superOutputArea", year: 2011 },
+			edition: "2017",
+			metadata: {
+				source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
+				notes: [
+					"Northern Ireland only. NISRA publishes ranks, not deciles, for Super Output Areas; rank 1 is the most deprived.",
+				],
+			},
+			code: "soaCode",
+			name: "soaName",
+			parent: { code: "lgdCode", name: "lgdName" },
+			summaryField: "lgdStats",
+			// The most deprived tenth of the 890 areas.
+			mostDeprived: (record) => (record.nimdmRank as number) <= 89,
+		}),
+		direct: {
+			read: async ({ text }) => {
+				const { data } = await parseCsv<Record<string, string>>(
+					await text(sourceDir("nimdm", "NIMDM17_SOAresults.csv")),
+					{ header: true },
+				);
+				const records = new Map<string, DirectRecord>();
+				for (const row of data) {
+					const code = pick(
+						row,
+						"SOA2001",
+						"SOA2011",
+						"SOA_Code",
+						"SOA",
+					);
+					if (!code) continue;
+					const parentName = pick(
+						row,
+						"LGD2014NAME",
+						"LGD2014",
+						"LGD",
+						"Council",
+					);
+					const parentCode = LGD_CODES[parentName] ?? "";
+					const rank = parseNumInt(
+						pickBySubstring(
+							row,
+							"Multiple Deprivation Measure Rank",
+						),
+					);
+					if (!rank) continue;
+					records.set(code, {
+						code,
+						name: pick(
+							row,
+							"SOA2001_name",
+							"SOA2011_name",
+							"SOA Name",
+						),
+						parents: {
+							lgdCode: { code: parentCode, name: parentName },
+						},
+						values: [{ measure: "nimdm-rank", value: rank }],
+					});
+				}
+				return [{ key: "2017", records: [...records.values()] }];
+			},
 		},
-		code: "soaCode",
-		name: "soaName",
-		parent: { code: "lgdCode", name: "lgdName" },
-		summaryField: "lgdStats",
-		// The most deprived tenth of the 890 areas.
-		mostDeprived: (record) => (record.nimdmRank as number) <= 89,
-	}),
+	},
 	ranking: {
 		label: "Neighbourhoods in Northern Ireland's most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
