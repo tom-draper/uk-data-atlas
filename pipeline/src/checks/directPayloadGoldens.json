@@ -50,5 +50,9 @@
 	"nimdm": {
 		"sha256": "f47ae703f66a8824f3496cf824c74805ea16ede1d6406847e36df656a37c10a2",
 		"bytes": 114947
+	},
+	"simd": {
+		"sha256": "d1868041a949b9b5765ddc1d4d0def2055881977d09e9d05e2890eb38bedb816",
+		"bytes": 1233880
 	}
 }
