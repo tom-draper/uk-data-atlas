@@ -20,7 +20,6 @@ import { compileDirectDataset } from "./compileDirectDataset.ts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import {
 	withDuckdbEnergyConsumption,
-	withDuckdbImd,
 	withDuckdbLocalElection,
 	withDuckdbSchoolPerformance,
 } from "./duckdbDatasetCsv.ts";
@@ -160,37 +159,26 @@ export async function compileStaleDataset(
 												input,
 											),
 									)
-								: definition.type === "imd"
-									? await withDuckdbImd(
+								: definition.type === "school-performance" ||
+									  definition.type ===
+											"school-performance-disadvantage"
+									? await withDuckdbSchoolPerformance(
 											reader,
 											artifacts,
+											definition.type ===
+												"school-performance"
+												? "Total"
+												: "Disadvantage status",
 											(input) =>
 												compileDatasetContents(
 													definition,
 													input,
 												),
 										)
-									: definition.type ===
-												"school-performance" ||
-										  definition.type ===
-												"school-performance-disadvantage"
-										? await withDuckdbSchoolPerformance(
-												reader,
-												artifacts,
-												definition.type ===
-													"school-performance"
-													? "Total"
-													: "Disadvantage status",
-												(input) =>
-													compileDatasetContents(
-														definition,
-														input,
-													),
-											)
-										: await compileDatasetContents(
-												definition,
-												reader,
-											);
+									: await compileDatasetContents(
+											definition,
+											reader,
+										);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
