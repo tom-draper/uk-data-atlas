@@ -110,3 +110,31 @@ test("rejects ambiguous sources for an individual observation", () => {
 		),
 	).toThrow(/Ambiguous observation source/);
 });
+
+test("uses dataset provenance to distinguish otherwise identical sources", () => {
+	const first = measure("first", "young", source("dataset-a"));
+	const second = measure("second", "young", source("dataset-b"));
+	const firstArtifact = observed(measureSeriesKey(first.series!));
+	const secondArtifact = observed(measureSeriesKey(second.series!));
+	const datasets = new Map([
+		[firstArtifact, "dataset-a"],
+		[secondArtifact, "dataset-b"],
+	]);
+	expect(() =>
+		validateObservationSeries(
+			catalog(first, second),
+			[firstArtifact, secondArtifact],
+			[],
+			datasets,
+		),
+	).not.toThrow();
+	datasets.set(secondArtifact, "dataset-c");
+	expect(() =>
+		validateObservationSeries(
+			catalog(first, second),
+			[firstArtifact, secondArtifact],
+			[],
+			datasets,
+		),
+	).toThrow(/No catalogue source matches/);
+});

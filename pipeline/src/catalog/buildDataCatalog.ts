@@ -82,6 +82,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		regionalGdpObservations,
 		energyConsumptionObservations,
 		indicatorObservations,
+		observationDatasets,
 		statisticsFields,
 		populationDensityObservations,
 		housePriceObservations,
@@ -118,7 +119,12 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		...lifeExpectancyObservations,
 		...electionObservations,
 	];
-	validateObservationSeries(catalog, observationArtifacts, censusTables);
+	validateObservationSeries(
+		catalog,
+		observationArtifacts,
+		censusTables,
+		observationDatasets,
+	);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	writeFileSync(
 		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
