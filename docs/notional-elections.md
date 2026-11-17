@@ -96,6 +96,14 @@ are placed on the December 2019 ward release: seven were recoded after
 December 2017. 2017 is the only Scottish contest before 2022, so every
 Scottish piece uses it.
 
+The May 2022 Scottish council results (LEAP's 2022 file, placed on the
+December 2022 ward release) were tried and left out. Used alone, as the
+nearest contest in time, they raise Scotland's error from 0.23 to 0.34.
+Averaged with 2017 on the 2017 wards, Scotland scores 0.23 with 2022 at a
+quarter weight, 0.25 at half and 0.29 at three quarters: no gain. The SNP and
+Labour gained and the Conservatives lost between 2019 and 2022, so 2022 is a
+worse guide to 2019 than 2017 is.
+
 Where local results come from, by adults covered:
 
 | Source                      | Adults (m) |
@@ -279,7 +287,6 @@ table.
 
 ## What would improve it
 
-- Scottish council results from 2022, averaged with 2017.
 - Electorates by ward or polling district, to weight by electors instead of
   adults.
 - Several years of local results per ward, averaged, to damp local candidate
