@@ -56,6 +56,15 @@ const directTypes = STATISTICS_DATASETS.filter(
 	({ direct }) => direct && !direct.only,
 ).map(({ type }) => type);
 
+/**
+ * Datasets a payload is rebuilt with: a per-100,000 figure divides by the
+ * population in the same database. They are written from their compiled JSON.
+ */
+const supporting: Record<string, string[]> = {
+	jobs: ["population-uk"],
+	"business-activity": ["population-uk"],
+};
+
 /** Writes one dataset's rows, from either path, onto the real area tables. */
 function write(
 	name: string,
@@ -66,6 +75,15 @@ function write(
 		(candidate) => candidate.type === type,
 	)!;
 	const path = join(directory, `${name}.sqlite`);
+	const others = (supporting[type] ?? []).map((other) => {
+		const config = STATISTICS_DATASETS.find(
+			(candidate) => candidate.type === other,
+		)!;
+		const compiled = manifest.datasets.find(
+			(candidate) => candidate.type === other,
+		)!;
+		return { config, compiled };
+	});
 	writeSqliteIndex(
 		path,
 		{ schemaVersion: "3" },
@@ -77,19 +95,41 @@ function write(
 				rows: [],
 			},
 			...statisticsTables(
-				[input(entry)],
+				[
+					input(entry),
+					...others.map(({ config, compiled }) =>
+						declaredStatistics(
+							config,
+							() =>
+								readFileSync(
+									join(
+										root,
+										`data/build/datasets/${compiled.output}.json`,
+									),
+									"utf8",
+								),
+							compiled,
+						),
+					),
+				],
 				IdRegistries.memory(),
-				new Map([
+				new Map(
 					[
-						entry.output,
+						{ type, entry },
+						...others.map(({ config, compiled }) => ({
+							type: config.type,
+							entry: compiled,
+						})),
+					].map(({ type: other, entry: found }) => [
+						found.output,
 						{
-							type,
-							sha256: entry.compiled.sha256,
-							bytes: entry.compiled.bytes,
+							type: other,
+							sha256: found.compiled.sha256,
+							bytes: found.compiled.bytes,
 							payloadId: null,
 						},
-					],
-				]),
+					]),
+				),
 			),
 		},
 	);
