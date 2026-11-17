@@ -4,6 +4,10 @@ import { yearParts } from "../../../declaration/yearParts.ts";
 import { averagePay } from "../../../data/income/aggregate.ts";
 import { loadWorkplaceIncome } from "../../../data/income/loader.ts";
 import { payStatistics } from "../../../data/income/statistics.ts";
+import {
+	payStatisticsPart,
+	workplaceIncomeFiles,
+} from "../../../data/income/source.ts";
 
 export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 	id: "workplace-income",
@@ -39,6 +43,14 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 			code: "ladCode",
 		},
 		...payStatistics("workplace"),
+		direct: {
+			read: ({ xlsxSheet }) =>
+				payStatisticsPart(
+					(path) => xlsxSheet(path, "All"),
+					"workplace",
+					workplaceIncomeFiles,
+				),
+		},
 	},
 	display: {
 		label: "Workplace Pay [2025]",
