@@ -30,6 +30,12 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 		],
 	},
 	load: ({ odsTableRows }) => loadChildPoverty(odsTableRows),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 50,
+		label: "Child poverty",
+		about: "Children under 16 in relative low-income families",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

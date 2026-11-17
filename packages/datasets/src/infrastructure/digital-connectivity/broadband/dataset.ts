@@ -39,6 +39,13 @@ export const broadband = defineDataset<BroadbandDataset>({
 	},
 	boundary: { type: "localAuthority", year: 2024 },
 	load: ({ text }) => loadBroadband(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 90,
+		label: "Full fibre",
+		about: "Premises that can get full-fibre broadband",
+		format: { kind: "decimal", digits: 0, suffix: "%" },
+	},
 	statistics: {
 		payload: { code: "ladCode" },
 		name: "ladName",

@@ -38,6 +38,13 @@ export const crime = defineDataset<CrimeDataset>({
 	// straight out of the published workbook rather than from an extract,
 	// with the notes that say which areas' figures are incomplete.
 	load: ({ xlsxSheet }) => loadCrime(xlsxSheet),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 80,
+		label: "Crime",
+		about: "Police-recorded crimes per 1,000 residents",
+		column: 0,
+	},
 	statistics: {
 		name: {
 			data: "ladName",

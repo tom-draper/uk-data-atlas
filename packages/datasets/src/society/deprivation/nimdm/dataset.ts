@@ -28,6 +28,12 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		notes: [],
 	},
 	load: ({ text }) => loadNIMDM(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 43,
+		label: "Deprivation",
+		about: "Share of its neighbourhoods in Northern Ireland's most deprived 10%",
+	},
 	statistics: deprivationStatistics({
 		id: "nimdm",
 		prefix: "nimdm",

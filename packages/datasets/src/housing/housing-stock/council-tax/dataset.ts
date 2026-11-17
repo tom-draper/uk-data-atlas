@@ -37,6 +37,12 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 		requiredDataFields: ["value"],
 	},
 	load: ({ odsContent }) => loadCouncilTax(odsContent),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 70,
+		label: "Council tax",
+		about: "Average Band D bill for the year",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

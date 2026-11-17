@@ -32,6 +32,12 @@ export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 	},
 	load: async ({ xlsxSheet }) =>
 		loadBrexitConstituency((path) => xlsxSheet(path, "DATA")),
+	placeHeadline: {
+		places: ["constituency"],
+		order: 20,
+		label: "EU referendum",
+		about: "Estimated share voting Leave",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

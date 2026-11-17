@@ -30,6 +30,12 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 	},
 	boundary: { type: "localAuthority", year: 2024 },
 	load: ({ text, xlsxSheet }) => loadClaimantCount(text, xlsxSheet),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 60,
+		label: "Claimant rate",
+		about: "Residents aged 16 to 64 claiming out-of-work benefits",
+	},
 	statistics: {
 		payload: { header: { month: "Apr 2026" }, code: "ladCode" },
 		name: "ladName",

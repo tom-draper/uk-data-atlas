@@ -12,7 +12,7 @@ import type {
 	DeclaredHeader,
 	DeclaredPayload,
 } from "./statistics.ts";
-import type { DatasetDisplay } from "./display.ts";
+import type { DatasetDisplay, DisplayFormat } from "./display.ts";
 import { yearParts } from "./yearParts.ts";
 
 /**
@@ -178,6 +178,39 @@ export type DatasetDeclaration<
 	/** The API catalogue measures, when the dataset publishes any. */
 	catalogue?: IndicatorCatalogue;
 	display?: DatasetDisplay;
+	/** The key figure place pages show for the dataset, if it has one. */
+	placeHeadline?: PlaceHeadlineDeclaration;
+};
+
+/** The place pages that can show a dataset's headline. */
+export const PLACE_HEADLINE_GEOGRAPHIES = [
+	"localAuthority",
+	"ward",
+	"constituency",
+] as const;
+export type PlaceHeadlineGeography =
+	(typeof PLACE_HEADLINE_GEOGRAPHIES)[number];
+
+/**
+ * A key figure on place pages: the area's value on the dataset's ranked map
+ * and where it ranks. The dataset's id is the map, so a dataset that declares
+ * this appears on the pages of the places it names with no website code.
+ */
+export type PlaceHeadlineDeclaration = {
+	/** The kinds of place whose page shows it. */
+	places: readonly PlaceHeadlineGeography[];
+	/** Where it sits in the page's list, lowest first. */
+	order: number;
+	/** A short name for the measure. */
+	label: string;
+	/** What exactly the value counts, in a line. */
+	about: string;
+	/** Rank by this extra column rather than the map's own value. */
+	column?: number;
+	/** Where the map's own format reads oddly out of context. */
+	format?: DisplayFormat;
+	/** How the two ends of the ranking read, "highest" and "lowest" by default. */
+	ends?: readonly [string, string];
 };
 
 const KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;

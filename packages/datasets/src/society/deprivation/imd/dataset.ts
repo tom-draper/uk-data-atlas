@@ -119,6 +119,12 @@ export const imd = defineDataset<IMDDataset>({
 	},
 	layout: { regionChunks: { kind: "regional", lsoaToLad: true } },
 	load: ({ text }) => loadIMD(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 40,
+		label: "Deprivation",
+		about: "Share of its neighbourhoods in England's most deprived 10%",
+	},
 	statistics: {
 		...base,
 		measures: [

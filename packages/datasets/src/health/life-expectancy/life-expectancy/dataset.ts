@@ -69,6 +69,13 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 	},
 	// Both source workbooks carry their local-area data on sheet 1.
 	load: async ({ xlsxSheetSelectedRows }) => loadLE(xlsxSheetSelectedRows),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 30,
+		label: "Life expectancy",
+		about: "At birth, the average of men and women",
+		format: { kind: "decimal", digits: 1, suffix: " years" },
+	},
 	statistics: {
 		payload: {
 			parts: () => [

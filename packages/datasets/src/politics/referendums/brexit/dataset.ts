@@ -28,6 +28,12 @@ export const brexit = defineDataset<BrexitLADDataset>({
 		notes: [],
 	},
 	load: async ({ text }) => loadBrexit(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 120,
+		label: "EU referendum",
+		about: "Share voting Leave",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts("brexit", "localAuthority", 2016, {}, ["2016"]),
