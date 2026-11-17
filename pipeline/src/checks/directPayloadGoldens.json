@@ -82,5 +82,9 @@
 	"unemployment": {
 		"sha256": "09213ee94117f9f6295cb5f0bf45f856f919aaffb71f88dab5f97389e2924f11",
 		"bytes": 484231
+	},
+	"regional-gdp": {
+		"sha256": "fc2d174c9dd79213664d83e4c37a9199dda3bbae6d8717019a26295441fcc6e9",
+		"bytes": 642709
 	}
 }

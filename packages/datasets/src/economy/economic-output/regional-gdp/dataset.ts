@@ -1,10 +1,13 @@
 import type { RegionalGdpDataset } from "../../../types/regionalGdp.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import type { DisplayFormat } from "../../../declaration/display.ts";
 import { aggregateRegionalGdp } from "../../../data/regional-gdp/aggregate.ts";
-import { loadRegionalGdp } from "../../../data/regional-gdp/loader.ts";
 import {
 	REGIONAL_GDP_SOURCE,
+	regionalGdpStatisticsParts,
 	regionalGdpDescription,
 } from "../../../data/regional-gdp/source.ts";
 import { regionalGdpStatistics } from "../../../data/regional-gdp/statistics.ts";
@@ -39,8 +42,14 @@ export const regionalGdp = defineDataset<RegionalGdpDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["gvaMillionGbp", "gdpMillionGbp"],
 	},
-	load: ({ text }) => loadRegionalGdp(text),
-	statistics: regionalGdpStatistics(),
+	load: noCompiledPayload<RegionalGdpDataset>(),
+	statistics: {
+		...regionalGdpStatistics(),
+		direct: {
+			only: true,
+			read: ({ text }) => regionalGdpStatisticsParts(text),
+		},
+	},
 	ranking: {
 		label: "Gross domestic product",
 		format: {
