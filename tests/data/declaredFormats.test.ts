@@ -26,6 +26,13 @@ describe("declared number formats", () => {
 		);
 	});
 
+	it("writes a value in whole thousands", () => {
+		const price = { kind: "thousands", prefix: "£" } as const;
+		expect(formatDisplay(price, 250_000)).toBe("£250k");
+		expect(formatDisplay(price, 1_000_000)).toBe("£1000k");
+		expect(formatDisplay(price, 249_600)).toBe("£250k");
+	});
+
 	it("rounds a count first when asked to", () => {
 		expect(
 			formatDisplay(
