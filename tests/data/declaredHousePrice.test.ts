@@ -20,13 +20,13 @@ describe("house price declaration", () => {
 		for (const part of parts) expect(part.header.type).toBe("house-price");
 	});
 
-	it("keeps its hand-written series chart and median default", () => {
+	it("draws its card, map and options from its declaration", () => {
 		const definition = CHART_DATASET_DEFINITIONS.find(
 			(candidate) => candidate.type === "house-price",
 		);
-		expect(definition?.chart.key).toBe("economics-housePrice");
+		expect(definition?.chart.key).toBe("housing-house-price");
 		expect(definition?.chart.componentPath).toBe(
-			"@/components/datasets/housing/prices-and-affordability/house-price/HousePriceChart",
+			"@/components/measures/MeasureSeriesChart",
 		);
 		expect(DEFAULT_MAP_OPTIONS["house-price"].measure).toBe("median");
 	});

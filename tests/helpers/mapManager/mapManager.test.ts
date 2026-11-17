@@ -1,12 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
-import { housePriceDefinition } from "@/lib/datasets/housePrice";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import {
 	renderLocalElection,
 	renderNumericDataset,
 } from "@/lib/helpers/mapRendering";
+
+const housePriceMap = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "house-price",
+)!.map!;
 
 const childPovertyDefinition = CHART_DATASET_DEFINITIONS.find(
 	({ type }) => type === "child-poverty",
@@ -262,7 +265,7 @@ describe("MapManager election updates", () => {
 			geojson,
 			dataset,
 			DEFAULT_MAP_OPTIONS,
-			housePriceDefinition.map!,
+			housePriceMap,
 		);
 		renderNumericDataset(
 			manager,
@@ -275,7 +278,7 @@ describe("MapManager election updates", () => {
 					measure: "mean",
 				},
 			},
-			housePriceDefinition.map!,
+			housePriceMap,
 		);
 
 		expect(buildValue).toHaveBeenCalledTimes(2);

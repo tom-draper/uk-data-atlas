@@ -122,27 +122,6 @@ export function LifeExpectancyKindPanel({
 	);
 }
 
-const HOUSE_PRICE_MEASURES = [
-	["median", "Median"],
-	["mean", "Mean"],
-] as const;
-
-export function HousePriceMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "median" | "mean";
-	onChange: (measure: "median" | "mean") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={HOUSE_PRICE_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}
-
 const ELECTION_METRICS = [
 	["votes", "Votes"],
 	["turnout", "Turnout"],

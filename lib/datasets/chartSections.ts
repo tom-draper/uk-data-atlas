@@ -62,7 +62,7 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 			"economy-business-activity",
 		],
 		housing: [
-			"economics-housePrice",
+			"housing-house-price",
 			"housing-housing-affordability",
 			"housing-homelessness",
 		],

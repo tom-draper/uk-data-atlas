@@ -139,6 +139,7 @@ export type DeclaredDatasetId =
 	| "general-health"
 	| "ghg-emissions"
 	| "homelessness"
+	| "house-price"
 	| "housing-affordability"
 	| "housing-tenure"
 	| "imd"

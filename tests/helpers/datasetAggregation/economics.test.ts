@@ -1,68 +1,11 @@
 import { describe, expect, it } from "vitest";
-import {
-	aggregateCustomDataset,
-	aggregateHousePrices,
-} from "@/lib/helpers/datasetAggregation/economics";
+import { aggregateCustomDataset } from "@/lib/helpers/datasetAggregation/economics";
 import {
 	aggregateCrime,
 	aggregateJobs,
 	aggregateNHSWaiting,
 } from "@uk-data-atlas/datasets";
 import { CODE_KEY, features } from "./fixtures";
-
-describe("aggregateHousePrices", () => {
-	const data = {
-		E1: {
-			prices: { 2021: 200000, 2023: 240000, 2024: 500000 },
-			meanPrices: { 2021: 250000, 2023: 290000, 2024: 500000 },
-		},
-		E2: {
-			prices: { 2021: 300000, 2023: 260000 },
-			meanPrices: { 2021: 350000, 2023: 310000 },
-		},
-		E3: { prices: { 2021: 100000 }, meanPrices: { 2021: 150000 } },
-	} as any;
-
-	it("averages the headline price over the wards priced in 2023", () => {
-		const result = aggregateHousePrices(
-			features(["E1", "E2", "E3"]),
-			CODE_KEY,
-			data,
-		);
-
-		expect(result.averagePrice).toBe(250000);
-		expect(result.wardCount).toBe(2);
-	});
-
-	it("averages each year and ignores years after 2023", () => {
-		const result = aggregateHousePrices(
-			features(["E1", "E2", "E3"]),
-			CODE_KEY,
-			data,
-		);
-
-		expect(result.averagePrices).toEqual({ 2021: 200000, 2023: 250000 });
-		expect(result.averageMeanPrices).toEqual({
-			2021: 250000,
-			2023: 300000,
-		});
-	});
-
-	it("reports a zero average when no covered ward has a price", () => {
-		const result = aggregateHousePrices(
-			features(["missing"]),
-			CODE_KEY,
-			data,
-		);
-		expect(result).toEqual({
-			averagePrice: 0,
-			averageMeanPrice: 0,
-			wardCount: 0,
-			averagePrices: {},
-			averageMeanPrices: {},
-		});
-	});
-});
 
 describe("aggregateJobs", () => {
 	it("sums workplace jobs across the covered local authorities", () => {
