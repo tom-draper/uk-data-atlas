@@ -1158,6 +1158,10 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The postcode in upper case with no space, such as M11AE. Strip spaces from user input before matching.",
 			easting: "British National Grid easting in metres.",
 			northing: "British National Grid northing in metres.",
+			latitudeMicrodegrees:
+				"WGS 84 latitude in microdegrees, rounded to five decimal degrees (about 1 metre); null without a centroid.",
+			longitudeMicrodegrees:
+				"WGS 84 longitude in microdegrees, rounded to five decimal degrees (about 1 metre); null without a centroid.",
 			quality: "Positional quality code from the ONS Postcode Directory.",
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",
@@ -1198,6 +1202,10 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The postcode in upper case with no space, such as M11AE. Strip spaces from user input before matching.",
 			easting: "British National Grid easting in metres.",
 			northing: "British National Grid northing in metres.",
+			latitude:
+				"WGS 84 latitude in decimal degrees, rounded to five decimal places (about 1 metre); null without a centroid.",
+			longitude:
+				"WGS 84 longitude in decimal degrees, rounded to five decimal places (about 1 metre); null without a centroid.",
 			quality: "Positional quality code from the ONS Postcode Directory.",
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",
@@ -1563,7 +1571,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 	{
 		id: "postcode-lookup",
 		question: "Which council and ward is postcode M1 1AE in?",
-		sql: "SELECT postcode, \"localAuthority_2026-05-uk-bgcCode\" AS council, \"ward_2026-05-uk-bgcCode\" AS ward, terminated FROM postcodes_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
+		sql: "SELECT postcode, latitude, longitude, \"localAuthority_2026-05-uk-bgcCode\" AS council, \"ward_2026-05-uk-bgcCode\" AS ward, terminated FROM postcodes_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
 		expect: "E08000003 (Manchester) and its 2026 ward. Postcodes are stored without a space, and column names carry the release, so quote them.",
 	},
 ];
