@@ -1,9 +1,12 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadBusinessActivity } from "../../../data/new-datasets/loader.ts";
+import { businessActivityStatisticsPart } from "../../../data/business-activity/source.ts";
 
 export const businessActivity = defineDataset<
 	IndicatorDataset<"business-activity">
@@ -35,7 +38,7 @@ export const businessActivity = defineDataset<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	load: ({ xlsxSheet }) => loadBusinessActivity(xlsxSheet, xlsxSheet),
+	load: noCompiledPayload<IndicatorDataset<"business-activity">>(),
 	statistics: {
 		payload: {
 			header: {
@@ -57,6 +60,10 @@ export const businessActivity = defineDataset<
 		],
 		fields: [{ path: "value", measure: "enterprises" }],
 		...per100k((record) => record.value, 2024),
+		direct: {
+			only: true,
+			read: ({ xlsxSheet }) => businessActivityStatisticsPart(xlsxSheet),
+		},
 	},
 	catalogue: {
 		kind: "indicators",
