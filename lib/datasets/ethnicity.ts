@@ -1,6 +1,11 @@
 import { renderEthnicity } from "@/lib/helpers/mapRendering";
 import { ethnicityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
-import { definitionOf, ethnicity } from "@uk-data-atlas/datasets";
+import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale/ethnicityColors";
+import {
+	definitionOf,
+	ethnicity,
+	ETHNICITY_CODES,
+} from "@uk-data-atlas/datasets";
 import type { EthnicityDataset } from "@uk-data-atlas/datasets";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -19,14 +24,35 @@ const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] = (
 		datasetId,
 	);
 
+/** Every ethnic group, by the census's code for it, in its own colour. */
+const parts = Object.entries(ETHNICITY_CODES).map(([name, code]) => ({
+	code,
+	label: name,
+	color: ETHNICITY_COLORS[name] ?? "#6b7280",
+}));
+
 export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
 	...definitionOf(ethnicity),
 	chart: {
 		topic: "ethnicity-and-identity",
 		key: "demographics-ethnicity",
 		label: "Ethnicity [2021]",
-		componentPath:
-			"@/components/datasets/population/ethnicity-and-identity/ethnicity/EthnicityRegistry",
+		componentPath: "@/components/measures/MeasureBreakdownChart",
+		breakdown: {
+			request: {
+				measure: "usual-residents",
+				datasetId: ethnicity.id,
+				geography: ethnicity.boundary.type,
+				boundaryYear: ethnicity.boundary.year,
+			},
+			dimension: "ethnic-group",
+			parts,
+			order: "largest",
+			legendFilter: "ethnicity",
+			heading: "Ethnicity",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk",
+		},
 		calculateStats,
 		year: 2021,
 	},
