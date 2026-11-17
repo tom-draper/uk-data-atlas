@@ -24,17 +24,30 @@ export const readSqlitePostcodeShard = (
 	repositoryRoot: string,
 	entry: PostcodeIndexArtifact["shards"][number],
 	databasePath = atlasDatabasePath(repositoryRoot),
+	collectPoints?: (points: Array<[number, number] | null>) => void,
 ): string => {
 	const database = openReadOnlyDatabase(databasePath);
 	try {
 		const rows = database
 			.prepare(
-				`SELECT ${postcodeFields.join(", ")} FROM postcodes WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
+				`SELECT ${postcodeFields.join(", ")}${collectPoints ? ", latitudeMicrodegrees, longitudeMicrodegrees" : ""} FROM postcodes WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
 			)
 			.all(
 				entry.district,
 				`${entry.district}\x7f`,
 				entry.district.length + 3,
+			);
+		if (collectPoints)
+			collectPoints(
+				rows.map((row) =>
+					row.latitudeMicrodegrees == null ||
+					row.longitudeMicrodegrees == null
+						? null
+						: [
+								Number(row.longitudeMicrodegrees) / 1e6,
+								Number(row.latitudeMicrodegrees) / 1e6,
+							],
+				),
 			);
 		const shard: PostcodeShard = {
 			schemaVersion: 1,

@@ -21,7 +21,10 @@ import { assembleAtlas } from "./pipelineFixtures";
 import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "./pipelineFixtures";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-loader";
-import { readSqlitePostcodeShard } from "@uk-data-atlas/postcodes";
+import {
+	readSqlitePostcodeShard,
+	storedPostcodePoints,
+} from "@uk-data-atlas/postcodes";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "../src/routes";
 import { parsePostcode } from "@uk-data-atlas/geography";
@@ -143,7 +146,10 @@ test("SQLite retains every postcode field, exact shard bytes, positions and rout
 	]) {
 		const parsed = parsePostcode(query);
 		assert.ok(parsed && parsed.kind === "unit");
-		assert.deepEqual(after.lookup(parsed), before.index.lookup(parsed));
+		const stored = after.lookup(parsed);
+		assert.deepEqual(stored, before.index.lookup(parsed));
+		if (stored.status === "found" && stored.record.centroid)
+			assert.ok(storedPostcodePoints.has(stored.record.centroid));
 		assert.deepEqual(
 			after.position(parsed.compact),
 			before.index.position(parsed.compact),

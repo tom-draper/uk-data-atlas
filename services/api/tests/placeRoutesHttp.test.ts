@@ -9,7 +9,12 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
-import { toWgs84Point } from "@uk-data-atlas/geography";
+import {
+	parsePostcode,
+	toWgs84Point,
+	type PostcodeShard,
+} from "@uk-data-atlas/geography";
+import { PostcodeIndex, postcodeLookupPoint } from "@uk-data-atlas/postcodes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	characterize,
@@ -133,7 +138,7 @@ const placeIndex = compilePlaceIndex(
 	"sha256:areas",
 );
 
-const { index, texts } = postcodeIndexFor([
+const { index: sourceIndex, texts } = postcodeIndexFor([
 	// 300 m west and east of the centre line.
 	postcodeRow("EC1A 1AA", { east1m: "529700" }),
 	postcodeRow("EC1A 1AB", { east1m: "530300", doterm: "201905" }),
@@ -148,6 +153,22 @@ const { index, texts } = postcodeIndexFor([
 	}),
 	postcodeRow("BT1 1AA", { ctry: "N92000002" }),
 ]);
+
+// Exercise the stored-coordinate path in the HTTP snapshots as well as the
+// shard-backed fallback. The SQLite integration test checks the actual reader.
+const index = new PostcodeIndex(sourceIndex.artifact, (path) => {
+	const text = texts.get(path)!;
+	const shard = JSON.parse(text) as PostcodeShard;
+	const points = shard.postcodes.map((postcode): [number, number] | null => {
+		const parsed = parsePostcode(postcode);
+		if (!parsed || parsed.kind !== "unit") return null;
+		const result = sourceIndex.lookup(parsed);
+		if (result.status !== "found" || !result.record.centroid) return null;
+		const point = postcodeLookupPoint(result.record.centroid);
+		return [point.lng, point.lat];
+	});
+	return { text, points };
+});
 
 const context = (withPostcodes = true): RouteContext => ({
 	boundaryRegistry,
