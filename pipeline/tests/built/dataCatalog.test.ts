@@ -2266,10 +2266,13 @@ test("publishes grid area means as derived, weighted by their grid cells", () =>
 		const result = compileDataCatalog(writeSources(directory));
 		const measure = (id: string) =>
 			result.catalog.measures.find((candidate) => candidate.id === id);
-		const statuses = (id: string) => [
+		const statuses = (series: Parameters<typeof measureSeriesKey>[0]) => [
 			...new Set(
 				result.indicatorObservations
-					.find((artifact) => artifact.measureId === id)
+					.find(
+						(artifact) =>
+							artifact.measureId === measureSeriesKey(series),
+					)
 					?.periods[0]?.records.map((record) => record.status),
 			),
 		];
@@ -2286,10 +2289,20 @@ test("publishes grid area means as derived, weighted by their grid cells", () =>
 			},
 			available: true,
 		});
-		assert.deepEqual(statuses("no2-background-mean"), ["derived"]);
-		assert.deepEqual(statuses("air-quality-grid-cells"), ["derived"]);
+		assert.deepEqual(
+			statuses({
+				measure: "background-concentration",
+				dimensions: { pollutant: "no2" },
+			}),
+			["derived"],
+		);
+		assert.deepEqual(statuses({ measure: "air-quality-grid-cells" }), [
+			"derived",
+		]);
 		// Defra's own table is served as published, and not combined.
-		assert.deepEqual(statuses("pm25-population-weighted"), ["observed"]);
+		assert.deepEqual(statuses({ measure: "pm25-population-weighted" }), [
+			"observed",
+		]);
 		assert.equal(
 			measure("pm25-population-weighted")?.availability.aggregation,
 			false,
