@@ -60,6 +60,19 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		label: "Deprivation (NIMDM) [2017]",
 		year: 2017,
 		areaCount: 890,
+		deprivation: {
+			label: "NIMDM",
+			region: "Northern Ireland",
+			attribution:
+				"NISRA. Northern Ireland Multiple Deprivation Measure 2017. nisra.gov.uk",
+			metric: "rank",
+			metricMaximum: 890,
+			areaNoun: "super output areas",
+			areaType: "superOutputArea",
+			summaryField: "lgdStats",
+			// NISRA publishes no decile for these areas, so none is shown.
+			metricField: "nimdmRank",
+		},
 		aggregation: {
 			scope: "superOutputArea",
 			distinct: true,

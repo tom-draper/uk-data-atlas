@@ -107,10 +107,39 @@ describe.each([
 });
 
 describe("deprivation aggregation", () => {
-	it("is drawn by each index's own chart", () => {
-		expect(definitionOf("imd").chart.componentPath).toBe(
-			"@/components/datasets/society/deprivation/imd/IMDChart",
-		);
+	it("keeps each index its own card", () => {
 		expect(definitionOf("nimdm").chart.key).toBe("society-nimdm");
+	});
+});
+
+describe("deprivation cards", () => {
+	const cases = [
+		["imd", "ladStats", "imdScore", "imdDecile", "score"],
+		["wimd", "ladStats", "wimdScore", "wimdDecile", "score"],
+		["simd", "councilStats", "simdRank", "simdDecile", "rank"],
+		["nimdm", "lgdStats", "nimdmRank", undefined, "rank"],
+	] as const;
+
+	it.each(cases)(
+		"%s draws the shared card from its declaration",
+		(type, summaryField, metricField, decileField, metric) => {
+			const { chart } = definitionOf(type);
+			expect(chart.componentPath).toBe(
+				"@/components/measures/MeasureDeprivationChart",
+			);
+			expect(chart.deprivation).toMatchObject({
+				datasetType: type,
+				summaryField,
+				metricField,
+				metric,
+				headlineMeasure: declaredDisplay(type)!.measures[0].id,
+			});
+			expect(chart.deprivation?.decileField).toBe(decileField);
+		},
+	);
+
+	it("gives only the English index domain scores", () => {
+		expect(definitionOf("imd").chart.deprivation?.domains).toBeDefined();
+		expect(definitionOf("wimd").chart.deprivation?.domains).toBeUndefined();
 	});
 });

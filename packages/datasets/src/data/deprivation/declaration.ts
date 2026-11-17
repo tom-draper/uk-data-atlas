@@ -2,6 +2,7 @@ import type { BoundaryType } from "../boundaries/catalog.ts";
 import type { DeclaredStatistics } from "../../declaration/dataset.ts";
 import type {
 	DatasetDisplay,
+	DisplayDeprivation,
 	DisplayMeasure,
 } from "../../declaration/display.ts";
 import { measure, POPULATION } from "../../declaration/measures.ts";
@@ -232,6 +233,10 @@ export const deprivationStatistics = (
 	};
 };
 
+/** The shared deprivation chart, which draws every index's card. */
+export const DEPRIVATION_CHART_COMPONENT =
+	"@/components/measures/MeasureDeprivationChart";
+
 /**
  * The display of a rank-only index: one measure, the rank, with 1 as the most
  * deprived. Ranks run low to high on the colour scale, so the legend reads
@@ -242,17 +247,20 @@ export const rankDisplay = ({
 	label,
 	year,
 	areaCount,
+	deprivation,
 	aggregation,
 }: {
 	prefix: string;
 	label: string;
 	year: number;
 	areaCount: number;
+	deprivation: DisplayDeprivation;
 	aggregation: DatasetDisplay["aggregation"];
 }): DatasetDisplay => ({
 	label,
 	year,
-	component: `@/components/datasets/society/deprivation/${prefix}/${prefix.toUpperCase()}Chart`,
+	component: DEPRIVATION_CHART_COMPONENT,
+	deprivation,
 	measures: [
 		{
 			id: "rank",

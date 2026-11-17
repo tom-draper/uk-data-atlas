@@ -70,6 +70,19 @@ export const simd = defineDataset<SIMDDataset>({
 		label: "Deprivation (SIMD) [2020]",
 		year: 2020,
 		areaCount: 6976,
+		deprivation: {
+			label: "SIMD",
+			region: "Scotland",
+			attribution:
+				"Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot",
+			metric: "rank",
+			metricMaximum: 6976,
+			areaNoun: "data zones",
+			areaType: "dataZone",
+			summaryField: "councilStats",
+			metricField: "simdRank",
+			decileField: "simdDecile",
+		},
 		aggregation: {
 			scope: "dataZone",
 			distinct: true,
