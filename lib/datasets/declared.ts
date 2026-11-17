@@ -14,6 +14,7 @@ import { formatCompactCount, formatCount } from "@/lib/helpers/formatCount";
 import type { CatalogueDataset } from "@/lib/data/catalog";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ChartDatasetDefinition } from "./types.ts";
+import type { BreakdownCardConfig } from "../measures/breakdownConfig.ts";
 import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
 import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
 
@@ -157,6 +158,26 @@ const seriesFor = (
 	source: series.source,
 	accent: series.accent,
 	line: series.line ?? series.accent,
+});
+
+const breakdownFor = (
+	declaration: Displayed,
+	breakdown: NonNullable<DatasetDisplay["breakdown"]>,
+): BreakdownCardConfig => ({
+	request: {
+		measure: breakdown.measure,
+		datasetId: declaration.id,
+		geography: declaration.boundary.type,
+		boundaryYear: declaration.boundary.year,
+	},
+	dimension: breakdown.dimension,
+	total: breakdown.total,
+	parts: breakdown.parts,
+	accent: breakdown.accent,
+	heading: breakdown.heading,
+	period: breakdown.period,
+	source: breakdown.source,
+	coverage: breakdown.coverage,
 });
 
 const cardFor = (
@@ -318,6 +339,9 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 								optionsOf(options).id,
 							),
 					}
+				: {}),
+			...(display.breakdown
+				? { breakdown: breakdownFor(declaration, display.breakdown) }
 				: {}),
 			calculateStats: (
 				aggregator,

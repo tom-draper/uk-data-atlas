@@ -160,6 +160,38 @@ export type DisplaySeries = {
 	measures: Record<string, string>;
 };
 
+/**
+ * A breakdown card: one area's total split into parts, read from the
+ * statistics of a measure by the members of one of its dimensions. Drawn by
+ * the shared breakdown chart so a dataset that splits a total needs no chart
+ * component of its own.
+ */
+export type DisplayBreakdown = {
+	heading: string;
+	/** Shown in brackets after the heading. */
+	period: string;
+	/** The source and method note shown as the card's tooltip. */
+	source: string;
+	/** The nations the source covers. */
+	coverage?: string;
+	/** The measure whose rows are split. */
+	measure: string;
+	/** The slug of the dimension the total splits across. */
+	dimension: string;
+	/** The code of the member that is the total, the denominator of every share. */
+	total: string;
+	/** The parts, in the order they are drawn. */
+	parts: readonly {
+		/** The member's code in the dimension. */
+		code: string;
+		color: string;
+		/** Shorter wording than the member's own label, where the key is tight. */
+		label?: string;
+	}[];
+	/** The code of the part whose colour highlights the card. */
+	accent: string;
+};
+
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";
@@ -189,6 +221,11 @@ export type DatasetDisplay = {
 	 * `@/components/measures/MeasureSeriesChart`.
 	 */
 	series?: DisplaySeries;
+	/**
+	 * The breakdown card, with `component` set to the shared breakdown chart,
+	 * `@/components/measures/MeasureBreakdownChart`.
+	 */
+	breakdown?: DisplayBreakdown;
 	/**
 	 * Name of a compiled dataset field mapping an area code to the key of the
 	 * record that describes it, for a dataset published for larger areas than
