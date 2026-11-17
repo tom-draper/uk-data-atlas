@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { rankOf, rankPhrase, scopeName } from "@/lib/places/headlines";
+import { findAtlasMap } from "@/lib/atlas/pages";
+import {
+	headlineMapsFor,
+	rankOf,
+	rankPhrase,
+	scopeName,
+} from "@/lib/places/headlines";
 
 describe("rankPhrase", () => {
 	it("names the ends of the ranking", () => {
@@ -44,5 +50,43 @@ describe("scopeName", () => {
 		expect(
 			scopeName(["E06000001", "W06000001", "S12000001", "N09000001"]),
 		).toBe("the UK");
+	});
+});
+
+describe("headlineMapsFor", () => {
+	it("lists the declared headlines in page order", () => {
+		expect(headlineMapsFor("localAuthority")).toEqual([
+			"income",
+			"housing-affordability",
+			"life-expectancy",
+			"imd",
+			"wimd",
+			"simd",
+			"nimdm",
+			"child-poverty",
+			"claimant-count",
+			"council-tax",
+			"crime",
+			"broadband",
+			"qualification",
+			"ghg-emissions",
+			"brexit",
+		]);
+		expect(headlineMapsFor("ward")).toEqual(["house-price"]);
+		expect(headlineMapsFor("constituency")).toEqual([
+			"general-election",
+			"brexit-constituency",
+		]);
+		expect(headlineMapsFor("parish")).toEqual([]);
+	});
+
+	it("names a map the atlas draws", () => {
+		for (const geography of [
+			"localAuthority",
+			"ward",
+			"constituency",
+		] as const)
+			for (const slug of headlineMapsFor(geography))
+				expect(findAtlasMap(slug), slug).toBeDefined();
 	});
 });
