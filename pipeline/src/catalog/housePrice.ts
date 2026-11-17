@@ -8,6 +8,7 @@ import type {
 import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * The last period published for a full calendar year. The workbook is a
@@ -92,13 +93,14 @@ export const compileHousePrice = (
 	{ manifestPath, datasets }: CatalogManifest,
 	housePricePath: DatasetInput,
 ): CompiledMeasure => {
+	const seriesKey = measureSeriesKey({ measure: "house-price-median" });
 	const housePrice = datasets.find((dataset) => dataset.id === "house-price");
 	if (!housePrice)
 		throw new Error(`${manifestPath} has no house-price dataset`);
 	const housePriceByPeriod = housePricePeriods(housePricePath);
 	const housePriceContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "house-price-median",
+		measureId: seriesKey,
 		sourceGeography: { type: "ward", boundaryYear: 2020 },
 		periods: housePriceByPeriod,
 	});
@@ -145,7 +147,7 @@ export const compileHousePrice = (
 		artifact: {
 			schemaVersion: 1,
 			contentHash: sha256(housePriceContent),
-			measureId: "house-price-median",
+			measureId: seriesKey,
 			sourceGeography: { type: "ward", boundaryYear: 2020 },
 			periods: housePriceByPeriod,
 		},
