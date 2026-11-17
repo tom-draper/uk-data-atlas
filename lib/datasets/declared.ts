@@ -60,6 +60,8 @@ export function formatDisplay(format: DisplayFormat, value: number): string {
 					? `${(value / 1_000).toFixed(1)}bn`
 					: `${value.toFixed(0)}m`
 			}${format.suffix ?? ""}`;
+		case "thousands":
+			return `${format.prefix ?? ""}${Math.round(value / 1000)}k${format.suffix ?? ""}`;
 	}
 }
 

@@ -42,6 +42,12 @@ export type DisplayFormat =
 			kind: "millions";
 			prefix?: string;
 			suffix?: string;
+	  }
+	| {
+			/** A value in whole thousands, written as `£250k`. */
+			kind: "thousands";
+			prefix?: string;
+			suffix?: string;
 	  };
 
 /** How a measure's headline value is drawn on the shared chart card. */
