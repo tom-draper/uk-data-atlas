@@ -7,6 +7,7 @@ export const areaSearchIndexTables = (
 	index: AreaSearchIndexArtifact,
 ): Record<string, SqliteTable> => ({
 	area_search_meta: {
+		strict: true,
 		columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
 		key: ["key"],
 		rows: Object.entries({
@@ -24,12 +25,14 @@ export const areaSearchIndexTables = (
 		}),
 	},
 	area_search_code: {
+		strict: true,
 		columns: ["code TEXT"],
 		rows: index.releases.flatMap((release) =>
 			release.codes.map((code) => [code]),
 		),
 	},
 	area_search_term: {
+		strict: true,
 		columns: ["term TEXT", "areas BLOB"],
 		rows: index.terms.map((term, at) => [
 			term,
@@ -37,6 +40,7 @@ export const areaSearchIndexTables = (
 		]),
 	},
 	area_search_title_term: {
+		strict: true,
 		columns: ["term TEXT", "areas BLOB"],
 		rows: index.titleTerms.map((term, at) => [
 			term,

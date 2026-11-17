@@ -62,11 +62,13 @@ export const placeIndexTables = (
 	};
 	return {
 		place_index_meta: {
+			strict: true,
 			columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
 			key: ["key"],
 			rows: Object.entries(meta),
 		},
 		place_index_place: {
+			strict: true,
 			columns: [
 				"geography INTEGER",
 				"code TEXT",
@@ -77,13 +79,15 @@ export const placeIndexTables = (
 			rows: index.places.map((place) => placeColumns(place, geographyAt)),
 		},
 		place_index_name: {
-			columns: ["name TEXT", "labels"],
+			strict: true,
+			columns: ["name TEXT", "labels ANY"],
 			rows: index.names.map((name, at) => [
 				name,
 				packLabels(index.labels[at]!),
 			]),
 		},
 		place_index_code: {
+			strict: true,
 			columns: ["code TEXT", "places BLOB"],
 			rows: index.codes.map((code, at) => [
 				code,
