@@ -1,8 +1,10 @@
 import type { IncomeDataset } from "../../../types/income.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averagePay } from "../../../data/income/aggregate.ts";
-import { loadIncome } from "../../../data/income/loader.ts";
 import { payStatistics } from "../../../data/income/statistics.ts";
 import { payStatisticsPart, incomeFiles } from "../../../data/income/source.ts";
 
@@ -27,9 +29,7 @@ export const income = defineDataset<IncomeDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	// Each workbook holds the same table split by sex and hours; "All" is the
-	// sheet covering every employee job.
-	load: ({ xlsxSheet }) => loadIncome((path) => xlsxSheet(path, "All")),
+	load: noCompiledPayload<IncomeDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 10,
@@ -46,6 +46,9 @@ export const income = defineDataset<IncomeDataset>({
 		},
 		...payStatistics("residence"),
 		direct: {
+			only: true,
+			// Each workbook holds the same table split by sex and hours; "All" is the
+			// sheet covering every employee job.
 			read: ({ xlsxSheet }) =>
 				payStatisticsPart(
 					(path) => xlsxSheet(path, "All"),
