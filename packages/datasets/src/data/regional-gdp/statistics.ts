@@ -1,5 +1,5 @@
 import type { DeclaredStatistics } from "../../declaration/dataset.ts";
-import { regionalGdpId, regionalGdpKey } from "./loader.ts";
+import { regionalGdpId, regionalGdpKey } from "./source.ts";
 import { measure } from "../../declaration/measures.ts";
 import { periods } from "../../declaration/statistics.ts";
 
@@ -12,9 +12,11 @@ const regionalGdpParts: NonNullable<DeclaredStatistics["payload"]["parts"]> = (
 	TIERS.flatMap((boundaryType) =>
 		[
 			...new Set(
-				labels
-					.filter((label) => /^\d{4}(?!\d)/.test(label))
-					.map((label) => label.slice(0, 4)),
+				// A label is a year; a direct part is asked for by its key.
+				labels.flatMap((label) => {
+					const year = /^(?:itl\d-)?(\d{4})(?!\d)/.exec(label)?.[1];
+					return year ? [year] : [];
+				}),
 			),
 		]
 			.sort()
