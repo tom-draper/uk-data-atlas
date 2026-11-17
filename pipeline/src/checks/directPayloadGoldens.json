@@ -58,5 +58,9 @@
 	"wimd": {
 		"sha256": "e2c328ad3aa61e327c0af4ccece0adafc08645b847718c758dab1ffd99c18c67",
 		"bytes": 335071
+	},
+	"imd": {
+		"sha256": "903e7cffea7c392168f61be0bb4cde82bc736fb5facd862664f4c0e2df3f7f5c",
+		"bytes": 11547834
 	}
 }

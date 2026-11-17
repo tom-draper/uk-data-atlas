@@ -1,5 +1,8 @@
 import type { IMDDataset } from "../../../types/imd.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import type { DisplayMeasure } from "../../../declaration/display.ts";
 import { summariseIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -11,7 +14,6 @@ import {
 	DEPRIVATION_CHART_COMPONENT,
 	deprivationStatistics,
 } from "../../../data/deprivation/declaration.ts";
-import { loadIMD } from "../../../data/imd/loader.ts";
 import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { parseNum, parseNumInt } from "../../../helpers/parseNumber.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
@@ -125,7 +127,7 @@ export const imd = defineDataset<IMDDataset>({
 		notes: [],
 	},
 	layout: { regionChunks: { kind: "regional", lsoaToLad: true } },
-	load: ({ text }) => loadIMD(text),
+	load: noCompiledPayload<IMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 40,
@@ -135,6 +137,7 @@ export const imd = defineDataset<IMDDataset>({
 	statistics: {
 		...base,
 		direct: {
+			only: true,
 			read: async ({ text }) => {
 				const csv = await text(
 					sourceDir(

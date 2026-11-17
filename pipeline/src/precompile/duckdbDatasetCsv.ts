@@ -56,41 +56,6 @@ export async function withDuckdbSchoolPerformance<T>(
 	);
 }
 
-export async function withDuckdbImd<T>(
-	reader: DatasetReader,
-	artifacts: ReturnType<
-		typeof import("./trackedReader.ts").createTrackedReader
-	>["artifacts"],
-	compile: (reader: DatasetReader) => Promise<T>,
-	sourceRoot = SOURCE_DATA,
-): Promise<T> {
-	const columns = [
-		"LSOA code (2021)",
-		"LSOA name (2021)",
-		"Local Authority District code (2024)",
-		"Local Authority District name (2024)",
-		"Index of Multiple Deprivation (IMD) Score",
-		"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)",
-		"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)",
-		"Income Score (rate)",
-		"Employment Score (rate)",
-		"Education, Skills and Training Score",
-		"Health Deprivation and Disability Score",
-		"Crime Score",
-		"Barriers to Housing and Services Score",
-		"Living Environment Score",
-		"Total population: mid 2022",
-	];
-	return withDuckdbFilteredCsv(
-		reader,
-		artifacts,
-		columns.map((name) => `"${name}"`).join(", "),
-		`starts_with(trim("LSOA code (2021)"), 'E')`,
-		compile,
-		sourceRoot,
-	);
-}
-
 export async function withDuckdbEnergyConsumption<T>(
 	reader: DatasetReader,
 	artifacts: ReturnType<
