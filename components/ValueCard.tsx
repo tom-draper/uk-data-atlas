@@ -14,7 +14,12 @@ import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
-import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
+import {
+	groupLsoasByLocalAuthority,
+	resolveValueCardStats,
+} from "@/lib/helpers/valueCardStats";
+import { useLsoaToLad } from "@/lib/hooks/useLsoaToLad";
+import { useMemo } from "react";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import type { ActiveViz } from "@/lib/types";
 import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
@@ -62,6 +67,16 @@ export default function ValueCard({
 		!!dataset &&
 		activeDataset?.type === dataset.type &&
 		activeDataset.id === dataset.id;
+	const lsoaToLad = useLsoaToLad(
+		card?.fromLsoas ? dataset?.boundaryYear : undefined,
+	);
+	const lsoasByLad = useMemo(
+		() =>
+			dataset && lsoaToLad
+				? groupLsoasByLocalAuthority(dataset.data, lsoaToLad)
+				: null,
+		[dataset, lsoaToLad],
+	);
 	const resolved =
 		card && dataset
 			? resolveValueCardStats(
@@ -71,6 +86,7 @@ export default function ValueCard({
 					selectedArea,
 					codeMapper,
 					isActive,
+					lsoasByLad,
 				)
 			: null;
 	const color = useHeatmapValueColor(

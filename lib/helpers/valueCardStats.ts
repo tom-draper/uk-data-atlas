@@ -14,6 +14,19 @@ type CardDataset = {
 	data: Record<string, unknown>;
 };
 
+/** An LSOA dataset's records grouped under their local authority. */
+export function groupLsoasByLocalAuthority(
+	data: Record<string, unknown>,
+	lsoaToLad: Record<string, string>,
+): Record<string, unknown[]> {
+	const groups: Record<string, unknown[]> = {};
+	for (const [code, record] of Object.entries(data)) {
+		const ladCode = lsoaToLad[code];
+		if (ladCode) (groups[ladCode] ??= []).push(record);
+	}
+	return groups;
+}
+
 const found = (
 	stats: ValueCardStats | null,
 	viaLocalAuthority = false,
@@ -34,9 +47,18 @@ export function resolveValueCardStats(
 	selectedArea: SelectedArea | null,
 	codeMapper: LadResolver | undefined,
 	isActive: boolean,
+	lsoasByLad?: Record<string, unknown[]> | null,
 ): ResolvedValueCardStats | null {
 	if (!selectedArea)
 		return aggregate ? found(config.fromAggregate(aggregate)) : null;
+
+	if (dataset.boundaryType === "lsoa" && config.fromLsoas) {
+		if (selectedArea.type === "lsoa")
+			return found(config.fromRecord(dataset, selectedArea.code));
+		const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+		const records = ladCode ? lsoasByLad?.[ladCode] : undefined;
+		return records ? found(config.fromLsoas(records), true) : null;
+	}
 
 	if (dataset.boundaryType === "localAuthority") {
 		const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
