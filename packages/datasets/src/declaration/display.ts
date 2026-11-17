@@ -270,6 +270,39 @@ export type DisplayBars = {
 	digits: number;
 };
 
+/**
+ * The card of a national deprivation index. One small area shows its own rank
+ * or score and decile; any larger area is summarised by its share in the most
+ * deprived tenth, or by its average score where the index publishes scores.
+ * Drawn by the shared deprivation chart, with `component` set to
+ * `@/components/measures/MeasureDeprivationChart`.
+ */
+export type DisplayDeprivation = {
+	/** Short name shown in the heading, such as "IMD". */
+	label: string;
+	region: string;
+	attribution: string;
+	/** What one small area shows beneath its decile: its rank or its score. */
+	metric: "rank" | "score";
+	/** Highest value in this fixed release, which normalises the bar. */
+	metricMaximum: number;
+	/** What the index calls its small areas, such as "LSOAs". */
+	areaNoun: string;
+	/** The index's small-area geography, as a selected area's type. */
+	areaType: "lsoa" | "superOutputArea" | "dataZone";
+	/** The compiled dataset field holding each authority's summary. */
+	summaryField: string;
+	/** The record field behind `metric`. */
+	metricField: string;
+	/** The record field holding the published decile, where there is one. */
+	decileField?: string;
+	/**
+	 * Measures after the first are domain scores, read from a small area's
+	 * record or from its summary's `domainScores`.
+	 */
+	domains?: { attribution: string };
+};
+
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";
@@ -306,6 +339,8 @@ export type DatasetDisplay = {
 	breakdown?: DisplayBreakdown;
 	/** The bars card, with `component` set to the shared bars chart. */
 	bars?: DisplayBars;
+	/** The deprivation card, with `component` set to the shared deprivation chart. */
+	deprivation?: DisplayDeprivation;
 	/**
 	 * Name of a compiled dataset field mapping an area code to the key of the
 	 * record that describes it, for a dataset published for larger areas than

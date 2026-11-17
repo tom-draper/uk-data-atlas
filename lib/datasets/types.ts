@@ -6,6 +6,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { DatasetDefinition } from "../data/catalog";
+import type { DeprivationCardConfig } from "./deprivationCard";
 import type { BarsCardConfig } from "@/lib/measures/barsConfig";
 import type { BreakdownCardConfig } from "@/lib/measures/breakdownConfig";
 import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
@@ -102,6 +103,9 @@ export interface ChartDefinition<
 	// Declares the bars card for charts rendered by the shared bars chart
 	// (`@/components/measures/MeasureBarsChart`).
 	bars?: BarsCardConfig;
+	// Declares the deprivation card for charts rendered by the shared
+	// deprivation chart (`@/components/measures/MeasureDeprivationChart`).
+	deprivation?: DeprivationCardConfig;
 }
 
 export type ChartDatasetLegendAggregation<

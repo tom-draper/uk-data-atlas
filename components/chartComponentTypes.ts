@@ -3,6 +3,7 @@ import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { BarsCardConfig } from "@/lib/measures/barsConfig";
 import type { BreakdownCardConfig } from "@/lib/measures/breakdownConfig";
 import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
+import type { DeprivationCardConfig } from "@/lib/datasets/deprivationCard";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@uk-data-atlas/datasets";
@@ -28,4 +29,6 @@ export interface ChartComponentProps {
 	breakdown?: BreakdownCardConfig;
 	/** The declarative bars card, for charts drawn by the shared bars chart. */
 	bars?: BarsCardConfig;
+	/** The declarative deprivation card, for charts drawn by the shared deprivation chart. */
+	deprivation?: DeprivationCardConfig;
 }

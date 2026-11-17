@@ -6,25 +6,12 @@ import type {
 } from "@uk-data-atlas/datasets";
 import DecileChart from "./DecileChart";
 import { formatCount } from "@/lib/helpers/formatCount";
+import type {
+	DeprivationDetail,
+	DeprivationIndex,
+} from "@/lib/datasets/deprivationCard";
 
-/** The identity and wording of one national deprivation index. */
-export interface DeprivationIndex {
-	/** Dataset type as it appears on the active dataset, e.g. "imd". */
-	datasetType: Dataset["type"];
-	/** Short name shown in the heading, e.g. "IMD". */
-	label: string;
-	region: string;
-	attribution: string;
-	metric: DeprivationDetail["kind"];
-	/** Highest value in this fixed index release, used to normalise its bar. */
-	metricMaximum: number;
-	/** What the index calls its small areas, e.g. "LSOAs". */
-	areaNoun: string;
-}
-
-/** The one line of detail under the decile: a rank, or a deprivation score. */
-export type DeprivationDetail =
-	{ kind: "rank"; value: number } | { kind: "score"; value: number };
+export type { DeprivationDetail, DeprivationIndex };
 
 /** One small area as published, or a group of them summarised. */
 export type DeprivationView =
