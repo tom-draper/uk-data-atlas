@@ -303,6 +303,38 @@ export type DisplayDeprivation = {
 	domains?: { attribution: string };
 };
 
+/**
+ * A figure worked out from a record of people counted by age and sex. Each is
+ * written once, by the website: `total` is everyone, `medianAge` the age half
+ * of them are under, and `genderBalance` the surplus of males over females as
+ * a share of females.
+ */
+export type DisplayComputed = "total" | "medianAge" | "genderBalance";
+
+/**
+ * One way a map colours a dataset whose several views each have a chart of
+ * their own, chosen by the `view` in a link. The website draws the fill, the
+ * legend and the colour range control from it.
+ */
+export type DisplayMapView = {
+	/** The `view` in a link that selects it. */
+	id: string;
+	/** The figure each area is coloured by. */
+	value: {
+		computed: DisplayComputed;
+		/** Divide by the area's size in square kilometres. */
+		perSquareKm?: true;
+	};
+	/** The map options group holding the colour range the visitor adjusts. */
+	optionsKey: string;
+	/** The colour range the map starts with. */
+	colorRange: { min: number; max: number };
+	/** The full range the legend's colour range control can span. */
+	legend: { min: number; max: number };
+	/** Colour about zero, from one end to the other, not along the theme's ramp. */
+	palette?: "gender";
+};
+
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";

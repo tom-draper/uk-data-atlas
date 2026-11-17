@@ -30,6 +30,39 @@ export const population = defineDataset<PopulationDataset>({
 		notes: [],
 	},
 	load: ({ xlsxSheetRows }) => loadPopulation(xlsxSheetRows),
+	mapViews: [
+		{
+			id: "density",
+			value: { computed: "total", perSquareKm: true },
+			optionsKey: "populationDensity",
+			colorRange: { min: 0, max: 8000 },
+			legend: {
+				min: 0,
+				max: 15000,
+			},
+		},
+		{
+			id: "age",
+			value: { computed: "medianAge" },
+			optionsKey: "ageDistribution",
+			colorRange: { min: 25, max: 65 },
+			legend: {
+				min: 18,
+				max: 80,
+			},
+		},
+		{
+			id: "gender",
+			value: { computed: "genderBalance" },
+			optionsKey: "gender",
+			colorRange: { min: -0.1, max: 0.1 },
+			legend: {
+				min: -0.5,
+				max: 0.5,
+			},
+			palette: "gender",
+		},
+	],
 	statistics: {
 		payload: {
 			parts: yearParts("population", "ward", 2023, {
