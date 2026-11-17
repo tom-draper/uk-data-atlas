@@ -132,11 +132,37 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 	display: {
 		label: "Greenhouse Gas Emissions [2024]",
 		year: 2024,
-		component:
-			"@/components/datasets/environment/emissions/ghg-emissions/GHGEmissionsChart",
+		card: {
+			heading: "Greenhouse Gas Emissions",
+			source: "DESNZ. UK local authority greenhouse gas emissions. gov.uk",
+			pills: [
+				{
+					label: "Transport",
+					field: "transport",
+					unit: "kt",
+					digits: 0,
+				},
+				{ label: "Domestic", field: "domestic", unit: "kt", digits: 0 },
+				{ label: "Industry", field: "industry", unit: "kt", digits: 0 },
+			],
+			appearance: { layout: "pills", accent: "#0ea5e9" },
+		},
 		measures: [
 			{
 				id: "perPerson",
+				card: {
+					unit: "t CO₂e per person",
+					digits: 1,
+					maximum: 12,
+					secondary: {
+						field: "totalKtCO2e",
+						format: {
+							kind: "count",
+							round: true,
+							suffix: " kt total",
+						},
+					},
+				},
 				label: "Net emissions per person",
 				field: "perPersonTCO2e",
 				colorRange: { min: 3, max: 12 },
@@ -152,6 +178,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "total",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Net emissions total",
 				field: "totalKtCO2e",
 				colorRange: { min: 0, max: 2500 },
@@ -163,6 +202,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "excludingLandUse",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Emissions excluding land use",
 				field: "excludingLandUseKtCO2e",
 				colorRange: { min: 0, max: 2500 },
@@ -174,6 +226,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "transport",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Transport",
 				field: "transport",
 				colorRange: { min: 0, max: 2500 },
@@ -185,6 +250,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "domestic",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Domestic",
 				field: "domestic",
 				colorRange: { min: 0, max: 2500 },
@@ -196,6 +274,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "industry",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Industry",
 				field: "industry",
 				colorRange: { min: 0, max: 2500 },
@@ -207,6 +298,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "commercial",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Commercial",
 				field: "commercial",
 				colorRange: { min: 0, max: 2500 },
@@ -218,6 +322,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "publicSector",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Public sector",
 				field: "publicSector",
 				colorRange: { min: 0, max: 2500 },
@@ -229,6 +346,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "agriculture",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Agriculture",
 				field: "agriculture",
 				colorRange: { min: 0, max: 2500 },
@@ -240,6 +370,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "waste",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 2500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Waste",
 				field: "waste",
 				colorRange: { min: 0, max: 2500 },
@@ -251,6 +394,19 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 			{
 				id: "landUse",
+				card: {
+					unit: "kt CO₂e",
+					format: { kind: "count", round: true },
+					maximum: 500,
+					secondary: {
+						field: "perPersonTCO2e",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: " t per person",
+						},
+					},
+				},
 				label: "Land use and forestry",
 				field: "landUse",
 				colorRange: { min: -500, max: 500 },
