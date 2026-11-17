@@ -193,3 +193,17 @@ test("a failed final check preserves the published file and removes the copy", (
 	assert.equal(existsSync(`${published}.tmp`), false);
 	assert.equal(existsSync(`${published}.tmp-journal`), false);
 });
+
+test("refuses a conflicting schema marker", () => {
+	const root = directory();
+	const work = join(root, "work.sqlite");
+	const database = new DatabaseSync(work);
+	database.exec(
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT); INSERT INTO meta VALUES ('schemaVersion', '2')",
+	);
+	database.close();
+	assert.throws(
+		() => publishVacuumed(work, join(root, "out.sqlite")),
+		/Cannot publish atlas schema version 2/,
+	);
+});
