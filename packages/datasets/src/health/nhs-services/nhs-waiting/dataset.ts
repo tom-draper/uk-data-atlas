@@ -77,6 +77,7 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 		name: "icbName",
 		/** Keyed by NHS organisation code, on the boards in force to March 2026. */
 		keys: ICB_ODS_TO_GSS,
+		keyScheme: "nhs-ods",
 		release: () => ({ geography: "integratedCareBoard", year: 2023 }),
 		period: headerMonth,
 		measures: [

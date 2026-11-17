@@ -250,6 +250,7 @@ describe("directStatistics", () => {
 		const keyed: DeclaredDataset = {
 			...config,
 			keys: { ODS1: "E06000001" },
+			keyScheme: "nhs-ods",
 			headerRelationships: [
 				{
 					field: "mapping",
@@ -291,13 +292,22 @@ describe("directStatistics", () => {
 		);
 		try {
 			expect(rows(direct)).toEqual(rows(compiled));
-			for (const table of ["dataset_area_key", "area_relationship"])
+			for (const table of [
+				"dataset_area_key",
+				"area_identifier",
+				"area_relationship",
+			])
 				expect(direct.prepare(`SELECT * FROM ${table}`).all()).toEqual(
 					compiled.prepare(`SELECT * FROM ${table}`).all(),
 				);
 			expect(
 				direct.prepare("SELECT key FROM dataset_area_key").get()?.key,
 			).toBe("ODS1");
+			expect(
+				direct
+					.prepare("SELECT scheme, identifier FROM area_identifier")
+					.all(),
+			).toEqual([{ scheme: "nhs-ods", identifier: "ODS1" }]);
 			expect(
 				direct
 					.prepare("SELECT count(*) AS n FROM area_relationship")

@@ -163,7 +163,9 @@ hashes, so the website's immutable URLs identify the content they serve.
 Facts that are not observations have a home in the tables above. A publisher's
 parent areas and crosswalks are `area_relationship` rows; election text and
 winners are `contest` and `candidacy` rows; names and keys are
-`dataset_area_name` and `dataset_area_key`. Figures that are aggregates of
+`dataset_area_name` and `dataset_area_key`. A key that is a published external
+code, such as an NHS ODS code, is also an `area_identifier` row, a documented
+reference table. Figures that are aggregates of
 observations, such as a referendum's winning answer, a district's deprivation
 summary or an area's largest ethnic group, are computed when the payload is
 generated and stored nowhere. Fixed text, such as a table's source note, sits

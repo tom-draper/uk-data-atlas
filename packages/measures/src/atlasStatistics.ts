@@ -80,6 +80,8 @@ export type StatisticsDataset = {
 		code: string;
 		name: string;
 	}>;
+	/** The published identifier scheme `areaKeys` come from, such as `nhs-ods`, when they are external codes. */
+	keyScheme?: string;
 	/** Record keys for areas the file keys by something other than their code. */
 	areaKeys?: () => Iterable<{
 		release: AreaRelease;
