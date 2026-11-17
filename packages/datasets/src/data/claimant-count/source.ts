@@ -1,12 +1,12 @@
-import {
-	type ClaimantCountDataset,
-	type ClaimantCountLADData,
-} from "../../types/claimantCount.ts";
+import type {
+	DirectPart,
+	DirectRecord,
+} from "../../declaration/statistics.ts";
+import { sourceDir } from "../../declaration/sources.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNumOrZero } from "../../helpers/parseNumber.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 import { loadPopulationUk } from "../population/ukLoader.ts";
-import { sourceDir } from "../../declaration/sources.ts";
 
 const COL_TOTAL_COUNT =
 	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimant count; measures: Value";
@@ -22,9 +22,17 @@ const COL_YOUTH_COUNT =
  */
 export const CLAIMANT_COUNT_LAD_PREDECESSORS = APRIL_2023_LAD_MERGERS;
 
+/** One authority's claimants: all aged 16 and over, those aged 16 to 24, and the rate. */
+export type ClaimantFigures = {
+	name: string;
+	totalCount: number;
+	totalRate: number;
+	youthCount: number;
+};
+
 /** Add current authority records and calculate their rates from age 16–64 population. */
 export function addMergedClaimantAuthorities(
-	records: Record<string, ClaimantCountLADData>,
+	records: Record<string, ClaimantFigures>,
 	workingAgePopulation: Record<string, number>,
 ): void {
 	for (const [target, { name, predecessors }] of Object.entries(
@@ -53,53 +61,39 @@ export function addMergedClaimantAuthorities(
 			throw new Error(
 				`Missing working-age population for merged authority ${target}`,
 			);
-		const totalRate = (totalCount / denominator) * 100;
 
 		records[target] = {
-			ladCode: target,
-			ladName: name,
+			name,
 			totalCount,
-			totalRate,
+			totalRate: (totalCount / denominator) * 100,
 			youthCount,
-			youthRate:
-				totalCount > 0 ? (youthCount / totalCount) * totalRate : 0,
 		};
 	}
 }
 
-export async function loadClaimantCount(
+/**
+ * The April 2026 claimant count of each local authority, with the authorities
+ * created in April 2023 added from the districts they replaced. The youth rate
+ * is suppressed in the source, so it is derived from the rows, not stored.
+ */
+export async function claimantCountStatisticsPart(
 	read: (path: string) => Promise<string>,
 	readPopulation: (path: string, sheet: string) => Promise<string>,
-): Promise<Record<string, ClaimantCountDataset>> {
+): Promise<DirectPart[]> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(sourceDir("claimant-count", "claimant-count-2026.csv")),
 		{ header: true },
 	);
 
-	const records: Record<string, ClaimantCountLADData> = {};
-	let month = "2026";
-
-	for (const row of data as Record<string, string>[]) {
+	const figures: Record<string, ClaimantFigures> = {};
+	for (const row of data) {
 		const code = (row["geography code"] ?? "").trim();
-		const name = (row["geography"] ?? "").trim();
 		if (!code || !/^[EWSN][0-9]/.test(code)) continue;
-
-		if (!month || month === "2026") month = (row["date"] ?? "2026").trim();
-
-		const totalCount = parseNumOrZero(row[COL_TOTAL_COUNT]);
-		const totalRate = parseNumOrZero(row[COL_TOTAL_RATE]);
-		const youthCount = parseNumOrZero(row[COL_YOUTH_COUNT]);
-		// Youth rate is suppressed in source data, derive from youth/total count ratio
-		const youthRate =
-			totalCount > 0 ? (youthCount / totalCount) * totalRate : 0;
-
-		records[code] = {
-			ladCode: code,
-			ladName: name,
-			totalCount,
-			totalRate,
-			youthCount,
-			youthRate,
+		figures[code] = {
+			name: (row["geography"] ?? "").trim(),
+			totalCount: parseNumOrZero(row[COL_TOTAL_COUNT]),
+			totalRate: parseNumOrZero(row[COL_TOTAL_RATE]),
+			youthCount: parseNumOrZero(row[COL_YOUTH_COUNT]),
 		};
 	}
 
@@ -112,18 +106,26 @@ export async function loadClaimantCount(
 				.reduce((sum, [, count]) => sum + count, 0),
 		]),
 	);
-	addMergedClaimantAuthorities(records, workingAgePopulation);
+	addMergedClaimantAuthorities(figures, workingAgePopulation);
 
-	const year = 2026;
-	return {
-		[year]: {
-			id: `claimant-count${year}`,
-			type: "claimant-count",
-			year,
-			month,
-			boundaryType: "localAuthority",
-			boundaryYear: 2024,
-			data: records,
-		},
-	};
+	const records: DirectRecord[] = Object.entries(figures).map(
+		([code, figure]) => ({
+			code,
+			name: figure.name,
+			values: [
+				{
+					measure: "claimants",
+					members: { "age-group": "totalCount" },
+					value: figure.totalCount,
+				},
+				{
+					measure: "claimants",
+					members: { "age-group": "youthCount" },
+					value: figure.youthCount,
+				},
+				{ measure: "claimant-rate", value: figure.totalRate },
+			],
+		}),
+	);
+	return [{ key: "2026", records }];
 }
