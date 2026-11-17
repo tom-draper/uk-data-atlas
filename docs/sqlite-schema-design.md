@@ -12,19 +12,35 @@ Bump the schema version when the published SQLite schema changes. Internal
 cache files do not carry this identity. Inspect both header values with
 `sqlite3 atlas.sqlite 'PRAGMA application_id; PRAGMA user_version;'`.
 Readers accept the legacy zero application id and reject other unknown ids.
-For a local file(1) magic entry, add the following under its SQLite rule:
+`file` needs a locally installed magic entry to identify these files by name.
+Add this under its SQLite rule; the ID is not registered upstream:
 
 ```text
 >68 belong =0x554b4441 UK Data Atlas SQLite database -
 ```
 
-`meta` records `schemaVersion`, `buildId`, `buildTimestamp` (UTC), `gitCommit`, `gitDirty` (tracked changes)
-and `dataRelease` (the pinned data-release.json). When the pinned release file is present, the build id and timestamp
-are assigned when the atlas is published, and are not stage cache inputs.
-Source edition dates are recorded in the release and source tables. Module
+`meta.schemaVersion` records the schema version. `buildId` is a SHA-256 of
+an intermediate assembled database and its provenance, before final publication.
+It identifies the assembly without hashing the file that contains the hash.
+`dataRelease` contains the pinned `data-release.json` when present. `gitCommit`
+and `gitDirty` are present when the repository and Git are available. Dirty
+includes tracked changes and non-ignored untracked files, but not ignored files.
+The build ID also reflects assembled content from ignored inputs.
+
+`buildTimestamp` is the UTC time supplied through `SOURCE_DATE_EPOCH`, in Unix
+seconds. It is omitted when that variable is absent; it is not inferred from a
+commit date or the wall clock. Identical assembly inputs and provenance therefore
+produce identical published bytes. These values are recorded at assembly and do
+not enter stage cache keys. A skipped assembly retains the provenance of the
+file it produced, even if the current checkout or environment has changed.
+When a fresh publication timestamp is required, supply `SOURCE_DATE_EPOCH` and
+run assembly again.
+
+Source edition information is already in `boundary_release.reference_year` and
+`reference_month`, `boundary_release_edition`, and `dataset.released` where
+known. The atlas does not assert dates that the sources do not provide. Module
 files repeat provenance in `module_info`; assembled files retain core `meta`.
-The release and module manifests hold SHA-256 file hashes, avoiding a circular
-hash inside the file itself.
+The release and module manifests hold SHA-256 hashes of the finished files.
 
 ## Stable ids
 

@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
@@ -14,7 +15,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { test, type TestContext } from "vitest";
+import { test, vi, type TestContext } from "vitest";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { IdRegistries, idDirectory } from "../../src/ids/idRegistries";
 import { seedIdRegistries } from "../../src/ids/seedIds";
@@ -794,4 +795,86 @@ test("a release stores null where an earlier release has the same distance", (t)
 		{ a: 999, b: 1234, c: 1234 },
 	);
 	after.close();
+});
+
+test("assembly records reproducible provenance and detects untracked inputs", (t) => {
+	const { root, path } = fixture(t);
+	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
+	base.exec(
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID; INSERT INTO meta VALUES ('schemaVersion', '3')",
+	);
+	base.close();
+	vi.stubEnv("SOURCE_DATE_EPOCH", "1700000000");
+	t.onTestFinished(() => vi.unstubAllEnvs());
+	const assemble = () => assembleAtlas(root, { crosswalkWeights: false });
+	const metadata = () => {
+		const db = new DatabaseSync(path, { readOnly: true });
+		try {
+			return Object.fromEntries(
+				db
+					.prepare("SELECT key, value FROM meta")
+					.all()
+					.map(({ key, value }) => [String(key), String(value)]),
+			);
+		} finally {
+			db.close();
+		}
+	};
+	assemble();
+	const noGit = metadata();
+	assert.match(noGit.buildId!, /^sha256:[0-9a-f]{64}$/);
+	assert.equal(noGit.buildTimestamp, "2023-11-14T22:13:20.000Z");
+	assert.equal(noGit.gitCommit, undefined);
+	assert.equal(noGit.dataRelease, undefined);
+	const first = readFileSync(path);
+	assemble();
+	assert.deepEqual(metadata(), noGit);
+	assert.deepEqual(readFileSync(path), first);
+	const changedBase = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+	);
+	changedBase.exec(
+		"UPDATE payloads SET payload = 'changed' WHERE id = 'existing'",
+	);
+	changedBase.close();
+	assemble();
+	assert.notEqual(metadata().buildId, noGit.buildId);
+
+	const git = (...args: string[]) =>
+		execFileSync("git", ["-C", root, ...args], {
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "pipe"],
+		}).trim();
+	git("init");
+	writeFileSync(join(root, ".gitignore"), "data/\npipeline/\n");
+	writeFileSync(join(root, "data-release.json"), '{"tag":"fixture"}\n');
+	git("add", ".gitignore", "data-release.json");
+	git(
+		"-c",
+		"user.name=Fixture",
+		"-c",
+		"user.email=fixture@example.test",
+		"commit",
+		"-m",
+		"fixture",
+	);
+	assemble();
+	const clean = metadata();
+	assert.equal(clean.gitCommit, git("rev-parse", "HEAD"));
+	assert.equal(clean.gitDirty, "false");
+	assert.equal(clean.dataRelease, '{"tag":"fixture"}');
+	assert.notEqual(clean.buildId, noGit.buildId);
+	writeFileSync(join(root, "new-input.txt"), "new input");
+	assemble();
+	assert.equal(metadata().gitDirty, "true");
+	vi.stubEnv("SOURCE_DATE_EPOCH", undefined);
+	vi.stubEnv("PATH", "");
+	assemble();
+	const withoutGit = metadata();
+	assert.equal(withoutGit.buildTimestamp, undefined);
+	assert.equal(withoutGit.gitCommit, undefined);
+	assert.equal(withoutGit.gitDirty, undefined);
+	assert.equal(withoutGit.dataRelease, '{"tag":"fixture"}');
+	vi.stubEnv("SOURCE_DATE_EPOCH", "invalid");
+	assert.throws(assemble, /SOURCE_DATE_EPOCH/);
 });
