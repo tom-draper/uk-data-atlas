@@ -24,7 +24,7 @@ import Chart18 from "@/components/datasets/infrastructure/digital-connectivity/m
 import Chart19 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
 import Chart20 from "@/components/datasets/education/qualifications/qualification/QualificationChart";
 import Chart21 from "@/components/datasets/society/deprivation/simd/SIMDChart";
-import Chart22 from "@/components/datasets/transport/commuting/travel-to-work/TravelToWorkChart";
+import Chart22 from "@/components/measures/MeasureBreakdownChart";
 import Chart23 from "@/components/measures/MeasureSeriesChart";
 import Chart24 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
 
