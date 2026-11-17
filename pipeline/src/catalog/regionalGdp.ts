@@ -9,6 +9,7 @@ import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * Regional economic output on the three ITL tiers.
@@ -64,6 +65,7 @@ export const compileRegionalGdp = (
 	if (!dataset) throw new Error(`${manifestPath} has no ${DATASET} dataset`);
 
 	for (const spec of MEASURES) {
+		const seriesKey = measureSeriesKey({ measure: spec.id });
 		const sources: MeasureSource[] = [];
 		let tierRecords = 0;
 		for (const tier of TIERS) {
@@ -125,14 +127,14 @@ export const compileRegionalGdp = (
 			});
 			const content = JSON.stringify({
 				schemaVersion: 1,
-				measureId: spec.id,
+				measureId: seriesKey,
 				sourceGeography,
 				periods,
 			});
 			artifacts.push({
 				schemaVersion: 1,
 				contentHash: sha256(content),
-				measureId: spec.id,
+				measureId: seriesKey,
 				sourceGeography,
 				periods,
 			});
