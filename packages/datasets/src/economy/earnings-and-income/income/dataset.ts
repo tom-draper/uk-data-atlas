@@ -4,6 +4,7 @@ import { yearParts } from "../../../declaration/yearParts.ts";
 import { averagePay } from "../../../data/income/aggregate.ts";
 import { loadIncome } from "../../../data/income/loader.ts";
 import { payStatistics } from "../../../data/income/statistics.ts";
+import { payStatisticsPart, incomeFiles } from "../../../data/income/source.ts";
 
 export const income = defineDataset<IncomeDataset>({
 	id: "income",
@@ -44,6 +45,14 @@ export const income = defineDataset<IncomeDataset>({
 			code: "ladCode",
 		},
 		...payStatistics("residence"),
+		direct: {
+			read: ({ xlsxSheet }) =>
+				payStatisticsPart(
+					(path) => xlsxSheet(path, "All"),
+					"residence",
+					incomeFiles,
+				),
+		},
 	},
 	ranking: {
 		label: "Median annual pay",
