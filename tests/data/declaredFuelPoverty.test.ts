@@ -40,11 +40,11 @@ describe("fuel poverty declaration", () => {
 		});
 	});
 
-	it("keeps its hand-written chart, map and England coverage", () => {
+	it("declares its map, legend and England coverage; keeps its hand-written chart", () => {
 		const definition = CHART_DATASET_DEFINITIONS.find(
 			(candidate) => candidate.type === "fuel-poverty",
 		);
-		expect(definition?.chart.key).toBe("economics-fuelPoverty");
+		expect(definition?.chart.key).toBe("society-fuel-poverty");
 		expect(definition?.map?.valueFor).toBeTypeOf("function");
 		expect(definition?.coverageCountries).toEqual(["GB-ENG"]);
 		expect(DEFAULT_MAP_OPTIONS["fuel-poverty"].measure).toBe("rate");

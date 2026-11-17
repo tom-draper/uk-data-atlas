@@ -134,6 +134,7 @@ export type DeclaredDatasetId =
 	| "crime"
 	| "electric-vehicle-chargers"
 	| "electricity-consumption"
+	| "fuel-poverty"
 	| "gas-consumption"
 	| "general-health"
 	| "ghg-emissions"

@@ -75,7 +75,7 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 		society: [
 			"society-imd",
 			"society-child-poverty",
-			"economics-fuelPoverty",
+			"society-fuel-poverty",
 			"society-crime",
 		],
 		politics: [

@@ -1,5 +1,5 @@
 import type { BoundaryAggregationSpec } from "./ports";
-import { aggregateFuelPoverty, collectBoundaryRecords } from "./numeric";
+import { collectBoundaryRecords } from "./numeric";
 import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import { aggregateCustomDataset, aggregateHousePrices } from "./economics";
@@ -78,11 +78,6 @@ export const lifeExpectancyAggregation = boundaryAggregation(
 	"life-expectancy",
 	"localAuthority",
 	aggregateLifeExpectancy,
-);
-export const fuelPovertyAggregation = numericAggregation(
-	"fuel-poverty",
-	"lsoa",
-	aggregateFuelPoverty,
 );
 export const indicatorAggregation = numericAggregation(
 	"indicator",

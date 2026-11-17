@@ -29,7 +29,6 @@ import {
 import {
 	DeclaredMeasurePanel,
 	ElectionMetricPanel,
-	FuelPovertyMeasurePanel,
 	HousePriceMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
@@ -153,20 +152,6 @@ export default function LegendPanel({
 				</div>
 			</div>
 
-			{activeDataset?.type === "fuel-poverty" && (
-				<FuelPovertyMeasurePanel
-					measure={controls.displayOptions["fuel-poverty"].measure}
-					onChange={(measure) =>
-						onMapOptionsChange("fuel-poverty", {
-							measure,
-							colorRange:
-								measure === "rate"
-									? { min: 5, max: 15 }
-									: { min: 0, max: 300 },
-						})
-					}
-				/>
-			)}
 			{activeDataset?.type === "life-expectancy" && setActiveViz && (
 				<LifeExpectancyKindPanel
 					kind={activeDataset.id === "hle" ? "hle" : "le"}

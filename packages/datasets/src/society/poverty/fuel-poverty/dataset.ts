@@ -5,6 +5,7 @@ import {
 } from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS, measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
+import { aggregateFuelPoverty } from "./aggregate.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	FUEL_POVERTY_SOURCE,
@@ -114,5 +115,44 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 				return [{ key: "2024", records: [...records.values()] }];
 			},
 		},
+	},
+	display: {
+		label: "Fuel Poverty [2024]",
+		year: 2024,
+		component:
+			"@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart",
+		measures: [
+			{
+				id: "rate",
+				label: "Percentage",
+				field: "fuelPovertyRate",
+				colorRange: { min: 5, max: 15 },
+				legend: {
+					min: 0,
+					max: 30,
+					format: {
+						kind: "decimal",
+						digits: 0,
+						suffix: "% households",
+					},
+				},
+			},
+			{
+				id: "count",
+				label: "Total",
+				field: "fuelPoorHouseholdCount",
+				colorRange: { min: 0, max: 300 },
+				legend: {
+					min: 0,
+					max: 1000,
+					format: {
+						kind: "count",
+						locale: "en-GB",
+						suffix: " households",
+					},
+				},
+			},
+		],
+		aggregation: { scope: "lsoa", aggregate: aggregateFuelPoverty },
 	},
 });

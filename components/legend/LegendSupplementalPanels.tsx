@@ -122,27 +122,6 @@ export function LifeExpectancyKindPanel({
 	);
 }
 
-const FUEL_POVERTY_SEGMENTS = [
-	["rate", "Percentage"],
-	["count", "Total"],
-] as const;
-
-export function FuelPovertyMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "rate" | "count";
-	onChange: (measure: "rate" | "count") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={FUEL_POVERTY_SEGMENTS}
-			onChange={onChange}
-		/>
-	);
-}
-
 const HOUSE_PRICE_MEASURES = [
 	["median", "Median"],
 	["mean", "Mean"],

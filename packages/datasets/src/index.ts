@@ -22,6 +22,7 @@ export * from "./health/social-care/adult-social-care-activity/dataset.ts";
 export * from "./health/social-care/adult-social-care-outcomes/dataset.ts";
 export * from "./economy/business/business-activity/dataset.ts";
 export * from "./data/child-poverty/aggregate.ts";
+export * from "./society/poverty/fuel-poverty/aggregate.ts";
 export * from "./society/poverty/child-poverty/dataset.ts";
 export * from "./housing/housing-stock/council-tax/dataset.ts";
 export * from "./transport/vehicles/electric-vehicle-chargers/dataset.ts";
