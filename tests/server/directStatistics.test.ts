@@ -309,10 +309,68 @@ describe("directStatistics", () => {
 		}
 	});
 
+	it("stores record-level parent relationships and names", () => {
+		const withParent: DeclaredDataset = {
+			...config,
+			parents: [
+				{
+					code: "regionCode",
+					name: "regionName",
+					release: { geography: "region", year: 2025 },
+				},
+			],
+		};
+		const compiled = write(
+			declaredStatistics(
+				withParent,
+				() =>
+					file({
+						E06000001: {
+							ladCode: "E06000001",
+							ladName: "Hartlepool",
+							total: 10,
+							theft: 4,
+							regionCode: "E12000001",
+							regionName: "North East",
+						},
+					}),
+				entry,
+			),
+		);
+		const direct = write(
+			directStatistics(
+				withParent,
+				parts({
+					...record("E06000001", "Hartlepool", 10, 4),
+					parents: {
+						regionCode: { code: "E12000001", name: "North East" },
+					},
+				}),
+				entry,
+			),
+		);
+		try {
+			expect(rows(direct)).toEqual(rows(compiled));
+			expect(
+				direct.prepare("SELECT * FROM area_relationship").all(),
+			).toEqual(
+				compiled.prepare("SELECT * FROM area_relationship").all(),
+			);
+			expect(
+				direct
+					.prepare("SELECT count(*) AS n FROM area_relationship")
+					.get()?.n,
+			).toBe(1);
+		} finally {
+			compiled.close();
+			direct.close();
+		}
+	});
+
 	it("refuses a declaration with more than one record set", () => {
 		expect(() =>
 			directStatistics(
-				{ ...config, parents: { from: "data" } as never },
+				{ ...config, records: [{ from: "data" }, { from: "other" }] },
 				[],
 				entry,
 			),
