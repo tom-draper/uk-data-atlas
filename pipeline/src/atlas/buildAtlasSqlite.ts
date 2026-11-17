@@ -1,3 +1,4 @@
+import { ATLAS_SCHEMA_VERSION } from "@uk-data-atlas/atlas-db";
 import { datasetCoverageGapTables } from "../storage/datasetCoverageGaps.ts";
 import { crosswalkInputSourceTables } from "../storage/crosswalkInputSources.ts";
 import { licenceTables } from "../storage/licenceTables.ts";
@@ -322,7 +323,7 @@ export const buildAtlasSqlite = (
 	}
 	writeSqliteIndex(
 		path,
-		{ schemaVersion: "3" },
+		{ schemaVersion: String(ATLAS_SCHEMA_VERSION) },
 		{
 			...areaTables(artifactDirectory(repositoryRoot), ids),
 			...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),

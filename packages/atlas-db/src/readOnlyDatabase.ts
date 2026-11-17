@@ -1,3 +1,4 @@
+import { ATLAS_APPLICATION_ID } from "./fileIdentity.ts";
 import { statSync } from "node:fs";
 import { resolve } from "node:path";
 import { DatabaseSync, type StatementSync } from "node:sqlite";
@@ -256,6 +257,11 @@ function open(state: Registry, path: string): Entry {
 	}
 	let pragmas: AppliedPragmas;
 	try {
+		const applicationId = pragmaValue(database, "application_id");
+		if (applicationId !== 0 && applicationId !== ATLAS_APPLICATION_ID)
+			throw new Error(
+				`Not an atlas database: ${path} has application_id ${applicationId}`,
+			);
 		pragmas = applyPragmas(database, connectionPragmas());
 	} catch (error) {
 		database.close();

@@ -1,3 +1,7 @@
+import {
+	ATLAS_APPLICATION_ID,
+	ATLAS_SCHEMA_VERSION,
+} from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -24,7 +28,7 @@ function bloated(path: string) {
 	const database = new DatabaseSync(path);
 	try {
 		database.exec(
-			"PRAGMA page_size = 8192; PRAGMA auto_vacuum = 2; PRAGMA user_version = 7; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;",
+			"PRAGMA page_size = 8192; PRAGMA auto_vacuum = 2; PRAGMA user_version = 3; PRAGMA application_id = 1430996033; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;",
 		);
 		database.exec(
 			"CREATE TABLE t (id INTEGER PRIMARY KEY, body BLOB NOT NULL); BEGIN",
@@ -61,12 +65,17 @@ test("publishes a compact copy that keeps the rows and the page layout", () => {
 	const work = join(root, "work.sqlite");
 	const published = join(root, "published.sqlite");
 	bloated(work);
-	assert.equal(publishVacuumed(work, published), published);
+	assert.equal(
+		publishVacuumed(work, published, { atlasIdentity: false }),
+		published,
+	);
 	assert.equal(count(published), 200);
 	assert.equal(pragma(published, "freelist_count"), 0);
 	assert.equal(pragma(published, "page_size"), 8192);
 	assert.equal(pragma(published, "auto_vacuum"), 2);
-	assert.equal(pragma(published, "user_version"), 7);
+	assert.equal(pragma(published, "user_version"), ATLAS_SCHEMA_VERSION);
+	assert.equal(pragma(published, "application_id"), ATLAS_APPLICATION_ID);
+	assert.equal(pragma(work, "application_id"), ATLAS_APPLICATION_ID);
 	assert.equal(pragma(published, "integrity_check"), "ok");
 	assert.ok(statSync(published).size < statSync(work).size);
 	assert.equal(count(work), 200, "the working file is left as it was");

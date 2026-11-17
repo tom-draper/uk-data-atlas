@@ -1,3 +1,7 @@
+import {
+	ATLAS_APPLICATION_ID,
+	ATLAS_SCHEMA_VERSION,
+} from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	mkdirSync,
@@ -227,6 +231,14 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 	assert.deepEqual(result.skippedViews, []);
 	const atlas = open(join(root, "atlas.sqlite"));
 	const assembled = open(out);
+	assert.equal(
+		assembled.prepare("PRAGMA application_id").get()?.application_id,
+		ATLAS_APPLICATION_ID,
+	);
+	assert.equal(
+		assembled.prepare("PRAGMA user_version").get()?.user_version,
+		ATLAS_SCHEMA_VERSION,
+	);
 	try {
 		const postcodeModule = open(
 			join(root, "release", sqlitePath("postcodes")),

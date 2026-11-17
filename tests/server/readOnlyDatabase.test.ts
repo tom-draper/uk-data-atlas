@@ -279,3 +279,18 @@ describe("shared read-only connections", () => {
 		expect(readOnlyDatabaseStats().open).toBe(0);
 	});
 });
+
+it("rejects an unrecognised application id", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-id-"));
+	const path = join(root, "atlas.sqlite");
+	const database = new DatabaseSync(path);
+	database.exec("PRAGMA application_id = 42");
+	database.close();
+	try {
+		expect(() => openReadOnlyDatabase(path)).toThrow(
+			/Not an atlas database.*application_id 42/,
+		);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});

@@ -1,3 +1,4 @@
+export * from "./fileIdentity.ts";
 export * from "./atlasAssets.ts";
 export * from "./atlasCache.ts";
 export * from "./atlasLookups.ts";
