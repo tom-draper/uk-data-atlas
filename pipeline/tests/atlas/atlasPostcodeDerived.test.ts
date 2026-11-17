@@ -355,14 +355,27 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 			{ postcode: "SW1A1AA", area_set_id: 2 },
 		],
 	);
-	assert.equal(
+	for (const name of [
+		"postcodes",
+		"postcode_area_releases",
+		"postcode_area_matches",
+		"postcode_area_set",
+		"postcode_area_shard_hash",
+	]) {
+		assert.equal(
+			db
+				.prepare("SELECT strict FROM pragma_table_list WHERE name = ?")
+				.get(name)!.strict,
+			1,
+			name,
+		);
+	}
+	assert.throws(() =>
 		db
-			.prepare(
-				"SELECT strict FROM pragma_table_list WHERE name = 'postcode_area_set'",
-			)
-			.get()!.strict,
-		1,
+			.prepare("UPDATE postcodes SET easting = ? WHERE postcode = ?")
+			.run("invalid", "M11AA"),
 	);
+
 	assert.deepEqual(
 		db
 			.prepare("SELECT name FROM pragma_table_info('postcodes_decoded')")

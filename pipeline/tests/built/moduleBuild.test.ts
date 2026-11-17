@@ -82,6 +82,28 @@ const prepareRelease = () => {
 describe.runIf(built && existsSync(ATLAS))("module build", () => {
 	const atlas = () => open(ATLAS);
 
+	test("every ordinary table in each module is strict", () => {
+		for (const id of ["core", ...modules]) {
+			const file = open(join(BUILT, sqlitePath(id)));
+			try {
+				// SQLite manages FTS virtual and shadow tables separately.
+				assert.deepEqual(
+					file
+						.prepare(
+							`SELECT name FROM pragma_table_list
+						WHERE schema = 'main' AND type = 'table'
+						AND name NOT LIKE 'sqlite_%' AND strict = 0`,
+						)
+						.all(),
+					[],
+					id,
+				);
+			} finally {
+				file.close();
+			}
+		}
+	});
+
 	test("every theme module has the datasets, series and observations of its module", () => {
 		const reference = atlas();
 		try {
