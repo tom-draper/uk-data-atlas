@@ -288,3 +288,13 @@ The deprecated read-only views for legacy table names and camelCase columns
 are no longer written (see `data/build/README.md`). No reader used them. The
 `area_releases` and `payloads` tables remain unchanged pending the related
 branch work.
+
+## STRICT tables
+
+Ordinary tables in `atlas.sqlite` and sold modules use `STRICT`. SQLite FTS
+virtual tables and their shadow tables are managed by SQLite and cannot be
+declared STRICT. The internal place index uses `ANY` for packed labels because
+the writer stores either a binary posting list or JSON text. The postcode area
+layout marker is unchanged: STRICT adds type enforcement without changing the
+columns or how readers interpret existing files. Existing internal cache
+bookkeeping tables are not migrated; rebuilding a cache is a separate operation.
