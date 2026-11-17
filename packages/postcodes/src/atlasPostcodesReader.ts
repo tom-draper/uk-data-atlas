@@ -15,6 +15,7 @@ import { PostcodeIndex } from "./index.ts";
 export const readSqlitePostcodeIndex = (
 	repositoryRoot: string,
 	databasePath?: string,
+	options: { standalone?: boolean } = {},
 ): PostcodeIndex => {
 	const artifact = readSqlitePostcodeIndexArtifact(
 		repositoryRoot,
@@ -29,7 +30,12 @@ export const readSqlitePostcodeIndex = (
 		hasPoints =
 			columns.some((column) => column.name === "latitudeMicrodegrees") &&
 			columns.some((column) => column.name === "longitudeMicrodegrees");
-		if (hasPoints) requirePostcodeAreaLayout(database);
+		if (!options.standalone || hasPoints)
+			requirePostcodeAreaLayout(database);
+		if (!options.standalone && !hasPoints)
+			throw new Error(
+				"atlas.sqlite is missing stored postcode coordinates. Rebuild it with pnpm data:build.",
+			);
 	} finally {
 		database.release();
 	}

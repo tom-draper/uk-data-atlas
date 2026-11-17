@@ -37,7 +37,20 @@ export const readSqlitePostcodeShard = (
 				`${entry.district}\x7f`,
 				entry.district.length + 3,
 			);
-		if (collectPoints)
+		if (collectPoints) {
+			const coordinates = rows.flatMap((row) => [
+				row.latitudeMicrodegrees,
+				row.longitudeMicrodegrees,
+			]);
+			const expected = database
+				.prepare(
+					"SELECT coordinatesSha256 FROM postcode_area_shard_hash WHERE district = ?",
+				)
+				.get(entry.district)?.coordinatesSha256;
+			if (expected !== sha256(JSON.stringify(coordinates)))
+				throw new Error(
+					`Invalid SQLite postcode coordinates for district ${entry.district}`,
+				);
 			collectPoints(
 				rows.map((row) =>
 					row.latitudeMicrodegrees == null ||
@@ -49,6 +62,7 @@ export const readSqlitePostcodeShard = (
 							],
 				),
 			);
+		}
 		const shard: PostcodeShard = {
 			schemaVersion: 1,
 			district: entry.district,
