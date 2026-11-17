@@ -419,4 +419,74 @@ describe("value card registrations", () => {
 		expect(charts.length).toBeGreaterThan(0);
 		for (const chart of charts) expect(chart.card, chart.key).toBeDefined();
 	});
+
+	describe("an LSOA dataset", () => {
+		const fuelCard = (measure: "rate" | "count") =>
+			CHART_DATASET_DEFINITIONS.find(
+				({ type }) => type === "fuel-poverty",
+			)!.chart.cardForOptions!({
+				"fuel-poverty": { measure },
+			} as never);
+		const lsoas = {
+			boundaryType: "lsoa",
+			boundaryYear: 2021,
+			data: {
+				E01000001: {
+					householdCount: 100,
+					fuelPoorHouseholdCount: 12,
+					fuelPovertyRate: 12,
+				},
+				E01000002: {
+					householdCount: 300,
+					fuelPoorHouseholdCount: 48,
+					fuelPovertyRate: 16,
+				},
+			},
+		};
+		const byLad = { E09000001: Object.values(lsoas.data) };
+
+		it("shows a ward its authority's LSOAs pooled, not averaged", () => {
+			const resolved = resolveValueCardStats(
+				fuelCard("rate"),
+				lsoas,
+				undefined,
+				area("ward", "E05000001"),
+				{ getLadForWard: () => "E09000001" },
+				false,
+				byLad,
+			);
+			expect(resolved?.viaLocalAuthority).toBe(true);
+			expect(resolved?.stats.value).toBeCloseTo(15);
+			expect(resolved?.stats.secondary).toBe("60 affected");
+		});
+
+		it("shows an LSOA its own record, and a count with its rate", () => {
+			const resolved = resolveValueCardStats(
+				fuelCard("count"),
+				lsoas,
+				undefined,
+				area("lsoa", "E01000002"),
+				undefined,
+				false,
+				byLad,
+			);
+			expect(resolved?.viaLocalAuthority).toBe(false);
+			expect(resolved?.stats.value).toBe(48);
+			expect(resolved?.stats.secondary).toBe("16.0%");
+		});
+
+		it("shows nothing until the LSOA to authority lookup has loaded", () => {
+			expect(
+				resolveValueCardStats(
+					fuelCard("rate"),
+					lsoas,
+					undefined,
+					area("localAuthority", "E09000001"),
+					undefined,
+					false,
+					null,
+				),
+			).toBeNull();
+		});
+	});
 });

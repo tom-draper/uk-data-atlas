@@ -11,13 +11,12 @@ import Chart5 from "@/components/datasets/population/population-estimates/popula
 import Chart6 from "@/components/datasets/population/population-estimates/population/PopulationAgeRegistry";
 import Chart7 from "@/components/datasets/population/population-estimates/population/PopulationGenderRegistry";
 import Chart8 from "@/components/ValueCard";
-import Chart9 from "@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart";
-import Chart10 from "@/components/measures/MeasureSeriesChart";
-import Chart11 from "@/components/datasets/society/deprivation/imd/IMDChart";
-import Chart12 from "@/components/measures/MeasureBarsChart";
-import Chart13 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
-import Chart14 from "@/components/datasets/society/deprivation/simd/SIMDChart";
-import Chart15 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
+import Chart9 from "@/components/measures/MeasureSeriesChart";
+import Chart10 from "@/components/datasets/society/deprivation/imd/IMDChart";
+import Chart11 from "@/components/measures/MeasureBarsChart";
+import Chart12 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
+import Chart13 from "@/components/datasets/society/deprivation/simd/SIMDChart";
+import Chart14 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -109,12 +108,6 @@ const Chart14Presentation = {
 	),
 } satisfies ChartPresentation;
 
-const Chart15Presentation = {
-	component: (props) => (
-		<Chart15 {...(props as ComponentProps<typeof Chart15>)} />
-	),
-} satisfies ChartPresentation;
-
 export const CHART_PRESENTATIONS = {
 	"brexit-electoral": Chart0Presentation,
 	"brexit-hanretty": Chart1Presentation,
@@ -148,23 +141,23 @@ export const CHART_PRESENTATIONS = {
 	"society-crime": Chart8Presentation,
 	"transport-electric-vehicle-chargers": Chart8Presentation,
 	"environment-electricity-consumption": Chart8Presentation,
-	"society-fuel-poverty": Chart9Presentation,
+	"society-fuel-poverty": Chart8Presentation,
 	"environment-gas-consumption": Chart8Presentation,
 	"health-general-health": Chart8Presentation,
 	"environment-ghg-emissions": Chart8Presentation,
 	"housing-homelessness": Chart8Presentation,
-	"housing-house-price": Chart10Presentation,
+	"housing-house-price": Chart9Presentation,
 	"housing-housing-affordability": Chart8Presentation,
 	"housing-housing-tenure": Chart8Presentation,
-	"society-imd": Chart11Presentation,
+	"society-imd": Chart10Presentation,
 	"economy-income": Chart8Presentation,
 	"economy-jobs": Chart8Presentation,
-	"health-life-expectancy": Chart12Presentation,
+	"health-life-expectancy": Chart11Presentation,
 	"economy-local-government-finance": Chart8Presentation,
 	"infrastructure-mobile-coverage": Chart8Presentation,
 	"housing-net-additional-dwellings": Chart8Presentation,
 	"health-nhs-waiting": Chart8Presentation,
-	"society-nimdm": Chart13Presentation,
+	"society-nimdm": Chart12Presentation,
 	"housing-planning-applications": Chart8Presentation,
 	"health-public-health": Chart8Presentation,
 	"education-pupil-absence": Chart8Presentation,
@@ -172,11 +165,11 @@ export const CHART_PRESENTATIONS = {
 	"economy-regional-gdp": Chart8Presentation,
 	"education-school-performance": Chart8Presentation,
 	"education-school-performance-disadvantage": Chart8Presentation,
-	"society-simd": Chart14Presentation,
+	"society-simd": Chart13Presentation,
 	"transport-travel-to-work": Chart2Presentation,
-	"economy-unemployment": Chart10Presentation,
+	"economy-unemployment": Chart9Presentation,
 	"environment-waste": Chart8Presentation,
-	"society-wimd": Chart15Presentation,
+	"society-wimd": Chart14Presentation,
 	"economy-workplace-income": Chart8Presentation,
 } satisfies ChartPresentationRegistry;
 
