@@ -54,10 +54,14 @@ type Props = {
 	request: Omit<MeasureValuesRequest, "periods" | "areas">;
 	area: string | null;
 	heading: string;
+	/** The card's highlight colour. */
+	accent: string;
+	/** The line's colour. */
 	color: string;
 	title?: string;
 	coverage?: string;
-	estimateNote?: string;
+	/** A note for the card once it has data, such as that a ward shows its authority's figure. */
+	estimateNote?: (hasData: boolean) => string | undefined;
 	isActive: boolean;
 	onClick: () => void;
 	/** Shown where the card has nothing to say, such as before an area is chosen. */
@@ -73,6 +77,7 @@ export function MeasureSeriesCard({
 	request,
 	area,
 	heading,
+	accent,
 	color,
 	title,
 	coverage,
@@ -91,12 +96,12 @@ export function MeasureSeriesCard({
 	return (
 		<ChartCard
 			heading={heading}
-			accent={view ? color : null}
+			accent={view ? accent : null}
 			isActive={isActive}
 			onClick={onClick}
 			title={title}
 			coverage={coverage}
-			estimateNote={estimateNote}
+			estimateNote={estimateNote?.(view !== null)}
 			background={
 				view?.line && (
 					<SparklineBackground
