@@ -5,6 +5,7 @@ import { yearParts } from "../../../declaration/yearParts.ts";
 import { loadPopulationUk } from "../../../data/population/ukLoader.ts";
 import { aggregateJobs } from "../../../data/jobs/aggregate.ts";
 import { loadJobs } from "../../../data/jobs/loader.ts";
+import { jobsStatisticsParts } from "../../../data/jobs/source.ts";
 
 export const jobs = defineDataset<JobsDataset>({
 	id: "jobs",
@@ -57,6 +58,7 @@ export const jobs = defineDataset<JobsDataset>({
 			),
 		],
 		fields: [{ path: "totalJobs", measure: "total-jobs" }],
+		direct: { read: ({ text }) => jobsStatisticsParts(text) },
 		...per100k((record) => record.totalJobs),
 	},
 	display: {
