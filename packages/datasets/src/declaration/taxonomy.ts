@@ -6,7 +6,7 @@
  * A theme is a broad subject area. The list is closed and changes only by
  * product decision. A topic is a subject within a theme; every dataset will
  * have exactly one primary topic. Foundation parts (`core`, `boundaries`,
- * `postcodes`) are data every theme depends on, so they are not themes.
+ * `postcodes`, `crosswalk-checks`) are data every theme depends on, so they are not themes.
  *
  * Display order is the order of each list below. Reorder by moving an entry.
  */
@@ -129,6 +129,13 @@ const FOUNDATION_PART_DEFINITIONS = [
 		id: "postcodes",
 		label: "Postcodes",
 		description: "Postcode lookups (ONSPD). Large.",
+		alwaysIncluded: false,
+	},
+	{
+		id: "crosswalk-checks",
+		label: "Crosswalk checks",
+		description:
+			"Crosswalk edge measurements for reconstructing API responses. Requires core.",
 		alwaysIncluded: false,
 	},
 ] as const satisfies readonly FoundationPartDefinition[];

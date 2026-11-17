@@ -4396,10 +4396,11 @@ paths:
       description: >
         A module is a download unit built from datasets: one per theme, a few split-out modules such
         as `population-detail` and `politics-sharealike`, plus the foundation parts `core`,
-        `boundaries` and `postcodes`, which hold no datasets of their own. A module with `requires` is
-        an add-on: `politics-sharealike` holds only the share-alike rows of a dataset that stays in
-        `politics` (those datasets are marked `partial`), so it is downloaded with the module it
-        requires, and the module it adds to lists it under `addOns`. Each lists the `themes` and
+        `boundaries`, `postcodes` and `crosswalk-checks`, which hold no datasets of their own. A
+        module with `requires` needs its named module: `crosswalk-checks` needs `core` to reconstruct
+        crosswalk responses; `politics-sharealike` holds only the share-alike rows of a dataset that
+        stays in `politics` (those datasets are marked `partial`), so it is downloaded with the module
+        it requires, and the module it adds to lists it under `addOns`. Each lists the `themes` and
         `topics` it is built from and how many published datasets it holds. The manifest fields are
         the ones written beside each module in the data download: the licences its datasets use, a
         `licenceConflict` when it mixes share-alike data with other licences, the core `compatibility`
@@ -14933,6 +14934,37 @@ components:
             disagreed with itself about this area's name; it is not an alias
             list to pick from arbitrarily.
 
+    CrosswalkTarget:
+      allOf:
+        - $ref: "#/components/schemas/CrosswalkArea"
+        - type: object
+          properties:
+            containedShare:
+              type: number
+              description: On containment targets, the share of the source area inside the target.
+            outsideWidthM:
+              type: number
+              description: On containment targets, the widest part of the source outside the target, in metres.
+            match:
+              type: string
+              description: On extent-continuity targets, whether the area kept its code or was recoded.
+              enum: [same-code, recoded]
+            widestDifferenceM:
+              type: number
+              description: On extent-continuity targets, the width of the widest difference between boundaries, in metres.
+            claimedDifferenceM:
+              type: number
+              description: On extent-continuity targets when judged, the width of the widest difference claimed by another area, in metres.
+            sourceShare:
+              type: number
+              description: On applicable targets, overlap as a share of the source area.
+            targetShare:
+              type: number
+              description: On applicable targets, overlap as a share of the target area.
+            overlapAreaM2:
+              type: number
+              description: On applicable targets, the overlapping area in square metres.
+
     CrosswalkRecord:
       type: object
       required: [source, targets]
@@ -14942,7 +14974,7 @@ components:
         targets:
           type: array
           items:
-            $ref: "#/components/schemas/CrosswalkArea"
+            $ref: "#/components/schemas/CrosswalkTarget"
 
     AreaOverlapRecord:
       type: object

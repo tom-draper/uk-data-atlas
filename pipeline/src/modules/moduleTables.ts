@@ -176,11 +176,11 @@ export const readSchema = (database: DatabaseSync, schema = "main") => {
 	return rows.filter((row) => !shadows.has(row.name));
 };
 
-/** The module that owns a table, `serving` for API-only data, or `core`. */
+/** The module that owns a table, `crosswalk-checks` for API-serving diagnostics, or `core`. */
 export const tableOwner = (
 	table: string,
-): "dataset" | "postcodes" | "serving" | "core" => {
-	if (table === "crosswalk_edge_check") return "serving";
+): "dataset" | "postcodes" | "crosswalk-checks" | "core" => {
+	if (table === "crosswalk_edge_check") return "crosswalk-checks";
 	if (DATASET_TABLES.some((owned) => owned.table === table)) return "dataset";
 	if (POSTCODE_TABLE.test(table)) return "postcodes";
 	return "core";

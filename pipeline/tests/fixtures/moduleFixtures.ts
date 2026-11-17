@@ -63,6 +63,7 @@ export const FIXTURE_MODULES = [
 	"politics",
 	"politics-sharealike",
 	"postcodes",
+	"crosswalk-checks",
 ] as const;
 
 /** Writes the fixture atlas and returns the module of each dataset. */
@@ -148,7 +149,12 @@ export const fixtureManifests = (): ModuleManifest[] => {
 				partial,
 				licences: [{ id: licence(id) }],
 			})),
-			requires: id === "politics-sharealike" ? ["politics"] : [],
+			requires:
+				id === "politics-sharealike"
+					? ["politics"]
+					: id === "crosswalk-checks"
+						? ["core"]
+						: [],
 			addOns: id === "politics" ? ["politics-sharealike"] : [],
 			licences: [{ id: licence(id) }],
 			licenceConflict: null,

@@ -44,6 +44,7 @@ const facts = (): DistFacts => {
 			core: [fact(OGL, "core")],
 			boundaries: [fact(OGL, "boundaries")],
 			postcodes: [fact(OGL, "postcodes")],
+			"crosswalk-checks": [fact(OGL, "core"), fact(OGL, "boundaries")],
 		},
 	};
 };

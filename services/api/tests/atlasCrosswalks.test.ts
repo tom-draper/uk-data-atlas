@@ -4,6 +4,7 @@ import { IdRegistries, areaTables } from "./pipelineFixtures";
 import { emptyCrosswalkAreas } from "./helpers/sqliteAreas";
 import assert from "node:assert/strict";
 import {
+	copyFileSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -22,8 +23,26 @@ import {
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	buildModuleManifests,
+	CORE_COMPATIBILITY_KEY,
+} from "@uk-data-atlas/datasets/registry";
+import {
+	buildModuleDatabase,
+	sqlitePath,
+} from "../../../pipeline/src/modules/buildModules";
+import {
+	assembleModules,
+	manifestFilePath,
+} from "../../../pipeline/src/modules/assembleModules";
+import {
+	route,
+	registry,
+	geographyInventory,
+	areaLookup,
+} from "./routeFixtures";
 
-test("crosswalk edges rebuild artifacts with zero weights, labels and empty targets", (context) => {
+test("crosswalk edges rebuild artifacts with zero weights, labels and empty targets", async (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-crosswalks-"));
 	context.onTestFinished(() =>
 		rmSync(root, { recursive: true, force: true }),
@@ -309,6 +328,52 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		);
 	} finally {
 		database.close();
+	}
+	// Assemble the real check table with a core copied from this serving fixture.
+	const release = join(root, "release");
+	mkdirSync(join(release, "sqlite"), { recursive: true });
+	const corePath = join(release, sqlitePath("core"));
+	copyFileSync(path, corePath);
+	const core = new DatabaseSync(corePath);
+	core.exec(`PRAGMA foreign_keys = OFF; DROP TABLE crosswalk_edge_check;
+		CREATE TABLE module_info (key TEXT PRIMARY KEY, value TEXT);
+		INSERT INTO module_info VALUES ('coreCompatibility', '${CORE_COMPATIBILITY_KEY}');
+		CREATE TABLE module (id TEXT PRIMARY KEY, installed INTEGER);
+		INSERT INTO module VALUES ('crosswalk-checks', 0);
+		CREATE TABLE module_view (name TEXT, position INTEGER, sql TEXT, requires TEXT);`);
+	core.close();
+	const manifest = buildModuleManifests({ datasets: () => [] }).find(
+		(item) => item.id === "crosswalk-checks",
+	)!;
+	buildModuleDatabase(path, manifest, join(release, sqlitePath(manifest.id)));
+	writeFileSync(
+		join(release, manifestFilePath(manifest.id)),
+		JSON.stringify(manifest),
+	);
+	const assembled = join(root, "assembled.sqlite");
+	await assembleModules({
+		root: release,
+		modules: [manifest.id],
+		out: assembled,
+	});
+	const servingLookup = readCrosswalkLookup(root, inventory, 0, path);
+	const assembledLookup = readCrosswalkLookup(root, inventory, 0, assembled);
+	for (const item of inventory.crosswalks) {
+		const url = `/v1/crosswalks/${item.id}/records`;
+		const response = (lookup: typeof servingLookup) =>
+			route(
+				"GET",
+				url,
+				registry,
+				geographyInventory,
+				areaLookup,
+				inventory,
+				lookup,
+			);
+		assert.equal(
+			JSON.stringify(response(assembledLookup)),
+			JSON.stringify(response(servingLookup)),
+		);
 	}
 	const before = readFileSync(path);
 	const refuse = (value: object, message: RegExp) => {

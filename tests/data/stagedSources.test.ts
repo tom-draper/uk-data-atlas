@@ -95,6 +95,7 @@ describe("staged sources", () => {
 			core: [],
 			boundaries: [],
 			postcodes: [],
+			"crosswalk-checks": [],
 		});
 	});
 });

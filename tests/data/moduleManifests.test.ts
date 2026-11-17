@@ -44,6 +44,11 @@ describe("module manifests", () => {
 		);
 	});
 
+	it("requires core for crosswalk checks", () => {
+		expect(byId("crosswalk-checks").requires).toEqual(["core"]);
+		expect(byId("crosswalk-checks").alwaysIncluded).toBe(false);
+	});
+
 	it("hold every registered dataset once as a whole, in the module it is homed in", () => {
 		const whole = manifests.flatMap(({ datasets }) =>
 			datasets.filter(({ partial }) => !partial).map(({ id }) => id),
@@ -98,6 +103,8 @@ describe("module manifests", () => {
 		const ids = new Set(manifests.map(({ id }) => id));
 		for (const manifest of manifests)
 			for (const required of manifest.requires) {
+				if (manifest.id === "crosswalk-checks" && required === "core")
+					continue;
 				expect(ids.has(required), manifest.id).toBe(true);
 				expect(required, manifest.id).not.toBe(manifest.id);
 				expect(
