@@ -1,3 +1,7 @@
+import {
+	ATLAS_APPLICATION_ID,
+	ATLAS_SCHEMA_VERSION,
+} from "@uk-data-atlas/atlas-db";
 import { closeSync, fsyncSync, openSync, renameSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -9,6 +13,8 @@ export type PublishVacuumedOptions = {
 	 * that belongs in the published file but not in the working one.
 	 */
 	finish?: (database: DatabaseSync) => void;
+	/** Internal caches do not use the atlas file family header. */
+	atlasIdentity?: boolean;
 	/** Validate the final copy before replacing the published file. */
 	check?: "integrity_check" | "quick_check";
 	/** Runs just before the rename, to release readers holding the old file. */
@@ -47,13 +53,19 @@ function syncDirectory(path: string) {
  *
  * `workPath` is left as it was; the caller removes it. The copy keeps the
  * source's page size, auto_vacuum, user_version and application_id, but not
- * journal_mode, which is the default again. A stale `.tmp` from a build that
+ * journal_mode, which is the default again. By default the published copy's
+ * identity is then set to the current atlas file family and schema version. A stale `.tmp` from a build that
  * stopped is removed first, as `VACUUM INTO` needs a target that is absent.
  */
 export function publishVacuumed(
 	workPath: string,
 	publishedPath: string,
-	{ finish, check, beforeReplace }: PublishVacuumedOptions = {},
+	{
+		finish,
+		check,
+		beforeReplace,
+		atlasIdentity = true,
+	}: PublishVacuumedOptions = {},
 ) {
 	const temporary = `${publishedPath}.tmp`;
 	const remove = () => {
@@ -68,10 +80,14 @@ export function publishVacuumed(
 		} finally {
 			source.close();
 		}
-		if (finish || check) {
+		if (finish || check || atlasIdentity) {
 			const copy = new DatabaseSync(temporary);
 			try {
 				copy.exec("PRAGMA journal_mode = OFF");
+				if (atlasIdentity)
+					copy.exec(
+						`PRAGMA application_id = ${ATLAS_APPLICATION_ID}; PRAGMA user_version = ${ATLAS_SCHEMA_VERSION}`,
+					);
 				finish?.(copy);
 				if (check) checkDatabase(copy, check);
 			} finally {

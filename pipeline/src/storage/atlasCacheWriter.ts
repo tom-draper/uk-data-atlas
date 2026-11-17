@@ -145,6 +145,7 @@ export function publishAtlasCacheSteps(
 		// Readers in this process must not keep the file about to be replaced.
 		if (vacuum)
 			publishVacuumed(temporary, path, {
+				atlasIdentity: false,
 				beforeReplace: () => closeReadOnlyDatabase(path),
 			});
 		else {
@@ -220,6 +221,7 @@ export function publishAtlasCacheWork(root: string) {
 	if (!existsSync(work)) return false;
 	const path = atlasCachePath(root);
 	publishVacuumed(work, path, {
+		atlasIdentity: false,
 		// The published copy drops the session id; the working copy keeps it,
 		// so a failed publish is still discarded with its stamps.
 		finish: (database) =>
