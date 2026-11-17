@@ -84,6 +84,8 @@ export * from "./society/deprivation/simd/dataset.ts";
 export * from "./data/unemployment/aggregate.ts";
 export * from "./economy/labour-market/unemployment/dataset.ts";
 export * from "./data/waste/aggregate.ts";
+export * from "./data/waste/source.ts";
+export * from "./data/electric-vehicle-chargers/source.ts";
 export * from "./environment/waste/waste/dataset.ts";
 export * from "./society/deprivation/wimd/dataset.ts";
 export * from "./economy/earnings-and-income/workplace-income/dataset.ts";
