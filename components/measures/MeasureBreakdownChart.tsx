@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import {
 	isLocalAuthorityEstimate,
@@ -8,6 +9,7 @@ import {
 import { MeasureBreakdownCard } from "@/components/measures/MeasureBreakdownCard";
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { areaForMeasure } from "@/lib/measures/area";
+import { areaCodesInScope } from "@/lib/measures/scope";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 import type { Dataset, DatasetCoverage, ActiveViz } from "@/lib/types";
@@ -24,6 +26,7 @@ type BreakdownDataset = DatasetCoverage & {
  */
 export default function MeasureBreakdownChart({
 	breakdown,
+	boundaryData,
 	activeDataset,
 	availableDatasets,
 	selectedArea,
@@ -31,23 +34,32 @@ export default function MeasureBreakdownChart({
 	codeMapper,
 	setActiveViz,
 }: ChartComponentProps) {
+	const geography = breakdown?.request.geography;
+	const boundaryYear = breakdown?.request.boundaryYear;
+	const scope = useMemo(
+		() =>
+			geography && boundaryYear !== undefined
+				? areaCodesInScope(boundaryData, geography, boundaryYear)
+				: null,
+		[boundaryData, geography, boundaryYear],
+	);
 	const dataset = (
 		availableDatasets as Record<string, BreakdownDataset> | undefined
 	)?.[year];
 	if (!breakdown || !dataset) return null;
 
-	const { geography, boundaryYear } = breakdown.request;
 	const area =
 		areaForMeasure(
 			selectedArea,
-			geography,
-			boundaryYear,
+			breakdown.request.geography,
+			breakdown.request.boundaryYear,
 			codeMapper as (CodeYearResolver & LadResolver) | undefined,
 		) ?? null;
 
 	return (
 		<MeasureBreakdownCard
 			request={breakdown.request}
+			scope={scope}
 			area={area}
 			dimension={breakdown.dimension}
 			total={breakdown.total}
