@@ -1,6 +1,7 @@
 import { closeSync, fsyncSync, openSync, renameSync, rmSync } from "node:fs";
 import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { checkDatabase } from "./checkDatabase.ts";
 
 export type PublishVacuumedOptions = {
 	/**
@@ -8,6 +9,8 @@ export type PublishVacuumedOptions = {
 	 * that belongs in the published file but not in the working one.
 	 */
 	finish?: (database: DatabaseSync) => void;
+	/** Validate the final copy before replacing the published file. */
+	check?: "integrity_check" | "quick_check";
 	/** Runs just before the rename, to release readers holding the old file. */
 	beforeReplace?: () => void;
 };
@@ -50,7 +53,7 @@ function syncDirectory(path: string) {
 export function publishVacuumed(
 	workPath: string,
 	publishedPath: string,
-	{ finish, beforeReplace }: PublishVacuumedOptions = {},
+	{ finish, check, beforeReplace }: PublishVacuumedOptions = {},
 ) {
 	const temporary = `${publishedPath}.tmp`;
 	const remove = () => {
@@ -65,11 +68,12 @@ export function publishVacuumed(
 		} finally {
 			source.close();
 		}
-		if (finish) {
+		if (finish || check) {
 			const copy = new DatabaseSync(temporary);
 			try {
 				copy.exec("PRAGMA journal_mode = OFF");
-				finish(copy);
+				finish?.(copy);
+				if (check) checkDatabase(copy, check);
 			} finally {
 				copy.close();
 			}
