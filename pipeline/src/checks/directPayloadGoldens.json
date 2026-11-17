@@ -54,5 +54,9 @@
 	"simd": {
 		"sha256": "d1868041a949b9b5765ddc1d4d0def2055881977d09e9d05e2890eb38bedb816",
 		"bytes": 1233880
+	},
+	"wimd": {
+		"sha256": "e2c328ad3aa61e327c0af4ccece0adafc08645b847718c758dab1ffd99c18c67",
+		"bytes": 335071
 	}
 }
