@@ -2,7 +2,10 @@ import {
 	parseLookupCoordinate,
 	type LookupPoint,
 } from "@uk-data-atlas/geography";
-import type { PostcodeCentroid } from "./postcodeIndex.ts";
+import {
+	storedPostcodePoints,
+	type PostcodeCentroid,
+} from "./postcodeIndex.ts";
 
 /**
  * The postcode's centroid as a lookup point. Where the directory states the
@@ -21,5 +24,6 @@ export const postcodeLookupPoint = (
 			northing: String(centroid.northing),
 		},
 		accuracyM === null || accuracyM <= 0.5 ? undefined : accuracyM,
+		storedPostcodePoints.get(centroid),
 	)!;
 };

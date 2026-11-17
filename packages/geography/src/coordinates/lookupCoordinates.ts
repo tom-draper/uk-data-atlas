@@ -1,5 +1,9 @@
 import { metresPerDegree } from "../areaDistance.ts";
-import { toWgs84Point, type GeometryTransformation } from "./reprojection.ts";
+import {
+	geometryProvenance,
+	toWgs84Point,
+	type GeometryTransformation,
+} from "./reprojection.ts";
 
 export type LookupPoint = {
 	lng: number;
@@ -137,6 +141,7 @@ const projectedLookupPoint = (
 	eastingText: string | undefined,
 	northingText: string | undefined,
 	statedAccuracyM?: number,
+	storedPosition?: [number, number],
 ): LookupPoint | undefined => {
 	const bounds = projectedBounds[crs];
 	const easting = coordinatePart(
@@ -155,6 +160,8 @@ const projectedLookupPoint = (
 		easting,
 		northing,
 		statedAccuracyM,
+		undefined,
+		storedPosition,
 	);
 };
 
@@ -276,11 +283,14 @@ const projectedLookupPointFromParts = (
 	northing: ProjectedCoordinate,
 	statedAccuracyM?: number,
 	gridReference?: BritishGridReference,
+	storedPosition?: [number, number],
 ): LookupPoint => {
-	const { position, transformation } = toWgs84Point(
-		[easting.value, northing.value],
-		crs,
-	);
+	const { position, transformation } = storedPosition
+		? {
+				position: storedPosition,
+				transformation: geometryProvenance(crs).transformation,
+			}
+		: toWgs84Point([easting.value, northing.value], crs);
 	const coordinateUncertainty =
 		gridReference === undefined
 			? (statedAccuracyM ??
@@ -352,6 +362,7 @@ export const parseLookupCoordinate = (
 		gridReference?: string;
 	},
 	statedAccuracyM?: number,
+	storedPosition?: [number, number],
 ): LookupPoint | undefined => {
 	if (crs === "EPSG:4326")
 		return values.easting === undefined &&
@@ -367,6 +378,7 @@ export const parseLookupCoordinate = (
 					values.easting,
 					values.northing,
 					statedAccuracyM,
+					storedPosition,
 				)
 			: undefined;
 	if (values.easting !== undefined || values.northing !== undefined)

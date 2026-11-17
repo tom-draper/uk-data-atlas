@@ -1,3 +1,8 @@
+import {
+	atlasDatabasePath,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
+import { requirePostcodeAreaLayout } from "./atlasPostcodeAreaShard.ts";
 import { readSqlitePostcodeShard } from "./atlasPostcodeShard.ts";
 export {
 	postcodeFields,
@@ -15,12 +20,36 @@ export const readSqlitePostcodeIndex = (
 		repositoryRoot,
 		databasePath,
 	);
+	const database = openReadOnlyDatabase(
+		databasePath ?? atlasDatabasePath(repositoryRoot),
+	);
+	let hasPoints: boolean;
+	try {
+		const columns = database.prepare("PRAGMA table_info(postcodes)").all();
+		hasPoints =
+			columns.some((column) => column.name === "latitudeMicrodegrees") &&
+			columns.some((column) => column.name === "longitudeMicrodegrees");
+		if (hasPoints) requirePostcodeAreaLayout(database);
+	} finally {
+		database.release();
+	}
 	const entries = new Map(
 		artifact.shards.map((entry) => [entry.path, entry]),
 	);
 	return new PostcodeIndex(artifact, (path) => {
 		const entry = entries.get(path);
 		if (!entry) throw new Error(`Unknown postcode shard ${path}`);
-		return readSqlitePostcodeShard(repositoryRoot, entry, databasePath);
+		if (!hasPoints)
+			return readSqlitePostcodeShard(repositoryRoot, entry, databasePath);
+		let points: Array<[number, number] | null> = [];
+		const text = readSqlitePostcodeShard(
+			repositoryRoot,
+			entry,
+			databasePath,
+			(value) => {
+				points = value;
+			},
+		);
+		return { text, points };
 	});
 };

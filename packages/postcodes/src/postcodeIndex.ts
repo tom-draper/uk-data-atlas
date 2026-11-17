@@ -24,6 +24,16 @@ export type PostcodeCentroid = {
 	positionalQuality: QualityIndicator;
 };
 
+// Kept outside records so public JSON and equality retain their existing shape.
+export const storedPostcodePoints = new WeakMap<
+	PostcodeCentroid,
+	[number, number]
+>();
+export type PostcodeShardData = {
+	text: string;
+	points: Array<[number, number] | null>;
+};
+
 export type PostcodeRecord = {
 	postcode: string;
 	status: "live" | "terminated";
@@ -49,18 +59,21 @@ export type PostcodeLookup =
 
 /** Unit postcodes read through a hash-checked district reader, a few districts at a time. */
 export class PostcodeIndex {
-	private readonly shards = new Map<string, PostcodeShard>();
+	private readonly shards = new Map<
+		string,
+		PostcodeShard & { storedPoints?: PostcodeShardData["points"] }
+	>();
 	private readonly districts: string[];
 	/** Shards already checked against the manifest; a re-read need not be. */
 	private readonly verified = new Set<string>();
 
 	readonly artifact: PostcodeIndexArtifact;
-	private readonly readShard: (path: string) => string;
+	private readonly readShard: (path: string) => string | PostcodeShardData;
 	private readonly capacity: number;
 	constructor(
 		artifact: PostcodeIndexArtifact,
 		/** The text of a shard at its path in the manifest. */
-		readShard: (path: string) => string,
+		readShard: (path: string) => string | PostcodeShardData,
 		/**
 		 * How many districts stay in memory. A district averages some 900
 		 * postcodes and the largest holds a few thousand, so this is a few
@@ -75,7 +88,11 @@ export class PostcodeIndex {
 		this.districts = artifact.shards.map((shard) => shard.district);
 	}
 
-	private shard(district: string): PostcodeShard | undefined {
+	private shard(
+		district: string,
+	):
+		| (PostcodeShard & { storedPoints?: PostcodeShardData["points"] })
+		| undefined {
 		const cached = this.shards.get(district);
 		if (cached) {
 			// Most recently used last, so the first entry is evicted first.
@@ -86,7 +103,8 @@ export class PostcodeIndex {
 		const at = findSorted(this.districts, district);
 		if (at === -1) return undefined;
 		const entry = this.artifact.shards[at]!;
-		const text = this.readShard(entry.path);
+		const data = this.readShard(entry.path);
+		const text = typeof data === "string" ? data : data.text;
 		if (!this.verified.has(entry.path)) {
 			if (sha256(text) !== entry.contentHash)
 				throw new Error(
@@ -94,7 +112,10 @@ export class PostcodeIndex {
 				);
 			this.verified.add(entry.path);
 		}
-		const shard = JSON.parse(text) as PostcodeShard;
+		const shard = JSON.parse(text) as PostcodeShard & {
+			storedPoints?: PostcodeShardData["points"];
+		};
+		if (typeof data !== "string") shard.storedPoints = data.points;
 		this.shards.set(district, shard);
 		if (this.shards.size > this.capacity)
 			this.shards.delete(this.shards.keys().next().value!);
@@ -134,7 +155,7 @@ export class PostcodeIndex {
 		const easting = shard.grid[at * 2];
 		const northing = shard.grid[at * 2 + 1];
 		const terminated = shard.terminated[at]!;
-		return {
+		const result: PostcodeLookup = {
 			status: "found",
 			record: {
 				postcode: postcode.display,
@@ -168,5 +189,9 @@ export class PostcodeIndex {
 							},
 			},
 		};
+		const point = shard.storedPoints?.[at];
+		if (point && result.record.centroid)
+			storedPostcodePoints.set(result.record.centroid, point);
+		return result;
 	}
 }
