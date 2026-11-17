@@ -18,12 +18,12 @@ tsx src/stages/build-notional-elections.ts --source <built checkout> --benchmark
 ## Summary
 
 - **The main method beats the baseline.** Mean absolute error in party share per
-  seat falls from 0.72 to 0.42 points over all 632 seats in Great Britain, and
-  from 0.80 to 0.47 over the 567 seats whose make-up changed. The notional
-  winner differs from the benchmark in 7 seats, against 11 for the baseline.
-- **England gains most** (0.74 to 0.40). Wales gains less (0.56 to 0.51), since
-  15% of its adults live in wards with no usable contest. **Scotland is the
-  baseline**: the atlas holds no Scottish local results.
+  seat falls from 0.72 to 0.39 points over all 632 seats in Great Britain, and
+  from 0.80 to 0.43 over the 567 seats whose make-up changed. The notional
+  winner differs from the benchmark in 8 seats, against 11 for the baseline.
+- **England and Scotland gain most** (0.74 to 0.40, and 0.57 to 0.23). Wales
+  gains less (0.56 to 0.51), since 15% of its adults live in wards with no
+  usable contest.
 - **Northern Ireland is excluded.** The weight atoms do not cover it, and the
   benchmark has no Northern Ireland seats to score against.
 
@@ -60,9 +60,10 @@ proportional to its adults times the party's relative strength there:
 1. **Local results.** Each atom takes the ward contest nearest in time to
    12 December 2019 that covers it, up to the end of 2023. A contest is usable
    if it has votes, at least two of Conservative, Labour, Liberal Democrat,
-   Green and Plaid Cymru stood, and they took at least half the vote. Each
+   SNP, Green and Plaid Cymru stood, and they took at least half the vote. Each
    party's local vote in a year is scaled to its 2019 general election vote in
-   England and Wales, so contests from different years are comparable. A
+   the same nation (England and Wales together, or Scotland), so contests from
+   different years and places are comparable. A
    piece's strength is its scaled local share over the average of the seat's
    pieces that have one. UKIP's local share stands in for the Brexit Party.
 2. **Census model, where local results are missing.** For Conservative,
@@ -73,7 +74,8 @@ proportional to its adults times the party's relative strength there:
    contest was unusable or where the party did not stand. Within-seat R² is
    0.37 (Con), 0.43 (Lab), 0.07 (LD) and 0.08 (Green). Plaid Cymru and the
    Brexit Party scored worse with the model, so they fall back to the seat
-   average.
+   average. The census tables cover England and Wales only, so the model does
+   not run in Scotland.
 3. **Seat average,** where neither applies.
 4. **Raking.** The pieces are raked so each party sums exactly to its actual
    vote in the 2019 seat, and each piece's total vote follows its adults
@@ -81,23 +83,34 @@ proportional to its adults times the party's relative strength there:
 5. The pieces are summed into the 2024 seats.
 
 Pieces without a usable contest are flagged in `notional_piece` with the 2019
-ward, the reason (`no local results held`, `contest unusable`,
-`no contest placed`) and the parties the model or the seat average filled in.
+ward, the reason (`contest unusable` or `no contest placed`) and the parties
+the model or the seat average filled in.
+
+**Scotland.** The atlas's local election series covers England and Wales. For
+Scotland the stage reads the May 2017 council results from the same Local
+Elections Archive Project file the atlas holds
+(`data/source/politics/local-elections/local-election/2017`, CC BY-SA 3.0),
+whose Scottish rows the series leaves out. Councils there use STV, so a
+party's share is the sum of its candidates' first preferences. The 354 wards
+are placed on the December 2019 ward release: seven were recoded after
+December 2017. 2017 is the only Scottish contest before 2022, so every
+Scottish piece uses it.
 
 Where local results come from, by adults covered:
 
-| Source                           | Adults (m) |
-| -------------------------------- | ---------- |
-| 2019 local elections             | 28.36      |
-| 2018                             | 8.28       |
-| 2021                             | 5.36       |
-| 2022                             | 2.08       |
-| 2023                             | 1.16       |
-| 2017                             | 0.34       |
-| 2016                             | 0.06       |
-| No local results held (Scotland) | 4.32       |
-| Contest unusable                 | 1.56       |
-| No contest placed                | 0.01       |
+| Source                      | Adults (m) |
+| --------------------------- | ---------- |
+| 2019 local elections        | 28.36      |
+| 2018                        | 8.28       |
+| 2021                        | 5.36       |
+| 2017 Scottish councils      | 4.20       |
+| 2022                        | 2.08       |
+| 2023                        | 1.16       |
+| 2017 (England and Wales)    | 0.34       |
+| 2016                        | 0.06       |
+| Contest unusable            | 1.56       |
+| Contest unusable (Scotland) | 0.12       |
+| No contest placed           | 0.01       |
 
 ## Accuracy
 
@@ -108,31 +121,35 @@ more whole 2019 seats. The rows add each part of the main method in turn.
 | Method                                       | MAE, all seats | MAE, changed seats | Winners differ |
 | -------------------------------------------- | -------------- | ------------------ | -------------- |
 | Baseline: residents, uniform within old seat | 0.72           | 0.80               | 11             |
-| Local results, seat average where missing    | 0.43           | 0.48               | 6              |
-| Plus UKIP for the Brexit Party               | 0.43           | 0.48               | 6              |
-| Plus census model and adult raking (main)    | 0.42           | 0.47               | 7              |
+| Local results, seat average where missing    | 0.40           | 0.45               | 7              |
+| Plus UKIP for the Brexit Party               | 0.40           | 0.44               | 7              |
+| Plus census model and adult raking (main)    | 0.39           | 0.43               | 8              |
 
 By nation (seats):
 
 | Method             | England (543) | Wales (32) | Scotland (57) |
 | ------------------ | ------------- | ---------- | ------------- |
 | Baseline           | 0.74          | 0.56       | 0.57          |
-| Local results only | 0.41          | 0.52       | 0.57          |
-| Plus UKIP          | 0.41          | 0.52       | 0.57          |
-| Main               | 0.40          | 0.51       | 0.57          |
+| Local results only | 0.41          | 0.52       | 0.22          |
+| Plus UKIP          | 0.41          | 0.52       | 0.22          |
+| Main               | 0.40          | 0.51       | 0.23          |
 
 By party, mean absolute error (mean signed error):
 
 | Method             | con          | lab          | ld           | snp          | pc           | green        | brx          | other        |
 | ------------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
 | Baseline           | 1.35 (+0.07) | 1.33 (-0.09) | 0.70 (+0.03) | 0.86 (-0.03) | 0.45 (+0.05) | 0.21 (+0.00) | 0.17 (-0.02) | 0.18 (+0.01) |
-| Local results only | 0.74 (+0.05) | 0.70 (-0.08) | 0.43 (+0.03) | 0.86 (-0.03) | 0.47 (+0.06) | 0.15 (+0.00) | 0.17 (-0.02) | 0.18 (+0.01) |
-| Plus UKIP          | 0.74 (+0.05) | 0.70 (-0.08) | 0.43 (+0.03) | 0.86 (-0.03) | 0.47 (+0.06) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
-| Main               | 0.73 (+0.07) | 0.68 (-0.09) | 0.41 (+0.03) | 0.86 (-0.03) | 0.46 (+0.05) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
+| Local results only | 0.68 (+0.05) | 0.65 (-0.08) | 0.40 (+0.03) | 0.41 (-0.02) | 0.47 (+0.06) | 0.15 (+0.00) | 0.17 (-0.02) | 0.18 (+0.01) |
+| Plus UKIP          | 0.68 (+0.05) | 0.65 (-0.08) | 0.40 (+0.03) | 0.41 (-0.02) | 0.47 (+0.06) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
+| Main               | 0.67 (+0.06) | 0.63 (-0.09) | 0.39 (+0.02) | 0.40 (-0.02) | 0.46 (+0.05) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
 
-Of the 7 seats where the main method's winner differs from the benchmark, 4
-are within 1,000 votes in the estimate. The local-only variant gets one more
-winner right but is worse on share error.
+Of the 8 seats where the main method's winner differs from the benchmark, 5
+are within 1,000 votes in the estimate. One is Scottish: Moray West, Nairn and
+Strathspey, where the estimate has the Conservatives 976 votes ahead of the
+SNP, well inside its bounds. The local-only variant gets one more winner right
+but is worse on share error. In Scotland raking to adults is slightly worse
+(0.23 against 0.22), since its adults are an England and Wales average share
+of residents.
 
 A census model of seat-level shares (fitted across seats rather than within
 them) was also tried and made things worse: 0.46 overall and 0.69 in Wales, as
@@ -147,9 +164,7 @@ the votes from split seats were placed.
 | ------------------------------------ | ---- | ------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | Wakefield and Rothwell               | 2.92 | con 7.46      | lab, benchmark con | Morley and Outwood, Elmet and Rothwell, Wakefield                                                                   | 96%, 1%, 2%           |
 | Ossett and Denby Dale                | 2.73 | con 7.51      | con                | Hemsworth, Colne Valley, Dewsbury, Wakefield                                                                        | 91%, 0%, 8%           |
-| Alloa and Grangemouth                | 2.50 | con 7.69      | snp                | Linlithgow and East Falkirk, Falkirk, Ochil and South Perthshire                                                    | 0%, 0%, 100%          |
 | Kingswinford and South Staffordshire | 2.41 | lab 4.60      | con                | Dudley South, South Staffordshire                                                                                   | 91%, 9%, 0%           |
-| Gordon and Buchan                    | 2.41 | con 3.12      | con                | Gordon, Banff and Buchan                                                                                            | 0%, 0%, 100%          |
 | Leeds North West                     | 2.17 | con 5.76      | con                | Pudsey, Leeds North West, Leeds North East                                                                          | 99%, 0%, 1%           |
 | Wetherby and Easingwold              | 2.11 | lab 5.38      | con                | Skipton and Ripon, Thirsk and Malton, Selby and Ainsty, Harrogate and Knaresborough, Leeds East, Elmet and Rothwell | 91%, 7%, 2%           |
 | Spen Valley                          | 2.07 | lab 6.09      | con                | Batley and Spen, Huddersfield, Dewsbury                                                                             | 87%, 0%, 13%          |
@@ -158,13 +173,15 @@ the votes from split seats were placed.
 | Bicester and Woodstock               | 1.91 | ld 4.67       | con                | Witney, Henley, Banbury, Oxford West and Abingdon                                                                   | 91%, 9%, 0%           |
 | Dewsbury and Batley                  | 1.87 | lab 5.43      | lab                | Batley and Spen, Huddersfield, Dewsbury                                                                             | 92%, 0%, 8%           |
 | Leeds Central and Headingley         | 1.77 | lab 4.67      | lab                | Leeds Central, Leeds West, Leeds North West                                                                         | 98%, 0%, 2%           |
-| Perth and Kinross-shire              | 1.72 | snp 3.76      | snp                | Perth and North Perthshire, Ochil and South Perthshire                                                              | 0%, 0%, 100%          |
 | East Grinstead and Uckfield          | 1.71 | con 3.61      | con                | Lewes, Wealden, Mid Sussex, Horsham                                                                                 | 81%, 19%, 0%          |
 | Isle of Wight West                   | 1.68 | lab 3.15      | con                | Isle of Wight                                                                                                       | 67%, 29%, 4%          |
-| Aberdeen North                       | 1.68 | con 3.76      | snp                | Aberdeen North, Aberdeen South, Gordon                                                                              | 0%, 0%, 100%          |
 | Melton and Syston                    | 1.68 | ld 2.92       | con                | Loughborough, Charnwood, Rutland and Melton                                                                         | 81%, 18%, 1%          |
 | Banbury                              | 1.67 | lab 3.20      | con                | Witney, Banbury                                                                                                     | 96%, 4%, 0%           |
 | Isle of Wight East                   | 1.66 | lab 3.11      | con                | Isle of Wight                                                                                                       | 87%, 8%, 4%           |
+| Tiverton and Minehead                | 1.57 | ld 2.72       | con                | Bridgwater and West Somerset, Tiverton and Honiton, Taunton Deane                                                   | 91%, 7%, 2%           |
+| Ellesmere Port and Bromborough       | 1.53 | lab 3.70      | lab                | Ellesmere Port and Neston, Wirral South                                                                             | 94%, 2%, 4%           |
+| Bristol North East                   | 1.42 | con 4.21      | lab                | Kingswood, Bristol West, Bristol North West, Filton and Bradley Stoke, Bristol East                                 | 97%, 1%, 2%           |
+| St Neots and Mid Cambridgeshire      | 1.41 | con 3.21      | con                | South Cambridgeshire, South East Cambridgeshire, Huntingdon                                                         | 95%, 3%, 2%           |
 
 Why:
 
@@ -174,8 +191,10 @@ Why:
   Spen Valley have strong independent and residents' groups. The method reads
   those wards as weak for the Conservatives and moves their vote elsewhere in
   the old seat. Wakefield and Rothwell is the worst case and flips the winner.
-- **Scotland (5).** No local results, so each old seat is split uniformly. The
-  error is the baseline's.
+- **No Scottish seat** is in the worst 20 now that the 2017 council results
+  are used. Before, five were, each split uniformly. Their places go to
+  Tiverton and Minehead, Ellesmere Port and Bromborough, Bristol North East,
+  and St Neots and Mid Cambridgeshire, at 1.41 to 1.57 points.
 - **Rural seats in the Midlands and South (Bicester, Banbury, Melton, East
   Grinstead, Kingswinford).** Liberal Democrat and Green local strength is
   patchier than their general election vote, and parts of these seats have
@@ -211,8 +230,7 @@ Both bias the split towards areas with many foreign nationals, students or low
 turnout, mostly inner cities. Raking to adults moved the error from 0.428 to
 0.418; electorates by ward or polling district would remove the rest of this
 bias but are not in the atlas. Scotland has no LSOA census data in the atlas,
-so its adults are taken as the England and Wales average share; this only
-affects the Scottish split by its size, not its shares.
+so its adults are taken as the England and Wales average share of residents.
 
 ## Storage
 
@@ -223,7 +241,7 @@ The estimates are a build output for now:
   `lower`, `upper`, `status` (`derived` or `estimated`), `at_risk` and the 2019
   seats it draws on.
 - `notional_input`: every series key read (general election, local elections by
-  date, census tables) and the weights used.
+  date, census tables), the Scottish council file, and the weights used.
 - `notional_piece`: each piece, its local contest or fallback reason, and the
   parties the model or seat average filled in.
 - `notional_seat_source`, `notional_score`, `notional_seat_score`: where at-risk
@@ -251,7 +269,8 @@ table.
 - Places where local and national voting differ: strong local Liberal
   Democrats, independents and residents' groups (West Yorkshire, Isle of
   Wight).
-- Scotland: no local results, so no better than the baseline.
+- Scotland: one set of council results, from May 2017, two and a half years
+  before the general election, and no census model.
 - Wales: 15% of adults in wards with no usable contest, and Plaid Cymru is
   slightly worse than the baseline (0.46 against 0.45).
 - Local contests from 2021 to 2023 are up to four years from the general
@@ -260,7 +279,7 @@ table.
 
 ## What would improve it
 
-- Scottish council results (STV first preferences by ward, 2017 and 2022).
+- Scottish council results from 2022, averaged with 2017.
 - Electorates by ward or polling district, to weight by electors instead of
   adults.
 - Several years of local results per ward, averaged, to damp local candidate
