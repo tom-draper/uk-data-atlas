@@ -14,6 +14,7 @@ import { formatCompactCount, formatCount } from "@/lib/helpers/formatCount";
 import type { CatalogueDataset } from "@/lib/data/catalog";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ChartDatasetDefinition } from "./types.ts";
+import type { BarsCardConfig } from "../measures/barsConfig.ts";
 import type { BreakdownCardConfig } from "../measures/breakdownConfig.ts";
 import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
 import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
@@ -78,6 +79,13 @@ const read = (record: unknown, path: string): number | null => {
 /** A measure's value in a record: a field, or one field as a percentage of another. */
 const valueOf = (record: unknown, field: DisplayField): number | null => {
 	if (typeof field === "string") return read(record, field);
+	if ("mean" in field) {
+		const values = field.mean.map((path) => read(record, path));
+		return values.some((value) => value === null)
+			? null
+			: (values as number[]).reduce((sum, value) => sum + value, 0) /
+					values.length;
+	}
 	if ("apportion" in field) {
 		const { amount, part, whole } = field.apportion;
 		const total = read(record, amount);
@@ -187,6 +195,25 @@ const breakdownFor = (
 	period: breakdown.period,
 	source: breakdown.source,
 	coverage: breakdown.coverage,
+});
+
+const barsFor = (
+	declaration: Displayed,
+	bars: NonNullable<DatasetDisplay["bars"]>,
+): BarsCardConfig => ({
+	request: {
+		datasetId: declaration.id,
+		geography: declaration.boundary.type,
+		boundaryYear: declaration.boundary.year,
+	},
+	measures: bars.measures,
+	...(bars.views ? { views: bars.views } : {}),
+	dimension: bars.dimension,
+	bars: bars.bars,
+	combine: bars.combine,
+	ramp: bars.ramp,
+	digits: bars.digits,
+	heading: bars.heading,
 });
 
 const cardFor = (
@@ -363,6 +390,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			...(display.breakdown
 				? { breakdown: breakdownFor(declaration, display.breakdown) }
 				: {}),
+			// The editions are told apart by id, the first being the one shown.
+			...(display.bars
+				? {
+						bars: barsFor(declaration, display.bars),
+						datasetId: Object.keys(display.bars.measures)[0],
+						keyBy: "id" as const,
+					}
+				: {}),
 			calculateStats: (
 				aggregator,
 				geojson,
@@ -409,6 +444,28 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 						sourceMode: (_dataset, options) =>
 							`${declaration.id}:${optionsOf(options).id}`,
 					}),
+			...(display.measures.some((measure) => measure.rangeFromData)
+				? {
+						getColorRange: (dataset, options) => {
+							const measure = optionsOf(options);
+							if (!measure.rangeFromData)
+								return measure.colorRange;
+							let min = Infinity;
+							let max = -Infinity;
+							for (const record of Object.values(
+								dataset.data as Record<string, unknown>,
+							)) {
+								const value = valueOf(record, measure.field);
+								if (value === null) continue;
+								min = Math.min(min, value);
+								max = Math.max(max, value);
+							}
+							return min <= max
+								? { min, max }
+								: measure.colorRange;
+						},
+					}
+				: {}),
 			colorRange: first.colorRange,
 			...(first.invertColor === false ? { invertColor: false } : {}),
 			legend: {

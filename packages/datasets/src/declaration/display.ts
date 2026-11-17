@@ -84,12 +84,14 @@ export type DisplayMeasureCard = {
  * percentage of `over`, or `amount` apportioned to the share `part` is of
  * `whole` (`amount × part ÷ whole`), such as a rate for the whole area applied
  * to one part of it. An apportioned part of nothing is zero when the part is
- * zero, and missing otherwise.
+ * zero, and missing otherwise. `mean` is the plain mean of several fields,
+ * missing unless every one exists.
  */
 export type DisplayField =
 	| string
 	| { share: { of: string; over: string } }
-	| { apportion: { amount: string; part: string; whole: string } };
+	| { apportion: { amount: string; part: string; whole: string } }
+	| { mean: readonly string[] };
 
 /** One way to read the dataset, shown as a choice when there is more than one. */
 export type DisplayMeasure = {
@@ -104,6 +106,11 @@ export type DisplayMeasure = {
 	field: DisplayField;
 	/** The colour range the map starts with. */
 	colorRange: { min: number; max: number };
+	/**
+	 * Colour the map over the lowest and highest value in the dataset, not the
+	 * range above, which then only starts the range control.
+	 */
+	rangeFromData?: true;
 	/** The legend's full range and the text of its labels. */
 	legend: { min: number; max: number; format: DisplayFormat };
 	/** Needed when the dataset is drawn by the shared chart card. */
@@ -233,6 +240,31 @@ export type DisplayBreakdown = {
 	order?: "largest";
 };
 
+/**
+ * A card of bars on one shared scale, one for each member of a dimension of a
+ * measure, read from the statistics. Drawn by the shared bars chart, with
+ * `component` set to `@/components/measures/MeasureBarsChart`. A dataset of
+ * several editions, such as life expectancy and healthy life expectancy,
+ * names the measure each edition's bars read; the first edition is shown first.
+ */
+export type DisplayBars = {
+	heading: string;
+	/** The measure to read for each edition of the dataset, by the edition's id. */
+	measures: Record<string, string>;
+	/** The map view each edition selects when the card is clicked, where it has one. */
+	views?: Record<string, string>;
+	/** The slug of the dimension whose members each get a bar. */
+	dimension: string;
+	/** The members drawn, in order, with the short label beside each bar. */
+	bars: readonly { code: string; label: string }[];
+	/** How areas combine before one is chosen: added up, or a plain mean. */
+	combine: "sum" | "mean";
+	/** Pale to deep, the colours a bar runs through from the scale's low to its high. */
+	ramp: { low: string; high: string };
+	/** Decimal places of each value. */
+	digits: number;
+};
+
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";
@@ -267,6 +299,8 @@ export type DatasetDisplay = {
 	 * `@/components/measures/MeasureBreakdownChart`.
 	 */
 	breakdown?: DisplayBreakdown;
+	/** The bars card, with `component` set to the shared bars chart. */
+	bars?: DisplayBars;
 	/**
 	 * Name of a compiled dataset field mapping an area code to the key of the
 	 * record that describes it, for a dataset published for larger areas than
