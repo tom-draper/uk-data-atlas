@@ -94,7 +94,7 @@ export function buildAtlasAssets(root: string) {
 			database.exec(`CREATE TABLE website_asset (
 				kind TEXT NOT NULL, id TEXT NOT NULL, sha256 TEXT NOT NULL,
 				gzip BLOB NOT NULL, PRIMARY KEY (kind, id)
-			) WITHOUT ROWID`);
+			) STRICT, WITHOUT ROWID`);
 			database.exec("BEGIN");
 			const insert = database.prepare(
 				"INSERT INTO website_asset VALUES (?, ?, ?, ?)",
