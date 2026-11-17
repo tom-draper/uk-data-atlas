@@ -10,7 +10,7 @@ export function storePostcodeCounts(
 ) {
 	const path = publishAtlasCache(root, "postcode-counts", (database) => {
 		database.exec(
-			"DROP TABLE IF EXISTS postcode_counts; CREATE TABLE postcode_counts (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease, code)) WITHOUT ROWID",
+			"DROP TABLE IF EXISTS postcode_counts; CREATE TABLE postcode_counts (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease, code)) STRICT, WITHOUT ROWID",
 		);
 		const insert = database.prepare(
 			"INSERT INTO postcode_counts VALUES (?, ?, ?, ?, ?, ?)",

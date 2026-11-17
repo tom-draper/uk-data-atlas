@@ -160,8 +160,8 @@ export const buildCrosswalkWeights = async (
 		try {
 			result.exec(`
 				PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;
-				CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID;
-				CREATE TABLE crosswalk_weight (crosswalk_id INTEGER NOT NULL, from_version_id INTEGER NOT NULL, to_version_id INTEGER NOT NULL, basis_id TEXT NOT NULL, weight REAL NOT NULL, overlap REAL, source_share REAL, target_share REAL, PRIMARY KEY (crosswalk_id, from_version_id, to_version_id, basis_id)) WITHOUT ROWID;
+				CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID;
+				CREATE TABLE crosswalk_weight (crosswalk_id INTEGER NOT NULL, from_version_id INTEGER NOT NULL, to_version_id INTEGER NOT NULL, basis_id TEXT NOT NULL, weight REAL NOT NULL, overlap REAL, source_share REAL, target_share REAL, PRIMARY KEY (crosswalk_id, from_version_id, to_version_id, basis_id)) STRICT, WITHOUT ROWID;
 				BEGIN`);
 			const insert = result.prepare(
 				"INSERT INTO crosswalk_weight VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
