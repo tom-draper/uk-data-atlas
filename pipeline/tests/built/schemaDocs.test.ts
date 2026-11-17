@@ -18,6 +18,16 @@ afterAll(() => database.close());
 
 const all = (sql: string) => database.prepare(sql).all();
 
+test("all ordinary published tables are strict", () => {
+	// FTS virtual and shadow tables are managed by SQLite and cannot be STRICT.
+	assert.deepEqual(
+		all(`SELECT name FROM pragma_table_list
+			 WHERE schema = 'main' AND type = 'table'
+			   AND name NOT LIKE 'sqlite_%' AND strict = 0`),
+		[],
+	);
+});
+
 test("every worked example returns rows", () => {
 	const examples = all(
 		"SELECT id, sql FROM schema_example ORDER BY position",
