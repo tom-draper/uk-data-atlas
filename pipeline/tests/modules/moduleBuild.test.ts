@@ -37,6 +37,10 @@ test("a module file holds only the rows of its datasets", async (t) => {
 	const root = scratch(t);
 	await buildFixtureRelease(root);
 	const atlas = open(join(root, "atlas.sqlite"));
+	assert.equal(
+		count(atlas, "SELECT count(*) AS n FROM crosswalk_edge_check"),
+		1,
+	);
 	for (const [module, expected] of [
 		[
 			"economy",
@@ -85,7 +89,7 @@ test("a module file holds only the rows of its datasets", async (t) => {
 			assert.equal(
 				count(
 					file,
-					"SELECT count(*) AS n FROM sqlite_schema WHERE name IN ('measure','area_version','period','status')",
+					"SELECT count(*) AS n FROM sqlite_schema WHERE name IN ('measure','area_version','period','status','crosswalk_edge_check','crosswalk_check_match')",
 				),
 				0,
 				`${module} restates a core table`,
@@ -121,6 +125,7 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 			assert.ok(tables.includes(name), name);
 		for (const name of [
 			"observation",
+			"crosswalk_edge_check",
 			"dataset",
 			"postcode_unit",
 			"series_gap",
@@ -132,6 +137,20 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 			count(core, "SELECT count(*) AS n FROM payloads"),
 			1,
 			"postcode payloads belong to the postcodes module",
+		);
+		assert.equal(
+			count(
+				core,
+				"SELECT count(*) AS n FROM schema_table WHERE name = 'crosswalk_edge_check'",
+			),
+			0,
+		);
+		assert.equal(
+			count(
+				core,
+				"SELECT count(*) AS n FROM schema_column WHERE table_name = 'crosswalk_edge_check'",
+			),
+			0,
 		);
 		// Population and households with no dimension: series 1 (3 rows) and 5 (1 row).
 		assert.equal(

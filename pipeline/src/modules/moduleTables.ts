@@ -176,8 +176,11 @@ export const readSchema = (database: DatabaseSync, schema = "main") => {
 	return rows.filter((row) => !shadows.has(row.name));
 };
 
-/** The module that owns a table, or `core` when none does. */
-export const tableOwner = (table: string): "dataset" | "postcodes" | "core" => {
+/** The module that owns a table, `serving` for API-only data, or `core`. */
+export const tableOwner = (
+	table: string,
+): "dataset" | "postcodes" | "serving" | "core" => {
+	if (table === "crosswalk_edge_check") return "serving";
 	if (DATASET_TABLES.some((owned) => owned.table === table)) return "dataset";
 	if (POSTCODE_TABLE.test(table)) return "postcodes";
 	return "core";

@@ -39,6 +39,10 @@ CREATE TABLE series_gap (series_id INTEGER NOT NULL REFERENCES series(id), area_
 CREATE TABLE conversion_skip (dataset_id INTEGER NOT NULL REFERENCES dataset(id), measure_id INTEGER NOT NULL REFERENCES measure(id), source_release_id INTEGER NOT NULL REFERENCES area_releases(id), target_release_id INTEGER NOT NULL REFERENCES area_releases(id), reason TEXT NOT NULL, series INTEGER NOT NULL, PRIMARY KEY (dataset_id, measure_id, source_release_id, target_release_id, reason)) WITHOUT ROWID;
 CREATE TABLE weight_basis (id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL) WITHOUT ROWID;
 CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE, from_release_id INTEGER NOT NULL REFERENCES area_releases(id), to_release_id INTEGER NOT NULL REFERENCES area_releases(id), basis_id TEXT REFERENCES weight_basis(id));
+CREATE TABLE schema_table (name TEXT PRIMARY KEY);
+CREATE TABLE schema_column (table_name TEXT REFERENCES schema_table(name), column_name TEXT);
+CREATE TABLE crosswalk_edge_check (id INTEGER PRIMARY KEY, match TEXT);
+CREATE INDEX crosswalk_check_match ON crosswalk_edge_check (match);
 CREATE TABLE series_conversion (series_id INTEGER PRIMARY KEY REFERENCES series(id), rule TEXT NOT NULL, basis_id TEXT NOT NULL REFERENCES weight_basis(id), exact INTEGER NOT NULL);
 CREATE TABLE series_crosswalk (series_id INTEGER NOT NULL REFERENCES series(id), position INTEGER NOT NULL, crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id), reversed INTEGER NOT NULL, PRIMARY KEY (series_id, position)) WITHOUT ROWID;
 CREATE TABLE area_relationship (dataset_id INTEGER NOT NULL REFERENCES dataset(id), relation TEXT NOT NULL, period_id INTEGER NOT NULL REFERENCES period(id), child_version_id INTEGER NOT NULL REFERENCES area_version(id), parent_version_id INTEGER NOT NULL REFERENCES area_version(id), PRIMARY KEY (dataset_id, relation, period_id, child_version_id, parent_version_id)) WITHOUT ROWID;
@@ -69,6 +73,9 @@ export const writeFixtureAtlas = (path: string): void => {
 		database.exec(ATLAS_DDL);
 		database.exec(`
 INSERT INTO meta VALUES ('release', 'fixture');
+INSERT INTO schema_table VALUES ('crosswalk_edge_check'), ('crosswalk');
+INSERT INTO schema_column VALUES ('crosswalk_edge_check', 'match'), ('crosswalk', 'id');
+INSERT INTO crosswalk_edge_check VALUES (1, 'identical');
 INSERT INTO payloads VALUES ('catalogue', x'01'), ('postcode-index', x'0203'), ('postcode-areas', x'04');
 INSERT INTO source VALUES (1, 'ons');
 INSERT INTO area_releases VALUES (1, '2024');

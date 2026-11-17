@@ -836,7 +836,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	crosswalk_edge_check: {
 		audience: "reference",
 		description:
-			"Geometric checks on crosswalk edges: how well source and target boundaries line up.",
+			"Geometric checks on crosswalk edges used to rebuild API responses. Kept in the serving atlas.sqlite and excluded from sold modules.",
 		columns: {
 			crosswalk_id: "The crosswalk (crosswalk.id).",
 			from_version_id: "Source area.",

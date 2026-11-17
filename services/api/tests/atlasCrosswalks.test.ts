@@ -85,7 +85,21 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 				{ source: { code: "A2", labels: [] }, targets: [] },
 				{
 					source: { code: "B", labels: ["different"] },
-					targets: [{ code: "Y", labels: [], change: "split" }],
+					targets: [
+						{
+							code: "Y",
+							labels: [],
+							change: "split",
+							containedShare: 0.75,
+							outsideWidthM: 12,
+							match: "same-code",
+							widestDifferenceM: 8,
+							claimedDifferenceM: 4,
+							sourceShare: 0.25,
+							targetShare: 0.5,
+							overlapAreaM2: 20,
+						},
+					],
 				},
 			],
 		},
@@ -236,7 +250,7 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 			all(
 				"SELECT overlap_area_m2 FROM crosswalk_edge_check ORDER BY to_version_id",
 			),
-			[[10], [0]],
+			[[10], [0], [20]],
 		);
 		// Sources are stored only for coverage or an empty target list.
 		assert.deepEqual(
