@@ -38,7 +38,9 @@ and product readiness, **P2** cleanup and size, **P3** nice to have.
   which is internal. See `docs/stable-ids.md`.
 - Task 14 progress (2026-11-11): the atlas build runs `ANALYZE` and
   `PRAGMA optimize` on the vacuumed copy before it is renamed into place, so
-  `atlas.sqlite` ships `sqlite_stat1`. Added `area_version_area (area_id)`,
+  `atlas.sqlite` ships `sqlite_stat1`. The final atlas and assembled modules
+  also pass foreign-key and SQLite integrity checks before publication.
+  Added `area_version_area (area_id)`,
   `crosswalk_edge_from (from_version_id)` and `area_relationship_parent
 (parent_version_id)`. Measured on a copy of the 2026-11-11 build (665.6 MB):
   the three indexes and statistics add 46 MB (711.9 MB). A lookup by code

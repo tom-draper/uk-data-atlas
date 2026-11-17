@@ -221,6 +221,7 @@ export function assembleAtlas(
 		// The build's one vacuum of atlas.sqlite: written once beside the
 		// release, then renamed over it.
 		publishVacuumed(temporary, path, {
+			check: "integrity_check",
 			// Planner statistics ship with the file, so ad-hoc queries choose
 			// indexes without the reader running ANALYZE.
 			finish: (database) => database.exec("ANALYZE; PRAGMA optimize"),

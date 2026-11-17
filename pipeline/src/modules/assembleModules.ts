@@ -219,16 +219,11 @@ export const assembleModules = async ({
 		meta.run("assembledLicences", [...licences].sort().join(","));
 		for (const id of ids) meta.run(`moduleSha256:${id}`, hashes[id]!);
 		database.exec("COMMIT");
-		const broken = database.prepare("PRAGMA foreign_key_check").all();
-		if (broken.length > 0)
-			throw new AssembleError(
-				`${broken.length} rows break a foreign key after assembly, first: ${JSON.stringify(broken[0])}`,
-			);
 	} finally {
 		database.close();
 	}
 	try {
-		publishVacuumed(work, out);
+		publishVacuumed(work, out, { check: "integrity_check" });
 	} finally {
 		rmSync(work, { force: true });
 	}

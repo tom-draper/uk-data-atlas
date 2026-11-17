@@ -160,3 +160,27 @@ test("a failure part way leaves the published file untouched and no temporary fi
 	assert.equal(statSync(published).mtimeMs, before.mtimeMs);
 	assert.equal(existsSync(`${published}.tmp`), false);
 });
+
+test("a failed final check preserves the published file and removes the copy", () => {
+	const root = directory();
+	const work = join(root, "work.sqlite");
+	const published = join(root, "published.sqlite");
+	bloated(work);
+	publishVacuumed(work, published);
+	const before = statSync(published);
+	assert.throws(
+		() =>
+			publishVacuumed(work, published, {
+				finish: (db) =>
+					db.exec(
+						"PRAGMA foreign_keys = OFF; CREATE TABLE parent (id INTEGER PRIMARY KEY); CREATE TABLE child (parent_id INTEGER REFERENCES parent(id)); INSERT INTO child VALUES (42)",
+					),
+				check: "integrity_check",
+			}),
+		/child -> parent/,
+	);
+	assert.equal(count(published), 200);
+	assert.equal(statSync(published).ino, before.ino);
+	assert.equal(existsSync(`${published}.tmp`), false);
+	assert.equal(existsSync(`${published}.tmp-journal`), false);
+});
