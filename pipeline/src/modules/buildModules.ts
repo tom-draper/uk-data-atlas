@@ -388,7 +388,16 @@ export const buildModuleDatabase = (
 				for (const { table, where } of rowSelection(manifest.id))
 					copyTable(database, table, where);
 			}
+			const provenance = Object.fromEntries(
+				database
+					.prepare(
+						"SELECT key, value FROM src.meta WHERE key IN ('schemaVersion', 'buildId', 'buildTimestamp', 'gitCommit', 'gitDirty', 'dataRelease')",
+					)
+					.all()
+					.map((row) => [String(row.key), String(row.value)]),
+			);
 			moduleInfo(database, {
+				...provenance,
 				id: manifest.id,
 				coreCompatibility: CORE_COMPATIBILITY_KEY,
 				kind: manifest.kind,

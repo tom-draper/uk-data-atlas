@@ -4,6 +4,28 @@
 `atlas-cache.sqlite` holds derived search, projection and dataset payload
 caches. See `data/build/README.md` for the tables, keys and build stages.
 
+## File identity and provenance
+
+Published atlas and module SQLite files have `application_id` 0x554b4441
+(ASCII UKDA) and `user_version` equal to `meta.schemaVersion` (currently 3).
+Bump the schema version when the published SQLite schema changes. Internal
+cache files do not carry this identity. Inspect both header values with
+`sqlite3 atlas.sqlite 'PRAGMA application_id; PRAGMA user_version;'`.
+Readers accept the legacy zero application id and reject other unknown ids.
+For a local file(1) magic entry, add the following under its SQLite rule:
+
+```text
+>68 belong =0x554b4441 UK Data Atlas SQLite database -
+```
+
+`meta` records `schemaVersion`, `buildId`, `buildTimestamp` (UTC), `gitCommit`, `gitDirty` (tracked changes)
+and `dataRelease` (the pinned data-release.json). When the pinned release file is present, the build id and timestamp
+are assigned when the atlas is published, and are not stage cache inputs.
+Source edition dates are recorded in the release and source tables. Module
+files repeat provenance in `module_info`; assembled files retain core `meta`.
+The release and module manifests hold SHA-256 file hashes, avoiding a circular
+hash inside the file itself.
+
 ## Stable ids
 
 Integer ids are assigned once from registries committed in `pipeline/ids/`

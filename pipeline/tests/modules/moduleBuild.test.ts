@@ -84,6 +84,22 @@ test("a module file holds only the rows of its datasets", async (t) => {
 	] as const) {
 		const file = open(join(root, "release", sqlitePath(module)));
 		try {
+			assert.equal(
+				file
+					.prepare(
+						"SELECT value FROM module_info WHERE key = 'buildId'",
+					)
+					.get()?.value,
+				"fixture-build",
+			);
+			assert.equal(
+				file
+					.prepare(
+						"SELECT value FROM module_info WHERE key = 'schemaVersion'",
+					)
+					.get()?.value,
+				String(ATLAS_SCHEMA_VERSION),
+			);
 			for (const [table, rows] of Object.entries(expected))
 				assert.equal(
 					count(file, `SELECT count(*) AS n FROM ${table}`),
