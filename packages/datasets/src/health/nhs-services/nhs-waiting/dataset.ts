@@ -7,6 +7,9 @@ import {
 } from "../../../declaration/statistics.ts";
 import { aggregateNHSWaiting } from "../../../data/nhs-waiting/aggregate.ts";
 import { ICB_ODS_TO_GSS } from "../../../data/nhs-waiting/icbToGss.ts";
+import { LAD_TO_ICB } from "../../../data/nhs-waiting/ladToIcb.ts";
+import { parseNumOrZero } from "../../../helpers/parseNumber.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
 import { loadNHSWaiting } from "../../../data/nhs-waiting/loader.ts";
 
 const MONTHS = [
@@ -92,6 +95,74 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 				"Incomplete referral to treatment pathways waiting more than 18 weeks at the end of the month.",
 			),
 		],
+		direct: {
+			read: async ({ zipCsvRows }) => {
+				const totals = new Map<
+					string,
+					{ name: string; total: number; over18: number }
+				>();
+				let bands: string[] | undefined;
+				await zipCsvRows(
+					sourceDir("nhs-waiting", "rtt-mar-2026.zip"),
+					(row) => {
+						bands ??= Object.keys(row).filter((column) => {
+							const match = column.match(
+								/^Gt (\d+) To \d+ Weeks SUM 1$|^Gt (\d+) Weeks SUM 1$/,
+							);
+							return (
+								match !== null &&
+								Number(match[1] ?? match[2]) >= 18
+							);
+						});
+						if (
+							row["RTT Part Description"] !==
+							"Incomplete Pathways"
+						)
+							return;
+						const code = (
+							row["Provider Parent Org Code"] ?? ""
+						).trim();
+						const name = (row["Provider Parent Name"] ?? "").trim();
+						if (!code || !name) return;
+						const current = totals.get(code) ?? {
+							name,
+							total: 0,
+							over18: 0,
+						};
+						current.total += parseNumOrZero(row["Total All"]);
+						current.over18 += bands.reduce(
+							(sum, column) => sum + parseNumOrZero(row[column]),
+							0,
+						);
+						totals.set(code, current);
+					},
+				);
+				if (!bands) return [];
+				return [
+					{
+						key: "2026",
+						records: [...totals]
+							.filter(([, record]) => record.total !== 0)
+							.map(([code, record]) => ({
+								code,
+								name: record.name,
+								values: [
+									{
+										measure: "rtt-incomplete-pathways",
+										value: record.total,
+									},
+									{
+										measure:
+											"rtt-incomplete-pathways-over-18-weeks",
+										value: record.over18,
+									},
+								],
+							})),
+						relationships: { ladToIcb: LAD_TO_ICB },
+					},
+				];
+			},
+		},
 		fields: [
 			{ path: "total", measure: "rtt-incomplete-pathways" },
 			{
