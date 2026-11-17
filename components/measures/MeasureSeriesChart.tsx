@@ -9,7 +9,7 @@ import {
 import { MeasureSeriesCard } from "@/components/measures/MeasureSeriesCard";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
-import { areaForMeasure } from "@/lib/measures/area";
+import { areaForMeasure, wardsWithin } from "@/lib/measures/area";
 import { areaCodesInScope } from "@/lib/measures/scope";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
@@ -45,23 +45,34 @@ export default function MeasureSeriesChart({
 				: null,
 		[boundaryData, geography, boundaryYear],
 	);
+	const generation = codeMapper?.getMappingGeneration() ?? 0;
+	// A ward measure shows a selected authority or constituency as its wards combined.
+	const members = useMemo(
+		() =>
+			geography && boundaryYear !== undefined
+				? wardsWithin(selectedArea, geography, boundaryYear, codeMapper)
+				: undefined,
+		// The mapper is a stable object; its generation says when it has loaded.
+		[selectedArea, geography, boundaryYear, generation],
+	);
 	const dataset = (
 		availableDatasets as Record<string, SeriesDataset> | undefined
 	)?.[year];
 	if (!series || !dataset) return null;
 
-	const area =
-		areaForMeasure(
-			selectedArea,
-			series.request.geography,
-			series.request.boundaryYear,
-			codeMapper as (CodeYearResolver & LadResolver) | undefined,
-		) ?? null;
+	const area = members
+		? null
+		: (areaForMeasure(
+				selectedArea,
+				series.request.geography,
+				series.request.boundaryYear,
+				codeMapper as (CodeYearResolver & LadResolver) | undefined,
+			) ?? null);
 
 	return (
 		<MeasureSeriesCard
 			request={series.request}
-			scope={scope}
+			scope={members ?? scope}
 			area={area}
 			countMeasure={series.countMeasure}
 			combine={series.combine}
