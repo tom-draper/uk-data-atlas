@@ -40,3 +40,29 @@ describe("a declared breakdown card", () => {
 		expect(breakdown?.heading).toBe("Travel to Work");
 	});
 });
+
+describe.each([
+	["car-availability", "households", "cars-or-vans", 4],
+	["qualification", "usual-residents-16-plus", "highest-qualification", 7],
+] as const)("the %s breakdown card", (type, measure, dimension, parts) => {
+	const chart = CHART_DATASET_DEFINITIONS.find(
+		(candidate) => candidate.type === type,
+	)!.chart!;
+
+	it("is drawn by the generic breakdown chart", () => {
+		expect(chart.componentPath).toBe(
+			"@/components/measures/MeasureBreakdownChart",
+		);
+	});
+
+	it("reads the declared measure and dimension", () => {
+		expect(chart.breakdown?.request.measure).toBe(measure);
+		expect(chart.breakdown?.dimension).toBe(dimension);
+		expect(chart.breakdown?.parts).toHaveLength(parts);
+		expect(
+			chart.breakdown?.parts.some(
+				(part) => part.code === chart.breakdown?.accent,
+			),
+		).toBe(true);
+	});
+});
