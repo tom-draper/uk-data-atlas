@@ -51,13 +51,18 @@ export interface ValueCardConfig {
 	fromRecord(dataset: unknown, code: string): ValueCardStats | null;
 	/** Figures for the aggregate shown when no area is selected. */
 	fromAggregate(aggregate: unknown): ValueCardStats | null;
+	/**
+	 * Figures for a local authority's LSOAs combined, for an LSOA dataset a
+	 * ward or authority is shown through.
+	 */
+	fromLsoas?(records: unknown[]): ValueCardStats | null;
 	/** Figures read from the map's own hover record, for the active dataset. */
 	fromHover?(data: unknown): ValueCardStats | null;
 }
 
 type Display = Omit<
 	ValueCardConfig,
-	"fromRecord" | "fromAggregate" | "fromHover"
+	"fromRecord" | "fromAggregate" | "fromHover" | "fromLsoas"
 >;
 
 type ValueCardSpec<T, S, A> = Display & {
@@ -70,6 +75,8 @@ type ValueCardSpec<T, S, A> = Display & {
 	pills?(stats: S): ValueCardPill[];
 	/** Reads the map hover record as a record when nothing else matches. */
 	hoverRecord?: boolean;
+	/** Combines LSOA records into the aggregate shape, for `fromLsoas`. */
+	combineLsoas?(records: S[]): A | null | undefined;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -91,6 +98,7 @@ export function defineValueCard<
 	secondary,
 	pills,
 	hoverRecord,
+	combineLsoas,
 	...display
 }: ValueCardSpec<T, S, A>): ValueCardConfig {
 	const stats = (record: S | null | undefined): ValueCardStats | null => {
@@ -112,6 +120,20 @@ export function defineValueCard<
 			),
 		fromAggregate: (data) =>
 			stats(aggregate ? aggregate(data as A) : (data as S)),
+		...(combineLsoas
+			? {
+					fromLsoas: (records: unknown[]) => {
+						const combined = combineLsoas(records as S[]);
+						return combined === null || combined === undefined
+							? null
+							: stats(
+									aggregate
+										? aggregate(combined)
+										: (combined as unknown as S),
+								);
+					},
+				}
+			: {}),
 		...(hoverRecord
 			? {
 					fromHover: (data: unknown) =>

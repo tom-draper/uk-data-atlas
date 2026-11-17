@@ -241,6 +241,13 @@ const cardFor = (
 		unit: measure.card.unit,
 		...(measure.card.prefix ? { prefix: measure.card.prefix } : {}),
 		...(card.hoverRecord ? { hoverRecord: true } : {}),
+		...(card.summariseLsoas
+			? {
+					combineLsoas: declaration.display.aggregation.aggregate as (
+						records: Record<string, unknown>[],
+					) => Record<string, unknown> | null,
+				}
+			: {}),
 		...(measure.card.digits === undefined
 			? {}
 			: { digits: measure.card.digits }),

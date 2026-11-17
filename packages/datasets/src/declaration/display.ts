@@ -153,6 +153,11 @@ export type DisplayCard = {
 	secondaryHiddenWhen?: string;
 	/** Use a hovered map record when no matching area record is available. */
 	hoverRecord?: boolean;
+	/**
+	 * For a dataset held by LSOA: a ward or local authority shows its
+	 * authority's LSOAs combined by the dataset's aggregation, not one record.
+	 */
+	summariseLsoas?: "localAuthority";
 	/** Keep the card on this measure when the map switches measures. */
 	fixedMeasure?: string;
 	/** How the card looks, where it differs from the standard card. */
