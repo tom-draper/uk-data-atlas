@@ -78,5 +78,9 @@
 	"jobs": {
 		"sha256": "4aa814aa8e44eeaafb75ddc905d82e2110ec28e64b5a3474721ad42901c32610",
 		"bytes": 637729
+	},
+	"unemployment": {
+		"sha256": "09213ee94117f9f6295cb5f0bf45f856f919aaffb71f88dab5f97389e2924f11",
+		"bytes": 484231
 	}
 }

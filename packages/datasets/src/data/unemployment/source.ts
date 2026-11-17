@@ -1,9 +1,11 @@
 // Data source: ONS Model-based estimates of unemployment for local and unitary authorities
 // https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current
+import type { UnemploymentLADData } from "../../types/unemployment.ts";
 import {
-	type UnemploymentDataset,
-	type UnemploymentLADData,
-} from "../../types/unemployment.ts";
+	type DirectPart,
+	type DirectValue,
+	periods,
+} from "../../declaration/statistics.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 import { sourceDir } from "../../declaration/sources.ts";
@@ -201,9 +203,21 @@ async function readSheet(csv: string): Promise<Sheet> {
 	};
 }
 
-export async function loadUnemployment(
+/** Years to 2003 are April to March; later ones are calendar years. */
+export const unemploymentPeriod = (key: string) =>
+	Number(key) <= 2003
+		? periods.financialYear(Number(key))
+		: periods.year(Number(key));
+
+/**
+ * The modelled unemployment of each local authority in each year, its rate
+ * and level with their intervals, from the final release of the series.
+ * Authorities formed in 2023 carry the figures built from their predecessors,
+ * and no intervals.
+ */
+export async function unemploymentStatisticsPart(
 	readSheetCsv: (path: string, sheet: string) => Promise<string>,
-): Promise<Record<string, UnemploymentDataset>> {
+): Promise<DirectPart[]> {
 	const rateSheet = await readSheet(
 		await readSheetCsv(WORKBOOK, "LA,UA Rates"),
 	);
@@ -216,9 +230,7 @@ export async function loadUnemployment(
 		);
 	const levelsByCode = new Map(levelSheet.rows.map((row) => [row.code, row]));
 
-	const { years, periodLabels } = rateSheet;
-	const latestYear = years[years.length - 1] ?? 2021;
-
+	const { years } = rateSheet;
 	const records: Record<string, UnemploymentLADData> = {};
 	for (const row of rateSheet.rows) {
 		const level = levelsByCode.get(row.code);
@@ -240,17 +252,45 @@ export async function loadUnemployment(
 	normaliseUnemploymentBoundaryCodes(records);
 	addMergedUnemploymentAuthorities(records, years);
 
-	const dataset: UnemploymentDataset = {
-		id: "unemployment",
-		type: "unemployment",
-		year: latestYear,
-		boundaryType: "localAuthority",
-		boundaryYear: 2024,
-		years,
-		periodLabels,
-		latestYear,
-		data: records,
-	};
+	const series = (
+		measure: string,
+		figures: Record<number, number | null> | undefined,
+	): DirectValue[] =>
+		figures
+			? years.map((year) => ({
+					measure,
+					value: figures[year] ?? null,
+					period: unemploymentPeriod(String(year)),
+				}))
+			: [];
 
-	return { [latestYear]: dataset };
+	return [
+		{
+			key: "2021",
+			records: Object.values(records).map((record) => ({
+				code: record.ladCode,
+				name: record.ladName,
+				parents: Object.fromEntries(
+					(record.derivedFromPredecessors ?? []).map(
+						(code, index) => [
+							`derivedFromPredecessors.${index}`,
+							{ code },
+						],
+					),
+				),
+				values: [
+					...series("unemployment-rate", record.rates),
+					...series(
+						"unemployment-rate-interval",
+						record.rateIntervals,
+					),
+					...series("unemployed-people", record.levels),
+					...series(
+						"unemployed-people-interval",
+						record.levelIntervals,
+					),
+				],
+			})),
+		},
+	];
 }
