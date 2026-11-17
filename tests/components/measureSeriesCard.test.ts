@@ -151,6 +151,25 @@ describe("seriesView with no area", () => {
 		expect(seriesView(rates, null, counts)!.value).toBe("8.8%");
 	});
 
+	it("averages a measure that cannot be added up when the card says to", () => {
+		const base = payload("currency", "gbp", [
+			{ period: "2022", values: [200000, 300000] },
+			{ period: "2023", values: [250000, 350000] },
+		]);
+		const prices = {
+			...base,
+			areas: ["E1", "E2"],
+			measure: {
+				...base.measure,
+				aggregation: { kind: "non-aggregatable" },
+			},
+		} as unknown as MeasureValuesPayload;
+		expect(seriesView(prices, null)).toBeNull();
+		const view = seriesView(prices, null, null, "mean")!;
+		expect(view.value).toBe("£300,000");
+		expect(view.period).toBe("2023");
+	});
+
 	it("shows nothing for a rate with no counts to combine by", () => {
 		const rates = {
 			...summable("percent", [{ period: "2021", values: [5, 10] }]),

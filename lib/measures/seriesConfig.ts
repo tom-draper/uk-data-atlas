@@ -16,6 +16,8 @@ export interface SeriesCardConfig {
 	 * that cannot be combined.
 	 */
 	countMeasure?: string;
+	/** How areas combine before one is chosen; added up where absent. */
+	combine?: "mean";
 	heading: string;
 	/** Shown in brackets after the heading. */
 	period: string;

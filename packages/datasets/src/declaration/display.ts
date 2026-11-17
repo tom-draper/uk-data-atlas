@@ -186,6 +186,14 @@ export type DisplaySeries = {
 	 * it a rate shows nothing until an area is chosen.
 	 */
 	countOf?: Record<string, string>;
+	/**
+	 * How the areas in scope combine before one is chosen. Absent, a measure
+	 * that adds up is summed; `mean` takes each area's value once, for a
+	 * measure such as a price that cannot be added up.
+	 */
+	combine?: "mean";
+	/** A heading for each of the dataset's measures, by id, where it differs from `heading`. */
+	headings?: Record<string, string>;
 };
 
 /**
