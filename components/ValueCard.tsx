@@ -3,6 +3,8 @@
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { ChartDataPlaceholder } from "@/components/ChartDataPlaceholder";
+import { MetricPill } from "@/components/MetricPill";
 import { IncomeCardBackground } from "@/components/datasets/economy/earnings-and-income/income/IncomeCardBackground";
 import {
 	isLocalAuthorityEstimate,
@@ -110,7 +112,49 @@ export default function ValueCard({
 				})
 			}
 		>
-			{card.layout === "centered" ? (
+			{card.layout === "pills" ? (
+				value === undefined ? (
+					<ChartDataPlaceholder />
+				) : (
+					<div className="flex items-end justify-between gap-1.5 flex-1">
+						<div className="flex flex-col gap-0.5">
+							<div className="flex items-baseline gap-1">
+								<span
+									className="text-2xl font-bold leading-none"
+									style={{ color: card.accent }}
+								>
+									{formatValue(card, value)}
+								</span>
+								<span
+									className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								>
+									{card.unit}
+								</span>
+							</div>
+							{resolved?.stats.secondary && (
+								<span
+									className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								>
+									{resolved.stats.secondary}
+								</span>
+							)}
+						</div>
+						<div className="flex gap-1 shrink-0">
+							{resolved?.stats.pills?.map((pill) => (
+								<MetricPill
+									key={pill.label}
+									label={pill.label}
+									value={pill.value}
+									unit={pill.unit}
+									format={(number) =>
+										number.toFixed(pill.digits)
+									}
+								/>
+							))}
+						</div>
+					</div>
+				)
+			) : card.layout === "centered" ? (
 				<div className="relative flex justify-center items-center flex-1 z-10">
 					<div
 						className={

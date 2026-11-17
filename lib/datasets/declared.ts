@@ -220,6 +220,17 @@ const cardFor = (
 				}
 			: {}),
 		maximum: measure.card.maximum,
+		...(card.pills
+			? {
+					pills: (record: Record<string, unknown>) =>
+						card.pills!.map((pill) => ({
+							label: pill.label,
+							value: read(record, pill.field),
+							unit: pill.unit,
+							digits: pill.digits,
+						})),
+				}
+			: {}),
 		...(recordsVia
 			? {
 					lookup: (

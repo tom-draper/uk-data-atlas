@@ -4,6 +4,15 @@ import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
 export interface ValueCardStats {
 	value: number;
 	secondary?: string;
+	/** Small figures beside the headline, for the `pills` layout. */
+	pills?: ValueCardPill[];
+}
+
+export interface ValueCardPill {
+	label: string;
+	value: number | null;
+	unit: string;
+	digits: number;
 }
 
 /**
@@ -16,8 +25,8 @@ export interface ValueCardConfig {
 	heading: string;
 	/** Optional decorative background shared with the income chart. */
 	background?: "income";
-	/** Centres the headline value without a bar or secondary text. */
-	layout?: "centered";
+	/** Centres the headline value without a bar or secondary text, or sets it beside pills. */
+	layout?: "centered" | "pills";
 	/** Fixed card highlight colour; otherwise uses the map colour scale. */
 	accent?: string;
 	/** Shown in brackets after the heading; defaults to the dataset's year. */
@@ -58,6 +67,7 @@ type ValueCardSpec<T, S, A> = Display & {
 	aggregate?(aggregate: A): S | null | undefined;
 	value(stats: S): number | null | undefined;
 	secondary?(stats: S): string | undefined;
+	pills?(stats: S): ValueCardPill[];
 	/** Reads the map hover record as a record when nothing else matches. */
 	hoverRecord?: boolean;
 };
@@ -79,6 +89,7 @@ export function defineValueCard<
 	aggregate,
 	value,
 	secondary,
+	pills,
 	hoverRecord,
 	...display
 }: ValueCardSpec<T, S, A>): ValueCardConfig {
@@ -87,7 +98,11 @@ export function defineValueCard<
 		const headline = value(record);
 		if (headline === null || headline === undefined) return null;
 		if (!Number.isFinite(headline)) return null;
-		return { value: headline, secondary: secondary?.(record) };
+		return {
+			value: headline,
+			secondary: secondary?.(record),
+			...(pills ? { pills: pills(record) } : {}),
+		};
 	};
 	return {
 		...display,

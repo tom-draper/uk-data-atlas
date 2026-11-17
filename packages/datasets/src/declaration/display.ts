@@ -109,6 +109,16 @@ export type DisplayMeasure = {
 	invertColor?: false;
 };
 
+/** A small labelled figure drawn beside the headline of a pill card. */
+export type DisplayPill = {
+	label: string;
+	/** The record field the figure reads. */
+	field: string;
+	unit: string;
+	/** Decimal places of the figure. */
+	digits: number;
+};
+
 export type DisplayCard = {
 	heading: string;
 	/** Shown in brackets after the heading; defaults to the dataset's year. */
@@ -122,6 +132,8 @@ export type DisplayCard = {
 	 * `versus`, the note reads `field vs versus`, and is omitted unless both exist.
 	 */
 	secondary?: { field: string; format: DisplayFormat; versus?: string };
+	/** Small figures beside the headline, for the `pills` layout. */
+	pills?: DisplayPill[];
 	/** A fixed note beside the value. */
 	secondaryText?: string;
 	/** Leave out the fixed note when this record field is true, as on an average. */
@@ -134,8 +146,11 @@ export type DisplayCard = {
 	appearance?: {
 		/** The decorative background the income chart also uses. */
 		background?: "income";
-		/** Centres the headline value without a bar or note. */
-		layout?: "centered";
+		/**
+		 * Centres the headline value without a bar or note (`centered`), or
+		 * draws the headline beside the card's `pills` instead of a bar (`pills`).
+		 */
+		layout?: "centered" | "pills";
 		/** A fixed highlight colour, instead of the map's colour scale. */
 		accent?: string;
 	};
