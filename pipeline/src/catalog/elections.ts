@@ -1,4 +1,5 @@
 import { SERVED_LOCAL_ELECTION_WARD_CODES } from "@uk-data-atlas/datasets";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	SourceGeography,
@@ -234,6 +235,26 @@ export const compileElections = (
 		];
 
 		return metrics.flatMap((metric) => {
+			const seriesKey = measureSeriesKey({
+				measure:
+					metric.field.kind === "partyVotes"
+						? "party-votes"
+						: metric.field.kind === "partyVoteShare"
+							? "party-vote-share"
+							: metric.field.field === "turnoutPercent"
+								? "turnout"
+								: election.datasetId === "general-election"
+									? "valid-votes"
+									: "effective-votes",
+				...(metric.field.kind !== "field"
+					? {
+							dimensions: {
+								party: metric.field.party.toLowerCase(),
+							},
+						}
+					: {}),
+				datasetId: election.datasetId,
+			});
 			const periods = electionFieldPeriods(
 				election.path,
 				election.geography,
@@ -329,7 +350,7 @@ export const compileElections = (
 				);
 				const content = JSON.stringify({
 					schemaVersion: 1,
-					measureId: metric.id,
+					measureId: seriesKey,
 					sourceGeography: source.sourceGeography,
 					periods: artifactPeriods,
 				});
@@ -338,7 +359,7 @@ export const compileElections = (
 					artifact: {
 						schemaVersion: 1 as const,
 						contentHash: sha256(content),
-						measureId: metric.id,
+						measureId: seriesKey,
 						sourceGeography: source.sourceGeography,
 						periods: artifactPeriods,
 					},
@@ -365,6 +386,10 @@ export const compileElections = (
 			byBoundaryYear.set(period.boundaryYear, partition);
 		}
 		const measureId = `${election.datasetId}-winning-party`;
+		const seriesKey = measureSeriesKey({
+			measure: "winning-party",
+			datasetId: election.datasetId,
+		});
 		const sources = [...byBoundaryYear.entries()]
 			.sort(([left], [right]) => left - right)
 			.map(([boundaryYear, sourcePeriods]) => ({
@@ -414,7 +439,7 @@ export const compileElections = (
 			);
 			const content = JSON.stringify({
 				schemaVersion: 1,
-				measureId,
+				measureId: seriesKey,
 				sourceGeography: source.sourceGeography,
 				periods: artifactPeriods,
 			});
@@ -423,7 +448,7 @@ export const compileElections = (
 				artifact: {
 					schemaVersion: 1 as const,
 					contentHash: sha256(content),
-					measureId,
+					measureId: seriesKey,
 					sourceGeography: source.sourceGeography,
 					periods: artifactPeriods,
 				},

@@ -1,5 +1,6 @@
 import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type { Measure } from "@uk-data-atlas/measures";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import {
 	isPublishedAreaCode,
 	countriesFor,
@@ -45,6 +46,10 @@ export const compileLifeExpectancy = (
 		.sort((left, right) => left.period.localeCompare(right.period));
 	const lifeExpectancyMeasures = (["male", "female"] as const).map((sex) => {
 		const measureId = `life-expectancy-${sex}`;
+		const seriesKey = measureSeriesKey({
+			measure: "life-expectancy",
+			dimensions: { sex },
+		});
 		const periods = lifeExpectancyPeriods.map(({ period, data }) => ({
 			period,
 			records: Object.entries(data)
@@ -80,7 +85,7 @@ export const compileLifeExpectancy = (
 		};
 		const content = JSON.stringify({
 			schemaVersion: 1,
-			measureId,
+			measureId: seriesKey,
 			sourceGeography,
 			periods,
 		});
@@ -130,7 +135,7 @@ export const compileLifeExpectancy = (
 			artifact: {
 				schemaVersion: 1 as const,
 				contentHash: sha256(content),
-				measureId,
+				measureId: seriesKey,
 				sourceGeography,
 				periods,
 			},

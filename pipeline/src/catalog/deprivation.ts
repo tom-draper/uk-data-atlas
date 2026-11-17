@@ -4,6 +4,7 @@ import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * A nation's deprivation index, as its published rank and decile.
@@ -76,6 +77,7 @@ export const compileDeprivationIndices = (
 			},
 		];
 		return metrics.map((metric) => {
+			const seriesKey = measureSeriesKey({ measure: metric.id });
 			const periods = localAuthorityFieldPeriods(
 				index.path,
 				metric.field,
@@ -88,7 +90,7 @@ export const compileDeprivationIndices = (
 			};
 			const content = JSON.stringify({
 				schemaVersion: 1,
-				measureId: metric.id,
+				measureId: seriesKey,
 				sourceGeography,
 				periods,
 			});
@@ -134,7 +136,7 @@ export const compileDeprivationIndices = (
 				artifact: {
 					schemaVersion: 1 as const,
 					contentHash: sha256(content),
-					measureId: metric.id,
+					measureId: seriesKey,
 					sourceGeography,
 					periods,
 				},

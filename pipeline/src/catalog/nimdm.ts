@@ -1,5 +1,6 @@
 import { type DatasetInput } from "./input.ts";
 import type { Measure } from "@uk-data-atlas/measures";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
@@ -23,9 +24,10 @@ export const compileNimdm = (
 		2011,
 		"superOutputArea",
 	);
+	const seriesKey = measureSeriesKey({ measure: "nimdm-rank" });
 	const nimdmContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "nimdm-rank",
+		measureId: seriesKey,
 		sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
 		periods: nimdmPeriods,
 	});
@@ -73,7 +75,7 @@ export const compileNimdm = (
 		artifact: {
 			schemaVersion: 1,
 			contentHash: sha256(nimdmContent),
-			measureId: "nimdm-rank",
+			measureId: seriesKey,
 			sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
 			periods: nimdmPeriods,
 		},

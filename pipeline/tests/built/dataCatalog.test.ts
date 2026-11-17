@@ -1261,8 +1261,12 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const localVotes2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "local-election-con-votes" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "party-votes",
+						dimensions: { party: "con" },
+						datasetId: "local-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(
 			localVotes2019?.periods[0]?.records.find(
@@ -1277,8 +1281,11 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const localWinners2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "local-election-winning-party" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "winning-party",
+						datasetId: "local-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(
 			localWinners2019?.periods[0]?.records.find(
@@ -1293,8 +1300,12 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const localVotes2024 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "local-election-con-votes" &&
-				artifact.sourceGeography.boundaryYear === 2024,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "party-votes",
+						dimensions: { party: "con" },
+						datasetId: "local-election",
+					}) && artifact.sourceGeography.boundaryYear === 2024,
 		);
 		assert.deepEqual(
 			localVotes2024?.periods[0]?.records.find(
@@ -1308,8 +1319,11 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const localWinners2024 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "local-election-winning-party" &&
-				artifact.sourceGeography.boundaryYear === 2024,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "winning-party",
+						datasetId: "local-election",
+					}) && artifact.sourceGeography.boundaryYear === 2024,
 		);
 		assert.deepEqual(
 			localWinners2024?.periods[0]?.records.find(
@@ -1337,8 +1351,12 @@ test("publishes source-exact election turnout and party vote counts", () => {
 
 		const labour2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "general-election-lab-votes" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "party-votes",
+						dimensions: { party: "lab" },
+						datasetId: "general-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(labour2019?.periods[0]?.records, [
 			{ areaCode: "E14000001", value: 40, status: "observed" },
@@ -1346,8 +1364,12 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		]);
 		const reform2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "general-election-sf-votes" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "party-votes",
+						dimensions: { party: "sf" },
+						datasetId: "general-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(
 			reform2019?.periods[0]?.records.map((record) =>
@@ -1357,8 +1379,11 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const winners2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "general-election-winning-party" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "winning-party",
+						datasetId: "general-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(winners2019?.periods[0]?.records, [
 			{ areaCode: "E14000001", category: "CON", status: "observed" },
@@ -1374,8 +1399,12 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		const conservativeShare2019 = result.electionObservations.find(
 			(artifact) =>
-				artifact.measureId === "general-election-con-vote-share" &&
-				artifact.sourceGeography.boundaryYear === 2019,
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "party-vote-share",
+						dimensions: { party: "con" },
+						datasetId: "general-election",
+					}) && artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(conservativeShare2019?.periods[0]?.records, [
 			{ areaCode: "E14000001", value: 60, status: "observed" },
@@ -1633,7 +1662,10 @@ test("publishes deprivation rank and decile as they were published", () => {
 		const result = compileDataCatalog(sources);
 		const [rank, decile] = result.imdObservations;
 
-		assert.equal(rank?.measureId, "imd-rank");
+		assert.equal(
+			rank?.measureId,
+			measureSeriesKey({ measure: "imd-rank" }),
+		);
 		assert.deepEqual(rank?.sourceGeography, {
 			type: "lsoa",
 			boundaryYear: 2021,
@@ -1643,7 +1675,10 @@ test("publishes deprivation rank and decile as they were published", () => {
 			rank?.periods[0]?.records.map((record) => record.value),
 			[1, 2, 3],
 		);
-		assert.equal(decile?.measureId, "imd-decile");
+		assert.equal(
+			decile?.measureId,
+			measureSeriesKey({ measure: "imd-decile" }),
+		);
 
 		for (const id of ["imd-rank", "imd-decile"]) {
 			const measure = result.catalog.measures.find(
@@ -1741,7 +1776,13 @@ test("publishes the life expectancy series with each published interval", () => 
 		const result = compileDataCatalog(sources);
 		const [male, female] = result.lifeExpectancyObservations;
 
-		assert.equal(male?.measureId, "life-expectancy-male");
+		assert.equal(
+			male?.measureId,
+			measureSeriesKey({
+				measure: "life-expectancy",
+				dimensions: { sex: "male" },
+			}),
+		);
 		assert.deepEqual(
 			male?.periods.map((period) => period.period),
 			["2001-2003", "2020-2022"],
