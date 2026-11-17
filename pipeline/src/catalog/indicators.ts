@@ -18,7 +18,7 @@ import {
 
 export type Indicator = {
 	id: string;
-	series?: MeasureSeriesIdentity;
+	series: MeasureSeriesIdentity;
 	label: string;
 	field: string;
 	valueKind: Measure["valueKind"];
@@ -122,9 +122,7 @@ export const publishIndicators = (
 			.filter((code) => !published.has(code))
 			.sort();
 		const periods = [{ period: spec.period, records }];
-		const seriesKey = indicator.series
-			? measureSeriesKey(indicator.series)
-			: indicator.id;
+		const seriesKey = measureSeriesKey(indicator.series);
 		const recordHash = createHash("sha256");
 		for (const record of records)
 			recordHash.update(
