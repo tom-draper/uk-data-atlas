@@ -141,6 +141,25 @@ export type DisplayCard = {
 	};
 };
 
+/**
+ * A history card: one area's latest value over a line of the periods before
+ * it, read from the statistics of a measure. Drawn by the shared series card
+ * so a dataset with a history needs no chart component of its own.
+ */
+export type DisplaySeries = {
+	heading: string;
+	/** Shown in brackets after the heading. */
+	period: string;
+	/** The source and method note shown as the card's tooltip. */
+	source: string;
+	/** The card's highlight colour. */
+	accent: string;
+	/** The line's colour; the accent when absent. */
+	line?: string;
+	/** The measure to draw for each of the dataset's measures, by id. */
+	measures: Record<string, string>;
+};
+
 /** Combining records over the areas a place is made of. */
 export type DisplayAggregation = {
 	scope: BoundaryType | "any";
@@ -165,6 +184,11 @@ export type DatasetDisplay = {
 	 * `@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart`.
 	 */
 	component?: string;
+	/**
+	 * The history card, with `component` set to the shared series chart,
+	 * `@/components/measures/MeasureSeriesChart`.
+	 */
+	series?: DisplaySeries;
 	/**
 	 * Name of a compiled dataset field mapping an area code to the key of the
 	 * record that describes it, for a dataset published for larger areas than

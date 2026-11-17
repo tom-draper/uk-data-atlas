@@ -14,6 +14,7 @@ import { formatCompactCount, formatCount } from "@/lib/helpers/formatCount";
 import type { CatalogueDataset } from "@/lib/data/catalog";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ChartDatasetDefinition } from "./types.ts";
+import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
 import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
 
 /**
@@ -138,6 +139,25 @@ const recordKey = (
 	via === undefined
 		? code
 		: (dataset[via] as Record<string, string> | undefined)?.[code];
+
+const seriesFor = (
+	declaration: Displayed,
+	series: NonNullable<DatasetDisplay["series"]>,
+	measureId: string,
+): SeriesCardConfig => ({
+	request: {
+		measure:
+			series.measures[measureId] ?? Object.values(series.measures)[0]!,
+		datasetId: declaration.id,
+		geography: declaration.boundary.type,
+		boundaryYear: declaration.boundary.year,
+	},
+	heading: series.heading,
+	period: series.period,
+	source: series.source,
+	accent: series.accent,
+	line: series.line ?? series.accent,
+});
 
 const cardFor = (
 	declaration: Displayed,
@@ -287,6 +307,16 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 										)
 									: optionsOf(options),
 							)!,
+					}
+				: {}),
+			...(display.series
+				? {
+						seriesForOptions: (options: MapOptions) =>
+							seriesFor(
+								declaration,
+								display.series!,
+								optionsOf(options).id,
+							),
 					}
 				: {}),
 			calculateStats: (
