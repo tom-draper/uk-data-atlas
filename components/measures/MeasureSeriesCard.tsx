@@ -33,11 +33,12 @@ export function seriesView(
 	payload: MeasureValuesPayload,
 	area: string | null,
 	counts?: MeasureValuesPayload | null,
+	combine?: "mean",
 ): SeriesView | null {
 	const points =
 		area === null && counts
 			? ratioSeries(payload, counts)
-			: readSeries(payload, area);
+			: readSeries(payload, area, combine);
 	const latest = latestPoint(points);
 	if (!latest) return null;
 	return {
@@ -66,6 +67,8 @@ type Props = {
 	area: string | null;
 	/** For a rate, the measure of the people it counts, to combine areas. */
 	countMeasure?: string;
+	/** How areas combine before one is chosen; added up where absent. */
+	combine?: "mean";
 	heading: string;
 	/** The card's highlight colour. */
 	accent: string;
@@ -90,6 +93,7 @@ export function MeasureSeriesCard({
 	scope,
 	area,
 	countMeasure,
+	combine,
 	heading,
 	accent,
 	color,
@@ -116,6 +120,7 @@ export function MeasureSeriesCard({
 					state.data,
 					area,
 					counts.status === "ready" ? counts.data : null,
+					combine,
 				)
 			: null;
 	const loading =

@@ -64,6 +64,7 @@ export default function MeasureSeriesChart({
 			scope={scope}
 			area={area}
 			countMeasure={series.countMeasure}
+			combine={series.combine}
 			heading={`${series.heading} [${series.period}]`}
 			accent={series.accent}
 			color={series.line}
