@@ -2224,7 +2224,8 @@ test("publishes modelled unemployment in the two code vintages the workbook hold
 		const partition = (boundaryYear: number) =>
 			result.indicatorObservations.find(
 				(artifact) =>
-					artifact.measureId === "unemployment-rate" &&
+					artifact.measureId ===
+						measureSeriesKey({ measure: "unemployment-rate" }) &&
 					artifact.sourceGeography.boundaryYear === boundaryYear,
 			);
 		const codes = (boundaryYear: number, period: string) =>

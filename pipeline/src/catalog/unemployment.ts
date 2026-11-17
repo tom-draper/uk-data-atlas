@@ -12,6 +12,7 @@ import {
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * ONS's final model-based unemployment estimates, in the two code vintages
@@ -169,9 +170,15 @@ export const compileUnemployment = (
 			type: "localAuthority" as const,
 			boundaryYear,
 		};
+		const seriesKey = measureSeriesKey({
+			measure:
+				valueField === "levels"
+					? "unemployed-people"
+					: "unemployment-rate",
+		});
 		const content = JSON.stringify({
 			schemaVersion: 1,
-			measureId,
+			measureId: seriesKey,
 			sourceGeography,
 			periods,
 		});
@@ -195,7 +202,7 @@ export const compileUnemployment = (
 			artifact: {
 				schemaVersion: 1 as const,
 				contentHash: sha256(content),
-				measureId,
+				measureId: seriesKey,
 				sourceGeography,
 				periods,
 			},
