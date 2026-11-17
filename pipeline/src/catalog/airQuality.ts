@@ -1,6 +1,7 @@
 import { type DatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { airQuality } from "@uk-data-atlas/datasets";
 
 /**
  * Defra's Pollution Climate Mapping (PCM) model of background air
@@ -17,6 +18,14 @@ export const compileAirQuality = (
 	airQualityPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
+	const fields = airQuality.statistics!.fields!;
+	if (!Array.isArray(fields)) throw new Error("Expected air quality fields");
+	const seriesFor = (path: string) => {
+		const field = fields.find((candidate) => candidate.path === path);
+		if (!field)
+			throw new Error(`No air quality series declared for ${path}`);
+		return { measure: field.measure, dimensions: field.members };
+	};
 	const areaMean = (
 		id: string,
 		label: string,
@@ -24,6 +33,7 @@ export const compileAirQuality = (
 		pollutant: string,
 	): Indicator => ({
 		id,
+		series: seriesFor(field),
 		label,
 		field,
 		valueKind: "quantity",
@@ -51,6 +61,7 @@ export const compileAirQuality = (
 		note: string,
 	): Indicator => ({
 		id,
+		series: seriesFor(field),
 		label,
 		field,
 		valueKind: "quantity",
@@ -82,6 +93,7 @@ export const compileAirQuality = (
 		indicators: [
 			{
 				id: "air-quality-grid-cells",
+				series: seriesFor("gridCells"),
 				label: "PCM grid cells",
 				field: "gridCells",
 				valueKind: "count",
