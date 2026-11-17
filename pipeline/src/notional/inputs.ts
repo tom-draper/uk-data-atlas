@@ -7,11 +7,13 @@ import {
 } from "../crosswalk-weights/storedAtoms.ts";
 import { crosswalkWeightsDirectory } from "../crosswalk-weights/paths.ts";
 import type { Placement } from "../crosswalk-weights/weigh.ts";
+import { readScottishLocal } from "./scotland.ts";
 
 /**
  * What the notional estimate reads: the weight atoms and where they lie, the
- * 2019 general election by old seat, ward local election results, and census
- * 2021 counts by LSOA. All of it is read from a built checkout, read only.
+ * 2019 general election by old seat, ward local election results (with the
+ * 2017 Scottish council first preferences, see `scotland.ts`), and census 2021
+ * counts by LSOA. All of it is read from a built checkout, read only.
  */
 
 export type Votes = Record<string, number>;
@@ -151,7 +153,7 @@ export const readNotionalInputs = (root: string): NotionalInputs => {
 				}[]
 			).map((row) => [row.code, row.name]),
 		);
-		const local = [...sources.values()];
+		const local = [...sources.values(), readScottishLocal(root)];
 		return {
 			population: atoms.measures.population,
 			atoms: atoms.count,

@@ -35,7 +35,14 @@ export const GENERAL_PARTIES = [
 ] as const;
 export type Party = (typeof GENERAL_PARTIES)[number];
 /** Parties whose local candidates stand in for their general election vote. */
-export const LOCAL_PARTIES = ["con", "lab", "ld", "green", "pc"] as const;
+export const LOCAL_PARTIES = [
+	"con",
+	"lab",
+	"ld",
+	"snp",
+	"green",
+	"pc",
+] as const;
 
 /**
  * Parties the within-seat model fills in for. Plaid Cymru and the Brexit
@@ -44,8 +51,7 @@ export const LOCAL_PARTIES = ["con", "lab", "ld", "green", "pc"] as const;
 export const MODELLED_PARTIES = ["con", "lab", "ld", "green"] as const;
 
 export type Source = "local" | "model" | "uniform";
-export type FallbackReason =
-	"no local results held" | "no contest placed" | "contest unusable";
+export type FallbackReason = "no contest placed" | "contest unusable";
 
 export type Unit = {
 	period: string;
@@ -158,7 +164,6 @@ export const partition = (
 		const key = `${unit}|${unit < 0 ? ward : ""}|${old}|${target}`;
 		let piece = byKey.get(key);
 		if (!piece) {
-			const seat = inputs.oldSeats.codes[old]!;
 			piece = {
 				unit,
 				ward: unit >= 0 ? "" : ward,
@@ -171,11 +176,9 @@ export const partition = (
 				fallback:
 					unit >= 0
 						? undefined
-						: seat.startsWith("S")
-							? "no local results held"
-							: contested[i]
-								? "contest unusable"
-								: "no contest placed",
+						: contested[i]
+							? "contest unusable"
+							: "no contest placed",
 			};
 			byKey.set(key, piece);
 		}
@@ -353,35 +356,44 @@ const localParty = (party: Party, options: MainOptions) =>
 			? party
 			: undefined;
 
+/** Scotland's councils and parties differ, so it is scaled on its own. */
+const nation = (code: string) => (code.startsWith("S") ? "S" : "EW");
+
 /**
  * Local shares, made comparable across years by scaling each party's local
- * vote in a year to its 2019 general election vote in England and Wales.
+ * vote in a year to its 2019 general election vote in the same nation
+ * (England and Wales together, or Scotland).
  */
 const strengths = (
 	inputs: NotionalInputs,
 	parts: Partition,
 	options: MainOptions,
 ): Strengths => {
-	const national: Votes = {};
-	for (const [seat, votes] of inputs.general)
-		if (seat.startsWith("E") || seat.startsWith("W"))
-			for (const [party, value] of Object.entries(votes))
-				national[party] = (national[party] ?? 0) + value;
-	national.ukip = national.brx ?? 0;
+	const national = new Map<string, Votes>();
+	for (const [seat, votes] of inputs.general) {
+		if (!/^[EWS]/.test(seat)) continue;
+		let totals = national.get(nation(seat));
+		if (!totals) national.set(nation(seat), (totals = {}));
+		for (const [party, value] of Object.entries(votes))
+			totals[party] = (totals[party] ?? 0) + value;
+		totals.ukip = totals.brx ?? 0;
+	}
 	const yearly = new Map<string, Votes>();
+	const group = (unit: Unit) => `${unit.period}|${nation(unit.code)}`;
 	for (const unit of parts.units) {
-		let totals = yearly.get(unit.period);
-		if (!totals) yearly.set(unit.period, (totals = {}));
+		let totals = yearly.get(group(unit));
+		if (!totals) yearly.set(group(unit), (totals = {}));
 		for (const [party, value] of Object.entries(unit.votes))
 			totals[party] = (totals[party] ?? 0) + value;
 	}
-	const scale = (period: string, party: string) =>
-		(national[party] ?? 0) / (yearly.get(period)![party] || 1);
+	const scale = (unit: Unit, party: string) =>
+		(national.get(nation(unit.code))?.[party] ?? 0) /
+		(yearly.get(group(unit))![party] || 1);
 	const shares = parts.units.map((unit) => {
 		const scaled: Votes = {};
 		let total = 0;
 		for (const party of [...LOCAL_PARTIES, "ukip"]) {
-			const value = (unit.votes[party] ?? 0) * scale(unit.period, party);
+			const value = (unit.votes[party] ?? 0) * scale(unit, party);
 			scaled[party] = value;
 			if (party !== "ukip") total += value;
 		}
