@@ -1255,7 +1255,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	meta: {
 		audience: "reference",
 		description:
-			"Key and value settings of the database file, including schemaVersion.",
+			"File settings and provenance: schemaVersion matches PRAGMA user_version; buildId, buildTimestamp, gitCommit, gitDirty and dataRelease identify the build and pinned input release. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
 		columns: { key: "Setting name.", value: "Setting value." },
 	},
 	payloads: {
