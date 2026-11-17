@@ -6,7 +6,9 @@ import {
 	deprivationStatistics,
 	rankDisplay,
 } from "../../../data/deprivation/declaration.ts";
-import { loadSIMD } from "../../../data/simd/loader.ts";
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
+import { loadSIMD, publishedSIMDRanks } from "../../../data/simd/loader.ts";
 
 export const simd = defineDataset<SIMDDataset>({
 	id: "simd",
@@ -45,26 +47,75 @@ export const simd = defineDataset<SIMDDataset>({
 		label: "Deprivation",
 		about: "Share of its data zones in Scotland's most deprived 10%",
 	},
-	statistics: deprivationStatistics({
-		id: "simd",
-		prefix: "simd",
-		index: "Scottish Index of Multiple Deprivation",
-		area: "data zones in Scotland",
-		fields: { quintile: true, decile: true },
-		boundary: { type: "dataZone", year: 2011 },
-		edition: "2020",
-		metadata: {
-			source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
-			notes: [
-				"Scotland only. Quintile 1 = most deprived 20% of data zones.",
-			],
+	statistics: {
+		...deprivationStatistics({
+			id: "simd",
+			prefix: "simd",
+			index: "Scottish Index of Multiple Deprivation",
+			area: "data zones in Scotland",
+			fields: { quintile: true, decile: true },
+			boundary: { type: "dataZone", year: 2011 },
+			edition: "2020",
+			metadata: {
+				source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
+				notes: [
+					"Scotland only. Quintile 1 = most deprived 20% of data zones.",
+				],
+			},
+			code: "dzCode",
+			name: "dzName",
+			parent: { code: "councilAreaCode", name: "councilAreaName" },
+			summaryField: "councilStats",
+			mostDeprived: (record) => record.simdDecile === 1,
+		}),
+		direct: {
+			read: async ({ text, xlsxSheet }) => {
+				const lookup = await xlsxSheet(
+					sourceDir(
+						"simd",
+						"SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx",
+					),
+					"SIMD 2020v2 DZ lookup data",
+				);
+				const { data } = await parseCsv<Record<string, string>>(
+					await text(
+						sourceDir("simd", "SIMD+2020v2+-+indicators.csv"),
+					),
+					{ header: true },
+				);
+				const published = await publishedSIMDRanks(lookup);
+				const records = new Map<string, DirectRecord>();
+				for (const row of data) {
+					const code = row.Data_Zone?.trim();
+					if (!code || !code.startsWith("S")) continue;
+					const ranks = published.get(code);
+					if (!ranks)
+						throw new Error(
+							`SIMD lookup: no published rank for ${code}`,
+						);
+					records.set(code, {
+						code,
+						name: row.Intermediate_Zone?.trim() || "",
+						parents: {
+							councilAreaCode: {
+								code: ranks.councilAreaCode,
+								name:
+									row.Council_area?.trim() ||
+									row.Council_Area?.trim() ||
+									"",
+							},
+						},
+						values: [
+							{ measure: "simd-rank", value: ranks.rank },
+							{ measure: "simd-quintile", value: ranks.quintile },
+							{ measure: "simd-decile", value: ranks.decile },
+						],
+					});
+				}
+				return [{ key: "2020", records: [...records.values()] }];
+			},
 		},
-		code: "dzCode",
-		name: "dzName",
-		parent: { code: "councilAreaCode", name: "councilAreaName" },
-		summaryField: "councilStats",
-		mostDeprived: (record) => record.simdDecile === 1,
-	}),
+	},
 	ranking: {
 		label: "Data zones in Scotland's most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
