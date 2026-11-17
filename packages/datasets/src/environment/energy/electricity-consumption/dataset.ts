@@ -1,11 +1,12 @@
 import type { ElectricityConsumptionDataset } from "../../../types/energyConsumption.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import {
 	energyDisplay,
 	energyStatistics,
-	loadWithPopulation,
 } from "../../../data/energy-consumption/declaration.ts";
-import { loadElectricityConsumption } from "../../../data/energy-consumption/loader.ts";
 import { ELECTRICITY_CONSUMPTION_SOURCE as SOURCE } from "../../../data/energy-consumption/source.ts";
 
 export const electricityConsumption =
@@ -33,7 +34,7 @@ export const electricityConsumption =
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["allMetersGwh", "domesticGwh"],
 		},
-		load: loadWithPopulation(loadElectricityConsumption),
+		load: noCompiledPayload<ElectricityConsumptionDataset>(),
 		statistics: energyStatistics("electricity", "electricity-consumption"),
 		display: energyDisplay({
 			fuel: "electricity",

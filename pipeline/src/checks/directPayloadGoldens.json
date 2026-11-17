@@ -98,5 +98,13 @@
 	"electric-vehicle-chargers": {
 		"sha256": "9d2b5c410a4b49e7a7f76425d5169dcddb5b39c1e5c0f7707b4341a0c4973833",
 		"bytes": 42331
+	},
+	"electricity-consumption": {
+		"sha256": "244ccbd5350f15ca116453867a09ba6a8dbbeb7763ba37fd43dc3111aad6a16b",
+		"bytes": 826945
+	},
+	"gas-consumption": {
+		"sha256": "0d30a180744faf4e0d3962e9bfdefb2699c2f04cbccf708b477eab28da08e47e",
+		"bytes": 823637
 	}
 }

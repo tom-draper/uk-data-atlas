@@ -1,5 +1,3 @@
-import type { EnergyConsumptionLADData } from "../../types/energyConsumption.ts";
-import type { DatasetReader } from "../catalog/types.ts";
 import type { DeclaredStatistics } from "../../declaration/dataset.ts";
 import type {
 	DatasetDisplay,
@@ -7,9 +5,8 @@ import type {
 } from "../../declaration/display.ts";
 import { measure, per100k } from "../../declaration/measures.ts";
 import { yearParts } from "../../declaration/yearParts.ts";
-import { addPopulationMetrics } from "../population/metrics.ts";
-import { loadPopulationUk } from "../population/ukLoader.ts";
 import { aggregateEnergyConsumption } from "./aggregate.ts";
+import { energyConsumptionStatisticsParts } from "./source.ts";
 
 /**
  * Electricity and gas are published as two datasets of one shape: metered
@@ -79,31 +76,12 @@ export const energyStatistics = (
 			{ path: "metersThousands", measure: `${fuel}-meters` },
 		],
 		...per100k((record) => record.allMetersGwh),
+		direct: {
+			only: true,
+			read: ({ text }) => energyConsumptionStatisticsParts(text, fuel),
+		},
 	};
 };
-
-/** Reads the consumption files, then gives each authority its rate per 100,000 residents. */
-export const loadWithPopulation =
-	<
-		T extends {
-			year: number;
-			data: Record<string, EnergyConsumptionLADData>;
-		},
-	>(
-		loadFuel: (text: DatasetReader["text"]) => Promise<Record<string, T>>,
-	) =>
-	async ({ text, xlsxSheet }: DatasetReader) => {
-		const datasets = await loadFuel(text);
-		const population = await loadPopulationUk(xlsxSheet);
-		for (const dataset of Object.values(datasets)) {
-			addPopulationMetrics(
-				dataset.data,
-				population[dataset.year]?.data ?? {},
-				(record) => record.allMetersGwh,
-			);
-		}
-		return datasets;
-	};
 
 const SECTORS = [
 	{ id: "all", label: "All meters", field: "allMetersGwh" },
