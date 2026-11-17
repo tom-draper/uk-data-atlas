@@ -67,6 +67,19 @@ export const wimd = defineDataset<WIMDDataset>({
 		label: "Deprivation (WIMD) [2019]",
 		year: 2019,
 		areaCount: 1909,
+		deprivation: {
+			label: "WIMD",
+			region: "Wales",
+			attribution:
+				"Welsh Government. Welsh Index of Multiple Deprivation 2019. gov.wales",
+			metric: "score",
+			metricMaximum: 86.6,
+			areaNoun: "LSOAs",
+			areaType: "lsoa",
+			summaryField: "ladStats",
+			metricField: "wimdScore",
+			decileField: "wimdDecile",
+		},
 		aggregation: {
 			scope: "lsoa",
 			distinct: true,

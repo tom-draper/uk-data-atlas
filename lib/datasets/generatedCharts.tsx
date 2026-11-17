@@ -12,11 +12,8 @@ import Chart6 from "@/components/datasets/population/population-estimates/popula
 import Chart7 from "@/components/datasets/population/population-estimates/population/PopulationGenderRegistry";
 import Chart8 from "@/components/ValueCard";
 import Chart9 from "@/components/measures/MeasureSeriesChart";
-import Chart10 from "@/components/datasets/society/deprivation/imd/IMDChart";
+import Chart10 from "@/components/measures/MeasureDeprivationChart";
 import Chart11 from "@/components/measures/MeasureBarsChart";
-import Chart12 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
-import Chart13 from "@/components/datasets/society/deprivation/simd/SIMDChart";
-import Chart14 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -90,24 +87,6 @@ const Chart11Presentation = {
 	),
 } satisfies ChartPresentation;
 
-const Chart12Presentation = {
-	component: (props) => (
-		<Chart12 {...(props as ComponentProps<typeof Chart12>)} />
-	),
-} satisfies ChartPresentation;
-
-const Chart13Presentation = {
-	component: (props) => (
-		<Chart13 {...(props as ComponentProps<typeof Chart13>)} />
-	),
-} satisfies ChartPresentation;
-
-const Chart14Presentation = {
-	component: (props) => (
-		<Chart14 {...(props as ComponentProps<typeof Chart14>)} />
-	),
-} satisfies ChartPresentation;
-
 export const CHART_PRESENTATIONS = {
 	"brexit-electoral": Chart0Presentation,
 	"brexit-hanretty": Chart1Presentation,
@@ -157,7 +136,7 @@ export const CHART_PRESENTATIONS = {
 	"infrastructure-mobile-coverage": Chart8Presentation,
 	"housing-net-additional-dwellings": Chart8Presentation,
 	"health-nhs-waiting": Chart8Presentation,
-	"society-nimdm": Chart12Presentation,
+	"society-nimdm": Chart10Presentation,
 	"housing-planning-applications": Chart8Presentation,
 	"health-public-health": Chart8Presentation,
 	"education-pupil-absence": Chart8Presentation,
@@ -165,11 +144,11 @@ export const CHART_PRESENTATIONS = {
 	"economy-regional-gdp": Chart8Presentation,
 	"education-school-performance": Chart8Presentation,
 	"education-school-performance-disadvantage": Chart8Presentation,
-	"society-simd": Chart13Presentation,
+	"society-simd": Chart10Presentation,
 	"transport-travel-to-work": Chart2Presentation,
 	"economy-unemployment": Chart9Presentation,
 	"environment-waste": Chart8Presentation,
-	"society-wimd": Chart14Presentation,
+	"society-wimd": Chart10Presentation,
 	"economy-workplace-income": Chart8Presentation,
 } satisfies ChartPresentationRegistry;
 

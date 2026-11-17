@@ -7,7 +7,10 @@ import type {
 	DeclaredDimension,
 	DeclaredField,
 } from "../../../declaration/statistics.ts";
-import { deprivationStatistics } from "../../../data/deprivation/declaration.ts";
+import {
+	DEPRIVATION_CHART_COMPONENT,
+	deprivationStatistics,
+} from "../../../data/deprivation/declaration.ts";
 import { loadIMD } from "../../../data/imd/loader.ts";
 
 /** The overall score and its seven domains, each a map measure. */
@@ -147,7 +150,23 @@ export const imd = defineDataset<IMDDataset>({
 	display: {
 		label: "Deprivation (IMD) [2025]",
 		year: 2025,
-		component: "@/components/datasets/society/deprivation/imd/IMDChart",
+		component: DEPRIVATION_CHART_COMPONENT,
+		deprivation: {
+			label: "IMD",
+			region: "England",
+			attribution:
+				"Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2025. gov.uk",
+			metric: "score",
+			metricMaximum: 92.735,
+			areaNoun: "LSOAs",
+			areaType: "lsoa",
+			summaryField: "ladStats",
+			metricField: "imdScore",
+			decileField: "imdDecile",
+			domains: {
+				attribution: "MHCLG. English Indices of Deprivation 2025.",
+			},
+		},
 		measures,
 		aggregation: {
 			scope: "lsoa",
