@@ -1,4 +1,4 @@
-import { areaSeries } from "./client";
+import { readSeries } from "./combine";
 import { latestPoint } from "./series";
 import type { MeasureValuesPayload } from "./types";
 
@@ -40,19 +40,20 @@ export function memberLabels(
 
 /**
  * How one area's total splits across the parts, from a payload for each
- * member (one member is one request). Null where the total or any part is
- * missing, or the total is nothing, so a half-drawn bar is never shown.
+ * member (one member is one request). With no area, the split of every area
+ * in the payloads combined. Null where the total or any part is missing, or
+ * the total is nothing, so a half-drawn bar is never shown.
  */
 export function breakdownView(
 	payloads: Readonly<Record<string, MeasureValuesPayload>>,
-	area: string,
+	area: string | null,
 	dimension: string,
 	totalCode: string,
 	parts: readonly BreakdownPart[],
 ): BreakdownView | null {
 	const latest = (code: string) => {
 		const payload = payloads[code];
-		return payload ? latestPoint(areaSeries(payload, area)) : null;
+		return payload ? latestPoint(readSeries(payload, area)) : null;
 	};
 	const total = latest(totalCode);
 	if (!total || total.value <= 0) return null;
