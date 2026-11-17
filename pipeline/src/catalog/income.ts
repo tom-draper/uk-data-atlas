@@ -1,6 +1,7 @@
 import { type DatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { income, workplaceIncome } from "@uk-data-atlas/datasets";
 
 /** Median gross pay of employees in each English authority, by residence or workplace. */
 export const compileIncome = (
@@ -12,26 +13,34 @@ export const compileIncome = (
 	},
 ): CompiledMeasure[] => {
 	const workplace = options.datasetId === "workplace-income";
+	const fields = (workplace ? workplaceIncome : income).statistics!.fields!;
+	if (!Array.isArray(fields)) throw new Error("Expected income fields");
 	const medianPay = (
 		id: string,
 		label: string,
 		field: string,
 		unit: string,
 		note: string,
-	): Indicator => ({
-		id,
-		label,
-		field,
-		valueKind: "currency",
-		unit,
-		aggregation: {
-			kind: "non-aggregatable",
-			statistic: "median",
-			note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
-			available: false,
-		},
-		notes: [note],
-	});
+	): Indicator => {
+		const declared = fields.find((candidate) => candidate.path === field);
+		if (!declared)
+			throw new Error(`No income series declared for ${field}`);
+		return {
+			id,
+			series: { measure: declared.measure, dimensions: declared.members },
+			label,
+			field,
+			valueKind: "currency",
+			unit,
+			aggregation: {
+				kind: "non-aggregatable",
+				statistic: "median",
+				note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				available: false,
+			},
+			notes: [note],
+		};
+	};
 	return publishIndicators(manifest, {
 		datasetId: options.datasetId,
 		path: incomePath,
