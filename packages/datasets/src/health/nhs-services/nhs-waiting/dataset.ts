@@ -1,5 +1,8 @@
 import type { NHSWaitingDataset } from "../../../types/nhsWaiting.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	periods,
@@ -10,7 +13,6 @@ import { ICB_ODS_TO_GSS } from "../../../data/nhs-waiting/icbToGss.ts";
 import { LAD_TO_ICB } from "../../../data/nhs-waiting/ladToIcb.ts";
 import { parseNumOrZero } from "../../../helpers/parseNumber.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
-import { loadNHSWaiting } from "../../../data/nhs-waiting/loader.ts";
 
 const MONTHS = [
 	"January",
@@ -58,7 +60,7 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 		cadence: "monthly",
 		notes: [],
 	},
-	load: ({ zipCsvRows }) => loadNHSWaiting(zipCsvRows),
+	load: noCompiledPayload<NHSWaitingDataset>(),
 	statistics: {
 		payload: {
 			header: { month: "March 2026", coverageCountries: ["GB-ENG"] },
@@ -96,6 +98,7 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 			),
 		],
 		direct: {
+			only: true,
 			read: async ({ zipCsvRows }) => {
 				const totals = new Map<
 					string,

@@ -1,44 +1,35 @@
-import { describe, expect, it } from "vitest";
-import { loadNHSWaiting, sourceDir } from "@uk-data-atlas/datasets";
+import { expect, it } from "vitest";
+import { sourceDir, type DatasetReader } from "@uk-data-atlas/datasets";
+import { nhsWaiting } from "../../packages/datasets/src/health/nhs-services/nhs-waiting/dataset.ts";
 
-describe("loadNHSWaiting", () => {
-	it("aggregates rows as they are read from the archive", async () => {
-		const result = await loadNHSWaiting(async (path, visit) => {
+it("aggregates waiting bands from the archive", async () => {
+	const [part] = await nhsWaiting.statistics.direct!.read({
+		zipCsvRows: async (path, visit) => {
 			expect(path).toBe(sourceDir("nhs-waiting", "rtt-mar-2026.zip"));
-			visit({
-				"RTT Part Description": "Incomplete Pathways",
-				"Provider Parent Org Code": "E54000001",
-				"Provider Parent Name": "NHS Somerset ICB",
-				"Total All": "100",
-				"Gt 18 To 52 Weeks SUM 1": "4",
-				"Gt 52 Weeks SUM 1": "3",
-			});
-			visit({
-				"RTT Part Description": "Incomplete Pathways",
-				"Provider Parent Org Code": "E54000001",
-				"Provider Parent Name": "NHS Somerset ICB",
-				"Total All": "50",
-				"Gt 18 To 52 Weeks SUM 1": "2",
-				"Gt 52 Weeks SUM 1": "1",
-			});
-			visit({
-				"RTT Part Description": "Admitted Pathways",
-				"Provider Parent Org Code": "E54000001",
-				"Provider Parent Name": "NHS Somerset ICB",
-				"Total All": "999",
-				"Gt 18 To 52 Weeks SUM 1": "999",
-				"Gt 52 Weeks SUM 1": "999",
-			});
-		});
-
-		expect(result[2026]?.data).toEqual({
-			E54000001: {
-				icbCode: "E54000001",
-				icbName: "NHS Somerset ICB",
-				total: 150,
-				over18Weeks: 10,
-				pctOver18Weeks: 20 / 3,
-			},
-		});
-	});
+			for (const [total, first, second, kind] of [
+				["100", "4", "3", "Incomplete Pathways"],
+				["50", "2", "1", "Incomplete Pathways"],
+				["999", "999", "999", "Admitted Pathways"],
+			])
+				visit({
+					"RTT Part Description": kind,
+					"Provider Parent Org Code": "E54000001",
+					"Provider Parent Name": "NHS Somerset ICB",
+					"Total All": total,
+					"Gt 18 To 52 Weeks SUM 1": first,
+					"Gt 52 Weeks SUM 1": second,
+				});
+		},
+	} as DatasetReader);
+	expect(part.records).toEqual([
+		{
+			code: "E54000001",
+			name: "NHS Somerset ICB",
+			values: [
+				{ measure: "rtt-incomplete-pathways", value: 150 },
+				{ measure: "rtt-incomplete-pathways-over-18-weeks", value: 10 },
+			],
+		},
+	]);
+	expect(part.relationships?.ladToIcb.E06000001).toBe("QHM");
 });
