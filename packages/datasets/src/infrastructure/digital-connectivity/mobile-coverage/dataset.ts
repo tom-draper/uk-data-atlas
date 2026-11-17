@@ -192,8 +192,25 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 	display: {
 		label: "Mobile Coverage [2025]",
 		year: 2025,
-		component:
-			"@/components/datasets/infrastructure/digital-connectivity/mobile-coverage/MobileCoverageChart",
+		card: {
+			heading: "Mobile Coverage",
+			source: "Ofcom. Connected Nations, mobile coverage. ofcom.org.uk",
+			pills: [
+				{
+					label: "4G in",
+					field: "pct4GIndoorAll",
+					unit: "%",
+					digits: 1,
+				},
+				{
+					label: "4G land",
+					field: "pct4GGeoAll",
+					unit: "%",
+					digits: 1,
+				},
+			],
+			appearance: { layout: "pills", accent: "#8b5cf6" },
+		},
 		measures: [
 			{
 				id: "pct5GOutdoorAll",
@@ -207,6 +224,19 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						kind: "decimal",
 						digits: 0,
 						suffix: "% 5G outdoors, all four operators",
+					},
+				},
+				card: {
+					unit: "%",
+					digits: 1,
+					maximum: 100,
+					secondary: {
+						field: "pct5GOutdoorAny",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: "% 5G on at least one",
+						},
 					},
 				},
 			},
@@ -224,6 +254,19 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						suffix: "% 5G outdoors, any operator",
 					},
 				},
+				card: {
+					unit: "%",
+					digits: 1,
+					maximum: 100,
+					secondary: {
+						field: "pct5GOutdoorAny",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: "% 5G on at least one",
+						},
+					},
+				},
 			},
 			{
 				id: "pct4GIndoorAll",
@@ -237,6 +280,19 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						kind: "decimal",
 						digits: 0,
 						suffix: "% 4G indoors, all four operators",
+					},
+				},
+				card: {
+					unit: "%",
+					digits: 1,
+					maximum: 100,
+					secondary: {
+						field: "pct5GOutdoorAny",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: "% 5G on at least one",
+						},
 					},
 				},
 			},
@@ -254,6 +310,19 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						suffix: "% 4G indoors, any operator",
 					},
 				},
+				card: {
+					unit: "%",
+					digits: 1,
+					maximum: 100,
+					secondary: {
+						field: "pct5GOutdoorAny",
+						format: {
+							kind: "decimal",
+							digits: 1,
+							suffix: "% 5G on at least one",
+						},
+					},
+				},
 			},
 			{
 				id: "pct4GGeoAll",
@@ -269,6 +338,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						suffix: "% 4G landmass, all four operators",
 					},
 				},
+				card: { unit: "%", digits: 1, maximum: 100 },
 			},
 			{
 				id: "pct5GGeoAny",
@@ -284,6 +354,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 						suffix: "% 5G landmass, any operator",
 					},
 				},
+				card: { unit: "%", digits: 1, maximum: 100 },
 			},
 		],
 		aggregation: {

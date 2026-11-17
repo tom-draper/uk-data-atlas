@@ -108,8 +108,16 @@ export const airQuality = defineDataset<AirQualityDataset>({
 	display: {
 		label: "Air Quality - NO₂ [2024]",
 		year: 2024,
-		component:
-			"@/components/datasets/environment/air-quality/air-quality/AirQualityChart",
+		card: {
+			heading: "Air Quality",
+			coverage: "United Kingdom",
+			source: "Defra. Pollution Climate Mapping background maps, 2024. uk-air.defra.gov.uk",
+			pills: [
+				{ label: "PM2.5", field: "pm25Mean", unit: "µg/m³", digits: 1 },
+				{ label: "PM10", field: "pm10Mean", unit: "µg/m³", digits: 1 },
+			],
+			appearance: { layout: "pills", accent: "#22c55e" },
+		},
 		measures: [
 			// Modelled background NO2 runs from under 1 µg/m³ in the Highlands to
 			// about 33 in the City of London; 95% of authorities are below 18.
@@ -119,6 +127,7 @@ export const airQuality = defineDataset<AirQualityDataset>({
 				field: "no2Mean",
 				colorRange: { min: 2, max: 20 },
 				legend: { min: 0, max: 35, format: concentration("NO₂") },
+				card: { unit: "µg/m³", digits: 1, maximum: 35 },
 			},
 			{
 				id: "pm25",
@@ -126,6 +135,7 @@ export const airQuality = defineDataset<AirQualityDataset>({
 				field: "pm25Mean",
 				colorRange: { min: 4, max: 12 },
 				legend: { min: 0, max: 20, format: concentration("PM2.5") },
+				card: { unit: "µg/m³", digits: 1, maximum: 35 },
 			},
 			{
 				id: "pm10",
@@ -133,6 +143,7 @@ export const airQuality = defineDataset<AirQualityDataset>({
 				field: "pm10Mean",
 				colorRange: { min: 8, max: 25 },
 				legend: { min: 0, max: 35, format: concentration("PM10") },
+				card: { unit: "µg/m³", digits: 1, maximum: 35 },
 			},
 		],
 		aggregation: {
