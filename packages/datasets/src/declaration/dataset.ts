@@ -12,7 +12,11 @@ import type {
 	DeclaredHeader,
 	DeclaredPayload,
 } from "./statistics.ts";
-import type { DatasetDisplay, DisplayFormat } from "./display.ts";
+import type {
+	DatasetDisplay,
+	DisplayFormat,
+	DisplayMapView,
+} from "./display.ts";
 import { yearParts } from "./yearParts.ts";
 
 /**
@@ -178,6 +182,8 @@ export type DatasetDeclaration<
 	/** The API catalogue measures, when the dataset publishes any. */
 	catalogue?: IndicatorCatalogue;
 	display?: DatasetDisplay;
+	/** The views of a dataset whose map has several, the first being the default. */
+	mapViews?: readonly [DisplayMapView, ...DisplayMapView[]];
 	/** The key figure place pages show for the dataset, if it has one. */
 	placeHeadline?: PlaceHeadlineDeclaration;
 };
