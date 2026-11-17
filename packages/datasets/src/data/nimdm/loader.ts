@@ -8,7 +8,7 @@ import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNumInt } from "../../helpers/parseNumber.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
-const LGD_CODES: Record<string, string> = {
+export const LGD_CODES: Record<string, string> = {
 	"Antrim and Newtownabbey": "N09000001",
 	"Armagh City, Banbridge and Craigavon": "N09000002",
 	Belfast: "N09000003",
@@ -22,7 +22,7 @@ const LGD_CODES: Record<string, string> = {
 	"Ards and North Down": "N09000011",
 };
 
-function pick(row: Record<string, any>, ...keys: string[]): string {
+export function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
 		const v = row[k];
 		if (v !== undefined && v !== null && v !== "") return String(v).trim();
@@ -30,7 +30,10 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 	return "";
 }
 
-function pickBySubstring(row: Record<string, any>, substring: string): string {
+export function pickBySubstring(
+	row: Record<string, any>,
+	substring: string,
+): string {
 	for (const [k, v] of Object.entries(row)) {
 		if (
 			k.replace(/\s+/g, " ").includes(substring) &&
