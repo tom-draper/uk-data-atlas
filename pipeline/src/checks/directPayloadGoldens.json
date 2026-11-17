@@ -90,5 +90,13 @@
 	"business-activity": {
 		"sha256": "c653dad188c6a4cd39d80b23bf4823c9591bd991e4dedf7eff1e67838e7527b9",
 		"bytes": 42573
+	},
+	"waste": {
+		"sha256": "e95a9b41900e9c4b1354dd835e8e30d028ed1847b4dd3df97d21aec74aa38bc5",
+		"bytes": 30470
+	},
+	"electric-vehicle-chargers": {
+		"sha256": "9d2b5c410a4b49e7a7f76425d5169dcddb5b39c1e5c0f7707b4341a0c4973833",
+		"bytes": 42331
 	}
 }

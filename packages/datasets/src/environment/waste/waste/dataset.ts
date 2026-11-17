@@ -1,5 +1,8 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import type {
 	DatasetDisplay,
 	DisplayMeasure,
@@ -7,9 +10,7 @@ import type {
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
-import { loadWaste } from "../../../data/new-datasets/loader.ts";
-import { addPopulationMetrics } from "../../../data/population/metrics.ts";
-import { loadPopulationUk } from "../../../data/population/ukLoader.ts";
+import { wasteStatisticsPart } from "../../../data/waste/source.ts";
 import { aggregateWaste } from "../../../data/waste/aggregate.ts";
 
 const TONNES = { kind: "count", locale: "en-GB" } as const;
@@ -72,18 +73,7 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	load: async ({ odsTableRows, xlsxSheet }) => {
-		const datasets = await loadWaste(odsTableRows);
-		const population = await loadPopulationUk(xlsxSheet);
-		for (const dataset of Object.values(datasets)) {
-			addPopulationMetrics(
-				dataset.data,
-				population["2024"]?.data ?? {},
-				(record) => record.value,
-			);
-		}
-		return datasets;
-	},
+	load: noCompiledPayload<IndicatorDataset<"waste">>(),
 	statistics: {
 		payload: {
 			parts: yearParts(
@@ -123,6 +113,10 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 			},
 		],
 		...per100k((record) => record.value, 2024),
+		direct: {
+			only: true,
+			read: ({ odsTableRows }) => wasteStatisticsPart(odsTableRows),
+		},
 	},
 	display: {
 		label: "Collected Waste [2025]",

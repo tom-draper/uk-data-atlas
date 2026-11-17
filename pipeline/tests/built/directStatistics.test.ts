@@ -63,6 +63,8 @@ const directTypes = STATISTICS_DATASETS.filter(
 const supporting: Record<string, string[]> = {
 	jobs: ["population-uk"],
 	"business-activity": ["population-uk"],
+	waste: ["population-uk"],
+	"electric-vehicle-chargers": ["population-uk"],
 };
 
 /** Writes one dataset's rows, from either path, onto the real area tables. */
@@ -280,6 +282,8 @@ it.each([
 	"unemployment",
 	"regional-gdp",
 	"business-activity",
+	"waste",
+	"electric-vehicle-chargers",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts();

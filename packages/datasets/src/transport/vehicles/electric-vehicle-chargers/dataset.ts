@@ -1,9 +1,12 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateIndicator } from "../../../data/new-datasets/aggregate.ts";
-import { loadElectricVehicleChargers } from "../../../data/new-datasets/loader.ts";
+import { electricVehicleChargerStatisticsPart } from "../../../data/electric-vehicle-chargers/source.ts";
 
 export const electricVehicleChargers = defineDataset<
 	IndicatorDataset<"electric-vehicle-chargers">
@@ -36,8 +39,7 @@ export const electricVehicleChargers = defineDataset<
 		expectedBoundaryYears: [2026],
 		requiredDataFields: ["value"],
 	},
-	load: ({ odsContent, xlsxSheet }) =>
-		loadElectricVehicleChargers(odsContent, xlsxSheet),
+	load: noCompiledPayload<IndicatorDataset<"electric-vehicle-chargers">>(),
 	statistics: {
 		payload: {
 			header: {
@@ -59,6 +61,11 @@ export const electricVehicleChargers = defineDataset<
 		],
 		fields: [{ path: "value", measure: "public-ev-chargers" }],
 		...per100k((record) => record.value, 2024),
+		direct: {
+			only: true,
+			read: ({ odsContent }) =>
+				electricVehicleChargerStatisticsPart(odsContent),
+		},
 	},
 	catalogue: {
 		kind: "indicators",
