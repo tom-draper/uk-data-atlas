@@ -1,5 +1,8 @@
 import { CHART_DATASET_DEFINITIONS } from "../datasets";
-import { declaredDefaultOptions } from "../datasets/declared";
+import {
+	declaredDefaultOptions,
+	declaredMapViewOptions,
+} from "../datasets/declared";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
 const chartMapOptions: ChartMapOptions = Object.fromEntries(
@@ -28,15 +31,10 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 		turnoutRange: { min: 0, max: 100 },
 		colorRange: { min: 0, max: 1 },
 	},
-	ageDistribution: {
-		colorRange: { min: 25, max: 65 },
-	},
-	populationDensity: {
-		colorRange: { min: 0, max: 8000 },
-	},
-	gender: {
-		colorRange: { min: -0.1, max: 0.1 },
-	},
+	...(declaredMapViewOptions() as Pick<
+		MapOptions,
+		"ageDistribution" | "populationDensity" | "gender"
+	>),
 	ethnicity: {
 		mode: "majority",
 		percentageRange: { min: 0, max: 50 },

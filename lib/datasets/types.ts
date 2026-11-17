@@ -112,8 +112,7 @@ export type ChartDatasetLegendAggregation<
 	T extends { type: string; data: unknown },
 > = Pick<ChartDefinition<T>, "calculateStats" | "keyBy">;
 
-export type ChartDatasetLegendKind =
-	"population" | "party" | "ethnicity" | "brexit";
+export type ChartDatasetLegendKind = "party" | "ethnicity" | "brexit";
 
 export interface ChartDatasetDefinition<
 	T extends { type: string; data: unknown } = { type: string; data: unknown },

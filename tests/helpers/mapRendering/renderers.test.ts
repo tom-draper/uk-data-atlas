@@ -4,11 +4,12 @@ import {
 	renderCustomPoints,
 	renderLocalElection,
 	renderNumericDataset,
-	renderPopulationDensity,
+	renderPopulationView,
 	type MapRenderContext,
 } from "@/lib/helpers/mapRendering";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { declaredMapView } from "@/lib/datasets/declared";
 
 const lifeExpectancyDefinition = CHART_DATASET_DEFINITIONS.find(
 	({ type }) => type === "life-expectancy",
@@ -162,14 +163,20 @@ describe("renderLocalElection", () => {
 	});
 });
 
-describe("renderPopulationDensity", () => {
+describe("renderPopulationView", () => {
 	it("divides ward population by the feature's own area", () => {
 		const { ctx, featureBuilder } = fakeContext("WD25CD");
 		const dataset = {
 			data: { E05000001: { males: { "30": 60 }, females: { "30": 40 } } },
 		} as never;
 
-		renderPopulationDensity(ctx, geojson, dataset, DEFAULT_MAP_OPTIONS);
+		renderPopulationView(
+			ctx,
+			geojson,
+			dataset,
+			DEFAULT_MAP_OPTIONS,
+			declaredMapView("population", "density")!,
+		);
 
 		const valueFor = featureBuilder.buildValueFeatures.mock.calls[0][2];
 		// 100 people over the fake builder's 2 km².

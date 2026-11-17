@@ -2,7 +2,11 @@
 
 import type { ActiveViz, Dataset } from "@/lib/types";
 import { getChartDatasetDefinition } from "@/lib/datasets";
-import { declaredMeasure, formatDisplay } from "@/lib/datasets/declared";
+import {
+	declaredMapView,
+	declaredMeasure,
+	formatDisplay,
+} from "@/lib/datasets/declared";
 import {
 	EthnicityLegend,
 	NetworkLegend,
@@ -12,7 +16,7 @@ import { CustomLegend } from "./legend/CustomLegend";
 import {
 	BrexitLegend,
 	DynamicRangeLegend,
-	PopulationLegend,
+	MapViewLegend,
 } from "./legend/RangeLegends";
 import type {
 	ColorRangeDatasetKey,
@@ -73,6 +77,8 @@ export default function LegendContent({
 		onRangeChangeEnd,
 	};
 	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
+	const mapView = declaredMapView(activeDataset.type, activeViz.view);
+	if (mapView) return <MapViewLegend {...rangeControls} view={mapView} />;
 	const declared = declaredMeasure(activeDataset.type, displayOptions);
 	if (declared) {
 		const { legend } = declared;
@@ -124,11 +130,6 @@ export default function LegendContent({
 	}
 
 	switch (chartDefinition?.legendKind) {
-		case "population":
-			return (
-				<PopulationLegend {...rangeControls} activeViz={activeViz} />
-			);
-
 		case "ethnicity":
 			return (
 				<EthnicityLegend

@@ -10,11 +10,7 @@ export {
 	renderLocalElection,
 } from "./elections";
 export { renderEthnicity } from "./demographics";
-export {
-	renderAgeDistribution,
-	renderGender,
-	renderPopulationDensity,
-} from "./population";
+export { renderPopulationView } from "./population";
 export { renderNumericDataset } from "./numeric";
 export type { NumericDataset, NumericMapConfig } from "./numeric";
 export { renderCustomDataset, renderCustomPoints } from "./custom";
