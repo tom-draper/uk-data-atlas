@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { ChartCard } from "@/components/ChartCard";
 import {
 	ChartContentPlaceholder,
@@ -8,8 +7,9 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { SparklineBackground } from "@/components/measures/SparklineBackground";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { areaSeries } from "@/lib/measures/client";
+import { ratioSeries, readSeries } from "@/lib/measures/combine";
 import { formatMeasureValue } from "@/lib/measures/presentation";
+import { requestAreas } from "@/lib/measures/scope";
 import { latestPoint, numericPoints, sparkline } from "@/lib/measures/series";
 import type {
 	MeasureValuesPayload,
@@ -24,12 +24,20 @@ type SeriesView = {
 	line: ReturnType<typeof sparkline>;
 };
 
-/** What a card shows of one area's history, or null if it has no values. */
+/**
+ * What a card shows of one area's history, or, with no area, of every area
+ * in the response together. A rate with the counts it is of combines by their
+ * implied base; a measure that adds up is summed. Null if there are no values.
+ */
 export function seriesView(
 	payload: MeasureValuesPayload,
-	area: string,
+	area: string | null,
+	counts?: MeasureValuesPayload | null,
 ): SeriesView | null {
-	const points = areaSeries(payload, area);
+	const points =
+		area === null && counts
+			? ratioSeries(payload, counts)
+			: readSeries(payload, area);
 	const latest = latestPoint(points);
 	if (!latest) return null;
 	return {
@@ -50,9 +58,14 @@ export function seriesView(
 }
 
 type Props = {
-	/** The measure, the geography it is read at, and the one area shown. */
+	/** The measure and the geography it is read at. */
 	request: Omit<MeasureValuesRequest, "periods" | "areas">;
+	/** The areas the figure covers, or null until they are known. */
+	scope: readonly string[] | null;
+	/** The area hovered or selected; the whole scope when none is. */
 	area: string | null;
+	/** For a rate, the measure of the people it counts, to combine areas. */
+	countMeasure?: string;
 	heading: string;
 	/** The card's highlight colour. */
 	accent: string;
@@ -64,18 +77,19 @@ type Props = {
 	estimateNote?: (hasData: boolean) => string | undefined;
 	isActive: boolean;
 	onClick: () => void;
-	/** Shown where the card has nothing to say, such as before an area is chosen. */
-	empty?: ReactNode;
 };
 
 /**
- * A card for any measure with a history: its latest value for one area over a
- * line of the periods before it. Everything it says comes from the measure's
+ * A card for any measure with a history: its latest value over a line of the
+ * periods before it, for the selected area or, before one is chosen, for every
+ * area in scope. Everything it says comes from the measure's
  * own metadata and rows, so a new measure needs no card of its own.
  */
 export function MeasureSeriesCard({
 	request,
+	scope,
 	area,
+	countMeasure,
 	heading,
 	accent,
 	color,
@@ -84,14 +98,31 @@ export function MeasureSeriesCard({
 	estimateNote,
 	isActive,
 	onClick,
-	empty,
 }: Props) {
 	const isDark = useIsDark();
 	const chartsLoading = useChartsLoading();
-	const state = useMeasureSeries(area ? { ...request, areas: [area] } : null);
+	const scoped = scope?.length
+		? { ...request, areas: requestAreas(scope) }
+		: null;
+	const state = useMeasureSeries(scoped);
+	const counts = useMeasureSeries(
+		scoped && countMeasure ? { ...scoped, measure: countMeasure } : null,
+	);
+	// A rate shown for every area needs the counts it is of, so waits for them.
+	const waitingOnCounts = !area && countMeasure && counts.status !== "ready";
 	const view =
-		area && state.status === "ready" ? seriesView(state.data, area) : null;
-	const loading = state.status === "loading" || chartsLoading;
+		state.status === "ready" && !waitingOnCounts
+			? seriesView(
+					state.data,
+					area,
+					counts.status === "ready" ? counts.data : null,
+				)
+			: null;
+	const loading =
+		state.status === "loading" ||
+		counts.status === "loading" ||
+		chartsLoading ||
+		scope === null;
 
 	return (
 		<ChartCard
@@ -133,15 +164,13 @@ export function MeasureSeriesCard({
 				</div>
 			) : (
 				<div className="flex-1 mt-1">
-					{area && loading ? (
+					{loading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
 						<div
 							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
-							{area
-								? "No data available"
-								: (empty ?? "Select an area")}
+							No data available
 						</div>
 					)}
 				</div>

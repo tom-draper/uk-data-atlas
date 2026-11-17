@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import {
 	isLocalAuthorityEstimate,
@@ -9,6 +10,7 @@ import { MeasureSeriesCard } from "@/components/measures/MeasureSeriesCard";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { areaForMeasure } from "@/lib/measures/area";
+import { areaCodesInScope } from "@/lib/measures/scope";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 import type { Dataset, DatasetCoverage, ActiveViz } from "@/lib/types";
@@ -24,6 +26,7 @@ type SeriesDataset = DatasetCoverage & {
  */
 export default function MeasureSeriesChart({
 	seriesForOptions,
+	boundaryData,
 	activeDataset,
 	availableDatasets,
 	selectedArea,
@@ -33,24 +36,34 @@ export default function MeasureSeriesChart({
 }: ChartComponentProps) {
 	const options = useCurrentMapOptions();
 	const series = seriesForOptions?.(options);
+	const geography = series?.request.geography;
+	const boundaryYear = series?.request.boundaryYear;
+	const scope = useMemo(
+		() =>
+			geography && boundaryYear !== undefined
+				? areaCodesInScope(boundaryData, geography, boundaryYear)
+				: null,
+		[boundaryData, geography, boundaryYear],
+	);
 	const dataset = (
 		availableDatasets as Record<string, SeriesDataset> | undefined
 	)?.[year];
 	if (!series || !dataset) return null;
 
-	const { geography, boundaryYear } = series.request;
 	const area =
 		areaForMeasure(
 			selectedArea,
-			geography,
-			boundaryYear,
+			series.request.geography,
+			series.request.boundaryYear,
 			codeMapper as (CodeYearResolver & LadResolver) | undefined,
 		) ?? null;
 
 	return (
 		<MeasureSeriesCard
 			request={series.request}
+			scope={scope}
 			area={area}
+			countMeasure={series.countMeasure}
 			heading={`${series.heading} [${series.period}]`}
 			accent={series.accent}
 			color={series.line}
