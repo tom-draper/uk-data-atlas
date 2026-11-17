@@ -2,11 +2,13 @@ import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { BroadbandDataset } from "../../../types/broadband.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { PREMISES, measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateBroadband } from "./aggregate.ts";
-import { loadBroadband } from "./loader.ts";
 
 const WEIGHT = {
 	kind: "weighted-mean",
@@ -41,7 +43,7 @@ export const broadband = defineDataset<BroadbandDataset>({
 		],
 	},
 	boundary: { type: "localAuthority", year: 2024 },
-	load: ({ text }) => loadBroadband(text),
+	load: noCompiledPayload<BroadbandDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 90,
@@ -94,6 +96,7 @@ export const broadband = defineDataset<BroadbandDataset>({
 			},
 		],
 		direct: {
+			only: true,
 			read: async ({ text }) => {
 				const { data } = await parseCsv<Record<string, string>>(
 					await text(

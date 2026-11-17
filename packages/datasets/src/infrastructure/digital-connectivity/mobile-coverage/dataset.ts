@@ -2,10 +2,12 @@ import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { MobileCoverageDataset } from "../../../types/mobileCoverage.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { PREMISES, measure } from "../../../declaration/measures.ts";
 import { aggregateMobileCoverage } from "./aggregate.ts";
-import { loadMobileCoverage } from "./loader.ts";
 
 const WEIGHT = {
 	kind: "weighted-mean",
@@ -42,9 +44,8 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 	ingestion: {
 		minimumDataRecords: 361,
 		expectedBoundaryYears: [2024],
-		requiredDataFields: ["pct4GIndoorAll", "pct5GOutdoorAll"],
 	},
-	load: ({ text }) => loadMobileCoverage(text),
+	load: noCompiledPayload<MobileCoverageDataset>(),
 	statistics: {
 		payload: {
 			header: {
@@ -100,6 +101,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 			},
 		],
 		direct: {
+			only: true,
 			read: async ({ text }) => {
 				const { data } = await parseCsv<Record<string, string>>(
 					await text(

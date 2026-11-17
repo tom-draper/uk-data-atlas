@@ -34,5 +34,13 @@
 	"planning-applications": {
 		"sha256": "619418c88bbd4ffbb3dd1eb52cc06703ff6bdd44ab13f62115dc759d5fb62a8e",
 		"bytes": 31651
+	},
+	"broadband": {
+		"sha256": "55c225945486b540ba3281e2681e944bc7e1504f67e422ad50a38ba424dc9385",
+		"bytes": 57924
+	},
+	"mobile-coverage": {
+		"sha256": "ae4be9fe897be3e337a1c5aaa3518c9e91c0ec67d10fba43531513cbef820be8",
+		"bytes": 77316
 	}
 }

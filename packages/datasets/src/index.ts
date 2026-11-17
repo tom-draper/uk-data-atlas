@@ -122,7 +122,6 @@ export * from "./data/life-expectancy/seriesLoader.ts";
 export * from "./data/localAuthority/reorganisations.ts";
 export * from "./data/locations.ts";
 export * from "./infrastructure/digital-connectivity/mobile-coverage/aggregate.ts";
-export * from "./infrastructure/digital-connectivity/mobile-coverage/loader.ts";
 export * from "./data/new-datasets/loader.ts";
 export * from "./data/nhs-waiting/icbToGss.ts";
 export * from "./data/nhs-waiting/loader.ts";
