@@ -116,7 +116,7 @@ export * from "./data/homelessness/loader.ts";
 export * from "./data/house-price/loader.ts";
 export * from "./data/house-price/wardCodes.ts";
 export * from "./data/housing-tenure/loader.ts";
-export * from "./data/jobs/loader.ts";
+export * from "./data/jobs/source.ts";
 export * from "./data/life-expectancy/loader.ts";
 export * from "./data/life-expectancy/seriesLoader.ts";
 export * from "./data/localAuthority/reorganisations.ts";

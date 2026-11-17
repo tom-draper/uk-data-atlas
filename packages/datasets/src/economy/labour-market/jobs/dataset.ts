@@ -1,10 +1,11 @@
 import type { JobsDataset } from "../../../types/jobs.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
-import { loadPopulationUk } from "../../../data/population/ukLoader.ts";
 import { aggregateJobs } from "../../../data/jobs/aggregate.ts";
-import { loadJobs } from "../../../data/jobs/loader.ts";
 import { jobsStatisticsParts } from "../../../data/jobs/source.ts";
 
 export const jobs = defineDataset<JobsDataset>({
@@ -37,8 +38,7 @@ export const jobs = defineDataset<JobsDataset>({
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["totalJobs"],
 	},
-	load: async ({ text, xlsxSheet }) =>
-		loadJobs(text, await loadPopulationUk(xlsxSheet)),
+	load: noCompiledPayload<JobsDataset>(),
 	statistics: {
 		payload: {
 			header: {
@@ -58,7 +58,7 @@ export const jobs = defineDataset<JobsDataset>({
 			),
 		],
 		fields: [{ path: "totalJobs", measure: "total-jobs" }],
-		direct: { read: ({ text }) => jobsStatisticsParts(text) },
+		direct: { only: true, read: ({ text }) => jobsStatisticsParts(text) },
 		...per100k((record) => record.totalJobs),
 	},
 	display: {

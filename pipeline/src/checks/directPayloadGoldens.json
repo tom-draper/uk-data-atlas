@@ -74,5 +74,9 @@
 	"claimant-count": {
 		"sha256": "cc660d32aad9b321e6d9b3c017897e2a3954aaad29dcc2a104bd630c8a358bee",
 		"bytes": 53685
+	},
+	"jobs": {
+		"sha256": "4aa814aa8e44eeaafb75ddc905d82e2110ec28e64b5a3474721ad42901c32610",
+		"bytes": 637729
 	}
 }

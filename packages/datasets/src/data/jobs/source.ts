@@ -1,7 +1,4 @@
-import type {
-	DirectPart,
-	DirectRecord,
-} from "../../declaration/statistics.ts";
+import type { DirectPart, DirectRecord } from "../../declaration/statistics.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 
