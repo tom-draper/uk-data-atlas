@@ -4,12 +4,17 @@ import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /** Net territorial greenhouse gas emissions by local authority. */
 export const compileEmissions = (
 	{ manifestPath, datasets }: CatalogManifest,
 	ghgEmissionsPath: DatasetInput,
 ): CompiledMeasure => {
+	const seriesKey = measureSeriesKey({
+		measure: "ghg-emissions",
+		dimensions: { "emissions-sector": "total" },
+	});
 	const emissions = datasets.find(
 		(dataset) => dataset.id === "ghg-emissions",
 	);
@@ -75,7 +80,7 @@ export const compileEmissions = (
 	};
 	const emissionsObservationsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "ghg-emissions",
+		measureId: seriesKey,
 		sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
 		periods: emissionsPeriods,
 	});
@@ -84,7 +89,7 @@ export const compileEmissions = (
 		artifact: {
 			schemaVersion: 1,
 			contentHash: sha256(emissionsObservationsContent),
-			measureId: "ghg-emissions",
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
 			periods: emissionsPeriods,
 		},
