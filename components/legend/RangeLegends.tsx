@@ -1,7 +1,7 @@
 "use client";
 
 import { RangeControl } from "@/components/controls/RangeControl";
-import type { ActiveViz } from "@/lib/types";
+import type { DisplayMapView } from "@uk-data-atlas/datasets";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey } from "./types";
 
@@ -68,29 +68,20 @@ export function DynamicRangeLegend({
 	);
 }
 
-export function PopulationLegend({
-	activeViz,
+/** The colour range control of a declared map view. */
+export function MapViewLegend({
+	view,
 	...controls
-}: { activeViz: ActiveViz } & RangeLegendControls) {
-	if (activeViz.view === "age") {
-		return (
-			<DynamicRangeLegend
-				{...controls}
-				datasetKey="ageDistribution"
-				absoluteRange={{ min: 18, max: 80 }}
-				defaultRange={{ min: 25, max: 55 }}
-			/>
-		);
-	}
-	if (activeViz.view === "gender") {
-		const currentMin =
-			controls.displayOptions.gender?.colorRange?.min ?? -0.1;
-		const currentMax =
-			controls.displayOptions.gender?.colorRange?.max ?? 0.1;
+}: { view: DisplayMapView } & RangeLegendControls) {
+	const key = view.optionsKey as ColorRangeDatasetKey;
+	if (view.palette === "gender") {
+		const { colorRange } = controls.displayOptions[key];
+		const currentMin = colorRange?.min ?? view.colorRange.min;
+		const currentMax = colorRange?.max ?? view.colorRange.max;
 		return (
 			<RangeControl
-				min={-0.5}
-				max={0.5}
+				min={view.legend.min}
+				max={view.legend.max}
 				currentMin={currentMin}
 				currentMax={currentMax}
 				gradient="linear-gradient(to top, rgba(255,105,180,0.8), rgba(240,240,240,0.8), rgba(70,130,180,0.8))"
@@ -101,20 +92,18 @@ export function PopulationLegend({
 				]}
 				opacity={controls.overlayOpacity}
 				onRangeInput={(min, max) =>
-					controls.onRangeInput("gender", min, max)
+					controls.onRangeInput(key, min, max)
 				}
-				onRangeChangeEnd={() => controls.onRangeChangeEnd("gender")}
+				onRangeChangeEnd={() => controls.onRangeChangeEnd(key)}
 			/>
 		);
 	}
-
-	// A link that names no view gets the dataset's primary chart, density.
 	return (
 		<DynamicRangeLegend
 			{...controls}
-			datasetKey="populationDensity"
-			absoluteRange={{ min: 0, max: 15000 }}
-			defaultRange={{ min: 500, max: 8000 }}
+			datasetKey={key}
+			absoluteRange={view.legend}
+			defaultRange={view.colorRange}
 		/>
 	);
 }

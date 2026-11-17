@@ -1,4 +1,5 @@
 import { datasetSlug, getChartDatasetTypeForSlug } from "@/lib/datasets";
+import { declaredMapViews } from "@/lib/datasets/declared";
 import type { ActiveViz, VizView } from "@/lib/types";
 
 /**
@@ -12,13 +13,15 @@ export type VisualizationRef = {
 	view?: VizView;
 };
 
-const VIEWS_BY_DATASET: Readonly<Record<string, readonly VizView[]>> = {
-	population: ["age", "density", "gender"],
-	"life-expectancy": ["healthy-life-expectancy"],
-};
+/** The views a link may name for a dataset: those its map declares, and life expectancy's. */
+function viewsOf(dataset: string): readonly string[] {
+	if (dataset === "life-expectancy") return ["healthy-life-expectancy"];
+	return declaredMapViews(dataset)?.map(({ id }) => id) ?? [];
+}
 
 function parseView(dataset: string, value: string | null): VizView | undefined {
-	return VIEWS_BY_DATASET[dataset]?.find((view) => view === value);
+	return viewsOf(dataset).find((view) => view === value) as
+		VizView | undefined;
 }
 
 function internalDatasetId(

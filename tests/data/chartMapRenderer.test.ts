@@ -9,9 +9,7 @@ vi.mock("@/lib/helpers/mapRendering", () => ({
 	renderEthnicity: vi.fn(),
 	renderBrexit: vi.fn(),
 	renderBrexitConstituency: vi.fn(),
-	renderAgeDistribution: vi.fn(),
-	renderGender: vi.fn(),
-	renderPopulationDensity: vi.fn(),
+	renderPopulationView: vi.fn(),
 }));
 
 import * as rendering from "@/lib/helpers/mapRendering";
@@ -65,21 +63,23 @@ describe("chart map renderers", () => {
 		);
 	});
 
-	it("routes population visualisations by the active view", () => {
-		render(
-			populationDefinition.mapRenderer,
-			"renderAgeDistribution",
-			"age",
-		);
-		render(
-			populationDefinition.mapRenderer,
-			"renderPopulationDensity",
-			"density",
-		);
-		render(populationDefinition.mapRenderer, "renderGender", "gender");
-	});
-
-	it("falls back to the primary chart when a link names no view", () => {
-		render(populationDefinition.mapRenderer, "renderPopulationDensity");
-	});
+	it.each([
+		["age", "age"],
+		["density", "density"],
+		["gender", "gender"],
+		// A link that names no view gets the primary chart, density.
+		[undefined, "density"],
+	] as const)(
+		"routes the population %s view to the declared %s map view",
+		(view, declared) => {
+			render(
+				populationDefinition.mapRenderer,
+				"renderPopulationView",
+				view,
+			);
+			expect(
+				vi.mocked(rendering.renderPopulationView).mock.calls[0][4],
+			).toMatchObject({ id: declared });
+		},
+	);
 });

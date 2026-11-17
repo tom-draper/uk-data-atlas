@@ -5,123 +5,92 @@ import type {
 } from "@lib/types";
 import type { BoundaryCodeScope } from "@/lib/helpers/datasetAggregation/ports";
 import type { MapOptions } from "@lib/types/mapOptions";
+import type { DisplayMapView } from "@uk-data-atlas/datasets";
 import {
 	getGenderColorExpression,
 	getSequentialColorExpression,
 } from "@/lib/helpers/colorScale/datasetColors";
 import { calculateMedianAge, calculateTotal } from "@uk-data-atlas/datasets";
-import type { MapExpression } from "../mapManager/expressions";
 import { valueGeojson, type MapRenderContext } from "./context";
 
 /** Any population vintage, whatever geography its records are keyed by. */
 type PopulationRenderDataset = { data: Record<string, PopulationAgeSexRecord> };
 
-function renderPopulation(
+/** The figure a view colours an area by, from the area's record. */
+function computedValue(
+	computed: DisplayMapView["value"]["computed"],
+	record: PopulationAgeSexRecord,
+): number {
+	switch (computed) {
+		case "total":
+			return (
+				calculateTotal(record.males) + calculateTotal(record.females)
+			);
+		case "medianAge":
+			return calculateMedianAge(record) ?? 0;
+		case "genderBalance": {
+			const males = calculateTotal(record.males);
+			const females = calculateTotal(record.females);
+			return females > 0 ? (males - females) / females : 0;
+		}
+	}
+}
+
+/** A population view's value for one area, or null where it has no record. */
+export function populationViewValue(
+	ctx: MapRenderContext,
+	view: DisplayMapView,
+	record: PopulationAgeSexRecord | undefined,
+	feature: Features[number],
+): number | null {
+	if (!record) return null;
+	const value = computedValue(view.value.computed, record);
+	if (!view.value.perSquareKm) return value;
+	const area = ctx.featureBuilder.getFeatureAreaSqKm(feature);
+	return area > 0 ? value / area : 0;
+}
+
+/** The colour range a view reads from the map options. */
+export const populationViewOptions = (
+	view: DisplayMapView,
+	mapOptions: MapOptions,
+) =>
+	(
+		mapOptions as unknown as Record<
+			string,
+			{ colorRange: { min: number; max: number } }
+		>
+	)[view.optionsKey];
+
+/** Colours a population dataset by one of its declared map views. */
+export function renderPopulationView(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
 	dataset: PopulationRenderDataset,
 	mapOptions: MapOptions,
-	mode: "population-age" | "population-gender" | "population-density",
-	valueFor: (code: string, feature: Features[number]) => number | null,
-	colorExpression: (options: MapOptions) => MapExpression,
-	scope: BoundaryCodeScope,
+	view: DisplayMapView,
+	scope: BoundaryCodeScope = "ward",
 ): void {
 	const codeProp = ctx.codeProp(scope, geojson.features);
+	const { colorRange } = populationViewOptions(view, mapOptions);
 
 	const transformedGeojson = valueGeojson(
 		ctx,
 		geojson,
 		dataset,
-		mode,
+		`population-${view.id}`,
 		codeProp,
-		valueFor,
+		(code, feature) =>
+			populationViewValue(ctx, view, dataset.data[code], feature),
 	);
 	ctx.layerManager.render({
 		kind: "boundary-fill",
 		data: transformedGeojson,
-		colorExpression: colorExpression(mapOptions),
+		colorExpression:
+			view.palette === "gender"
+				? getGenderColorExpression(colorRange)
+				: getSequentialColorExpression(colorRange, mapOptions.theme.id),
 		visibility: mapOptions.visibility,
 	});
 	ctx.eventHandler.setupEventHandlers(dataset.data, codeProp);
-}
-
-export function renderAgeDistribution(
-	ctx: MapRenderContext,
-	geojson: BoundaryGeojson,
-	dataset: PopulationRenderDataset,
-	mapOptions: MapOptions,
-	scope: BoundaryCodeScope = "ward",
-): void {
-	renderPopulation(
-		ctx,
-		geojson,
-		dataset,
-		mapOptions,
-		"population-age",
-		(code) => {
-			const record = dataset.data[code];
-			return record ? (calculateMedianAge(record) ?? 0) : null;
-		},
-		(options) =>
-			getSequentialColorExpression(
-				options.ageDistribution.colorRange,
-				options.theme.id,
-			),
-		scope,
-	);
-}
-
-export function renderGender(
-	ctx: MapRenderContext,
-	geojson: BoundaryGeojson,
-	dataset: PopulationRenderDataset,
-	mapOptions: MapOptions,
-	scope: BoundaryCodeScope = "ward",
-): void {
-	renderPopulation(
-		ctx,
-		geojson,
-		dataset,
-		mapOptions,
-		"population-gender",
-		(code) => {
-			const record = dataset.data[code];
-			if (!record) return null;
-			const males = calculateTotal(record.males);
-			const females = calculateTotal(record.females);
-			return females > 0 ? (males - females) / females : 0;
-		},
-		(options) => getGenderColorExpression(options.gender.colorRange),
-		scope,
-	);
-}
-
-export function renderPopulationDensity(
-	ctx: MapRenderContext,
-	geojson: BoundaryGeojson,
-	dataset: PopulationRenderDataset,
-	mapOptions: MapOptions,
-	scope: BoundaryCodeScope = "ward",
-): void {
-	renderPopulation(
-		ctx,
-		geojson,
-		dataset,
-		mapOptions,
-		"population-density",
-		(code, feature) => {
-			const record = dataset.data[code];
-			if (!record) return null;
-			const total =
-				calculateTotal(record.males) + calculateTotal(record.females);
-			const area = ctx.featureBuilder.getFeatureAreaSqKm(feature);
-			return area > 0 ? total / area : 0;
-		},
-		(options) =>
-			getSequentialColorExpression(
-				options.populationDensity.colorRange,
-				options.theme.id,
-			),
-		scope,
-	);
 }

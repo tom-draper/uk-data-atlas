@@ -1,8 +1,6 @@
-import {
-	renderAgeDistribution,
-	renderGender,
-	renderPopulationDensity,
-} from "@/lib/helpers/mapRendering";
+import { renderPopulationView } from "@/lib/helpers/mapRendering";
+import { populationViewOptions } from "@/lib/helpers/mapRendering/population";
+import { declaredMapView } from "./declared";
 import { populationAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { definitionOf, population } from "@uk-data-atlas/datasets";
 import type { PopulationDataset } from "@uk-data-atlas/datasets";
@@ -57,31 +55,21 @@ export const populationDefinition: ChartDatasetDefinition<PopulationDataset> = {
 	...definitionOf(population),
 	chart: density,
 	charts: [density, age, gender],
-	legendKind: "population",
 	mapRenderer: {
 		// Population backs three charts, so the active view picks between them.
 		// A link that names no view gets the dataset's primary chart, density.
-		getOptions: (activeViz, mapOptions) => {
-			switch (activeViz.view) {
-				case "age":
-					return mapOptions.ageDistribution;
-				case "gender":
-					return mapOptions.gender;
-				default:
-					return mapOptions.populationDensity;
-			}
-		},
-		render: ({ map, geojson, dataset, mapOptions, activeViz }) => {
-			switch (activeViz.view) {
-				case "age":
-					renderAgeDistribution(map, geojson, dataset, mapOptions);
-					return;
-				case "gender":
-					renderGender(map, geojson, dataset, mapOptions);
-					return;
-				default:
-					renderPopulationDensity(map, geojson, dataset, mapOptions);
-			}
-		},
+		getOptions: (activeViz, mapOptions) =>
+			populationViewOptions(
+				declaredMapView("population", activeViz.view)!,
+				mapOptions,
+			),
+		render: ({ map, geojson, dataset, mapOptions, activeViz }) =>
+			renderPopulationView(
+				map,
+				geojson,
+				dataset,
+				mapOptions,
+				declaredMapView("population", activeViz.view)!,
+			),
 	},
 };

@@ -5,6 +5,7 @@ import type {
 	DatasetDisplay,
 	DisplayField,
 	DisplayFormat,
+	DisplayMapView,
 	DisplayMeasure,
 } from "@uk-data-atlas/datasets";
 import { getFeatureProp } from "@/lib/types";
@@ -141,6 +142,30 @@ export const declaredDefaultOptions = (type: string) => {
 	const [first] = display.measures;
 	return { measure: first.id, colorRange: { ...first.colorRange } };
 };
+
+/** The views a dataset's map can show, the first being its default, if it declares any. */
+export const declaredMapViews = (
+	type: string,
+): readonly DisplayMapView[] | undefined =>
+	DATASET_DECLARATIONS.find((declaration) => declaration.id === type)
+		?.mapViews;
+
+/** The map view a link names, or the dataset's first when it names none or an unknown one. */
+export const declaredMapView = (
+	type: string,
+	view: string | undefined,
+): DisplayMapView | undefined => {
+	const views = declaredMapViews(type);
+	return views?.find(({ id }) => id === view) ?? views?.[0];
+};
+
+/** The initial colour range of every declared map view, by its options group. */
+export const declaredMapViewOptions = () =>
+	Object.fromEntries(
+		DATASET_DECLARATIONS.flatMap(({ mapViews }) => mapViews ?? []).map(
+			(view) => [view.optionsKey, { colorRange: { ...view.colorRange } }],
+		),
+	);
 
 /** The record describing an area, reached through `recordsVia` when the dataset names one. */
 const recordKey = (
