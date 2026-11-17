@@ -6,7 +6,7 @@
  */
 
 import { join } from "node:path";
-import proj4 from "proj4";
+import { postcodeGridLngLat } from "@uk-data-atlas/geography";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { requirePostcodeAreaLayout } from "@uk-data-atlas/postcodes";
@@ -80,16 +80,6 @@ export type PostcodeUnit = {
 
 const NEARBY = 10;
 
-// British National Grid to WGS 84, as the API reprojects postcode centroids.
-const britishNationalGrid = proj4(
-	"+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 " +
-		"+ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 " +
-		"+units=m +no_defs",
-	"+proj=longlat +datum=WGS84 +no_defs",
-);
-
-const round5 = (value: number) => Math.round(value * 1e5) / 1e5;
-
 /**
  * The postcode at `at` in its district's rows, with the code of the area it
  * is placed in for each release, keyed as `geography/boundaryRelease`.
@@ -149,10 +139,7 @@ export function readPostcodeUnit(
 		...(grid
 			? {
 					grid,
-					lngLat: britishNationalGrid.forward(grid).map(round5) as [
-						number,
-						number,
-					],
+					lngLat: postcodeGridLngLat(grid),
 				}
 			: {}),
 		areas,

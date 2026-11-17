@@ -39,6 +39,10 @@ import {
 } from "@uk-data-atlas/atlas-loader";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
+import {
+	readPostcodeUnit,
+	type DistrictRow,
+} from "../../../lib/places/postcodeUnit";
 
 /**
  * The fixture's base database is written by hand, so its ids are registered
@@ -114,7 +118,11 @@ function fixture(t: TestContext) {
 	);
 	const postcodes = postcodeIndexFor([
 		postcodeRow("M1 1AA", { usrtypind: "1" }),
-		postcodeRow("M1 1AB", { doterm: "200102" }),
+		postcodeRow("M1 1AB", {
+			doterm: "200102",
+			east1m: "400000",
+			north1m: "400000",
+		}),
 		postcodeRow("SW1A 1AA", { east1m: "", north1m: "", gridind: "9" }),
 	]);
 	storePostcodeIndex(root, postcodes.artifact, (path) =>
@@ -198,11 +206,35 @@ test("readers refuse a database built before postcode area sets", (t) => {
 		compiled.files[0]!.text,
 	);
 	const db = new DatabaseSync(path);
-	db.exec("DELETE FROM meta WHERE key = 'postcodeAreaLayout'");
+	const postcodeRows = db
+		.prepare(
+			"SELECT postcode, easting, northing, quality, country, introduced, terminated, largeUser FROM postcodes ORDER BY postcode",
+		)
+		.all() as DistrictRow[];
+	const coordinates = db
+		.prepare(
+			"SELECT latitude, longitude FROM postcodes_decoded ORDER BY postcode",
+		)
+		.all();
+	for (const at of [0, 1]) {
+		const unit = readPostcodeUnit("M1", postcodeRows, at, () => undefined, {
+			areas: { constituency: "", localAuthority: "", ward: "" },
+			deprivation: { imd: "", simd: "", wimd: "" },
+		});
+		assert.deepEqual(
+			[coordinates[at]!.longitude, coordinates[at]!.latitude],
+			unit.lngLat,
+		);
+	}
+	assert.deepEqual(
+		{ ...coordinates[2] },
+		{ latitude: null, longitude: null },
+	);
+	db.exec("UPDATE meta SET value = '4' WHERE key = 'postcodeAreaLayout'");
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 1 but this code needs 4/,
+		/postcode area layout 4 but this code needs 5/,
 	);
 });
 
@@ -346,6 +378,8 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 			"introduced",
 			"terminated",
 			"largeUser",
+			"latitude",
+			"longitude",
 			"wardAreaId",
 			"wardDistanceCm",
 			"wardCode",

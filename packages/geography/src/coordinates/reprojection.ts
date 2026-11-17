@@ -40,6 +40,12 @@ const britishNationalGrid = proj4(
 	"+proj=longlat +datum=WGS84 +no_defs",
 );
 
+/** British National Grid centroid in WGS 84, rounded as the postcode API. */
+export const postcodeGridLngLat = (position: Position): Position =>
+	britishNationalGrid
+		.forward(position)
+		.map((value) => Math.round(value * 1e5) / 1e5) as Position;
+
 // Irish Grid on TM65, the grid the Northern Ireland super output areas are
 // published on, to WGS 84 through EPSG's seven-parameter transformation.
 const irishGrid = proj4(

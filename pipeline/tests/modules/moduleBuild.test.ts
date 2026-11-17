@@ -228,6 +228,17 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 	const atlas = open(join(root, "atlas.sqlite"));
 	const assembled = open(out);
 	try {
+		const postcodeModule = open(
+			join(root, "release", sqlitePath("postcodes")),
+		);
+		try {
+			assert.deepEqual(
+				postcodeModule.prepare("SELECT * FROM postcodes").all(),
+				atlas.prepare("SELECT * FROM postcodes").all(),
+			);
+		} finally {
+			postcodeModule.close();
+		}
 		for (const sql of [
 			"SELECT count(*) AS n FROM crosswalk_edge_check",
 			"SELECT count(*) AS n FROM schema_table",
