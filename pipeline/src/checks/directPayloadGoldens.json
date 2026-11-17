@@ -62,5 +62,13 @@
 	"imd": {
 		"sha256": "903e7cffea7c392168f61be0bb4cde82bc736fb5facd862664f4c0e2df3f7f5c",
 		"bytes": 11547834
+	},
+	"income": {
+		"sha256": "73bd3fe38c9a75e7c8844372f7ba30b43a64b8eedc30e80348644dc93b75858f",
+		"bytes": 181712
+	},
+	"workplace-income": {
+		"sha256": "b50d02f9e42b7be407188ae03f5d8959e785d27b9dc4d13e867220052e4e6de8",
+		"bytes": 181715
 	}
 }
