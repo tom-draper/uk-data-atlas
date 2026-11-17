@@ -19,7 +19,6 @@ import {
 import { compileDirectDataset } from "./compileDirectDataset.ts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import {
-	withDuckdbEnergyConsumption,
 	withDuckdbLocalElection,
 	withDuckdbSchoolPerformance,
 } from "./duckdbDatasetCsv.ts";
@@ -138,9 +137,8 @@ export async function compileStaleDataset(
 								},
 								reader,
 							)
-						: definition.type === "electricity-consumption" ||
-							  definition.type === "gas-consumption"
-							? await withDuckdbEnergyConsumption(
+						: definition.type === "local-election"
+							? await withDuckdbLocalElection(
 									reader,
 									artifacts,
 									(input) =>
@@ -149,36 +147,25 @@ export async function compileStaleDataset(
 											input,
 										),
 								)
-							: definition.type === "local-election"
-								? await withDuckdbLocalElection(
+							: definition.type === "school-performance" ||
+								  definition.type ===
+										"school-performance-disadvantage"
+								? await withDuckdbSchoolPerformance(
 										reader,
 										artifacts,
+										definition.type === "school-performance"
+											? "Total"
+											: "Disadvantage status",
 										(input) =>
 											compileDatasetContents(
 												definition,
 												input,
 											),
 									)
-								: definition.type === "school-performance" ||
-									  definition.type ===
-											"school-performance-disadvantage"
-									? await withDuckdbSchoolPerformance(
-											reader,
-											artifacts,
-											definition.type ===
-												"school-performance"
-												? "Total"
-												: "Disadvantage status",
-											(input) =>
-												compileDatasetContents(
-													definition,
-													input,
-												),
-										)
-									: await compileDatasetContents(
-											definition,
-											reader,
-										);
+								: await compileDatasetContents(
+										definition,
+										reader,
+									);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&

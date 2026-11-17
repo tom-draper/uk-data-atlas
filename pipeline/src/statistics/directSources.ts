@@ -55,7 +55,10 @@ export async function readDirectParts(
 }
 
 /** `readDirectParts`, with the inputs the built manifest records for each compiler. */
-export const readDirectPartsFor = (repositoryRoot: string) => {
+export const readDirectPartsFor = (
+	repositoryRoot: string,
+	types?: readonly string[],
+) => {
 	const manifest = JSON.parse(
 		readFileSync(
 			join(repositoryRoot, "data/build/datasets/dataset-manifest.json"),
@@ -69,7 +72,8 @@ export const readDirectPartsFor = (repositoryRoot: string) => {
 			compiled: { sha256: string };
 		}[];
 	};
-	return readDirectParts((type) =>
-		manifest.datasets.find((entry) => entry.type === type),
+	return readDirectParts(
+		(type) => manifest.datasets.find((entry) => entry.type === type),
+		types,
 	);
 };
