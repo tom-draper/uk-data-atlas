@@ -7,7 +7,11 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { BreakdownBars } from "@/components/measures/BreakdownBars";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { breakdownView, type BreakdownPart } from "@/lib/measures/breakdown";
+import {
+	breakdownView,
+	type BreakdownOptions,
+	type BreakdownPart,
+} from "@/lib/measures/breakdown";
 import type { MeasureValuesRequest } from "@/lib/measures/types";
 import { requestAreas } from "@/lib/measures/scope";
 import { useMeasureMembers } from "@/lib/measures/useMeasureMembers";
@@ -20,10 +24,13 @@ type Props = {
 	/** The area hovered or selected; the whole scope when none is. */
 	area: string | null;
 	dimension: string;
-	total: string;
+	/** The member that is the total; absent, the sum of the parts. */
+	total?: string;
 	parts: readonly BreakdownPart[];
-	/** The part whose colour highlights the card. */
-	accent: string;
+	/** The part whose colour highlights the card; absent, the largest drawn. */
+	accent?: string;
+	/** Which parts are drawn, and in what order. */
+	options?: BreakdownOptions;
 	heading: string;
 	title?: string;
 	coverage?: string;
@@ -47,6 +54,7 @@ export function MeasureBreakdownCard({
 	total,
 	parts,
 	accent,
+	options,
 	heading,
 	title,
 	coverage,
@@ -59,15 +67,29 @@ export function MeasureBreakdownCard({
 	const state = useMeasureMembers(
 		scope?.length ? { ...request, areas: requestAreas(scope) } : null,
 		dimension,
-		[total, ...parts.map((part) => part.code)],
+		total === undefined
+			? parts.map((part) => part.code)
+			: [total, ...parts.map((part) => part.code)],
 	);
 	const view =
 		state.status === "ready"
-			? breakdownView(state.payloads, area, dimension, total, parts)
+			? breakdownView(
+					state.payloads,
+					area,
+					dimension,
+					total,
+					parts,
+					options,
+				)
 			: null;
 	const loading =
 		state.status === "loading" || chartsLoading || scope === null;
-	const accentColor = parts.find((part) => part.code === accent)?.color;
+	const accentColor =
+		accent === undefined
+			? view?.shares.reduce((most, share) =>
+					share.pct > most.pct ? share : most,
+				).color
+			: parts.find((part) => part.code === accent)?.color;
 
 	return (
 		<ChartCard

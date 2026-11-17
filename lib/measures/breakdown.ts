@@ -19,6 +19,14 @@ export type BreakdownShare = {
 	pct: number;
 };
 
+/** How a breakdown is drawn beyond its declared parts. */
+export type BreakdownOptions = {
+	/** Draw the largest part first, rather than in the declared order. */
+	order?: "largest";
+	/** Leave out a part by its label. The shares are then of the parts left. */
+	includes?: (label: string) => boolean;
+};
+
 export type BreakdownView = {
 	period: string;
 	total: number;
@@ -41,34 +49,54 @@ export function memberLabels(
 /**
  * How one area's total splits across the parts, from a payload for each
  * member (one member is one request). With no area, the split of every area
- * in the payloads combined. Null where the total or any part is missing, or
- * the total is nothing, so a half-drawn bar is never shown.
+ * in the payloads combined. The total is the member named by `totalCode`, or,
+ * with none, the sum of the parts drawn. Null where the total or any part is
+ * missing, or the total is nothing, so a half-drawn bar is never shown.
  */
 export function breakdownView(
 	payloads: Readonly<Record<string, MeasureValuesPayload>>,
 	area: string | null,
 	dimension: string,
-	totalCode: string,
+	totalCode: string | undefined,
 	parts: readonly BreakdownPart[],
+	options: BreakdownOptions = {},
 ): BreakdownView | null {
 	const latest = (code: string) => {
 		const payload = payloads[code];
 		return payload ? latestPoint(readSeries(payload, area)) : null;
 	};
-	const total = latest(totalCode);
-	if (!total || total.value <= 0) return null;
-	const labels = memberLabels(payloads[totalCode]!, dimension);
-	const shares: BreakdownShare[] = [];
+	const declaredTotal = totalCode === undefined ? null : latest(totalCode);
+	if (totalCode !== undefined && !declaredTotal) return null;
+	const first = payloads[totalCode ?? parts[0]?.code ?? ""];
+	if (!first) return null;
+	const labels = memberLabels(first, dimension);
+	const found: {
+		part: BreakdownPart;
+		label: string;
+		value: number;
+		period: string;
+	}[] = [];
 	for (const part of parts) {
 		const point = latest(part.code);
 		if (!point) return null;
-		shares.push({
-			key: part.code,
-			label: part.label ?? labels.get(part.code) ?? part.code,
-			color: part.color,
-			count: point.value,
-			pct: (point.value / total.value) * 100,
-		});
+		const label = part.label ?? labels.get(part.code) ?? part.code;
+		if (options.includes && !options.includes(label)) continue;
+		found.push({ part, label, value: point.value, period: point.period });
 	}
-	return { period: total.period, total: total.value, shares };
+	const total = declaredTotal
+		? declaredTotal.value
+		: found.reduce((sum, one) => sum + one.value, 0);
+	if (total <= 0) return null;
+	if (options.order === "largest") found.sort((a, b) => b.value - a.value);
+	return {
+		period: declaredTotal?.period ?? found[0]?.period ?? "",
+		total,
+		shares: found.map((one) => ({
+			key: one.part.code,
+			label: one.label,
+			color: one.part.color,
+			count: one.value,
+			pct: (one.value / total) * 100,
+		})),
+	};
 }

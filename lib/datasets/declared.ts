@@ -179,6 +179,7 @@ const breakdownFor = (
 	total: breakdown.total,
 	parts: breakdown.parts,
 	accent: breakdown.accent,
+	order: breakdown.order,
 	heading: breakdown.heading,
 	period: breakdown.period,
 	source: breakdown.source,
