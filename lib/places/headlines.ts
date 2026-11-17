@@ -8,7 +8,12 @@ import {
 	type MapRanking,
 	type RankedArea,
 } from "@/lib/atlas/rankings";
+import { formatDisplay } from "@/lib/datasets/declared";
 import type { PlaceGeography } from "@uk-data-atlas/catalogue/place-profile";
+import {
+	DATASET_DECLARATIONS,
+	type PlaceHeadlineDeclaration,
+} from "@uk-data-atlas/datasets";
 
 /**
  * A place page's key figures: a few of the atlas's ranked maps, each with the
@@ -16,119 +21,36 @@ import type { PlaceGeography } from "@uk-data-atlas/catalogue/place-profile";
  * page shows the same numbers as the ranking pages it links to.
  */
 
-type HeadlineSpec = {
-	map: string;
-	/** A short name for the measure. */
-	label: string;
-	/** What exactly the value counts, in a line. */
-	about: string;
-	/** Rank by this extra column rather than the map's own value. */
-	column?: number;
-	/** Where the map's own format reads oddly out of context. */
-	format?: (value: number) => string;
-	/** How the two ends of the ranking read, "highest" and "lowest" by default. */
-	ends?: readonly [string, string];
-};
+type HeadlineSpec = PlaceHeadlineDeclaration & { map: string };
 
-const oneDecimal = (unit: string) => (value: number) =>
-	`${value.toFixed(1)}${unit}`;
+/**
+ * The headlines of each kind of place, in page order. A dataset declares its
+ * own, so a place page needs no list kept here.
+ */
+const HEADLINES: Readonly<Record<PlaceGeography, readonly HeadlineSpec[]>> =
+	(() => {
+		const byPlace: Record<PlaceGeography, HeadlineSpec[]> = {
+			localAuthority: [],
+			ward: [],
+			constituency: [],
+			// No ranked map is drawn by parish or by town.
+			parish: [],
+			majorTownAndCity: [],
+		};
+		for (const declaration of DATASET_DECLARATIONS) {
+			const { placeHeadline } = declaration;
+			if (!placeHeadline) continue;
+			for (const place of placeHeadline.places)
+				byPlace[place].push({ ...placeHeadline, map: declaration.id });
+		}
+		for (const specs of Object.values(byPlace))
+			specs.sort((a, b) => a.order - b.order);
+		return byPlace;
+	})();
 
-const deprivation = (map: string, nation: string, areas: string) => ({
-	map,
-	label: "Deprivation",
-	about: `Share of its ${areas} in ${nation}'s most deprived 10%`,
-});
-
-const HEADLINES: Readonly<Record<PlaceGeography, readonly HeadlineSpec[]>> = {
-	localAuthority: [
-		{
-			map: "income",
-			label: "Median pay",
-			about: "Annual pay of residents in full-time work",
-		},
-		{
-			map: "housing-affordability",
-			label: "Housing affordability",
-			about: "Median house price as a multiple of median earnings",
-			format: oneDecimal("×"),
-		},
-		{
-			map: "life-expectancy",
-			label: "Life expectancy",
-			about: "At birth, the average of men and women",
-			format: oneDecimal(" years"),
-		},
-		deprivation("imd", "England", "neighbourhoods"),
-		deprivation("wimd", "Wales", "neighbourhoods"),
-		deprivation("simd", "Scotland", "data zones"),
-		deprivation("nimdm", "Northern Ireland", "neighbourhoods"),
-		{
-			map: "child-poverty",
-			label: "Child poverty",
-			about: "Children under 16 in relative low-income families",
-		},
-		{
-			map: "claimant-count",
-			label: "Claimant rate",
-			about: "Residents aged 16 to 64 claiming out-of-work benefits",
-		},
-		{
-			map: "council-tax",
-			label: "Council tax",
-			about: "Average Band D bill for the year",
-		},
-		{
-			map: "crime",
-			column: 0,
-			label: "Crime",
-			about: "Police-recorded crimes per 1,000 residents",
-		},
-		{
-			map: "broadband",
-			label: "Full fibre",
-			about: "Premises that can get full-fibre broadband",
-			format: (value) => `${Math.round(value)}%`,
-		},
-		{
-			map: "qualification",
-			label: "Degree-educated",
-			about: "Residents with a degree-level qualification or above",
-		},
-		{
-			map: "ghg-emissions",
-			label: "Emissions",
-			about: "Greenhouse gases per resident, in CO2e",
-		},
-		{
-			map: "brexit",
-			label: "EU referendum",
-			about: "Share voting Leave",
-		},
-	],
-	ward: [
-		{
-			map: "house-price",
-			label: "House prices",
-			about: "Median price paid for homes sold",
-		},
-	],
-	constituency: [
-		{
-			map: "general-election",
-			label: "General election",
-			about: "The winning party",
-			ends: ["largest majority", "smallest majority"],
-		},
-		{
-			map: "brexit-constituency",
-			label: "EU referendum",
-			about: "Estimated share voting Leave",
-		},
-	],
-	// No ranked map is drawn by parish or by town.
-	parish: [],
-	majorTownAndCity: [],
-};
+/** The datasets a kind of place shows headlines for, in page order. */
+export const headlineMapsFor = (geography: PlaceGeography) =>
+	HEADLINES[geography].map((spec) => spec.map);
 
 export type Rank = { rank: number; of: number; href?: string };
 
@@ -298,7 +220,7 @@ async function headline(
 		value:
 			election?.value ??
 			(spec.format
-				? spec.format(value)
+				? formatDisplay(spec.format, value)
 				: column
 					? formatColumnValue(column, value)
 					: formatRankedValue(map, value)),
