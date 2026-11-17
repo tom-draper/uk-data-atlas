@@ -4,6 +4,7 @@ import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateClaimantCount } from "./aggregate.ts";
 import { loadClaimantCount } from "./loader.ts";
+import { claimantCountStatisticsPart } from "../../../data/claimant-count/source.ts";
 
 export const claimantCount = defineDataset<ClaimantCountDataset>({
 	id: "claimant-count",
@@ -41,6 +42,10 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 		name: "ladName",
 		period: () => periods.month(2026, 4),
 		alsoIn: [{ geography: "localAuthority", year: 2022 }],
+		direct: {
+			read: async ({ text, xlsxSheet }) =>
+				claimantCountStatisticsPart(text, xlsxSheet),
+		},
 		measures: [
 			measure(
 				"claimants",
