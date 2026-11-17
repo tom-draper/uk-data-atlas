@@ -78,6 +78,7 @@ export const readDistFacts = (source = SOURCE): DistFacts => {
 		core: [],
 		boundaries: [],
 		postcodes: [],
+		"crosswalk-checks": [],
 	};
 	const fed = new Map(DATASET_SOURCES.map(([folder, ids]) => [folder, ids]));
 	for (const path of metaFolders(source)) {
@@ -92,6 +93,11 @@ export const readDistFacts = (source = SOURCE): DistFacts => {
 		const part = PART_OF_KIND[meta.kind];
 		if (part) foundation[part].push(fact);
 	}
+	// Checks derive from crosswalks and boundary geometry. Include both source sets.
+	foundation["crosswalk-checks"] = [
+		...foundation.core,
+		...foundation.boundaries,
+	];
 	return { datasets, foundation };
 };
 

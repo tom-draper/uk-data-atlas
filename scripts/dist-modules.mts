@@ -43,7 +43,12 @@ export interface DistFacts {
 	foundation: Readonly<Record<DatasetFoundationPart, readonly SourceFact[]>>;
 }
 
-export const FOUNDATION_PARTS = ["core", "boundaries", "postcodes"] as const;
+export const FOUNDATION_PARTS = [
+	"core",
+	"boundaries",
+	"postcodes",
+	"crosswalk-checks",
+] as const;
 
 /** Where the database of a module is written by the module build. */
 export const databasePath = (moduleId: string) =>

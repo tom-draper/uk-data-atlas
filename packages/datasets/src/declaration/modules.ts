@@ -32,7 +32,7 @@ import { REGISTERED_DATASETS } from "./tree.ts";
  * a change to core would break a module built before it; the assembler (task
  * 13) refuses to combine modules whose keys differ from core's.
  */
-export const CORE_COMPATIBILITY_KEY = "atlas-core-1";
+export const CORE_COMPATIBILITY_KEY = "atlas-core-2";
 
 /** The shape of a manifest. Bump when a field is removed or changes meaning. */
 export const MODULE_MANIFEST_SCHEMA_VERSION = 1;
@@ -404,7 +404,7 @@ export const buildModuleManifests = (
 				themes: [],
 				topics: [],
 				datasets: [],
-				requires: [],
+				requires: part.id === "crosswalk-checks" ? ["core"] : [],
 				addOns: [],
 				compatibility: { core: CORE_COMPATIBILITY_KEY },
 				build: NOT_BUILT,

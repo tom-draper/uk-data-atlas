@@ -207,6 +207,7 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 	const result = await assembleModules({
 		root: join(root, "release"),
 		modules: [
+			"crosswalk-checks",
 			"postcodes",
 			"politics-sharealike",
 			"politics",
@@ -216,6 +217,7 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 		out,
 	});
 	assert.deepEqual(result.modules, [
+		"crosswalk-checks",
 		"economy",
 		"health",
 		"politics",
@@ -227,6 +229,9 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 	const assembled = open(out);
 	try {
 		for (const sql of [
+			"SELECT count(*) AS n FROM crosswalk_edge_check",
+			"SELECT count(*) AS n FROM schema_table",
+			"SELECT count(*) AS n FROM schema_column",
 			"SELECT count(*) AS n FROM dataset",
 			"SELECT count(*) AS n FROM measure",
 			"SELECT count(*) AS n FROM observation",
@@ -259,7 +264,7 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 					)
 					.get() as { value: string }
 			).value,
-			"economy,health,politics,politics-sharealike,postcodes",
+			"crosswalk-checks,economy,health,politics,politics-sharealike,postcodes",
 		);
 		assert.deepEqual(
 			assembled.prepare("PRAGMA foreign_key_check").all(),
@@ -354,7 +359,7 @@ test("the assembler refuses a module built for another core", async (t) => {
 	const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
 		compatibility: { core: string };
 	};
-	manifest.compatibility.core = "atlas-core-0";
+	manifest.compatibility.core = "atlas-core-1";
 	writeFileSync(manifestPath, JSON.stringify(manifest));
 	await assert.rejects(
 		assembleModules({
@@ -364,7 +369,7 @@ test("the assembler refuses a module built for another core", async (t) => {
 		}),
 		(error) =>
 			error instanceof AssembleError &&
-			/health: its manifest needs core atlas-core-0/.test(
+			/health: its manifest needs core atlas-core-1/.test(
 				error.message,
 			) &&
 			!/economy/.test(error.message),

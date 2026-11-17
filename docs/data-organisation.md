@@ -239,7 +239,7 @@ names recorded for each dataset, so a split such as task 16's is one entry in
 `SPLIT_MODULE_DEFINITIONS` (`packages/datasets/src/declaration/taxonomy.ts`).
 It carries the id, label, description, themes, topics,
 datasets, resolved licences, a `licenceConflict`, the core compatibility key
-(`atlas-core-1`, bumped when a change to core breaks modules built before it),
+(`atlas-core-2`, bumped when a change to core breaks modules built before it),
 the manifest `schemaVersion`, and a `build` block whose size and file checksums
 are null until task 13 fills them. Licences resolve to ids (`ogl-3.0`,
 `open-parliament`, `cc-by-sa-3.0`) from the `meta.json` licence name; a name
@@ -691,3 +691,5 @@ quality and size. **P3** is product polish.
 | 18  | P2       | Done: the 14 unused sources are staged in `_staging/` (see "Staged sources"). At the next data refresh, rename the external `school-performance-constituency` folder and its `meta.json` (`dataset`) to match `school-performance`, then drop its `DATASET_SOURCES` mapping. |
 | 19  | P3       | Bundles for sale (for example public services, full) with download sizes.                                                                                                                                                                                                    |
 | 20  | P3       | Theme icons and colours, used across website, docs and published READMEs.                                                                                                                                                                                                    |
+
+The optional `crosswalk-checks` module holds edge measurements used by crosswalk API responses. Assemble it with core to reconstruct those responses; its source and licence information conservatively combines core and boundary sources. Core and module files must share a compatibility key.

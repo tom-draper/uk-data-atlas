@@ -102,6 +102,7 @@ export const countRows = (database: DatabaseSync): Record<string, number> => {
 const publish = (
 	path: string,
 	build: (database: DatabaseSync) => void,
+	checkIntegrity = false,
 ): void => {
 	mkdirSync(dirname(path), { recursive: true });
 	const work = `${path}.work`;
@@ -119,7 +120,27 @@ const publish = (
 		database.close();
 	}
 	try {
-		publishVacuumed(work, path);
+		publishVacuumed(
+			work,
+			path,
+			checkIntegrity
+				? {
+						finish: (database) => {
+							// Module foreign keys resolve only after assembly with core.
+							const results = database
+								.prepare("PRAGMA integrity_check")
+								.all();
+							if (
+								results.length !== 1 ||
+								results[0]?.integrity_check !== "ok"
+							)
+								throw new Error(
+									`SQLite integrity_check failed: ${JSON.stringify(results)}`,
+								);
+						},
+					}
+				: undefined,
+		);
 	} finally {
 		rmSync(work, { force: true });
 	}
@@ -282,6 +303,11 @@ const moduleInfo = (
 
 /** The module's own tables and how to select the rows it owns. */
 const moduleSelection = (id: string) => {
+	if (id === "crosswalk-checks")
+		return (table: string) =>
+			tableOwner(table) === "crosswalk-checks" ||
+			table === "schema_table" ||
+			table === "schema_column";
 	if (id === "postcodes")
 		return (table: string) => tableOwner(table) === "postcodes";
 	if (addOnOf(id))
@@ -318,43 +344,59 @@ export const buildModuleDatabase = (
 	manifest: ModuleManifest,
 	path: string,
 ): void =>
-	publish(path, (database) => {
-		attachSource(database, atlasPath);
-		const schema = readSchema(database, "src");
-		const keep = moduleSelection(manifest.id);
-		createSchema(database, schema, keep);
-		if (manifest.id === "postcodes") {
-			for (const row of schema)
-				if (row.type === "table" && keep(row.name))
-					copyTable(database, row.name);
-			database.exec(
-				`CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID`,
-			);
-			copyTable(
-				database,
-				"payloads",
-				`id IN (${POSTCODE_PAYLOADS.map(literal).join(", ")})`,
-			);
-		} else {
-			markOwned(database, manifest.id);
-			const addOn = addOnOf(manifest.id);
-			const withheld = withheldFrom(manifest.id);
-			if (addOn || withheld.length > 0) {
-				markLicensed(database, addOn ? [addOn] : withheld);
-				checkLicensedPeriods(database, manifest.id);
+	publish(
+		path,
+		(database) => {
+			attachSource(database, atlasPath);
+			const schema = readSchema(database, "src");
+			const keep = moduleSelection(manifest.id);
+			createSchema(database, schema, keep);
+			if (manifest.id === "crosswalk-checks") {
+				for (const row of schema)
+					if (row.type === "table" && keep(row.name))
+						copyTable(
+							database,
+							row.name,
+							row.name === "schema_table"
+								? "name = 'crosswalk_edge_check'"
+								: row.name === "schema_column"
+									? "table_name = 'crosswalk_edge_check'"
+									: undefined,
+						);
+			} else if (manifest.id === "postcodes") {
+				for (const row of schema)
+					if (row.type === "table" && keep(row.name))
+						copyTable(database, row.name);
+				database.exec(
+					`CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID`,
+				);
+				copyTable(
+					database,
+					"payloads",
+					`id IN (${POSTCODE_PAYLOADS.map(literal).join(", ")})`,
+				);
+			} else {
+				markOwned(database, manifest.id);
+				const addOn = addOnOf(manifest.id);
+				const withheld = withheldFrom(manifest.id);
+				if (addOn || withheld.length > 0) {
+					markLicensed(database, addOn ? [addOn] : withheld);
+					checkLicensedPeriods(database, manifest.id);
+				}
+				checkDatasets(database, manifest);
+				checkSelfContained(database, manifest.id);
+				for (const { table, where } of rowSelection(manifest.id))
+					copyTable(database, table, where);
 			}
-			checkDatasets(database, manifest);
-			checkSelfContained(database, manifest.id);
-			for (const { table, where } of rowSelection(manifest.id))
-				copyTable(database, table, where);
-		}
-		moduleInfo(database, {
-			id: manifest.id,
-			coreCompatibility: CORE_COMPATIBILITY_KEY,
-			kind: manifest.kind,
-			requires: manifest.requires.join(","),
-		});
-	});
+			moduleInfo(database, {
+				id: manifest.id,
+				coreCompatibility: CORE_COMPATIBILITY_KEY,
+				kind: manifest.kind,
+				requires: manifest.requires.join(","),
+			});
+		},
+		manifest.id === "crosswalk-checks",
+	);
 
 const isPostcodePayload = `id IN (${POSTCODE_PAYLOADS.map(literal).join(", ")})`;
 

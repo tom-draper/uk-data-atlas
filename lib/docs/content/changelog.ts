@@ -29,6 +29,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-17",
+		title: "Crosswalk checks available as a module",
+		surface: "4e9130821397",
+		changes: [
+			"`GET /v1/modules` lists the optional `crosswalk-checks` module. It can be assembled with core to restore crosswalk edge measurements used by the API.",
+			"The OpenAPI schema now describes crosswalk target measurements already returned by the records endpoint. Existing crosswalk responses are unchanged.",
+		],
+	},
+	{
 		date: "2026-11-13",
 		title: "Datasets list their related topics",
 		surface: "eec677cc63c7",

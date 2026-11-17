@@ -39,6 +39,7 @@ describe("theme and topic registry", () => {
 			"core",
 			"boundaries",
 			"postcodes",
+			"crosswalk-checks",
 		]);
 		expect(
 			DATASET_FOUNDATION_PARTS.filter(

@@ -14,7 +14,7 @@ This file is generated from the module manifest. Do not edit it.
 | Kind | theme |
 | Always included | No, choose it as needed |
 | Datasets | 4 |
-| Core compatibility | \`atlas-core-1\` |
+| Core compatibility | \`atlas-core-2\` |
 | Manifest schema version | 1 |
 | Manifest | \`sqlite/atlas-transport.manifest.json\` |
 
@@ -65,7 +65,7 @@ Road collisions and casualties.
 
 ## Core compatibility
 
-This module is built against core \`atlas-core-1\` (the current key is \`atlas-core-1\`). It joins to the areas, releases and lookups in core, so use it only with a core carrying the same key.
+This module is built against core \`atlas-core-2\` (the current key is \`atlas-core-2\`). It joins to the areas, releases and lookups in core, so use it only with a core carrying the same key.
 
 ## Using this module
 
