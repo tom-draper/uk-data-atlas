@@ -11,29 +11,30 @@ import {
 import { loadEthnicity } from "../../../data/ethnicity/loader.ts";
 
 /** The census's code for each ethnic group. */
-const ETHNICITY_CODES: Readonly<Record<string, string>> = Object.fromEntries(
-	[
-		"Bangladeshi",
-		"Chinese",
-		"Indian",
-		"Pakistani",
-		"Other Asian",
-		"African",
-		"Caribbean",
-		"Other Black",
-		"White and Asian",
-		"White and Black African",
-		"White and Black Caribbean",
-		"Other Mixed or Multiple ethnic groups",
-		"English, Welsh, Scottish, Northern Irish or British",
-		"Irish",
-		"Gypsy or Irish Traveller",
-		"Roma",
-		"Other White",
-		"Arab",
-		"Any other ethnic group",
-	].map((name, index) => [name, String(index + 1)]),
-);
+export const ETHNICITY_CODES: Readonly<Record<string, string>> =
+	Object.fromEntries(
+		[
+			"Bangladeshi",
+			"Chinese",
+			"Indian",
+			"Pakistani",
+			"Other Asian",
+			"African",
+			"Caribbean",
+			"Other Black",
+			"White and Asian",
+			"White and Black African",
+			"White and Black Caribbean",
+			"Other Mixed or Multiple ethnic groups",
+			"English, Welsh, Scottish, Northern Irish or British",
+			"Irish",
+			"Gypsy or Irish Traveller",
+			"Roma",
+			"Other White",
+			"Arab",
+			"Any other ethnic group",
+		].map((name, index) => [name, String(index + 1)]),
+	);
 
 export const ethnicity = defineDataset<EthnicityDataset>({
 	id: "ethnicity",
