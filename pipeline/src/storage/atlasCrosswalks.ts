@@ -365,6 +365,7 @@ export const crosswalkTables = (
 		"FOREIGN KEY (crosswalk_id, from_version_id, to_version_id) REFERENCES crosswalk_edge (crosswalk_id, from_version_id, to_version_id)";
 	return {
 		crosswalk_inventory_metadata: {
+			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",
@@ -379,6 +380,7 @@ export const crosswalkTables = (
 			],
 		},
 		crosswalk_coverage_entry: {
+			strict: true,
 			columns: [
 				"geography TEXT NOT NULL",
 				"boundary_release TEXT NOT NULL",

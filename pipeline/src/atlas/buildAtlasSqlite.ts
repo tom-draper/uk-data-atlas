@@ -332,6 +332,7 @@ export const buildAtlasSqlite = (
 			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
 			...namedLocationTables(artifactDirectory(repositoryRoot), ids),
 			payloads: {
+				strict: true,
 				columns: ["id TEXT NOT NULL", "payload BLOB NOT NULL"],
 				key: ["id"],
 				rows: payloads(),

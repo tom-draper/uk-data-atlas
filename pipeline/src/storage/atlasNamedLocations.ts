@@ -44,6 +44,7 @@ export const namedLocationTables = (
 	};
 	return {
 		named_location_inventory_metadata: {
+			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",
@@ -60,6 +61,7 @@ export const namedLocationTables = (
 			],
 		},
 		place: {
+			strict: true,
 			columns: [
 				"id INTEGER NOT NULL",
 				"slug TEXT NOT NULL UNIQUE",
@@ -100,6 +102,7 @@ export const namedLocationTables = (
 			]),
 		},
 		place_member: {
+			strict: true,
 			columns: [
 				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
@@ -117,6 +120,7 @@ export const namedLocationTables = (
 				),
 		},
 		place_assertion: {
+			strict: true,
 			columns: [
 				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
@@ -140,6 +144,7 @@ export const namedLocationTables = (
 				),
 		},
 		place_partial_member: {
+			strict: true,
 			columns: [
 				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"position INTEGER NOT NULL",
@@ -161,6 +166,7 @@ export const namedLocationTables = (
 				),
 		},
 		place_geometry: {
+			strict: true,
 			columns: [
 				"place_id INTEGER NOT NULL REFERENCES place(id)",
 				"boundary_release TEXT NOT NULL",
