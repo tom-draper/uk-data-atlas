@@ -8,7 +8,7 @@ import { parseNum } from "../../helpers/parseNumber.ts";
 import { odsTableRows } from "../spreadsheet/ods.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
-const LOCAL_AUTHORITY_CODES: Record<string, string> = {
+export const LOCAL_AUTHORITY_CODES: Record<string, string> = {
 	"Isle of Anglesey": "W06000001",
 	Gwynedd: "W06000002",
 	Conwy: "W06000003",
@@ -33,7 +33,7 @@ const LOCAL_AUTHORITY_CODES: Record<string, string> = {
 	"Merthyr Tydfil": "W06000024",
 };
 
-function pick(row: Record<string, any>, ...keys: string[]): string {
+export function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
 		const v = row[k];
 		if (v !== undefined && v !== null && v !== "") return String(v).trim();

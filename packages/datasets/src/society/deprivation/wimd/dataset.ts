@@ -6,7 +6,16 @@ import {
 	deprivationStatistics,
 	rankDisplay,
 } from "../../../data/deprivation/declaration.ts";
-import { loadWIMD } from "../../../data/wimd/loader.ts";
+import {
+	loadWIMD,
+	publishedWIMDRanks,
+	welshLSOAPopulations,
+	LOCAL_AUTHORITY_CODES,
+	pick,
+} from "../../../data/wimd/loader.ts";
+import { findHeaderLine, parseCsv } from "../../../helpers/parseCsv.ts";
+import { parseNum } from "../../../helpers/parseNumber.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 export const wimd = defineDataset<WIMDDataset>({
 	id: "wimd",
@@ -43,25 +52,122 @@ export const wimd = defineDataset<WIMDDataset>({
 		label: "Deprivation",
 		about: "Share of its neighbourhoods in Wales's most deprived 10%",
 	},
-	statistics: deprivationStatistics({
-		id: "wimd",
-		prefix: "wimd",
-		index: "Welsh Index of Multiple Deprivation",
-		area: "LSOAs in Wales",
-		fields: { score: true, decile: true, population: true },
-		boundary: { type: "lsoa", year: 2011 },
-		edition: "2019",
-		metadata: {
-			source: "Welsh Government. Welsh Index of Multiple Deprivation 2019.",
-			notes: ["Wales only. Decile 1 = most deprived 10% of LSOAs."],
+	statistics: {
+		...deprivationStatistics({
+			id: "wimd",
+			prefix: "wimd",
+			index: "Welsh Index of Multiple Deprivation",
+			area: "LSOAs in Wales",
+			fields: { score: true, decile: true, population: true },
+			boundary: { type: "lsoa", year: 2011 },
+			edition: "2019",
+			metadata: {
+				source: "Welsh Government. Welsh Index of Multiple Deprivation 2019.",
+				notes: ["Wales only. Decile 1 = most deprived 10% of LSOAs."],
+			},
+			code: "lsoaCode",
+			name: "lsoaName",
+			parent: { code: "ladCode", name: "ladName" },
+			summaryField: "ladStats",
+			mostDeprived: (record) => record.wimdDecile === 1,
+			weighted: { score: "wimdScore" },
+		}),
+		direct: {
+			read: async ({ text, odsContent }) => {
+				const published = publishedWIMDRanks(
+					await odsContent(
+						sourceDir(
+							"wimd",
+							"welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+						),
+					),
+				);
+				const populations = welshLSOAPopulations(
+					await text(
+						sourceDir("wimd", "wales-lsoa-population-mid-2017.csv"),
+					),
+				);
+				const csv = await text(sourceDir("wimd", "wimd2019.csv"));
+				const { data } = await parseCsv<Record<string, string>>(csv, {
+					header: true,
+					skipLines: findHeaderLine(csv, "LSOA code"),
+				});
+				const records = new Map<string, DirectRecord>();
+				for (const raw of data) {
+					const row = Object.fromEntries(
+						Object.entries(raw).map(([key, value]) => [
+							key.trim(),
+							value,
+						]),
+					);
+					const code = pick(
+						row,
+						"LSOA code",
+						"LSOA Code",
+						"lsoa_code",
+						"LSOA_Code",
+						"lsoaCode",
+					);
+					if (!code || !code.startsWith("W")) continue;
+					const name = pick(
+						row,
+						"LSOA name",
+						"LSOA Name",
+						"lsoa_name",
+						"LSOA_Name",
+						"lsoaName",
+					);
+					const parentName = pick(
+						row,
+						"Local Authority name",
+						"Local Authority Name",
+						"Local Authority",
+						"la_name",
+						"LA_Name",
+					);
+					const rank = published.get(code);
+					if (!rank)
+						throw new Error(
+							`WIMD ranks: no published rank for ${code}`,
+						);
+					const population = populations.get(code);
+					if (population === undefined)
+						throw new Error(
+							`WIMD population: no estimate for ${code}`,
+						);
+					records.set(code, {
+						code,
+						name,
+						parents: {
+							ladCode: {
+								code: LOCAL_AUTHORITY_CODES[parentName] || "",
+								name: parentName,
+							},
+						},
+						values: [
+							{
+								measure: "wimd-score",
+								value: parseNum(
+									pick(
+										row,
+										"WIMD 2019",
+										"WIMD 2019 Score",
+										"WIMD Score",
+										"wimd_score",
+										"Score",
+									),
+								),
+							},
+							{ measure: "wimd-rank", value: rank.rank },
+							{ measure: "wimd-decile", value: rank.decile },
+							{ measure: "population", value: population },
+						],
+					});
+				}
+				return [{ key: "2019", records: [...records.values()] }];
+			},
 		},
-		code: "lsoaCode",
-		name: "lsoaName",
-		parent: { code: "ladCode", name: "ladName" },
-		summaryField: "ladStats",
-		mostDeprived: (record) => record.wimdDecile === 1,
-		weighted: { score: "wimdScore" },
-	}),
+	},
 	ranking: {
 		label: "Neighbourhoods in Wales' most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
