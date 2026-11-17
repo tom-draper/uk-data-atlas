@@ -163,25 +163,3 @@ export function DeclaredMeasurePanel({
 		/>
 	);
 }
-
-const LIFE_EXPECTANCY_MEASURES = [
-	["average", "Average"],
-	["male", "Male"],
-	["female", "Female"],
-] as const;
-
-export function LifeExpectancyMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "average" | "male" | "female";
-	onChange: (measure: "average" | "male" | "female") => void;
-}) {
-	return (
-		<GlassSegmentedMeasurePanel
-			measure={measure}
-			measures={LIFE_EXPECTANCY_MEASURES}
-			onChange={onChange}
-		/>
-	);
-}

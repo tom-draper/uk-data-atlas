@@ -25,12 +25,18 @@ describe("life expectancy declaration", () => {
 			expect(part.header.type).toBe("life-expectancy");
 	});
 
-	it("keeps its hand-written chart and map", () => {
+	it("draws its bars card and map from its declaration", () => {
 		const definition = CHART_DATASET_DEFINITIONS.find(
 			(candidate) => candidate.type === "life-expectancy",
 		);
-		expect(definition?.chart.key).toBe("health-lifeExpectancy");
+		expect(definition?.chart.key).toBe("health-life-expectancy");
+		expect(definition?.chart.componentPath).toBe(
+			"@/components/measures/MeasureBarsChart",
+		);
+		expect(definition?.chart.datasetId).toBe("le");
+		expect(definition?.chart.keyBy).toBe("id");
 		expect(definition?.map?.valueFor).toBeTypeOf("function");
+		expect(definition?.map?.getColorRange).toBeTypeOf("function");
 		expect(DEFAULT_MAP_OPTIONS["life-expectancy"].measure).toBe("average");
 	});
 

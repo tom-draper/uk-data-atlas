@@ -145,6 +145,7 @@ export type DeclaredDatasetId =
 	| "imd"
 	| "income"
 	| "jobs"
+	| "life-expectancy"
 	| "local-government-finance"
 	| "mobile-coverage"
 	| "net-additional-dwellings"

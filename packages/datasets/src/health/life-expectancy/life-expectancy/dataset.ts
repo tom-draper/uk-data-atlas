@@ -7,6 +7,7 @@ import {
 } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { loadLE } from "../../../data/life-expectancy/loader.ts";
+import { aggregateLifeExpectancy } from "./aggregate.ts";
 
 const HEALTHY_LIFE_EXPECTANCY = measure(
 	"healthy-life-expectancy",
@@ -75,6 +76,71 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 		label: "Life expectancy",
 		about: "At birth, the average of men and women",
 		format: { kind: "decimal", digits: 1, suffix: " years" },
+	},
+	display: {
+		label: "Life Expectancy [2022-2024]",
+		year: 2024,
+		component: "@/components/measures/MeasureBarsChart",
+		bars: {
+			heading: "Life Expectancy",
+			measures: {
+				le: "life-expectancy",
+				hle: "healthy-life-expectancy",
+			},
+			views: { hle: "healthy-life-expectancy" },
+			dimension: "sex",
+			bars: [
+				{ code: "male", label: "M" },
+				{ code: "female", label: "F" },
+			],
+			// Each authority counts once, as the card has always averaged them.
+			combine: "mean",
+			ramp: { low: "#dcfce7", high: "#15803d" },
+			digits: 1,
+		},
+		measures: [
+			{
+				id: "average",
+				label: "Average",
+				field: { mean: ["maleBirthLE", "femaleBirthLE"] },
+				colorRange: { min: 72, max: 84 },
+				rangeFromData: true,
+				legend: {
+					min: 72,
+					max: 84,
+					format: { kind: "decimal", digits: 1, suffix: "y" },
+				},
+			},
+			{
+				id: "male",
+				label: "Male",
+				field: "maleBirthLE",
+				colorRange: { min: 72, max: 84 },
+				rangeFromData: true,
+				legend: {
+					min: 72,
+					max: 84,
+					format: { kind: "decimal", digits: 1, suffix: "y" },
+				},
+			},
+			{
+				id: "female",
+				label: "Female",
+				field: "femaleBirthLE",
+				colorRange: { min: 72, max: 84 },
+				rangeFromData: true,
+				legend: {
+					min: 72,
+					max: 84,
+					format: { kind: "decimal", digits: 1, suffix: "y" },
+				},
+			},
+		],
+		aggregation: {
+			scope: "localAuthority",
+			distinct: true,
+			aggregate: aggregateLifeExpectancy,
+		},
 	},
 	statistics: {
 		payload: {

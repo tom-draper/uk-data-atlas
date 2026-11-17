@@ -1,10 +1,6 @@
 import type { EthnicityCategory, Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
 import type { EthnicityDataset } from "@uk-data-atlas/datasets";
-import type {
-	AggregatedLifeExpectancyData,
-	LifeExpectancyDataset,
-} from "@uk-data-atlas/datasets";
 
 export function aggregateEthnicity(
 	features: Features,
@@ -49,26 +45,4 @@ export function aggregateEthnicity(
 		}
 	}
 	return result;
-}
-
-export function aggregateLifeExpectancy(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: LifeExpectancyDataset["data"],
-): AggregatedLifeExpectancyData {
-	let male = 0,
-		female = 0,
-		count = 0;
-	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
-		if (!record) continue;
-		male += record.maleBirthLE;
-		female += record.femaleBirthLE;
-		count++;
-	}
-	return {
-		averageMaleLE: count > 0 ? male / count : 0,
-		averageFemaleLE: count > 0 ? female / count : 0,
-	};
 }

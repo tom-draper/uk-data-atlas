@@ -4,7 +4,7 @@ import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import { aggregateCustomDataset } from "./economics";
 import {} from "@uk-data-atlas/datasets";
-import { aggregateEthnicity, aggregateLifeExpectancy } from "./demographics";
+import { aggregateEthnicity } from "./demographics";
 import {
 	aggregateBrexit,
 	aggregateBrexitConstituencies,
@@ -68,11 +68,6 @@ export const brexitConstituencyAggregation = boundaryAggregation(
 	"brexit-constituency",
 	"constituency",
 	aggregateBrexitConstituencies,
-);
-export const lifeExpectancyAggregation = boundaryAggregation(
-	"life-expectancy",
-	"localAuthority",
-	aggregateLifeExpectancy,
 );
 export const indicatorAggregation = numericAggregation(
 	"indicator",
