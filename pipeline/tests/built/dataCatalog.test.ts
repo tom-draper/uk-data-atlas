@@ -2088,11 +2088,19 @@ test("publishes median pay for authorities only, naming suppressed estimates", (
 	);
 	try {
 		const result = compileDataCatalog(writeSources(directory));
-		const periods = (id: string) =>
+		const periods = (measure: string) =>
 			result.indicatorObservations.find(
-				(artifact) => artifact.measureId === id,
+				(artifact) =>
+					artifact.measureId ===
+					measureSeriesKey({
+						measure,
+						dimensions: {
+							"earnings-place": "residence",
+							"pay-statistic": "median",
+						},
+					}),
 			)?.periods;
-		assert.deepEqual(periods("median-annual-pay"), [
+		assert.deepEqual(periods("gross-annual-pay"), [
 			{
 				period: "2025",
 				records: [
@@ -2100,7 +2108,7 @@ test("publishes median pay for authorities only, naming suppressed estimates", (
 				],
 			},
 		]);
-		assert.deepEqual(periods("median-hourly-pay"), [
+		assert.deepEqual(periods("gross-hourly-pay"), [
 			{ period: "2025", records: [] },
 		]);
 		const hourly = result.catalog.measures.find(
