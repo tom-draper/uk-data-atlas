@@ -7,6 +7,7 @@ import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * Population density, the first measure derived from two others.
@@ -21,6 +22,7 @@ export const compilePopulationDensity = (
 	landAreaPath: DatasetInput,
 	localAuthorityPeriods: MeasureObservationArtifact["periods"],
 ): CompiledMeasure => {
+	const seriesKey = measureSeriesKey({ measure: "population-density" });
 	const landArea = datasets.find((dataset) => dataset.id === "land-area");
 	if (!landArea) throw new Error(`${manifestPath} has no land-area dataset`);
 	const landAreaByCode = new Map(
@@ -66,7 +68,7 @@ export const compilePopulationDensity = (
 	}
 	const densityContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population-density",
+		measureId: seriesKey,
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: densityPeriods,
 	});
@@ -120,7 +122,7 @@ export const compilePopulationDensity = (
 		artifact: {
 			schemaVersion: 1,
 			contentHash: sha256(densityContent),
-			measureId: "population-density",
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 			periods: densityPeriods,
 		},

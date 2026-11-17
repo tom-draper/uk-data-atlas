@@ -7,6 +7,7 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import { type PrecompiledFile, sha256, number, object } from "./values.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 const recordsFromData = (
 	data: Record<string, unknown>,
@@ -115,6 +116,7 @@ export const compilePopulation = (
 	localAuthorityObservations: MeasureObservationArtifact;
 	constituencyObservations: MeasureObservationArtifact;
 } => {
+	const seriesKey = measureSeriesKey({ measure: "population" });
 	const population = datasets.find((dataset) => dataset.id === "population");
 	if (!population)
 		throw new Error(`${manifestPath} has no population dataset`);
@@ -209,7 +211,7 @@ export const compilePopulation = (
 	}
 	const constituencyContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population",
+		measureId: seriesKey,
 		sourceGeography: { type: "constituency", boundaryYear: 2024 },
 		periods: constituencyPeriods,
 	});
@@ -293,13 +295,13 @@ export const compilePopulation = (
 	const wardPeriods = [{ period: "2022", records }];
 	const observationsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population",
+		measureId: seriesKey,
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
 		periods: wardPeriods,
 	});
 	const localAuthorityObservationsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population",
+		measureId: seriesKey,
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: localAuthorityPeriods,
 	});
@@ -308,21 +310,21 @@ export const compilePopulation = (
 		wardObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(observationsContent),
-			measureId: "population",
+			measureId: seriesKey,
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
 			periods: wardPeriods,
 		},
 		localAuthorityObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(localAuthorityObservationsContent),
-			measureId: "population",
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 			periods: localAuthorityPeriods,
 		},
 		constituencyObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(constituencyContent),
-			measureId: "population",
+			measureId: seriesKey,
 			sourceGeography: { type: "constituency", boundaryYear: 2024 },
 			periods: constituencyPeriods,
 		},
