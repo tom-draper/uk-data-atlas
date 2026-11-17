@@ -34,6 +34,15 @@ describe("a declared history card", () => {
 		expect(count?.request.measure).toBe("unemployed-people");
 	});
 
+	it("names the counts a rate combines areas by, and none for a count", () => {
+		const rate = definition.chart?.seriesForOptions?.(withMeasure("rate"));
+		const count = definition.chart?.seriesForOptions?.(
+			withMeasure("count"),
+		);
+		expect(rate?.countMeasure).toBe("unemployed-people");
+		expect(count?.countMeasure).toBeUndefined();
+	});
+
 	it("takes its wording from the declaration", () => {
 		const series = definition.chart?.seriesForOptions?.(
 			withMeasure("rate"),

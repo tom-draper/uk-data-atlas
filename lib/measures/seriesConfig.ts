@@ -10,6 +10,12 @@ export interface SeriesCardConfig {
 		geography: string;
 		boundaryYear: number;
 	};
+	/**
+	 * The measure of the people a rate counts, which lets the card combine
+	 * areas by their implied base. Absent for a measure that adds up, or one
+	 * that cannot be combined.
+	 */
+	countMeasure?: string;
 	heading: string;
 	/** Shown in brackets after the heading. */
 	period: string;

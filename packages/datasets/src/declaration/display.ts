@@ -158,6 +158,13 @@ export type DisplaySeries = {
 	line?: string;
 	/** The measure to draw for each of the dataset's measures, by id. */
 	measures: Record<string, string>;
+	/**
+	 * For a measure that is a percentage rate, the measure of the people it
+	 * counts, so the card can combine areas: rates cannot be averaged, but
+	 * each area's count over its rate gives the base the rate is of. Without
+	 * it a rate shows nothing until an area is chosen.
+	 */
+	countOf?: Record<string, string>;
 };
 
 /**

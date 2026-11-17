@@ -145,20 +145,25 @@ const seriesFor = (
 	declaration: Displayed,
 	series: NonNullable<DatasetDisplay["series"]>,
 	measureId: string,
-): SeriesCardConfig => ({
-	request: {
-		measure:
-			series.measures[measureId] ?? Object.values(series.measures)[0]!,
-		datasetId: declaration.id,
-		geography: declaration.boundary.type,
-		boundaryYear: declaration.boundary.year,
-	},
-	heading: series.heading,
-	period: series.period,
-	source: series.source,
-	accent: series.accent,
-	line: series.line ?? series.accent,
-});
+): SeriesCardConfig => {
+	const measure =
+		series.measures[measureId] ?? Object.values(series.measures)[0]!;
+	const countMeasure = series.countOf?.[measure];
+	return {
+		request: {
+			measure,
+			datasetId: declaration.id,
+			geography: declaration.boundary.type,
+			boundaryYear: declaration.boundary.year,
+		},
+		...(countMeasure ? { countMeasure } : {}),
+		heading: series.heading,
+		period: series.period,
+		source: series.source,
+		accent: series.accent,
+		line: series.line ?? series.accent,
+	};
+};
 
 const breakdownFor = (
 	declaration: Displayed,
