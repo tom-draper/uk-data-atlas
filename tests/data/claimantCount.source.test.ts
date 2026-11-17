@@ -3,7 +3,7 @@ import {
 	addMergedClaimantAuthorities,
 	CLAIMANT_COUNT_LAD_PREDECESSORS,
 } from "@uk-data-atlas/datasets";
-import type { ClaimantCountLADData } from "@uk-data-atlas/datasets";
+import type { ClaimantFigures } from "@uk-data-atlas/datasets";
 
 describe("addMergedClaimantAuthorities", () => {
 	const sourceRecords = () =>
@@ -13,15 +13,13 @@ describe("addMergedClaimantAuthorities", () => {
 				.map((code, index) => [
 					code,
 					{
-						ladCode: code,
-						ladName: code,
+						name: code,
 						totalCount: (index + 1) * 100,
 						totalRate: 1,
 						youthCount: (index + 1) * 10,
-						youthRate: 0.1,
 					},
 				]),
-		) as Record<string, ClaimantCountLADData>;
+		) as Record<string, ClaimantFigures>;
 	const population = () =>
 		Object.fromEntries(
 			Object.entries(CLAIMANT_COUNT_LAD_PREDECESSORS).map(
@@ -39,27 +37,24 @@ describe("addMergedClaimantAuthorities", () => {
 
 		const somerset = records.E06000066;
 		expect(somerset).toMatchObject({
-			ladName: "Somerset",
+			name: "Somerset",
 			totalCount: 6_200,
 			youthCount: 620,
 			totalRate: 15.5,
-			youthRate: 1.55,
 		});
 	});
 
 	it("does not replace a record supplied for the current authority", () => {
 		const records = sourceRecords();
 		records.E06000063 = {
-			ladCode: "E06000063",
-			ladName: "Native Cumberland",
+			name: "Native Cumberland",
 			totalCount: 99,
 			totalRate: 1,
 			youthCount: 9,
-			youthRate: 0.1,
 		};
 
 		addMergedClaimantAuthorities(records, population());
 
-		expect(records.E06000063.ladName).toBe("Native Cumberland");
+		expect(records.E06000063.name).toBe("Native Cumberland");
 	});
 });

@@ -41,7 +41,7 @@ files), and the measure `claimants` (statistics vocabulary). The API adds two
 indicator ids, `claimant-count` and `claimant-count-16-to-24`. About thirty
 files name it:
 
-- Loader and definition: `data/claimant-count/loader.ts`,
+- Source reader and definition: `data/claimant-count/source.ts`,
   `catalog/definitions/claimantCount.ts`, `types/claimantCount.ts`.
 - Statistics: the `statistics` block of its declaration (measures, age-group
   dimension, fields, header, `derived` youth rate).

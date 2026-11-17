@@ -92,7 +92,7 @@ export * from "./data/income/statistics.ts";
 export * from "./data/catalog/meta.ts";
 export * from "./data/child-poverty/loader.ts";
 export * from "./economy/labour-market/claimant-count/aggregate.ts";
-export * from "./economy/labour-market/claimant-count/loader.ts";
+export * from "./data/claimant-count/source.ts";
 export * from "./data/crime/loader.ts";
 export * from "./data/declarations.ts";
 export * from "./data/education/ks4.ts";

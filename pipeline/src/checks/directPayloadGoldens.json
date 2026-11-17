@@ -70,5 +70,9 @@
 	"workplace-income": {
 		"sha256": "b50d02f9e42b7be407188ae03f5d8959e785d27b9dc4d13e867220052e4e6de8",
 		"bytes": 181715
+	},
+	"claimant-count": {
+		"sha256": "cc660d32aad9b321e6d9b3c017897e2a3954aaad29dcc2a104bd630c8a358bee",
+		"bytes": 53685
 	}
 }
