@@ -156,8 +156,18 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 	display: {
 		label: "Historic Unemployment Rate [2021]",
 		year: 2021,
-		component:
-			"@/components/datasets/economy/labour-market/unemployment/UnemploymentChart",
+		component: "@/components/measures/MeasureSeriesChart",
+		series: {
+			heading: "Historic Unemployment",
+			period: "1996-2021",
+			source: "ONS. Final model-based unemployment estimates for local and unitary authorities; this series was discontinued in August 2022. ons.gov.uk",
+			accent: "#1e40af",
+			line: "#3b82f6",
+			measures: {
+				rate: "unemployment-rate",
+				count: "unemployed-people",
+			},
+		},
 		// The series ended in 2021, so the map reads that year.
 		measures: [
 			{
