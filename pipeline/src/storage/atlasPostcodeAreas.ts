@@ -79,11 +79,11 @@ export function writePostcodeAreas(
 		DROP TABLE IF EXISTS postcode_area_releases;
 		DROP TABLE IF EXISTS postcodes_next;
 		DROP TABLE IF EXISTS postcode_area_set;
-		CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE, distanceFallback INTEGER REFERENCES postcode_area_releases(position));
+		CREATE TABLE postcode_area_releases (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, areaColumn TEXT NOT NULL UNIQUE, distanceColumn TEXT NOT NULL UNIQUE, distanceFallback INTEGER REFERENCES postcode_area_releases(position)) STRICT;
 		CREATE TABLE postcode_area_shard_hash (district TEXT PRIMARY KEY, sha256 TEXT NOT NULL, coordinatesSha256 TEXT NOT NULL) STRICT, WITHOUT ROWID;
-		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) WITHOUT ROWID;
+		CREATE TABLE postcode_area_matches (district TEXT NOT NULL, releasePosition INTEGER NOT NULL REFERENCES postcode_area_releases(position), postcodePosition INTEGER NOT NULL, position INTEGER NOT NULL, areaId INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distanceCm INTEGER NOT NULL, PRIMARY KEY(district, releasePosition, postcodePosition, position)) STRICT, WITHOUT ROWID;
 		CREATE TABLE postcode_area_set (id INTEGER PRIMARY KEY${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id)`).join("")}) STRICT;
-		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, latitudeMicrodegrees INTEGER, longitudeMicrodegrees INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c, i) => `, ${quote(c.distance)} INTEGER${fallbacks[i] === null ? " NOT NULL" : ""}`).join("")}) WITHOUT ROWID;`);
+		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, latitudeMicrodegrees INTEGER, longitudeMicrodegrees INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c, i) => `, ${quote(c.distance)} INTEGER${fallbacks[i] === null ? " NOT NULL" : ""}`).join("")}) STRICT, WITHOUT ROWID;`);
 	database.exec(
 		"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
 	);
