@@ -30,6 +30,25 @@ export function summedSeries(payload: MeasureValuesPayload): SeriesPoint[] {
 }
 
 /**
+ * Each period's plain mean over every area in the response. Unweighted, so
+ * a card declares it for a measure such as life expectancy, where each area
+ * counts once.
+ */
+export function meanSeries(payload: MeasureValuesPayload): SeriesPoint[] {
+	return payload.columns.map((column) => {
+		const values = [...valuesByCode(payload, column.period).values()];
+		return {
+			period: column.period,
+			value:
+				values.length > 0
+					? values.reduce((sum, value) => sum + value, 0) /
+						values.length
+					: null,
+		};
+	});
+}
+
+/**
  * A rate over every area in the response, as a percentage. A rate cannot be
  * averaged, so each area's count over its rate gives the base the rate is of,
  * and the figure is the counts over the bases. Areas missing either, or with
@@ -67,5 +86,10 @@ export function ratioSeries(
 export const readSeries = (
 	payload: MeasureValuesPayload,
 	area: string | null,
+	combine: "sum" | "mean" = "sum",
 ): SeriesPoint[] =>
-	area === null ? summedSeries(payload) : areaSeries(payload, area);
+	area !== null
+		? areaSeries(payload, area)
+		: combine === "mean"
+			? meanSeries(payload)
+			: summedSeries(payload);
