@@ -137,7 +137,7 @@ export * from "./data/spreadsheet/xls.ts";
 export * from "./data/spreadsheet/xlsx.ts";
 export * from "./data/travel-to-work/loader.ts";
 export * from "./data/unemployment/loader.ts";
-export * from "./data/wimd/loader.ts";
+export * from "./data/wimd/source.ts";
 export * from "./declaration/dataset.ts";
 export * from "./declaration/display.ts";
 export * from "./declaration/guides.ts";

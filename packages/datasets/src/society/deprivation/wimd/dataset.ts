@@ -1,5 +1,8 @@
 import type { WIMDDataset } from "../../../types/wimd.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import { summariseWIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
@@ -7,12 +10,11 @@ import {
 	rankDisplay,
 } from "../../../data/deprivation/declaration.ts";
 import {
-	loadWIMD,
 	publishedWIMDRanks,
 	welshLSOAPopulations,
 	LOCAL_AUTHORITY_CODES,
 	pick,
-} from "../../../data/wimd/loader.ts";
+} from "../../../data/wimd/source.ts";
 import { findHeaderLine, parseCsv } from "../../../helpers/parseCsv.ts";
 import { parseNum } from "../../../helpers/parseNumber.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
@@ -36,16 +38,7 @@ export const wimd = defineDataset<WIMDDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: async ({ text, odsContent }) =>
-		loadWIMD(
-			text,
-			await odsContent(
-				sourceDir(
-					"wimd",
-					"welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
-				),
-			),
-		),
+	load: noCompiledPayload<WIMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 41,
@@ -73,6 +66,7 @@ export const wimd = defineDataset<WIMDDataset>({
 			weighted: { score: "wimdScore" },
 		}),
 		direct: {
+			only: true,
 			read: async ({ text, odsContent }) => {
 				const published = publishedWIMDRanks(
 					await odsContent(
