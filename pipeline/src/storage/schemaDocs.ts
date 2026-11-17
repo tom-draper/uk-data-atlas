@@ -1159,9 +1159,9 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			easting: "British National Grid easting in metres.",
 			northing: "British National Grid northing in metres.",
 			latitudeMicrodegrees:
-				"WGS 84 latitude in microdegrees, rounded to five decimal degrees (about 1 metre); null without a centroid.",
+				"WGS 84 latitude in microdegrees, rounded to six decimal degrees (about 0.1 metre resolution); null without a centroid.",
 			longitudeMicrodegrees:
-				"WGS 84 longitude in microdegrees, rounded to five decimal degrees (about 1 metre); null without a centroid.",
+				"WGS 84 longitude in microdegrees, rounded to six decimal degrees (about 0.1 metre resolution); null without a centroid.",
 			quality: "Positional quality code from the ONS Postcode Directory.",
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",
@@ -1203,9 +1203,9 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			easting: "British National Grid easting in metres.",
 			northing: "British National Grid northing in metres.",
 			latitude:
-				"WGS 84 latitude in decimal degrees, rounded to five decimal places (about 1 metre); null without a centroid.",
+				"WGS 84 latitude in decimal degrees, rounded to six decimal places (about 0.1 metre resolution); null without a centroid.",
 			longitude:
-				"WGS 84 longitude in decimal degrees, rounded to five decimal places (about 1 metre); null without a centroid.",
+				"WGS 84 longitude in decimal degrees, rounded to six decimal places (about 0.1 metre resolution); null without a centroid.",
 			quality: "Positional quality code from the ONS Postcode Directory.",
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",

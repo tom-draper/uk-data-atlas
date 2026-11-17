@@ -39,10 +39,7 @@ import {
 } from "@uk-data-atlas/atlas-loader";
 import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
 import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
-import {
-	readPostcodeUnit,
-	type DistrictRow,
-} from "../../../lib/places/postcodeUnit";
+import { parseLookupCoordinate } from "@uk-data-atlas/geography";
 
 /**
  * The fixture's base database is written by hand, so its ids are registered
@@ -210,31 +207,32 @@ test("readers refuse a database built before postcode area sets", (t) => {
 		.prepare(
 			"SELECT postcode, easting, northing, quality, country, introduced, terminated, largeUser FROM postcodes ORDER BY postcode",
 		)
-		.all() as DistrictRow[];
+		.all();
 	const coordinates = db
 		.prepare(
 			"SELECT latitude, longitude FROM postcodes_decoded ORDER BY postcode",
 		)
 		.all();
 	for (const at of [0, 1]) {
-		const unit = readPostcodeUnit("M1", postcodeRows, at, () => undefined, {
-			areas: { constituency: "", localAuthority: "", ward: "" },
-			deprivation: { imd: "", simd: "", wimd: "" },
-		});
+		const row = postcodeRows[at]!;
+		const point = parseLookupCoordinate("EPSG:27700", {
+			easting: String(row.easting),
+			northing: String(row.northing),
+		})!;
 		assert.deepEqual(
 			[coordinates[at]!.longitude, coordinates[at]!.latitude],
-			unit.lngLat,
+			[point.lng, point.lat],
 		);
 	}
 	assert.deepEqual(
 		{ ...coordinates[2] },
 		{ latitude: null, longitude: null },
 	);
-	db.exec("UPDATE meta SET value = '4' WHERE key = 'postcodeAreaLayout'");
+	db.exec("UPDATE meta SET value = '5' WHERE key = 'postcodeAreaLayout'");
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 4 but this code needs 5/,
+		/postcode area layout 5 but this code needs 6/,
 	);
 });
 

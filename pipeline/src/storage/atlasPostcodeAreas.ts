@@ -14,7 +14,7 @@ import {
 } from "@uk-data-atlas/postcodes";
 import {
 	NONE,
-	postcodeGridLngLat,
+	parseLookupCoordinate,
 	SEVERAL,
 	type PostcodeAreasArtifact,
 	type PostcodeAreasShard,
@@ -251,15 +251,19 @@ export function writePostcodeAreas(
 			}
 			const point =
 				row.easting !== null && row.northing !== null
-					? postcodeGridLngLat([
-							Number(row.easting),
-							Number(row.northing),
-						])
+					? parseLookupCoordinate("EPSG:27700", {
+							easting: String(row.easting),
+							northing: String(row.northing),
+						})
 					: null;
+			if (point === undefined)
+				throw new Error(
+					`Invalid postcode grid reference in ${entry.path}`,
+				);
 			addPostcode.run(
 				...values.slice(0, 3),
-				point ? Math.round(point[1] * 1e6) : null,
-				point ? Math.round(point[0] * 1e6) : null,
+				point ? Math.round(point.lat * 1e6) : null,
+				point ? Math.round(point.lng * 1e6) : null,
 				...values.slice(3),
 				setId,
 				...distances,
