@@ -84,10 +84,30 @@ export function publishVacuumed(
 			const copy = new DatabaseSync(temporary);
 			try {
 				copy.exec("PRAGMA journal_mode = OFF");
-				if (atlasIdentity)
+				if (atlasIdentity) {
+					const hasMeta = copy
+						.prepare(
+							"SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'meta'",
+						)
+						.get();
+					if (hasMeta) {
+						const version = copy
+							.prepare(
+								"SELECT value FROM meta WHERE key = 'schemaVersion'",
+							)
+							.get()?.value;
+						if (
+							version !== undefined &&
+							version !== String(ATLAS_SCHEMA_VERSION)
+						)
+							throw new Error(
+								`Cannot publish atlas schema version ${String(version)} as version ${ATLAS_SCHEMA_VERSION}`,
+							);
+					}
 					copy.exec(
 						`PRAGMA application_id = ${ATLAS_APPLICATION_ID}; PRAGMA user_version = ${ATLAS_SCHEMA_VERSION}`,
 					);
+				}
 				finish?.(copy);
 				if (check) checkDatabase(copy, check);
 			} finally {
