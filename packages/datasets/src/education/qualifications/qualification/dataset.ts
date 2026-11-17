@@ -127,8 +127,30 @@ export const qualification = defineDataset<QualificationDataset>({
 	display: {
 		label: "Qualifications [2021]",
 		year: 2021,
-		component:
-			"@/components/datasets/education/qualifications/qualification/QualificationChart",
+		component: "@/components/measures/MeasureBreakdownChart",
+		breakdown: {
+			heading: "Qualifications",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067.",
+			coverage: "England & Wales",
+			measure: "usual-residents-16-plus",
+			dimension: "highest-qualification",
+			total: "total",
+			parts: [
+				{ code: "level-4-plus", color: "#3b82f6", label: "Level 4+" },
+				{ code: "level-3", color: "#22c55e", label: "Level 3" },
+				{
+					code: "apprenticeship",
+					color: "#84cc16",
+					label: "Apprenticeship",
+				},
+				{ code: "level-2", color: "#eab308", label: "Level 2" },
+				{ code: "level-1", color: "#f97316", label: "Level 1" },
+				{ code: "none", color: "#ef4444", label: "No qualifications" },
+				{ code: "other", color: "#9ca3af", label: "Other" },
+			],
+			accent: "level-4-plus",
+		},
 		measures: [
 			{
 				id: "level-4-plus",

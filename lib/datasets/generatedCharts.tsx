@@ -16,17 +16,15 @@ import Chart10 from "@/components/datasets/population/population-estimates/popul
 import Chart11 from "@/components/ValueCard";
 import Chart12 from "@/components/datasets/environment/air-quality/air-quality/AirQualityChart";
 import Chart13 from "@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart";
-import Chart14 from "@/components/datasets/transport/vehicles/car-availability/CarAvailabilityChart";
+import Chart14 from "@/components/measures/MeasureBreakdownChart";
 import Chart15 from "@/components/datasets/environment/emissions/ghg-emissions/GHGEmissionsChart";
 import Chart16 from "@/components/datasets/housing/homelessness/homelessness/HomelessnessChart";
 import Chart17 from "@/components/datasets/society/deprivation/imd/IMDChart";
 import Chart18 from "@/components/datasets/infrastructure/digital-connectivity/mobile-coverage/MobileCoverageChart";
 import Chart19 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
-import Chart20 from "@/components/datasets/education/qualifications/qualification/QualificationChart";
-import Chart21 from "@/components/datasets/society/deprivation/simd/SIMDChart";
-import Chart22 from "@/components/measures/MeasureBreakdownChart";
-import Chart23 from "@/components/measures/MeasureSeriesChart";
-import Chart24 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
+import Chart20 from "@/components/datasets/society/deprivation/simd/SIMDChart";
+import Chart21 from "@/components/measures/MeasureSeriesChart";
+import Chart22 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -166,18 +164,6 @@ const Chart22Presentation = {
 	),
 } satisfies ChartPresentation;
 
-const Chart23Presentation = {
-	component: (props) => (
-		<Chart23 {...(props as ComponentProps<typeof Chart23>)} />
-	),
-} satisfies ChartPresentation;
-
-const Chart24Presentation = {
-	component: (props) => (
-		<Chart24 {...(props as ComponentProps<typeof Chart24>)} />
-	),
-} satisfies ChartPresentation;
-
 export const CHART_PRESENTATIONS = {
 	"brexit-electoral": Chart0Presentation,
 	"brexit-hanretty": Chart1Presentation,
@@ -231,15 +217,15 @@ export const CHART_PRESENTATIONS = {
 	"housing-planning-applications": Chart11Presentation,
 	"health-public-health": Chart11Presentation,
 	"education-pupil-absence": Chart11Presentation,
-	"education-qualification": Chart20Presentation,
+	"education-qualification": Chart14Presentation,
 	"economy-regional-gdp": Chart11Presentation,
 	"education-school-performance": Chart11Presentation,
 	"education-school-performance-disadvantage": Chart11Presentation,
-	"society-simd": Chart21Presentation,
-	"transport-travel-to-work": Chart22Presentation,
-	"economy-unemployment": Chart23Presentation,
+	"society-simd": Chart20Presentation,
+	"transport-travel-to-work": Chart14Presentation,
+	"economy-unemployment": Chart21Presentation,
 	"environment-waste": Chart11Presentation,
-	"society-wimd": Chart24Presentation,
+	"society-wimd": Chart22Presentation,
 	"economy-workplace-income": Chart11Presentation,
 } satisfies ChartPresentationRegistry;
 

@@ -97,8 +97,23 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 	display: {
 		label: "Car Availability [2021]",
 		year: 2021,
-		component:
-			"@/components/datasets/transport/vehicles/car-availability/CarAvailabilityChart",
+		component: "@/components/measures/MeasureBreakdownChart",
+		breakdown: {
+			heading: "Car Availability",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Car or van availability, England and Wales. TS045.",
+			coverage: "England & Wales",
+			measure: "households",
+			dimension: "cars-or-vans",
+			total: "total",
+			parts: [
+				{ code: "none", color: "#3b82f6", label: "No car or van" },
+				{ code: "one", color: "#84cc16", label: "1 car or van" },
+				{ code: "two", color: "#f97316", label: "2 cars or vans" },
+				{ code: "three-or-more", color: "#ef4444", label: "3 or more" },
+			],
+			accent: "none",
+		},
 		measures: [
 			{
 				// Households with no car: the measure with the most spread, and
