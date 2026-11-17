@@ -9,7 +9,10 @@ import {
 } from "@/lib/helpers/mapRendering";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
-import { lifeExpectancyDefinition } from "@/lib/datasets/lifeExpectancy";
+
+const lifeExpectancyDefinition = CHART_DATASET_DEFINITIONS.find(
+	({ type }) => type === "life-expectancy",
+)!;
 
 const childPovertyDefinition = CHART_DATASET_DEFINITIONS.find(
 	({ type }) => type === "child-poverty",

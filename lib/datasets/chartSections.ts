@@ -67,7 +67,7 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 			"housing-homelessness",
 		],
 		health: [
-			"health-lifeExpectancy",
+			"health-life-expectancy",
 			"health-nhs-waiting",
 			"health-adult-social-care-activity",
 		],

@@ -10,7 +10,6 @@ import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { ethnicityDefinition } from "./ethnicity";
 import { generalElectionDefinition } from "./generalElection";
-import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
 import { populationDefinition } from "./population";
 
@@ -24,7 +23,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		brexitConstituencyDefinition,
 		ethnicityDefinition,
 		generalElectionDefinition,
-		lifeExpectancyDefinition,
 		localElectionDefinition,
 		populationDefinition,
 		...DECLARED_CHART_DEFINITIONS,

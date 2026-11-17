@@ -29,7 +29,6 @@ import {
 import {
 	DeclaredMeasurePanel,
 	ElectionMetricPanel,
-	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
 } from "./legend/LegendSupplementalPanels";
@@ -185,15 +184,6 @@ export default function LegendPanel({
 								},
 							},
 						)
-					}
-				/>
-			)}
-
-			{activeDataset?.type === "life-expectancy" && (
-				<LifeExpectancyMeasurePanel
-					measure={controls.displayOptions["life-expectancy"].measure}
-					onChange={(measure) =>
-						onMapOptionsChange("life-expectancy", { measure })
 					}
 				/>
 			)}

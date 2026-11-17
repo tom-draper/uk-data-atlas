@@ -6,15 +6,15 @@ import Chart0 from "@/components/datasets/politics/referendums/brexit/BrexitElec
 import Chart1 from "@/components/datasets/politics/referendums/brexit-constituency/BrexitHanrettyEstimatesChart";
 import Chart2 from "@/components/measures/MeasureBreakdownChart";
 import Chart3 from "@/components/datasets/politics/general-elections/general-election/GeneralElectionRegistryChart";
-import Chart4 from "@/components/measures/MeasureBarsChart";
-import Chart5 from "@/components/datasets/politics/local-elections/local-election/LocalElectionRegistryChart";
-import Chart6 from "@/components/datasets/population/population-estimates/population/PopulationDensityRegistry";
-import Chart7 from "@/components/datasets/population/population-estimates/population/PopulationAgeRegistry";
-import Chart8 from "@/components/datasets/population/population-estimates/population/PopulationGenderRegistry";
-import Chart9 from "@/components/ValueCard";
-import Chart10 from "@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart";
-import Chart11 from "@/components/measures/MeasureSeriesChart";
-import Chart12 from "@/components/datasets/society/deprivation/imd/IMDChart";
+import Chart4 from "@/components/datasets/politics/local-elections/local-election/LocalElectionRegistryChart";
+import Chart5 from "@/components/datasets/population/population-estimates/population/PopulationDensityRegistry";
+import Chart6 from "@/components/datasets/population/population-estimates/population/PopulationAgeRegistry";
+import Chart7 from "@/components/datasets/population/population-estimates/population/PopulationGenderRegistry";
+import Chart8 from "@/components/ValueCard";
+import Chart9 from "@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart";
+import Chart10 from "@/components/measures/MeasureSeriesChart";
+import Chart11 from "@/components/datasets/society/deprivation/imd/IMDChart";
+import Chart12 from "@/components/measures/MeasureBarsChart";
 import Chart13 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
 import Chart14 from "@/components/datasets/society/deprivation/simd/SIMDChart";
 import Chart15 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
@@ -124,60 +124,60 @@ export const CHART_PRESENTATIONS = {
 	"generalElection-2017": Chart3Presentation,
 	"generalElection-2015": Chart3Presentation,
 	"generalElection-2010": Chart3Presentation,
-	"health-lifeExpectancy": Chart4Presentation,
-	"localElection-2025": Chart5Presentation,
-	"localElection-2024": Chart5Presentation,
-	"localElection-2023": Chart5Presentation,
-	"localElection-2022": Chart5Presentation,
-	"localElection-2021": Chart5Presentation,
-	"localElection-2019": Chart5Presentation,
-	"localElection-2018": Chart5Presentation,
-	"localElection-2017": Chart5Presentation,
-	"localElection-2016": Chart5Presentation,
-	"demographics-populationDensity": Chart6Presentation,
-	"demographics-age": Chart7Presentation,
-	"demographics-gender": Chart8Presentation,
-	"health-adult-social-care-activity": Chart9Presentation,
-	"health-adult-social-care-outcomes": Chart9Presentation,
-	"environment-air-quality": Chart9Presentation,
-	"infrastructure-broadband": Chart9Presentation,
-	"economy-business-activity": Chart9Presentation,
+	"localElection-2025": Chart4Presentation,
+	"localElection-2024": Chart4Presentation,
+	"localElection-2023": Chart4Presentation,
+	"localElection-2022": Chart4Presentation,
+	"localElection-2021": Chart4Presentation,
+	"localElection-2019": Chart4Presentation,
+	"localElection-2018": Chart4Presentation,
+	"localElection-2017": Chart4Presentation,
+	"localElection-2016": Chart4Presentation,
+	"demographics-populationDensity": Chart5Presentation,
+	"demographics-age": Chart6Presentation,
+	"demographics-gender": Chart7Presentation,
+	"health-adult-social-care-activity": Chart8Presentation,
+	"health-adult-social-care-outcomes": Chart8Presentation,
+	"environment-air-quality": Chart8Presentation,
+	"infrastructure-broadband": Chart8Presentation,
+	"economy-business-activity": Chart8Presentation,
 	"transport-car-availability": Chart2Presentation,
-	"society-child-poverty": Chart9Presentation,
-	"economy-claimant-count": Chart9Presentation,
-	"housing-council-tax": Chart9Presentation,
-	"society-crime": Chart9Presentation,
-	"transport-electric-vehicle-chargers": Chart9Presentation,
-	"environment-electricity-consumption": Chart9Presentation,
-	"society-fuel-poverty": Chart10Presentation,
-	"environment-gas-consumption": Chart9Presentation,
-	"health-general-health": Chart9Presentation,
-	"environment-ghg-emissions": Chart9Presentation,
-	"housing-homelessness": Chart9Presentation,
-	"housing-house-price": Chart11Presentation,
-	"housing-housing-affordability": Chart9Presentation,
-	"housing-housing-tenure": Chart9Presentation,
-	"society-imd": Chart12Presentation,
-	"economy-income": Chart9Presentation,
-	"economy-jobs": Chart9Presentation,
-	"economy-local-government-finance": Chart9Presentation,
-	"infrastructure-mobile-coverage": Chart9Presentation,
-	"housing-net-additional-dwellings": Chart9Presentation,
-	"health-nhs-waiting": Chart9Presentation,
+	"society-child-poverty": Chart8Presentation,
+	"economy-claimant-count": Chart8Presentation,
+	"housing-council-tax": Chart8Presentation,
+	"society-crime": Chart8Presentation,
+	"transport-electric-vehicle-chargers": Chart8Presentation,
+	"environment-electricity-consumption": Chart8Presentation,
+	"society-fuel-poverty": Chart9Presentation,
+	"environment-gas-consumption": Chart8Presentation,
+	"health-general-health": Chart8Presentation,
+	"environment-ghg-emissions": Chart8Presentation,
+	"housing-homelessness": Chart8Presentation,
+	"housing-house-price": Chart10Presentation,
+	"housing-housing-affordability": Chart8Presentation,
+	"housing-housing-tenure": Chart8Presentation,
+	"society-imd": Chart11Presentation,
+	"economy-income": Chart8Presentation,
+	"economy-jobs": Chart8Presentation,
+	"health-life-expectancy": Chart12Presentation,
+	"economy-local-government-finance": Chart8Presentation,
+	"infrastructure-mobile-coverage": Chart8Presentation,
+	"housing-net-additional-dwellings": Chart8Presentation,
+	"health-nhs-waiting": Chart8Presentation,
 	"society-nimdm": Chart13Presentation,
-	"housing-planning-applications": Chart9Presentation,
-	"health-public-health": Chart9Presentation,
-	"education-pupil-absence": Chart9Presentation,
+	"housing-planning-applications": Chart8Presentation,
+	"health-public-health": Chart8Presentation,
+	"education-pupil-absence": Chart8Presentation,
 	"education-qualification": Chart2Presentation,
-	"economy-regional-gdp": Chart9Presentation,
-	"education-school-performance": Chart9Presentation,
-	"education-school-performance-disadvantage": Chart9Presentation,
+	"economy-regional-gdp": Chart8Presentation,
+	"education-school-performance": Chart8Presentation,
+	"education-school-performance-disadvantage": Chart8Presentation,
 	"society-simd": Chart14Presentation,
 	"transport-travel-to-work": Chart2Presentation,
-	"economy-unemployment": Chart11Presentation,
-	"environment-waste": Chart9Presentation,
+	"economy-unemployment": Chart10Presentation,
+	"environment-waste": Chart8Presentation,
 	"society-wimd": Chart15Presentation,
-	"economy-workplace-income": Chart9Presentation,
+	"economy-workplace-income": Chart8Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;

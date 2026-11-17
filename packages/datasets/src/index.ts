@@ -64,6 +64,7 @@ export * from "./education/qualifications/qualification/dataset.ts";
 export * from "./data/travel-to-work/aggregate.ts";
 export * from "./transport/commuting/travel-to-work/dataset.ts";
 export * from "./environment/emissions/land-area/dataset.ts";
+export * from "./health/life-expectancy/life-expectancy/aggregate.ts";
 export * from "./health/life-expectancy/life-expectancy/dataset.ts";
 export * from "./health/life-expectancy/life-expectancy-series/dataset.ts";
 export * from "./economy/public-finance/local-government-finance/dataset.ts";

@@ -10,10 +10,6 @@ export interface ColorRangeOption {
 	colorRange: ColorRange;
 }
 
-export interface LifeExpectancyOptions extends ColorRangeOption {
-	measure: "average" | "male" | "female";
-}
-
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -45,7 +41,6 @@ type CustomMapDatasetId =
 	| "brexit-constituency"
 	| "ethnicity"
 	| "general-election"
-	| "life-expectancy"
 	| "local-election"
 	| "population";
 
@@ -54,11 +49,9 @@ type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	DisplayedDatasetId | "life-expectancy"
+	DisplayedDatasetId
 > &
-	Record<DisplayedDatasetId, DeclaredMapOptions> & {
-		"life-expectancy": LifeExpectancyOptions;
-	};
+	Record<DisplayedDatasetId, DeclaredMapOptions>;
 
 export type ColorTheme =
 	| "viridis"

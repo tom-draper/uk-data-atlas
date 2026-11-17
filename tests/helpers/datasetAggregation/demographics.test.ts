@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { aggregateQualifications } from "@uk-data-atlas/datasets";
 import {
-	aggregateEthnicity,
 	aggregateLifeExpectancy,
-} from "@/lib/helpers/datasetAggregation/demographics";
+	aggregateQualifications,
+} from "@uk-data-atlas/datasets";
+import { aggregateEthnicity } from "@/lib/helpers/datasetAggregation/demographics";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { CODE_KEY, features } from "./fixtures";
 
@@ -58,21 +58,23 @@ describe("aggregateEthnicity", () => {
 });
 
 describe("aggregateLifeExpectancy", () => {
-	const data = {
-		E1: { maleBirthLE: 78, femaleBirthLE: 82 },
-		E2: { maleBirthLE: 80, femaleBirthLE: 86 },
-	} as any;
+	const records = [
+		{ maleBirthLE: 78, femaleBirthLE: 82 },
+		{ maleBirthLE: 80, femaleBirthLE: 86 },
+	] as any;
 
 	it("averages male and female life expectancy over the covered areas", () => {
-		expect(
-			aggregateLifeExpectancy(features(["E1", "E2"]), CODE_KEY, data),
-		).toEqual({ averageMaleLE: 79, averageFemaleLE: 84 });
+		expect(aggregateLifeExpectancy(records)).toEqual({
+			averageMaleLE: 79,
+			averageFemaleLE: 84,
+		});
 	});
 
 	it("reports zeros when no covered area has a record", () => {
-		expect(
-			aggregateLifeExpectancy(features(["missing"]), CODE_KEY, data),
-		).toEqual({ averageMaleLE: 0, averageFemaleLE: 0 });
+		expect(aggregateLifeExpectancy([])).toEqual({
+			averageMaleLE: 0,
+			averageFemaleLE: 0,
+		});
 	});
 });
 
