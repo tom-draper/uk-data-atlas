@@ -76,9 +76,14 @@ const SHARED_NOTES = [
 export const compileEnergyConsumption = (
 	{ manifestPath, datasets }: CatalogManifest,
 	paths: Record<(typeof FUELS)[number]["dataset"], DatasetInput>,
-): { measures: Measure[]; artifacts: MeasureObservationArtifact[] } => {
+): {
+	measures: Measure[];
+	artifacts: MeasureObservationArtifact[];
+	observationDatasets: ReadonlyMap<MeasureObservationArtifact, string>;
+} => {
 	const measures: Measure[] = [];
 	const artifacts: MeasureObservationArtifact[] = [];
+	const observationDatasets = new Map<MeasureObservationArtifact, string>();
 
 	for (const fuel of FUELS) {
 		const dataset = datasets.find(
@@ -144,13 +149,15 @@ export const compileEnergyConsumption = (
 				sourceGeography: SOURCE_GEOGRAPHY,
 				periods,
 			});
-			artifacts.push({
+			const artifact: MeasureObservationArtifact = {
 				schemaVersion: 1,
 				contentHash: sha256(content),
 				measureId: seriesKey,
 				sourceGeography: SOURCE_GEOGRAPHY,
 				periods,
-			});
+			};
+			artifacts.push(artifact);
+			observationDatasets.set(artifact, fuel.dataset);
 			measures.push({
 				id: measureId,
 				label: `${fuel.label} consumption${segment.label}`,
@@ -177,5 +184,5 @@ export const compileEnergyConsumption = (
 		}
 	}
 
-	return { measures, artifacts };
+	return { measures, artifacts, observationDatasets };
 };

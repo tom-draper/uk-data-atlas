@@ -139,7 +139,7 @@ export const compileDataCatalog = ({
 	jobsObservations: MeasureObservationArtifact;
 	yearlyIndicatorObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
-	observationDatasets: ReadonlyMap<MeasureObservationArtifact, string>;
+	observationDatasets: ReadonlyMap<AnyMeasureObservationArtifact, string>;
 	statisticsFields: Array<{
 		measureId: string;
 		field: NonNullable<CompiledMeasure["statisticsField"]>;
@@ -203,13 +203,14 @@ export const compileDataCatalog = ({
 	};
 	const yearly = DATASET_DECLARATIONS.filter(
 		(declaration) => declaration.catalogue?.yearly,
-	).map((declaration) =>
-		compileYearlyIndicators(
+	).map((declaration) => ({
+		datasetId: declaration.id,
+		...compileYearlyIndicators(
 			catalogManifest,
 			declaration,
 			declaredFile(declaration.id),
 		),
-	);
+	}));
 	const census = compileCensus(
 		catalogManifest,
 		travelToWorkPath,
@@ -363,12 +364,55 @@ export const compileDataCatalog = ({
 			...indicatorObservations.map(({ artifact }) => artifact),
 			...unemployment.artifacts,
 		],
-		observationDatasets: new Map(
-			indicatorObservations.map(({ measure, artifact }) => [
-				artifact,
-				measure.sources[0]!.datasetId,
-			]),
-		),
+		observationDatasets: new Map<AnyMeasureObservationArtifact, string>([
+			[population.wardObservations, "population"],
+			[population.localAuthorityObservations, "population-uk"],
+			[population.constituencyObservations, "population-constituency"],
+			[emissions.artifact, "ghg-emissions"],
+			[jobs.artifact, "jobs"],
+			[density.artifact, "population-uk"],
+			[housePrice.artifact, "house-price"],
+			[nimdm.artifact, "nimdm"],
+			...regionalGdp.artifacts.map(
+				(artifact): [AnyMeasureObservationArtifact, string] => [
+					artifact,
+					"regional-gdp",
+				],
+			),
+			...unemployment.artifacts.map(
+				(artifact): [AnyMeasureObservationArtifact, string] => [
+					artifact,
+					"unemployment",
+				],
+			),
+			...lifeExpectancy.artifacts.map(
+				(artifact): [AnyMeasureObservationArtifact, string] => [
+					artifact,
+					"life-expectancy-series",
+				],
+			),
+			...yearly.flatMap(({ datasetId, artifacts }) =>
+				artifacts.map(
+					(artifact): [AnyMeasureObservationArtifact, string] => [
+						artifact,
+						datasetId,
+					],
+				),
+			),
+			...indicatorObservations.map(
+				({
+					measure,
+					artifact,
+				}): [AnyMeasureObservationArtifact, string] => [
+					artifact,
+					measure.sources[0]!.datasetId,
+				],
+			),
+			...census.observationDatasets,
+			...deprivation.observationDatasets,
+			...energyConsumption.observationDatasets,
+			...elections.observationDatasets,
+		]),
 		statisticsFields: indicatorObservations.flatMap(
 			({ measure, statisticsField }) =>
 				statisticsField

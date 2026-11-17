@@ -202,5 +202,11 @@ export const compileDeprivationIndices = (
 	return {
 		measures: imdMeasures,
 		artifacts: imdObservations.map(({ artifact }) => artifact),
+		observationDatasets: new Map(
+			imdObservations.map(({ measure, artifact }) => [
+				artifact,
+				measure.sources[0]!.datasetId,
+			]),
+		),
 	};
 };

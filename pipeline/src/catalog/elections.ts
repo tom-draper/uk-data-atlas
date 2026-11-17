@@ -510,5 +510,11 @@ export const compileElections = (
 	return {
 		measures: electionMeasureDefinitions,
 		artifacts: electionObservations.map(({ artifact }) => artifact),
+		observationDatasets: new Map(
+			electionObservations.map(({ measure, artifact }) => [
+				artifact,
+				measure.sources[0]!.datasetId,
+			]),
+		),
 	};
 };

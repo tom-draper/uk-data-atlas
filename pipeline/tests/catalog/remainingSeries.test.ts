@@ -84,8 +84,23 @@ test("deprivation and life expectancy observations use canonical series keys", (
 				{ id: "nimdm" },
 			],
 		} as CatalogManifest;
+		const deprivation = compileDeprivationIndices(
+			manifest,
+			imd,
+			wimd,
+			simd,
+		);
+		expect(
+			deprivation.artifacts.map((artifact) =>
+				deprivation.observationDatasets.get(artifact),
+			),
+		).toEqual(
+			deprivation.measures.map(
+				(measure) => measure.sources[0]!.datasetId,
+			),
+		);
 		const artifacts = [
-			...compileDeprivationIndices(manifest, imd, wimd, simd).artifacts,
+			...deprivation.artifacts,
 			compileNimdm(manifest, nimdm).artifact,
 			...compileLifeExpectancy(life).artifacts,
 		];
@@ -185,6 +200,12 @@ test("election observations preserve source partitions and canonical identities"
 			),
 		]);
 		const partitions = new Map<string, number[]>();
+		for (const artifact of result.artifacts)
+			expect(result.observationDatasets.get(artifact)).toBe(
+				artifact.sourceGeography.type === "ward"
+					? "local-election"
+					: "general-election",
+			);
 		for (const { contentHash, ...artifact } of result.artifacts) {
 			expect(expected.has(artifact.measureId)).toBe(true);
 			expect(contentHash).toBe(sha256(JSON.stringify(artifact)));
