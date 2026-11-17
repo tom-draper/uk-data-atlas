@@ -15,6 +15,7 @@ import type { CatalogueDataset } from "@/lib/data/catalog";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ChartDatasetDefinition } from "./types.ts";
 import type { BarsCardConfig } from "../measures/barsConfig.ts";
+import type { DeprivationCardConfig } from "./deprivationCard.ts";
 import type { BreakdownCardConfig } from "../measures/breakdownConfig.ts";
 import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
 import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
@@ -195,6 +196,15 @@ const breakdownFor = (
 	period: breakdown.period,
 	source: breakdown.source,
 	coverage: breakdown.coverage,
+});
+
+const deprivationFor = (
+	declaration: Displayed,
+	deprivation: NonNullable<DatasetDisplay["deprivation"]>,
+): DeprivationCardConfig => ({
+	...deprivation,
+	datasetType: declaration.id as DeprivationCardConfig["datasetType"],
+	headlineMeasure: declaration.display.measures[0].id,
 });
 
 const barsFor = (
@@ -396,6 +406,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 				: {}),
 			...(display.breakdown
 				? { breakdown: breakdownFor(declaration, display.breakdown) }
+				: {}),
+			...(display.deprivation
+				? {
+						deprivation: deprivationFor(
+							declaration,
+							display.deprivation,
+						),
+					}
 				: {}),
 			// The editions are told apart by id, the first being the one shown.
 			...(display.bars
