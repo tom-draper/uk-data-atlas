@@ -30,9 +30,6 @@ export function validateObservationSeries(
 				);
 			required.add(identity);
 		}
-	const measures = new Map(
-		catalog.measures.map((measure) => [measure.id, measure]),
-	);
 	const series = new Map<string, Measure[]>();
 	for (const measure of catalog.measures) {
 		if (!measure.series)
@@ -54,11 +51,7 @@ export function validateObservationSeries(
 			);
 	};
 	for (const artifact of observations) {
-		const candidates =
-			series.get(artifact.measureId) ??
-			(measures.has(artifact.measureId)
-				? [measures.get(artifact.measureId)!]
-				: []);
+		const candidates = series.get(artifact.measureId) ?? [];
 		const matches = candidates.flatMap((measure) =>
 			measure.sources
 				.filter(
@@ -83,24 +76,30 @@ export function validateObservationSeries(
 	}
 	for (const table of tables)
 		for (const id of table.measures) {
-			const match = series
-				.get(id)
-				?.flatMap((measure) =>
-					measure.sources
-						.filter(
-							(candidate) =>
-								candidate.datasetId === table.datasetId &&
-								candidate.sourceGeography.type ===
-									table.sourceGeography.type &&
-								candidate.sourceGeography.boundaryYear ===
-									table.sourceGeography.boundaryYear &&
-								observationArtifactName(
-									measure.id,
-									candidate,
-								) === table.id,
-						)
-						.map((source) => ({ measure, source })),
-				)[0];
+			const matches =
+				series
+					.get(id)
+					?.flatMap((measure) =>
+						measure.sources
+							.filter(
+								(candidate) =>
+									candidate.datasetId === table.datasetId &&
+									candidate.sourceGeography.type ===
+										table.sourceGeography.type &&
+									candidate.sourceGeography.boundaryYear ===
+										table.sourceGeography.boundaryYear &&
+									observationArtifactName(
+										measure.id,
+										candidate,
+									) === table.id,
+							)
+							.map((source) => ({ measure, source })),
+					) ?? [];
+			if (matches.length > 1)
+				throw new Error(
+					`Ambiguous observation source: ${id} in ${table.id}`,
+				);
+			const match = matches[0];
 			accept(match?.measure, match?.source, `${id} in ${table.id}`);
 		}
 	if (required.size)
