@@ -14,7 +14,7 @@ export function validateObservationSeries(
 	catalog: DataCatalog,
 	observations: readonly AnyMeasureObservationArtifact[],
 	tables: readonly MeasureTableArtifact[],
-	datasets: ReadonlyMap<AnyMeasureObservationArtifact, string> = new Map(),
+	datasets: ReadonlyMap<AnyMeasureObservationArtifact, string>,
 ): void {
 	const key = (measure: Measure, source: MeasureSource) => {
 		if (!measure.series)
@@ -52,13 +52,17 @@ export function validateObservationSeries(
 			);
 	};
 	for (const artifact of observations) {
+		const datasetId = datasets.get(artifact);
+		if (!datasetId)
+			throw new Error(
+				`Missing observation dataset: ${artifact.measureId}`,
+			);
 		const candidates = series.get(artifact.measureId) ?? [];
 		const matches = candidates.flatMap((measure) =>
 			measure.sources
 				.filter(
 					(source) =>
-						(!datasets.has(artifact) ||
-							source.datasetId === datasets.get(artifact)) &&
+						source.datasetId === datasetId &&
 						source.sourceGeography.type ===
 							artifact.sourceGeography.type &&
 						source.sourceGeography.boundaryYear ===

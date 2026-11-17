@@ -44,6 +44,13 @@ test("generates energy observations with declared series keys and matching hashe
 		expect(result.artifacts.map((artifact) => artifact.measureId)).toEqual(
 			expected,
 		);
+		expect(
+			result.artifacts.map((artifact) =>
+				result.observationDatasets.get(artifact),
+			),
+		).toEqual(
+			result.measures.map((measure) => measure.sources[0]!.datasetId),
+		);
 		for (const { contentHash, ...content } of result.artifacts)
 			expect(contentHash).toBe(sha256(JSON.stringify(content)));
 	} finally {

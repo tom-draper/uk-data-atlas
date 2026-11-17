@@ -61,21 +61,29 @@ test("validates individual and shared table observations by canonical series and
 	const first = measure("old-young", "young", source("census", table.id));
 	const second = measure("old-older", "older", source("census", table.id));
 	const third = measure("old-total", "all", source("population"));
+	const artifact = observed(measureSeriesKey(third.series!));
 	expect(() =>
 		validateObservationSeries(
 			catalog(first, second, third),
-			[observed(measureSeriesKey(third.series!))],
+			[artifact],
 			[table],
+			new Map([[artifact, "population"]]),
 		),
 	).not.toThrow();
 	expect(() =>
-		validateObservationSeries(catalog(first, second, third), [], [table]),
+		validateObservationSeries(
+			catalog(first, second, third),
+			[],
+			[table],
+			new Map(),
+		),
 	).toThrow(/Missing observation series/);
 	expect(() =>
 		validateObservationSeries(
 			catalog(first, second),
 			[],
 			[{ ...table, measures: [table.measures[0]!, table.measures[0]!] }],
+			new Map(),
 		),
 	).toThrow(/duplicate observation series/);
 });
@@ -88,18 +96,25 @@ test("rejects duplicate canonical identities even when legacy names differ", () 
 			catalog(first, second),
 			[observed(first.id), observed(second.id)],
 			[],
+			new Map(),
 		),
 	).toThrow(/Duplicate catalogue series source/);
 });
 
 test("rejects legacy artifact identities", () => {
 	const entry = measure("old-young", "young", source("population"));
+	const artifact = observed(entry.id);
 	expect(() =>
-		validateObservationSeries(catalog(entry), [observed(entry.id)], []),
+		validateObservationSeries(
+			catalog(entry),
+			[artifact],
+			[],
+			new Map([[artifact, "population"]]),
+		),
 	).toThrow(/No catalogue source matches/);
 });
 
-test("rejects ambiguous sources for an individual observation", () => {
+test("rejects observations without dataset provenance", () => {
 	const first = measure("first", "young", source("dataset-a"));
 	const second = measure("second", "young", source("dataset-b"));
 	expect(() =>
@@ -107,8 +122,9 @@ test("rejects ambiguous sources for an individual observation", () => {
 			catalog(first, second),
 			[observed(measureSeriesKey(first.series!))],
 			[],
+			new Map(),
 		),
-	).toThrow(/Ambiguous observation source/);
+	).toThrow(/Missing observation dataset/);
 });
 
 test("uses dataset provenance to distinguish otherwise identical sources", () => {

@@ -343,5 +343,11 @@ export const compileCensus = (
 	return {
 		measures: censusMeasures,
 		artifacts: censusObservations.map(({ artifact }) => artifact),
+		observationDatasets: new Map(
+			censusObservations.map(({ measure, artifact }) => [
+				artifact,
+				measure.sources[0]!.datasetId,
+			]),
+		),
 	};
 };
