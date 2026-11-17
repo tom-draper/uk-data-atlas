@@ -4,6 +4,7 @@ import { countryForCode, countriesFor } from "@uk-data-atlas/catalogue/node";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /**
  * Total jobs, counted where the work is.
@@ -19,6 +20,7 @@ export const compileJobs = (
 	jobsPath: DatasetInput,
 	populationCodes: Set<string>,
 ): CompiledMeasure => {
+	const seriesKey = measureSeriesKey({ measure: "total-jobs" });
 	const jobs = datasets.find((dataset) => dataset.id === "jobs");
 	if (!jobs) throw new Error(`${manifestPath} has no jobs dataset`);
 	if (
@@ -71,7 +73,7 @@ export const compileJobs = (
 		.map((period) => period.period);
 	const jobsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "total-jobs",
+		measureId: seriesKey,
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: jobsPeriods,
 	});
@@ -112,7 +114,7 @@ export const compileJobs = (
 		artifact: {
 			schemaVersion: 1,
 			contentHash: sha256(jobsContent),
-			measureId: "total-jobs",
+			measureId: seriesKey,
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 			periods: jobsPeriods,
 		},
