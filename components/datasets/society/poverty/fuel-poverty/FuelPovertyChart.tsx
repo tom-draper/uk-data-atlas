@@ -97,7 +97,8 @@ export default function FuelPovertyChart({
 	codeMapper,
 	setActiveViz,
 }: Props) {
-	const measure = useCurrentMapOptions()["fuel-poverty"].measure;
+	const measure = useCurrentMapOptions()["fuel-poverty"].measure as
+		"rate" | "count";
 	const dataset = availableDatasets[year];
 	const isDark = useIsDark();
 	const [lsoaToLad, setLsoaToLad] = useState<Record<string, string> | null>(

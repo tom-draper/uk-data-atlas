@@ -18,10 +18,6 @@ export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
 
-export interface FuelPovertyOptions extends ColorRangeOption {
-	measure: "rate" | "count";
-}
-
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -52,7 +48,6 @@ type CustomMapDatasetId =
 	| "brexit"
 	| "brexit-constituency"
 	| "ethnicity"
-	| "fuel-poverty"
 	| "general-election"
 	| "house-price"
 	| "life-expectancy"
@@ -64,10 +59,9 @@ type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	DisplayedDatasetId | "fuel-poverty" | "house-price" | "life-expectancy"
+	DisplayedDatasetId | "house-price" | "life-expectancy"
 > &
 	Record<DisplayedDatasetId, DeclaredMapOptions> & {
-		"fuel-poverty": FuelPovertyOptions;
 		"house-price": HousePriceOptions;
 		"life-expectancy": LifeExpectancyOptions;
 	};

@@ -1,3 +1,4 @@
+import { aggregateFuelPoverty } from "@uk-data-atlas/datasets";
 import { describe, expect, it } from "vitest";
 import {
 	aggregateBroadband,
@@ -15,10 +16,7 @@ import {
 	aggregateClaimantCount,
 	aggregateSchoolPerformance,
 } from "@uk-data-atlas/datasets";
-import {
-	aggregateFuelPoverty,
-	collectBoundaryRecords,
-} from "@/lib/helpers/datasetAggregation/numeric";
+import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { CODE_KEY, features } from "./fixtures";
 
 describe("collectBoundaryRecords", () => {

@@ -1,7 +1,7 @@
-import { aggregateFuelPoverty } from "./datasetAggregation/numeric";
-import type {
-	AggregatedFuelPovertyData,
-	FuelPovertyDataset,
+import {
+	aggregateFuelPoverty,
+	type AggregatedFuelPovertyData,
+	type FuelPovertyDataset,
 } from "@uk-data-atlas/datasets";
 
 /**

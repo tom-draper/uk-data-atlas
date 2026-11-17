@@ -1,7 +1,11 @@
 import { it, expect } from "vitest";
-import { fuelPovertyDefinition } from "@/lib/datasets/fuelPoverty";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import type { FuelPovertyDataset } from "@uk-data-atlas/datasets";
+const fuelPovertyDefinition = CHART_DATASET_DEFINITIONS.find(
+	(definition) => definition.type === "fuel-poverty",
+)!;
+
 it("maps rate or household count without filling absent areas", () => {
 	const dataset = {
 		data: { E1: { fuelPovertyRate: 12.5, fuelPoorHouseholdCount: 125 } },
@@ -10,7 +14,7 @@ it("maps rate or household count without filling absent areas", () => {
 		...DEFAULT_MAP_OPTIONS,
 		"fuel-poverty": {
 			...DEFAULT_MAP_OPTIONS["fuel-poverty"],
-			measure: "count" as const,
+			measure: "count",
 		},
 	};
 	expect(fuelPovertyDefinition.map?.valueFor?.(dataset, "E1", options)).toBe(

@@ -5,10 +5,6 @@ import { denominator, weightedMean } from "@uk-data-atlas/datasets";
 
 export { weightedMean };
 import type {} from "@uk-data-atlas/datasets";
-import type {
-	AggregatedFuelPovertyData,
-	FuelPovertyDataset,
-} from "@uk-data-atlas/datasets";
 import type {} from "@uk-data-atlas/datasets";
 import type { SchoolPerformanceGapMeasures } from "@uk-data-atlas/datasets";
 
@@ -32,23 +28,4 @@ export function collectBoundaryRecords<T>(
 		if (record) records.push(record);
 	}
 	return records;
-}
-
-export function aggregateFuelPoverty(
-	records: FuelPovertyDataset["data"][string][],
-): AggregatedFuelPovertyData | null {
-	let householdCount = 0;
-	let fuelPoorHouseholdCount = 0;
-	for (const record of records) {
-		householdCount += record.householdCount;
-		fuelPoorHouseholdCount += record.fuelPoorHouseholdCount;
-	}
-	return householdCount === 0
-		? null
-		: {
-				householdCount,
-				fuelPoorHouseholdCount,
-				fuelPovertyRate:
-					(fuelPoorHouseholdCount / householdCount) * 100,
-			};
 }
