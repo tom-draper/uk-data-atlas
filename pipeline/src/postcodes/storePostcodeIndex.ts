@@ -20,7 +20,7 @@ export const storePostcodeIndex = (
 		const database = new DatabaseSync(temporary);
 		try {
 			database.exec(
-				"BEGIN; CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID;",
+				"BEGIN; CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) STRICT, WITHOUT ROWID;",
 			);
 			writeSqliteTables(database, postcodeTables(artifact, readShard));
 			database

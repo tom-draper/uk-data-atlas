@@ -44,6 +44,7 @@ export const postcodeTables = (
 	}
 	return {
 		postcodes: {
+			strict: true,
 			columns: [
 				"postcode TEXT NOT NULL",
 				"easting INTEGER",

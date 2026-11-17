@@ -23,7 +23,7 @@ export const writeSqliteIndex = (
 			`PRAGMA foreign_keys = ON; PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
 		);
 		database.exec(
-			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
+			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID",
 		);
 		const insertMeta = database.prepare("INSERT INTO meta VALUES (?, ?)");
 		for (const [key, value] of Object.entries(meta))

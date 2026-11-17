@@ -85,7 +85,7 @@ export function writePostcodeAreas(
 		CREATE TABLE postcode_area_set (id INTEGER PRIMARY KEY${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id)`).join("")}) STRICT;
 		CREATE TABLE postcodes_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, latitudeMicrodegrees INTEGER, longitudeMicrodegrees INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c, i) => `, ${quote(c.distance)} INTEGER${fallbacks[i] === null ? " NOT NULL" : ""}`).join("")}) STRICT, WITHOUT ROWID;`);
 	database.exec(
-		"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
+		"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID",
 	);
 	database
 		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")

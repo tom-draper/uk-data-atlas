@@ -368,7 +368,7 @@ export const buildModuleDatabase = (
 					if (row.type === "table" && keep(row.name))
 						copyTable(database, row.name);
 				database.exec(
-					`CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID`,
+					`CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) STRICT, WITHOUT ROWID`,
 				);
 				copyTable(
 					database,

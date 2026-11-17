@@ -83,6 +83,7 @@ export const locationProjectionTables = ({
 			);
 	return {
 		location_projection_dictionary: {
+			strict: true,
 			columns: [
 				"kind TEXT NOT NULL",
 				"crosswalk_id TEXT NOT NULL",
@@ -96,6 +97,7 @@ export const locationProjectionTables = ({
 			]),
 		},
 		location_projection_member: {
+			strict: true,
 			columns: [
 				"crosswalk_id TEXT NOT NULL",
 				"key TEXT NOT NULL",
@@ -105,6 +107,7 @@ export const locationProjectionTables = ({
 			rows: rows("members"),
 		},
 		location_projection_parent: {
+			strict: true,
 			columns: [
 				"crosswalk_id TEXT NOT NULL",
 				"key TEXT NOT NULL",
