@@ -105,6 +105,8 @@ export type DirectRecord = {
 	code: string;
 	/** The publisher's name, stored when the declaration has a `name`. */
 	name?: string;
+	/** Parent areas keyed by the declaration's parent code field. */
+	parents?: Record<string, { code: string; name?: string } | null>;
 	values: DirectValue[];
 };
 

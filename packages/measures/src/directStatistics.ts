@@ -27,7 +27,7 @@ import {
  * assembly plans the series and the same writer stores them.
  *
  * Only what a single table of areas needs is supported: one record set, no
- * record parents, election text or discovered (undeclared) dimension parents.
+ * election text or discovered (undeclared) dimension parents.
  */
 export function directStatistics(
 	config: DeclaredDataset,
@@ -40,7 +40,6 @@ export function directStatistics(
 			`${type}: a direct dataset needs a payload declaration`,
 		);
 	if (
-		config.parents ||
 		config.election ||
 		(config.records && config.records.length !== 1) ||
 		typeof config.fields === "function"
@@ -160,6 +159,43 @@ export function directStatistics(
 						onName?.(release, code, record.name);
 					if (code !== record.code)
 						onKey?.(release, code, record.code);
+					for (const parent of config.parents ?? []) {
+						if (!(parent.sets ?? [set.from]).includes(set.from))
+							continue;
+						const found = record.parents?.[parent.code];
+						if (
+							found === undefined ||
+							(found === null && parent.nullable)
+						)
+							continue;
+						if (
+							!found ||
+							(parent.name !== undefined &&
+								typeof found.name !== "string")
+						)
+							throw new Error(
+								`${context}: record ${code} has no ${[parent.code, parent.name].filter(Boolean).join(" and ")}`,
+							);
+						const parentRelease = heldOf(
+							[parent.release, ...(parent.alsoIn ?? [])],
+							context,
+						).find((candidate) => areas.has(candidate, found.code));
+						if (!parentRelease)
+							throw new Error(
+								`${context}: ${parent.code} ${found.code} is in no listed release`,
+							);
+						if (found.name !== undefined)
+							onName?.(parentRelease, found.code, found.name);
+						onRelation?.({
+							relation: parent.relation ?? "parent",
+							period: topPeriod.label,
+							child: { release, code },
+							parent: {
+								release: parentRelease,
+								code: found.code,
+							},
+						});
+					}
 					for (const value of record.values) {
 						if (!measures.has(value.measure))
 							throw new Error(
