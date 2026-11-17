@@ -86,5 +86,9 @@
 	"regional-gdp": {
 		"sha256": "fc2d174c9dd79213664d83e4c37a9199dda3bbae6d8717019a26295441fcc6e9",
 		"bytes": 642709
+	},
+	"business-activity": {
+		"sha256": "c653dad188c6a4cd39d80b23bf4823c9591bd991e4dedf7eff1e67838e7527b9",
+		"bytes": 42573
 	}
 }

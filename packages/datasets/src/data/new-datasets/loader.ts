@@ -64,39 +64,6 @@ async function addPopulationMetrics(
 const table = (content: string, name: string, maxColumns = 64) =>
 	odsTableRows(content, { table: name, label: name, maxColumns });
 
-/** ONS table 1 reports broad-industry counts; summing them gives all enterprises. */
-export async function loadBusinessActivity(
-	read: (path: string, sheet: string) => Promise<string>,
-	readPopulation: (path: string, sheet: string) => Promise<string> = read,
-) {
-	const { data: rows } = await parseCsv<string[]>(
-		await read(
-			source(
-				sourceDir(
-					"business-activity",
-					"ukbusinessworkbook2025new.xlsx",
-				),
-			),
-			"Table 1",
-		),
-		{ header: false },
-	);
-	// Each row lists its broad industries and then their total. Read the
-	// total, as adding up the row would count every business twice.
-	const total = rows.find((row) => row.includes("Total"))?.indexOf("Total");
-	if (total === undefined)
-		throw new Error("Business activity Table 1 has no Total column.");
-	const records: Record<string, IndicatorRecord> = {};
-	for (const row of rows) {
-		const match = /^([EWSN]\d+)\s*:\s*(.+)$/.exec(row[0] ?? "");
-		const value = numeric(row[total]);
-		if (!match || !mapAuthorityCode(match[1]!) || value === null) continue;
-		records[match[1]!] = { code: match[1]!, name: match[2]!.trim(), value };
-	}
-	await addPopulationMetrics(records, readPopulation);
-	return dataset("business-activity", 2025, "localAuthority", 2025, records);
-}
-
 export async function loadWaste(
 	readRows: (
 		path: string,
