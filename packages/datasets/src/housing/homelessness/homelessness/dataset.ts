@@ -111,8 +111,14 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 	display: {
 		label: "Homelessness [2026]",
 		year: 2026,
-		component:
-			"@/components/datasets/housing/homelessness/homelessness/HomelessnessChart",
+		card: {
+			heading: "Homelessness",
+			source: "Ministry of Housing, Communities and Local Government. Statutory homelessness statistics. gov.uk",
+			secondary: {
+				field: "childrenInTemporaryAccommodation",
+				format: { kind: "compact", suffix: " children in TA" },
+			},
+		},
 		measures: [
 			{
 				id: "rate",
@@ -128,6 +134,7 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 						suffix: " per 1k households",
 					},
 				},
+				card: { unit: "per 1k households", digits: 1, maximum: 15 },
 			},
 			{
 				id: "count",
@@ -138,6 +145,11 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 					min: 0,
 					max: 8000,
 					format: { kind: "count", suffix: " households in TA" },
+				},
+				card: {
+					unit: "households in TA",
+					format: { kind: "count", locale: "en-GB" },
+					maximum: 2500,
 				},
 			},
 		],
