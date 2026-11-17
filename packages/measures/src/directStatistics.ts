@@ -5,6 +5,7 @@ import {
 	type DeclaredHeader,
 	type DeclaredRelease,
 	type DirectPart,
+	type AreaRelationship,
 } from "@uk-data-atlas/datasets";
 import type {
 	AreaIndex,
@@ -26,7 +27,7 @@ import {
  * assembly plans the series and the same writer stores them.
  *
  * Only what a single table of areas needs is supported: one record set, no
- * parents, keys, election text or discovered (undeclared) dimension parents.
+ * record parents, election text or discovered (undeclared) dimension parents.
  */
 export function directStatistics(
 	config: DeclaredDataset,
@@ -39,10 +40,8 @@ export function directStatistics(
 			`${type}: a direct dataset needs a payload declaration`,
 		);
 	if (
-		config.keys ||
 		config.parents ||
 		config.election ||
-		config.headerRelationships ||
 		(config.records && config.records.length !== 1) ||
 		typeof config.fields === "function"
 	)
@@ -116,6 +115,13 @@ export function directStatistics(
 		function* walk(
 			onMember?: (dimension: string, key: string) => void,
 			onName?: (release: AreaRelease, code: string, name: string) => void,
+			onKey?: (release: AreaRelease, code: string, key: string) => void,
+			onRelation?: (relation: {
+				relation: AreaRelationship;
+				period: string;
+				child: { release: AreaRelease; code: string };
+				parent: { release: AreaRelease; code: string };
+			}) => void,
 		) {
 			for (const part of parts) {
 				const context = `${type} ${part.key}`;
@@ -130,23 +136,30 @@ export function directStatistics(
 								);
 							})();
 				const candidates = heldOf(releasesOf(header), context);
+				const codeOf = (key: string) =>
+					typeof config.keys === "function"
+						? config.keys(key, header)
+						: (config.keys?.[key] ?? key);
 				for (const record of part.records) {
+					const code = codeOf(record.code);
 					const release = candidates.find((candidate) =>
-						areas.has(candidate, record.code),
+						areas.has(candidate, code),
 					);
 					if (!release) {
 						if (
 							config.exclude?.some(({ codes }) =>
-								codes.test(record.code),
+								codes.test(code),
 							)
 						)
 							continue;
 						throw new Error(
-							`${context}: area ${record.code} is in no listed release`,
+							`${context}: area ${code} is in no listed release`,
 						);
 					}
 					if (nameField !== undefined && record.name !== undefined)
-						onName?.(release, record.code, record.name);
+						onName?.(release, code, record.name);
+					if (code !== record.code)
+						onKey?.(release, code, record.code);
 					for (const value of record.values) {
 						if (!measures.has(value.measure))
 							throw new Error(
@@ -184,7 +197,7 @@ export function directStatistics(
 							measure: value.measure,
 							members,
 							release,
-							code: record.code,
+							code,
 							period: value.period ?? topPeriod,
 							value: value.value,
 							lower: value.lower,
@@ -192,6 +205,23 @@ export function directStatistics(
 							status: value.status,
 						};
 					}
+				}
+				for (const link of config.headerRelationships ?? []) {
+					const links = part.relationships?.[link.field];
+					if (!links)
+						throw new Error(`${context} has no ${link.field}`);
+					const [childRelease] = heldOf([link.child], context);
+					const [parentRelease] = heldOf([link.parent], context);
+					for (const [child, parentKey] of Object.entries(links))
+						onRelation?.({
+							relation: link.relation ?? "parent",
+							period: topPeriod.label,
+							child: { release: childRelease!, code: child },
+							parent: {
+								release: parentRelease!,
+								code: codeOf(parentKey),
+							},
+						});
 				}
 			}
 		}

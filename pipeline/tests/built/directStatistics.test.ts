@@ -136,6 +136,23 @@ function snapshot(path: string, output: string) {
 				 JOIN area_releases r ON r.id = v.release_id
 				 WHERE d.slug = ? ORDER BY r.geography, r.release, a.code`,
 			),
+			keys: all(
+				`SELECT r.geography, r.release, a.code, k.key
+				 FROM dataset_area_key k JOIN dataset d ON d.id = k.dataset_id
+				 JOIN area_version v ON v.id = k.area_version_id JOIN area a ON a.id = v.area_id
+				 JOIN area_releases r ON r.id = v.release_id WHERE d.slug = ?
+				 ORDER BY r.geography, r.release, a.code`,
+			),
+			relationships: all(
+				`SELECT l.relation, p.label AS period, cr.geography AS child_geography,
+				 cr.release AS child_release, ca.code AS child_code, pr.geography AS parent_geography,
+				 pr.release AS parent_release, pa.code AS parent_code
+				 FROM area_relationship l JOIN dataset d ON d.id = l.dataset_id
+				 JOIN period p ON p.id = l.period_id
+				 JOIN area_version cv ON cv.id = l.child_version_id JOIN area ca ON ca.id = cv.area_id JOIN area_releases cr ON cr.id = cv.release_id
+				 JOIN area_version pv ON pv.id = l.parent_version_id JOIN area pa ON pa.id = pv.area_id JOIN area_releases pr ON pr.id = pv.release_id
+				 WHERE d.slug = ? ORDER BY l.relation, p.label, cr.geography, cr.release, ca.code, pr.geography, pr.release, pa.code`,
+			),
 			periods: all(
 				`SELECT DISTINCT p.label, p.kind, p.start_date, p.end_date
 				 FROM observation o JOIN series s ON s.id = o.series_id

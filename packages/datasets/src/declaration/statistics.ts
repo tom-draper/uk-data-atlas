@@ -113,6 +113,8 @@ export type DirectPart = {
 	/** The key of the part in the dataset's payload, as `payload.parts` gives it. */
 	key: string;
 	records: DirectRecord[];
+	/** Header relationship mappings, keyed by their declared payload field. */
+	relationships?: Record<string, Record<string, string>>;
 };
 
 /**

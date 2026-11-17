@@ -246,6 +246,69 @@ describe("directStatistics", () => {
 		);
 	});
 
+	it("stores external keys and header relationships like compiled records", () => {
+		const keyed: DeclaredDataset = {
+			...config,
+			keys: { ODS1: "E06000001" },
+			headerRelationships: [
+				{
+					field: "mapping",
+					child: { geography: "region", year: 2025 },
+					parent: { geography: "localAuthority", year: 2024 },
+				},
+			],
+		};
+		const compiled = write(
+			declaredStatistics(
+				keyed,
+				() =>
+					file(
+						{
+							ODS1: {
+								ladCode: "ODS1",
+								ladName: "Hartlepool",
+								total: 10,
+								theft: 4,
+							},
+						},
+						{ mapping: { E12000001: "ODS1" } },
+					),
+				entry,
+			),
+		);
+		const direct = write(
+			directStatistics(
+				keyed,
+				[
+					{
+						key: "2024",
+						records: [record("ODS1", "Hartlepool", 10, 4)],
+						relationships: { mapping: { E12000001: "ODS1" } },
+					},
+				],
+				entry,
+			),
+		);
+		try {
+			expect(rows(direct)).toEqual(rows(compiled));
+			for (const table of ["dataset_area_key", "area_relationship"])
+				expect(direct.prepare(`SELECT * FROM ${table}`).all()).toEqual(
+					compiled.prepare(`SELECT * FROM ${table}`).all(),
+				);
+			expect(
+				direct.prepare("SELECT key FROM dataset_area_key").get()?.key,
+			).toBe("ODS1");
+			expect(
+				direct
+					.prepare("SELECT count(*) AS n FROM area_relationship")
+					.get()?.n,
+			).toBe(1);
+		} finally {
+			compiled.close();
+			direct.close();
+		}
+	});
+
 	it("refuses a declaration with more than one record set", () => {
 		expect(() =>
 			directStatistics(
