@@ -42,5 +42,9 @@
 	"mobile-coverage": {
 		"sha256": "ae4be9fe897be3e337a1c5aaa3518c9e91c0ec67d10fba43531513cbef820be8",
 		"bytes": 77316
+	},
+	"nhs-waiting": {
+		"sha256": "057e9aed9ba785a0d5855cbec653d83c573708f6269dd91fd097d2fc653967d4",
+		"bytes": 12092
 	}
 }
