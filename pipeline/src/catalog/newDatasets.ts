@@ -1,9 +1,12 @@
 import { type DatasetInput } from "./input.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
+import { planningApplications, waste } from "@uk-data-atlas/datasets";
+
+const declarations = { waste, "planning-applications": planningApplications };
 
 type NewDataset = {
-	datasetId: string;
+	datasetId: keyof typeof declarations;
 	path: DatasetInput;
 	boundaryYear: number;
 	period: string;
@@ -20,8 +23,16 @@ export const compileNewDatasets = (
 	manifest: CatalogManifest,
 	datasets: readonly NewDataset[],
 ): CompiledMeasure[] =>
-	datasets.flatMap((dataset) =>
-		publishIndicators(manifest, {
+	datasets.flatMap((dataset) => {
+		const fields = declarations[dataset.datasetId].statistics!.fields!;
+		if (!Array.isArray(fields))
+			throw new Error(`Expected ${dataset.datasetId} fields`);
+		const field = fields.find((candidate) => candidate.path === "value");
+		if (!field)
+			throw new Error(
+				`No value series declared for ${dataset.datasetId}`,
+			);
+		return publishIndicators(manifest, {
 			datasetId: dataset.datasetId,
 			path: dataset.path,
 			boundaryYear: dataset.boundaryYear,
@@ -33,6 +44,10 @@ export const compileNewDatasets = (
 			indicators: [
 				{
 					id: dataset.datasetId,
+					series: {
+						measure: field.measure,
+						dimensions: field.members,
+					},
 					label: dataset.label,
 					field: "value",
 					valueKind: dataset.valueKind,
@@ -41,8 +56,8 @@ export const compileNewDatasets = (
 					notes: [],
 				},
 			],
-		}),
-	);
+		});
+	});
 
 export const NEW_DATASET_MEASURES = (
 	paths: Partial<Record<string, DatasetInput>>,
