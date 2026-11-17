@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { housePriceDefinition } from "@/lib/datasets/housePrice";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets/generated";
+import { aggregateHousePrices } from "@uk-data-atlas/datasets";
 import type { HousePriceDataset } from "@uk-data-atlas/datasets";
+
+const definition = CHART_DATASET_DEFINITIONS.find(
+	(candidate) => candidate.type === "house-price",
+)!;
 
 const dataset: HousePriceDataset = {
 	id: "house-price2023",
@@ -23,7 +28,7 @@ const dataset: HousePriceDataset = {
 
 describe("house price map metric", () => {
 	it("uses the selected median or mean price", () => {
-		const valueFor = housePriceDefinition.map?.valueFor;
+		const valueFor = definition.map?.valueFor;
 		expect(valueFor?.(dataset, "E1", DEFAULT_MAP_OPTIONS)).toBe(250000);
 
 		expect(
@@ -35,5 +40,41 @@ describe("house price map metric", () => {
 				},
 			}),
 		).toBe(320000);
+	});
+
+	it("labels the legend in thousands of pounds", () => {
+		expect(definition.map!.legend.format(250000, DEFAULT_MAP_OPTIONS)).toBe(
+			"£250k",
+		);
+	});
+});
+
+describe("aggregateHousePrices", () => {
+	const ward = (prices: number | undefined, mean: number | undefined) =>
+		({
+			prices: prices === undefined ? {} : { 2023: prices },
+			meanPrices: mean === undefined ? {} : { 2023: mean },
+		}) as never;
+
+	it("averages the wards priced in 2023", () => {
+		expect(
+			aggregateHousePrices([
+				ward(240000, 290000),
+				ward(260000, 310000),
+				ward(undefined, undefined),
+			]),
+		).toEqual({
+			averagePrice: 250000,
+			averageMeanPrice: 300000,
+			wardCount: 2,
+		});
+	});
+
+	it("reports zero when no ward has a price", () => {
+		expect(aggregateHousePrices([])).toEqual({
+			averagePrice: 0,
+			averageMeanPrice: 0,
+			wardCount: 0,
+		});
 	});
 });

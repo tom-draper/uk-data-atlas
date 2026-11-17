@@ -2,7 +2,7 @@ import type { BoundaryAggregationSpec } from "./ports";
 import { collectBoundaryRecords } from "./numeric";
 import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
-import { aggregateCustomDataset, aggregateHousePrices } from "./economics";
+import { aggregateCustomDataset } from "./economics";
 import {} from "@uk-data-atlas/datasets";
 import { aggregateEthnicity, aggregateLifeExpectancy } from "./demographics";
 import {
@@ -58,11 +58,6 @@ export const ethnicityAggregation = boundaryAggregation(
 	"ethnicity",
 	"localAuthority",
 	aggregateEthnicity,
-);
-export const housePriceAggregation = boundaryAggregation(
-	"house-price",
-	"ward",
-	aggregateHousePrices,
 );
 export const brexitAggregation = boundaryAggregation(
 	"brexit",

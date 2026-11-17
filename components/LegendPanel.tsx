@@ -29,7 +29,6 @@ import {
 import {
 	DeclaredMeasurePanel,
 	ElectionMetricPanel,
-	HousePriceMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	LifeExpectancyKindPanel,
 	PercentageRangePanel,
@@ -167,14 +166,6 @@ export default function LegendPanel({
 									: {}),
 							});
 					}}
-				/>
-			)}
-			{activeDataset?.type === "house-price" && (
-				<HousePriceMeasurePanel
-					measure={controls.displayOptions["house-price"].measure}
-					onChange={(measure) =>
-						onMapOptionsChange("house-price", { measure })
-					}
 				/>
 			)}
 

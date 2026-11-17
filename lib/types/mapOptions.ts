@@ -10,10 +10,6 @@ export interface ColorRangeOption {
 	colorRange: ColorRange;
 }
 
-export interface HousePriceOptions extends ColorRangeOption {
-	measure: "median" | "mean";
-}
-
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -49,7 +45,6 @@ type CustomMapDatasetId =
 	| "brexit-constituency"
 	| "ethnicity"
 	| "general-election"
-	| "house-price"
 	| "life-expectancy"
 	| "local-election"
 	| "population";
@@ -59,10 +54,9 @@ type DisplayedDatasetId = Exclude<DeclaredDatasetId, CustomMapDatasetId>;
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	DisplayedDatasetId | "house-price" | "life-expectancy"
+	DisplayedDatasetId | "life-expectancy"
 > &
 	Record<DisplayedDatasetId, DeclaredMapOptions> & {
-		"house-price": HousePriceOptions;
 		"life-expectancy": LifeExpectancyOptions;
 	};
 

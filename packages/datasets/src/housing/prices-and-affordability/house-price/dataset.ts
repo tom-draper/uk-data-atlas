@@ -4,6 +4,7 @@ import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { loadHousePrice } from "../../../data/house-price/loader.ts";
+import { aggregateHousePrices } from "./aggregate.ts";
 
 export const housePrice = defineDataset<HousePriceDataset>({
 	id: "house-price",
@@ -105,5 +106,50 @@ export const housePrice = defineDataset<HousePriceDataset>({
 				period: (index) =>
 					periods.year(Number(header.priceYearsFrom) + Number(index)),
 			})),
+	},
+	display: {
+		label: "House Prices [2023]",
+		year: 2023,
+		component: "@/components/measures/MeasureSeriesChart",
+		series: {
+			heading: "House Price",
+			headings: {
+				median: "Median House Price",
+				mean: "Mean House Price",
+			},
+			period: "1995-2023",
+			source: "Office for National Statistics. Final ward-level median and mean house-price data for England and Wales, year ending March 2023. ons.gov.uk",
+			accent: "#6366f1",
+			measures: {
+				median: "house-price-median",
+				mean: "house-price-mean",
+			},
+			combine: "mean",
+		},
+		measures: [
+			{
+				id: "median",
+				label: "Median",
+				field: "prices.2023",
+				colorRange: { min: 80000, max: 500000 },
+				legend: {
+					min: 0,
+					max: 1000000,
+					format: { kind: "thousands", prefix: "£" },
+				},
+			},
+			{
+				id: "mean",
+				label: "Mean",
+				field: "meanPrices.2023",
+				colorRange: { min: 80000, max: 500000 },
+				legend: {
+					min: 0,
+					max: 1000000,
+					format: { kind: "thousands", prefix: "£" },
+				},
+			},
+		],
+		aggregation: { scope: "ward", aggregate: aggregateHousePrices },
 	},
 });

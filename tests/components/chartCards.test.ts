@@ -14,7 +14,7 @@ describe("ChartCards registry selection", () => {
 			visibility({
 				"economy-income": true,
 				"economy-jobs": false,
-				"economics-housePrice": true,
+				"housing-house-price": true,
 			}),
 		);
 
@@ -39,7 +39,7 @@ describe("ChartCards registry selection", () => {
 
 	it("splits the old Economics group across themes", () => {
 		const all = visibility({
-			"economics-housePrice": true,
+			"housing-house-price": true,
 			"economy-income": true,
 			"society-child-poverty": true,
 			"society-crime": true,
@@ -54,7 +54,7 @@ describe("ChartCards registry selection", () => {
 			getVisibleChartDefinitions("housing", all).map(
 				({ chart }) => chart.key,
 			),
-		).toEqual(["economics-housePrice"]);
+		).toEqual(["housing-house-price"]);
 		expect(
 			getVisibleChartDefinitions("society", all).map(
 				({ chart }) => chart.key,
