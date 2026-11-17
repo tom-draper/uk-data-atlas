@@ -19,6 +19,8 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
+import { SparklineBackground } from "@/components/measures/SparklineBackground";
+import { sparkline } from "@/lib/measures/series";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
 
@@ -70,27 +72,10 @@ function PriceChart({
 		mappingGeneration,
 	);
 
-	const { linePath, areaPath } = (() => {
-		if (priceData.length < 2) return { linePath: "", areaPath: "" };
-
-		const width = 100;
-		const height = 100;
-		const maxPrice = 700000;
-		const minPrice = 0;
-		const calculatedPoints = priceData.map((datum, index) => {
-			const x = (index / (priceData.length - 1)) * width;
-			const normalizedPrice = Math.min(datum.price, maxPrice);
-			const y =
-				height -
-				((normalizedPrice - minPrice) / (maxPrice - minPrice)) * height;
-			return { x, y };
-		});
-		const line = `M ${calculatedPoints.map((point) => `${point.x},${point.y}`).join(" L ")}`;
-		return {
-			linePath: line,
-			areaPath: `${line} L ${width},${height} L 0,${height} Z`,
-		};
-	})();
+	const line = sparkline(
+		priceData.map((datum) => datum.price),
+		{ domain: [0, 700000] },
+	);
 
 	const formattedPrice = currentPrice
 		? `£${formatCount(Math.round(currentPrice))}`
@@ -111,47 +96,17 @@ function PriceChart({
 				})
 			}
 			background={
-				priceData.length >= 2 &&
-				linePath && (
-					<svg
-						className="absolute inset-0 size-full"
-						viewBox="0 0 100 100"
-						preserveAspectRatio="none"
-					>
-						<defs>
-							<linearGradient
-								id={`gradient-${dataset.year}`}
-								x1="0%"
-								y1="0%"
-								x2="0%"
-								y2="100%"
-							>
-								<stop
-									offset="0%"
-									stopColor={LINE_COLOR}
-									stopOpacity="0.1"
-								/>
-								<stop
-									offset="100%"
-									stopColor={LINE_COLOR}
-									stopOpacity="0.05"
-								/>
-							</linearGradient>
-						</defs>
-						<path
-							d={areaPath}
-							fill={`url(#gradient-${dataset.year})`}
-						/>
-						<path
-							d={linePath}
-							fill="none"
-							stroke={LINE_COLOR}
-							strokeWidth="2.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							vectorEffect="non-scaling-stroke"
-						/>
-					</svg>
+				line && (
+					<SparklineBackground
+						sparkline={line}
+						color={LINE_COLOR}
+						gradientId={`gradient-${dataset.year}`}
+						fade={[
+							{ offset: "0%", opacity: 0.1 },
+							{ offset: "100%", opacity: 0.05 },
+						]}
+						strokeWidth={2.5}
+					/>
 				)
 			}
 		>

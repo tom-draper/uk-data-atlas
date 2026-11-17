@@ -17,6 +17,8 @@ import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
+import { SparklineBackground } from "@/components/measures/SparklineBackground";
+import { sparkline } from "@/lib/measures/series";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
@@ -85,40 +87,12 @@ function computeStats(
 function buildSparkline(
 	stats: AggregatedUnemploymentData,
 	measure: "rate" | "count",
-): {
-	linePath: string;
-	areaPath: string;
-	lastPt: { x: number; y: number };
-} | null {
-	const points = stats.years
-		.map((yr) => ({
-			yr,
-			v: stats[measure === "rate" ? "rates" : "levels"][yr],
-		}))
-		.filter((p): p is { yr: number; v: number } => p.v != null);
-
-	if (points.length < 2) return null;
-
-	const W = 100,
-		H = 100;
-	const PAD_Y = 12; // keep line away from top/bottom edges
-
-	const values = points.map((p) => p.v);
-	const min = Math.max(0, Math.min(...values) - 0.3);
-	const max = Math.max(...values) + 0.3;
-
-	const pts = points.map((p, i) => ({
-		x: (i / (points.length - 1)) * W,
-		y: PAD_Y + (1 - (p.v - min) / (max - min)) * (H - PAD_Y * 2),
-	}));
-
-	let linePath = `M ${pts[0].x},${pts[0].y}`;
-	for (let i = 1; i < pts.length; i++) {
-		linePath += ` L ${pts[i].x},${pts[i].y}`;
-	}
-
-	const areaPath = `${linePath} L ${W},${H} L 0,${H} Z`;
-	return { linePath, areaPath, lastPt: pts[pts.length - 1] };
+) {
+	const source = stats[measure === "rate" ? "rates" : "levels"];
+	return sparkline(
+		stats.years.flatMap((yr) => (source[yr] != null ? [source[yr]] : [])),
+		{ margin: 0.3, padY: 12 },
+	);
 }
 
 export default function UnemploymentChart({
@@ -146,7 +120,7 @@ export default function UnemploymentChart({
 		activeDataset?.type === "unemployment" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
-	const sparkline = stats ? buildSparkline(stats, measure) : null;
+	const line = stats ? buildSparkline(stats, measure) : null;
 
 	if (!dataset) return null;
 
@@ -173,53 +147,18 @@ export default function UnemploymentChart({
 				})
 			}
 			background={
-				sparkline && (
-					<svg
-						className="absolute inset-0 size-full"
-						viewBox="0 0 100 100"
-						preserveAspectRatio="none"
-					>
-						<defs>
-							<linearGradient
-								id="unemployment-area-gradient"
-								x1="0%"
-								y1="0%"
-								x2="0%"
-								y2="100%"
-							>
-								<stop
-									offset="0%"
-									stopColor={LINE_COLOR}
-									stopOpacity={isDark ? 0.2 : 0.12}
-								/>
-								<stop
-									offset="80%"
-									stopColor={LINE_COLOR}
-									stopOpacity={0}
-								/>
-							</linearGradient>
-						</defs>
-						<path
-							d={sparkline.areaPath}
-							fill="url(#unemployment-area-gradient)"
-						/>
-						<path
-							d={sparkline.linePath}
-							fill="none"
-							stroke={LINE_COLOR}
-							strokeWidth="1.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							vectorEffect="non-scaling-stroke"
-						/>
-						<circle
-							cx={sparkline.lastPt.x}
-							cy={sparkline.lastPt.y}
-							r="2"
-							fill={LINE_COLOR}
-							vectorEffect="non-scaling-stroke"
-						/>
-					</svg>
+				line && (
+					<SparklineBackground
+						sparkline={line}
+						color={LINE_COLOR}
+						gradientId="unemployment-area-gradient"
+						fade={[
+							{ offset: "0%", opacity: isDark ? 0.2 : 0.12 },
+							{ offset: "80%", opacity: 0 },
+						]}
+						strokeWidth={1.5}
+						marker
+					/>
 				)
 			}
 		>
