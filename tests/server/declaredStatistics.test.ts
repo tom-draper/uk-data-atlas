@@ -1252,6 +1252,7 @@ describe("declared statistics", () => {
 				topic: "labour-market",
 				name: "name",
 				keys: { QHM: "E06000001" },
+				keyScheme: "nhs-ods",
 				measures: [CRIMES],
 				fields: [{ path: "total", measure: "crimes" }],
 				payload: { ...payload, code: "code" },
@@ -1276,6 +1277,15 @@ describe("declared statistics", () => {
 				expect(
 					database.prepare("SELECT key FROM dataset_area_key").all(),
 				).toEqual([{ key: "QHM" }]);
+				expect(
+					database
+						.prepare(
+							"SELECT i.scheme, i.identifier, a.code FROM area_identifier i JOIN area_version v ON v.id = i.area_version_id JOIN area a ON a.id = v.area_id",
+						)
+						.all(),
+				).toEqual([
+					{ scheme: "nhs-ods", identifier: "QHM", code: "E06000001" },
+				]);
 			} finally {
 				database.close();
 			}

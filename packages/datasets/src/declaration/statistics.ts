@@ -172,6 +172,13 @@ export type DeclaredDataset = {
 	keys?:
 		| Readonly<Record<string, string>>
 		| ((key: string, header: DeclaredHeader) => string);
+	/**
+	 * Names the published identifier scheme `keys` come from, such as
+	 * `"nhs-ods"`, when they are an external code a reader can use to join
+	 * other data. Those keys are also stored in `area_identifier`, a documented
+	 * table. Without it they stay the website's own record keys.
+	 */
+	keyScheme?: string;
 	/** Codes in no listed release that are left out, with why. */
 	exclude?: { codes: RegExp; reason: string }[];
 	/**

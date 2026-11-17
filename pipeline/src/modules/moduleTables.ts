@@ -32,6 +32,10 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "dataset_id IN (SELECT id FROM temp.owned_dataset)",
 	},
 	{
+		table: "area_identifier",
+		where: "dataset_id IN (SELECT id FROM temp.owned_dataset)",
+	},
+	{
 		table: "dataset_area_name",
 		where: "dataset_id IN (SELECT id FROM temp.owned_dataset)",
 	},

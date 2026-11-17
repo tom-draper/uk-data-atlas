@@ -582,10 +582,21 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			name: "The published name.",
 		},
 	},
+	area_identifier: {
+		audience: "reference",
+		description:
+			"A published external identifier for an area, such as the NHS ODS code of an NHS board. Join other data that is keyed by the identifier to the area's statistics through area_version_id.",
+		columns: {
+			dataset_id: "The dataset (dataset.id) that carries the identifier.",
+			area_version_id: "The area (area_version.id).",
+			scheme: "The identifier scheme, such as nhs-ods for NHS Organisation Data Service codes.",
+			identifier: "The area's identifier in the scheme, such as QYG.",
+		},
+	},
 	dataset_area_key: {
 		audience: "internal",
 		description:
-			"A dataset's own key for an area, where the website needs it. Not needed for analysis.",
+			"A dataset's own record key for an area, where the website needs it, such as an election slug. Not needed for analysis. Published external codes are also in area_identifier.",
 		columns: {
 			dataset_id: "The dataset (dataset.id).",
 			area_version_id: "The area (area_version.id).",

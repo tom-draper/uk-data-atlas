@@ -504,6 +504,37 @@ LEFT JOIN series df ON df.id = s.derived_from_id`,
 						];
 			}),
 		},
+		area_identifier: {
+			strict: true,
+			columns: [
+				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
+				"area_version_id INTEGER NOT NULL REFERENCES area_version(id)",
+				"scheme TEXT NOT NULL",
+				"identifier TEXT NOT NULL",
+			],
+			key: ["dataset_id", "area_version_id"],
+			indexes: [
+				{
+					name: "area_identifier_lookup",
+					columns: ["scheme", "identifier"],
+				},
+			],
+			rows: rows(function* ({ datasets, datasetIds }, database) {
+				for (const [index, dataset] of datasets.entries())
+					if (dataset.keyScheme)
+						for (const {
+							release,
+							code,
+							key,
+						} of dataset.areaKeys?.() ?? [])
+							yield [
+								datasetIds[index]!,
+								area(database, dataset.slug, release, code).id,
+								dataset.keyScheme,
+								key,
+							];
+			}),
+		},
 		area_relationship: {
 			strict: true,
 			columns: [

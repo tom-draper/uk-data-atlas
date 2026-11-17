@@ -872,6 +872,7 @@ export function assembleStatistics(
 		},
 		areaNames: () => names.values(),
 		areaKeys: () => keys.values(),
+		...(config.keyScheme ? { keyScheme: config.keyScheme } : {}),
 		relationships: () => related.values(),
 		elections: () => elections,
 		...(config.election?.parties
