@@ -29,6 +29,12 @@ export const income = defineDataset<IncomeDataset>({
 	// Each workbook holds the same table split by sex and hours; "All" is the
 	// sheet covering every employee job.
 	load: ({ xlsxSheet }) => loadIncome((path) => xlsxSheet(path, "All")),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 10,
+		label: "Median pay",
+		about: "Annual pay of residents in full-time work",
+	},
 	statistics: {
 		name: "ladName",
 		payload: {

@@ -49,6 +49,13 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 		notes: [],
 	},
 	load: async ({ text }) => loadGeneralElection(text),
+	placeHeadline: {
+		places: ["constituency"],
+		order: 10,
+		label: "General election",
+		about: "The winning party",
+		ends: ["largest majority", "smallest majority"],
+	},
 	statistics: {
 		payload: {
 			parts: () =>

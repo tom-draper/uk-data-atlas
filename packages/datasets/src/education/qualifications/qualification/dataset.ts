@@ -27,6 +27,12 @@ export const qualification = defineDataset<QualificationDataset>({
 		notes: [],
 	},
 	load: ({ text }) => loadQualification(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 100,
+		label: "Degree-educated",
+		about: "Residents with a degree-level qualification or above",
+	},
 	statistics: {
 		payload: {
 			parts: () => [

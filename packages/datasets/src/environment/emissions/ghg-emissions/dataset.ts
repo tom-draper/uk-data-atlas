@@ -33,6 +33,12 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		requiredDataFields: ["totalKtCO2e", "perPersonTCO2e"],
 	},
 	load: ({ text }) => loadGhgEmissions(text),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 110,
+		label: "Emissions",
+		about: "Greenhouse gases per resident, in CO2e",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts("ghg-emissions", "localAuthority", 2025, {

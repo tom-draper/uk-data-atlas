@@ -37,6 +37,12 @@ export const wimd = defineDataset<WIMDDataset>({
 				),
 			),
 		),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 41,
+		label: "Deprivation",
+		about: "Share of its neighbourhoods in Wales's most deprived 10%",
+	},
 	statistics: deprivationStatistics({
 		id: "wimd",
 		prefix: "wimd",

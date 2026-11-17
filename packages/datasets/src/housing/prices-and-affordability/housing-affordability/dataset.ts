@@ -37,6 +37,13 @@ export const housingAffordability = defineDataset<
 		requiredDataFields: ["value"],
 	},
 	load: ({ xlsxSheet }) => loadHousingAffordability(xlsxSheet),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 20,
+		label: "Housing affordability",
+		about: "Median house price as a multiple of median earnings",
+		format: { kind: "decimal", digits: 1, suffix: "×" },
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

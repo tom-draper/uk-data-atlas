@@ -39,6 +39,12 @@ export const simd = defineDataset<SIMDDataset>({
 				"SIMD 2020v2 DZ lookup data",
 			),
 		),
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 42,
+		label: "Deprivation",
+		about: "Share of its data zones in Scotland's most deprived 10%",
+	},
 	statistics: deprivationStatistics({
 		id: "simd",
 		prefix: "simd",

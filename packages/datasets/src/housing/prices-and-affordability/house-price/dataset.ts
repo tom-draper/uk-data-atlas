@@ -29,6 +29,12 @@ export const housePrice = defineDataset<HousePriceDataset>({
 	},
 	// Table 1a of each workbook, read from inside the published zips.
 	load: ({ xlsSheetRows }) => loadHousePrice(xlsSheetRows),
+	placeHeadline: {
+		places: ["ward"],
+		order: 10,
+		label: "House prices",
+		about: "Median price paid for homes sold",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(
