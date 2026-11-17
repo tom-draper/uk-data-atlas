@@ -91,3 +91,22 @@ test("rejects duplicate canonical identities even when legacy names differ", () 
 		),
 	).toThrow(/Duplicate catalogue series source/);
 });
+
+test("rejects legacy artifact identities", () => {
+	const entry = measure("old-young", "young", source("population"));
+	expect(() =>
+		validateObservationSeries(catalog(entry), [observed(entry.id)], []),
+	).toThrow(/No catalogue source matches/);
+});
+
+test("rejects ambiguous sources for an individual observation", () => {
+	const first = measure("first", "young", source("dataset-a"));
+	const second = measure("second", "young", source("dataset-b"));
+	expect(() =>
+		validateObservationSeries(
+			catalog(first, second),
+			[observed(measureSeriesKey(first.series!))],
+			[],
+		),
+	).toThrow(/Ambiguous observation source/);
+});
