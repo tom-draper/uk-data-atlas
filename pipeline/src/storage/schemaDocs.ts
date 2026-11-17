@@ -1255,7 +1255,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	meta: {
 		audience: "reference",
 		description:
-			"File settings and provenance: schemaVersion matches PRAGMA user_version; buildId, buildTimestamp, gitCommit, gitDirty and dataRelease identify the build and pinned input release. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
+			"File settings and provenance: schemaVersion matches PRAGMA user_version. buildId hashes the assembled work file and provenance; buildTimestamp is present only when SOURCE_DATE_EPOCH is supplied. gitCommit and gitDirty are present when Git is available; gitDirty includes non-ignored untracked files. dataRelease is present when data-release.json exists. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
 		columns: { key: "Setting name.", value: "Setting value." },
 	},
 	payloads: {

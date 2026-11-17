@@ -1,10 +1,10 @@
-import { execFileSync } from "node:child_process";
+import { buildProvenance } from "./buildProvenance.ts";
 import { weightInputPaths } from "../storage/crosswalkInputSources.ts";
 import { statisticsReadPathTables } from "../storage/statisticsReadPathTables.ts";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 import type { StatisticsReadPath } from "@uk-data-atlas/measures";
 import { randomUUID } from "node:crypto";
-import { copyFileSync, existsSync, readFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
@@ -219,35 +219,19 @@ export function assembleAtlas(
 		} finally {
 			database.close();
 		}
-		// Stamp provenance only when a pinned release is present. This happens at
-		// publication, never in a stage key or an intermediate component.
-		const releasePath = join(root, "data-release.json");
+		const hasMeta = new DatabaseSync(temporary, { readOnly: true });
 		let provenance: Record<string, string> = {};
-		if (existsSync(releasePath)) {
-			const commit = execFileSync(
-				"git",
-				["-C", root, "rev-parse", "HEAD"],
-				{ encoding: "utf8" },
-			).trim();
-			provenance = {
-				buildId: randomUUID(),
-				buildTimestamp: new Date().toISOString(),
-				gitCommit: commit,
-				gitDirty: String(
-					execFileSync(
-						"git",
-						[
-							"-C",
-							root,
-							"status",
-							"--porcelain",
-							"--untracked-files=no",
-						],
-						{ encoding: "utf8" },
-					).trim() !== "",
-				),
-				dataRelease: readFileSync(releasePath, "utf8").trim(),
-			};
+		try {
+			if (
+				hasMeta
+					.prepare(
+						"SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'meta'",
+					)
+					.get()
+			)
+				provenance = buildProvenance(root, temporary);
+		} finally {
+			hasMeta.close();
 		}
 		// The build's one vacuum of atlas.sqlite: written once beside the
 		// release, then renamed over it.
@@ -257,6 +241,9 @@ export function assembleAtlas(
 			// indexes without the reader running ANALYZE.
 			finish: (database) => {
 				if (Object.keys(provenance).length > 0) {
+					database.exec(
+						"DELETE FROM meta WHERE key IN ('buildId', 'buildTimestamp', 'gitCommit', 'gitDirty', 'dataRelease')",
+					);
 					const insert = database.prepare(
 						"INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)",
 					);
