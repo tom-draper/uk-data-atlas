@@ -173,6 +173,7 @@ export const areaTables = (
 	}
 	return {
 		area_inventory_metadata: {
+			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",
 				"content_hash TEXT NOT NULL",
@@ -187,6 +188,7 @@ export const areaTables = (
 			],
 		},
 		area_releases: {
+			strict: true,
 			columns: [
 				// The release's stable id, assigned once and never reused. It is
 				// not an order: `inventory_position` is.
