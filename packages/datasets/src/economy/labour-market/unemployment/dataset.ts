@@ -167,6 +167,7 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 				rate: "unemployment-rate",
 				count: "unemployed-people",
 			},
+			countOf: { "unemployment-rate": "unemployed-people" },
 		},
 		// The series ended in 2021, so the map reads that year.
 		measures: [
