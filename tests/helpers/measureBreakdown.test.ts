@@ -70,6 +70,55 @@ describe("breakdownView", () => {
 		]);
 	});
 
+	it("takes the total as the sum of the parts when none is declared", () => {
+		const view = breakdownView(
+			{ car: payload([30]), bike: payload([10]) },
+			"E1",
+			"method",
+			undefined,
+			parts,
+		)!;
+		expect(view.total).toBe(40);
+		expect(view.period).toBe("2021");
+		expect(view.shares.map((share) => share.pct)).toEqual([75, 25]);
+	});
+
+	it("draws the largest part first when asked", () => {
+		const view = breakdownView(
+			{ car: payload([10]), bike: payload([30]) },
+			"E1",
+			"method",
+			undefined,
+			parts,
+			{ order: "largest" },
+		)!;
+		expect(view.shares.map((share) => share.key)).toEqual(["bike", "car"]);
+	});
+
+	it("shares what is left once parts are filtered out", () => {
+		const view = breakdownView(
+			{ car: payload([30]), bike: payload([10]) },
+			"E1",
+			"method",
+			undefined,
+			parts,
+			{ includes: (label) => label !== "Car or van" },
+		)!;
+		expect(view.shares.map((share) => [share.key, share.pct])).toEqual([
+			["bike", 100],
+		]);
+		expect(
+			breakdownView(
+				{ car: payload([30]), bike: payload([10]) },
+				"E1",
+				"method",
+				undefined,
+				parts,
+				{ includes: () => false },
+			),
+		).toBeNull();
+	});
+
 	it("shows nothing when the total is zero or missing", () => {
 		const others = { car: payload([1]), bike: payload([1]) };
 		expect(

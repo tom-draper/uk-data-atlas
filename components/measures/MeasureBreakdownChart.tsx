@@ -8,6 +8,7 @@ import {
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { MeasureBreakdownCard } from "@/components/measures/MeasureBreakdownCard";
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { areaForMeasure } from "@/lib/measures/area";
 import { areaCodesInScope } from "@/lib/measures/scope";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
@@ -34,6 +35,7 @@ export default function MeasureBreakdownChart({
 	codeMapper,
 	setActiveViz,
 }: ChartComponentProps) {
+	const { excludedEthnicities, selectedEthnicity } = useExcludedCategories();
 	const geography = breakdown?.request.geography;
 	const boundaryYear = breakdown?.request.boundaryYear;
 	const scope = useMemo(
@@ -56,6 +58,11 @@ export default function MeasureBreakdownChart({
 			codeMapper as (CodeYearResolver & LadResolver) | undefined,
 		) ?? null;
 
+	const isActive =
+		activeDataset?.type === dataset.type && activeDataset.id === dataset.id;
+	// The legend filter only applies while this dataset is on the map.
+	const filtered = isActive && breakdown.legendFilter === "ethnicity";
+
 	return (
 		<MeasureBreakdownCard
 			request={breakdown.request}
@@ -65,6 +72,14 @@ export default function MeasureBreakdownChart({
 			total={breakdown.total}
 			parts={breakdown.parts}
 			accent={breakdown.accent}
+			options={{
+				order: breakdown.order,
+				includes: filtered
+					? (label) =>
+							!excludedEthnicities.has(label) &&
+							(!selectedEthnicity || label === selectedEthnicity)
+					: undefined,
+			}}
 			heading={`${breakdown.heading} [${breakdown.period}]`}
 			title={breakdown.source}
 			coverage={breakdown.coverage ?? formatDatasetCoverage(dataset)}
@@ -73,10 +88,7 @@ export default function MeasureBreakdownChart({
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
 			}
-			isActive={
-				activeDataset?.type === dataset.type &&
-				activeDataset.id === dataset.id
-			}
+			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,

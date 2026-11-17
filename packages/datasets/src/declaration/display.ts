@@ -200,8 +200,11 @@ export type DisplayBreakdown = {
 	measure: string;
 	/** The slug of the dimension the total splits across. */
 	dimension: string;
-	/** The code of the member that is the total, the denominator of every share. */
-	total: string;
+	/**
+	 * The code of the member that is the total, the denominator of every
+	 * share. Absent, the total is the sum of the parts.
+	 */
+	total?: string;
 	/** The parts, in the order they are drawn. */
 	parts: readonly {
 		/** The member's code in the dimension. */
@@ -210,8 +213,10 @@ export type DisplayBreakdown = {
 		/** Shorter wording than the member's own label, where the key is tight. */
 		label?: string;
 	}[];
-	/** The code of the part whose colour highlights the card. */
-	accent: string;
+	/** The code of the part whose colour highlights the card; absent, the largest. */
+	accent?: string;
+	/** Draw the largest part first, rather than in the declared order. */
+	order?: "largest";
 };
 
 /** Combining records over the areas a place is made of. */
