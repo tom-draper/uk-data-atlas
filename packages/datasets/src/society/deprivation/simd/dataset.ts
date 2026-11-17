@@ -1,5 +1,8 @@
 import type { SIMDDataset } from "../../../types/simd.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import { summariseSIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
@@ -8,7 +11,7 @@ import {
 } from "../../../data/deprivation/declaration.ts";
 import { parseCsv } from "../../../helpers/parseCsv.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
-import { loadSIMD, publishedSIMDRanks } from "../../../data/simd/loader.ts";
+import { publishedSIMDRanks } from "../../../data/simd/source.ts";
 
 export const simd = defineDataset<SIMDDataset>({
 	id: "simd",
@@ -30,17 +33,7 @@ export const simd = defineDataset<SIMDDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: async ({ text, xlsxSheet }) =>
-		loadSIMD(
-			text,
-			await xlsxSheet(
-				sourceDir(
-					"simd",
-					"SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx",
-				),
-				"SIMD 2020v2 DZ lookup data",
-			),
-		),
+	load: noCompiledPayload<SIMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 42,
@@ -69,6 +62,7 @@ export const simd = defineDataset<SIMDDataset>({
 			mostDeprived: (record) => record.simdDecile === 1,
 		}),
 		direct: {
+			only: true,
 			read: async ({ text, xlsxSheet }) => {
 				const lookup = await xlsxSheet(
 					sourceDir(

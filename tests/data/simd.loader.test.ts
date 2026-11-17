@@ -1,70 +1,66 @@
 import { describe, expect, it } from "vitest";
-import { loadSIMD, publishedSIMDRanks } from "@uk-data-atlas/datasets";
+import {
+	publishedSIMDRanks,
+	type DatasetReader,
+} from "@uk-data-atlas/datasets";
+import { simd } from "../../packages/datasets/src/society/deprivation/simd/dataset.ts";
 
-const lookupCsv = `DZ,DZname,SIMD2020v2_Rank,SIMD2020v2_Vigintile,SIMD2020v2_Decile,SIMD2020v2_Quintile,LAcode,LAname
+const lookup = `DZ,DZname,SIMD2020v2_Rank,SIMD2020v2_Vigintile,SIMD2020v2_Decile,SIMD2020v2_Quintile,LAcode,LAname
 S01006506,Culter - 01,4691,14,7,4,S12000033,Aberdeen City
 S01010891,Greenock Town Centre and East Central - 01,1,1,1,1,S12000018,Inverclyde
 `;
-
-// The indicators file has no rank at all. Its rates must not be turned into
-// one: the index is not a weighted sum of these columns.
-const indicatorsCsv = `Data_Zone,Intermediate_Zone,Council_area,Income_rate,Employment_rate
+const indicators = `Data_Zone,Intermediate_Zone,Council_area,Income_rate,Employment_rate
 S01006506,Culter,Aberdeen City,99%,99%
 S01010891,Greenock Town Centre and East Central,Inverclyde,0%,0%
 `;
+const read = (input = indicators, ranks = lookup) =>
+	simd.statistics.direct!.read({
+		text: async () => input,
+		xlsxSheet: async () => ranks,
+	} as unknown as DatasetReader);
 
-describe("loadSIMD", () => {
-	it("takes rank, decile and quintile from the published lookup", async () => {
-		const datasets = await loadSIMD(async () => indicatorsCsv, lookupCsv);
-		const data = datasets[2020].data;
-
-		// Culter's extreme rates would put it first on any indicator-weighted
-		// score; the published rank puts it in the least deprived half.
-		expect(data.S01006506).toMatchObject({
-			simdRank: 4691,
-			simdDecile: 7,
-			simdQuintile: 4,
-			councilAreaCode: "S12000033",
+describe("SIMD source reader", () => {
+	it("uses the published lookup for ranks and council codes", async () => {
+		const [part] = await read();
+		expect(part.records[0]).toEqual({
+			code: "S01006506",
+			name: "Culter",
+			parents: {
+				councilAreaCode: { code: "S12000033", name: "Aberdeen City" },
+			},
+			values: [
+				{ measure: "simd-rank", value: 4691 },
+				{ measure: "simd-quintile", value: 4 },
+				{ measure: "simd-decile", value: 7 },
+			],
 		});
-		expect(data.S01010891).toMatchObject({ simdRank: 1, simdDecile: 1 });
 	});
-
-	it("takes the council area code from the lookup, not the name", async () => {
-		// The indicators file names the Western Isles in Gaelic, and Fife's
-		// code changed in 2018, so a table keyed by name goes stale.
-		const datasets = await loadSIMD(
-			async () => indicatorsCsv.replace("Inverclyde", "Fife"),
-			lookupCsv.replace("S12000018,Inverclyde", "S12000047,Fife"),
+	it("uses council codes from the lookup rather than the name", async () => {
+		const [part] = await read(
+			indicators.replace("Inverclyde", "Fife"),
+			lookup.replace("S12000018,Inverclyde", "S12000047,Fife"),
 		);
-		expect(datasets[2020].data.S01010891).toMatchObject({
-			councilAreaCode: "S12000047",
-			councilAreaName: "Fife",
+		expect(part.records[1].parents?.councilAreaCode).toEqual({
+			code: "S12000047",
+			name: "Fife",
 		});
 	});
-
-	it("refuses a data zone the lookup gives no council area", async () => {
+	it("rejects a missing council or published rank", async () => {
 		await expect(
-			loadSIMD(
-				async () => indicatorsCsv,
-				lookupCsv.replace("S12000018", ""),
-			),
+			read(indicators, lookup.replace("S12000018", "")),
 		).rejects.toThrow(/no council area code for S01010891/);
-	});
-
-	it("refuses a data zone the lookup does not rank", async () => {
-		const missing = lookupCsv
-			.split("\n")
-			.filter((line) => !line.startsWith("S01010891"))
-			.join("\n");
 		await expect(
-			loadSIMD(async () => indicatorsCsv, missing),
+			read(
+				indicators,
+				lookup
+					.split("\n")
+					.filter((line) => !line.startsWith("S01010891"))
+					.join("\n"),
+			),
 		).rejects.toThrow(/no published rank for S01010891/);
 	});
-});
-
-describe("publishedSIMDRanks", () => {
-	it("reads every ranked data zone", async () => {
-		const ranks = await publishedSIMDRanks(lookupCsv);
+	it("reads all published ranks", async () => {
+		const ranks = await publishedSIMDRanks(lookup);
 		expect(ranks.get("S01010891")).toEqual({
 			rank: 1,
 			decile: 1,

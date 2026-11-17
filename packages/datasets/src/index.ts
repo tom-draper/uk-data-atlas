@@ -131,7 +131,7 @@ export * from "./data/public-health/loader.ts";
 export * from "./data/pupil-absence/loader.ts";
 export * from "./data/qualification/loader.ts";
 export * from "./data/road-safety/authorityLoader.ts";
-export * from "./data/simd/loader.ts";
+export * from "./data/simd/source.ts";
 export * from "./data/spreadsheet/ods.ts";
 export * from "./data/spreadsheet/xls.ts";
 export * from "./data/spreadsheet/xlsx.ts";
