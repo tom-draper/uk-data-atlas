@@ -1,5 +1,6 @@
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
+import type { BarsCardConfig } from "@/lib/measures/barsConfig";
 import type { BreakdownCardConfig } from "@/lib/measures/breakdownConfig";
 import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
@@ -25,4 +26,6 @@ export interface ChartComponentProps {
 	seriesForOptions?(options: MapOptions): SeriesCardConfig;
 	/** The declarative breakdown card, for charts drawn by the shared breakdown chart. */
 	breakdown?: BreakdownCardConfig;
+	/** The declarative bars card, for charts drawn by the shared bars chart. */
+	bars?: BarsCardConfig;
 }

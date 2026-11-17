@@ -112,6 +112,7 @@ export default function ChartCards({
 			cardForOptions: chart.cardForOptions,
 			seriesForOptions: chart.seriesForOptions,
 			breakdown: chart.breakdown,
+			bars: chart.bars,
 		};
 		return <ViewportGatedChart key={chart.key} Chart={Chart} {...props} />;
 	});

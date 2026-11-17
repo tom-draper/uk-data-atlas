@@ -17,12 +17,33 @@ const le: ChartDefinition<LifeExpectancyDataset> = {
 	topic: "life-expectancy",
 	key: "health-lifeExpectancy",
 	label: "Life Expectancy [2022-2024]",
-	componentPath:
-		"@/components/datasets/health/life-expectancy/life-expectancy/LifeExpectancyChart",
+	componentPath: "@/components/measures/MeasureBarsChart",
 	datasetId: "le",
 	keyBy: "id",
 	calculateStats,
 	year: 2024,
+	bars: {
+		request: {
+			datasetId: lifeExpectancy.id,
+			geography: lifeExpectancy.boundary.type,
+			boundaryYear: lifeExpectancy.boundary.year,
+		},
+		measures: {
+			le: "life-expectancy",
+			hle: "healthy-life-expectancy",
+		},
+		views: { hle: "healthy-life-expectancy" },
+		dimension: "sex",
+		bars: [
+			{ code: "male", label: "M" },
+			{ code: "female", label: "F" },
+		],
+		// Each authority counts once, as the card has always averaged them.
+		combine: "mean",
+		ramp: { low: "#dcfce7", high: "#15803d" },
+		digits: 1,
+		heading: "Life Expectancy",
+	},
 };
 export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyDataset> =
 	{
