@@ -111,6 +111,7 @@ describe("MeasureSeriesCard", () => {
 				request: { measure: "unemployment-rate" },
 				area: null,
 				heading: "Unemployment",
+				accent: "#1e40af",
 				color: "#3b82f6",
 				isActive: false,
 				onClick: () => {},
