@@ -152,8 +152,27 @@ export const broadband = defineDataset<BroadbandDataset>({
 	display: {
 		label: "Fixed Broadband Coverage [2025]",
 		year: 2025,
-		component:
-			"@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart",
+		card: {
+			heading: "Broadband",
+			coverage: "United Kingdom",
+			source: "Ofcom. Connected Nations Report 2025. ofcom.org.uk",
+			pills: [
+				{
+					label: "Superfast",
+					field: "pctSuperfast",
+					unit: "%",
+					digits: 0,
+				},
+				{
+					label: "Ultrafast",
+					field: "pctUltrafast",
+					unit: "%",
+					digits: 0,
+				},
+				{ label: "Gigabit", field: "pctGigabit", unit: "%", digits: 0 },
+			],
+			appearance: { layout: "pills", accent: "#6366f1" },
+		},
 		measures: [
 			{
 				id: "fullFibre",
@@ -168,6 +187,12 @@ export const broadband = defineDataset<BroadbandDataset>({
 						digits: 0,
 						suffix: "% full fibre",
 					},
+				},
+				card: {
+					heading: "Full Fibre Broadband",
+					unit: "%",
+					digits: 0,
+					maximum: 100,
 				},
 			},
 			{
@@ -184,6 +209,12 @@ export const broadband = defineDataset<BroadbandDataset>({
 						suffix: "% superfast",
 					},
 				},
+				card: {
+					heading: "Superfast Broadband",
+					unit: "%",
+					digits: 0,
+					maximum: 100,
+				},
 			},
 			{
 				id: "ultrafast",
@@ -199,6 +230,12 @@ export const broadband = defineDataset<BroadbandDataset>({
 						suffix: "% ultrafast",
 					},
 				},
+				card: {
+					heading: "Ultrafast Broadband",
+					unit: "%",
+					digits: 0,
+					maximum: 100,
+				},
 			},
 			{
 				id: "gigabit",
@@ -209,6 +246,12 @@ export const broadband = defineDataset<BroadbandDataset>({
 					min: 0,
 					max: 100,
 					format: { kind: "decimal", digits: 0, suffix: "% gigabit" },
+				},
+				card: {
+					heading: "Gigabit Broadband",
+					unit: "%",
+					digits: 0,
+					maximum: 100,
 				},
 			},
 		],

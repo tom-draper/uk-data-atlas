@@ -14,16 +14,13 @@ import Chart8 from "@/components/datasets/population/population-estimates/popula
 import Chart9 from "@/components/datasets/population/population-estimates/population/PopulationAgeRegistry";
 import Chart10 from "@/components/datasets/population/population-estimates/population/PopulationGenderRegistry";
 import Chart11 from "@/components/ValueCard";
-import Chart12 from "@/components/datasets/environment/air-quality/air-quality/AirQualityChart";
-import Chart13 from "@/components/datasets/infrastructure/digital-connectivity/broadband/BroadbandChart";
-import Chart14 from "@/components/measures/MeasureBreakdownChart";
-import Chart15 from "@/components/datasets/environment/emissions/ghg-emissions/GHGEmissionsChart";
-import Chart16 from "@/components/datasets/society/deprivation/imd/IMDChart";
-import Chart17 from "@/components/datasets/infrastructure/digital-connectivity/mobile-coverage/MobileCoverageChart";
-import Chart18 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
-import Chart19 from "@/components/datasets/society/deprivation/simd/SIMDChart";
-import Chart20 from "@/components/measures/MeasureSeriesChart";
-import Chart21 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
+import Chart12 from "@/components/measures/MeasureBreakdownChart";
+import Chart13 from "@/components/datasets/environment/emissions/ghg-emissions/GHGEmissionsChart";
+import Chart14 from "@/components/datasets/society/deprivation/imd/IMDChart";
+import Chart15 from "@/components/datasets/society/deprivation/nimdm/NIMDMChart";
+import Chart16 from "@/components/datasets/society/deprivation/simd/SIMDChart";
+import Chart17 from "@/components/measures/MeasureSeriesChart";
+import Chart18 from "@/components/datasets/society/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -139,24 +136,6 @@ const Chart18Presentation = {
 	),
 } satisfies ChartPresentation;
 
-const Chart19Presentation = {
-	component: (props) => (
-		<Chart19 {...(props as ComponentProps<typeof Chart19>)} />
-	),
-} satisfies ChartPresentation;
-
-const Chart20Presentation = {
-	component: (props) => (
-		<Chart20 {...(props as ComponentProps<typeof Chart20>)} />
-	),
-} satisfies ChartPresentation;
-
-const Chart21Presentation = {
-	component: (props) => (
-		<Chart21 {...(props as ComponentProps<typeof Chart21>)} />
-	),
-} satisfies ChartPresentation;
-
 export const CHART_PRESENTATIONS = {
 	"brexit-electoral": Chart0Presentation,
 	"brexit-hanretty": Chart1Presentation,
@@ -183,10 +162,10 @@ export const CHART_PRESENTATIONS = {
 	"demographics-gender": Chart10Presentation,
 	"health-adult-social-care-activity": Chart11Presentation,
 	"health-adult-social-care-outcomes": Chart11Presentation,
-	"environment-air-quality": Chart12Presentation,
-	"infrastructure-broadband": Chart13Presentation,
+	"environment-air-quality": Chart11Presentation,
+	"infrastructure-broadband": Chart11Presentation,
 	"economy-business-activity": Chart11Presentation,
-	"transport-car-availability": Chart14Presentation,
+	"transport-car-availability": Chart12Presentation,
 	"society-child-poverty": Chart11Presentation,
 	"economy-claimant-count": Chart11Presentation,
 	"housing-council-tax": Chart11Presentation,
@@ -195,30 +174,30 @@ export const CHART_PRESENTATIONS = {
 	"environment-electricity-consumption": Chart11Presentation,
 	"environment-gas-consumption": Chart11Presentation,
 	"health-general-health": Chart11Presentation,
-	"environment-ghg-emissions": Chart15Presentation,
+	"environment-ghg-emissions": Chart13Presentation,
 	"housing-homelessness": Chart11Presentation,
 	"housing-housing-affordability": Chart11Presentation,
 	"housing-housing-tenure": Chart11Presentation,
-	"society-imd": Chart16Presentation,
+	"society-imd": Chart14Presentation,
 	"economy-income": Chart11Presentation,
 	"economy-jobs": Chart11Presentation,
 	"economy-local-government-finance": Chart11Presentation,
-	"infrastructure-mobile-coverage": Chart17Presentation,
+	"infrastructure-mobile-coverage": Chart11Presentation,
 	"housing-net-additional-dwellings": Chart11Presentation,
 	"health-nhs-waiting": Chart11Presentation,
-	"society-nimdm": Chart18Presentation,
+	"society-nimdm": Chart15Presentation,
 	"housing-planning-applications": Chart11Presentation,
 	"health-public-health": Chart11Presentation,
 	"education-pupil-absence": Chart11Presentation,
-	"education-qualification": Chart14Presentation,
+	"education-qualification": Chart12Presentation,
 	"economy-regional-gdp": Chart11Presentation,
 	"education-school-performance": Chart11Presentation,
 	"education-school-performance-disadvantage": Chart11Presentation,
-	"society-simd": Chart19Presentation,
-	"transport-travel-to-work": Chart14Presentation,
-	"economy-unemployment": Chart20Presentation,
+	"society-simd": Chart16Presentation,
+	"transport-travel-to-work": Chart12Presentation,
+	"economy-unemployment": Chart17Presentation,
 	"environment-waste": Chart11Presentation,
-	"society-wimd": Chart21Presentation,
+	"society-wimd": Chart18Presentation,
 	"economy-workplace-income": Chart11Presentation,
 } satisfies ChartPresentationRegistry;
 
