@@ -229,6 +229,7 @@ it.each([
 	"broadband",
 	"mobile-coverage",
 	"nhs-waiting",
+	"nimdm",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts();
