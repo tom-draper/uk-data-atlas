@@ -6,6 +6,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { DatasetDefinition } from "../data/catalog";
+import type { BarsCardConfig } from "@/lib/measures/barsConfig";
 import type { BreakdownCardConfig } from "@/lib/measures/breakdownConfig";
 import type { SeriesCardConfig } from "@/lib/measures/seriesConfig";
 import type { ValueCardConfig } from "./valueCard";
@@ -98,6 +99,9 @@ export interface ChartDefinition<
 	// Declares the breakdown card for charts rendered by the shared breakdown
 	// chart (`@/components/measures/MeasureBreakdownChart`).
 	breakdown?: BreakdownCardConfig;
+	// Declares the bars card for charts rendered by the shared bars chart
+	// (`@/components/measures/MeasureBarsChart`).
+	bars?: BarsCardConfig;
 }
 
 export type ChartDatasetLegendAggregation<

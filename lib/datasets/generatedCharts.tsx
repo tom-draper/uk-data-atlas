@@ -8,7 +8,7 @@ import Chart2 from "@/components/datasets/population/ethnicity-and-identity/ethn
 import Chart3 from "@/components/datasets/society/poverty/fuel-poverty/FuelPovertyChart";
 import Chart4 from "@/components/datasets/politics/general-elections/general-election/GeneralElectionRegistryChart";
 import Chart5 from "@/components/datasets/housing/prices-and-affordability/house-price/HousePriceChart";
-import Chart6 from "@/components/datasets/health/life-expectancy/life-expectancy/LifeExpectancyChart";
+import Chart6 from "@/components/measures/MeasureBarsChart";
 import Chart7 from "@/components/datasets/politics/local-elections/local-election/LocalElectionRegistryChart";
 import Chart8 from "@/components/datasets/population/population-estimates/population/PopulationDensityRegistry";
 import Chart9 from "@/components/datasets/population/population-estimates/population/PopulationAgeRegistry";
