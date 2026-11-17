@@ -12,6 +12,10 @@ import {
 	deprivationStatistics,
 } from "../../../data/deprivation/declaration.ts";
 import { loadIMD } from "../../../data/imd/loader.ts";
+import { parseCsv } from "../../../helpers/parseCsv.ts";
+import { parseNum, parseNumInt } from "../../../helpers/parseNumber.ts";
+import { sourceDir } from "../../../declaration/sources.ts";
+import type { DirectRecord } from "../../../declaration/statistics.ts";
 
 /** The overall score and its seven domains, each a map measure. */
 const SCORES = [
@@ -130,6 +134,97 @@ export const imd = defineDataset<IMDDataset>({
 	},
 	statistics: {
 		...base,
+		direct: {
+			read: async ({ text }) => {
+				const csv = await text(
+					sourceDir(
+						"imd",
+						"File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
+					),
+				);
+				const { data } = await parseCsv(csv, { header: true });
+				const records = new Map<string, DirectRecord>();
+				for (const row of data) {
+					const code = row["LSOA code (2021)"]?.trim();
+					if (!code || !code.startsWith("E")) continue;
+					const score = (column: string) => parseNum(row[column]);
+					const domain = (member: string, column: string) => ({
+						measure: "imd-domain-score",
+						members: { "deprivation-domain": member },
+						value: score(column),
+					});
+					records.set(code, {
+						code,
+						name: row["LSOA name (2021)"]?.trim() || "",
+						parents: {
+							ladCode: {
+								code:
+									row[
+										"Local Authority District code (2024)"
+									]?.trim() || "",
+								name:
+									row[
+										"Local Authority District name (2024)"
+									]?.trim() || "",
+							},
+						},
+						values: [
+							{
+								measure: "imd-score",
+								value: score(
+									"Index of Multiple Deprivation (IMD) Score",
+								),
+							},
+							{
+								measure: "imd-rank",
+								value: parseNumInt(
+									row[
+										"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
+									],
+								),
+							},
+							{
+								measure: "imd-decile",
+								value: parseNumInt(
+									row[
+										"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
+									],
+								),
+							},
+							{
+								measure: "population",
+								value: parseNumInt(
+									row["Total population: mid 2022"],
+								),
+							},
+							domain("incomeScore", "Income Score (rate)"),
+							domain(
+								"employmentScore",
+								"Employment Score (rate)",
+							),
+							domain(
+								"educationScore",
+								"Education, Skills and Training Score",
+							),
+							domain(
+								"healthScore",
+								"Health Deprivation and Disability Score",
+							),
+							domain("crimeScore", "Crime Score"),
+							domain(
+								"housingScore",
+								"Barriers to Housing and Services Score",
+							),
+							domain(
+								"livingEnvironmentScore",
+								"Living Environment Score",
+							),
+						],
+					});
+				}
+				return [{ key: "2025", records: [...records.values()] }];
+			},
+		},
 		measures: [
 			...base.measures,
 			measure(
