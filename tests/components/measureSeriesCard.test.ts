@@ -104,11 +104,79 @@ describe("historyPeriods", () => {
 	});
 });
 
+describe("seriesView with no area", () => {
+	const summable = (
+		unit: string,
+		columns: Array<{ period: string; values: Array<number | null> }>,
+	) => {
+		const base = payload("count", unit, columns);
+		return {
+			...base,
+			areas: ["E1", "E2"],
+			measure: {
+				...base.measure,
+				aggregation: { kind: "extensive", available: true },
+			},
+		} as MeasureValuesPayload;
+	};
+
+	it("totals a measure that adds up over the areas in scope", () => {
+		const view = seriesView(
+			summable("people", [
+				{ period: "2020", values: [100, 200] },
+				{ period: "2021", values: [150, 250] },
+			]),
+			null,
+		)!;
+		expect(view.value).toBe("400");
+		expect(view.period).toBe("2021");
+		expect(view.line).not.toBeNull();
+	});
+
+	it("weights a rate by the base its counts imply", () => {
+		const rates = {
+			...summable("percent", [{ period: "2021", values: [5, 10] }]),
+			measure: {
+				id: "r",
+				valueKind: "ratio",
+				unit: "percent",
+				dimensions: [],
+				aggregation: { kind: "non-aggregatable" },
+			},
+		} as unknown as MeasureValuesPayload;
+		const counts = summable("people", [
+			{ period: "2021", values: [5, 30] },
+		]);
+		// 35 of a base of 100 + 300 is 8.75%
+		expect(seriesView(rates, null, counts)!.value).toBe("8.8%");
+	});
+
+	it("shows nothing for a rate with no counts to combine by", () => {
+		const rates = {
+			...summable("percent", [{ period: "2021", values: [5, 10] }]),
+			measure: {
+				id: "r",
+				valueKind: "ratio",
+				unit: "percent",
+				dimensions: [],
+				aggregation: { kind: "non-aggregatable" },
+			},
+		} as unknown as MeasureValuesPayload;
+		expect(seriesView(rates, null)).toBeNull();
+	});
+});
+
 describe("MeasureSeriesCard", () => {
-	it("asks for an area before it has one", () => {
-		const html = renderToStaticMarkup(
+	const render = (scope: string[] | null) =>
+		renderToStaticMarkup(
 			createElement(MeasureSeriesCard, {
-				request: { measure: "unemployment-rate" },
+				request: {
+					measure: "unemployment-rate",
+					datasetId: "unemployment",
+					geography: "localAuthority",
+					boundaryYear: 2024,
+				},
+				scope,
 				area: null,
 				heading: "Unemployment",
 				accent: "#1e40af",
@@ -117,7 +185,15 @@ describe("MeasureSeriesCard", () => {
 				onClick: () => {},
 			}),
 		);
+
+	it("no longer asks for an area before it draws anything", () => {
+		const html = render(["E1"]);
 		expect(html).toContain("Unemployment");
-		expect(html).toContain("Select an area");
+		expect(html).not.toContain("Select an area");
+	});
+
+	it("waits while the areas in scope are unknown, and says so when none are", () => {
+		expect(render(null)).not.toContain("No data available");
+		expect(render([])).toContain("No data available");
 	});
 });
