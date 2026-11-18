@@ -359,7 +359,7 @@ export const apiStages = [
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{
 			writes: ["data/build/atlas.sqlite"],
-			rawInputs: [],
+			rawInputs: crosswalkWeightInputs,
 			requiredOutputs: ["data/build/atlas.sqlite"],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},

@@ -94,11 +94,11 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	area_location: {
 		audience: "core",
 		description:
-			"A polygon interior point and bounding box for each area version, or a reason geometry is unavailable. This is not a population-weighted centroid.",
+			"A representative point and bounding box for each area version, or a reason geometry is unavailable. Matching 2021 England and Wales output areas use published ONS population-weighted centroids when inside the bounding box; others use polygon interior points.",
 		columns: {
 			area_version_id: "Area version (area_version.id).",
-			longitude: "Interior point longitude in WGS84 degrees.",
-			latitude: "Interior point latitude in WGS84 degrees.",
+			longitude: "Representative point longitude in WGS84 degrees.",
+			latitude: "Representative point latitude in WGS84 degrees.",
 			min_longitude:
 				"Western bound in WGS84 degrees, rounded outward to six decimal places.",
 			min_latitude:
@@ -107,7 +107,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"Eastern bound in WGS84 degrees, rounded outward to six decimal places.",
 			max_latitude:
 				"Northern bound in WGS84 degrees, rounded outward to six decimal places.",
-			method: "polygon-interior-point: a scanline point strictly inside the polygon, not population weighted.",
+			method: "ons-population-weighted-2021: published ONS 2021 England and Wales output-area centroid; polygon-interior-point: a scanline point strictly inside the polygon, not population weighted.",
 			gap: "no-geometry or no-interior-point when no location could be calculated; otherwise null.",
 		},
 	},
