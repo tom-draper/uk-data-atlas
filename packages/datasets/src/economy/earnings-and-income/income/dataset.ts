@@ -27,7 +27,11 @@ export const income = defineDataset<IncomeDataset>({
 		description:
 			"Earnings estimates by local authority of residence for England.",
 		cadence: "annual",
-		notes: [],
+		notes: [
+			"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives. Every employee job counts, full and part time; the self-employed are not included.",
+			"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+			"Provisional results are revised when the following year's survey is published.",
+		],
 	},
 	load: noCompiledPayload<IncomeDataset>(),
 	placeHeadline: {
@@ -60,6 +64,56 @@ export const income = defineDataset<IncomeDataset>({
 	ranking: {
 		label: "Median annual pay",
 		format: { kind: "count", locale: "en-GB", round: true, prefix: "£" },
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2025",
+		codes: "england2025",
+		authorityCodes: /^E0[6-9]/,
+		coverageNote:
+			"Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value.",
+		indicators: [
+			{
+				id: "median-annual-pay",
+				label: "Median gross annual pay",
+				field: "annual.median",
+				valueKind: "currency",
+				unit: "£ per year",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "median",
+					note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				},
+				notes: [
+					"Annual pay is estimated only for employees who have been in the same job for at least a year.",
+				],
+				measure: "gross-annual-pay",
+				members: {
+					"earnings-place": "residence",
+					"pay-statistic": "median",
+				},
+			},
+			{
+				id: "median-hourly-pay",
+				label: "Median gross hourly pay",
+				field: "hourly.median",
+				valueKind: "currency",
+				unit: "£ per hour",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "median",
+					note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				},
+				notes: [
+					"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+				],
+				measure: "gross-hourly-pay",
+				members: {
+					"earnings-place": "residence",
+					"pay-statistic": "median",
+				},
+			},
+		],
 	},
 	display: {
 		label: "Income [2025]",

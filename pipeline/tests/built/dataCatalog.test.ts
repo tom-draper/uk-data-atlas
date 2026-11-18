@@ -247,6 +247,7 @@ const writeSources = (
 				dataset("homelessness", 1, 1, 2025),
 				dataset("road-collisions", 2, 1, 2024),
 				dataset("income", 2, 1, 2025),
+				dataset("workplace-income", 2, 1, 2025),
 				dataset("waste", 2, 1, 2025),
 				dataset("planning-applications", 2, 1, 2025),
 				dataset("crime", 1, 1, 2026),
@@ -1133,13 +1134,13 @@ const writeSources = (
 			"business-activity": business,
 			"mobile-coverage": mobileCoverage,
 			broadband,
+			homelessness,
+			income,
+			"workplace-income": income,
 			waste,
 			"planning-applications": planningApplications,
 		},
-		homelessness,
 		roadCollisions,
-		income,
-		workplaceIncome: income,
 		crime,
 		unemployment,
 		airQuality,
@@ -1167,7 +1168,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 39);
+		assert.equal(result.catalog.datasets.length, 40);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

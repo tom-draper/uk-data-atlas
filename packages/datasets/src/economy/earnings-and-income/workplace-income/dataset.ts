@@ -30,7 +30,11 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		description:
 			"Earnings estimates by local authority of workplace for England.",
 		cadence: "annual",
-		notes: [],
+		notes: [
+			"Annual Survey of Hours and Earnings, 2025 provisional results, Table 7: pay of employee jobs by the local authority where the employee works. Every employee job counts, full and part time; the self-employed are not included.",
+			"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+			"Provisional results are revised when the following year's survey is published.",
+		],
 	},
 	load: noCompiledPayload<WorkplaceIncomeDataset>(),
 	statistics: {
@@ -53,6 +57,56 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 					workplaceIncomeFiles,
 				),
 		},
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2025",
+		codes: "england2025",
+		authorityCodes: /^E0[6-9]/,
+		coverageNote:
+			"Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value.",
+		indicators: [
+			{
+				id: "median-workplace-annual-pay",
+				label: "Median gross annual workplace pay",
+				field: "annual.median",
+				valueKind: "currency",
+				unit: "£ per year",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "median",
+					note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				},
+				notes: [
+					"Annual pay is estimated only for employees who have been in the same job for at least a year.",
+				],
+				measure: "gross-annual-pay",
+				members: {
+					"earnings-place": "workplace",
+					"pay-statistic": "median",
+				},
+			},
+			{
+				id: "median-workplace-hourly-pay",
+				label: "Median gross hourly workplace pay",
+				field: "hourly.median",
+				valueKind: "currency",
+				unit: "£ per hour",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "median",
+					note: "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				},
+				notes: [
+					"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+				],
+				measure: "gross-hourly-pay",
+				members: {
+					"earnings-place": "workplace",
+					"pay-statistic": "median",
+				},
+			},
+		],
 	},
 	display: {
 		label: "Workplace Pay [2025]",

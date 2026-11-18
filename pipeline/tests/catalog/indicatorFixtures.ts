@@ -5,7 +5,9 @@ import type { CatalogManifest } from "../../src/catalog/manifest.ts";
 
 /**
  * Small compiled files for the datasets whose API catalogue measures are read
- * from their declaration. Each lists the two authorities its dataset covers.
+ * from their declaration. Each leaves an authority without a value, so the
+ * coverage note is exercised, and income carries the county and region rows
+ * the table interleaves with its authorities.
  */
 const file = (boundaryYear: number, data: Record<string, unknown>) => ({
 	"2025": {
@@ -24,6 +26,32 @@ export const INDICATOR_FIXTURES: Record<string, unknown> = {
 	"planning-applications": file(2025, {
 		E06000001: { value: 120 },
 		E06000002: { value: 33 },
+	}),
+	homelessness: file(2025, {
+		E06000001: {
+			householdsInTemporaryAccommodation: 62,
+			householdsWithChildren: 30,
+			childrenInTemporaryAccommodation: 54,
+		},
+		E06000002: {
+			householdsInTemporaryAccommodation: 11,
+			householdsWithChildren: 4,
+			childrenInTemporaryAccommodation: 9,
+		},
+	}),
+	income: file(2025, {
+		E06000001: {
+			annual: { median: 31250 },
+			hourly: { median: 15.8 },
+		},
+		E06000002: { annual: { median: null }, hourly: { median: 14.2 } },
+		E10000003: { annual: { median: 29000 }, hourly: { median: 14 } },
+		E12000001: { annual: { median: 30000 }, hourly: { median: 14.5 } },
+	}),
+	"workplace-income": file(2025, {
+		E06000001: { annual: { median: 28000 }, hourly: { median: 13.9 } },
+		E06000002: { annual: { median: 27100 }, hourly: { median: null } },
+		E10000003: { annual: { median: 29000 }, hourly: { median: 14 } },
 	}),
 };
 
