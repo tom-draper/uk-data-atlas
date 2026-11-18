@@ -336,3 +336,12 @@ the writer stores either a binary posting list or JSON text. The postcode area
 layout marker is unchanged: STRICT adds type enforcement without changing the
 columns or how readers interpret existing files. Existing internal cache
 bookkeeping tables are not migrated; rebuilding a cache is a separate operation.
+
+### Area locations
+
+`area_location` is a core table with one row per area version. Its WGS84
+longitude and latitude are a polygon interior point, not a population-weighted
+centroid; `method` identifies the algorithm. The bounding box uses WGS84
+longitude and latitude rounded outward to six decimal places. `gap` explains
+why a row has no coordinates. See [the coverage audit](area-geometry-coverage.md)
+for the observed gaps and example queries.

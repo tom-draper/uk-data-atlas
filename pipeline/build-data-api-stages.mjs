@@ -347,6 +347,7 @@ export const apiStages = [
 		"assemble-atlas",
 		[
 			"atlas-sqlite",
+			"geometry-store",
 			"statistics-read-path",
 			"data-catalog",
 			"geography-catalogues",
