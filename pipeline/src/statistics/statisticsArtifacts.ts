@@ -6,10 +6,8 @@ import {
 	measureSeriesKey,
 	type DataCatalog,
 	type MeasureSource,
-	type MeasureSeriesIdentity,
 } from "@uk-data-atlas/measures";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 import {
 	rebuildStatisticsObservationText,
 	type StatisticsReadPath,
@@ -20,7 +18,6 @@ export const statisticsArtifactReader = (
 	database: DatabaseSync,
 	catalog: DataCatalog,
 	readPath: StatisticsReadPath,
-	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ) => {
 	if (readPath.dataCatalogHash !== catalog.contentHash)
 		throw new Error(
@@ -31,26 +28,15 @@ export const statisticsArtifactReader = (
 	const byId = new Map(
 		catalog.measures.map((measure) => [measure.id, measure]),
 	);
-	const canonical = Boolean(
-		readPath.series &&
-		(identities || catalog.measures.some((measure) => measure.series)),
-	);
 	const selectorFor = (measureId: string, source: MeasureSource) => {
-		const identity = byId.get(measureId)?.series ?? identities?.[measureId];
-		if (readPath.series && canonical) {
-			if (!identity)
-				throw new Error(`Missing series identity for ${measureId}.`);
-			const key = measureSeriesSourceKey(identity, source);
-			seriesKeys.add(key);
-			const selector = readPath.series[key];
-			if (!selector)
-				throw new Error(`Missing statistics selector for ${key}.`);
-			return selector;
-		}
-		const name = observationArtifactName(measureId, source);
-		const selector = readPath.statistics?.[name];
+		const identity = byId.get(measureId)?.series;
+		if (!identity)
+			throw new Error(`Missing series identity for ${measureId}.`);
+		const key = measureSeriesSourceKey(identity, source);
+		seriesKeys.add(key);
+		const selector = readPath.series?.[key];
 		if (!selector)
-			throw new Error(`Missing statistics selector for ${name}.`);
+			throw new Error(`Missing statistics selector for ${key}.`);
 		return selector;
 	};
 	const datasets = new Set(catalog.datasets.map((dataset) => dataset.id));
@@ -68,7 +54,7 @@ export const statisticsArtifactReader = (
 	for (const name of Object.keys(readPath.statistics ?? {}))
 		if (!names.has(name))
 			throw new Error(`Unexpected statistics selector: ${name}.`);
-	if (readPath.series && canonical)
+	if (readPath.series)
 		for (const key of Object.keys(readPath.series))
 			if (!seriesKeys.has(key))
 				throw new Error(
@@ -78,10 +64,9 @@ export const statisticsArtifactReader = (
 		throw new Error(`Artifact ${name} has no statistics read path.`);
 	return (measureId: string, source: MeasureSource) => {
 		const selector = selectorFor(measureId, source);
-		const identity = byId.get(measureId)?.series ?? identities?.[measureId];
+		const identity = byId.get(measureId)!.series!;
 		return rebuildStatisticsObservationText(database, selector, {
-			measureId:
-				canonical && identity ? measureSeriesKey(identity) : measureId,
+			measureId: measureSeriesKey(identity),
 			sourceGeography: source.sourceGeography,
 			periods: source.periods,
 		});
@@ -102,15 +87,7 @@ export const openStatisticsArtifactReader = (
 	try {
 		return {
 			database,
-			readArtifact: statisticsArtifactReader(
-				database,
-				catalog,
-				readPath,
-				readPath.series &&
-					catalog.measures.some((measure) => !measure.series)
-					? readMeasureDimensionsMapping(repositoryRoot).ids
-					: undefined,
-			),
+			readArtifact: statisticsArtifactReader(database, catalog, readPath),
 		};
 	} catch (error) {
 		database.close();

@@ -37,12 +37,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		const manifest = compileExportManifest(
 			publicDirectory,
 			dataCatalog,
-			statisticsArtifactReader(
-				database,
-				dataCatalog,
-				readPath,
-				identities,
-			),
+			statisticsArtifactReader(database, dataCatalog, readPath),
 		);
 		manifest.measureExports = [];
 		for (const measure of dataCatalog.measures) {
