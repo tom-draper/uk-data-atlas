@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadHousePrice } from "@uk-data-atlas/datasets";
+import { housePriceStatisticsParts } from "@uk-data-atlas/datasets";
 
 const rows = [
 	["Median price paid by ward"],
@@ -24,7 +24,7 @@ const read = async (
 		visit(new Map(row.map((value, column) => [column, value])));
 };
 
-describe("loadHousePrice", () => {
+describe("housePriceStatisticsParts", () => {
 	it("starts median and mean workbooks before either finishes", async () => {
 		const started: string[] = [];
 		let release: () => void;
@@ -42,7 +42,7 @@ describe("loadHousePrice", () => {
 				visit(new Map(values.map((value, index) => [index, value])));
 		};
 
-		const loading = loadHousePrice(slowRead);
+		const loading = housePriceStatisticsParts(slowRead);
 		try {
 			expect(started).toHaveLength(2);
 		} finally {
@@ -52,19 +52,27 @@ describe("loadHousePrice", () => {
 	});
 
 	it("keeps the publisher's code on a ward it moves for the map", async () => {
-		const data = (await loadHousePrice(read))[2023].data;
+		const [part] = await housePriceStatisticsParts(read);
+		const ward = part.records.find(({ code }) => code === "E05013018")!;
 
 		// Salford's redrawn ward joins the map under its 2021 code, but the old
 		// code the price was published against stays on the record.
-		expect(data.E05013018).toMatchObject({
-			wardCode: "E05013018",
-			sourceWardCode: "E05000759",
+		expect(ward.parents).toMatchObject({
+			ladCode: { code: "E08000006", name: "Salford" },
+			sourceWardCode: { code: "E05000759" },
 		});
-		expect(data.E05013018.prices[2022]).toBe(179500);
+		expect(ward.values).toContainEqual(
+			expect.objectContaining({
+				measure: "house-price-median",
+				value: 179500,
+				period: expect.objectContaining({ label: "2022" }),
+			}),
+		);
 	});
 
 	it("adds no source code where the ward was not moved", async () => {
-		const data = (await loadHousePrice(read))[2023].data;
-		expect(data.E05008945).not.toHaveProperty("sourceWardCode");
+		const [part] = await housePriceStatisticsParts(read);
+		const ward = part.records.find(({ code }) => code === "E05008945")!;
+		expect(ward.parents).not.toHaveProperty("sourceWardCode");
 	});
 });

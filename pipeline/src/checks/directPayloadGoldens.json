@@ -151,6 +151,10 @@
 		"sha256": "4560a10e45f658c472c83af5c3f9500e5ffab3edea43d29a2b36c340ede2d451",
 		"bytes": 59473
 	},
+	"house-price": {
+		"sha256": "1eddff7c3a794f62143873793c9a5111cb024d608ca02b6b004f06e610bbfaf2",
+		"bytes": 4255518
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992
