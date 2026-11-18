@@ -203,6 +203,10 @@
 		"sha256": "fb0e430ca658325cce6e2b91acea64e7bef9fbb107b9a0151e5494e65e88b00f",
 		"bytes": 1587386
 	},
+	"historical-general-election": {
+		"sha256": "8b0898595ee234d3c0388fe1180367224a7c629099ab00085e984a26d4c3622a",
+		"bytes": 4792783
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

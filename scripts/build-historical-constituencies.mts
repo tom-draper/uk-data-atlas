@@ -9,14 +9,14 @@
  * year and the Library's id (`1918-1`), unique across sets. A few 1918 Irish
  * rows have no id; the compiler keys those by name, and so does the code.
  *
- * Usage: node --import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
-import tsx scripts/build-historical-constituencies.mts [out]
+ * Usage: node --import tsx scripts/build-historical-constituencies.mts [out]
  * `out` defaults to data/source/boundaries/historical-constituency.
  */
+import { buildLog, formatCount } from "@uk-data-atlas/atlas-db";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { loadHistoricalGeneralElection } from "@uk-data-atlas/datasets";
+import { historicalConstituencyNames } from "@uk-data-atlas/datasets";
 import { historicalConstituencyCode, sourceDir } from "@uk-data-atlas/datasets";
 
 const root = join(import.meta.dirname, "..");
@@ -32,23 +32,21 @@ const source = JSON.parse(
 	readFileSync(join(sourceDirectory, "meta.json"), "utf8"),
 );
 
-const elections = await loadHistoricalGeneralElection(async (path) =>
-	readFileSync(join(root, "data/source", path), "utf8"),
+const allSets = historicalConstituencyNames(
+	readFileSync(
+		join(
+			root,
+			"data/source",
+			sourceDir(
+				"historical-general-election",
+				"1918-2019election_results.csv",
+			),
+		),
+		"utf8",
+	),
 );
-
-// Boundary sets in election order, each with its constituencies in the order
-// first published and the name its latest election gives them.
-const sets = new Map<string, Map<string, string>>();
-for (const election of Object.values(elections).sort(
-	(a, b) => a.year - b.year || a.election.localeCompare(b.election),
-)) {
-	// From 2010 the Library uses ONS codes, on the atlas's own releases.
-	if (election.boundarySet.startsWith("2010")) continue;
-	let names = sets.get(election.boundarySet);
-	if (!names) sets.set(election.boundarySet, (names = new Map()));
-	for (const [id, { constituencyName }] of Object.entries(election.data))
-		names.set(id, constituencyName);
-}
+// From 2010 the Library uses ONS codes, on the atlas's own releases.
+const sets = new Map([...allSets].filter(([set]) => !set.startsWith("2010")));
 
 for (const [set, names] of sets) {
 	const [first, last = first] = set.split("-");

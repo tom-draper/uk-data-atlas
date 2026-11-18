@@ -1,5 +1,8 @@
 import type { HistoricalGeneralElectionDataset } from "../../../types/historicalGeneralElection.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -17,7 +20,7 @@ import {
 	GENERAL_POLLING_DAYS,
 	pollingDay,
 } from "../../../data/election/pollingDays.ts";
-import { loadHistoricalGeneralElection } from "../../../data/historical-general-election/loader.ts";
+import { historicalGeneralElectionStatisticsParts } from "../../../data/historical-general-election/source.ts";
 
 /** Polling days of the general elections from 1918 to 2019, by election. */
 const HISTORICAL_POLLING_DAYS: Readonly<Record<string, string>> = {
@@ -145,8 +148,13 @@ export const historicalGeneralElection =
 			minimumDatasets: 28,
 			requiredDataFields: ["constituencyName", "votes"],
 		},
-		load: async ({ text }) => loadHistoricalGeneralElection(text),
+		load: noCompiledPayload<HistoricalGeneralElectionDataset>(),
 		statistics: {
+			direct: {
+				only: true,
+				read: ({ text }) =>
+					historicalGeneralElectionStatisticsParts(text),
+			},
 			payload: {
 				parts: () =>
 					Object.keys(HISTORICAL_POLLING_DAYS)
