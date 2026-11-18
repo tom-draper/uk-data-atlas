@@ -1,188 +1,123 @@
 # Dataset declarations
 
-One module per dataset. This note records where a dataset is described today,
-the shape that replaces it, the order datasets move in, and what stays custom.
+A dataset is described in one file, its declaration:
+`packages/datasets/src/<theme>/<topic>/<id>/dataset.ts`, which exports the
+result of `defineDataset(...)`. `<id>` is the only identifier: kebab-case, used
+for the API, the pipeline, the files, the SQLite slug and the website. A test
+checks the folder against the declared theme, topic and id.
 
 How datasets are grouped (themes, topics, classification rules, download
-modules and folder layout) is defined in `docs/data-organisation.md`, and the
-registry in `packages/datasets/src/declaration/taxonomy.ts`. This note covers
-only the shape of a declaration and how datasets move to it.
+modules and folder layout) is in `docs/data-organisation.md`. This note covers
+the shape of a declaration, what is generated from it, and what still lives
+outside it.
 
-## Current state
+## What a declaration holds
 
-A dataset is described in separate places that nothing keeps in step:
+The type is `DatasetDeclaration` in `packages/datasets/src/declaration/dataset.ts`.
 
-| Place                                                                                            | Holds                                                                                       |
-| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| `packages/datasets/src/data/<name>/loader.ts`                                                    | Reads raw files into the compiled payload                                                   |
-| `packages/datasets/src/data/catalog/definitions/<camelCase>.ts`                                  | Manifest `type`, output file, boundary type, source and licence, loader hook                |
-| `packages/datasets/src/types/<camelCase>.ts`                                                     | Types of the compiled payload                                                               |
-| `packages/measures/src/statisticsDatasets/*.ts`                                                  | Statistics declaration of the datasets not yet declared (see Migration status)              |
-| `pipeline/src/catalog/<name>.ts`, `compileDataCatalog.ts`                                        | A second compiler for the API catalogue: indicator ids, units, notes, boundary year, period |
-| `pipeline/src/stages/build-data-catalog.ts`                                                      | Input file per dataset                                                                      |
-| `pipeline/src/statistics/bindCompiledFields.ts`                                                  | API measure id to dataset field                                                             |
-| `services/api/config/statistics-vocabulary.json`                                                 | Measure vocabulary (a snapshot of the declarations)                                         |
-| `packages/measures/src/catalogueUnits.ts`                                                        | Which unit strings are counts                                                               |
-| `lib/datasets/<camelCase>.ts`                                                                    | Website chart definition: topic, key, label, card, map value, colour range, legend          |
-| `lib/datasets/generated.ts`, `generatedCharts.tsx`                                               | Generated registries over the files above                                                   |
-| `lib/types/datasets.ts`, `lib/types/mapOptions.ts`                                               | One entry per dataset in the dataset and map option records                                 |
-| `lib/config/mapOptions.ts`                                                                       | Default map options, with an `if (type === ...)` per dataset                                |
-| `lib/helpers/datasetAggregation/*`                                                               | Aggregation functions and one specification per dataset                                     |
-| `components/LegendContent.tsx`, `LegendPanel.tsx`, `legend/*`                                    | Per-dataset legend and measure toggle                                                       |
-| `lib/atlas/figures.ts`, `rankingRecipes.ts`, `rankings.ts`, `pages.ts`, `scripts/map-figures.ts` | Place figures, ranking recipes and labels, keyed by dataset id                              |
-| `lib/places/headlines.ts`                                                                        | Place headline per dataset                                                                  |
+| Field                                                           | Describes                                                                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`, `topic`, `related`                                        | Identity and filing. The module and theme are derived from the topic, never set by hand.                                             |
+| `source`                                                        | Name, publisher, source URL, licence and its URL, attribution, description, edition year, update cadence, notes.                     |
+| `boundary`, `additionalBoundaryTypes`, `coverageCountries`      | The geography and boundary release the records are keyed by, and the nations the source can cover.                                   |
+| `load`, `ingestion`, `layout`                                   | How the sources are read (`noCompiledPayload()` for a dataset read straight into rows) and the checks on what the reader returns.    |
+| `statistics`                                                    | Measures, dimensions and their members, the field of each record that is each series, derived fields, periods and payload header.    |
+| `catalogue`                                                     | The measures the API publishes: id, label, unit, value kind, aggregation, notes, the statistics measure and fixed dimension members. |
+| `display`, `mapViews`, `categories`, `ranking`, `placeHeadline` | How the website draws the dataset: card, map colouring, legend, measure toggle, ranking labels and the place page headline.          |
 
-### Claimant count
+The parser (`load`, or `statistics.direct.read`) is real code and stays beside
+the declaration's imports. Everything else in the table is data.
 
-It has three ids: the manifest `type` `claimantCount` (payload header, website
-keys, map options), the file and dataset slug `claimant-count` (SQLite, API,
-files), and the measure `claimants` (statistics vocabulary). The API adds two
-indicator ids, `claimant-count` and `claimant-count-16-to-24`. About thirty
-files name it:
+## What is generated or derived from it
 
-- Source reader and definition: `data/claimant-count/source.ts`,
-  `catalog/definitions/claimantCount.ts`, `types/claimantCount.ts`.
-- Statistics: the `statistics` block of its declaration (measures, age-group
-  dimension, fields, header, `derived` youth rate).
-- API: `pipeline/src/catalog/claimantCount.ts` (indicators, notes, boundary
-  year 2024, period `2026-04`), `compileDataCatalog.ts`, `build-data-catalog.ts`,
-  `bindCompiledFields.ts`, `statistics-vocabulary.json`,
-  `catalogueUnits.ts`.
-- Website chart: the declaration's `display` block, built by `lib/datasets/declared.ts`,
-  then `generated.ts`, `generatedCharts.tsx`.
-- Website options and legend: `lib/types/mapOptions.ts`, `lib/config/mapOptions.ts`,
-  `LegendContent.tsx`, `LegendPanel.tsx`, `LegendSupplementalPanels.tsx`.
-- Aggregation and figures: `specifications.ts`, `numeric.ts`, `lib/atlas/figures.ts`,
-  `rankingRecipes.ts`, `rankings.ts`, `pages.ts`, `scripts/map-figures.ts`,
-  `lib/places/headlines.ts`.
+- `pnpm data:build --only catalogue-registry` finds every `dataset.ts` and writes
+  `data/declarations.ts`, `data/catalog/registry.ts` and `data/catalog/generated.ts`
+  (the manifest definitions and the dataset record types). Those files are
+  generated and checked in.
+- `definitionOf` turns a declaration into the manifest definition the dataset
+  compiler reads. `statisticsOf` turns it into the statistics declaration the
+  rows are written and read back from (`packages/measures/src/statisticsDatasets`).
+- `catalogue` is read by `pipeline/src/catalog/declaredIndicators.ts`, which
+  publishes the API measures and their observation artifacts.
+- `display`, `mapViews`, `categories`, `ranking` and `placeHeadline` are read by
+  `lib/datasets/declared.ts`, `lib/datasets/categories.ts` and
+  `lib/places/headlines.ts`, so a dataset that fits the shared card and map
+  needs no website code.
 
-### House price
+## Validation
 
-Same layout: `data/house-price/loader.ts` and `wardCodes.ts`, the definition and
-types, the economy statistics declaration, `pipeline/src/catalog/housePrice.ts`
-(a ward partition with its own last-period constant), `measureAliases.ts`,
-`measureStatisticsSelections.ts`, `lib/datasets/housePrice.ts`,
-`HousePriceChart.tsx`, `housePriceSeries.ts`, the `measure.housePrice` URL
-parameter in `mapOptionsUrl.ts`, `housePrice` entries in the map option types
-and defaults, `ChartCards.tsx`, aggregation, figures, rankings and docs.
+`defineDataset` runs `declarationProblems`
+(`packages/datasets/src/declaration/validate.ts`) when the module is first
+imported, so an invalid declaration fails typecheck, tests and every build
+stage rather than reaching a table or a page. It rejects:
 
-### Local election
+- an empty source term, a URL that is not http(s), or an unknown cadence;
+- a repeated or unlabelled measure, dimension or member, and a member whose
+  parent is not a member;
+- a field that reads a measure or binds a dimension the declaration does not
+  declare;
+- a catalogue indicator that names an undeclared measure, dimension or member,
+  repeats another indicator, or reads a field that the declaration gives a
+  different series;
+- a catalogue with no period (or `yearly`), no coverage note, or a stateful
+  authority pattern;
+- a display with repeated measure ids or an empty colour range or legend, and a
+  place headline with no places.
 
-The same again, plus custom website code: `components/datasets/politics/local-elections/local-election/*`,
-`lib/helpers/localElection.ts`, `mapRendering/elections.ts`,
-`useLocalElectionDatasets.ts`, `legend/CategoryLegends.tsx`, `legendData.ts`,
-`PlaceElections.tsx`, and pipeline `catalog/elections.ts`,
-`electionStatisticsExport.ts` and `datasetRegionChunks.ts`.
+`tests/data/declarationValidation.test.ts` checks that every declared dataset
+passes and that each rule rejects a faulty copy of a real declaration.
 
-## Target shape
+## The API catalogue
 
-Each dataset is one module, `packages/datasets/src/<theme>/<topic>/<id>/dataset.ts`,
-exporting a `DatasetDeclaration`. `<id>` is the only identifier: kebab-case,
-used for the API, pipeline, files, SQLite slug and website.
+`catalogue: { kind: "indicators", ... }` replaces a per-dataset compiler in
+`pipeline/src/catalog`. Besides the indicators it sets:
 
-```ts
-export const claimantCount = defineDataset<ClaimantCountDataset>({
-	id: "claimant-count",
-	topic: "labour-market",
-	source: { name, publisher, sourceUrl, licence, licenceUrl, attribution,
-	          description, year, cadence, notes },
-	boundary: { type: "localAuthority", year: 2024 },
-	load: ({ text, xlsxSheet }) => loadClaimantCount(text, xlsxSheet),
-	statistics: { measures, dimensions, fields, derived, computed, ... },
-	catalogue: { kind: "indicators", period, indicators: [/* API measures */] },
-	display: { label, year, card, measures: [/* rate, count */], aggregation },
-});
-```
+- `period` for a file of one period, or `yearly` for a file with an entry per year;
+- `codes`, the set of authorities every record must belong to (`authorities` of
+  the population estimate, or `england2025`), so any authority without a value is
+  named in the coverage note;
+- `authorityCodes`, a pattern for tables that interleave counties or regions
+  with their authorities;
+- `mergeApril2023`, to reduce the April 2023 authorities and the districts they
+  replaced to authorities.
 
-`pnpm data:build --only catalogue-registry` finds every
-`<theme>/<topic>/<id>/dataset.ts` and writes `data/declarations.ts`, the catalogue
-registry and the dataset record types from them.
+The dataset's `source.notes` are published with every indicator.
 
-- It extends the existing `DeclaredDataset` (the statistics declaration) rather
-  than replacing it. The declaration types and the `periods`, `measure` and
-  `yearParts` helpers move to `packages/datasets` so a declaration can sit
-  beside its loader.
-- `topic` is required: the one registered topic the dataset is filed under.
-  `related` is an optional list of other topics, never the primary. The module
-  is derived from the topic (`moduleOfTopic`) and written to `dataset.module`
-  in `atlas.sqlite`; it is not set by hand.
-- Everything that used to be a second copy reads the declaration: the API
-  catalogue compiler, the field bindings, the manifest and registry, website
-  chart and map options, legend, ranking labels and place figures.
-- Display hints are data. A measure toggle (rate or count) is
-  `display.measures: [{ id, label, field, colorRange, legend, card }]`, so the
-  legend, the toggle panel and the default map options are built from it. A
-  dataset whose chart is more than one headline value names its own component
-  in `display.component`; the website looks it up from the declaration.
-  A rank is written with the `rank` format ("Most deprived" to "Least
-  deprived") and keeps low values at the low end of the colour scale with
-  `invertColor: false`; an aggregation that must count each area once however
-  many boundary features carry its code sets `distinct`.
-- `catalogue.indicators` is the API catalogue: each indicator names its
-  measure id, the compiled field, the statistics measure and the fixed
-  dimension members. The API's measure-to-dimension mapping and the pipeline's
-  field bindings are read from it, and the catalogue measures carry that
-  series identity themselves.
+## Adding a simple dataset today
 
-### Themes, topics and modules
+1. Write `<theme>/<topic>/<id>/dataset.ts` and its source parser.
+2. Run `pnpm data:build --only catalogue-registry` and `pnpm ids`.
+3. Add the three registry entries listed below.
 
-Themes, topics and modules are defined in `docs/data-organisation.md`. The
-module table that was here is superseded: `crime` and `deprivation` are topics
-of the `society` theme, `population` and `infrastructure` keep their names, and
-`core` splits into `core`, `boundaries` and `postcodes`.
+A dataset whose payload is a single value per authority can use
+`IndicatorDataset<"<id>">` as its payload type (see `waste`) instead of a new
+type file.
 
-## Migration order
+## Still described outside the declaration
 
-1. Done: a primary `topic` on every dataset, with `dataset.module` derived
-   from it and tests (`docs/data-organisation.md`, task 2). The census small
-   area tables and fuel poverty are filed the same way. `land-area` is
-   provisionally filed under `emissions` because no registered topic fits it.
-2. Move the declaration types and helpers to `packages/datasets`; add
-   `DatasetDeclaration`, `declareDataset` and the registry. A test requires
-   every catalogue dataset to have one declaration with a unique id, a valid
-   module and a licence. Datasets not yet moved are listed explicitly in the
-   test and removed from that list as they move.
-3. Pilot: claimant count moves fully and its scattered definitions are
-   deleted. The API catalogue compiler, field bindings, and website options
-   read its declaration generically.
-4. Batches by theme, one or a few commits each, deleting old definitions as
-   each dataset moves: economy first (it shares the claimant count shapes),
-   then housing, then the rest.
-5. Delete the leftover generic scaffolding: per-dataset switch statements, maps
-   keyed by dataset id, duplicate notes and boundary years.
-6. Update `ARCHITECTURE.md` and the dataset docs.
+These are the places left that name a dataset. Each is a follow-up to #708, in
+roughly the order it is worth doing.
+
+| Place                                                                                                                                                                                   | Holds                                                                        | Plan                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `declaration/guides.ts`                                                                                                                                                                 | Title, topic, about and summary of each dataset, for the docs pages          | Move into the declaration and generate. The registry entry point must stay free of loaders, so it needs a generated file. |
+| `declaration/sources.ts` and `declaration/sourceDatasets.ts`                                                                                                                            | The topic again, the source folder and which datasets it feeds               | Generate from the declarations. Loaders import `sources.ts`, so a declaration cannot import it back.                      |
+| `pipeline/src/catalog/*.ts` (road collisions, crime, air quality, unemployment, jobs, emissions, GDP, energy, population, house price, life expectancy, deprivation, elections, census) | Indicator ids, units, notes, period and boundary year, written as a compiler | Move into `catalogue`, extending it where a dataset has several partitions or a derived status.                           |
+| `pipeline/src/statistics/bindCompiledFields.ts`                                                                                                                                         | Indicator id to dataset field for those compilers                            | Delete as each compiler moves.                                                                                            |
+| `lib/atlas/pages.ts` (`MAP_NAMES`)                                                                                                                                                      | The name of each map, defaulting to `source.name`                            | Move into `display`.                                                                                                      |
+| `lib/atlas/rankingRecipes.ts`, `lib/atlas/figures.ts`, `scripts/map-figures.ts`                                                                                                         | Ranking columns and place figures, mostly code                               | Declare the simple ones, keep the rest as code (website generic over measures, #709).                                     |
+| `types/<name>.ts`, `types/index.ts`, `packages/datasets/src/index.ts`                                                                                                                   | Payload types and re-exports                                                 | Payload types stay with the parser. The re-exports could be generated.                                                    |
+
+Some places name datasets but are not descriptions: `pipeline/ids/*.txt` (the
+permanent id registry), `pipeline/src/checks/directPayloadGoldens.json` (golden
+hashes), `lib/docs/legacyDataPages.ts` (old page redirects) and the test
+fixtures.
 
 ## What stays custom
 
-- Loaders: real code per source, now next to the declaration.
+- Parsers: real code per source.
 - Aggregation maths that is not a sum or weighted mean, as a pure function in
-  the declaration.
+  the declaration's `display.aggregation`.
 - React components that are not a value card or choropleth: the election charts
-  and result maps, ethnicity, population pyramids, and the house price series.
-  The declaration names the component and the website looks it up by id.
-
-## Migration status
-
-Every dataset is a declaration in
-`packages/datasets/src/<theme>/<topic>/<id>/dataset.ts`. A test checks that the
-folder matches the declared theme, topic and id. The statistics entries of
-declared datasets are built from their declarations (`statisticsOf`).
-
-The four politics datasets, `ethnicity`, `population`, `house-price`,
-`life-expectancy` and `fuel-poverty` are declared, but their maps are not drawn
-from a display: party colours, the Leave share scale, one chart per election,
-the ethnicity categories and the population age, gender and density views, the
-house price series, the life expectancy male, female and average views and the
-fuel poverty ward and local authority summary are website code. Each keeps a
-hand-written `lib/datasets/<name>.ts` that spreads `definitionOf(<declaration>)`
-and adds its renderer, legend kind and charts. Shared links keep the old
-`generalElection`, `localElection`, `brexitConstituency`, `fuelPoverty`,
-`housePrice` and `lifeExpectancy` names in the map option parameters.
-
-A dataset that stays on a camelCase website key (`type`) until it moves is the
-only place an old id survives; all declared datasets use their kebab-case id
-everywhere.
-
-Declared metadata that was derived rather than researched: `attribution` comes
-from the publisher, `cadence` from a table in the migration script, and `notes`
-is empty. Review these per dataset when its docs page is written.
+  and result maps, the population pyramids and the house price series. The
+  declaration names the component and the website looks it up by id.

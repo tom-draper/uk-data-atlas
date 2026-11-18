@@ -3,8 +3,8 @@
 How datasets are grouped across the whole project: source files, build
 output, code, website, docs, API and the published database. One taxonomy,
 defined once, used everywhere. This note supersedes the module section in
-`docs/dataset-declarations.md`; that note still covers the declaration shape
-and migration mechanics.
+`docs/dataset-declarations.md`; that note covers the declaration shape
+and what is still described outside it.
 
 Written 2026-11-10 from a survey of the repo at `a1cd196b7`.
 
@@ -178,8 +178,9 @@ dataset id it serves. Sources no dataset reads sit in `_staging/` (see
 "Staged sources").
 
 Task 7 moved the declarations into `packages/datasets/src/<theme>/<topic>/<dataset>/`.
-Five datasets are still hand written, with reasons in
-`docs/dataset-declarations.md`. Loaders and types have not moved yet.
+Every dataset is declared; `docs/dataset-declarations.md` describes the
+declaration and lists what is still described outside it. Loaders and types
+have not moved yet.
 
 Task 8 moved the custom charts into
 `components/datasets/<theme>/<topic>/<dataset>/`. Code shared by a topic or a
