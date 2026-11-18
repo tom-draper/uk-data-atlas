@@ -1,5 +1,6 @@
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetDefinition } from "@/lib/datasets";
+import { declaredRanking, formatDisplay } from "@/lib/datasets/declared";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import {
@@ -310,78 +311,14 @@ export function hasRankingPage(
 	);
 }
 
-const pounds = (value: number) =>
-	`£${Math.round(value).toLocaleString("en-GB")}`;
-
-/** Maps whose card or legend format is too coarse for a table. */
-const RANKED_FORMATS: Readonly<Record<string, (value: number) => string>> = {
-	"house-price": pounds,
-	income: pounds,
-	"council-tax": (value) =>
-		`£${value.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-	// Published in thousands of pounds.
-	"local-government-finance": (value) => pounds(value * 1000),
-	"ghg-emissions": (value) => `${value.toFixed(1)} tonnes`,
-	qualification: (value) => `${value.toFixed(1)}%`,
-	"car-availability": (value) => `${value.toFixed(1)}%`,
-	"child-poverty": (value) => `${value.toFixed(1)}%`,
-	"travel-to-work": (value) => `${value.toFixed(1)}%`,
-	brexit: (value) => `${value.toFixed(1)}%`,
-	ethnicity: (value) => `${value.toFixed(1)}%`,
-	"fuel-poverty": (value) => `${value.toFixed(1)}%`,
-	imd: (value) => `${value.toFixed(1)}%`,
-	nimdm: (value) => `${value.toFixed(1)}%`,
-	simd: (value) => `${value.toFixed(1)}%`,
-	wimd: (value) => `${value.toFixed(1)}%`,
-	"population-age": (value) => `${value.toFixed(1)} years`,
-	"general-election": (value) => `${value.toFixed(1)}%`,
-	"brexit-constituency": (value) => `${value.toFixed(1)}%`,
-	"nhs-waiting": (value) => `${value.toFixed(1)}%`,
-	// Published in millions of pounds.
-	"regional-gdp": (value) => `£${Math.round(value).toLocaleString("en-GB")}m`,
-	"population-density": (value) =>
-		`${Math.round(value).toLocaleString("en-GB")} per km²`,
-};
-
 /** What a ranking's value column measures, where the map's name is unclear. */
-const RANKED_VALUE_LABELS: Readonly<Record<string, string>> = {
-	"car-availability": "Households without a car",
-	qualification: "Residents with degree-level qualifications",
-	"local-government-finance": "Education services spending",
-	crime: "Police recorded crimes",
-	"ghg-emissions": "Emissions per person (CO2e)",
-	"house-price": "Median price paid",
-	income: "Median annual pay",
-	"council-tax": "Average Band D council tax",
-	"child-poverty": "Children in low-income families",
-	"claimant-count": "Claimants, % of residents aged 16 to 64",
-	broadband: "Premises with full fibre",
-	"mobile-coverage": "Premises with outdoor 5G from all operators",
-	"electric-vehicle-chargers": "Public chargers",
-	"business-activity": "VAT or PAYE businesses",
-	homelessness: "Households in temporary accommodation per 1,000",
-	brexit: "Share voting Leave",
-	ethnicity: "White British residents",
-	"fuel-poverty": "Households in fuel poverty",
-	imd: "Neighbourhoods in England's most deprived 10%",
-	nimdm: "Neighbourhoods in Northern Ireland's most deprived 10%",
-	simd: "Data zones in Scotland's most deprived 10%",
-	wimd: "Neighbourhoods in Wales' most deprived 10%",
-	"population-age": "Median age",
-	"general-election": "Majority as a share of votes",
-	"brexit-constituency": "Estimated share voting Leave",
-	"nhs-waiting": "Patients waiting over 18 weeks",
-	"regional-gdp": "Gross domestic product",
-	"population-density": "Residents per km²",
-};
-
 export const rankedValueLabel = (map: AtlasMap) =>
-	RANKED_VALUE_LABELS[map.slug] ?? map.name;
+	declaredRanking(map.dataset, map.view)?.label ?? map.name;
 
-/** How a ranked value reads: as the map's card shows it, or its legend. */
+/** How a ranked value reads: as its dataset declares, the map's card, or its legend. */
 export function formatRankedValue(map: AtlasMap, value: number) {
-	const format = RANKED_FORMATS[map.slug];
-	if (format) return format(value);
+	const format = declaredRanking(map.dataset, map.view)?.format;
+	if (format) return formatDisplay(format, value);
 	const definition = rankingSource(map)?.definition;
 	const card = definition?.chart.card;
 	if (card?.format)
