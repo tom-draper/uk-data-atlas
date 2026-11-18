@@ -8,6 +8,8 @@ import type {
 import {
 	availableReconciliations,
 	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
 	reconcileMeasure,
 } from "@uk-data-atlas/measures";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
@@ -34,6 +36,7 @@ import {
 const measure: DataCatalog["measures"][number] = {
 	...dataCatalog.measures.find((candidate) => candidate.id === "population")!,
 	id: "fixture-people",
+	series: { measure: "fixture-people" },
 	sources: [
 		{
 			datasetId: "fixture-wards",
@@ -96,6 +99,16 @@ const observations: MeasureObservationArtifact[] = [
 		],
 	},
 ];
+
+registerSeriesObservations(
+	observations,
+	new Map(
+		measure.sources.map((source, index) => [
+			measureSeriesSourceKey(measure.series!, source),
+			observations[index]!,
+		]),
+	),
+);
 
 const crosswalk = (
 	id: string,

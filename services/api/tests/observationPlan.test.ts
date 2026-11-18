@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
 	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
 	type DataCatalog,
 	type Measure,
 	type MeasureCompatibilityInventory,
@@ -53,6 +55,42 @@ test("selects weights using their canonical identity instead of the old id", () 
 		sources: [source],
 	};
 	const catalog = { measures: [measure] } as unknown as DataCatalog;
+	const observations = [
+		{
+			schemaVersion: 1 as const,
+			contentHash: "hash",
+			measureId: "actual-weight",
+			sourceGeography: source.sourceGeography as Parameters<
+				typeof readWeightedSource
+			>[0]["source"]["sourceGeography"],
+			periods: [
+				{
+					period: "2024",
+					records: [
+						{
+							areaCode: "E1",
+							value: 3,
+							status: "observed" as const,
+						},
+					],
+				},
+			],
+		},
+	];
+	registerSeriesObservations(
+		observations,
+		new Map([
+			[
+				measureSeriesSourceKey(
+					measure.series,
+					source as Parameters<
+						typeof readWeightedSource
+					>[0]["source"],
+				),
+				observations[0]!,
+			],
+		]),
+	);
 	const result = readWeightedSource({
 		context: {
 			dataCatalog: catalog,
@@ -64,30 +102,7 @@ test("selects weights using their canonical identity instead of the old id", () 
 		measureId: "ratio",
 		period: "2024",
 		source: source as Parameters<typeof readWeightedSource>[0]["source"],
-		artifacts: {
-			measureObservations: [
-				{
-					schemaVersion: 1,
-					contentHash: "hash",
-					measureId: "actual-weight",
-					sourceGeography: source.sourceGeography as Parameters<
-						typeof readWeightedSource
-					>[0]["source"]["sourceGeography"],
-					periods: [
-						{
-							period: "2024",
-							records: [
-								{
-									areaCode: "E1",
-									value: 3,
-									status: "observed",
-								},
-							],
-						},
-					],
-				},
-			],
-		},
+		artifacts: { measureObservations: observations },
 	});
 	assert.ok(!("status" in result));
 	assert.equal(result.measure.id, "actual-weight");
