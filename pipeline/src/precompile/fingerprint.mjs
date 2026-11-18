@@ -28,7 +28,6 @@ const datasetCompilerInputs = [
 	"pipeline/src/precompile/compileDataset.ts",
 	"pipeline/src/precompile/compileDirectDataset.ts",
 	"pipeline/src/statistics/directDigest.ts",
-	"packages/datasets/src/compileDataset.ts",
 ];
 
 /** What builds everything that is not a catalogue dataset. */
