@@ -21,6 +21,7 @@ import { roundKeepingValidity } from "./compileGeometryValidity.ts";
 import type { BoundaryReleaseSummary } from "./compileMapResource.ts";
 import {
 	mapResourceConcurrency,
+	mapResourceMemoryBudget,
 	runMapResourceJobs,
 	type Job,
 	type Result,
@@ -294,6 +295,7 @@ export const buildMapResources = async (
 				results[index] = result;
 				publishReady();
 			},
+			mapResourceMemoryBudget(),
 		);
 	} catch (error) {
 		for (const { path, backup } of backups.reverse()) {
