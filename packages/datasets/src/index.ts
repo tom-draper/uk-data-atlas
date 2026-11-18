@@ -12,6 +12,7 @@ export * from "./politics/referendums/brexit-constituency/dataset.ts";
 export * from "./data/brexit-constituency/loader.ts";
 export * from "./politics/referendums/brexit/dataset.ts";
 export * from "./data/brexit/referendum.ts";
+export * from "./data/brexit/source.ts";
 export * from "./politics/general-elections/general-election/dataset.ts";
 export * from "./politics/local-elections/local-election/dataset.ts";
 export * from "./data/election/pollingDays.ts";

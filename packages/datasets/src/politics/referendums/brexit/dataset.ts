@@ -1,12 +1,15 @@
 import type { BrexitLADDataset } from "../../../types/referendum.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	ANSWER,
 	REFERENDUM,
 	referendumDay,
 } from "../../../data/brexit/referendum.ts";
-import { loadBrexit } from "../../../data/brexit/loader.ts";
+import { brexitStatisticsParts } from "../../../data/brexit/source.ts";
 
 export const brexit = defineDataset<BrexitLADDataset>({
 	id: "brexit",
@@ -27,7 +30,7 @@ export const brexit = defineDataset<BrexitLADDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
-	load: async ({ text }) => loadBrexit(text),
+	load: noCompiledPayload<BrexitLADDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 120,
@@ -39,6 +42,10 @@ export const brexit = defineDataset<BrexitLADDataset>({
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ csvRows }) => brexitStatisticsParts(csvRows),
+		},
 		payload: {
 			parts: yearParts("brexit", "localAuthority", 2016, {}, ["2016"]),
 			code: "ladCode",
