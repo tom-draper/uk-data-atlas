@@ -190,9 +190,10 @@ export function createStageRunner({
 			state.failureStatus ??= status;
 			return false;
 		}
-		const undeclared = verifyOutputs
-			? (cache?.undeclaredChanges(stage) ?? [])
-			: [];
+		// A stage owns the paths it declares. Whatever else it changed belongs
+		// to another stage or to none, so it fails the build and is not
+		// recorded: its dependants would not see the change, and it must rerun.
+		const undeclared = cache?.undeclaredChanges(stage) ?? [];
 		if (undeclared.length) {
 			state.undeclaredStages.push(stage.name);
 			log(
@@ -201,6 +202,24 @@ export function createStageRunner({
 			for (const path of undeclared.slice(0, 10)) log(`  ${path}`);
 			if (undeclared.length > 10)
 				log(`  and ${formatCount(undeclared.length - 10)} more`);
+			const total = recordTiming(
+				stage.name,
+				stageStartedAt,
+				command,
+				false,
+				waited,
+			);
+			timings.at(-1).failed = true;
+			cache?.recordTiming(stage.name, {
+				commandMs: command,
+				totalMs: total,
+				...queueFields(waited),
+				finishedAt: new Date().toISOString(),
+				failed: true,
+			});
+			state.failed = true;
+			state.failureStatus ??= 1;
+			return false;
 		}
 		const digest = cache?.record(stage, dependencies, {
 			cacheable: stage.cacheable !== false,

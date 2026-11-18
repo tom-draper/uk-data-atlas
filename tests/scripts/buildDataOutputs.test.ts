@@ -244,7 +244,7 @@ const runVerified = async (
 	return { status, log, errors };
 };
 
-test("verify mode catches a write outside the declared outputs", async () => {
+test("a write outside the declared outputs fails the build, with or without verify mode", async () => {
 	const { root, write } = fixture();
 	const stages: Stage[] = [alpha];
 	const clean = await runVerified(root, stages, () => {
@@ -259,7 +259,24 @@ test("verify mode catches a write outside the declared outputs", async () => {
 	});
 	assert.equal(stray.status, 1);
 	assert.ok(stray.log.includes("  data/build/stray.json"));
-	assert.ok(stray.errors.includes("Output verification failed."));
+	// Every build makes the check, so a stage that strayed reruns next time.
+	const unverified = await runVerified(
+		root,
+		stages,
+		() => {
+			write("data/build/a/file.json", "{  }");
+			write("data/build/stray.json", "{ }");
+			return 0;
+		},
+		["--no-cache"],
+	);
+	assert.equal(unverified.status, 1);
+	assert.ok(unverified.log.includes("  data/build/stray.json"));
+	// The stage is left unrecorded, so the next build runs it again.
+	const state = JSON.parse(
+		readFileSync(join(root, ".cache/stages.json"), "utf8"),
+	);
+	assert.equal(state.stages.alpha.key, null);
 });
 
 test("verify mode catches a stage that recorded a hash its file does not have", async () => {
