@@ -349,16 +349,25 @@ export function createStageCache({
 
 	// What each running stage's scope held when it began.
 	const begun = new Map();
-	// The output trees and raw sources when an audited stage began. Only
-	// `sources` may change the latter.
-	const audited = new Map();
-	const fullScan = () => {
+	// The output trees when a scoped stage began, to find what it changed
+	// outside its paths. An audited stage also notes the raw sources, which
+	// only `sources` may change.
+	const watched = new Map();
+	// The stages that ran at the same time as each stage that is running or
+	// has just finished. Whatever a stage changed inside the paths of one of
+	// these cannot be told from that stage's own writes.
+	const alongside = new Map();
+	// The paths every stage that has begun owns.
+	const owned = new Map();
+	const fullScan = (audit = false) => {
 		const stamps = new Map();
 		for (const directory of outputRoots)
 			stampFiles(root, directory, stamps);
-		stampFiles(root, dataDirectory, stamps);
+		if (audit) stampFiles(root, dataDirectory, stamps);
 		return stamps;
 	};
+	const within = (scope, path) =>
+		scope.some((own) => path === own || path.startsWith(`${own}/`));
 	const scopedSnapshot = (scope) => {
 		const stamps = new Map();
 		for (const path of scope) stampPath(root, path, stamps);
@@ -530,7 +539,8 @@ export function createStageCache({
 		recordTiming(name, timing) {
 			// A stage with a timing is no longer running, even if it failed.
 			begun.delete(name);
-			audited.delete(name);
+			watched.delete(name);
+			alongside.delete(name);
 			rmSync(manifestFile(name), { force: true });
 			state.stages[name] ??= { key: null, digest: null, outputs: {} };
 			state.stages[name].timing = timing;
@@ -607,7 +617,17 @@ export function createStageCache({
 				throw new Error(
 					`Cannot begin ${name} beside a running stage without a declared scope. Pass the stage, not its name, to begin().`,
 				);
-			if (audit && scope) audited.set(name, fullScan());
+			// A stage that owns paths must change nothing else. The trees are
+			// small enough to stat whole, and the check is made when it ends.
+			if (scope) {
+				watched.set(name, { audit, tree: fullScan(audit) });
+				owned.set(name, scope);
+				const together = new Set(
+					[...begun.keys()].filter((other) => other !== name),
+				);
+				alongside.set(name, together);
+				for (const other of together) alongside.get(other)?.add(name);
+			}
 			// Hashes left by an earlier run say nothing about this one.
 			rmSync(manifestFile(name), { force: true });
 			begun.set(name, {
@@ -621,23 +641,33 @@ export function createStageCache({
 		},
 
 		/**
-		 * After a stage that began with `audit`: the files it changed outside its
-		 * declared scope, which its record would otherwise miss. Raw sources
-		 * count: a stage that changes them would stale every stage's key.
+		 * After a stage ran: the files it changed or removed outside its
+		 * declared scope, which its record would otherwise miss and which
+		 * belong to another stage or to none. A file inside the scope of a stage
+		 * that ran at the same time is left out, as either may have written
+		 * it. A stage that began with `audit` also has raw sources counted,
+		 * since one that changes them would stale every stage's key, and the
+		 * build runs it alone, so nothing is left out. A stage with no scope
+		 * has nothing to be outside of.
 		 */
 		undeclaredChanges(stage) {
-			const before = audited.get(stage.name);
-			audited.delete(stage.name);
+			const watch = watched.get(stage.name);
+			watched.delete(stage.name);
+			const together = alongside.get(stage.name) ?? new Set();
+			// The record of who ran together stays until the next stage begins.
 			const scope = stageScope(stage);
-			if (!before || !scope) return [];
-			const inScope = (path) =>
-				scope.some((own) => path === own || path.startsWith(`${own}/`));
-			return [...fullScan()]
+			if (!watch || !scope) return [];
+			const after = fullScan(watch.audit);
+			const paths = new Set([...watch.tree.keys(), ...after.keys()]);
+			return [...paths]
 				.filter(
-					([path, stamp]) =>
-						!inScope(path) && !sameFile(before.get(path), stamp),
+					(path) =>
+						!sameFile(watch.tree.get(path), after.get(path)) &&
+						!within(scope, path) &&
+						![...together].some((other) =>
+							within(owned.get(other) ?? [], path),
+						),
 				)
-				.map(([path]) => path)
 				.sort();
 		},
 

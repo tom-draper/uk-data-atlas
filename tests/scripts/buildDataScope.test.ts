@@ -180,10 +180,10 @@ test("adoption takes the files in a required folder, and refuses an empty one", 
 	assert.deepEqual(adopted.files, ["data/build/observations/one.json"]);
 });
 
-test("an audited stage reports files it changed outside its scope", () => {
+test("a stage reports files it changed outside its scope, audited or not", () => {
 	const { write, cache } = fixture();
 	const current = cache();
-	current.begin(alpha, { audit: true });
+	current.begin(alpha);
 	write("data/build/a/one.json", "inside");
 	write("data/build/stray.json", "outside");
 	write("public/data/other/two.json", "outside too");
@@ -191,15 +191,68 @@ test("an audited stage reports files it changed outside its scope", () => {
 		"data/build/stray.json",
 		"public/data/other/two.json",
 	]);
-	// Without an audit, or without a scope, there is nothing to report.
 	current.record(alpha, []);
+	// Only what changed counts: the strays are there already and left alone.
 	current.begin(beta);
-	write("data/build/stray.json", "changed again");
+	write("data/build/b/two.json", "inside");
 	assert.deepEqual(current.undeclaredChanges(beta), []);
 	current.record(beta, []);
+	current.begin(beta);
+	write("data/build/stray.json", "changed again");
+	assert.deepEqual(current.undeclaredChanges(beta), [
+		"data/build/stray.json",
+	]);
+	current.record(beta, []);
+	// A stage with no scope has no paths to be outside of.
 	const unscoped: Stage = { name: "unscoped", args: [] };
 	current.begin(unscoped, { audit: true });
 	assert.deepEqual(current.undeclaredChanges(unscoped), []);
+});
+
+test("removing another stage's file is a write outside the scope", () => {
+	const { root, write, cache } = fixture();
+	const current = cache();
+	write("data/build/b/kept.json", "b");
+	current.begin(alpha);
+	write("data/build/a/one.json", "inside");
+	rmSync(join(root, "data/build/b/kept.json"));
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/build/b/kept.json",
+	]);
+});
+
+test("a file changed inside the scope of a stage running at the same time is not blamed on the other", () => {
+	const { write, cache } = fixture();
+	const current = cache();
+	current.begin(alpha);
+	current.begin(beta);
+	write("data/build/a/one.json", "alpha's");
+	write("data/build/b/one.json", "beta's");
+	// Either may have written the other's file, and the scopes cannot say which.
+	assert.deepEqual(current.undeclaredChanges(alpha), []);
+	assert.deepEqual(current.undeclaredChanges(beta), []);
+	current.record(alpha, []);
+	current.record(beta, []);
+	// Once they have ended, the same write by one of them is blamed on it.
+	current.begin(alpha);
+	write("data/build/b/one.json", "alpha, alone");
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/build/b/one.json",
+	]);
+});
+
+test("a stage that ended before another began shares nothing with it", () => {
+	const { write, cache } = fixture();
+	const current = cache();
+	current.begin(alpha);
+	write("data/build/a/one.json", "a");
+	assert.deepEqual(current.undeclaredChanges(alpha), []);
+	current.record(alpha, []);
+	current.begin(beta);
+	write("data/build/a/one.json", "beta wrote alpha's file");
+	assert.deepEqual(current.undeclaredChanges(beta), [
+		"data/build/a/one.json",
+	]);
 });
 
 test("an audited stage that changes a raw source file is reported", () => {

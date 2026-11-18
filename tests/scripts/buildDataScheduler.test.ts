@@ -312,7 +312,7 @@ test("--jobs 1 runs the real graph in plan order and logs exactly as a default b
 
 test("running stages together leaves the same outputs, digests and skips as one at a time", async () => {
 	const stages = [
-		stage("download", [], { cacheable: false, writes: ["data/build/raw"] }),
+		stage("download", [], { cacheable: false }),
 		stage("left", ["download"]),
 		stage("right", ["download"]),
 		stage("cache-a", ["left"], { writes: ["data/build/cache.sqlite"] }),

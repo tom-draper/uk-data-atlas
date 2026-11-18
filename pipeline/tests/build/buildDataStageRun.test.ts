@@ -145,6 +145,7 @@ test("a stage that exits 0 is recorded and logged as done", async () => {
 		outputDigest: () => null,
 		begin: (...args: unknown[]) => calls.push(["begin", ...args]),
 		manifestPath: () => "manifest",
+		undeclaredChanges: () => [],
 		record: () => "new-digest",
 		recordTiming: (name: string, timing: any) =>
 			calls.push(["timing", name, timing.failed]),
@@ -200,13 +201,42 @@ test("a stage that cannot start records the failure and rethrows", async () => {
 	assert.equal(state.failureStatus, null);
 });
 
-test("verifying outputs collects undeclared writes and wrong hashes", async () => {
+test("a stage that changed files outside its declared writes fails the build and is not recorded", async () => {
+	const recorded: string[] = [];
+	const timings: boolean[] = [];
 	const cache = {
 		lastTiming: () => undefined,
 		outputDigest: () => null,
 		begin: () => {},
 		manifestPath: () => undefined,
 		undeclaredChanges: () => ["x.json"],
+		record: () => {
+			recorded.push("record");
+			return "digest";
+		},
+		recordTiming: (_name: string, timing: any) =>
+			timings.push(timing.failed),
+	};
+	// The check does not wait for verification: every build makes it.
+	const { settle, run, state, lines, digests } = setup({ cache });
+	settle(stage("a"));
+	assert.equal(await run(stage("a")), false);
+	assert.deepEqual(state.undeclaredStages, ["a"]);
+	assert.equal(state.failureStatus, 1);
+	assert.ok(lines.includes("a: changed 1 file outside its declared writes"));
+	assert.ok(lines.includes("  x.json"));
+	assert.deepEqual(recorded, []);
+	assert.deepEqual(timings, [true]);
+	assert.equal(digests.has("a"), false);
+});
+
+test("verifying outputs collects wrong hashes", async () => {
+	const cache = {
+		lastTiming: () => undefined,
+		outputDigest: () => null,
+		begin: () => {},
+		manifestPath: () => undefined,
+		undeclaredChanges: () => [],
 		record: () => "digest",
 		manifestMismatches: () => ["y.json", "z.json"],
 		recordTiming: () => {},
@@ -217,9 +247,7 @@ test("verifying outputs collects undeclared writes and wrong hashes", async () =
 	});
 	settle(stage("a"));
 	assert.equal(await run(stage("a")), true);
-	assert.deepEqual(state.undeclaredStages, ["a"]);
+	assert.deepEqual(state.undeclaredStages, []);
 	assert.deepEqual(state.mismatchedStages, ["a"]);
-	assert.ok(lines.includes("a: changed 1 file outside its declared writes"));
-	assert.ok(lines.includes("  x.json"));
 	assert.ok(lines.includes("a: recorded a hash that does not match 2 files"));
 });
