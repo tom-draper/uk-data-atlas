@@ -765,5 +765,487 @@
 				]
 			}
 		}
+	],
+	"air-quality": [
+		{
+			"measure": {
+				"id": "air-quality-grid-cells",
+				"series": {
+					"measure": "air-quality-grid-cells"
+				},
+				"label": "PCM grid cells",
+				"valueKind": "count",
+				"unit": "1x1 km grid cells",
+				"aggregation": {
+					"kind": "extensive",
+					"operation": "sum",
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/air-quality-grid-cells"
+				},
+				"notes": [
+					"How many of Defra's 1x1 km PCM cells have their centre in the authority, roughly its land area in square kilometres. It is the weight for the area means.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:e111ce34f1781d023abe34f8741ad35f53a7d57d38f3ca8f438a8e4d073366fb",
+				"measureId": "[\"air-quality-grid-cells\",[],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 24,
+								"status": "derived"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 9,
+								"status": "derived"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"measure": {
+				"id": "no2-background-mean",
+				"series": {
+					"measure": "background-concentration",
+					"dimensions": {
+						"pollutant": "no2"
+					}
+				},
+				"label": "Background nitrogen dioxide, area mean",
+				"valueKind": "quantity",
+				"unit": "µg/m³",
+				"aggregation": {
+					"kind": "intensive",
+					"operation": "weighted-mean",
+					"weight": {
+						"description": "The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						"datasetField": "gridCells",
+						"measureId": "air-quality-grid-cells"
+					},
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/no2-background-mean"
+				},
+				"notes": [
+					"The mean of Defra's modelled 2024 annual mean background nitrogen dioxide (NO2) concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:644ac039a719434866a4872b80adb8559858251337d76cadfa778dfd6584faab",
+				"measureId": "[\"background-concentration\",[[\"pollutant\",\"no2\"]],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 11.5,
+								"status": "derived"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 14,
+								"status": "derived"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"measure": {
+				"id": "pm10-background-mean",
+				"series": {
+					"measure": "background-concentration",
+					"dimensions": {
+						"pollutant": "pm10"
+					}
+				},
+				"label": "Background PM10, area mean",
+				"valueKind": "quantity",
+				"unit": "µg/m³",
+				"aggregation": {
+					"kind": "intensive",
+					"operation": "weighted-mean",
+					"weight": {
+						"description": "The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						"datasetField": "gridCells",
+						"measureId": "air-quality-grid-cells"
+					},
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/pm10-background-mean"
+				},
+				"notes": [
+					"The mean of Defra's modelled 2024 annual mean background PM10, in gravimetric units, concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:8b04ae7828e673fef01234c1ce072bfe04fd3f9bc0e2cd00bfdc2d26b6a6c7ac",
+				"measureId": "[\"background-concentration\",[[\"pollutant\",\"pm10\"]],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 13.25,
+								"status": "derived"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 12,
+								"status": "derived"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"measure": {
+				"id": "pm25-background-mean",
+				"series": {
+					"measure": "background-concentration",
+					"dimensions": {
+						"pollutant": "pm25"
+					}
+				},
+				"label": "Background PM2.5, area mean",
+				"valueKind": "quantity",
+				"unit": "µg/m³",
+				"aggregation": {
+					"kind": "intensive",
+					"operation": "weighted-mean",
+					"weight": {
+						"description": "The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						"datasetField": "gridCells",
+						"measureId": "air-quality-grid-cells"
+					},
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/pm25-background-mean"
+				},
+				"notes": [
+					"The mean of Defra's modelled 2024 annual mean background PM2.5 concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:4804e8acedd76e24e87623d87e63298010efdd63eb46ad6f75ab5850cc726918",
+				"measureId": "[\"background-concentration\",[[\"pollutant\",\"pm25\"]],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 7.75,
+								"status": "derived"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 8,
+								"status": "derived"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"statisticsField": {
+				"dataset": "air-quality",
+				"field": "pm25PopulationWeighted",
+				"records": "data",
+				"sourcePeriod": "2024",
+				"publishedPeriod": "2024",
+				"geography": "localAuthority",
+				"boundaryYear": 2024,
+				"recordCount": 2,
+				"recordHash": "b0e0a6ddcc6076e58966bba593498bcb7c0e955cd27a40c68fe5f2fb0ed7fdf9"
+			},
+			"measure": {
+				"id": "pm25-population-weighted",
+				"series": {
+					"measure": "pm25-population-weighted"
+				},
+				"label": "Population-weighted PM2.5",
+				"valueKind": "quantity",
+				"unit": "µg/m³",
+				"aggregation": {
+					"kind": "intensive",
+					"operation": "weighted-mean",
+					"weight": {
+						"description": "The resident population Defra weighted each authority's concentrations by, which it does not publish with the table.",
+						"datasetField": "population"
+					},
+					"available": false
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": false
+				},
+				"links": {
+					"data": "/v1/data/pm25-population-weighted"
+				},
+				"notes": [
+					"Defra's published population-weighted annual mean PM2.5 for 2024, total of anthropogenic and non-anthropogenic, which Defra advises for estimating the health burden of long-term exposure.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:476512cff9071e267f144f72e612643b86c8af087ff120875065f02c045e7989",
+				"measureId": "[\"pm25-population-weighted\",[],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 8.5,
+								"status": "observed"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 9,
+								"status": "observed"
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"statisticsField": {
+				"dataset": "air-quality",
+				"field": "pm25PopulationWeightedAnthropogenic",
+				"records": "data",
+				"sourcePeriod": "2024",
+				"publishedPeriod": "2024",
+				"geography": "localAuthority",
+				"boundaryYear": 2024,
+				"recordCount": 2,
+				"recordHash": "4eaab42e5bf7ba5615d60d85486a96eb28631b44420976cec2f8a3e6ad2a2fb3"
+			},
+			"measure": {
+				"id": "pm25-population-weighted-anthropogenic",
+				"series": {
+					"measure": "pm25-population-weighted-anthropogenic"
+				},
+				"label": "Population-weighted anthropogenic PM2.5",
+				"valueKind": "quantity",
+				"unit": "µg/m³",
+				"aggregation": {
+					"kind": "intensive",
+					"operation": "weighted-mean",
+					"weight": {
+						"description": "The resident population Defra weighted each authority's concentrations by, which it does not publish with the table.",
+						"datasetField": "population"
+					},
+					"available": false
+				},
+				"sources": [
+					{
+						"datasetId": "air-quality",
+						"periods": ["2024"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2024
+						},
+						"coverage": {
+							"kind": "partial",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Every local authority in all four UK nations has a value. No value is published for 1 of the 3 authorities: E06000003."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": false
+				},
+				"links": {
+					"data": "/v1/data/pm25-population-weighted-anthropogenic"
+				},
+				"notes": [
+					"The anthropogenic part of Defra's population-weighted PM2.5 for 2024, excluding natural sources such as sea salt.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:3e4b3ba31e321ad137894be446583bab98b88cbc71daf18676cef6a8bf34c196",
+				"measureId": "[\"pm25-population-weighted-anthropogenic\",[],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2024
+				},
+				"periods": [
+					{
+						"period": "2024",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 5.5,
+								"status": "observed"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 6,
+								"status": "observed"
+							}
+						]
+					}
+				]
+			}
+		}
 	]
 }

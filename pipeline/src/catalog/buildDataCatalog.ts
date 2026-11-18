@@ -35,7 +35,6 @@ export const datasetCatalogInputs = (
 		ethnicity: precompiled("ethnicity.json"),
 		roadCollisions: precompiled("road-collisions.json"),
 		crime: precompiled("crime.json"),
-		airQuality: precompiled("air-quality.json"),
 		unemployment: precompiled("unemployment.json"),
 		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
