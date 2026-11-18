@@ -145,9 +145,8 @@ test("Retired series ids return 404", () => {
 });
 
 test("Retired ids do not answer measure definitions", () => {
-	const { config } = catalogues.measureDimensions;
-	for (const [id, mapping] of Object.entries(config.ids)) {
-		if (id === mapping.measure) continue;
+	for (const { id, series } of catalogues.dataCatalog.measures) {
+		if (!series || id === series.measure) continue;
 		const response = route("GET", `/v1/measures/${id}`, catalogues);
 		assert.equal(response.status, 404, id);
 	}

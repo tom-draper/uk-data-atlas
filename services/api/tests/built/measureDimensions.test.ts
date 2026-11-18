@@ -8,20 +8,11 @@ import { measureDimensionProblems } from "@uk-data-atlas/measures";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	readMeasureDimensionsConfig,
-	readAtlasMeasureMapping,
 	readStatisticsVocabulary,
 } from "@uk-data-atlas/measures";
 import { artifactDirectory, atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-
-test("database mappings match the reviewed and declared configuration", () => {
-	const root = resolve(apiRoot, "../..");
-	assert.deepEqual(
-		readAtlasMeasureMapping(atlasDatabasePath(root)),
-		readMeasureDimensionsConfig(root).config,
-	);
-});
 
 test("the generated vocabulary is what the statistics tables hold", () => {
 	const { vocabulary } = readMeasureDimensionsConfig(
@@ -61,5 +52,4 @@ test("every built catalogue measure id is mapped to a measure and its members", 
 		resolve(apiRoot, "../.."),
 	);
 	assert.deepEqual(measureDimensionProblems(catalog, config, vocabulary), []);
-	assert.equal(Object.keys(config.ids).length, catalog.measures.length);
 });

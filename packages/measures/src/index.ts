@@ -10,7 +10,7 @@ export * from "./conversion.ts";
 export * from "./reconciliationContext.ts";
 export * from "./measureReconciliation.ts";
 export * from "./measureDimensions.ts";
-export * from "./atlasMeasureMapping.ts";
+export * from "./computedMeasures.ts";
 export * from "./atlasStatisticsReadPath.ts";
 
 export * from "./atlasStatisticsObservations.ts";

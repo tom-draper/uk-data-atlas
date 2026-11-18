@@ -205,7 +205,6 @@ export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
 	const built: MeasureDimensions = {
 		vocabulary: { schemaVersion: 1, measures: {}, dimensions: {} },
 		config: {
-			schemaVersion: 1,
 			measures: Object.fromEntries(
 				catalog.measures.map((measure) => [
 					measure.series?.measure ?? measure.id,
@@ -231,12 +230,6 @@ export const identityDimensions = (catalog: DataCatalog): MeasureDimensions => {
 			),
 			members: {},
 			defaults: {},
-			ids: Object.fromEntries(
-				catalog.measures.map((measure) => [
-					measure.id,
-					measure.series ?? { measure: measure.id },
-				]),
-			),
 		},
 	};
 	identities.set(catalog, built);

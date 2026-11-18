@@ -162,9 +162,12 @@ test("plans a geometry join from the selected series compatibility", () => {
 		measure: "households",
 		dimensions: { tenure: "rented" },
 	};
-	const config = {
-		ids: { "legacy-rented": identity },
-	} as unknown as MeasureDimensionsConfig;
+	const config: MeasureDimensionsConfig = {
+		measures: {},
+		dimensions: {},
+		members: {},
+		defaults: {},
+	};
 	const inventory = {
 		measures: [
 			{

@@ -193,13 +193,6 @@ test("conversion links name the public measure and series members", () => {
 						reason: "",
 					},
 				},
-				ids: {
-					...dimensions.config.ids,
-					population: {
-						measure: "residents",
-						dimensions: { sex: "female" },
-					},
-				},
 			},
 		},
 	};

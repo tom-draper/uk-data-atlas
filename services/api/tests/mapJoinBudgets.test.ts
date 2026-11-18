@@ -144,17 +144,10 @@ test("joins a dimensional series using its public measure id", () => {
 				},
 			},
 			config: {
-				schemaVersion: 1 as const,
 				measures: {},
 				dimensions: {},
 				members: {},
 				defaults: {},
-				ids: {
-					population: {
-						measure: "residents",
-						dimensions: { age: "all" },
-					},
-				},
 			},
 		},
 	};

@@ -8,7 +8,10 @@ import type {
 	Measure,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import type { MeasureDimensions } from "@uk-data-atlas/measures";
+import type {
+	MeasureDimensions,
+	MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
 import { handleMeasureExport } from "../src/bulk/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
@@ -173,42 +176,42 @@ const measureDimensions: MeasureDimensions = {
 		},
 	},
 	config: {
-		schemaVersion: 1,
 		measures: {},
 		dimensions: {},
 		members: {},
 		defaults: {},
-		ids: {
-			population: { measure: "population" },
-			"crime-total": {
-				measure: "recorded-crimes",
-				dimensions: { offence: "total" },
-			},
-			"crime-burglary": {
-				measure: "recorded-crimes",
-				dimensions: { offence: "burglary" },
-			},
-			"crime-robbery": {
-				measure: "recorded-crimes",
-				dimensions: { offence: "robbery" },
-			},
-			"local-election-lab-votes": {
-				measure: "party-votes",
-				dimensions: { party: "lab" },
-				datasetId: "local",
-			},
-			"general-election-lab-votes": {
-				measure: "party-votes",
-				dimensions: { party: "lab" },
-				datasetId: "general",
-			},
-		},
+	},
+};
+
+const seriesById: Record<string, MeasureSeriesIdentity> = {
+	population: { measure: "population" },
+	"crime-total": {
+		measure: "recorded-crimes",
+		dimensions: { offence: "total" },
+	},
+	"crime-burglary": {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	},
+	"crime-robbery": {
+		measure: "recorded-crimes",
+		dimensions: { offence: "robbery" },
+	},
+	"local-election-lab-votes": {
+		measure: "party-votes",
+		dimensions: { party: "lab" },
+		datasetId: "local",
+	},
+	"general-election-lab-votes": {
+		measure: "party-votes",
+		dimensions: { party: "lab" },
+		datasetId: "general",
 	},
 };
 
 catalog.measures = catalog.measures.map((measure) => ({
 	...measure,
-	series: measureDimensions.config.ids[measure.id],
+	series: seriesById[measure.id],
 }));
 
 const indexedObservations = (
@@ -971,22 +974,11 @@ test("resolves default dimensions even when the catalogue id matches", () => {
 				: measure,
 		),
 	};
-	const matchingDimensions = {
-		...measureDimensions,
-		config: {
-			...measureDimensions.config,
-			ids: {
-				...measureDimensions.config.ids,
-				"recorded-crimes": measureDimensions.config.ids["crime-total"]!,
-			},
-		},
-	};
 	const resolved = resolveDimensionRequest(
 		"/v1/example?measure=recorded-crimes",
 		{
 			...context,
 			dataCatalog: matchingCatalog,
-			measureDimensions: matchingDimensions,
 		},
 	);
 	assert.equal(resolved.kind, "rewritten");

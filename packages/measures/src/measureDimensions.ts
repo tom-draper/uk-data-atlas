@@ -1,15 +1,14 @@
 import type { DataCatalog, MeasureSource } from "./dataCatalog.ts";
 
 /**
- * Measures and their dimensions, and how each catalogue measure id maps onto
- * them.
+ * Measures and their dimensions, and the series each catalogue measure is.
  *
  * A catalogue measure id such as `crime-burglary` names one series: a measure
  * (`recorded-crimes`) with some of its dimensions fixed (`offence=burglary`).
  * The statistics tables already model that; the vocabulary below is generated
- * from them, and `services/api/config/measure-dimensions.json` maps every
- * catalogue id onto it. The data catalogue build refuses an id with no
- * mapping, so a new encoded id cannot be published by accident.
+ * from them, and every catalogue measure carries its own series identity. The
+ * data catalogue build refuses a measure whose identity the vocabulary does
+ * not hold, so a new encoded id cannot be published by accident.
  */
 
 export type DimensionMemberDefinition = {
@@ -58,12 +57,8 @@ export type MeasureSeriesIdentity = {
 	datasetId?: string;
 };
 
-/** What one catalogue measure id stands for. */
-export type MeasureIdMapping = MeasureSeriesIdentity;
-
-/** The reviewed mapping, `services/api/config/measure-dimensions.json`. */
+/** What the API serves beyond the statistics tables, in `computedMeasures.ts`. */
 export type MeasureDimensionsConfig = {
-	schemaVersion: 1;
 	/** Measures the API serves that the statistics tables do not hold yet. */
 	measures: Record<string, MeasureDefinition & { reason: string }>;
 	/** Dimensions the API serves that the statistics tables do not hold yet. */
@@ -76,7 +71,6 @@ export type MeasureDimensionsConfig = {
 	 * by car availability.
 	 */
 	defaults: Record<string, Record<string, string>>;
-	ids: Record<string, MeasureIdMapping>;
 };
 
 /** A dimension's members, from the statistics tables and the reviewed config. */
@@ -135,16 +129,13 @@ export const measureSeriesKeySourceKey = (
 		source.sourceGeography.boundaryYear,
 	]);
 
-/** Everything wrong with a mapping, against a catalogue and the vocabulary. */
+/** Everything wrong with a catalogue's series, against the vocabulary. */
 export const measureDimensionProblems = (
 	catalog: Pick<DataCatalog, "measures">,
 	config: MeasureDimensionsConfig,
 	vocabulary: StatisticsVocabulary,
 ): string[] => {
 	const problems: string[] = [];
-	const catalogued = new Map(
-		catalog.measures.map((measure) => [measure.id, measure]),
-	);
 	const isMeasure = (slug: string) =>
 		slug in vocabulary.measures || slug in config.measures;
 	for (const slug of Object.keys(config.measures))
@@ -179,16 +170,14 @@ export const measureDimensionProblems = (
 					`Member ${dimension}=${member.code} names an unknown parent ${member.parent}.`,
 				);
 	}
-	for (const measure of catalog.measures)
-		if (!config.ids[measure.id])
-			problems.push(
-				`Measure id ${measure.id} has no mapping to a measure and its dimension members.`,
-			);
 	const seen = new Map<string, string>();
-	for (const [id, mapping] of Object.entries(config.ids)) {
-		const measure = catalogued.get(id);
-		if (!measure) {
-			problems.push(`Mapped id ${id} is not a catalogue measure.`);
+	for (const measure of catalog.measures) {
+		const id = measure.id;
+		const mapping = measure.series;
+		if (!mapping) {
+			problems.push(
+				`Measure id ${id} has no series identity naming a measure and its dimension members.`,
+			);
 			continue;
 		}
 		if (!isMeasure(mapping.measure))
@@ -250,7 +239,7 @@ export const measureDimensionProblems = (
 	return problems;
 };
 
-/** Refuse a catalogue whose measure ids are not all mapped. */
+/** Refuse a catalogue whose measures do not all name a known series. */
 export const assertMeasureDimensions = (
 	catalog: Pick<DataCatalog, "measures">,
 	config: MeasureDimensionsConfig,
@@ -259,6 +248,6 @@ export const assertMeasureDimensions = (
 	const problems = measureDimensionProblems(catalog, config, vocabulary);
 	if (problems.length > 0)
 		throw new Error(
-			`The measure dimension mapping does not match the catalogue:\n${problems.join("\n")}\nEdit services/api/config/measure-dimensions.json.`,
+			`The catalogue's series do not match the measure vocabulary:\n${problems.join("\n")}\nSet the measure's series.`,
 		);
 };

@@ -2,7 +2,7 @@ import { readApiCatalogues as readRuntimeApiCatalogues } from "./runtime/index.t
 import { assertMeasureDimensions } from "@uk-data-atlas/catalogue/node";
 import {
 	readStatisticsVocabulary,
-	readAtlasMeasureMapping,
+	MEASURE_DIMENSIONS_CONFIG,
 	readAtlasStatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import { type CatalogueOptions } from "@uk-data-atlas/atlas-loader";
@@ -12,15 +12,15 @@ export * from "@uk-data-atlas/catalogue/node";
 
 /**
  * The catalogues the API serves: the runtime's, read with the API's
- * statistics read path, and the measure dimension mapping, refused unless it
- * maps every catalogue measure id.
+ * statistics read path, and the measure vocabulary, refused unless it holds
+ * every catalogue series.
  */
 export const readApiCatalogues = (
 	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
 	const dimensions = {
-		config: readAtlasMeasureMapping(atlasDatabasePath(repositoryRoot)),
+		config: MEASURE_DIMENSIONS_CONFIG,
 		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
 	};
 	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {

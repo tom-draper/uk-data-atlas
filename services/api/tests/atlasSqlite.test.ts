@@ -66,18 +66,6 @@ const fixture = (context: TestContext) => {
 			releases: [],
 		}),
 	);
-	mkdirSync(join(root, "services/api/config"), { recursive: true });
-	writeFileSync(
-		join(root, "services/api/config/measure-dimensions.json"),
-		JSON.stringify({
-			schemaVersion: 1,
-			measures: {},
-			dimensions: {},
-			members: {},
-			defaults: {},
-			ids: {},
-		}),
-	);
 	buildTerrainCatalogue(root);
 	writeFileSync(
 		join(artifactDirectory(root), "named-locations.json"),
