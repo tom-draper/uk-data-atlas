@@ -12,12 +12,14 @@ import { statisticsArtifactReader } from "../../src/statistics/statisticsArtifac
 test("requires an exact selector inventory for the catalogue", () => {
 	const database = new DatabaseSync(":memory:");
 	try {
+		const identity = { measure: "count", dimensions: { sex: "female" } };
 		const catalog = {
 			contentHash: "fixture-hash",
 			datasets: [{ id: "dataset" }],
 			measures: [
 				{
 					id: "count",
+					series: identity,
 					sources: [
 						{
 							datasetId: "dataset",
@@ -36,67 +38,46 @@ test("requires an exact selector inventory for the catalogue", () => {
 			dimensions: {},
 			geography: "ward",
 		};
+		const source = catalog.measures[0]!.sources[0]!;
+		const key = measureSeriesSourceKey(identity, source);
 		const readPath: StatisticsReadPath = {
 			schemaVersion: 1,
 			dataCatalogHash: "fixture-hash",
-			statistics: { "count-observations": selector },
+			series: { [key]: selector },
 			observations: {},
 		};
 		assert.doesNotThrow(() =>
 			statisticsArtifactReader(database, catalog, readPath),
 		);
-		const identity = { measure: "count", dimensions: { sex: "female" } };
-		const source = catalog.measures[0]!.sources[0]!;
-		const key = measureSeriesSourceKey(identity, source);
-		const canonical = { ...readPath, series: { [key]: selector } };
-		assert.doesNotThrow(() =>
-			statisticsArtifactReader(database, catalog, canonical, {
-				count: identity,
-			}),
-		);
-		const embedded = {
-			...catalog,
-			measures: catalog.measures.map((measure) => ({
-				...measure,
-				series: identity,
-			})),
-		};
-		assert.doesNotThrow(() =>
-			statisticsArtifactReader(database, embedded, canonical),
-		);
-		assert.doesNotThrow(() =>
-			statisticsArtifactReader(
-				database,
-				catalog,
-				{ ...canonical, statistics: undefined },
-				{ count: identity },
-			),
+		assert.throws(
+			() =>
+				statisticsArtifactReader(database, catalog, {
+					...readPath,
+					series: {},
+				}),
+			/Missing statistics selector/,
 		);
 		assert.throws(
 			() =>
 				statisticsArtifactReader(
 					database,
-					catalog,
-					{ ...canonical, series: {} },
-					{ count: identity },
+					{
+						...catalog,
+						measures: catalog.measures.map((measure) => ({
+							...measure,
+							series: undefined,
+						})),
+					},
+					readPath,
 				),
-			/Missing statistics selector/,
-		);
-		assert.throws(
-			() => statisticsArtifactReader(database, catalog, canonical, {}),
 			/Missing series identity/,
 		);
 		assert.throws(
 			() =>
-				statisticsArtifactReader(
-					database,
-					catalog,
-					{
-						...canonical,
-						series: { [key]: selector, extra: selector },
-					},
-					{ count: identity },
-				),
+				statisticsArtifactReader(database, catalog, {
+					...readPath,
+					series: { [key]: selector, extra: selector },
+				}),
 			/Unexpected statistics series selector/,
 		);
 		assert.throws(
@@ -111,7 +92,8 @@ test("requires an exact selector inventory for the catalogue", () => {
 			() =>
 				statisticsArtifactReader(database, catalog, {
 					...readPath,
-					statistics: {},
+					series: undefined,
+					statistics: { "count-observations": selector },
 				}),
 			/Missing statistics selector/,
 		);
@@ -119,7 +101,7 @@ test("requires an exact selector inventory for the catalogue", () => {
 			() =>
 				statisticsArtifactReader(database, catalog, {
 					...readPath,
-					statistics: { ...readPath.statistics, extra: selector },
+					statistics: { extra: selector },
 				}),
 			/Unexpected statistics selector/,
 		);
