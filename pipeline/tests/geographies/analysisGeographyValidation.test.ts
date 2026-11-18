@@ -11,6 +11,7 @@ import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../../src/geographies/buildAnalysisGeographyValidation";
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { measureSeriesKey, measureSeriesSourceKey } from "@uk-data-atlas/measures";
 import { validateAnalysisGeographies } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
@@ -56,6 +57,7 @@ const catalogue = {
 	measures: [
 		{
 			id: "fixture",
+			series: { measure: "fixture" },
 			label: "Fixture",
 			valueKind: "count",
 			unit: "things",
@@ -283,7 +285,10 @@ test("gates a reviewed measure read from a shared census table", () => {
 		datasetId: "fixture-dataset",
 		sourceGeography: { type: "lsoa", boundaryYear: 2021 },
 		period: "2025",
-		measures: ["other", "fixture"],
+		measures: [
+			measureSeriesKey({ measure: "other" }),
+			measureSeriesKey({ measure: "fixture" }),
+		],
 		records: [
 			["E01000001", 1, 40],
 			["E01000002", 2, 60],
@@ -354,8 +359,11 @@ test("analysis validation builds from statistics rows", (t) => {
 		JSON.stringify({
 			schemaVersion: 1,
 			dataCatalogHash: catalogue.contentHash,
-			statistics: {
-				"fixture-observations": {
+			series: {
+				[measureSeriesSourceKey(
+					{ measure: "fixture" },
+					catalogue.measures[0]!.sources[0]!,
+				)]: {
 					datasetId: "fixture-dataset",
 					measure: "fixture",
 					dimensions: {},
