@@ -301,6 +301,7 @@ export const fixtureCatalog = (): DataCatalog =>
 					label: "Access rate",
 					valueKind: "ratio",
 					unit: "% of premises",
+					weightSeries: { measure: "population" },
 					aggregation: {
 						kind: "intensive",
 						operation: "weighted-mean",

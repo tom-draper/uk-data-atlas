@@ -1,5 +1,8 @@
 import type { DataCatalog, MeasureSource } from "@uk-data-atlas/catalogue/node";
-import { dimensionCatalogue } from "@uk-data-atlas/measures";
+import {
+	dimensionCatalogue,
+	identityDimensions,
+} from "@uk-data-atlas/measures";
 import {
 	measureSeriesKey,
 	type MeasureSeriesIdentity,
@@ -39,17 +42,14 @@ export const readWeightedSource = ({
 	source: MeasureSource;
 	artifacts: Parameters<typeof numericObservationsFor>[3];
 }): WeightedSource | ApiResponse => {
-	const catalogue = context.measureDimensions
-		? dimensionCatalogue(dataCatalog, context.measureDimensions)
-		: undefined;
+	const catalogue = dimensionCatalogue(
+		dataCatalog,
+		context.measureDimensions ?? identityDimensions(dataCatalog),
+	);
 	const weightSeries = weightSeriesIdentity
-		? catalogue?.series(measureSeriesKey(weightSeriesIdentity))?.series
-		: catalogue?.catalogueSeries(weightMeasureId)?.series;
-	const weightMeasure =
-		weightSeries?.catalogueMeasure ??
-		dataCatalog.measures.find(
-			(candidate) => candidate.id === weightMeasureId,
-		);
+		? catalogue.series(measureSeriesKey(weightSeriesIdentity))?.series
+		: undefined;
+	const weightMeasure = weightSeries?.catalogueMeasure;
 	const weightPlan = resolveObservations(context, {
 		measureId: weightMeasureId,
 		measure: weightMeasure,

@@ -382,24 +382,19 @@ const PARTIAL = MEASURE_VALUE_STATUSES.indexOf("partial");
  */
 const readWeights = (
 	context: MeasureValuesContext,
-	weightMeasureId: string | undefined,
 	weightSeriesIdentity: MeasureSeriesIdentity | undefined,
 	source: MeasureSource,
 	period: string,
 ): Map<string, number> | undefined => {
-	if (!weightMeasureId && !weightSeriesIdentity) return undefined;
+	if (!weightSeriesIdentity) return undefined;
 	const catalogue = dimensionCatalogue(
 		context.dataCatalog,
 		context.measureDimensions ?? identityDimensions(context.dataCatalog),
 	);
-	const weightSeries = weightSeriesIdentity
-		? catalogue.series(measureSeriesKey(weightSeriesIdentity))?.series
-		: catalogue.catalogueSeries(weightMeasureId!)?.series;
-	const weight =
-		weightSeries?.catalogueMeasure ??
-		context.dataCatalog.measures.find(
-			(candidate) => candidate.id === weightMeasureId,
-		);
+	const weightSeries = catalogue.series(
+		measureSeriesKey(weightSeriesIdentity),
+	)?.series;
+	const weight = weightSeries?.catalogueMeasure;
 	const weightSource = weight?.sources.find(
 		(candidate) =>
 			candidate.sourceGeography.type === source.sourceGeography.type &&
@@ -413,7 +408,7 @@ const readWeights = (
 		weight.id,
 		weightSource,
 		period,
-		weightSeries?.id,
+		weightSeries.id,
 	);
 	if (!read?.records.numeric) return undefined;
 	return new Map(
@@ -570,7 +565,6 @@ export function queryMeasureValues(
 				rule.kind === "weighted-mean"
 					? readWeights(
 							context,
-							rule.weighted.weight.measureId,
 							catalogueMeasure.weightSeries,
 							source,
 							period,
