@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { identityDimensions } from "@uk-data-atlas/measures";
 import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
@@ -11,7 +12,8 @@ import {
 	containmentCrosswalk,
 	dataCatalog,
 	geographyInventory,
-	populationObservations,
+	combineObservations,
+	measureObservations,
 	routeWithData,
 	testContext,
 } from "./routeFixtures";
@@ -121,7 +123,11 @@ const pathContext = (second: CrosswalkArtifact) =>
 		geographyInventory,
 		areaLookup,
 		dataCatalog,
-		measureObservations: [populationObservations],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 		crosswalkLookup: new Map<string, CrosswalkArtifact>([
 			[wardToAuthority.id, wardToAuthority],
 			[second.id, second],

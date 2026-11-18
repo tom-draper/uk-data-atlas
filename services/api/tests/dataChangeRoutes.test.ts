@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { identityDimensions } from "@uk-data-atlas/measures";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	registry,
 	dataCatalog,
 	measureObservations,
-	populationObservations,
-	populationLocalAuthorityObservations,
+	combineObservations,
 	testContext,
 } from "./routeFixtures";
 
@@ -15,11 +15,11 @@ test("ranks change between two periods of one source partition", () => {
 	const context = testContext({
 		boundaryRegistry: registry,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	});
 	const ask = (measureId: string, query: string) =>
 		routeRequest("GET", `/v1/data/${measureId}/change?${query}`, context);

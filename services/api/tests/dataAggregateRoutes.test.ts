@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { identityDimensions, measureSeriesKey } from "@uk-data-atlas/measures";
+import {
+	identityDimensions,
+	measureSeriesKey,
+	measureSeriesKeySourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import { route as routeRequest } from "../src/routes";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import {
@@ -16,14 +21,13 @@ import type {
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/catalogue/node";
 import {
 	areaLookup,
+	combineObservations,
 	crosswalkArtifact,
 	crosswalkLookup,
 	dataCatalog,
 	measureCompatibilityInventory,
 	measureObservations,
 	namedLocationAreaLookup,
-	populationLocalAuthorityObservations,
-	populationObservations,
 	registry,
 	routeWithCatalog,
 	routeWithData,
@@ -294,14 +298,34 @@ test("aggregates an intensive measure with its published weight", () => {
 			},
 		],
 	});
+	const observations = [
+		...measureObservations,
+		artifact(shareId, [25, 80]),
+		artifact(weightId, [100, 400]),
+	];
+	registerSeriesObservations(
+		observations,
+		new Map([
+			[
+				measureSeriesKeySourceKey(
+					measureSeriesKey({ measure: shareId }),
+					source,
+				),
+				observations[observations.length - 2]!,
+			],
+			[
+				measureSeriesKeySourceKey(
+					measureSeriesKey({ measure: weightId }),
+					source,
+				),
+				observations[observations.length - 1]!,
+			],
+		]),
+	);
 	const response = routeWithCatalog(
 		`/v1/data/${shareId}/value?period=2024&geography=ward&codeYear=2023&place=E92000001`,
 		catalog,
-		[
-			...measureObservations,
-			artifact(shareId, [25, 80]),
-			artifact(weightId, [100, 400]),
-		],
+		observations,
 	);
 	assert.equal(response.status, 200);
 	assert.equal(
@@ -392,11 +416,11 @@ test("aggregates an extensive measure only over a complete direct named-location
 		namedLocationInventory: aggregationNamedLocations,
 		namedLocationLookup: aggregationNamedLocationLookup,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	};
 	const context = testContext(inputs);
 	const response = routeRequest(
@@ -560,11 +584,11 @@ test("sums a location whose members span several code vintages", () => {
 		namedLocationInventory: spanningLocations,
 		namedLocationLookup: locations,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	});
 	const response = routeRequest(
 		"GET",

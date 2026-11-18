@@ -12,8 +12,7 @@ import {
 	dataCatalog,
 	measureCompatibilityInventory,
 	measureObservations,
-	populationLocalAuthorityObservations,
-	populationObservations,
+	combineObservations,
 	registry,
 	testContext,
 } from "./routeFixtures";
@@ -238,11 +237,10 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 			},
 			dataCatalog,
 			measureCompatibilityInventory,
-			measureObservations: [
-				populationObservations,
-				populationLocalAuthorityObservations,
-				...measureObservations,
-			],
+			measureObservations: combineObservations(
+				dataCatalog,
+				measureObservations,
+			),
 			relationshipPathInventory: {
 				schemaVersion: 1,
 				contentHash: "sha256:paths",
