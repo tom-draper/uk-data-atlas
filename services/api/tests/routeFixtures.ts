@@ -202,7 +202,7 @@ export const namedLocationLookup = createNamedLocationLookup(
 export const routeWithData = (url: string) =>
 	routeWithCatalog(url, dataCatalog, measureObservations);
 
-const combineObservations = (
+export const combineObservations = (
 	catalog: DataCatalog,
 	observations: NonNullable<RouteContext["measureObservations"]>,
 ) => {
