@@ -55,7 +55,6 @@ const datasetInputs = (root) => {
 				!Array.isArray(dataset.inputs)
 			)
 				return [""];
-			if (dataset.missingSource !== undefined) add(dataset.missingSource);
 			for (const input of dataset.inputs) {
 				if (typeof input.path !== "string") return [""];
 				if (sheetInputs.has(input.kind)) {

@@ -1,48 +1,7 @@
-import { compileDatasetContents } from "@uk-data-atlas/datasets";
-import { sha256Hex } from "../lib/hash.ts";
-import { readFile } from "fs/promises";
-import { join, relative, sep } from "path";
-import {
-	decodeCompactPayload,
-	encodeCompactPayload,
-} from "@uk-data-atlas/catalogue/compactPayload";
-import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import { canReuseDataset, NO_REUSE } from "./cache.ts";
-import { out } from "./output.ts";
-import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.ts";
-import { createTrackedReader } from "./trackedReader.ts";
 import { compileDirectDataset } from "./compileDirectDataset.ts";
-import type {
-	CatalogueDefinition,
-	CompiledDatasets,
-	ExistingManifestDataset,
-	ReuseContext,
-} from "./types.ts";
-import { readJson } from "../lib/json.ts";
-
-/**
- * Registers a compiled dataset to be read back off disk if region chunks are
- * cut from it. Only the regional datasets are ever read back.
- */
-export const readCompiledFromDisk = (
-	definition: CatalogueDefinition,
-	compiledDatasets: CompiledDatasets,
-) => {
-	if (definition.payload?.regionChunks?.kind !== "regional") return;
-	compiledDatasets.set(definition.precompiledFile, {
-		load: async () =>
-			decodeCompactPayload(
-				await readJson(
-					join(
-						COMPILED_DATASETS,
-						`${definition.precompiledFile}.json`,
-					),
-				),
-			),
-		layout: definition.payload,
-	});
-};
+import type { CatalogueDefinition, ReuseContext } from "./types.ts";
 
 /**
  * The manifest entry of a dataset an earlier run compiled, when none of its
@@ -50,7 +9,6 @@ export const readCompiledFromDisk = (
  */
 export async function reuseDataset(
 	definition: CatalogueDefinition,
-	compiledDatasets: CompiledDatasets,
 	{ datasetFingerprints, existingDatasets, sourceRelease }: ReuseContext,
 ) {
 	const startedAt = performance.now();
@@ -62,8 +20,7 @@ export async function reuseDataset(
 		datasetFingerprints[definition.type],
 	);
 	if (!cached || !existing) return undefined;
-	readCompiledFromDisk(definition, compiledDatasets);
-	buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
+	buildLog.artifact("dataset", `${definition.precompiledFile} (rows)`, {
 		status: "cached",
 		bytes: cached.bytes,
 		ms: msSince(startedAt),
@@ -72,132 +29,18 @@ export async function reuseDataset(
 }
 
 /**
- * Compiles one dataset into data/build/datasets, or reuses the file an earlier
- * run left when none of its inputs have changed. Returns the manifest entry.
+ * Reads one dataset's sources into its manifest entry, or reuses the entry an
+ * earlier run left when none of its inputs have changed.
  */
 export async function compileDataset(
 	definition: CatalogueDefinition,
-	compiledDatasets: CompiledDatasets,
 	reuse: ReuseContext = NO_REUSE,
 ) {
 	return (
-		(await reuseDataset(definition, compiledDatasets, reuse)) ??
-		compileStaleDataset(
+		(await reuseDataset(definition, reuse)) ??
+		compileDirectDataset(
 			definition,
-			compiledDatasets,
-			reuse.existingDatasets.get(definition.type),
 			reuse.datasetFingerprints[definition.type],
 		)
 	);
-}
-
-/**
- * Compiles one dataset from its raw sources, whatever an earlier run left.
- * `existing` is its previous manifest entry, kept when the raw source is not
- * held locally.
- */
-export async function compileStaleDataset(
-	definition: CatalogueDefinition,
-	compiledDatasets: CompiledDatasets,
-	existing: ExistingManifestDataset | undefined,
-	fingerprint: string | undefined,
-) {
-	if (definition.directOnly)
-		return compileDirectDataset(definition, fingerprint);
-	const startedAt = performance.now();
-	const { reader, artifacts } = createTrackedReader();
-	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
-	let preserved: ExistingManifestDataset | undefined;
-	try {
-		compiled = await compileDatasetContents(definition, reader);
-	} catch (error) {
-		const missingRawSource =
-			typeof error === "object" &&
-			error !== null &&
-			"code" in error &&
-			error.code === "ENOENT" &&
-			"path" in error &&
-			typeof error.path === "string" &&
-			error.path.startsWith(`${SOURCE_DATA}${sep}`)
-				? error.path
-				: undefined;
-
-		if (!missingRawSource) throw error;
-
-		const compiledPath = join(
-			COMPILED_DATASETS,
-			`${definition.precompiledFile}.json`,
-		);
-		if (!existing || existing.output !== definition.precompiledFile)
-			throw error;
-
-		const content = await readFile(compiledPath, "utf8");
-		const actualSha256 = sha256Hex(content);
-		if (actualSha256 !== existing.compiled.sha256) {
-			throw new Error(
-				`Cannot preserve ${definition.type}: ${compiledPath} does not match dataset-manifest.json`,
-			);
-		}
-
-		compiled = decodeCompactPayload(JSON.parse(content)) as typeof compiled;
-		if (definition.coverageCountries) {
-			compiled = Object.fromEntries(
-				Object.entries(compiled).map(([id, dataset]) => [
-					id,
-					{
-						...dataset,
-						coverageCountries: definition.coverageCountries,
-					},
-				]),
-			);
-		}
-		preserved = {
-			...existing,
-			inputTrackingVersion: 1,
-			missingSource: relative(SOURCE_DATA, missingRawSource)
-				.split(sep)
-				.join("/"),
-		};
-	}
-	const data = compiled;
-	// Region chunk generation is the sole downstream consumer of a compiled
-	// payload. Retaining every dataset here needlessly keeps the entire atlas
-	// in V8's heap until the last loader completes.
-	if (definition.payload?.regionChunks?.kind === "regional") {
-		compiledDatasets.set(definition.precompiledFile, {
-			load: async () => data,
-			layout: definition.payload,
-		});
-	}
-	const summary = validatePrecompiledDataset(definition, data);
-	if (preserved) {
-		buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
-			status: "preserved, raw source unavailable",
-			bytes: preserved.compiled.bytes,
-			ms: msSince(startedAt),
-		});
-		return { ...preserved, fingerprint };
-	}
-	const output = await out(
-		definition.precompiledFile,
-		encodeCompactPayload(data),
-		COMPILED_DATASETS,
-	);
-	buildLog.artifact("dataset", `${definition.precompiledFile}.json`, {
-		status: "compiled",
-		bytes: output.bytes,
-		ms: msSince(startedAt),
-	});
-	return {
-		inputTrackingVersion: 1 as const,
-		type: definition.type,
-		output: definition.precompiledFile,
-		source: definition.source,
-		inputs: [...artifacts.values()].sort((left, right) =>
-			left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
-		),
-		summary,
-		compiled: output,
-		fingerprint,
-	};
 }

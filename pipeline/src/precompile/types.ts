@@ -45,7 +45,6 @@ export type ExistingManifestDataset = {
 	/** What the dataset was compiled by; see pipeline/src/precompile/fingerprint.mjs. */
 	fingerprint?: string;
 	inputTrackingVersion?: 1;
-	missingSource?: string;
 	/**
 	 * Set when no compiled file exists: the rows are read straight from the
 	 * sources and `compiled` describes the parts they were read as.

@@ -729,7 +729,7 @@ test("postcode index tracks the selected edition, not older editions", async () 
 	assert.equal(current.lookup(stage, []), null);
 });
 
-test("dataset stage keys only tracked sources and missing inputs", async () => {
+test("dataset stage keys only tracked sources", async () => {
 	const { root, write } = fixture();
 	const entry = buildDataStages.find((stage) => stage.name === "datasets")!;
 	const stage = { ...entry, outputs: [], requiredOutputs: [] };
@@ -746,7 +746,6 @@ test("dataset stage keys only tracked sources and missing inputs", async () => {
 							path: "survey/workbook.xlsx#Sheet1",
 						},
 					],
-					missingSource: "survey/missing.csv",
 				},
 			],
 		}),
@@ -763,11 +762,6 @@ test("dataset stage keys only tracked sources and missing inputs", async () => {
 	write("data/source/input.csv", "unrelated dataset input");
 	current = cache();
 	assert.notEqual(current.lookup(stage, []), null);
-	write("data/source/survey/missing.csv", "restored");
-	current = cache();
-	assert.equal(current.lookup(stage, []), null);
-	current.begin(stage.name);
-	current.record(stage, []);
 	write("data/source/survey/workbook.xlsx", "changed workbook");
 	current = cache();
 	assert.equal(current.lookup(stage, []), null);

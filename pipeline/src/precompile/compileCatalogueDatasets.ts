@@ -17,7 +17,6 @@ import { compileDataset } from "./compileDataset.ts";
 import { compileDatasets } from "./datasetPool.ts";
 import { out } from "./output.ts";
 import { COMPILED_DATASETS, ROOT } from "./paths.ts";
-import type { CompiledDatasets } from "./types.ts";
 import { buildLog, elapsedSince, formatCount } from "@uk-data-atlas/atlas-db";
 import { readJson } from "../lib/json.ts";
 
@@ -40,12 +39,10 @@ const readManifest = async (): Promise<{ datasets: ManifestEntry[] }> => {
 
 /**
  * Compiles the catalogue datasets, or only those named, into
- * data/build/datasets and rewrites its manifest. Regional datasets are
- * registered in `compiledDatasets` for anything that cuts chunks from them.
+ * data/build/datasets and rewrites its manifest.
  */
 export async function compileCatalogueDatasets(
 	only: readonly string[] | null = null,
-	compiledDatasets: CompiledDatasets = new Map(),
 ) {
 	const startedAt = performance.now();
 	await mkdir(COMPILED_DATASETS, { recursive: true });
@@ -58,7 +55,7 @@ export async function compileCatalogueDatasets(
 		// Nothing is reused here, but each entry still records what compiled it.
 		for (const definition of selected)
 			results.push(
-				await compileDataset(definition, compiledDatasets, {
+				await compileDataset(definition, {
 					...NO_REUSE,
 					datasetFingerprints: reuse.datasetFingerprints,
 				}),
@@ -69,11 +66,7 @@ export async function compileCatalogueDatasets(
 			CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type),
 		);
 	} else {
-		datasets = await compileDatasets(
-			CATALOGUE_DATASET_DEFINITIONS,
-			compiledDatasets,
-			reuse,
-		);
+		datasets = await compileDatasets(CATALOGUE_DATASET_DEFINITIONS, reuse);
 	}
 	await out("dataset-manifest", { version: 1, datasets }, COMPILED_DATASETS);
 	buildLog.info(
