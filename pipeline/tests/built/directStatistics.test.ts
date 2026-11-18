@@ -303,6 +303,7 @@ it.each([
 	"general-health",
 	"housing-tenure",
 	"public-health",
+	"life-expectancy",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts(type);

@@ -1,13 +1,17 @@
 import type { LifeExpectancyDataset } from "../../../types/lifeExpectancy.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import {
 	LIFE_EXPECTANCY,
 	SEX,
 	measure,
 } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
-import { loadLE } from "../../../data/life-expectancy/loader.ts";
+import { APRIL_2023_LAD_MERGERS } from "../../../data/localAuthority/reorganisations.ts";
 import { aggregateLifeExpectancy } from "./aggregate.ts";
+import { lifeExpectancyStatisticsParts } from "../../../data/life-expectancy/source.ts";
 
 const HEALTHY_LIFE_EXPECTANCY = measure(
 	"healthy-life-expectancy",
@@ -24,6 +28,13 @@ const yearRange = (text: unknown) => {
 	if (!match) throw new Error(`Unknown year range ${String(text)}`);
 	return periods.years(Number(match[1]), Number(match[2]));
 };
+
+/** The most districts any 2023 authority was formed from. */
+const MOST_PREDECESSORS = Math.max(
+	...Object.values(APRIL_2023_LAD_MERGERS).map(
+		({ predecessors }) => predecessors.length,
+	),
+);
 
 const COUNTRIES = ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"];
 
@@ -68,8 +79,68 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	// Both source workbooks carry their local-area data on sheet 1.
-	load: async ({ xlsxSheetSelectedRows }) => loadLE(xlsxSheetSelectedRows),
+	load: noCompiledPayload<LifeExpectancyDataset>(),
+	statistics: {
+		payload: {
+			parts: () => [
+				part(
+					"le",
+					"Life Expectancy",
+					"Office for National Statistics. Life expectancy for local areas of the UK: 2022 to 2024.",
+					"Life expectancy at birth. UK local authorities.",
+				),
+				part(
+					"hle",
+					"Healthy Life Expectancy",
+					"Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
+					"Healthy life expectancy at birth. UK local authorities.",
+				),
+			],
+			code: "ladCode",
+			arrays: ["derivedFromPredecessors"],
+		},
+		/** Both source workbooks carry their local-area data on sheet 1. */
+		direct: {
+			only: true,
+			read: ({ xlsxSheetSelectedRows }) =>
+				lifeExpectancyStatisticsParts(xlsxSheetSelectedRows),
+		},
+		/** The districts a 2023 authority's estimate was built from, one per index. */
+		parents: Array.from({ length: MOST_PREDECESSORS }, (_, index) => ({
+			relation: "predecessor",
+			code: `derivedFromPredecessors.${index}`,
+			release: { geography: "localAuthority", year: 2022 },
+		})),
+		name: "ladName",
+		period: (_key, header) => yearRange(header.dataPeriod),
+		alsoIn: [
+			{ geography: "countyAndUnitaryAuthority", year: 2025 },
+			{ geography: "region", year: 2025 },
+			{ geography: "country", year: 2023 },
+			{ geography: "localAuthority", year: 2022 },
+		],
+		measures: [LIFE_EXPECTANCY, HEALTHY_LIFE_EXPECTANCY],
+		dimensions: [SEX],
+		fields: (key) => {
+			const slug = {
+				le: "life-expectancy",
+				hle: "healthy-life-expectancy",
+			}[key];
+			if (!slug) throw new Error(`Unknown life expectancy table ${key}`);
+			return [
+				{
+					path: "maleBirthLE",
+					measure: slug,
+					members: { sex: "male" },
+				},
+				{
+					path: "femaleBirthLE",
+					measure: slug,
+					members: { sex: "female" },
+				},
+			];
+		},
+	},
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 30,
@@ -140,54 +211,6 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 			scope: "localAuthority",
 			distinct: true,
 			aggregate: aggregateLifeExpectancy,
-		},
-	},
-	statistics: {
-		payload: {
-			parts: () => [
-				part(
-					"le",
-					"Life Expectancy",
-					"Office for National Statistics. Life expectancy for local areas of the UK: 2022 to 2024.",
-					"Life expectancy at birth. UK local authorities.",
-				),
-				part(
-					"hle",
-					"Healthy Life Expectancy",
-					"Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
-					"Healthy life expectancy at birth. UK local authorities.",
-				),
-			],
-			code: "ladCode",
-		},
-		name: "ladName",
-		period: (_key, header) => yearRange(header.dataPeriod),
-		alsoIn: [
-			{ geography: "countyAndUnitaryAuthority", year: 2025 },
-			{ geography: "region", year: 2025 },
-			{ geography: "country", year: 2023 },
-			{ geography: "localAuthority", year: 2022 },
-		],
-		measures: [LIFE_EXPECTANCY, HEALTHY_LIFE_EXPECTANCY],
-		dimensions: [SEX],
-		fields: (key) => {
-			const slug = {
-				le: "life-expectancy",
-				hle: "healthy-life-expectancy",
-			}[key];
-			if (!slug) throw new Error(`Unknown life expectancy table ${key}`);
-			return [
-				{
-					path: "maleBirthLE",
-					measure: slug,
-					members: { sex: "male" },
-				},
-				{
-					path: "femaleBirthLE",
-					measure: slug,
-					members: { sex: "female" },
-				},
-			];
 		},
 	},
 });
