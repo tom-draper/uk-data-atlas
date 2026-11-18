@@ -43,15 +43,10 @@ for (const [name, json] of outputs)
 const readEditions = (name: string) =>
 	decodeCompactPayload(JSON.parse(readDataset(name))) as Parameters<
 		typeof compilePlaceFacts
-	>[1];
+	>[0][number];
 pages.set(
 	"place-facts",
-	JSON.stringify(
-		compilePlaceFacts(
-			AGE_DATASETS.map(readEditions),
-			readEditions("ethnicity"),
-		),
-	),
+	JSON.stringify(compilePlaceFacts(AGE_DATASETS.map(readEditions))),
 );
 const wardAreas: Record<string, number> = {};
 for (const [name, json] of outputs) {

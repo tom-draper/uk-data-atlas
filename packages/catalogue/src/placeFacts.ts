@@ -71,12 +71,10 @@ export function ethnicGroups(record: DataRecord) {
 	return { ...groups, whiteBritish, total };
 }
 
-/** Population age and ethnicity figures compiled by the API. */
+/** Population age figures compiled by the API. */
 export type PlaceFacts = {
 	/** Median age, the share aged 65 and over, and the estimate's year. */
 	age?: [median: number, over65: number, year: number];
-	/** Percentages of residents who were White, and White British, in 2021. */
-	ethnicity?: [white: number, whiteBritish: number];
 };
 
 /** The datasets holding residents by single year of age, by geography. */
@@ -87,7 +85,6 @@ const round1 = (value: number) => Math.round(value * 10) / 10;
 /** Every place's facts, keyed by area code, from the compiled datasets. */
 export function compilePlaceFacts(
 	ages: readonly Editions[],
-	ethnicity: Editions,
 ): Record<string, PlaceFacts> {
 	const facts: Record<string, PlaceFacts> = {};
 	for (const editions of ages)
@@ -105,16 +102,6 @@ export function compilePlaceFacts(
 				};
 			}
 		}
-	const census = Object.values(ethnicity).at(-1);
-	for (const [code, record] of Object.entries(census?.data ?? {})) {
-		const groups = ethnicGroups(record);
-		if (groups.total <= 0) continue;
-		const share = (count: number) => round1((count / groups.total) * 100);
-		facts[code] = {
-			...facts[code],
-			ethnicity: [share(groups.white), share(groups.whiteBritish)],
-		};
-	}
 	return Object.fromEntries(
 		Object.entries(facts).sort(([a], [b]) => a.localeCompare(b)),
 	);

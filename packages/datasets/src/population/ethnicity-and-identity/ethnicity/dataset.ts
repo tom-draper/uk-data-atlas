@@ -80,6 +80,12 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		label: "White British residents",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 15,
+		label: "White British",
+		about: "Residents identifying as English, Welsh, Scottish, Northern Irish or British, 2021 Census",
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(
