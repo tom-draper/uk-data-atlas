@@ -8,83 +8,13 @@ import type { DimensionReading } from "./dimensionRequests";
 
 /**
  * Responses to a request read through dimension filters. The route answered
- * for a series by its catalogue id; the response is restated in terms of the
- * measure and its members, and says what the API chose.
+ * for a selected series and the response says what the API chose.
  */
 
 type Body = Record<string, unknown>;
 
 const isObject = (value: unknown): value is Body =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
-
-/** A link to a series, rewritten to name its measure and members. */
-const rewriteLink = (
-	text: string,
-	series: Series,
-	reading: DimensionReading,
-) => {
-	const data = new RegExp(
-		`/v1/data/(?:${[series.catalogueMeasure.id, reading.measure.id].map((id) => id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?=[/?#"]|$)(/[A-Za-z:]+)?(\\?[^\\s"#]*)?`,
-		"g",
-	);
-	const rewritten = text.replace(
-		data,
-		(_match, operation: string | undefined, search: string | undefined) => {
-			const query = new URLSearchParams(search?.slice(1) ?? "");
-			for (const [dimension, code] of Object.entries(series.dimensions))
-				query.set(dimension, code);
-			if (series.datasetId && !query.has("datasetId"))
-				query.set("datasetId", series.datasetId);
-			const rest = query.toString();
-			return `/v1/data/${reading.measure.id}${operation ?? ""}${rest ? `?${rest}` : ""}`;
-		},
-	);
-	return rewritten.replaceAll(
-		`/v1/measures/${series.catalogueMeasure.id}`,
-		`/v1/measures/${reading.measure.id}`,
-	);
-};
-
-/** Restate a route's data for the measure rather than its catalogue id. */
-const restate = (
-	value: unknown,
-	series: Series,
-	reading: DimensionReading,
-	key?: string,
-): unknown => {
-	if (typeof value === "string")
-		return series.catalogueMeasure.id === reading.measure.id &&
-			Object.keys(series.dimensions).length === 0 &&
-			!series.datasetId
-			? value
-			: rewriteLink(value, series, reading);
-	if (Array.isArray(value))
-		return value.map((item) => restate(item, series, reading));
-	if (!isObject(value)) return value;
-	const restated: Body = {};
-	for (const [name, item] of Object.entries(value)) {
-		if (
-			(name === "measureId" || name === "measure") &&
-			item === series.catalogueMeasure.id
-		) {
-			restated[name] = reading.measure.id;
-			continue;
-		}
-		restated[name] = restate(item, series, reading, name);
-	}
-	if (
-		key === "measure" &&
-		value.id === series.catalogueMeasure.id &&
-		!("seriesLabel" in value)
-	) {
-		restated.id = reading.measure.id;
-		if (typeof value.label === "string") {
-			restated.label = reading.measure.label;
-			restated.seriesLabel = value.label;
-		}
-	}
-	return restated;
-};
 
 /** The members a series was read with, marking those the API chose. */
 const membersRead = (series: Series, reading: DimensionReading) => {
@@ -132,25 +62,22 @@ const withReading = (
 	series: Series,
 	reading: DimensionReading,
 ) => {
-	const restated = restate(data, series, reading);
-	if (!isObject(restated)) return restated;
+	if (!isObject(data)) return data;
 	const defaulted = Object.keys(reading.defaulted).length > 0;
 	const from = resolvedFrom(series, reading);
 	return {
-		...restated,
+		...data,
 		dimensions: membersRead(series, reading),
 		...(defaulted
 			? {
 					defaults: {
-						...(isObject(restated.defaults)
-							? restated.defaults
-							: {}),
+						...(isObject(data.defaults) ? data.defaults : {}),
 						...reading.defaulted,
 					},
 				}
 			: {}),
-		...(defaulted && typeof restated.note === "string"
-			? { note: `${restated.note} ${defaultNote(reading)}` }
+		...(defaulted && typeof data.note === "string"
+			? { note: `${data.note} ${defaultNote(reading)}` }
 			: defaulted
 				? { note: defaultNote(reading) }
 				: {}),
@@ -158,7 +85,7 @@ const withReading = (
 	};
 };
 
-/** A route's answer for one series, restated for its measure and members. */
+/** Add the selected members to a route's answer for one series. */
 export const seriesResponse = (
 	response: ApiResponse,
 	series: Series,
@@ -171,11 +98,7 @@ export const seriesResponse = (
 			...response,
 			headers,
 			body: {
-				...(restate(
-					response.body,
-					series,
-					reading,
-				) as typeof response.body),
+				...response.body,
 				...(from ? { resolvedFrom: from } : {}),
 			} as typeof response.body,
 		};
@@ -205,12 +128,12 @@ export const breakdownResponse = (
 			return {
 				dimensions,
 				...(series.datasetId ? { datasetId: series.datasetId } : {}),
-				data: restate(response.body.data, series, reading),
+				data: response.body.data,
 			};
 		return {
 			dimensions,
 			...(series.datasetId ? { datasetId: series.datasetId } : {}),
-			problem: restate(response.body, series, reading),
+			problem: response.body,
 		};
 	});
 	const answered = answers.find(({ response }) => "data" in response.body);
@@ -226,11 +149,7 @@ export const breakdownResponse = (
 			...first.response,
 			headers: { ...first.response.headers, ...readingHeaders(reading) },
 			body: {
-				...(restate(
-					first.response.body,
-					first.series,
-					reading,
-				) as Body),
+				...first.response.body,
 				breakdown: entries,
 			} as unknown as ApiResponse["body"],
 		};
