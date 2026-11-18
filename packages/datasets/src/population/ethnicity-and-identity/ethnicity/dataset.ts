@@ -1,5 +1,8 @@
 import type { EthnicityDataset } from "../../../types/ethnicity.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { USUAL_RESIDENTS } from "../../../declaration/measures.ts";
 import { type Json } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -8,33 +11,45 @@ import {
 	census2021,
 	districts2021,
 } from "../../../data/census/districts.ts";
-import { loadEthnicity } from "../../../data/ethnicity/loader.ts";
+import { ethnicityStatisticsParts } from "../../../data/ethnicity/source.ts";
 import { ETHNICITY_COLORS } from "./colors.ts";
 
-/** The census's code for each ethnic group. */
+/** The census's ethnic groups, each with the categories it holds, in table order. */
+const ETHNIC_GROUPS: Readonly<Record<string, readonly string[]>> = {
+	"Asian, Asian British or Asian Welsh": [
+		"Bangladeshi",
+		"Chinese",
+		"Indian",
+		"Pakistani",
+		"Other Asian",
+	],
+	"Black, Black British, Black Welsh, Caribbean or African": [
+		"African",
+		"Caribbean",
+		"Other Black",
+	],
+	"Mixed or Multiple ethnic groups": [
+		"White and Asian",
+		"White and Black African",
+		"White and Black Caribbean",
+		"Other Mixed or Multiple ethnic groups",
+	],
+	White: [
+		"English, Welsh, Scottish, Northern Irish or British",
+		"Irish",
+		"Gypsy or Irish Traveller",
+		"Roma",
+		"Other White",
+	],
+	"Other ethnic group": ["Arab", "Any other ethnic group"],
+};
+
+/** The census's code for each ethnic category. */
 export const ETHNICITY_CODES: Readonly<Record<string, string>> =
 	Object.fromEntries(
-		[
-			"Bangladeshi",
-			"Chinese",
-			"Indian",
-			"Pakistani",
-			"Other Asian",
-			"African",
-			"Caribbean",
-			"Other Black",
-			"White and Asian",
-			"White and Black African",
-			"White and Black Caribbean",
-			"Other Mixed or Multiple ethnic groups",
-			"English, Welsh, Scottish, Northern Irish or British",
-			"Irish",
-			"Gypsy or Irish Traveller",
-			"Roma",
-			"Other White",
-			"Arab",
-			"Any other ethnic group",
-		].map((name, index) => [name, String(index + 1)]),
+		Object.values(ETHNIC_GROUPS)
+			.flat()
+			.map((name, index) => [name, String(index + 1)]),
 	);
 
 /** Every ethnic group, by the census's code for it, in its own colour. */
@@ -61,32 +76,12 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		notes: [],
 		retrievedAt: "2026-09-05",
 	},
-	load: async ({ text }) => loadEthnicity(text),
-	categories: {
-		label: "Ethnicity [2021]",
-		year: 2021,
-		colors: ETHNICITY_COLORS,
-		breakdown: {
-			measure: "usual-residents",
-			dimension: "ethnic-group",
-			parts: ethnicityParts,
-			order: "largest",
-			heading: "Ethnicity",
-			period: "2021",
-			source: "Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk",
-		},
-	},
-	ranking: {
-		label: "White British residents",
-		format: { kind: "decimal", digits: 1, suffix: "%" },
-	},
-	placeHeadline: {
-		places: ["localAuthority"],
-		order: 15,
-		label: "White British",
-		about: "Residents identifying as English, Welsh, Scottish, Northern Irish or British, 2021 Census",
-	},
+	load: noCompiledPayload<EthnicityDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => ethnicityStatisticsParts(text),
+		},
 		payload: {
 			parts: yearParts(
 				"ethnicity",
@@ -131,12 +126,47 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		...districts2021,
 		period: census2021,
 		measures: [USUAL_RESIDENTS],
-		dimensions: [{ slug: "ethnic-group", label: "Ethnic group" }],
+		dimensions: [
+			{
+				slug: "ethnic-group",
+				label: "Ethnic group",
+				members: Object.entries(ETHNIC_GROUPS).flatMap(
+					([group, categories]) => [
+						{ key: group },
+						...categories.map((key) => ({ key, parent: group })),
+					],
+				),
+			},
+		],
 		fields: [
 			{
 				path: "{ethnic-group}.{ethnic-group}.population",
 				measure: "usual-residents",
 			},
 		],
+	},
+	categories: {
+		label: "Ethnicity [2021]",
+		year: 2021,
+		colors: ETHNICITY_COLORS,
+		breakdown: {
+			measure: "usual-residents",
+			dimension: "ethnic-group",
+			parts: ethnicityParts,
+			order: "largest",
+			heading: "Ethnicity",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk",
+		},
+	},
+	ranking: {
+		label: "White British residents",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
+	placeHeadline: {
+		places: ["localAuthority"],
+		order: 15,
+		label: "White British",
+		about: "Residents identifying as English, Welsh, Scottish, Northern Irish or British, 2021 Census",
 	},
 });
