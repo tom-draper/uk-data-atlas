@@ -191,6 +191,10 @@
 		"sha256": "eba453f551008ce9c87a1b1abac63105eff9da4d431a9f5ff00403320e9eeb96",
 		"bytes": 4689665
 	},
+	"brexit": {
+		"sha256": "5634d6873e314cbc0be8d50d7356d3fc5041929713c85ff5e8513ae6026b51c9",
+		"bytes": 104393
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992
