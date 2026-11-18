@@ -13,7 +13,11 @@ import { route } from "../src/routes";
 import { handleMeasureExport } from "../src/bulk/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
-import { dimensionCatalogue } from "@uk-data-atlas/measures";
+import {
+	dimensionCatalogue,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import { seriesResponse } from "../src/dimensions/dimensionResponses";
 import {
@@ -207,6 +211,30 @@ catalog.measures = catalog.measures.map((measure) => ({
 	series: measureDimensions.config.ids[measure.id],
 }));
 
+const indexedObservations = (
+	entries: Array<[MeasureObservationArtifact, string, string]>,
+): MeasureObservationArtifact[] => {
+	const artifacts = entries.map(([artifact]) => artifact);
+	registerSeriesObservations(
+		artifacts,
+		new Map(
+			entries.map(([artifact, id, datasetId]) => {
+				const measure = catalog.measures.find(
+					(candidate) => candidate.id === id,
+				)!;
+				const source = measure.sources.find(
+					(candidate) => candidate.datasetId === datasetId,
+				)!;
+				return [
+					measureSeriesSourceKey(measure.series!, source),
+					artifact,
+				];
+			}),
+		),
+	);
+	return artifacts;
+};
+
 const context = testContext({
 	geographyInventory,
 	areaLookup,
@@ -215,19 +243,27 @@ const context = testContext({
 	dataCatalog: catalog,
 	measureCompatibilityInventory,
 	measureDimensions,
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		observations("crime-total", [50, 70]),
-		observations("crime-burglary", [5, 7]),
-		observations("crime-robbery", [2, 3]),
-		observations("local-election-lab-votes", [400, 600]),
-		observations(
+	measureObservations: indexedObservations([
+		[populationObservations, "population", "population"],
+		[populationLocalAuthorityObservations, "population", "population-uk"],
+		[observations("crime-total", [50, 70]), "crime-total", "crime"],
+		[observations("crime-burglary", [5, 7]), "crime-burglary", "crime"],
+		[observations("crime-robbery", [2, 3]), "crime-robbery", "crime"],
+		[
+			observations("local-election-lab-votes", [400, 600]),
+			"local-election-lab-votes",
+			"local",
+		],
+		[
+			observations(
+				"general-election-lab-votes",
+				[9000, 8000],
+				"localAuthority",
+			),
 			"general-election-lab-votes",
-			[9000, 8000],
-			"localAuthority",
-		),
-	],
+			"general",
+		],
+	]),
 });
 
 const get = (url: string) => route("GET", url, context);
@@ -426,10 +462,10 @@ test("pages dimensional conversions without mixing series", () => {
 		areaLookup,
 		dataCatalog: catalog,
 		measureDimensions,
-		measureObservations: [
-			observations("crime-burglary", [5, 7]),
-			observations("crime-robbery", [2, 3]),
-		],
+		measureObservations: indexedObservations([
+			[observations("crime-burglary", [5, 7]), "crime-burglary", "crime"],
+			[observations("crime-robbery", [2, 3]), "crime-robbery", "crime"],
+		]),
 		crosswalkLookup: new Map([[crosswalk.id, crosswalk]]),
 	});
 	const base = `/v1/data/recorded-crimes/convert?offence=burglary&period=2022&geography=ward&codeYear=2023&crosswalk=${crosswalk.id}&limit=1`;
@@ -494,7 +530,10 @@ test("pages dimensional change without mixing series", () => {
 	const changeContext = testContext({
 		...context,
 		dataCatalog: { ...catalog, measures },
-		measureObservations: artifacts,
+		measureObservations: indexedObservations([
+			[artifacts[0]!, "crime-burglary", "crime"],
+			[artifacts[1]!, "crime-robbery", "crime"],
+		]),
 	});
 	const base =
 		"/v1/data/recorded-crimes/change?offence=burglary&startPeriod=2022&endPeriod=2023&limit=1";
