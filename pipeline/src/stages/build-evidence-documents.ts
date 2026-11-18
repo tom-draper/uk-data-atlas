@@ -32,6 +32,13 @@ import {
 } from "@uk-data-atlas/atlas-db";
 
 const repositoryRoot = resolve(import.meta.dirname, "../../..");
+
+// Every measure converts through the same crosswalks: about 165 of them,
+// 370 MB as stored, wanted by up to 89 measures each. The default cache holds
+// 64 MB, so the measures cycling through them evicted each crosswalk before
+// the next measure asked for it, and most of the stage's time went on reading
+// the same crosswalks from SQLite again.
+const CROSSWALK_CACHE_BYTES = 400 * 1024 * 1024;
 const directory = artifactDirectory(repositoryRoot);
 
 const write = (id: string, data: unknown) =>
@@ -60,6 +67,7 @@ const inputsHash = (context: ReturnType<typeof readAtlasCatalogues>) =>
 const main = () => {
 	const context = readAtlasCatalogues(repositoryRoot, {
 		loadEvidenceDocuments: false,
+		crosswalkCacheBytes: CROSSWALK_CACHE_BYTES,
 	});
 	const documents = [
 		write("corrections", { status: 200, data: correctionsReport(null) }),
