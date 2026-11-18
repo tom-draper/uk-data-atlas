@@ -94,35 +94,19 @@ test("selects weights using their canonical identity instead of the old id", () 
 });
 
 test("selects compatibility by canonical series instead of the supplied old id", () => {
-	const first = { measureId: "legacy-owned", sources: [] };
-	const second = { measureId: "legacy-rented", sources: [] };
-	const inventory = {
-		measures: [first, second],
-	} as unknown as MeasureCompatibilityInventory;
-	const config = {
-		ids: {
-			"legacy-owned": {
-				measure: "households",
-				dimensions: { tenure: "owned" },
-			},
-			"legacy-rented": {
-				measure: "households",
-				dimensions: { tenure: "rented" },
-			},
-		},
-	} as unknown as MeasureDimensionsConfig;
 	const key = measureSeriesKey({
 		measure: "households",
 		dimensions: { tenure: "rented" },
 	});
-	assert.equal(
-		seriesCompatibility(inventory, config, key, "legacy-owned"),
-		second,
-	);
+	const first = { measureId: "legacy-owned", sources: [] };
+	const second = { measureId: "legacy-rented", seriesKey: key, sources: [] };
+	const inventory = {
+		measures: [first, second],
+	} as unknown as MeasureCompatibilityInventory;
+	assert.equal(seriesCompatibility(inventory, key, "legacy-owned"), second);
 	assert.equal(
 		seriesCompatibility(
 			inventory,
-			config,
 			measureSeriesKey({ measure: "missing" }),
 			"legacy-owned",
 		),
@@ -139,14 +123,10 @@ test("selects published canonical compatibility without the legacy mapping", () 
 	const inventory = {
 		measures: [entry],
 	} as unknown as MeasureCompatibilityInventory;
-	assert.equal(
-		seriesCompatibility(inventory, undefined, key, "unrelated"),
-		entry,
-	);
+	assert.equal(seriesCompatibility(inventory, key, "unrelated"), entry);
 	assert.equal(
 		seriesCompatibility(
 			inventory,
-			undefined,
 			measureSeriesKey({ measure: "missing" }),
 			"legacy-rented",
 		),
@@ -175,6 +155,7 @@ test("plans a geometry join from the selected series compatibility", () => {
 		measures: [
 			{
 				measureId: "legacy-rented",
+				seriesKey: measureSeriesKey(identity),
 				sources: [
 					{
 						...source,
