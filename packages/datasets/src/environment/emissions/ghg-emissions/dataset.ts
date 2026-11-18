@@ -34,7 +34,11 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		description:
 			"Territorial greenhouse gas emissions by local authority across the United Kingdom, 2005 to 2024, broken down by sector. Aggregated from the published sub-sector and gas detail to a sector total in kt CO2e.",
 		cadence: "annual",
-		notes: [],
+		notes: [
+			"Values are net territorial emissions across every sector and gas. Land use, land use change and forestry is a net sink in most rural authorities, so their totals are lower than their gross emissions. No published authority-year is negative, but nothing in the method prevents it.",
+			"Emissions per resident are not served. They are a ratio, and a ratio cannot be summed over areas or compared between authorities of different size without recomputing it from the underlying totals.",
+			"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory.",
+		],
 	},
 	ingestion: {
 		minimumDatasets: 20,
@@ -152,6 +156,26 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 	ranking: {
 		label: "Emissions per person (CO2e)",
 		format: { kind: "decimal", digits: 1, suffix: " tonnes" },
+	},
+	catalogue: {
+		kind: "indicators",
+		yearly: true,
+		checks: ["manifest-records", "manifest-periods"],
+		coverageNote:
+			"Published source records cover all four UK nations for every available period, restated on one code vintage by the publisher.",
+		indicators: [
+			{
+				id: "ghg-emissions",
+				label: "Greenhouse gas emissions",
+				field: "totalKtCO2e",
+				valueKind: "quantity",
+				unit: "kt CO2e",
+				aggregation: "sum",
+				notes: [],
+				measure: "ghg-emissions",
+				members: { "emissions-sector": "total" },
+			},
+		],
 	},
 	display: {
 		label: "Greenhouse Gas Emissions [2024]",

@@ -28,7 +28,6 @@ export const datasetCatalogInputs = (
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),
 		populationUk: precompiled("population-uk.json"),
-		ghgEmissions: precompiled("ghg-emissions.json"),
 		travelToWork: precompiled("travel-to-work.json"),
 		carAvailability: precompiled("car-availability.json"),
 		qualification: precompiled("qualification.json"),
@@ -39,10 +38,6 @@ export const datasetCatalogInputs = (
 		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		housePrice: precompiled("house-price.json"),
-		imd: precompiled("imd.json"),
-		nimdm: precompiled("nimdm.json"),
-		wimd: precompiled("wimd.json"),
-		simd: precompiled("simd.json"),
 		lifeExpectancySeries: precompiled("life-expectancy-series.json"),
 		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
@@ -69,7 +64,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	const {
 		catalog: sourceCatalog,
 		populationObservations,
-		ghgEmissionsObservations,
 		jobsObservations,
 		yearlyIndicatorObservations,
 		censusObservations,
@@ -80,8 +74,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		statisticsFields,
 		populationDensityObservations,
 		housePriceObservations,
-		imdObservations,
-		nimdmObservations,
 		lifeExpectancyObservations,
 		electionObservations,
 		censusTables,
@@ -98,7 +90,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		force: true,
 	});
 	const observationArtifacts = [
-		ghgEmissionsObservations,
 		...populationObservations,
 		jobsObservations,
 		...yearlyIndicatorObservations,
@@ -108,8 +99,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		...indicatorObservations,
 		populationDensityObservations,
 		housePriceObservations,
-		...imdObservations,
-		nimdmObservations,
 		...lifeExpectancyObservations,
 		...electionObservations,
 	];
@@ -145,8 +134,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			...indicatorObservations,
 			populationDensityObservations,
 			housePriceObservations,
-			...imdObservations,
-			nimdmObservations,
 			...lifeExpectancyObservations,
 			...electionObservations,
 		].reduce(
@@ -159,9 +146,19 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 				),
 			0,
 		),
-		emissionsRecordCount: ghgEmissionsObservations.periods.reduce(
-			(count, period) => count + period.records.length,
-			0,
-		),
+		emissionsRecordCount: yearlyIndicatorObservations
+			.filter(
+				(artifact) =>
+					observationDatasets.get(artifact) === "ghg-emissions",
+			)
+			.reduce(
+				(count, { periods }) =>
+					count +
+					periods.reduce(
+						(total, period) => total + period.records.length,
+						0,
+					),
+				0,
+			),
 	};
 };

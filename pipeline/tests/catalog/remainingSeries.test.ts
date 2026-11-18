@@ -3,14 +3,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "vitest";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
-import { compileDeprivationIndices } from "../../src/catalog/deprivation.ts";
-import { compileNimdm } from "../../src/catalog/nimdm.ts";
 import { compileLifeExpectancy } from "../../src/catalog/lifeExpectancy.ts";
 import { compileElections } from "../../src/catalog/elections.ts";
 import type { CatalogManifest } from "../../src/catalog/manifest.ts";
 import { sha256 } from "../../src/catalog/values.ts";
 
-test("deprivation and life expectancy observations use canonical series keys", () => {
+test("life expectancy observations use canonical series keys", () => {
 	const directory = mkdtempSync(join(tmpdir(), "remaining-series-"));
 	try {
 		const write = (name: string, data: unknown) => {
@@ -18,45 +16,6 @@ test("deprivation and life expectancy observations use canonical series keys", (
 			writeFileSync(path, JSON.stringify(data));
 			return path;
 		};
-		const index = (
-			year: number,
-			boundaryYear: number,
-			boundaryType: string,
-			area: string,
-			fields: object,
-		) => ({
-			[year]: {
-				year,
-				boundaryYear,
-				boundaryType,
-				data: { [area]: fields },
-			},
-		});
-		const imd = write(
-			"imd",
-			index(2025, 2021, "lsoa", "E01000001", {
-				imdRank: 1,
-				imdDecile: 1,
-			}),
-		);
-		const wimd = write(
-			"wimd",
-			index(2019, 2011, "lsoa", "W01000001", {
-				wimdRank: 1,
-				wimdDecile: 1,
-			}),
-		);
-		const simd = write(
-			"simd",
-			index(2020, 2011, "dataZone", "S01010891", {
-				simdRank: 1,
-				simdDecile: 1,
-			}),
-		);
-		const nimdm = write(
-			"nimdm",
-			index(2017, 2011, "superOutputArea", "95ZZ06W1", { nimdmRank: 1 }),
-		);
 		const estimate = { value: 80, lower: 79, upper: 81 };
 		const life = write("life", {
 			"2022": {
@@ -66,54 +25,8 @@ test("deprivation and life expectancy observations use canonical series keys", (
 				data: { E06000001: { male: estimate, female: estimate } },
 			},
 		});
-		const manifest = {
-			manifestPath: directory,
-			datasets: [
-				{
-					id: "imd",
-					summary: { boundaryYears: [2021], dataRecordCount: 1 },
-				},
-				{
-					id: "wimd",
-					summary: { boundaryYears: [2011], dataRecordCount: 1 },
-				},
-				{
-					id: "simd",
-					summary: { boundaryYears: [2011], dataRecordCount: 1 },
-				},
-				{ id: "nimdm" },
-			],
-		} as CatalogManifest;
-		const deprivation = compileDeprivationIndices(
-			manifest,
-			imd,
-			wimd,
-			simd,
-		);
-		expect(
-			deprivation.artifacts.map((artifact) =>
-				deprivation.observationDatasets.get(artifact),
-			),
-		).toEqual(
-			deprivation.measures.map(
-				(measure) => measure.sources[0]!.datasetId,
-			),
-		);
-		const artifacts = [
-			...deprivation.artifacts,
-			compileNimdm(manifest, nimdm).artifact,
-			...compileLifeExpectancy(life).artifacts,
-		];
+		const artifacts = [...compileLifeExpectancy(life).artifacts];
 		const expected = new Set([
-			...[
-				"imd-rank",
-				"imd-decile",
-				"wimd-rank",
-				"wimd-decile",
-				"simd-rank",
-				"simd-decile",
-				"nimdm-rank",
-			].map((measure) => measureSeriesKey({ measure })),
 			...["male", "female"].map((sex) =>
 				measureSeriesKey({
 					measure: "life-expectancy",

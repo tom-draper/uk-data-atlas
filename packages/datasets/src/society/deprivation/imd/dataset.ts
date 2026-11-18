@@ -256,6 +256,50 @@ export const imd = defineDataset<IMDDataset>({
 		label: "Neighbourhoods in England's most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
+	catalogue: {
+		kind: "indicators",
+		yearly: true,
+		partial: true,
+		checks: ["manifest-areas"],
+		coverageNote:
+			"England only. The other three nations publish their own indices, which are not comparable with this one.",
+		indicators: [
+			{
+				id: "imd-rank",
+				label: "Index of Multiple Deprivation rank",
+				field: "imdRank",
+				valueKind: "ordinal",
+				unit: "rank of {areas} LSOAs, where 1 is the most deprived",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "rank",
+					note: "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				},
+				notes: [
+					"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"Ranks 1 to 33,755 are served as published.",
+				],
+				measure: "imd-rank",
+			},
+			{
+				id: "imd-decile",
+				label: "Index of Multiple Deprivation decile",
+				field: "imdDecile",
+				valueKind: "ordinal",
+				unit: "decile, where 1 is the most deprived tenth of LSOAs",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "decile",
+					note: "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's LSOAs in each decile is the defensible summary instead.",
+				},
+				notes: [
+					"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"Deciles divide England's 33,755 LSOAs into ten near-equal groups by rank.",
+				],
+				measure: "imd-decile",
+			},
+		],
+	},
 	display: {
 		label: "Deprivation (IMD) [2025]",
 		year: 2025,

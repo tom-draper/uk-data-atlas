@@ -9,16 +9,77 @@ import type { CatalogManifest } from "../../src/catalog/manifest.ts";
  * coverage note is exercised, and income carries the county and region rows
  * the table interleaves with its authorities.
  */
-const file = (boundaryYear: number, data: Record<string, unknown>) => ({
-	[String(boundaryYear)]: {
-		year: boundaryYear,
-		boundaryYear,
-		boundaryType: "localAuthority",
-		data,
-	},
-});
+type Periods = Record<string, Record<string, unknown>>;
+
+/** One entry per period, each on one code vintage and geography. */
+const periods = (
+	boundaryYear: number,
+	byYear: Periods,
+	boundaryType = "localAuthority",
+) =>
+	Object.fromEntries(
+		Object.entries(byYear).map(([year, data]) => [
+			year,
+			{ year: Number(year), boundaryYear, boundaryType, data },
+		]),
+	);
+
+const file = (boundaryYear: number, data: Record<string, unknown>) =>
+	periods(boundaryYear, { [String(boundaryYear)]: data });
 
 export const INDICATOR_FIXTURES: Record<string, unknown> = {
+	"ghg-emissions": periods(2025, {
+		"2023": {
+			E06000001: { totalKtCO2e: 10 },
+			N09000001: { totalKtCO2e: -2.5 },
+			S12000001: { totalKtCO2e: 7 },
+		},
+		"2024": {
+			E06000001: { totalKtCO2e: 9 },
+			N09000001: { totalKtCO2e: -2 },
+			S12000001: { totalKtCO2e: 6.5 },
+		},
+	}),
+	nimdm: periods(
+		2011,
+		{
+			"2017": {
+				"95ZZ06W1": { nimdmRank: 1 },
+				"95ZZ06W2": { nimdmRank: 2 },
+			},
+		},
+		"superOutputArea",
+	),
+	imd: periods(
+		2021,
+		{
+			"2025": {
+				E01000001: { imdRank: 1, imdDecile: 1 },
+				E01000002: { imdRank: 33755, imdDecile: 10 },
+			},
+		},
+		"lsoa",
+	),
+	wimd: periods(
+		2011,
+		{
+			"2019": {
+				W01000001: { wimdRank: 5, wimdDecile: 1 },
+				W01000002: { wimdRank: 1900, wimdDecile: 10 },
+			},
+		},
+		"lsoa",
+	),
+	simd: periods(
+		2011,
+		{
+			"2020": {
+				S01010891: { simdRank: 1, simdDecile: 1 },
+				S01010892: { simdRank: 6976, simdDecile: 10 },
+			},
+		},
+		"dataZone",
+	),
 	waste: file(2025, {
 		E06000001: { value: 42.5 },
 		E06000002: { value: 7 },
@@ -90,14 +151,28 @@ export function withFixtureFiles<T>(
 		const manifest = {
 			manifestPath: join(directory, "dataset-manifest.json"),
 			datasets: Object.entries(INDICATOR_FIXTURES).map(
-				([id, content]) => ({
-					id,
-					summary: {
-						boundaryYears: Object.values(
-							content as Record<string, { boundaryYear: number }>,
-						).map(({ boundaryYear }) => boundaryYear),
-					},
-				}),
+				([id, content]) => {
+					const entries = Object.values(
+						content as Record<
+							string,
+							{ boundaryYear: number; data: object }
+						>,
+					);
+					return {
+						id,
+						summary: {
+							boundaryYears: [
+								...new Set(entries.map((e) => e.boundaryYear)),
+							],
+							dataRecordCount: entries.reduce(
+								(total, e) =>
+									total + Object.keys(e.data).length,
+								0,
+							),
+							datasetCount: entries.length,
+						},
+					};
+				},
 			),
 		} as CatalogManifest;
 		return run(paths, manifest);

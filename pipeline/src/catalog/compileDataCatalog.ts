@@ -13,10 +13,8 @@ import {
 } from "./manifest.ts";
 import { RECODED_2025 } from "./authorityChanges.ts";
 import { compileElections } from "./elections.ts";
-import { compileNimdm } from "./nimdm.ts";
 import { compileHousePrice } from "./housePrice.ts";
 import { compileLifeExpectancy } from "./lifeExpectancy.ts";
-import { compileDeprivationIndices } from "./deprivation.ts";
 import { compilePopulationDensity } from "./populationDensity.ts";
 import { mergeMeasurePartitions } from "./indicators.ts";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
@@ -33,7 +31,6 @@ import { withAliases } from "./measureAliases.ts";
 import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import { compileJobs } from "./jobs.ts";
-import { compileEmissions } from "./emissions.ts";
 import { compileRegionalGdp } from "./regionalGdp.ts";
 import { compileEnergyConsumption } from "./energyConsumption.ts";
 import { compilePopulation } from "./population.ts";
@@ -48,7 +45,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	manifest: Input;
 	population: Input;
 	populationUk: Input;
-	ghgEmissions: Input;
 	travelToWork: Input;
 	carAvailability: Input;
 	qualification: Input;
@@ -59,10 +55,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	jobs: Input;
 	landArea: Input;
 	housePrice: Input;
-	imd: Input;
-	nimdm: Input;
-	wimd: Input;
-	simd: Input;
 	lifeExpectancySeries: Input;
 	populationConstituency: Input;
 	generalElection: Input;
@@ -89,7 +81,6 @@ export const compileDataCatalog = ({
 	manifest: manifestPath,
 	population: populationPath,
 	populationUk: populationUkPath,
-	ghgEmissions: ghgEmissionsPath,
 	travelToWork: travelToWorkPath,
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
@@ -100,10 +91,6 @@ export const compileDataCatalog = ({
 	jobs: jobsPath,
 	landArea: landAreaPath,
 	housePrice: housePricePath,
-	imd: imdPath,
-	nimdm: nimdmPath,
-	wimd: wimdPath,
-	simd: simdPath,
 	lifeExpectancySeries: lifeExpectancySeriesPath,
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
@@ -117,7 +104,6 @@ export const compileDataCatalog = ({
 	catalog: DataCatalog;
 	/** Wards in 2022, local authorities and constituencies by mid-year. */
 	populationObservations: MeasureObservationArtifact[];
-	ghgEmissionsObservations: MeasureObservationArtifact;
 	regionalGdpObservations: MeasureObservationArtifact[];
 	energyConsumptionObservations: MeasureObservationArtifact[];
 	jobsObservations: MeasureObservationArtifact;
@@ -131,8 +117,6 @@ export const compileDataCatalog = ({
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
-	imdObservations: MeasureObservationArtifact[];
-	nimdmObservations: MeasureObservationArtifact;
 	lifeExpectancyObservations: MeasureObservationArtifact[];
 	electionObservations: AnyMeasureObservationArtifact[];
 	censusTables: MeasureTableArtifact[];
@@ -170,7 +154,6 @@ export const compileDataCatalog = ({
 			(record) => record.areaCode,
 		),
 	);
-	const emissions = compileEmissions(catalogManifest, ghgEmissionsPath);
 	const energyConsumption = compileEnergyConsumption(catalogManifest, {
 		"electricity-consumption": electricityConsumptionPath,
 		"gas-consumption": gasConsumptionPath,
@@ -236,13 +219,6 @@ export const compileDataCatalog = ({
 		population.localAuthorityObservations.periods,
 	);
 	const housePrice = compileHousePrice(catalogManifest, housePricePath);
-	const deprivation = compileDeprivationIndices(
-		catalogManifest,
-		imdPath,
-		wimdPath,
-		simdPath,
-	);
-	const nimdm = compileNimdm(catalogManifest, nimdmPath);
 	const lifeExpectancy = compileLifeExpectancy(lifeExpectancySeriesPath);
 	const elections = compileElections(
 		catalogManifest,
@@ -270,10 +246,7 @@ export const compileDataCatalog = ({
 			...elections.measures,
 			density.measure,
 			housePrice.measure,
-			...deprivation.measures,
-			nimdm.measure,
 			...lifeExpectancy.measures,
-			emissions.measure,
 			...regionalGdp.measures,
 			...energyConsumption.measures,
 			jobs.measure,
@@ -310,7 +283,6 @@ export const compileDataCatalog = ({
 			population.localAuthorityObservations,
 			population.constituencyObservations,
 		],
-		ghgEmissionsObservations: emissions.artifact,
 		regionalGdpObservations: regionalGdp.artifacts,
 		energyConsumptionObservations: energyConsumption.artifacts,
 		jobsObservations: jobs.artifact,
@@ -326,11 +298,9 @@ export const compileDataCatalog = ({
 			[population.wardObservations, "population"],
 			[population.localAuthorityObservations, "population-uk"],
 			[population.constituencyObservations, "population-constituency"],
-			[emissions.artifact, "ghg-emissions"],
 			[jobs.artifact, "jobs"],
 			[density.artifact, "population-uk"],
 			[housePrice.artifact, "house-price"],
-			[nimdm.artifact, "nimdm"],
 			...regionalGdp.artifacts.map(
 				(artifact): [AnyMeasureObservationArtifact, string] => [
 					artifact,
@@ -367,7 +337,6 @@ export const compileDataCatalog = ({
 				],
 			),
 			...census.observationDatasets,
-			...deprivation.observationDatasets,
 			...energyConsumption.observationDatasets,
 			...elections.observationDatasets,
 		]),
@@ -377,10 +346,8 @@ export const compileDataCatalog = ({
 					? [{ measureId: measure.id, field: statisticsField }]
 					: [],
 		),
-		imdObservations: deprivation.artifacts,
 		lifeExpectancyObservations: lifeExpectancy.artifacts,
 		electionObservations: elections.artifacts,
-		nimdmObservations: nimdm.artifact,
 		housePriceObservations: housePrice.artifact,
 		populationDensityObservations: density.artifact,
 	};

@@ -121,6 +121,50 @@ export const simd = defineDataset<SIMDDataset>({
 		label: "Data zones in Scotland's most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
+	catalogue: {
+		kind: "indicators",
+		yearly: true,
+		partial: true,
+		checks: ["manifest-areas"],
+		coverageNote:
+			"Scotland only. The other three nations publish their own indices, which are not comparable with this one.",
+		indicators: [
+			{
+				id: "simd-rank",
+				label: "Scottish Index of Multiple Deprivation rank",
+				field: "simdRank",
+				valueKind: "ordinal",
+				unit: "rank of {areas} data zones, where 1 is the most deprived",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "rank",
+					note: "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				},
+				notes: [
+					"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"SIMD 2020v2, taken from the Scottish Government's published data zone lookup, whose ranks agree with its separately published ranks workbook.",
+				],
+				measure: "simd-rank",
+			},
+			{
+				id: "simd-decile",
+				label: "Scottish Index of Multiple Deprivation decile",
+				field: "simdDecile",
+				valueKind: "ordinal",
+				unit: "decile, where 1 is the most deprived tenth of data zones",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "decile",
+					note: "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's data zones in each decile is the defensible summary instead.",
+				},
+				notes: [
+					"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"Taken from the Scottish Government's published data zone lookup. Quintiles are also published there but are not offered as a measure.",
+				],
+				measure: "simd-decile",
+			},
+		],
+	},
 	display: rankDisplay({
 		prefix: "simd",
 		label: "Deprivation (SIMD) [2020]",
