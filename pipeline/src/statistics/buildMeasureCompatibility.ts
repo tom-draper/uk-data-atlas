@@ -6,7 +6,6 @@ import {
 import {
 	tableMeasureObservations,
 	measureSeriesKey,
-	readMeasureDimensionsMapping,
 } from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -57,23 +56,22 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 			artifacts,
 			dataCatalog.measures.flatMap((measure) =>
 				measure.sources.map((source) => {
+					if (!measure.series)
+						throw new Error(
+							`Missing series identity for ${measure.id}.`,
+						);
 					const artifact: unknown = JSON.parse(
 						readArtifact(measure.id, source),
 					);
 					const selected = isMeasureTable(artifact)
 						? tableMeasureObservations(
 								artifact,
-								measure.series
-									? measureSeriesKey(measure.series)
-									: measure.id,
+								measureSeriesKey(measure.series),
 							)
 						: (artifact as AnyMeasureObservationArtifact);
 					return { ...selected, measureId: measure.id };
 				}),
 			),
-			dataCatalog.measures.some((measure) => !measure.series)
-				? readMeasureDimensionsMapping(repositoryRoot).ids
-				: undefined,
 		);
 		const outputPath = join(publicDirectory, "measure-compatibility.json");
 		writeFileSync(
