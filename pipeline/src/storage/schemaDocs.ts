@@ -608,6 +608,20 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			count: "How many records the gap covers, where counted.",
 		},
 	},
+	area_hierarchy: {
+		audience: "core",
+		description:
+			"Direct child to parent assignments from membership and best-fit crosswalks. Join area_version and area_releases for geography and release, and crosswalk for provenance. Several sources or vintages can give different parents.",
+		columns: {
+			child_version_id: "The child area version (area_version.id).",
+			parent_version_id:
+				"The assigned parent area version (area_version.id).",
+			crosswalk_id:
+				"The crosswalk providing the assignment (crosswalk.id).",
+			accuracy:
+				"exact for published clean containment; approximate for best fit, geometry-derived containment with sliver tolerance, and official membership lookups whose containment has not been verified.",
+		},
+	},
 	area_relationship: {
 		audience: "core",
 		description:

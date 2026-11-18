@@ -345,3 +345,28 @@ centroid; `method` identifies the algorithm. The bounding box uses WGS84
 longitude and latitude rounded outward to six decimal places. `gap` explains
 why a row has no coordinates. See [the coverage audit](area-geometry-coverage.md)
 for the observed gaps and example queries.
+
+`area_hierarchy` stores direct child and parent area-version assignments from
+crosswalks, indexed in both directions. Join each version to `area_releases`
+for geography and vintage, and `crosswalk` for its source. Published clean
+containment is labelled `exact`; best fit, geometry-derived containment (which
+allows boundary slivers), and official membership lookups without independent
+containment verification are labelled `approximate`. An approximate label can
+therefore also mean that exactness is unverified. Identity and overlap
+crosswalks are excluded. Publisher `area_relationship` statements remain in
+their dataset modules and are not copied into core. No transitive relationships
+or missing geography combinations are inferred.
+
+```sql
+SELECT r.geography, r.release, a.code, v.name, h.accuracy, c.slug
+FROM area_hierarchy h
+JOIN area_version v ON v.id = h.parent_version_id
+JOIN area a ON a.id = v.area_id
+JOIN area_releases r ON r.id = v.release_id
+JOIN crosswalk c ON c.id = h.crosswalk_id
+WHERE h.child_version_id = ?;
+```
+
+Use `WHERE h.parent_version_id = ?` and join `h.child_version_id` instead to
+find children. These are direct links, and multiple releases can give multiple
+assignments.

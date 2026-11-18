@@ -1,3 +1,4 @@
+import { writeAreaHierarchy } from "../storage/areaHierarchy.ts";
 import { writeAreaLocations } from "../storage/areaLocations.ts";
 import { buildProvenance } from "./buildProvenance.ts";
 import { weightInputPaths } from "../storage/crosswalkInputSources.ts";
@@ -213,6 +214,7 @@ export function assembleAtlas(
 			if (convertedSeries) copyConvertedSeries(database, ids);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
+			writeAreaHierarchy(database);
 			if (areaLocations) writeAreaLocations(database, root);
 			// Last, so the docs see every table and a missing description
 			// fails the build.
