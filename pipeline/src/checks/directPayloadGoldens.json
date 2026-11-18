@@ -147,6 +147,10 @@
 		"sha256": "2c099c49acfdd5f6a44cec28886b16390e51ad846fcb681a155ecd13bb8909f0",
 		"bytes": 1247085
 	},
+	"homelessness": {
+		"sha256": "4560a10e45f658c472c83af5c3f9500e5ffab3edea43d29a2b36c340ede2d451",
+		"bytes": 59473
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

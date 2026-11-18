@@ -116,7 +116,7 @@ export * from "./data/gazetteer/types.ts";
 export * from "./data/general-health/source.ts";
 export * from "./data/historical-general-election/constituencies.ts";
 export * from "./data/historical-general-election/loader.ts";
-export * from "./data/homelessness/loader.ts";
+export * from "./data/homelessness/source.ts";
 export * from "./data/house-price/loader.ts";
 export * from "./data/house-price/wardCodes.ts";
 export * from "./data/housing-tenure/source.ts";
