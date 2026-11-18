@@ -245,20 +245,6 @@ export const canReuseDataset = async (
 		return undefined;
 
 	try {
-		if (existing.missingSource !== undefined) {
-			try {
-				await stat(join(SOURCE_DATA, existing.missingSource));
-				return undefined;
-			} catch (error) {
-				if (
-					!error ||
-					typeof error !== "object" ||
-					!("code" in error) ||
-					error.code !== "ENOENT"
-				)
-					throw error;
-			}
-		}
 		for (const artifact of existing.inputs) {
 			const path = sourceInputPath(artifact.kind, artifact.path);
 			const input = await fileStamp(path);
@@ -268,13 +254,8 @@ export const canReuseDataset = async (
 			)
 				return undefined;
 		}
-		// A direct-only dataset has no file: its hash is of the parts.
-		if (definition.directOnly) return existing.compiled;
-		return cachedDatasetOutput(
-			definition.precompiledFile,
-			existing.compiled,
-			COMPILED_DATASETS,
-		);
+		// A dataset has no file: its hash is of the parts.
+		return existing.compiled;
 	} catch {
 		return undefined;
 	}

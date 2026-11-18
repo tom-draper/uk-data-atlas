@@ -1,16 +1,9 @@
 import { datasetConcurrency } from "./datasetConcurrency.mjs";
 import { Worker } from "worker_threads";
-import {
-	compileStaleDataset,
-	readCompiledFromDisk,
-	reuseDataset,
-} from "./compileDataset.ts";
+import { compileDirectDataset } from "./compileDirectDataset.ts";
+import { reuseDataset } from "./compileDataset.ts";
 import type { DatasetJob, DatasetJobResult } from "./datasetWorker.ts";
-import type {
-	CatalogueDefinition,
-	CompiledDatasets,
-	ReuseContext,
-} from "./types.ts";
+import type { CatalogueDefinition, ReuseContext } from "./types.ts";
 
 type ManifestEntry = NonNullable<Awaited<ReturnType<typeof reuseDataset>>>;
 
@@ -65,22 +58,16 @@ const runJobs = (jobs: readonly DatasetJob[], size: number) =>
  */
 export async function compileDatasets(
 	definitions: readonly CatalogueDefinition[],
-	compiledDatasets: CompiledDatasets,
 	reuse: ReuseContext,
 ): Promise<ManifestEntry[]> {
 	const entries: (ManifestEntry | undefined)[] = [];
 	const jobs: DatasetJob[] = [];
 	for (const [index, definition] of definitions.entries()) {
-		entries[index] = await reuseDataset(
-			definition,
-			compiledDatasets,
-			reuse,
-		);
+		entries[index] = await reuseDataset(definition, reuse);
 		if (!entries[index])
 			jobs.push({
 				index,
 				type: definition.type,
-				existing: reuse.existingDatasets.get(definition.type),
 				fingerprint: reuse.datasetFingerprints[definition.type],
 			});
 	}
@@ -89,18 +76,14 @@ export async function compileDatasets(
 	// A worker has to load the catalogue before it can compile anything, which
 	// is not worth it for a single dataset.
 	if (size <= 1) {
-		for (const { index, existing, fingerprint } of jobs)
-			entries[index] = await compileStaleDataset(
+		for (const { index, fingerprint } of jobs)
+			entries[index] = await compileDirectDataset(
 				definitions[index]!,
-				compiledDatasets,
-				existing,
 				fingerprint,
 			);
 	} else {
-		for (const [index, entry] of await runJobs(jobs, size)) {
+		for (const [index, entry] of await runJobs(jobs, size))
 			entries[index] = entry;
-			readCompiledFromDisk(definitions[index]!, compiledDatasets);
-		}
 	}
 	return entries as ManifestEntry[];
 }
