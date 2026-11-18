@@ -33,6 +33,10 @@ import {
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const repositoryRoot = resolve(apiRoot, "../..");
 const catalogues = readApiCatalogues(repositoryRoot);
+/** The series a catalogue measure is. */
+const seriesOf = (id: string) =>
+	catalogues.dataCatalog!.measures.find((measure) => measure.id === id)!
+		.series!;
 const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
 ) as StatisticsReadPath;
@@ -69,7 +73,7 @@ const answered = (url: string) => {
 const partitions = (catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
 	measure.sources.flatMap((source) => {
 		const period = source.periods[0];
-		const mapping = catalogues.measureDimensions.config.ids[measure.id]!;
+		const mapping = seriesOf(measure.id);
 		const query = new URLSearchParams({
 			period: period ?? "",
 			geography: source.sourceGeography.type,
@@ -109,9 +113,7 @@ test("names an artifact that exists and hashes to what it says", () => {
 			const selector =
 				readPath.series?.[
 					measureSeriesSourceKey(
-						catalogues.measureDimensions.config.ids[
-							partition.measure
-						]!,
+						seriesOf(partition.measure),
 						partition.source,
 					)
 				];
@@ -123,11 +125,7 @@ test("names an artifact that exists and hashes to what it says", () => {
 				atlasDatabasePath(repositoryRoot),
 				selector,
 				{
-					measureId: measureSeriesKey(
-						catalogues.measureDimensions.config.ids[
-							partition.measure
-						]!,
-					),
+					measureId: measureSeriesKey(seriesOf(partition.measure)),
 					sourceGeography: partition.geography,
 					periods: partition.periods,
 				},
@@ -158,8 +156,7 @@ test("agrees with its own envelope and with the partition asked for", () => {
 		const { provenance } = body.data;
 		if (provenance.atlasRelease.id !== body.atlasRelease)
 			wrong.push(`${partition.url}: provenance names another release`);
-		const mapped =
-			catalogues.measureDimensions.config.ids[partition.measure]!.measure;
+		const mapped = seriesOf(partition.measure).measure;
 		if (provenance.measure.id !== mapped)
 			wrong.push(`${partition.url}: provenance names another measure`);
 		if (provenance.source.dataset.id !== partition.datasetId)

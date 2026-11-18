@@ -294,17 +294,10 @@ test("cites a selected dimensional series without rewriting its public measure",
 				},
 			},
 			config: {
-				schemaVersion: 1,
 				measures: {},
 				dimensions: {},
 				members: {},
 				defaults: {},
-				ids: {
-					population: {
-						measure: "residents",
-						dimensions: { age: "all" },
-					},
-				},
 			},
 		},
 	});

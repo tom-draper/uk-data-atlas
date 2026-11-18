@@ -13,7 +13,6 @@ import { compileMeasureDownloads } from "../statistics/measureDownloads.ts";
 import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { statisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
 import { readJsonSync } from "../lib/json.ts";
-import { readMeasureDimensionsMapping } from "@uk-data-atlas/measures";
 
 export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
@@ -28,7 +27,11 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const readPath = readJsonSync(
 		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
-	const identities = readMeasureDimensionsMapping(repositoryRoot).ids;
+	const identities = Object.fromEntries(
+		dataCatalog.measures.flatMap(({ id, series }) =>
+			series ? [[id, series]] : [],
+		),
+	);
 	const database = new DatabaseSync(
 		join(repositoryRoot, "data/build/atlas-base.sqlite"),
 		{ readOnly: true },

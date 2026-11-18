@@ -23,6 +23,10 @@ const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const repositoryRoot = resolve(apiRoot, "../..");
 const databasePath = atlasDatabasePath(repositoryRoot);
 const catalogues = readApiCatalogues(repositoryRoot);
+/** The series a catalogue measure is. */
+const seriesOf = (id: string) =>
+	catalogues.dataCatalog!.measures.find((measure) => measure.id === id)!
+		.series!;
 const catalog = catalogues.dataCatalog;
 const readPath = JSON.parse(
 	readFileSync(statisticsReadPathPath(repositoryRoot), "utf8"),
@@ -36,10 +40,7 @@ test("names every catalogue series source once as statistics", () => {
 	const keys = new Set(
 		catalog.measures.flatMap((measure) =>
 			measure.sources.map((source) =>
-				measureSeriesSourceKey(
-					catalogues.measureDimensions.config.ids[measure.id]!,
-					source,
-				),
+				measureSeriesSourceKey(seriesOf(measure.id), source),
 			),
 		),
 	);
@@ -54,10 +55,7 @@ const samples = () => {
 		for (const source of measure.sources) {
 			if (
 				!readPath.series?.[
-					measureSeriesSourceKey(
-						catalogues.measureDimensions.config.ids[measure.id]!,
-						source,
-					)
+					measureSeriesSourceKey(seriesOf(measure.id), source)
 				]
 			)
 				continue;
@@ -70,8 +68,7 @@ const samples = () => {
 						source.sourceGeography.boundaryYear,
 			)!;
 			const records = artifact.periods.at(-1)!.records;
-			const mapping =
-				catalogues.measureDimensions?.config.ids[measure.id];
+			const mapping = seriesOf(measure.id);
 			const measurePath = mapping?.measure ?? measure.id;
 			const dimensions = mapping?.dimensions ?? {};
 			const step = Math.max(1, Math.floor(records.length / 3));

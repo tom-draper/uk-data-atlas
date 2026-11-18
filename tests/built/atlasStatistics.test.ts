@@ -82,18 +82,6 @@ it("builds and serves every real fuel poverty value byte for byte from its sourc
 		mkdirSync(join(output, "datasets"), { recursive: true });
 		mkdirSync(join(output, "location-projections"), { recursive: true });
 		buildTerrainCatalogue(root);
-		mkdirSync(join(root, "services/api/config"), { recursive: true });
-		writeFileSync(
-			join(root, "services/api/config/measure-dimensions.json"),
-			JSON.stringify({
-				schemaVersion: 1,
-				measures: {},
-				dimensions: {},
-				members: {},
-				defaults: {},
-				ids: {},
-			}),
-		);
 		mkdirSync(join(output, "geography"), { recursive: true });
 		write(join(output, "geography/boundary-releases.json"), {
 			schemaVersion: 1,

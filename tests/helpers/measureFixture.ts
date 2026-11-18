@@ -13,6 +13,7 @@ import {
 	measureSeriesSourceKey,
 	measureSeriesKey,
 	type MeasureDimensions,
+	type MeasureSeriesIdentity,
 	type MeasureValuesContext,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
@@ -356,15 +357,9 @@ export const fixtureCatalog = (): DataCatalog =>
 		],
 	}) as DataCatalog;
 
-export const fixtureDimensions = (): MeasureDimensions => {
-	const description = (label: string) => ({
-		label,
-		description: label,
-		unit: "",
-		valueKind: "count",
-		aggregation: "sum",
-	});
-	const ids: MeasureDimensions["config"]["ids"] = {
+/** The series each fixture catalogue measure is. */
+const fixtureSeriesIds = (): Record<string, MeasureSeriesIdentity> => {
+	const ids: Record<string, MeasureSeriesIdentity> = {
 		population: { measure: "population" },
 		"access-rate": { measure: "access-rate" },
 		"median-age": { measure: "median-age" },
@@ -375,14 +370,23 @@ export const fixtureDimensions = (): MeasureDimensions => {
 			measure: "households",
 			dimensions: { tenure },
 		};
+	return ids;
+};
+
+export const fixtureDimensions = (): MeasureDimensions => {
+	const description = (label: string) => ({
+		label,
+		description: label,
+		unit: "",
+		valueKind: "count",
+		aggregation: "sum",
+	});
 	return {
 		config: {
-			schemaVersion: 1,
 			measures: {},
 			dimensions: {},
 			members: {},
 			defaults: {},
-			ids,
 		},
 		vocabulary: {
 			schemaVersion: 1,
@@ -418,17 +422,18 @@ export const createMeasureFixture = (): {
 	writeDatabase(path, fixtureSeries);
 	normalise(path);
 	const measureDimensions = fixtureDimensions();
+	const seriesIds = fixtureSeriesIds();
 	const fixture = fixtureCatalog();
 	const catalog = {
 		...fixture,
 		measures: fixture.measures.map((entry) => ({
 			...entry,
-			series: measureDimensions.config.ids[entry.id]!,
+			series: seriesIds[entry.id]!,
 		})),
 	};
 	const statistics: NonNullable<StatisticsReadPath["statistics"]> = {};
 	const bySeries = (id: string) => {
-		const mapped = measureDimensions.config.ids[id]!;
+		const mapped = seriesIds[id]!;
 		return fixtureSeries.find(
 			(entry) =>
 				entry.measure === mapped.measure &&
@@ -454,10 +459,7 @@ export const createMeasureFixture = (): {
 			catalog.measures.map((entry) => {
 				const source = entry.sources[0]!;
 				return [
-					measureSeriesSourceKey(
-						measureDimensions.config.ids[entry.id]!,
-						source,
-					),
+					measureSeriesSourceKey(seriesIds[entry.id]!, source),
 					statistics[observationArtifactName(entry.id, source)]!,
 				];
 			}),
@@ -475,13 +477,13 @@ export const createMeasureFixture = (): {
 				lazySourceObservations(
 					path,
 					measureSeriesSourceKey(
-						measureDimensions.config.ids[entry.id]!,
+						seriesIds[entry.id]!,
 						entry.sources[0]!,
 					),
 					entry.id,
 					entry.sources[0]!.sourceGeography,
 					cache,
-					measureSeriesKey(measureDimensions.config.ids[entry.id]!),
+					measureSeriesKey(seriesIds[entry.id]!),
 				),
 			),
 		},

@@ -302,17 +302,10 @@ test("uses the selected public series for postcode lookups and links", () => {
 				},
 			},
 			config: {
-				schemaVersion: 1,
 				measures: {},
 				dimensions: {},
 				members: {},
 				defaults: {},
-				ids: {
-					population: {
-						measure: "residents",
-						dimensions: { age: "all" },
-					},
-				},
 			},
 		},
 	});
