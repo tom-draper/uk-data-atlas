@@ -1,5 +1,8 @@
 import type { TravelToWorkDataset } from "../../../types/travelToWork.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -7,7 +10,7 @@ import {
 	districts2021,
 } from "../../../data/census/districts.ts";
 import { aggregateTravelToWork } from "../../../data/travel-to-work/aggregate.ts";
-import { loadTravelToWork } from "../../../data/travel-to-work/loader.ts";
+import { travelToWorkStatisticsParts } from "../../../data/travel-to-work/source.ts";
 
 export const travelToWork = defineDataset<TravelToWorkDataset>({
 	id: "travel-to-work",
@@ -32,8 +35,12 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["ladCode", "breakdown"],
 	},
-	load: ({ text }) => loadTravelToWork(text),
+	load: noCompiledPayload<TravelToWorkDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => travelToWorkStatisticsParts(text),
+		},
 		payload: {
 			parts: () => [
 				{

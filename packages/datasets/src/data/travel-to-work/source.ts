@@ -1,7 +1,5 @@
-import type {
-	TravelToWorkBreakdown,
-	TravelToWorkDataset,
-} from "../../types/travelToWork.ts";
+import type { TravelToWorkBreakdown } from "../../types/travelToWork.ts";
+import type { DirectPart } from "../../declaration/statistics.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
@@ -58,9 +56,15 @@ export function addMergedTravelToWorkAuthorities(
 	addMergedCountAuthorities(data, emptyBreakdown, "travel to work");
 }
 
-export async function loadTravelToWork(
+/**
+ * Census 2021 method of travel to work (TS061) by local authority, as the
+ * single part `2021`: people in employment by travel mode, and in total.
+ * Authorities that merged in 2023 are given the sum of their predecessors, as
+ * the table has not been published on the new codes.
+ */
+export async function travelToWorkStatisticsParts(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, TravelToWorkDataset>> {
+): Promise<DirectPart[]> {
 	const { data } = await parseCsv(
 		await read(sourceDir("travel-to-work", "TS061-2021-6.csv")),
 		{ header: true },
@@ -93,25 +97,17 @@ export async function loadTravelToWork(
 	}
 	addMergedTravelToWorkAuthorities(laData);
 
-	const records: TravelToWorkDataset["data"] = {};
-	for (const [ladCode, breakdown] of Object.entries(laData))
-		records[ladCode] = { ladCode, breakdown };
-
-	return {
-		2021: {
-			id: "travel-to-work2021",
-			type: "travel-to-work",
-			year: 2021,
-			boundaryType: "localAuthority",
-			boundaryYear: 2025,
-			data: records,
-			metadata: {
-				source: "Office for National Statistics. Census 2021: Method used to travel to workplace, England and Wales. TS061.",
-				notes: [
-					"England and Wales only. Shares are of people in employment, so those not in employment or aged under 16 are excluded.",
-					"Working mainly at or from home is counted as a method of travel, as the census reports it.",
-				],
-			},
+	return [
+		{
+			key: "2021",
+			records: Object.entries(laData).map(([code, breakdown]) => ({
+				code,
+				values: Object.entries(breakdown).map(([key, value]) => ({
+					measure: "people-in-employment",
+					members: { "travel-method": key },
+					value,
+				})),
+			})),
 		},
-	};
+	];
 }
