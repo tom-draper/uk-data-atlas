@@ -95,7 +95,18 @@ export const unpackGeometry = (packed: PackedGeometry): GeoJsonGeometry => {
 	let at = 0;
 	const build = (level: number): unknown => {
 		if (level === counts.length) {
-			const position = Array.from(positions.subarray(at, at + stride));
+			// Built directly: a view and a copy for every vertex is most of
+			// what unpacking a large area costs.
+			const position =
+				stride === 2
+					? [positions[at]!, positions[at + 1]!]
+					: stride === 3
+						? [
+								positions[at]!,
+								positions[at + 1]!,
+								positions[at + 2]!,
+							]
+						: Array.from(positions.subarray(at, at + stride));
 			at += stride;
 			return position;
 		}
