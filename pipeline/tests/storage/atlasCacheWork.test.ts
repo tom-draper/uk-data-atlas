@@ -21,6 +21,7 @@ import {
 	publishAtlasCache,
 	publishAtlasCacheSteps,
 	publishAtlasCacheWork,
+	writeCachePart,
 	publishCacheTables,
 	stageStampPath,
 	stampCacheStage,
@@ -235,15 +236,26 @@ test("stamping publishes the working copy once, with the content hash", () => {
 	assert.equal(existsSync(published), false);
 	// Only the two cache stages are staged here; the third is not under test.
 	assert.throws(() => checkStagedComponents(root), /postcode-counts/);
-	publishAtlasCache(root, "postcode-counts", (database) =>
-		database.exec("CREATE TABLE postcode_counts (x TEXT)"),
-	);
+	writeCachePart(root, {
+		component: "postcode-counts",
+		write: (database) =>
+			database.exec("CREATE TABLE postcode_counts (x TEXT)"),
+	});
 	checkStagedComponents(root);
 	const hash = stampAtlasCache(root);
 	assert.equal(existsSync(work), false);
 	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
 	const cache = new DatabaseSync(published, { readOnly: true });
 	try {
+		// The stage that owns the part wrote it, and the stamp copied it in.
+		assert.equal(
+			cache
+				.prepare(
+					"SELECT 1 AS found FROM sqlite_schema WHERE name = 'postcode_counts'",
+				)
+				.get()?.found,
+			1,
+		);
 		assert.equal(
 			cache
 				.prepare(

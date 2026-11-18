@@ -3,12 +3,15 @@ import {
 	constants,
 	copyFileSync,
 	existsSync,
+	mkdirSync,
 	renameSync,
 	rmSync,
 } from "node:fs";
+import { dirname } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 import {
+	atlasCachePartPath,
 	atlasCachePath,
 	CACHE_VERSION,
 	cacheGeneration,
@@ -50,6 +53,10 @@ function copyCurrentCache(source: string, destination: string) {
 	if (current) copyFileSync(source, destination, constants.COPYFILE_FICLONE);
 }
 
+/** The tables every cache file holds, whichever components are in it. */
+const SHARED_TABLES_DDL =
+	"CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL) WITHOUT ROWID;";
+
 export type CacheStep = {
 	component: CacheComponent;
 	write: (database: DatabaseSync) => void;
@@ -62,9 +69,7 @@ function applyStep(
 	session?: string,
 ) {
 	const generation = cacheGeneration(root, component);
-	database.exec(
-		"BEGIN; CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; CREATE TABLE IF NOT EXISTS cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL) WITHOUT ROWID;",
-	);
+	database.exec(`BEGIN; ${SHARED_TABLES_DDL}`);
 	database
 		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
 		.run(CACHE_VERSION_KEY, String(CACHE_VERSION));
@@ -93,6 +98,98 @@ const guardGeneration = (
 
 const FAST_WRITES = "PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;";
 
+/**
+ * Write one component to the file only its stage owns, in `atlas-cache-parts`.
+ * The part is built beside its place and renamed, so a reader sees the old
+ * file or the whole new one. Nothing else is read or kept from an earlier
+ * build, so the part holds exactly what the stage just wrote.
+ */
+export function writeCachePart(root: string, step: CacheStep) {
+	const path = atlasCachePartPath(root, step.component);
+	mkdirSync(dirname(path), { recursive: true });
+	const temporary = `${path}.${randomUUID()}.tmp`;
+	try {
+		const database = new DatabaseSync(temporary);
+		let generation: string;
+		try {
+			database.exec(FAST_WRITES);
+			generation = applyStep(database, root, step);
+		} finally {
+			database.close();
+		}
+		guardGeneration(root, step.component, generation);
+		// Readers in this process must not keep the file about to be replaced.
+		closeReadOnlyDatabase(path);
+		renameSync(temporary, path);
+	} finally {
+		rmSync(temporary, { force: true });
+	}
+	return path;
+}
+
+/** The tables of a component's part, with their tables replaced as one write. */
+export function writeCacheTables(
+	root: string,
+	component: CacheComponent,
+	tables: Record<string, SqliteTable>,
+) {
+	return writeCachePart(root, {
+		component,
+		write: (database) => writeSqliteTables(database, tables),
+	});
+}
+
+/** Tables every part holds, whose rows are merged rather than copied whole. */
+const SHARED_TABLES = ["meta", "payloads", "cache_generation"];
+
+/**
+ * Copy a part into a cache file: its tables are created as the part defines
+ * them and filled in the order the part holds them, and its rows of the
+ * tables every part shares are added to the shared ones. A table the cache
+ * already has under that name is replaced.
+ */
+export function copyCachePart(database: DatabaseSync, partPath: string) {
+	database.prepare("ATTACH DATABASE ? AS part").run(partPath);
+	try {
+		database.exec(SHARED_TABLES_DDL);
+		const schema = database
+			.prepare(
+				"SELECT type, name, sql FROM part.sqlite_schema WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY rowid",
+			)
+			.all() as Array<{ type: string; name: string; sql: string }>;
+		database.exec("BEGIN");
+		try {
+			copyPartRows(database, schema);
+			database.exec("COMMIT");
+		} catch (error) {
+			database.exec("ROLLBACK");
+			throw error;
+		}
+	} finally {
+		database.exec("DETACH DATABASE part");
+	}
+}
+
+function copyPartRows(
+	database: DatabaseSync,
+	schema: Array<{ type: string; name: string; sql: string }>,
+) {
+	for (const { type, name, sql } of schema)
+		if (type === "table" && !SHARED_TABLES.includes(name)) {
+			database.exec(`DROP TABLE IF EXISTS main."${name}"`);
+			database.exec(sql);
+			database.exec(
+				`INSERT INTO main."${name}" SELECT * FROM part."${name}"`,
+			);
+		}
+	for (const { type, sql } of schema)
+		if (type !== "table") database.exec(sql);
+	for (const name of SHARED_TABLES)
+		database.exec(
+			`INSERT OR REPLACE INTO main."${name}" SELECT * FROM part."${name}"`,
+		);
+}
+
 /** The working copy if there is one, else the published cache. */
 export const latestAtlasCachePath = (root: string) => {
 	const work = atlasCacheWorkPath(root);
@@ -105,6 +202,16 @@ export const latestAtlasCachePath = (root: string) => {
  */
 export const activeAtlasCachePath = (root: string) =>
 	defersCachePublish() ? latestAtlasCachePath(root) : atlasCachePath(root);
+
+/**
+ * The working copy, made from the published cache if the build has none yet.
+ * It is not session-marked: nothing in it is stamped.
+ */
+export function ensureWorkingCopy(root: string) {
+	const work = atlasCacheWorkPath(root);
+	if (!existsSync(work)) copyCurrentCache(atlasCachePath(root), work);
+	return work;
+}
 
 /**
  * Add components to the cache without exposing incomplete tables to API

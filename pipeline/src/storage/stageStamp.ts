@@ -14,7 +14,6 @@ export const STAMP_DIRECTORY = "data/build/.stamps";
 export const CACHE_STAGES = [
 	"place-index",
 	"area-search-index",
-	"postcode-counts",
 	"atlas-cache-stamp",
 ] as const;
 

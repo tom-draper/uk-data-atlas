@@ -79,9 +79,12 @@ test("the shared databases name every stage that writes them", () => {
 		"atlas-sqlite",
 		"place-index",
 		"area-search-index",
-		"postcode-counts",
 		"atlas-cache-stamp",
 	]);
+	assert.deepEqual(
+		writers("data/build/atlas-cache-parts/postcode-counts.sqlite"),
+		["postcode-counts"],
+	);
 	assert.deepEqual(writers("data/build/atlas-base.sqlite"), ["atlas-sqlite"]);
 	assert.deepEqual(writers("data/build/website-assets.sqlite"), [
 		"website-lookups",
@@ -109,7 +112,6 @@ test("the only stages that share a path are the cache writers and the two releas
 			"atlas-release-initial",
 			"atlas-sqlite",
 			"place-index",
-			"postcode-counts",
 		].sort(),
 	);
 });
@@ -129,11 +131,7 @@ test("every cache stage tracks its own stamp, and the base build clears them", (
 	}
 	// The stages that add to the cache share it and its one working copy; the
 	// last one publishes the copy, so it owns the cache's bytes.
-	for (const name of [
-		"place-index",
-		"area-search-index",
-		"postcode-counts",
-	]) {
+	for (const name of ["place-index", "area-search-index"]) {
 		assert.deepEqual(find(name).shared, ["data/build/atlas-cache.sqlite"]);
 		assert.deepEqual(find(name).scratch, [ATLAS_CACHE_WORK]);
 		assert.equal(find(name).finishedBy, "atlas-cache-stamp");
@@ -154,7 +152,7 @@ test("every cache stage tracks its own stamp, and the base build clears them", (
 });
 
 test("building a cache stage also builds the stage that publishes its working copy", () => {
-	for (const name of ["place-index", "area-search-index", "postcode-counts"])
+	for (const name of ["place-index", "area-search-index"])
 		assert.ok(
 			planBuild(stages, undefined, [name]).some(
 				(stage: { name: string }) => stage.name === "atlas-cache-stamp",
@@ -165,11 +163,7 @@ test("building a cache stage also builds the stage that publishes its working co
 
 test("the base build and the cache stages never run at once", () => {
 	const named = (name: string) => stages.find((stage) => stage.name === name);
-	for (const name of [
-		"place-index",
-		"area-search-index",
-		"postcode-counts",
-	]) {
+	for (const name of ["place-index", "area-search-index"]) {
 		assert.ok(conflicts(named("atlas-sqlite"), named(name)), name);
 		assert.ok(conflicts(named("atlas-cache-stamp"), named(name)), name);
 	}

@@ -39,6 +39,11 @@ const cacheWorkingCopy = {
 	finishedBy: "atlas-cache-stamp",
 };
 
+// A stage that builds one component of the atlas cache keeps it in a file of
+// its own. `atlas-cache-stamp` copies the parts into the cache.
+const cachePart = (component) =>
+	`data/build/atlas-cache-parts/${component}.sqlite`;
+
 const artifacts = "data/build/artifacts";
 const atlasAssets = "data/build/atlas-assets";
 const geography = "data/build/geography";
@@ -448,14 +453,16 @@ export const apiStages = [
 			],
 		},
 	),
+	// Its tables are the postcode-counts component of the atlas cache, in a file
+	// that only this stage writes. `atlas-cache-stamp` copies it into the cache.
 	stage(
 		"postcode-counts",
 		["postcode-index", "assemble-atlas"],
 		["pipeline/src/stages/build-postcode-counts.ts"],
 		{
 			rawInputs: [],
-			...cacheWorkingCopy,
-			requiredOutputs: [stampOf("postcode-counts")],
+			writes: [cachePart("postcode-counts")],
+			requiredOutputs: [cachePart("postcode-counts")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
