@@ -20,19 +20,26 @@ export type Job = {
 export type Result =
 	{ descriptor: MapResourceDescriptor } | { unavailable: Unavailable };
 
-export function mapResourceConcurrency() {
-	const requested = Number(process.env.ATLAS_MAP_RESOURCE_JOBS);
-	if (Number.isInteger(requested) && requested > 0) return requested;
+const GIB = 1024 ** 3;
+
+export function mapResourceConcurrency(
+	available = process.availableMemory(),
+	cpus = availableParallelism(),
+	override = Number(process.env.ATLAS_MAP_RESOURCE_JOBS),
+) {
+	if (Number.isInteger(override) && override > 0) return override;
 	return Math.max(
 		1,
-		Math.min(
-			4,
-			availableParallelism() - 1,
-			Math.floor(
-				(process.availableMemory() - 2 * 1024 ** 3) / (4 * 1024 ** 3),
-			),
-		),
+		Math.min(4, cpus - 1, Math.floor((available - 2 * GIB) / (2 * GIB))),
 	);
+}
+
+export function mapResourceMemoryBudget(
+	available = process.availableMemory(),
+	override = Number(process.env.ATLAS_MAP_RESOURCE_JOBS),
+) {
+	if (Number.isInteger(override) && override > 0) return Infinity;
+	return Math.max(4 * GIB, available - 2 * GIB);
 }
 
 export async function runMapResourceJobs(
@@ -40,12 +47,14 @@ export async function runMapResourceJobs(
 	size: number,
 	workerUrl = new URL("./mapResourceWorker.ts", import.meta.url),
 	onResult: (index: number, result: Result) => void = () => {},
+	budget = Infinity,
 ): Promise<Result[]> {
 	if (!jobs.length) return [];
 	const results: Result[] = new Array(jobs.length);
 	const workers: Worker[] = [];
 	const remaining = new Set(jobs.map((_, i) => i));
 	let activeLarge = false;
+	let activeMemory = 0;
 	let completed = 0;
 	let settled = false;
 	try {
@@ -68,11 +77,15 @@ export async function runMapResourceJobs(
 				for (const worker of workers) {
 					if (active.has(worker)) continue;
 					const index = [...remaining].find(
-						(i) => !jobs[i]!.large || !activeLarge,
+						(i) =>
+							(!jobs[i]!.large || !activeLarge) &&
+							activeMemory + (jobs[i]!.large ? 4 : 2) * GIB <=
+								budget,
 					);
 					if (index === undefined) continue;
 					remaining.delete(index);
 					active.set(worker, index);
+					activeMemory += (jobs[index]!.large ? 4 : 2) * GIB;
 					if (jobs[index]!.large) activeLarge = true;
 					worker.postMessage({ index, ...jobs[index] });
 				}
@@ -112,6 +125,7 @@ export async function runMapResourceJobs(
 							return fail(index, error);
 						}
 						active.delete(worker);
+						activeMemory -= (jobs[index]!.large ? 4 : 2) * GIB;
 						if (jobs[index]!.large) activeLarge = false;
 						if (++completed === jobs.length) {
 							settled = true;
