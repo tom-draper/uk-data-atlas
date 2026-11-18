@@ -92,6 +92,7 @@ export function createBuildReport({
 		stageStartedAt,
 		command = 0,
 		skipped = false,
+		waited = {},
 	) => {
 		const total = performance.now() - stageStartedAt;
 		timings.push({
@@ -100,6 +101,10 @@ export function createBuildReport({
 			command,
 			overhead: total - command,
 			skipped,
+			// How long the scheduler held the stage back, when it says.
+			...(waited.queuedMs === undefined
+				? {}
+				: { queue: waited.queuedMs, memoryWait: waited.memoryWaitMs }),
 		});
 		return total;
 	};
@@ -111,11 +116,24 @@ export function createBuildReport({
 			totalMs: performance.now() - startedAt,
 			failed,
 			stages: timings.map(
-				({ name, total, command, skipped, failed }) => ({
+				({
+					name,
+					total,
+					command,
+					skipped,
+					failed,
+					queue,
+					memoryWait,
+				}) => ({
 					name,
 					status: failed ? "failed" : skipped ? "skipped" : "ran",
 					totalMs: total,
 					commandMs: command,
+					// Time queued once the stage was ready to start, and the
+					// part of it spent held back by memory.
+					...(queue === undefined
+						? {}
+						: { queueMs: queue, memoryWaitMs: memoryWait }),
 				}),
 			),
 		});

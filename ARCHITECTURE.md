@@ -425,9 +425,16 @@ once because the command is part of each key. The cache format remains at
 version 4. Each stage record also keeps its latest command and total duration and
 finish time, including failed runs. Skips preserve the previous timing.
 `last-build.json` in the same directory records the latest build's start, finish,
-and stage outcomes and durations. `--plan` shows available previous durations
-and estimates the total for stages expected to run. The estimate can be partial
-and actual stages may differ if rebuilt outputs are unchanged.
+and stage outcomes and durations. A stage that ran also has `queueMs`, the time
+between the scheduler settling it and starting its command, and `memoryWaitMs`,
+the part of that spent held back by memory with a job slot free. `totalMs` still
+includes the queue, so `totalMs - commandMs` is not wait alone: it also holds
+the cache check and recording around the command. The stage record in
+`stages.json` keeps the same two fields beside `commandMs` and `totalMs`.
+
+`--plan` shows available previous durations and estimates the total for stages
+expected to run. The estimate can be partial and actual stages may differ if
+rebuilt outputs are unchanged.
 
 After a cache format bump or command change, `pnpm data:build --adopt` records existing outputs
 against current keys without running any stage, hashing every adopted file once.

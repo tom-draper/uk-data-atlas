@@ -170,8 +170,10 @@ export function planWaves(stages, { runs, weightOf }) {
  * Runs the planned stages, starting each one once everything that blocks it
  * has finished, with at most `jobs` running and their memory within
  * `memoryMb`. `settle(stage)` handles a stage that needs no command and
- * returns true when the stage has to run. `run(stage)` runs it and resolves
- * to false when it failed.
+ * returns true when the stage has to run. `run(stage, waited)` runs it and
+ * resolves to false when it failed. `waited` says how long the stage queued
+ * after it was settled: `queuedMs` in all, of which `memoryWaitMs` was spent
+ * with a free job slot, held back by memory.
  *
  * On a failure no new stage starts, but stages already running finish and are
  * recorded. Killing them could leave half-written files, and their results
@@ -183,10 +185,11 @@ export function planWaves(stages, { runs, weightOf }) {
  * @param {{
  *   stages: Array<{ name: string, dependencies: string[], args?: string[] }>,
  *   settle: (stage: any) => boolean,
- *   run: (stage: any) => Promise<boolean>,
+ *   run: (stage: any, waited: { queuedMs: number, memoryWaitMs: number }) => Promise<boolean>,
  *   jobs?: number,
  *   memoryMb?: number,
  *   order?: Array<{ name: string }>,
+ *   clock?: () => number,
  * }} options
  */
 export async function runSchedule({
@@ -196,16 +199,33 @@ export async function runSchedule({
 	jobs = 1,
 	memoryMb = Infinity,
 	order = stages,
+	clock = () => performance.now(),
 }) {
 	const blockers = blockersOf(stages);
 	const finished = new Set();
 	const running = new Map();
 	const decisions = new Map();
+	const queued = new Map();
 	let usedMb = 0;
+	let lastTick = clock();
 	let stopped = false;
 	let error = null;
 
+	// Stages that wait for the job limit are not waiting for memory.
+	const tick = () => {
+		const now = clock();
+		const elapsed = Math.max(0, now - lastTick);
+		lastTick = now;
+		for (const entry of queued.values()) {
+			entry.queuedMs += elapsed;
+			if (running.size < jobs) entry.memoryWaitMs += elapsed;
+		}
+		return now;
+	};
+	const fits = (stage) =>
+		running.size === 0 || usedMb + stageMemoryMb(stage) <= memoryMb;
 	const next = () => {
+		tick();
 		for (const stage of order) {
 			const { name } = stage;
 			if (finished.has(name) || running.has(name)) continue;
@@ -219,33 +239,38 @@ export async function runSchedule({
 					finished.add(name);
 					return next();
 				}
+				queued.set(name, { queuedMs: 0, memoryWaitMs: 0 });
 			}
 			// Wait for memory rather than start smaller stages ahead of it.
-			if (running.size > 0 && usedMb + stageMemoryMb(stage) > memoryMb)
-				return null;
+			if (!fits(stage)) return null;
 			return stage;
 		}
 		return null;
 	};
 	const start = (stage) => {
 		const cost = stageMemoryMb(stage);
+		tick();
+		const waited = queued.get(stage.name) ?? {
+			queuedMs: 0,
+			memoryWaitMs: 0,
+		};
+		queued.delete(stage.name);
 		usedMb += cost;
-		running.set(
-			stage.name,
-			(async () => {
-				try {
-					return await run(stage);
-				} catch (thrown) {
-					error ??= thrown;
-					return false;
-				}
-			})().then((succeeded) => {
-				running.delete(stage.name);
-				usedMb -= cost;
-				finished.add(stage.name);
-				if (!succeeded) stopped = true;
-			}),
-		);
+		running.set(stage.name, { cost });
+		running.get(stage.name).promise = (async () => {
+			try {
+				return await run(stage, { ...waited });
+			} catch (thrown) {
+				error ??= thrown;
+				return false;
+			}
+		})().then((succeeded) => {
+			tick();
+			running.delete(stage.name);
+			usedMb -= cost;
+			finished.add(stage.name);
+			if (!succeeded) stopped = true;
+		});
 	};
 	for (;;) {
 		try {
@@ -259,7 +284,7 @@ export async function runSchedule({
 			stopped = true;
 		}
 		if (running.size === 0) break;
-		await Promise.race(running.values());
+		await Promise.race([...running.values()].map((entry) => entry.promise));
 	}
 	if (error) throw error;
 	if (!stopped && finished.size < stages.length)
