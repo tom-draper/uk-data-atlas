@@ -39,6 +39,15 @@ function distanceExpression(
 	return names.length > 1 ? `COALESCE(${names.join(", ")})` : names[0]!;
 }
 
+/**
+ * A release's version of an area, by code. The file has no planner statistics
+ * yet, so a plain join starts from the release's versions and tests every one
+ * of them against the code. CROSS JOIN fixes the order: the code index
+ * first, then the one version.
+ */
+export const FIND_RELEASE_AREA_VERSION =
+	"SELECT v.id FROM area a CROSS JOIN area_version v ON v.area_id = a.id WHERE v.release_id = ? AND a.code = ?";
+
 export function writePostcodeAreas(
 	database: DatabaseSync,
 	artifact: PostcodeAreasArtifact,
@@ -96,9 +105,7 @@ export function writePostcodeAreas(
 	const findRelease = database.prepare(
 		"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
 	);
-	const findArea = database.prepare(
-		"SELECT v.id FROM area a JOIN area_version v ON v.area_id = a.id WHERE v.release_id = ? AND a.code = ?",
-	);
+	const findArea = database.prepare(FIND_RELEASE_AREA_VERSION);
 	const addArea = addAreaVersion(database, registries);
 	const ids = columns.map((column, position) => {
 		addRelease.run(
