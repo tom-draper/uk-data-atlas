@@ -228,6 +228,7 @@ test("aggregates an intensive measure with its published weight", () => {
 			...dataCatalog.measures,
 			{
 				id: weightId,
+				series: { measure: weightId },
 				label: "Fixture valid votes",
 				valueKind: "count",
 				unit: "votes",
@@ -246,6 +247,8 @@ test("aggregates an intensive measure with its published weight", () => {
 			},
 			{
 				id: shareId,
+				series: { measure: shareId },
+				weightSeries: { measure: weightId },
 				label: "Fixture party vote share",
 				valueKind: "ratio",
 				unit: "percent",
