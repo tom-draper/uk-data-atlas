@@ -128,7 +128,7 @@ function density(profile: AreaProfile) {
 	});
 }
 
-/** Median age, density and ethnicity, where the datasets publish them. */
+/** Density and median age, where the datasets publish them. */
 function peopleFacts(profile: AreaProfile, facts: PlaceFacts) {
 	const items: { label: string; value: ReactNode }[] = [];
 	const perKm2 = density(profile);
@@ -149,20 +149,6 @@ function peopleFacts(profile: AreaProfile, facts: PlaceFacts) {
 						className={sourceClass}
 					>
 						{percent(over65)} aged 65+, mid-{year}
-					</Link>
-				</>
-			),
-		});
-	}
-	if (facts.ethnicity) {
-		const [white, whiteBritish] = facts.ethnicity;
-		items.push({
-			label: "Ethnicity",
-			value: (
-				<>
-					{percent(white)} White
-					<Link href="/datasets#ethnicity" className={sourceClass}>
-						{percent(whiteBritish)} White British, 2021 Census
 					</Link>
 				</>
 			),

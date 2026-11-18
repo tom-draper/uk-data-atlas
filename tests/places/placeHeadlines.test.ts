@@ -57,6 +57,7 @@ describe("headlineMapsFor", () => {
 	it("lists the declared headlines in page order", () => {
 		expect(headlineMapsFor("localAuthority")).toEqual([
 			"income",
+			"ethnicity",
 			"housing-affordability",
 			"life-expectancy",
 			"imd",
