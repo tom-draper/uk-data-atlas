@@ -1,11 +1,14 @@
 import type { LifeExpectancySeriesDataset } from "../../../types/lifeExpectancySeries.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { LIFE_EXPECTANCY, SEX } from "../../../declaration/measures.ts";
 import {
 	periods,
 	type DeclaredHeader,
 } from "../../../declaration/statistics.ts";
-import { loadLifeExpectancySeriesRows } from "../../../data/life-expectancy/seriesLoader.ts";
+import { lifeExpectancySeriesStatisticsParts } from "../../../data/life-expectancy/seriesSource.ts";
 
 export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 	id: "life-expectancy-series",
@@ -35,8 +38,7 @@ export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["male", "female"],
 	},
-	load: ({ xlsxSheetSelectedRows }) =>
-		loadLifeExpectancySeriesRows(xlsxSheetSelectedRows),
+	load: noCompiledPayload<LifeExpectancySeriesDataset>(),
 	statistics: {
 		payload: {
 			parts: (labels) =>
@@ -65,6 +67,12 @@ export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 						: [];
 				}),
 			code: "ladCode",
+		},
+		/** A part is a period, keyed by its label; sheet 1 holds every period. */
+		direct: {
+			only: true,
+			read: ({ xlsxSheetSelectedRows }) =>
+				lifeExpectancySeriesStatisticsParts(xlsxSheetSelectedRows),
 		},
 		name: "ladName",
 		period: (_key, header: DeclaredHeader) => range(header.period),

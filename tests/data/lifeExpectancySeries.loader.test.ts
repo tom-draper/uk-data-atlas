@@ -1,12 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
-	loadLifeExpectancySeries,
-	loadLifeExpectancySeriesRows,
+	lifeExpectancySeriesStatisticsParts,
 	sourceDir,
 } from "@uk-data-atlas/datasets";
 
-const HEADER =
-	"Period,Country,Area type,Area code,Area name,Sex,Sex code,Age band,Age group,Life expectancy,Lower confidence interval,Upper confidence interval";
+const headers = new Map([
+	[0, "Period"],
+	[2, "Area type"],
+	[3, "Area code"],
+	[4, "Area name"],
+	[5, "Sex"],
+	[7, "Age group"],
+	[9, "Life expectancy"],
+	[10, "Lower confidence interval"],
+	[11, "Upper confidence interval"],
+]);
 
 const row = (
 	period: string,
@@ -16,11 +24,37 @@ const row = (
 	ageGroup = "<1",
 	areaType = "Local Areas",
 ) =>
-	`${period},England,${areaType},${code},A place,${sex},1,1,${ageGroup},${value},${lower},${upper}`;
+	new Map([
+		[0, period],
+		[2, areaType],
+		[3, code],
+		[4, "A place"],
+		[5, sex],
+		[7, ageGroup],
+		[9, String(value)],
+		[10, String(lower)],
+		[11, String(upper)],
+	]);
 
-// Sheet 1 carries five preamble lines before its header.
-const sheet = (rows: string[]) =>
-	["t", "t", "t", "t", "t", HEADER, ...rows].join("\n");
+type Row = ReadonlyMap<number, string>;
+
+/** A reader that streams the given rows after a preamble and the header. */
+const readerOf =
+	(
+		rows: Row[],
+		requests: { path: string; columns: readonly number[] }[] = [],
+	) =>
+	async (
+		path: string,
+		_sheet: string,
+		columns: readonly number[],
+		visit: (row: Row) => void,
+	) => {
+		requests.push({ path, columns });
+		visit(new Map([[0, "Contents"]]));
+		visit(headers);
+		for (const line of rows) visit(line);
+	};
 
 const complete = [
 	row("2001 to 2003", "E06000001", "Male", [73.42, 72.68, 74.16]),
@@ -35,52 +69,10 @@ const complete = [
 	row("2020 to 2022", "E10000003", "Female", [84, 83, 85]),
 ];
 
-describe("loadLifeExpectancySeries", () => {
+describe("lifeExpectancySeriesStatisticsParts", () => {
 	it("streams only the columns needed for each estimate", async () => {
-		const requests: Array<{ path: string; columns: readonly number[] }> =
-			[];
-		const headers = new Map([
-			[0, "Period"],
-			[2, "Area type"],
-			[3, "Area code"],
-			[4, "Area name"],
-			[5, "Sex"],
-			[7, "Age group"],
-			[9, "Life expectancy"],
-			[10, "Lower confidence interval"],
-			[11, "Upper confidence interval"],
-		]);
-		const streamRows = async (
-			path: string,
-			_sheet: string,
-			columns: readonly number[],
-			visit: (row: ReadonlyMap<number, string>) => void,
-		) => {
-			requests.push({ path, columns });
-			visit(headers);
-			for (const [period, sex, values] of [
-				["2001 to 2003", "Male", [73.42, 72.68, 74.16]],
-				["2001 to 2003", "Female", [79.1, 78.4, 79.8]],
-				["2020 to 2022", "Male", [75.97, 75.21, 76.74]],
-				["2020 to 2022", "Female", [80.08, 79.37, 80.79]],
-			] as const)
-				visit(
-					new Map([
-						[0, period],
-						[2, "Local Areas"],
-						[3, "E06000001"],
-						[4, "Hartlepool"],
-						[5, sex],
-						[7, "<1"],
-						[9, String(values[0])],
-						[10, String(values[1])],
-						[11, String(values[2])],
-					]),
-				);
-		};
-
-		const datasets = await loadLifeExpectancySeriesRows(streamRows);
-
+		const requests: { path: string; columns: readonly number[] }[] = [];
+		await lifeExpectancySeriesStatisticsParts(readerOf(complete, requests));
 		expect(requests).toEqual([
 			{
 				path: sourceDir(
@@ -90,28 +82,37 @@ describe("loadLifeExpectancySeries", () => {
 				columns: [0, 2, 3, 4, 5, 7, 9, 10, 11],
 			},
 		]);
-		expect(datasets[2003].data.E06000001.male).toEqual({
-			value: 73.42,
-			lower: 72.68,
-			upper: 74.16,
-		});
 	});
 
 	it("keeps every period's estimate with its confidence interval", async () => {
-		const datasets = await loadLifeExpectancySeries(sheet(complete));
+		const parts = await lifeExpectancySeriesStatisticsParts(
+			readerOf(complete),
+		);
 
-		expect(Object.keys(datasets)).toEqual(["2003", "2022"]);
-		expect(datasets[2022]).toMatchObject({
-			type: "life-expectancy-series",
-			period: "2020-2022",
-			boundaryYear: 2025,
-		});
-		expect(datasets[2003].data.E06000001.male).toEqual({
-			value: 73.42,
-			lower: 72.68,
-			upper: 74.16,
-		});
-		expect(Object.keys(datasets[2022].data)).toEqual(["E06000001"]);
+		expect(parts.map(({ key }) => key)).toEqual(["2001-2003", "2020-2022"]);
+		expect(parts[0].records).toEqual([
+			{
+				code: "E06000001",
+				name: "A place",
+				values: [
+					{
+						measure: "life-expectancy",
+						members: { sex: "male" },
+						value: 73.42,
+						lower: 72.68,
+						upper: 74.16,
+					},
+					{
+						measure: "life-expectancy",
+						members: { sex: "female" },
+						value: 79.1,
+						lower: 78.4,
+						upper: 79.8,
+					},
+				],
+			},
+		]);
+		expect(parts[1].records.map(({ code }) => code)).toEqual(["E06000001"]);
 	});
 
 	it("refuses a period that covers different areas", async () => {
@@ -120,18 +121,18 @@ describe("loadLifeExpectancySeries", () => {
 			row("2020 to 2022", "E06000002", "Male", [76, 75, 77]),
 			row("2020 to 2022", "E06000002", "Female", [80, 79, 81]),
 		];
-		await expect(loadLifeExpectancySeries(sheet(uneven))).rejects.toThrow(
-			/2001-2003 does not cover the same areas/,
-		);
+		await expect(
+			lifeExpectancySeriesStatisticsParts(readerOf(uneven)),
+		).rejects.toThrow(/2001-2003 does not cover the same areas/);
 	});
 
 	it("refuses an area missing one sex", async () => {
 		const halfMissing = complete.filter(
 			(line) =>
-				!(line.startsWith("2001 to 2003") && line.includes("Female")),
+				!(line.get(0) === "2001 to 2003" && line.get(5) === "Female"),
 		);
 		await expect(
-			loadLifeExpectancySeries(sheet(halfMissing)),
+			lifeExpectancySeriesStatisticsParts(readerOf(halfMissing)),
 		).rejects.toThrow(
 			/E06000001 lacks a male or female estimate for 2001-2003/,
 		);
