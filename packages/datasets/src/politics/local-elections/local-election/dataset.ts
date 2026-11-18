@@ -1,5 +1,8 @@
 import type { LocalElectionDataset } from "../../../types/elections.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -10,7 +13,7 @@ import {
 	type DeclaredField,
 	type DeclaredRelease,
 } from "../../../declaration/statistics.ts";
-import { loadLocalElection } from "../../../data/election/local-election/load.ts";
+import { localElectionStatisticsParts } from "../../../data/election/local-election/source.ts";
 import {
 	PARTY,
 	PARTY_REFERENCE,
@@ -81,9 +84,13 @@ export const localElection = defineDataset<LocalElectionDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: async ({ text, xlsxSheetRows }) =>
-		loadLocalElection({ text, xlsxSheetRows }),
+	load: noCompiledPayload<LocalElectionDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text, xlsxSheetRows }) =>
+				localElectionStatisticsParts({ text, xlsxSheetRows }),
+		},
 		payload: {
 			parts: () =>
 				Object.keys(LOCAL_POLLING_DAYS).map((key) => ({

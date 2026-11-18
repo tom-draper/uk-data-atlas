@@ -1,10 +1,13 @@
-// lib/data/election/local-election/load.ts
 import Papa from "papaparse";
 import type {
 	LocalElectionDataset,
 	LocalElectionExcludedWard,
 	LocalElectionWardData,
 } from "../../../types/elections.ts";
+import type {
+	DirectPart,
+	DirectRecord,
+} from "../../../declaration/statistics.ts";
 import { PARTY_INFO } from "../parties.ts";
 import {
 	type ElectionTableSourceConfig,
@@ -438,57 +441,102 @@ export type LocalElectionReader = {
 	) => Promise<void>;
 };
 
-// Loads and parses every configured local election source via the provided
-// reader (used by the precompile script), keyed by year.
-export const loadLocalElection = async (
+/**
+ * One year's wards as records: party votes for each party that stood, and the
+ * electorate and turnout where the source publishes them. A ward published
+ * under another code names that code as its parent.
+ */
+export const localElectionRecords = (
+	dataset: LocalElectionDataset,
+	withTurnout: boolean,
+): DirectRecord[] =>
+	Object.values(dataset.data).map((ward) => ({
+		code: ward.wardCode,
+		...(ward.sourceWardCode
+			? { parents: { sourceWardCode: { code: ward.sourceWardCode } } }
+			: {}),
+		contest: {
+			area_name: ward.wardName,
+			authority_code: ward.ladCode,
+			authority_name: ward.ladName,
+			winner: dataset.results[ward.wardCode],
+		},
+		values: [
+			...Object.entries(ward.partyVotes).map(([party, value]) => ({
+				measure: "party-votes",
+				members: { party },
+				value: value ?? null,
+			})),
+			...(withTurnout
+				? [
+						{ measure: "electorate", value: ward.electorate },
+						{ measure: "turnout", value: ward.turnoutPercent },
+					]
+				: []),
+		],
+	}));
+
+/** Every configured local election, one part per year. */
+export const localElectionStatisticsParts = async (
 	reader: LocalElectionReader,
-): Promise<Record<string, LocalElectionDataset>> => {
-	const datasets: Record<string, LocalElectionDataset> = {};
+): Promise<DirectPart[]> => {
+	const parts: DirectPart[] = [];
 	for (const config of Object.values(ELECTION_SOURCES)) {
+		let dataset: LocalElectionDataset;
 		if (config.source === "leap") {
-			datasets[config.year] = parseLeapLocalElection(
+			dataset = parseLeapLocalElection(
 				await reader.text(config.path),
 				config,
 			);
-			continue;
-		}
-		const wardList = config.wardList
-			? wardCodesByName(
-					await reader.text(config.wardList.path),
-					config.wardList,
-				)
-			: undefined;
-		if (reader.xlsxSheetRows) {
-			const wardRows = await parseSheetRows(
-				(visit) =>
-					reader.xlsxSheetRows!(config.path, config.sheet, visit),
-				config.fields.name,
-			);
-			const candidateRows = await parseSheetRows(
-				(visit) =>
-					reader.xlsxSheetRows!(
+		} else {
+			const wardList = config.wardList
+				? wardCodesByName(
+						await reader.text(config.wardList.path),
+						config.wardList,
+					)
+				: undefined;
+			if (reader.xlsxSheetRows) {
+				const wardRows = await parseSheetRows(
+					(visit) =>
+						reader.xlsxSheetRows!(config.path, config.sheet, visit),
+					config.fields.name,
+				);
+				const candidateRows = await parseSheetRows(
+					(visit) =>
+						reader.xlsxSheetRows!(
+							config.path,
+							config.candidates.sheet,
+							visit,
+						),
+					config.candidates.fields.name,
+				);
+				dataset = parseLocalElectionRows(
+					wardRows,
+					candidateRows,
+					config,
+					wardList,
+				);
+			} else {
+				if (!reader.xlsxSheet)
+					throw new Error(
+						"Local election reader needs an XLSX sheet reader",
+					);
+				dataset = parseLocalElectionTable(
+					await reader.xlsxSheet(config.path, config.sheet),
+					await reader.xlsxSheet(
 						config.path,
 						config.candidates.sheet,
-						visit,
 					),
-				config.candidates.fields.name,
-			);
-			datasets[config.year] = parseLocalElectionRows(
-				wardRows,
-				candidateRows,
-				config,
-				wardList,
-			);
-			continue;
+					config,
+					wardList,
+				);
+			}
 		}
-		if (!reader.xlsxSheet)
-			throw new Error("Local election reader needs an XLSX sheet reader");
-		datasets[config.year] = parseLocalElectionTable(
-			await reader.xlsxSheet(config.path, config.sheet),
-			await reader.xlsxSheet(config.path, config.candidates.sheet),
-			config,
-			wardList,
-		);
+		parts.push({
+			key: String(config.year),
+			// LEAP, the source to 2019, publishes no electorate or turnout.
+			records: localElectionRecords(dataset, config.year >= 2021),
+		});
 	}
-	return datasets;
+	return parts;
 };
