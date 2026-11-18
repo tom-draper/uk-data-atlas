@@ -195,8 +195,7 @@ mapping. Both are produced by `pnpm data:build` and included in route tracing.
 ### Coverage gap
 
 The query layer serves the catalogue's measures, because that is what the API
-reads and what `services/api/config/measure-dimensions.json` maps onto
-dimensions. The statistics tables hold 95 measures and the mapping covers 51.
+reads and what carries a series identity onto dimensions. The statistics tables hold 95 measures and the mapping covers 51.
 The other 44 are not catalogue measures yet, including child poverty,
 fuel poverty, claimant rate, electorate, imd scores and several health and
 school measures. Phase 2 cannot switch a dataset until its measure is in the

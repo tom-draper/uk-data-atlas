@@ -131,9 +131,10 @@ The build refuses to publish if a contest's winner differs from its
 
 ## API measures and dimensions
 
-`services/api/config/measure-dimensions.json` maps catalogue measure IDs to
-statistics measures and dimension members. A dataset ID disambiguates measures
-published by more than one dataset. The `statistics-vocabulary` stage derives
+Each catalogue measure carries a series identity: a statistics measure and
+dimension members. A dataset ID disambiguates measures published by more than
+one dataset. The computed measures and default members are in
+`packages/measures/src/computedMeasures.ts`. The `statistics-vocabulary` stage derives
 labels, parents and ordering from the statistics tables.
 
 `data/build/statistics-read-path.json` is a build intermediate that maps each
