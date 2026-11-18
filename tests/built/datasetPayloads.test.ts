@@ -1,14 +1,11 @@
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { gunzipSync } from "node:zlib";
 import { expect, it } from "vitest";
 
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
-import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import { directPayloadProblem } from "../../pipeline/src/checks/directPayloadGoldens";
 import {
-	comparableCompiled,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/catalogue/node";
@@ -18,10 +15,10 @@ const digest = (text: string) =>
 
 /**
  * Reads the built `data/build/atlas.sqlite` and `atlas-cache.sqlite`. Every
- * dataset served from rows has no stored payload, matches the compiled values,
+ * dataset served from rows has no stored payload, matches its golden hash,
  * and is in the cache with the same bytes.
  */
-it("serves datasets from rows with the compiled values", () => {
+it("serves datasets from rows with their golden payloads", () => {
 	const root = process.cwd();
 	const database = new DatabaseSync("data/build/atlas.sqlite", {
 		readOnly: true,
@@ -50,27 +47,9 @@ it("serves datasets from rows with the compiled values", () => {
 				String(row.type),
 				output,
 			);
-			// A dataset with no compiler has no file to compare with: its golden hash.
-			if (
-				STATISTICS_DATASETS.some(
-					(config) => config.type === row.type && config.direct?.only,
-				)
-			)
-				expect(
-					directPayloadProblem(String(row.type), rebuilt),
-				).toBeUndefined();
-			else
-				expect(JSON.parse(rebuilt), output).toEqual(
-					comparableCompiled(
-						String(row.type),
-						JSON.parse(
-							readFileSync(
-								`data/build/datasets/${output}.json`,
-								"utf8",
-							),
-						),
-					),
-				);
+			expect(
+				directPayloadProblem(String(row.type), rebuilt),
+			).toBeUndefined();
 			const entry = cached.get(output);
 			expect(entry?.source_sha256, output).toBe(row.sha256);
 			expect(entry?.sha256, output).toBe(digest(rebuilt));

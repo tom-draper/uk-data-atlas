@@ -5,23 +5,12 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { test, type TestContext } from "vitest";
-import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import { verifyDatasetPayloads } from "../../src/checks/verifyDatasetPayloads";
 
-// A type whose generated payload drops a header field its compiler writes.
-const dropping = STATISTICS_DATASETS.find((config) =>
-	config.payload?.dropped?.includes("excludedWards"),
-)!.type;
-
-/** A root whose atlas cache holds the generated payloads, beside the compiled ones. */
+/** A root whose atlas cache holds the payloads generated from rows. */
 function fixture(
 	context: TestContext,
-	datasets: {
-		type: string;
-		output: string;
-		compiled: unknown;
-		generated: unknown;
-	}[],
+	datasets: { type: string; output: string; generated: unknown }[],
 ) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-payload-check-"));
 	context.onTestFinished(() =>
@@ -39,57 +28,34 @@ function fixture(
 	cache.exec(
 		"CREATE TABLE dataset_payload (output TEXT NOT NULL PRIMARY KEY, gzip BLOB NOT NULL)",
 	);
-	for (const { output, compiled, generated } of datasets) {
-		writeFileSync(
-			join(build, "datasets", `${output}.json`),
-			JSON.stringify(compiled),
-		);
+	for (const { output, generated } of datasets)
 		cache
 			.prepare("INSERT INTO dataset_payload VALUES (?, ?)")
 			.run(output, gzipSync(JSON.stringify(generated)));
-	}
 	cache.close();
 	return root;
 }
 
-test("passes when the generated payload holds the compiled values", (context) => {
+test("skips a dataset stored as is, which has nothing generated to check", (context) => {
 	const root = fixture(context, [
-		{
-			type: dropping,
-			output: "one",
-			compiled: { part: { count: 1, excludedWards: ["W1"] } },
-			generated: { part: { count: 1 } },
-		},
-		{
-			type: "fuel-poverty",
-			output: "two",
-			compiled: { 2023: { data: { E01: { value: 2 } } } },
-			generated: { 2023: { data: { E01: { value: 2 } } } },
-		},
-		// Stored as is, so there is nothing generated to compare.
-		{ type: "notFromRows", output: "three", compiled: {}, generated: {} },
+		{ type: "notFromRows", output: "three", generated: {} },
 	]);
-	assert.equal(verifyDatasetPayloads(root), 2);
+	assert.equal(verifyDatasetPayloads(root), 0);
 });
 
-test("fails with the path of the first value that differs", (context) => {
+test("fails when a generated payload is not its golden", (context) => {
 	const root = fixture(context, [
-		{
-			type: dropping,
-			output: "one",
-			compiled: { part: { count: 1, excludedWards: [] } },
-			generated: { part: { count: 2 } },
-		},
+		{ type: "fuel-poverty", output: "two", generated: { 2023: {} } },
 	]);
 	assert.throws(
 		() => verifyDatasetPayloads(root),
-		new RegExp(`${dropping}: statistics rows do not match.*part\\.count`),
+		/fuel-poverty: the payload generated from its rows is .* not the golden/,
 	);
 });
 
 test("fails when the cache lacks a payload it should hold", (context) => {
 	const root = fixture(context, [
-		{ type: "fuel-poverty", output: "two", compiled: {}, generated: {} },
+		{ type: "fuel-poverty", output: "two", generated: {} },
 	]);
 	const cache = new DatabaseSync(join(root, "data/build/atlas-cache.sqlite"));
 	cache.exec("DELETE FROM dataset_payload");
