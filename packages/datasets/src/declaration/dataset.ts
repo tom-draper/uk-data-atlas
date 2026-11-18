@@ -21,6 +21,7 @@ import type {
 } from "./display.ts";
 import { yearParts } from "./yearParts.ts";
 import type { UpdateCadence } from "./cadence.ts";
+import type { DatasetGuide } from "./guides.ts";
 import { declarationProblems } from "./validate.ts";
 
 /**
@@ -51,6 +52,15 @@ export type DeclaredSource = {
 	/** Date the source was retrieved, when known. */
 	retrievedAt?: string;
 };
+
+/**
+ * The words the docs and `/datasets` pages use for the dataset. Its topic is
+ * the declaration's own, so it is not repeated here.
+ */
+export type DeclaredGuide = Pick<
+	DatasetGuide,
+	"title" | "about" | "summary" | "publishedOn"
+>;
 
 /** The boundary release a dataset's records are keyed by. */
 export type DeclaredBoundary = { type: BoundaryType; year: number };
@@ -159,6 +169,8 @@ export type DatasetDeclaration<
 	topic: DatasetTopic;
 	/** Other topics the dataset is also listed under, never the primary. */
 	related?: readonly DatasetTopic[];
+	/** What the docs and `/datasets` pages say about the dataset. */
+	guide: DeclaredGuide;
 	source: DeclaredSource;
 	boundary: DeclaredBoundary;
 	/**

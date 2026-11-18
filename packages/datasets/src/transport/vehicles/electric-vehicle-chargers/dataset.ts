@@ -16,6 +16,12 @@ export const electricVehicleChargers = defineDataset<
 	related: ["energy"],
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+	guide: {
+		title: "Public electric vehicle chargers by local authority",
+		about: "How many public charging devices for electric vehicles there are in each local authority, counted every quarter by the Department for Transport.",
+		summary:
+			"Public electric vehicle charger counts by UK local authority.",
+	},
 	source: {
 		name: "Public electric vehicle chargers by local authority",
 		publisher: "Department for Transport",

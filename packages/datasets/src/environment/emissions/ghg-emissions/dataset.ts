@@ -13,6 +13,12 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 	topic: "emissions",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+	guide: {
+		title: "Greenhouse Gas Emissions",
+		about: "Estimated greenhouse gas emissions produced within each local authority. The map defaults to emissions per person so areas of different sizes can be compared. Select total emissions, emissions excluding land use or a sector such as transport, homes, industry or agriculture in the legend. Sector figures are totals in kilotonnes of carbon dioxide equivalent; land use can be negative where it removes more emissions than it produces.",
+		summary:
+			"Net greenhouse gas emissions produced within each UK local authority every year from 2005 to 2024, in kilotonnes of CO2 equivalent. The legend also maps transport, domestic, industrial, commercial, public-sector, agricultural, waste and land-use emissions separately in kt CO2e. Land use can be negative where removals exceed emissions; regional sector totals sum the authorities.",
+	},
 	source: {
 		name: "Greenhouse Gas Emissions",
 		publisher: "Department for Energy Security and Net Zero",

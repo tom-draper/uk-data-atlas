@@ -15,6 +15,12 @@ export const housePrice = defineDataset<HousePriceDataset>({
 	boundary: { type: "ward", year: 2021 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	layout: { regionChunks: { kind: "regional" } },
+	guide: {
+		title: "House Prices",
+		about: "The prices homes sold for in each ward of England and Wales, based on Land Registry sales records, going back to 1995. The Atlas shows the median price, the price in the middle of all sales.",
+		summary:
+			"Median prices paid for homes in every ward in England and Wales, for each year from 1995 to 2022. This was the final ONS ward-level edition, and its partial 2023 is left out because it isn't comparable.",
+	},
 	source: {
 		name: "House Prices",
 		publisher: "Office for National Statistics",

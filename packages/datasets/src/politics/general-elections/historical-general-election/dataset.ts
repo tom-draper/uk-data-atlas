@@ -128,6 +128,10 @@ export const historicalGeneralElection =
 		topic: "general-elections",
 		boundary: { type: "constituency", year: 2019 },
 		chartPending: true,
+		guide: {
+			title: "General Election Results, 1918-2019",
+			about: "General election results for every constituency back to 1918, grouped into broad party families so a century of results can be compared.",
+		},
 		source: {
 			name: "General Election Results, 1918-2019",
 			publisher: "House of Commons Library",

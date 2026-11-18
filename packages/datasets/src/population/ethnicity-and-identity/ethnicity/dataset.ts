@@ -64,6 +64,12 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 	topic: "ethnicity-and-identity",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
+	guide: {
+		title: "Ethnicity",
+		about: "The ethnic groups residents identified with in the 2021 Census, for every local authority in England and Wales. It shows how the make-up of the population differs from place to place.",
+		summary:
+			"How many residents of each local authority in England and Wales belong to each of the nineteen ethnic groups recorded in Census 2021.",
+	},
 	source: {
 		name: "Ethnicity",
 		publisher: "Office for National Statistics",

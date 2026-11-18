@@ -19,6 +19,12 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 	related: ["energy"],
 	boundary: { type: "lsoa", year: 2021 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Fuel Poverty",
+		about: "The share of households in each small neighbourhood of England in fuel poverty: living in a home with a poor energy efficiency rating and left below the poverty line after paying for energy.",
+		summary:
+			"The share of households in fuel poverty in each small neighbourhood of England. The fuel poverty map switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
+	},
 	source: {
 		name: "Fuel Poverty",
 		publisher: "Department for Energy Security and Net Zero",

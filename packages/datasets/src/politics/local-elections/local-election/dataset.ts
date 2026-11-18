@@ -68,6 +68,12 @@ export const localElection = defineDataset<LocalElectionDataset>({
 		minimumDatasets: 9,
 		requiredDataFields: ["wardCode", "wardName", "partyVotes"],
 	},
+	guide: {
+		title: "Local Election Results",
+		about: "Results of council elections in each ward of England and Wales: votes for each party, the winners and turnout where it's recorded.",
+		summary:
+			"Ward-level local election results for England and Wales from 2016 to 2025: votes by party, the winning party, and turnout from 2021 onwards.",
+	},
 	source: {
 		name: "Local Election Results",
 		publisher:

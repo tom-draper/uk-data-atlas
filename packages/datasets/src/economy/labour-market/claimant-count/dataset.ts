@@ -11,6 +11,12 @@ import { claimantCountStatisticsPart } from "../../../data/claimant-count/source
 export const claimantCount = defineDataset<ClaimantCountDataset>({
 	id: "claimant-count",
 	topic: "labour-market",
+	guide: {
+		title: "Claimant Count",
+		about: "The share of working-age residents claiming unemployment-related benefits, Universal Credit or Jobseeker's Allowance, in each local authority. It's published monthly, so it's the most up-to-date local view of unemployment.",
+		summary:
+			"How many people in each local authority count as claimants of Universal Credit or Jobseeker's Allowance, in total and for 16 to 24 year olds.",
+	},
 	source: {
 		name: "Claimant Count",
 		publisher: "Office for National Statistics",

@@ -13,6 +13,12 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 	topic: "homelessness",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Temporary Accommodation",
+		about: "How many households in each English council area are living in temporary accommodation, such as hostels or bed and breakfasts, while they wait for a settled home. Rates are shown per 1,000 households.",
+		summary:
+			"Households living in temporary accommodation in each English local authority, including households with children and the number of children.",
+	},
 	source: {
 		name: "Temporary Accommodation",
 		publisher: "Ministry of Housing, Communities and Local Government",

@@ -14,6 +14,10 @@ export const housingTenure = defineDataset<IndicatorDataset<"housing-tenure">>({
 	topic: "housing-stock",
 	boundary: { type: "lsoa", year: 2021 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
+	guide: {
+		title: "Housing tenure",
+		about: "Census 2021 household tenure for LSOAs in England and Wales. The legend selects owned, owned outright, owned with a mortgage or loan, shared ownership, social rent, private rent or rent free. Regional percentages divide summed category household counts by summed total households.",
+	},
 	source: {
 		name: "Housing tenure",
 		publisher: "Office for National Statistics",

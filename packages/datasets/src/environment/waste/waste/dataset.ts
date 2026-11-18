@@ -52,6 +52,12 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 	topic: "waste",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Local authority collected waste management",
+		about: "How much household and other waste English councils collect, and how much of it is recycled, composted or sent to landfill.",
+		summary:
+			"Local-authority collected waste in England, including material sent for recycling, composting and reuse. The atlas legend switches between collected tonnes, recycled tonnes and the recycling percentage. Tonnage measures can also be shown per 100,000 residents. For authorities with data, regional recycling percentages divide summed recycled tonnes by summed collected tonnes.",
+	},
 	source: {
 		name: "Local authority collected waste management",
 		publisher: "Department for Environment, Food and Rural Affairs",

@@ -42,6 +42,14 @@ export function declarationProblems(declaration: DatasetDeclaration): string[] {
 	if (!KEBAB.test(declaration.id))
 		problem(`id ${declaration.id} is not kebab-case`);
 
+	for (const key of ["title", "about"] as const)
+		if (blank(declaration.guide[key])) problem(`guide.${key} is empty`);
+	for (const key of ["summary", "publishedOn"] as const) {
+		const text = declaration.guide[key];
+		if (text !== undefined && blank(text))
+			problem(`guide.${key} is empty, leave it out instead`);
+	}
+
 	const { source } = declaration;
 	for (const key of [
 		"name",

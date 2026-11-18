@@ -12,6 +12,10 @@ import type { DirectRecord } from "../../../declaration/statistics.ts";
 export const landArea = defineDataset<LandAreaDataset>({
 	id: "land-area",
 	topic: "emissions",
+	guide: {
+		title: "Land Area",
+		about: "The official size of each local authority in hectares, measured by the Office for National Statistics. Land area is what population density is calculated from, so it excludes lakes, reservoirs and other inland water.",
+	},
 	source: {
 		name: "Land Area",
 		publisher: "Office for National Statistics",

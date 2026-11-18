@@ -15,6 +15,12 @@ export const electricityConsumption =
 		topic: "energy",
 		boundary: { type: "localAuthority", year: 2025 },
 		coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
+		guide: {
+			title: "Subnational electricity consumption",
+			about: "How much electricity homes and businesses in each local authority in Great Britain use each year, from meter readings.",
+			summary:
+				"Metered electricity used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly. The map legend switches between all, domestic and non-domestic meters, in total GWh or GWh per 100,000 residents. Cards show the selected meter group in total GWh; regional figures sum consumption.",
+		},
 		source: {
 			name: SOURCE.name,
 			publisher: SOURCE.source,

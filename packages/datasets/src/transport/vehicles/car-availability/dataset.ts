@@ -17,6 +17,12 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 	topic: "vehicles",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
+	guide: {
+		title: "Car Availability",
+		about: "How many cars or vans households have, from the 2021 Census. The Atlas maps the share of households with no car, which is highest in big cities with good public transport.",
+		summary:
+			"How many households in each local authority in England and Wales have no car, one, two, or three or more, from Census 2021.",
+	},
 	source: {
 		name: "Car Availability",
 		publisher: "Office for National Statistics",

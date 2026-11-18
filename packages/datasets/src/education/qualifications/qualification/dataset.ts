@@ -17,6 +17,12 @@ export const qualification = defineDataset<QualificationDataset>({
 	topic: "qualifications",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
+	guide: {
+		title: "Qualifications",
+		about: "The highest qualification held by residents aged 16 and over in the 2021 Census, from no qualifications up to degree level. The Atlas maps the share of residents with a degree or equivalent.",
+		summary:
+			"The highest qualification held by residents aged 16 and over in each local authority in England and Wales, from Census 2021.",
+	},
 	source: {
 		name: "Qualifications",
 		publisher: "Office for National Statistics",

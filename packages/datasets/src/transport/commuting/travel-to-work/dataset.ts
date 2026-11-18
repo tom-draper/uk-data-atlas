@@ -18,6 +18,12 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	related: ["labour-market"],
+	guide: {
+		title: "Travel to Work",
+		about: "How people in work usually travel to their job, by car, public transport, bike or on foot, and how many worked mainly from home, from the 2021 Census.",
+		summary:
+			"How working residents of each local authority in England and Wales get to work, from driving and public transport to cycling and working from home, from Census 2021.",
+	},
 	source: {
 		name: "Travel to Work",
 		publisher: "Office for National Statistics",
