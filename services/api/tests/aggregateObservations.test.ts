@@ -5,6 +5,11 @@ import type {
 	MeasureSource,
 } from "@uk-data-atlas/catalogue/node";
 import { readAggregateObservations } from "../src/aggregateObservations";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 
 const source = {
 	datasetId: "dataset.example",
@@ -27,14 +32,22 @@ const artifact = (records: Array<Record<string, unknown>>) =>
 		periods: [{ period: "2024", records }],
 	}) as AnyMeasureObservationArtifact;
 
+const indexed = (observation: AnyMeasureObservationArtifact) => {
+	const identity = { measure: "measure.example" };
+	const measureObservations = [observation];
+	registerSeriesObservations(
+		measureObservations,
+		new Map([[measureSeriesSourceKey(identity, source), observation]]),
+	);
+	return { measureObservations, seriesKey: measureSeriesKey(identity) };
+};
+
 test("reads numeric source-exact records", () => {
 	const result = readAggregateObservations({
 		measureId: "measure.example",
 		source,
 		period: "2024",
-		artifacts: {
-			measureObservations: [artifact([{ areaCode: "E1", value: 4 }])],
-		},
+		artifacts: indexed(artifact([{ areaCode: "E1", value: 4 }])),
 	});
 	assert.equal("status" in result, false);
 	if ("status" in result) return;
@@ -55,11 +68,7 @@ test("reports missing and non-numeric catalogue artifacts", () => {
 		measureId: "measure.example",
 		source,
 		period: "2024",
-		artifacts: {
-			measureObservations: [
-				artifact([{ areaCode: "E1", category: "high" }]),
-			],
-		},
+		artifacts: indexed(artifact([{ areaCode: "E1", category: "high" }])),
 	});
 	assert.equal("status" in nonNumeric ? nonNumeric.status : undefined, 503);
 });
