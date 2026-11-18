@@ -27,6 +27,9 @@ parent process, and budgets 2 GiB per worker. Automatic concurrency is at least
 one and at most four, and leaves one CPU available when possible.
 `ATLAS_PRECOMPILE_JOBS` overrides this automatic sizing. A value of `1` compiles
 on the main thread. A positive integer override bypasses the resource budget.
+Boundary tile compilation uses the same sizing and override, with one release
+per worker. The parent stages
+archives and publishes them only after all release jobs succeed.
 
 `pnpm data:build` reports the five slowest stages after a build completes or a
 stage returns a failure status. Each entry separates command time from overhead,
