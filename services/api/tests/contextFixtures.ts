@@ -466,6 +466,11 @@ export const dataCatalog: DataCatalog = {
 	],
 };
 
+dataCatalog.measures = dataCatalog.measures.map((measure) => ({
+	...measure,
+	series: measure.series ?? { measure: measure.id },
+}));
+
 export const measureObservations: MeasureObservationArtifact[] = [
 	{
 		schemaVersion: 1,

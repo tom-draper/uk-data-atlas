@@ -259,7 +259,20 @@ test("cites a measure through the observations holding the area's value", () => 
 test("cites a selected dimensional series without rewriting its public measure", () => {
 	const context = testContext({
 		...citationContext,
-		dataCatalog: { ...citationContext.dataCatalog! },
+		dataCatalog: {
+			...citationContext.dataCatalog!,
+			measures: citationContext
+				.dataCatalog!.measures.filter(
+					(measure) => measure.id === "population",
+				)
+				.map((measure) => ({
+					...measure,
+					series: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				})),
+		},
 		measureDimensions: {
 			vocabulary: {
 				schemaVersion: 1,
