@@ -29,6 +29,12 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 	topic: "labour-market",
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS"],
+	guide: {
+		title: "Unemployment",
+		about: "Estimates of the share of economically active people who are out of work and looking for a job, modelled for each local authority from survey data. The series ended in 2022.",
+		summary:
+			"The ONS's final model-based estimates of unemployment for local authorities in Great Britain, from 1996 to 2021, as a rate and a count, with confidence intervals. ONS discontinued this series in August 2022.",
+	},
 	source: {
 		name: "Unemployment",
 		publisher: "Office for National Statistics",

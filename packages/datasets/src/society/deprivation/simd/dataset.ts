@@ -17,6 +17,12 @@ export const simd = defineDataset<SIMDDataset>({
 	id: "simd",
 	topic: "deprivation",
 	boundary: { type: "dataZone", year: 2011 },
+	guide: {
+		title: "Scottish Index of Multiple Deprivation",
+		about: "Scotland's index of deprivation, ranking each of its small areas, called data zones, from most to least deprived. It's widely used to target funding and services in Scotland.",
+		summary:
+			"The Scottish Index of Multiple Deprivation, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
+	},
 	source: {
 		name: "Scottish Index of Multiple Deprivation",
 		publisher: "Scottish Government",

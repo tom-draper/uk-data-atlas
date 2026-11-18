@@ -21,6 +21,12 @@ export const population = defineDataset<PopulationDataset>({
 			locationAggregate: "population",
 		},
 	},
+	guide: {
+		title: "Population",
+		about: "Population estimates for the much smaller electoral wards of England and Wales, broken down by age and sex. The Atlas uses it for its population density, age and gender maps, which show how people are spread within a council area rather than across the country.",
+		summary:
+			"Official population estimates for wards in England and Wales, through mid-2022. Newer ONS ward estimates, on May 2025 boundaries, are not in the Atlas yet. Population density is included too.",
+	},
 	source: {
 		name: "Population",
 		publisher: "Office for National Statistics",

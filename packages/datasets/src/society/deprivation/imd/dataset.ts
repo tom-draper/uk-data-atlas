@@ -110,6 +110,12 @@ export const imd = defineDataset<IMDDataset>({
 	id: "imd",
 	topic: "deprivation",
 	boundary: { type: "lsoa", year: 2021 },
+	guide: {
+		title: "Indices of Multiple Deprivation",
+		about: "The English Indices of Deprivation rank every small neighbourhood in England from most to least deprived, combining income, employment, education, health, crime, housing and living environment. It's the standard way to find the most deprived areas in England.",
+		summary:
+			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles.",
+	},
 	source: {
 		name: "Indices of Multiple Deprivation",
 		publisher: "Ministry of Housing, Communities & Local Government",

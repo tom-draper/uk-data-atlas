@@ -22,6 +22,12 @@ const WEIGHT = {
 export const broadband = defineDataset<BroadbandDataset>({
 	id: "broadband",
 	topic: "digital-connectivity",
+	guide: {
+		title: "Broadband Coverage",
+		about: "The share of homes and businesses in each local authority that can get each speed of fixed broadband, from superfast to full fibre gigabit, from Ofcom's annual Connected Nations report.",
+		summary:
+			"The share of premises in each UK local authority that can get superfast, ultrafast, full fibre and gigabit broadband, from Ofcom.",
+	},
 	source: {
 		name: "Broadband Coverage",
 		publisher: "Ofcom",

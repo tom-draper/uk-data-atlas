@@ -39,6 +39,16 @@ describe("declaration validation", () => {
 
 	it.each([
 		[
+			"a guide with no title",
+			(d: any) => (d.guide.title = ""),
+			"guide.title is empty",
+		],
+		[
+			"a blank optional guide summary",
+			(d: any) => (d.guide.summary = " "),
+			"guide.summary is empty, leave it out instead",
+		],
+		[
 			"a blank source term",
 			(d: any) => (d.source.licence = " "),
 			"source.licence is empty",

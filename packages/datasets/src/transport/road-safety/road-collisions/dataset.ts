@@ -12,6 +12,12 @@ export const roadCollisions = defineDataset<RoadCollisionsDataset>({
 	boundary: { type: "localAuthority", year: 2025 },
 	chartPending: true,
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT"],
+	guide: {
+		title: "Road Collisions by Local Authority",
+		about: "Road collisions in which someone was injured, as reported to the police, for each local authority in Great Britain, split by how serious the worst injury was.",
+		summary:
+			"Final annual counts of road collisions reported to the police in 2024 and 2025, by how serious the worst injury was, for local authorities in Great Britain and small areas in England and Wales.",
+	},
 	source: {
 		name: "Road Collisions by Local Authority",
 		publisher: "Department for Transport",

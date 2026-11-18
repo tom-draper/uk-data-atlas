@@ -16,6 +16,12 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 	topic: "earnings-and-income",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Workplace income",
+		about: "Pay for jobs based in each local authority in England, whoever does them. Enable the Workplace Pay card and select annual or hourly pay, median or mean. Regional figures average the available authority estimates without population weighting. Compare it with the resident Income card to see differences between where people work and live.",
+		summary:
+			"Median and mean annual and hourly pay for employees in each English local authority, by where their jobs are located. Enable the Workplace Pay card to map earnings where jobs are located. Its legend offers annual or hourly median and mean pay, separately from the resident Income card. Regional workplace figures average available authority estimates; suppressed estimates remain unavailable.",
+	},
 	source: {
 		name: "Workplace income",
 		publisher: "Office for National Statistics",

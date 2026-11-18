@@ -22,6 +22,10 @@ export const housingAffordability = defineDataset<
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	publishMapValues: true,
 	related: ["earnings-and-income"],
+	guide: {
+		title: "House price to residence-based earnings ratio",
+		about: "How many years of typical local earnings it would take to buy a typical home in each local authority. A ratio of 10 means the median home costs ten times the median full-time salary of residents.",
+	},
 	source: {
 		name: "House price to residence-based earnings ratio",
 		publisher: "Office for National Statistics",

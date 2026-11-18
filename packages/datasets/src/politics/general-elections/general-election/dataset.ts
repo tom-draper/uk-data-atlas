@@ -37,6 +37,12 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 	id: "general-election",
 	topic: "general-elections",
 	boundary: { type: "constituency", year: 2024 },
+	guide: {
+		title: "General Election Results",
+		about: "Results of recent UK general elections for every Westminster constituency: votes for each party, the winner, turnout and majority.",
+		summary:
+			"Results for every Westminster constituency at the 2010, 2015, 2017, 2019 and 2024 general elections: votes for each party, vote shares, turnout and the winner.",
+	},
 	source: {
 		name: "General Election Results",
 		publisher: "House of Commons Library",

@@ -13,6 +13,12 @@ export const jobs = defineDataset<JobsDataset>({
 	topic: "labour-market",
 	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+	guide: {
+		title: "Jobs",
+		about: "How many jobs are based in each local authority, counted where people work rather than where they live. Places with large city centres or business parks can have more jobs than residents.",
+		summary:
+			"The total number of jobs in each local authority from 2011 to 2024, counted where people work rather than where they live.",
+	},
 	source: {
 		name: "Jobs",
 		publisher: "Office for National Statistics",

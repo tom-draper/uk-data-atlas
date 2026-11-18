@@ -22,6 +22,12 @@ export const nimdm = defineDataset<NIMDMDataset>({
 	id: "nimdm",
 	topic: "deprivation",
 	boundary: { type: "superOutputArea", year: 2011 },
+	guide: {
+		title: "Northern Ireland Multiple Deprivation Measure",
+		about: "Northern Ireland's measure of deprivation, ranking each of its small areas from most to least deprived across income, employment, health, education, access to services, living environment and crime.",
+		summary:
+			"The Northern Ireland Multiple Deprivation Measure, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
+	},
 	source: {
 		name: "Northern Ireland Multiple Deprivation Measure",
 		publisher: "Northern Ireland Statistics and Research Agency",

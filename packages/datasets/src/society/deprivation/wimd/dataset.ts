@@ -23,6 +23,12 @@ export const wimd = defineDataset<WIMDDataset>({
 	id: "wimd",
 	topic: "deprivation",
 	boundary: { type: "lsoa", year: 2011 },
+	guide: {
+		title: "Welsh Index of Multiple Deprivation",
+		about: "Wales's own index of deprivation, ranking every small neighbourhood in Wales across income, employment, health, education, access to services, housing, community safety and environment. Its ranks can't be compared directly with England's.",
+		summary:
+			"The Welsh Index of Multiple Deprivation, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
+	},
 	source: {
 		name: "Welsh Index of Multiple Deprivation",
 		publisher: "Welsh Government",

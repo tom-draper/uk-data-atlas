@@ -26,6 +26,7 @@ const catalogueFiles = [
 	`${catalogueRegistry}/registry.ts`,
 	`${catalogueRegistry}/generated.ts`,
 	"packages/datasets/src/data/declarations.ts",
+	"packages/datasets/src/declaration/declaredGuides.ts",
 ];
 // The atlas cache is one file with several writers. Each stage after the base
 // build adds tables to it, and tracks them through a stamp of its own. They

@@ -12,6 +12,12 @@ export const populationUk = defineDataset<PopulationUkDataset>({
 	topic: "population-estimates",
 	boundary: { type: "localAuthority", year: 2023 },
 	chartPending: true,
+	guide: {
+		title: "Population (Local Authority)",
+		about: "How many people live in each local authority across the UK, estimated every year by the Office for National Statistics between censuses. It's the standard yardstick for comparing places of different sizes, and many per-person figures in the Atlas are worked out from it.",
+		summary:
+			"Official population estimates from the Office for National Statistics: every UK local authority each year since 2011. Population density is included too.",
+	},
 	source: {
 		name: "Population (Local Authority)",
 		publisher: "Office for National Statistics",

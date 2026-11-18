@@ -15,6 +15,12 @@ export const airQuality = defineDataset<AirQualityDataset>({
 	id: "air-quality",
 	topic: "air-quality",
 	boundary: { type: "localAuthority", year: 2024 },
+	guide: {
+		title: "Air Quality",
+		about: "Modelled levels of the main air pollutants, nitrogen dioxide and fine particulate matter (PM2.5 and PM10), averaged over each local authority. These pollutants are linked to heart and lung disease.",
+		summary:
+			"Average background levels of nitrogen dioxide and particulate matter (PM10 and PM2.5) in each UK local authority, from Defra's modelled pollution maps.",
+	},
 	source: {
 		name: "Air Quality",
 		publisher: "Department for Environment, Food and Rural Affairs",

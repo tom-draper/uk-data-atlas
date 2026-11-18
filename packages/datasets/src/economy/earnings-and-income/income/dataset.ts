@@ -13,6 +13,12 @@ export const income = defineDataset<IncomeDataset>({
 	topic: "earnings-and-income",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Income",
+		about: "Pay for employees who live in each local authority in England, from the Annual Survey of Hours and Earnings. Select annual or hourly pay and median or mean. The median is the middle value, so a few very high earners don't skew it. Regional hourly figures average the available authority estimates without population weighting.",
+		summary:
+			"Median and mean annual and hourly pay for employees in each English local authority, by where workers live. The income legend switches between annual and hourly pay and between median and mean. Regional cards show an unweighted average of the available authority estimates, rather than a pooled regional median or mean.",
+	},
 	source: {
 		name: "Income",
 		publisher: "Office for National Statistics",

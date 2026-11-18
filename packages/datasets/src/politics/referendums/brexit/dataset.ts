@@ -15,6 +15,10 @@ export const brexit = defineDataset<BrexitLADDataset>({
 	id: "brexit",
 	topic: "referendums",
 	boundary: { type: "localAuthority", year: 2016 },
+	guide: {
+		title: "EU Referendum Results",
+		about: "Official results of the 2016 referendum on the UK's membership of the European Union, for each counting area, which were mostly local authorities.",
+	},
 	source: {
 		name: "EU Referendum Results",
 		publisher: "Electoral Commission",

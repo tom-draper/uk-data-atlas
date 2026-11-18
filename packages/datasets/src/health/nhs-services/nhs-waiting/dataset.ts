@@ -44,6 +44,11 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 	boundary: { type: "localAuthority", year: 2024 },
 	coverageCountries: ["GB-ENG"],
 	layout: { locationScope: { kind: "mapped", mappingField: "ladToIcb" } },
+	guide: {
+		title: "NHS Waiting Times",
+		about: "How long patients in England have been waiting for planned hospital treatment after a GP referral. Waits are reported for each integrated care board, the NHS body that plans services for an area.",
+		publishedOn: "integratedCareBoard",
+	},
 	source: {
 		name: "NHS Waiting Times",
 		publisher: "NHS England",

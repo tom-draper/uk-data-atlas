@@ -18,6 +18,12 @@ export const adultSocialCareOutcomes = defineDataset<
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,
+	guide: {
+		title: "Adult Social Care Outcomes Framework, England",
+		about: "How people who use adult social care in England rate their quality of life, scored out of 24 from a national survey. It's one of the main ways the government compares how well council care services work.",
+		summary:
+			"The care-related quality-of-life outcome score reported by English councils.",
+	},
 	source: {
 		name: "Adult Social Care Outcomes Framework, England",
 		publisher: "Department of Health and Social Care",

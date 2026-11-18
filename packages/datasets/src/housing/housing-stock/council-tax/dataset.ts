@@ -20,6 +20,12 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,
 	related: ["public-finance"],
+	guide: {
+		title: "Council Tax levels in England",
+		about: "The average Band D council tax bill in each English council area, including precepts for police, fire and parish councils. Band D is the standard band used to compare council tax between areas.",
+		summary:
+			"The council tax levels billing authorities in England set for 2026-27.",
+	},
 	source: {
 		name: "Council Tax levels in England",
 		publisher: "Ministry of Housing, Communities and Local Government",

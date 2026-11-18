@@ -18,6 +18,11 @@ export const localGovernmentFinance = defineDataset<
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG"],
 	publishMapValues: true,
+	guide: {
+		title: "Local authority revenue expenditure and financing",
+		about: "What English councils plan to spend on their services this financial year, from their budget returns to government. The Atlas maps spending on education services.",
+		summary: "English local-authority revenue budgets.",
+	},
 	source: {
 		name: "Local authority revenue expenditure and financing",
 		publisher: "Ministry of Housing, Communities and Local Government",

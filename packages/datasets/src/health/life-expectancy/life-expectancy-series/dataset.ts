@@ -13,6 +13,12 @@ import { lifeExpectancySeriesStatisticsParts } from "../../../data/life-expectan
 export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 	id: "life-expectancy-series",
 	topic: "life-expectancy",
+	guide: {
+		title: "Life Expectancy Series",
+		about: "Life expectancy at birth for men and women in each local area, going back to the early 2000s. It shows how the gap between places has changed over two decades, with confidence intervals so small differences aren't over-read.",
+		summary:
+			"Life expectancy at birth for men and women in local authorities across the UK, for every three-year period since 2001 to 2003, with confidence intervals. The map legend switches between life expectancy and healthy life expectancy, while retaining the male, female or average selection. Healthy life expectancy estimates the years lived in good health and uses its own scale and coverage. The separate Healthy Life Expectancy card is also available in the chart picker.",
+	},
 	source: {
 		name: "Life Expectancy Series",
 		publisher: "Office for National Statistics",

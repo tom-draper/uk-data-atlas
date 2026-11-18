@@ -15,6 +15,12 @@ export const businessActivity = defineDataset<
 	topic: "business",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
+	guide: {
+		title: "UK business: activity, size and location",
+		about: "How many businesses are based in each local authority, counting those registered for VAT or running a PAYE payroll. It gives a sense of the size and spread of local economies.",
+		summary:
+			"VAT and/or PAYE based enterprises in each UK local authority, published by broad industry group.",
+	},
 	source: {
 		name: "UK business: activity, size and location",
 		publisher: "Office for National Statistics",

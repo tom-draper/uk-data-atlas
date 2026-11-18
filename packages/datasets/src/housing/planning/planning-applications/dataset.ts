@@ -22,6 +22,12 @@ export const planningApplications = defineDataset<
 	topic: "planning",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
+	guide: {
+		title: "Planning applications in England",
+		about: "How many planning applications each local planning authority in England received in a quarter, from house extensions to major developments.",
+		summary:
+			"Planning applications received by English local authorities. The planning legend switches between applications received, decided and withdrawn during 2026 Q1. Outstanding counts are unavailable in this release. Regional cards sum available authority counts; suppressed measures remain unavailable.",
+	},
 	source: {
 		name: "Planning applications in England",
 		publisher: "Ministry of Housing, Communities and Local Government",

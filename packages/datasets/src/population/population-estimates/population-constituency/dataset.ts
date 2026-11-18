@@ -10,6 +10,12 @@ export const populationConstituency =
 	defineDataset<PopulationConstituencyDataset>({
 		id: "population-constituency",
 		topic: "population-estimates",
+		guide: {
+			title: "Population (Constituency)",
+			about: "How many people live in each Westminster constituency in England and Wales, on the boundaries used from the 2024 general election onwards. Useful for putting election results and other constituency figures in context.",
+			summary:
+				"Official population estimates for the Westminster constituencies first contested in 2024.",
+		},
 		source: {
 			name: "Population (Constituency)",
 			publisher: "Office for National Statistics",

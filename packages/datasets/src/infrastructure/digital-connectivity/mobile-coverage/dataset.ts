@@ -21,6 +21,12 @@ const WEIGHT = {
 export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 	id: "mobile-coverage",
 	topic: "digital-connectivity",
+	guide: {
+		title: "Mobile Coverage",
+		about: "How much of each local authority gets 4G and 5G signal, from Ofcom's Connected Nations report, both at premises and across the landmass, from all mobile operators and from at least one.",
+		summary:
+			"The share of premises in each UK local authority covered by 4G and 5G from all four mobile networks, from Ofcom. The legend selects indoor 4G, outdoor 5G or landmass coverage, using any operator or all four where published. Premises measures use premises-weighted regional averages; landmass measures use an unweighted mean of authorities, not a combined landmass percentage.",
+	},
 	source: {
 		name: "Mobile Coverage",
 		publisher: "Ofcom",
