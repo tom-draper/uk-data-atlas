@@ -38,6 +38,10 @@ export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 		label: "EU referendum",
 		about: "Estimated share voting Leave",
 	},
+	ranking: {
+		label: "Estimated share voting Leave",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

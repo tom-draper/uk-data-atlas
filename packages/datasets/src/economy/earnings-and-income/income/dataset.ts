@@ -45,6 +45,10 @@ export const income = defineDataset<IncomeDataset>({
 		},
 		...payStatistics("residence"),
 	},
+	ranking: {
+		label: "Median annual pay",
+		format: { kind: "count", locale: "en-GB", round: true, prefix: "£" },
+	},
 	display: {
 		label: "Income [2025]",
 		year: 2025,

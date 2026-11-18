@@ -147,6 +147,10 @@ export const imd = defineDataset<IMDDataset>({
 			{ path: "{deprivation-domain}", measure: "imd-domain-score" },
 		],
 	},
+	ranking: {
+		label: "Neighbourhoods in England's most deprived 10%",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Deprivation (IMD) [2025]",
 		year: 2025,

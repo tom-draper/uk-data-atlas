@@ -78,6 +78,9 @@ export const electricVehicleChargers = defineDataset<
 			},
 		],
 	},
+	ranking: {
+		label: "Public chargers",
+	},
 	display: {
 		label: "Public EV Chargers [2026]",
 		year: 2026,

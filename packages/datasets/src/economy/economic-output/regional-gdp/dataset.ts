@@ -41,6 +41,16 @@ export const regionalGdp = defineDataset<RegionalGdpDataset>({
 	},
 	load: ({ text }) => loadRegionalGdp(text),
 	statistics: regionalGdpStatistics(),
+	ranking: {
+		label: "Gross domestic product",
+		format: {
+			kind: "count",
+			locale: "en-GB",
+			round: true,
+			prefix: "£",
+			suffix: "m",
+		},
+	},
 	display: {
 		label: "Regional GDP [2023]",
 		year: 2023,

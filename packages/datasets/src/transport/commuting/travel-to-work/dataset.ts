@@ -137,6 +137,9 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 			},
 		],
 	},
+	ranking: {
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Travel to Work [2021]",
 		year: 2021,

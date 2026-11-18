@@ -108,6 +108,10 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 				100,
 		},
 	},
+	ranking: {
+		label: "Patients waiting over 18 weeks",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "NHS Waiting Times [2026]",
 		year: 2026,

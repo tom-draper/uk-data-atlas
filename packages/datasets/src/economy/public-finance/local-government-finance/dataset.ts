@@ -81,6 +81,16 @@ export const localGovernmentFinance = defineDataset<
 			},
 		],
 	},
+	ranking: {
+		label: "Education services spending",
+		format: {
+			kind: "count",
+			locale: "en-GB",
+			round: true,
+			scale: 1000,
+			prefix: "£",
+		},
+	},
 	display: {
 		label: "Education Services Spending [2026]",
 		year: 2026,

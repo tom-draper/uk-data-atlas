@@ -130,6 +130,10 @@ export const qualification = defineDataset<QualificationDataset>({
 			},
 		],
 	},
+	ranking: {
+		label: "Residents with degree-level qualifications",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Qualifications [2021]",
 		year: 2021,

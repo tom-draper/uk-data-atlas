@@ -85,6 +85,10 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 				((record.childPovertyRate as number) / 100),
 		},
 	},
+	ranking: {
+		label: "Children in low-income families",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Child Poverty [2025]",
 		year: 2025,

@@ -56,6 +56,10 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 		about: "The winning party",
 		ends: ["largest majority", "smallest majority"],
 	},
+	ranking: {
+		label: "Majority as a share of votes",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	statistics: {
 		payload: {
 			parts: () =>

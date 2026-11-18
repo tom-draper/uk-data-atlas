@@ -65,6 +65,10 @@ export const simd = defineDataset<SIMDDataset>({
 		summaryField: "councilStats",
 		mostDeprived: (record) => record.simdDecile === 1,
 	}),
+	ranking: {
+		label: "Data zones in Scotland's most deprived 10%",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: rankDisplay({
 		prefix: "simd",
 		label: "Deprivation (SIMD) [2020]",

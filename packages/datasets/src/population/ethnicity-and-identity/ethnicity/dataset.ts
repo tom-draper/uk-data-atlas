@@ -54,6 +54,10 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		retrievedAt: "2026-09-05",
 	},
 	load: async ({ text }) => loadEthnicity(text),
+	ranking: {
+		label: "White British residents",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	statistics: {
 		payload: {
 			parts: yearParts(

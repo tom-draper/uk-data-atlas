@@ -135,6 +135,10 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 			},
 		},
 	},
+	ranking: {
+		label: "Emissions per person (CO2e)",
+		format: { kind: "decimal", digits: 1, suffix: " tonnes" },
+	},
 	display: {
 		label: "Greenhouse Gas Emissions [2024]",
 		year: 2024,

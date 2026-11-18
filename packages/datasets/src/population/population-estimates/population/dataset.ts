@@ -33,6 +33,15 @@ export const population = defineDataset<PopulationDataset>({
 	mapViews: [
 		{
 			id: "density",
+			ranking: {
+				label: "Residents per km²",
+				format: {
+					kind: "count",
+					locale: "en-GB",
+					round: true,
+					suffix: " per km²",
+				},
+			},
 			value: { computed: "total", perSquareKm: true },
 			optionsKey: "populationDensity",
 			colorRange: { min: 0, max: 8000 },
@@ -43,6 +52,10 @@ export const population = defineDataset<PopulationDataset>({
 		},
 		{
 			id: "age",
+			ranking: {
+				label: "Median age",
+				format: { kind: "decimal", digits: 1, suffix: " years" },
+			},
 			value: { computed: "medianAge" },
 			optionsKey: "ageDistribution",
 			colorRange: { min: 25, max: 65 },

@@ -288,6 +288,9 @@ export const crime = defineDataset<CrimeDataset>({
 		],
 		fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 	},
+	ranking: {
+		label: "Police recorded crimes",
+	},
 	display: {
 		label: "Crime Rate [2026]",
 		year: 2026,

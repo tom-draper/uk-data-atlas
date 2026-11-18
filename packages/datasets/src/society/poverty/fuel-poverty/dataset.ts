@@ -116,6 +116,10 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			},
 		},
 	},
+	ranking: {
+		label: "Households in fuel poverty",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Fuel Poverty [2024]",
 		year: 2024,

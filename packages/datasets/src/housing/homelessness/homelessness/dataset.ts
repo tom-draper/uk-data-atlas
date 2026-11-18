@@ -108,6 +108,9 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 			},
 		],
 	},
+	ranking: {
+		label: "Households in temporary accommodation per 1,000",
+	},
 	display: {
 		label: "Homelessness [2026]",
 		year: 2026,
