@@ -39,39 +39,38 @@ export function directStatistics(
 		throw new Error(
 			`${type}: a direct dataset needs a payload declaration`,
 		);
-	if (
-		config.election ||
-		(config.records && config.records.length !== 1) ||
-		typeof config.fields === "function"
-	)
-		throw new Error(
-			`${type}: a direct dataset has one record set and static fields`,
-		);
+	if (config.election || (config.records && config.records.length !== 1))
+		throw new Error(`${type}: a direct dataset has one record set`);
 	const set = config.records?.[0] ?? {
 		from: "data",
 		release: config.release,
 		alsoIn: config.alsoIn,
 	};
-	const fields = config.fields as DeclaredField[];
 	const measures = new Set(config.measures.map(({ slug }) => slug));
 	const dimensions = new Set(
 		(config.dimensions ?? []).map(({ slug }) => slug),
 	);
 	const declared = declaredMemberCodes(config);
-	/** The dimensions a field binds or fixes, in the form a value names them. */
-	const shapes = fields.map((field) => ({
-		measure: field.measure,
-		slugs: new Set([
-			...Object.keys(field.members ?? {}),
-			...field.path
-				.split(".")
-				.flatMap(
-					(part) => /^\{([a-z0-9-]+)\}$/.exec(part)?.slice(1) ?? [],
-				)
-				.filter((binding) => binding !== "period"),
-		]),
-		periods: field.path.includes("{period}"),
-	}));
+	/** The dimensions a part's fields bind or fix, in the form a value names them. */
+	const shapesOf = (fields: readonly DeclaredField[]) =>
+		fields.map((field) => ({
+			measure: field.measure,
+			slugs: new Set([
+				...Object.keys(field.members ?? {}),
+				...field.path
+					.split(".")
+					.flatMap(
+						(part) =>
+							/^\{([a-z0-9-]+)\}$/.exec(part)?.slice(1) ?? [],
+					)
+					.filter((binding) => binding !== "period"),
+			]),
+			periods: field.path.includes("{period}"),
+		}));
+	const staticShapes =
+		typeof config.fields === "function"
+			? undefined
+			: shapesOf(config.fields);
 	const nameField =
 		typeof config.name === "string"
 			? config.name
@@ -134,6 +133,16 @@ export function directStatistics(
 									`${context}: ${part.key} is not a year; declare its period`,
 								);
 							})();
+				const shapes =
+					staticShapes ??
+					shapesOf(
+						(
+							config.fields as (
+								key: string,
+								header: DeclaredHeader,
+							) => DeclaredField[]
+						)(part.key, header),
+					);
 				const candidates = heldOf(releasesOf(header), context);
 				const codeOf = (key: string) =>
 					typeof config.keys === "function"
