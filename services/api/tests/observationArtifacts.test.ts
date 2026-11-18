@@ -5,6 +5,7 @@ import {
 	measureSeriesKey,
 	measureSeriesSourceKey,
 	registerSeriesObservations,
+	type AnyMeasureObservationArtifact,
 	type MeasureSource,
 } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
@@ -13,10 +14,20 @@ import type { MeasureTableArtifact } from "@uk-data-atlas/measures";
 
 const sourceGeography = { type: "lsoa", boundaryYear: 2021 } as const;
 const source = {
-	dataset: "fixture",
+	datasetId: "fixture",
 	sourceGeography,
 	periods: ["2021"],
 } as unknown as MeasureSource;
+
+const indexed = (artifact: AnyMeasureObservationArtifact) => {
+	const identity = { measure: "owned" };
+	const measureObservations = [artifact];
+	registerSeriesObservations(
+		measureObservations,
+		new Map([[measureSeriesSourceKey(identity, source), artifact]]),
+	);
+	return { measureObservations, seriesKey: measureSeriesKey(identity) };
+};
 
 const table: MeasureTableArtifact = {
 	schemaVersion: 1,
@@ -35,26 +46,24 @@ const table: MeasureTableArtifact = {
 
 test("finds one area's record in a measure's own artifact", () => {
 	const observations = observationsFor("owned", source, "2021", {
-		measureObservations: [
-			{
-				schemaVersion: 1,
-				contentHash: "sha256:own",
-				measureId: "owned",
-				sourceGeography,
-				periods: [
-					{
-						period: "2021",
-						records: [
-							{
-								areaCode: "E01000001",
-								value: 10,
-								status: "derived",
-							},
-						],
-					},
-				],
-			},
-		],
+		...indexed({
+			schemaVersion: 1,
+			contentHash: "sha256:own",
+			measureId: "owned",
+			sourceGeography,
+			periods: [
+				{
+					period: "2021",
+					records: [
+						{
+							areaCode: "E01000001",
+							value: 10,
+							status: "derived",
+						},
+					],
+				},
+			],
+		}),
 	});
 
 	assert.equal(observations?.recordFor("E01000001")?.status, "derived");
@@ -64,7 +73,7 @@ test("finds one area's record in a measure's own artifact", () => {
 
 test("finds one area's record in a table's view, and none where unpublished", () => {
 	const observations = observationsFor("owned", source, "2021", {
-		measureObservations: [tableMeasureObservations(table, "owned")],
+		...indexed(tableMeasureObservations(table, "owned")),
 	});
 
 	assert.deepEqual(observations?.recordFor("E01000001"), {
@@ -79,7 +88,7 @@ test("finds one area's record in a table's view, and none where unpublished", ()
 test("is undefined for a period the artifact does not hold", () => {
 	assert.equal(
 		observationsFor("owned", source, "1999", {
-			measureObservations: [tableMeasureObservations(table, "owned")],
+			...indexed(tableMeasureObservations(table, "owned")),
 		}),
 		undefined,
 	);
@@ -113,6 +122,13 @@ test("selects observations by canonical series and source", () => {
 			seriesKey: measureSeriesKey(secondIdentity),
 		})?.contentHash,
 		"sha256:second",
+	);
+	assert.equal(
+		observationsFor("owned", { ...source, datasetId: "other" }, "2021", {
+			measureObservations: all,
+			seriesKey: measureSeriesKey(secondIdentity),
+		}),
+		undefined,
 	);
 	assert.equal(
 		observationsFor("owned", source, "2021", {
