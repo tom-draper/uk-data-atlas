@@ -128,7 +128,7 @@ export * from "./data/locations.ts";
 export * from "./infrastructure/digital-connectivity/mobile-coverage/aggregate.ts";
 export * from "./data/new-datasets/loader.ts";
 export * from "./data/nhs-waiting/icbToGss.ts";
-export * from "./data/population-constituency/loader.ts";
+export * from "./data/population-constituency/source.ts";
 export * from "./data/population/metrics.ts";
 export * from "./data/population/source.ts";
 export * from "./data/population/ukLoader.ts";
