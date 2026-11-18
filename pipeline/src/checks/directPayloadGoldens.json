@@ -171,6 +171,10 @@
 		"sha256": "6008d90f0c63d5506dccf2fdbb91f58f2426b5d2b2c7debda78e8b28714c0ae7",
 		"bytes": 113484
 	},
+	"ethnicity": {
+		"sha256": "b171993f609f6cd64cad6e065c7f9bdf572a108ad1134129fa2e4d2921b3bfb3",
+		"bytes": 590656
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992
