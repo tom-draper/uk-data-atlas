@@ -186,6 +186,12 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	);
 	const [canonical] = canonicalArtifacts;
 	assert.equal(
+		observationsFor("count", source, "2024", {
+			measureObservations: canonicalArtifacts,
+		}),
+		undefined,
+	);
+	assert.equal(
 		seriesObservationFor(
 			canonicalArtifacts,
 			measureSeriesKey(identity),

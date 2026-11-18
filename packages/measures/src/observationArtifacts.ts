@@ -52,10 +52,11 @@ export const observationsFor = (
 	| undefined => {
 	const all = artifacts.measureObservations ?? [];
 	const indexed = seriesObservations.get(all);
-	const artifact =
-		artifacts.seriesKey && indexed
+	const artifact = indexed
+		? artifacts.seriesKey
 			? seriesObservationFor(all, artifacts.seriesKey, source)
-			: findMeasureObservations(all, measureId, source);
+			: undefined
+		: findMeasureObservations(all, measureId, source);
 	const held = artifact?.periods.find(
 		(candidate) => candidate.period === period,
 	);
