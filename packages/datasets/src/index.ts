@@ -122,7 +122,7 @@ export * from "./data/house-price/wardCodes.ts";
 export * from "./data/housing-tenure/source.ts";
 export * from "./data/jobs/source.ts";
 export * from "./data/life-expectancy/source.ts";
-export * from "./data/life-expectancy/seriesLoader.ts";
+export * from "./data/life-expectancy/seriesSource.ts";
 export * from "./data/localAuthority/reorganisations.ts";
 export * from "./data/locations.ts";
 export * from "./infrastructure/digital-connectivity/mobile-coverage/aggregate.ts";
