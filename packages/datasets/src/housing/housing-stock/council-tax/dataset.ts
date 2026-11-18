@@ -93,6 +93,10 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 			},
 		],
 	},
+	ranking: {
+		label: "Average Band D council tax",
+		format: { kind: "count", locale: "en-GB", digits: 2, prefix: "£" },
+	},
 	display: {
 		label: "Council Tax [2026]",
 		year: 2026,

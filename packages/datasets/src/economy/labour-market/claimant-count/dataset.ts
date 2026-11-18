@@ -128,6 +128,9 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 			},
 		],
 	},
+	ranking: {
+		label: "Claimants, % of residents aged 16 to 64",
+	},
 	display: {
 		label: "Claimant Count [2026]",
 		year: 2026,

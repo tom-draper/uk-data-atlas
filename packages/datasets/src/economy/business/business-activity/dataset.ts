@@ -76,6 +76,9 @@ export const businessActivity = defineDataset<
 			},
 		],
 	},
+	ranking: {
+		label: "VAT or PAYE businesses",
+	},
 	display: {
 		label: "Businesses [2025]",
 		year: 2025,

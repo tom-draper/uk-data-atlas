@@ -156,6 +156,9 @@ export const broadband = defineDataset<BroadbandDataset>({
 			},
 		],
 	},
+	ranking: {
+		label: "Premises with full fibre",
+	},
 	display: {
 		label: "Fixed Broadband Coverage [2025]",
 		year: 2025,

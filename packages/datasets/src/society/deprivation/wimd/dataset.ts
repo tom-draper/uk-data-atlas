@@ -62,6 +62,10 @@ export const wimd = defineDataset<WIMDDataset>({
 		mostDeprived: (record) => record.wimdDecile === 1,
 		weighted: { score: "wimdScore" },
 	}),
+	ranking: {
+		label: "Neighbourhoods in Wales' most deprived 10%",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: rankDisplay({
 		prefix: "wimd",
 		label: "Deprivation (WIMD) [2019]",

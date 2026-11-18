@@ -55,6 +55,10 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		// The most deprived tenth of the 890 areas.
 		mostDeprived: (record) => (record.nimdmRank as number) <= 89,
 	}),
+	ranking: {
+		label: "Neighbourhoods in Northern Ireland's most deprived 10%",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: rankDisplay({
 		prefix: "nimdm",
 		label: "Deprivation (NIMDM) [2017]",

@@ -94,6 +94,10 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		],
 		fields: [{ path: "breakdown.{cars-or-vans}", measure: "households" }],
 	},
+	ranking: {
+		label: "Households without a car",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	display: {
 		label: "Car Availability [2021]",
 		year: 2021,

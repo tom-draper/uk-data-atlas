@@ -189,6 +189,9 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 			},
 		],
 	},
+	ranking: {
+		label: "Premises with outdoor 5G from all operators",
+	},
 	display: {
 		label: "Mobile Coverage [2025]",
 		year: 2025,

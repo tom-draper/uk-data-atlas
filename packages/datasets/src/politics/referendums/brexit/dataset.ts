@@ -34,6 +34,10 @@ export const brexit = defineDataset<BrexitLADDataset>({
 		label: "EU referendum",
 		about: "Share voting Leave",
 	},
+	ranking: {
+		label: "Share voting Leave",
+		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
 	statistics: {
 		payload: {
 			parts: yearParts("brexit", "localAuthority", 2016, {}, ["2016"]),

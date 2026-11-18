@@ -107,6 +107,10 @@ export const housePrice = defineDataset<HousePriceDataset>({
 					periods.year(Number(header.priceYearsFrom) + Number(index)),
 			})),
 	},
+	ranking: {
+		label: "Median price paid",
+		format: { kind: "count", locale: "en-GB", round: true, prefix: "£" },
+	},
 	display: {
 		label: "House Prices [2023]",
 		year: 2023,
