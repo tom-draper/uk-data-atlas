@@ -9,7 +9,7 @@ export * from "./data/boundaries/dataPath.ts";
 export * from "./data/boundaries/decode.ts";
 export * from "./data/boundaries/properties.ts";
 export * from "./politics/referendums/brexit-constituency/dataset.ts";
-export * from "./data/brexit-constituency/loader.ts";
+export * from "./data/brexit-constituency/source.ts";
 export * from "./politics/referendums/brexit/dataset.ts";
 export * from "./data/brexit/referendum.ts";
 export * from "./data/brexit/source.ts";
