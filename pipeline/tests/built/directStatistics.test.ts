@@ -203,6 +203,19 @@ function snapshot(path: string, output: string) {
 				 JOIN area_version pv ON pv.id = l.parent_version_id JOIN area pa ON pa.id = pv.area_id JOIN area_releases pr ON pr.id = pv.release_id
 				 WHERE d.slug = ? ORDER BY l.relation, p.label, cr.geography, cr.release, ca.code, pr.geography, pr.release, pa.code`,
 			),
+			contests: all(
+				`SELECT election, kind, polling_day, area_code, area_name, geography, release,
+				        authority_code, authority_name, region, country, constituency_type,
+				        result, first_party, second_party, winner
+				 FROM v_contest WHERE dataset = ?
+				 ORDER BY polling_day, geography, release, area_code`,
+			),
+			candidacies: all(
+				`SELECT c.polling_day, c.area_code, k.position, k.given_name, k.family_name, k.gender, k.elected
+				 FROM candidacy k JOIN v_contest c ON c.contest_id = k.contest_id
+				 WHERE c.dataset = ?
+				 ORDER BY c.polling_day, c.geography, c.release, c.area_code, k.position`,
+			),
 			periods: all(
 				`SELECT DISTINCT p.label, p.kind, p.start_date, p.end_date
 				 FROM observation o JOIN series s ON s.id = o.series_id
@@ -239,6 +252,7 @@ describe.each(directTypes)("%s read straight from its source", (type) => {
 		const before = snapshot(compiled.path, compiled.entry.output);
 		const after = snapshot(direct.path, direct.entry.output);
 		expect(before.observations.length).toBeGreaterThan(0);
+		if (config.election) expect(before.contests.length).toBeGreaterThan(0);
 		for (const key of Object.keys(before) as (keyof typeof before)[])
 			expect(after[key], key).toEqual(before[key]);
 	});
@@ -318,6 +332,7 @@ it.each([
 	"road-collisions",
 	"brexit",
 	"brexit-constituency",
+	"general-election",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts(type);

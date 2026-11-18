@@ -1,5 +1,8 @@
 import type { GeneralElectionDataset } from "../../../types/elections.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -10,7 +13,7 @@ import {
 } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { calculateTurnout } from "../../../helpers/turnout.ts";
-import { loadGeneralElection } from "../../../data/election/general-election/load.ts";
+import { generalElectionStatisticsParts } from "../../../data/election/general-election/source.ts";
 import {
 	PARTY,
 	PARTY_REFERENCE,
@@ -48,7 +51,7 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: async ({ text }) => loadGeneralElection(text),
+	load: noCompiledPayload<GeneralElectionDataset>(),
 	placeHeadline: {
 		places: ["constituency"],
 		order: 10,
@@ -61,6 +64,10 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => generalElectionStatisticsParts(text),
+		},
 		payload: {
 			parts: () =>
 				Object.keys(GENERAL_POLLING_DAYS).map((key) => ({
