@@ -361,7 +361,12 @@ export const apiStages = [
 			writes: ["data/build/atlas.sqlite"],
 			rawInputs: crosswalkWeightInputs,
 			requiredOutputs: ["data/build/atlas.sqlite"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+			// A worker is started by path, not imported, so it is listed here.
+			codeInputs: [
+				"pipeline/package.json",
+				"pipeline/tsconfig.json",
+				"pipeline/src/storage/areaLocationWorker.ts",
+			],
 		},
 	),
 	// Splits atlas.sqlite into core and per-module SQLite and Parquet. The

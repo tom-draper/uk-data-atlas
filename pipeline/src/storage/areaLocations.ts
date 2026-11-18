@@ -14,6 +14,7 @@ import {
 	createAreaGeometryCache,
 	readGeometrySources,
 } from "@uk-data-atlas/geometry";
+import { SyncWorkerPool, workerCount } from "../lib/syncWorkerPool.ts";
 
 const reader = new GeoJSONReader(new GeometryFactory());
 
@@ -96,13 +97,34 @@ export function locateArea(
 	return areaLocation(geometry) ?? "no-interior-point";
 }
 
+/** What a worker is given: consecutive areas of one release. */
+export type AreaLocationJob = {
+	geography: string;
+	release: string;
+	codes: string[];
+};
+
+export type AreaLocationPool = Pick<
+	SyncWorkerPool<AreaLocationJob, AreaLocationResult[]>,
+	"submit" | "take" | "size"
+>;
+
+/** Areas per job, small enough to keep every worker busy at the end. */
+const JOB_AREAS = 2000;
+
 /** Writes one row for every area version, including an explicit reason for gaps. */
 export function writeAreaLocations(
 	database: DatabaseSync,
 	root: string,
-	cache: GeometryLookup = createAreaGeometryCache(root, 1),
+	cache?: GeometryLookup,
 	sources = readGeometrySources(root),
 	centroids = readPublishedCentroids(root),
+	// Geometry is read and its interior point found on worker threads, and
+	// the rows are written here in the order they would be on one thread.
+	// A supplied cache is that caller's own, so it is used in this thread.
+	workers = cache ? 1 : workerCount("ATLAS_SQLITE_WORKERS", 4),
+	/** Replaces the workers this would start, for a test. */
+	pool?: AreaLocationPool,
 ) {
 	database.exec(`CREATE TABLE area_location (
 		area_version_id INTEGER PRIMARY KEY REFERENCES area_version(id),
@@ -164,20 +186,76 @@ export function writeAreaLocations(
 			);
 		}
 	};
-	for (const row of versions.iterate())
-		write(
-			{
+	const rows = function* (): Generator<Version> {
+		for (const row of versions.iterate())
+			yield {
 				id: row.id as number,
 				code: String(row.code),
 				geography: String(row.geography),
 				release: String(row.release),
-			},
-			locateArea(
-				cache,
-				sources,
-				String(row.geography),
-				String(row.release),
-				String(row.code),
-			),
-		);
+			};
+	};
+	const own =
+		pool === undefined && workers > 1
+			? new SyncWorkerPool<AreaLocationJob, AreaLocationResult[]>(
+					new URL("./areaLocationWorker.ts", import.meta.url),
+					workers,
+					{ root },
+				)
+			: undefined;
+	const runner = pool ?? own;
+	if (!runner) {
+		const lookup = cache ?? createAreaGeometryCache(root, 1);
+		for (const row of rows())
+			write(
+				row,
+				locateArea(
+					lookup,
+					sources,
+					row.geography,
+					row.release,
+					row.code,
+				),
+			);
+		return;
+	}
+	try {
+		// Jobs run ahead of the rows being written, so every worker has one
+		// waiting; they are written in the order they were submitted.
+		const pending: { rows: Version[]; ticket: number }[] = [];
+		const flush = () => {
+			const { rows: done, ticket } = pending.shift()!;
+			const results = runner.take(ticket);
+			for (const [at, row] of done.entries()) write(row, results[at]!);
+		};
+		let current: Version[] = [];
+		const submit = () => {
+			if (!current.length) return;
+			pending.push({
+				rows: current,
+				ticket: runner.submit({
+					geography: current[0]!.geography,
+					release: current[0]!.release,
+					codes: current.map((row) => row.code),
+				}),
+			});
+			current = [];
+			if (pending.length > runner.size * 2) flush();
+		};
+		for (const row of rows()) {
+			const first = current[0];
+			if (
+				first &&
+				(current.length >= JOB_AREAS ||
+					first.geography !== row.geography ||
+					first.release !== row.release)
+			)
+				submit();
+			current.push(row);
+		}
+		submit();
+		while (pending.length) flush();
+	} finally {
+		own?.close();
+	}
 }
