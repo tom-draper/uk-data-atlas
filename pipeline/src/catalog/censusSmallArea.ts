@@ -226,7 +226,10 @@ export const compileCensusSmallArea = (
 				sha256: sha256Hex(Buffer.from(compiledContent)),
 			},
 		});
-		for (const [index, [, , label]] of table.categories.entries()) {
+		for (const [
+			index,
+			[suffix, , label, member],
+		] of table.categories.entries()) {
 			const measureId = measureIds[index]!;
 			const sources = built.map(
 				({ geography, artifact }): MeasureSource => ({
@@ -255,6 +258,10 @@ export const compileCensusSmallArea = (
 			}
 			measures.push({
 				id: measureId,
+				series: {
+					measure: table.measure,
+					dimensions: { [table.dimension]: member ?? suffix },
+				},
 				label,
 				valueKind: "count",
 				unit: table.unit,
