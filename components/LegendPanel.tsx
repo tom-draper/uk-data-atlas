@@ -1,20 +1,15 @@
 "use client";
 
 import { PARTIES } from "@uk-data-atlas/datasets";
-import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
+import { themes } from "@/lib/helpers/colorScale";
+import { categoryColor, isCategoryDataset } from "@/lib/datasets/categories";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import {
 	declaredDisplay as displayOf,
 	declaredMeasure as measureOf,
 } from "@/lib/datasets/declared";
 import {} from "@/lib/config/mapOptions";
-import type {
-	ActiveViz,
-	Dataset,
-	Datasets,
-	EthnicityCode,
-	PartyCode,
-} from "@/lib/types";
+import type { ActiveViz, Dataset, Datasets, PartyCode } from "@/lib/types";
 import type { BoundaryData } from "@uk-data-atlas/datasets";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
@@ -22,7 +17,7 @@ import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
-	ethnicityLegendItems,
+	categoryLegendItems,
 	partyLegendItems,
 	useLegendAggregates,
 } from "./legend/legendData";
@@ -84,7 +79,7 @@ export default function LegendPanel({
 		location,
 	);
 	const parties = partyLegendItems(activeDataset, aggregates);
-	const ethnicities = ethnicityLegendItems(activeDataset, aggregates);
+	const categories = categoryLegendItems(activeDataset, aggregates);
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
 	const electionSupportsTurnout =
@@ -99,7 +94,7 @@ export default function LegendPanel({
 		((activeDataset.type === "general-election" ||
 			activeDataset.type === "local-election") &&
 			parties.length === 0) ||
-		(activeDataset.type === "ethnicity" && ethnicities.length === 0)
+		(isCategoryDataset(activeDataset.type) && categories.length === 0)
 	) {
 		return null;
 	}
@@ -123,7 +118,7 @@ export default function LegendPanel({
 						overlayOpacity={overlayOpacity}
 						isDark={isDark}
 						parties={parties}
-						ethnicities={ethnicities}
+						categories={categories}
 						onRangeInput={controls.handleRangeInput}
 						onRangeChangeEnd={controls.handleRangeChangeEnd}
 						onPartyClick={(id) =>
@@ -132,14 +127,8 @@ export default function LegendPanel({
 						onPartyRightClick={(id) =>
 							controls.handlePartyRightClick(id as PartyCode)
 						}
-						onEthnicityClick={(id) =>
-							controls.handleEthnicityClick(id as EthnicityCode)
-						}
-						onEthnicityRightClick={(id) =>
-							controls.handleEthnicityRightClick(
-								id as EthnicityCode,
-							)
-						}
+						onCategoryClick={controls.handleCategoryClick}
+						onCategoryRightClick={controls.handleCategoryRightClick}
 						onPointLegendClick={controls.handlePointLegendClick}
 						onPointLegendRightClick={
 							controls.handlePointLegendRightClick
@@ -229,13 +218,13 @@ export default function LegendPanel({
 					/>
 				)}
 
-			{controls.showEthnicityPct && (
+			{controls.categoryOptions?.mode === "percentage" && (
 				<PercentageRangePanel
-					range={controls.ethnicityRange}
-					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[controls.displayOptions.ethnicity.selected as EthnicityCode] || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
+					range={controls.categoryRange}
+					gradient={`linear-gradient(to bottom, ${categoryColor(activeDataset.type, controls.categoryOptions.selected ?? "")}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
 					opacity={overlayOpacity}
-					onRangeInput={controls.handleEthnicityRangeInput}
-					onRangeChangeEnd={controls.handleEthnicityRangeChangeEnd}
+					onRangeInput={controls.handleCategoryRangeInput}
+					onRangeChangeEnd={controls.handleCategoryRangeChangeEnd}
 				/>
 			)}
 		</div>

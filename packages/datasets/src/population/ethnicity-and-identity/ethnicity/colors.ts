@@ -1,4 +1,5 @@
-export const ETHNICITY_COLORS: Record<string, string> = {
+/** Each ethnic group's map colour, by name, parent groups included. */
+export const ETHNICITY_COLORS: Readonly<Record<string, string>> = {
 	"Asian, Asian British or Asian Welsh": "#0ea5e9",
 	"Black, Black British, Black Welsh, Caribbean or African": "#14b8a6",
 	"Mixed or Multiple ethnic groups": "#f97316",

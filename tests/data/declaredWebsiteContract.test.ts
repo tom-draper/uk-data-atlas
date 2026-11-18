@@ -4,11 +4,16 @@ import { formatRankedValue } from "@/lib/atlas/rankings";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { DATASET_DECLARATIONS, typeOf } from "@uk-data-atlas/datasets";
+import {
+	CATEGORY_CHART_DEFINITIONS,
+	CATEGORY_DATASET_TYPES,
+} from "@/lib/datasets/categories";
+import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { getChartPresentation } from "@/lib/datasets/generatedCharts";
 
 const HAND_WRITTEN = new Set([
 	"brexit",
 	"brexit-constituency",
-	"ethnicity",
 	"general-election",
 	"local-election",
 	"population",
@@ -40,6 +45,38 @@ describe("a declared dataset needs no website code of its own", () => {
 			expect(maps.length, declaration.id).toBeGreaterThan(0);
 			for (const map of maps)
 				expect(formatRankedValue(map, 1234.5), map.slug).toMatch(/\d/);
+		}
+	});
+});
+
+describe("a dataset declaring categories needs no website code of its own", () => {
+	const declared = DATASET_DECLARATIONS.filter(
+		({ categories }) => categories !== undefined,
+	).map(({ id }) => id);
+
+	it("lists every one in the map options types, so they type-check", () => {
+		expect([...CATEGORY_DATASET_TYPES]).toEqual(declared);
+	});
+
+	it("gives each one map options, a registered chart card and a category legend", () => {
+		for (const definition of CATEGORY_CHART_DEFINITIONS) {
+			expect(
+				DEFAULT_MAP_OPTIONS[
+					definition.type as keyof typeof DEFAULT_MAP_OPTIONS
+				],
+				definition.type,
+			).toBeDefined();
+			expect(definition.legendKind, definition.type).toBe("category");
+			expect(
+				getChartPresentation(definition.chart.key),
+				definition.type,
+			).toBeDefined();
+			expect(
+				CHART_DATASET_DEFINITIONS.some(
+					({ type }) => type === definition.type,
+				),
+				definition.type,
+			).toBe(true);
 		}
 	});
 });

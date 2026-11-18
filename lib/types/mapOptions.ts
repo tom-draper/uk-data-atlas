@@ -35,11 +35,18 @@ export interface DeclaredMapOptions extends ColorRangeOption {
 	measure: string;
 }
 
+/**
+ * Declared datasets mapped by their largest group (those that declare
+ * `categories`). Listed here so their options type-check; a test holds the list
+ * to the declarations.
+ */
+export type CategoryDatasetId = "ethnicity";
+
 /** Declared datasets whose map has options of its own, listed below. */
 type CustomMapDatasetId =
+	| CategoryDatasetId
 	| "brexit"
 	| "brexit-constituency"
-	| "ethnicity"
 	| "general-election"
 	| "local-election"
 	| "population";
@@ -85,31 +92,31 @@ export type NumericMapOptionsKey = Extract<
 	}[keyof MapOptions]
 >;
 
-export type MapOptions = ChartMapOptions & {
-	"general-election": CategoryOptions;
-	"local-election": CategoryOptions;
-	ethnicity: CategoryOptions;
-	ageDistribution: ColorRangeOption;
-	populationDensity: ColorRangeOption;
-	gender: ColorRangeOption;
-	brexit: ColorRangeOption;
-	"brexit-constituency": ColorRangeOption;
-	custom: CustomOptions;
-	network: NetworkOptions;
-	theme: {
-		id: ColorTheme;
+export type MapOptions = ChartMapOptions &
+	Record<CategoryDatasetId, CategoryOptions> & {
+		"general-election": CategoryOptions;
+		"local-election": CategoryOptions;
+		ageDistribution: ColorRangeOption;
+		populationDensity: ColorRangeOption;
+		gender: ColorRangeOption;
+		brexit: ColorRangeOption;
+		"brexit-constituency": ColorRangeOption;
+		custom: CustomOptions;
+		network: NetworkOptions;
+		theme: {
+			id: ColorTheme;
+		};
+		baseStyle: {
+			id: BaseMapStyle["id"];
+		};
+		visibility: {
+			hideDataLayer: boolean;
+			hideBorders: boolean;
+			hideBoundaryLayer: boolean;
+			hideOverlay: boolean;
+			overlayOpacity: number;
+		};
 	};
-	baseStyle: {
-		id: BaseMapStyle["id"];
-	};
-	visibility: {
-		hideDataLayer: boolean;
-		hideBorders: boolean;
-		hideBoundaryLayer: boolean;
-		hideOverlay: boolean;
-		overlayOpacity: number;
-	};
-};
 
 export type ColorRangeMapOptionKey = {
 	[Key in keyof MapOptions]: MapOptions[Key] extends ColorRangeOption

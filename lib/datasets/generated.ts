@@ -8,7 +8,6 @@ import type { ChartDatasetDefinition } from "./types";
 import { DECLARED_CHART_DEFINITIONS } from "./declared";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
-import { ethnicityDefinition } from "./ethnicity";
 import { generalElectionDefinition } from "./generalElection";
 import { localElectionDefinition } from "./localElection";
 import { populationDefinition } from "./population";
@@ -21,7 +20,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 	[
 		brexitDefinition,
 		brexitConstituencyDefinition,
-		ethnicityDefinition,
 		generalElectionDefinition,
 		localElectionDefinition,
 		populationDefinition,

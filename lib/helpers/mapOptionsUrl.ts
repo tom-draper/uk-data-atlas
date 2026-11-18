@@ -1,5 +1,6 @@
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
+import { CATEGORY_DATASET_TYPES } from "@/lib/datasets/categories";
 import { themes } from "@/lib/helpers/colorScale/themes";
 import type {
 	CategoryOptions,
@@ -14,7 +15,7 @@ const COLOR_RANGE_KEYS = Object.keys(DEFAULT_MAP_OPTIONS).filter(
 const CATEGORY_KEYS = [
 	"general-election",
 	"local-election",
-	"ethnicity",
+	...CATEGORY_DATASET_TYPES,
 ] as const;
 /**
  * Shared links name these options as they were before the datasets took

@@ -400,3 +400,21 @@ export type DatasetDisplay = {
 	measures: readonly [DisplayMeasure, ...DisplayMeasure[]];
 	aggregation: DisplayAggregation;
 };
+
+/**
+ * A dataset that splits its people into groups, mapped by the largest group
+ * in each area or by one group's share, with a legend that isolates or
+ * crosses out groups. The record shape is `data[area][parent][group]`, each
+ * group holding `population`, and `results[area]` names the largest group.
+ * The website draws the map, legend, link options and breakdown card from it.
+ */
+export type DisplayCategories = {
+	/** The chart's label in the data list. */
+	label: string;
+	/** The edition shown first. */
+	year: number;
+	/** Each group's colour, by its name; groups without one are grey. */
+	colors: Readonly<Record<string, string>>;
+	/** The breakdown card, drawn by the shared breakdown chart. */
+	breakdown: DisplayBreakdown;
+};

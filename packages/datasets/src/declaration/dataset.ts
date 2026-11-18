@@ -14,6 +14,7 @@ import type {
 } from "./statistics.ts";
 import type {
 	DatasetDisplay,
+	DisplayCategories,
 	DisplayFormat,
 	DisplayMapView,
 	DisplayRanking,
@@ -185,6 +186,8 @@ export type DatasetDeclaration<
 	display?: DatasetDisplay;
 	/** The views of a dataset whose map has several, the first being the default. */
 	mapViews?: readonly [DisplayMapView, ...DisplayMapView[]];
+	/** The groups of a dataset mapped by its largest group, as ethnicity is. */
+	categories?: DisplayCategories;
 	/** How the dataset's areas read when ranked, for datasets with one map. */
 	ranking?: DisplayRanking;
 	/** The key figure place pages show for the dataset, if it has one. */

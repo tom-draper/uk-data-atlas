@@ -7,8 +7,10 @@ interface ExcludedCategories {
 	selectedGeneralParty?: string;
 	excludedLocalParties: Set<string>;
 	selectedLocalParty?: string;
-	excludedEthnicities: Set<string>;
-	selectedEthnicity?: string;
+	/** What a visitor has crossed out or isolated in a categorical map's legend, by dataset. */
+	categories: Readonly<
+		Record<string, { excluded: Set<string>; selected?: string }>
+	>;
 	excludedPointValues: Set<number>;
 	selectedPointValue?: number;
 }
@@ -18,8 +20,7 @@ const defaultValue: ExcludedCategories = {
 	selectedGeneralParty: undefined,
 	excludedLocalParties: new Set(),
 	selectedLocalParty: undefined,
-	excludedEthnicities: new Set(),
-	selectedEthnicity: undefined,
+	categories: {},
 	excludedPointValues: new Set(),
 	selectedPointValue: undefined,
 };

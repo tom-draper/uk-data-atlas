@@ -52,7 +52,7 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 			"demographics-populationDensity",
 			"demographics-age",
 			"demographics-gender",
-			"demographics-ethnicity",
+			"population-ethnicity",
 		],
 		economy: [
 			"economy-income",

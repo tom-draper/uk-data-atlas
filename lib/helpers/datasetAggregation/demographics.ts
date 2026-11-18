@@ -2,7 +2,7 @@ import type { EthnicityCategory, Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
 import type { EthnicityDataset } from "@uk-data-atlas/datasets";
 
-export function aggregateEthnicity(
+export function aggregateCategories(
 	features: Features,
 	codeProperty: PropertyKeys,
 	data: EthnicityDataset["data"],

@@ -2,13 +2,14 @@
 
 import type { ActiveViz, Dataset } from "@/lib/types";
 import { getChartDatasetDefinition } from "@/lib/datasets";
+import { isCategoryDataset } from "@/lib/datasets/categories";
 import {
 	declaredMapView,
 	declaredMeasure,
 	formatDisplay,
 } from "@/lib/datasets/declared";
 import {
-	EthnicityLegend,
+	CategoryLegend,
 	NetworkLegend,
 	PartyLegend,
 } from "./legend/CategoryLegends";
@@ -20,7 +21,7 @@ import {
 } from "./legend/RangeLegends";
 import type {
 	ColorRangeDatasetKey,
-	EthnicityDisplayData,
+	CategoryDisplayData,
 	PartyDisplayData,
 } from "./legend/types";
 import type { MapOptions } from "@/lib/types/mapOptions";
@@ -33,13 +34,13 @@ interface LegendContentProps {
 	overlayOpacity: number;
 	isDark: boolean;
 	parties: PartyDisplayData[];
-	ethnicities: EthnicityDisplayData[];
+	categories: CategoryDisplayData[];
 	onRangeInput: (key: ColorRangeDatasetKey, min: number, max: number) => void;
 	onRangeChangeEnd: (key: ColorRangeDatasetKey) => void;
 	onPartyClick: (id: string) => void;
 	onPartyRightClick: (id: string) => void;
-	onEthnicityClick: (id: string) => void;
-	onEthnicityRightClick: (id: string) => void;
+	onCategoryClick: (id: string) => void;
+	onCategoryRightClick: (id: string) => void;
 	onPointLegendClick: (value: string) => void;
 	onPointLegendRightClick: (value: string) => void;
 	onNetworkClick: (id: string) => void;
@@ -55,13 +56,13 @@ export default function LegendContent({
 	overlayOpacity,
 	isDark,
 	parties,
-	ethnicities,
+	categories,
 	onRangeInput,
 	onRangeChangeEnd,
 	onPartyClick,
 	onPartyRightClick,
-	onEthnicityClick,
-	onEthnicityRightClick,
+	onCategoryClick,
+	onCategoryRightClick,
 	onPointLegendClick,
 	onPointLegendRightClick,
 	onNetworkClick,
@@ -130,15 +131,17 @@ export default function LegendContent({
 	}
 
 	switch (chartDefinition?.legendKind) {
-		case "ethnicity":
+		case "category":
+			if (!isCategoryDataset(activeDataset.type)) return null;
 			return (
-				<EthnicityLegend
+				<CategoryLegend
 					displayOptions={displayOptions}
 					overlayOpacity={overlayOpacity}
 					isDark={isDark}
-					ethnicities={ethnicities}
-					onClick={onEthnicityClick}
-					onRightClick={onEthnicityRightClick}
+					categories={categories}
+					datasetType={activeDataset.type}
+					onClick={onCategoryClick}
+					onRightClick={onCategoryRightClick}
 				/>
 			);
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-	ethnicityLegendItems,
+	categoryLegendItems,
 	partyLegendItems,
 } from "@/components/legend/legendData";
 
@@ -17,12 +17,16 @@ describe("legend data selectors", () => {
 			},
 		);
 
-		expect(parties.map(({ id }) => id)).toEqual(["CON", "LAB", "OTHER"]);
+		expect(parties.map(({ id }: { id: string }) => id)).toEqual([
+			"CON",
+			"LAB",
+			"OTHER",
+		]);
 		expect(parties.at(-1)?.name).toBe("Other");
 	});
 
 	it("combines and sorts ethnicity totals across local authorities", () => {
-		const ethnicities = ethnicityLegendItems(
+		const ethnicities = categoryLegendItems(
 			{ type: "ethnicity", year: 2021 } as any,
 			{
 				ethnicity: {
@@ -40,7 +44,10 @@ describe("legend data selectors", () => {
 			},
 		);
 
-		expect(ethnicities.map(({ id }) => id)).toEqual(["Asian", "White"]);
+		expect(ethnicities.map(({ id }: { id: string }) => id)).toEqual([
+			"Asian",
+			"White",
+		]);
 	});
 
 	it("returns no category legend for an unrelated dataset", () => {
@@ -48,7 +55,7 @@ describe("legend data selectors", () => {
 			partyLegendItems({ type: "housePrice", year: 2024 } as any, {}),
 		).toEqual([]);
 		expect(
-			ethnicityLegendItems({ type: "housePrice", year: 2024 } as any, {}),
+			categoryLegendItems({ type: "housePrice", year: 2024 } as any, {}),
 		).toEqual([]);
 	});
 });

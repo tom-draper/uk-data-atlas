@@ -26,8 +26,8 @@ export interface BreakdownCardConfig {
 	accent?: string;
 	/** Draw the largest part first, rather than in the declared order. */
 	order?: "largest";
-	/** The legend filter that hides parts while this card's dataset is on the map. */
-	legendFilter?: "ethnicity";
+	/** Hide the parts a visitor excludes in the legend while this card's dataset is on the map. */
+	legendFilter?: boolean;
 	heading: string;
 	/** Shown in brackets after the heading. */
 	period: string;
