@@ -3,11 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 
-import {
-	comparableCompiled,
-	servedFromRows,
-	readAtlasPayload,
-} from "@uk-data-atlas/catalogue/node";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { directPayloadProblem } from "../pipeline/src/checks/directPayloadGoldens";
 import { datasetCatalogInputs } from "../pipeline/src/catalog/buildDataCatalog";
 import {
@@ -43,60 +39,16 @@ for (const { type, output, direct } of manifest.datasets) {
 	}
 	assert.deepEqual(
 		JSON.parse(readAtlasPayload(root, `dataset:${output}`)),
-		servedFromRows(type)
-			? comparableCompiled(
-					type,
-					JSON.parse(
-						readFileSync(
-							join(root, "data/build/datasets", `${output}.json`),
-							"utf8",
-						),
-					),
-				)
-			: JSON.parse(
-					readFileSync(
-						join(root, "data/build/datasets", `${output}.json`),
-						"utf8",
-					),
-				),
+		JSON.parse(
+			readFileSync(
+				join(root, "data/build/datasets", `${output}.json`),
+				"utf8",
+			),
+		),
 		output,
 	);
 }
 const jsonInputs = datasetCatalogInputs(root);
-// A direct dataset has no compiled file to compare, so it is checked above.
-const datasetTypes = new Map(
-	manifest.datasets
-		.filter(({ direct }) => !direct)
-		.map(({ type, output }) => [output, type]),
-);
-class ComparableDatasetInput extends AtlasDatasetInput {
-	constructor(
-		repositoryRoot: string,
-		output: string,
-		readonly type: string,
-	) {
-		super(repositoryRoot, output);
-	}
-	read() {
-		return JSON.stringify(
-			comparableCompiled(this.type, JSON.parse(super.read())),
-		);
-	}
-}
-const comparable = (value: unknown): unknown => {
-	if (!(value instanceof AtlasDatasetInput)) return value;
-	const type = datasetTypes.get(value.output);
-	return type && servedFromRows(type)
-		? new ComparableDatasetInput(root, value.output, type)
-		: value;
-};
-for (const [key, value] of Object.entries(jsonInputs)) {
-	if (key === "declared" && value && typeof value === "object")
-		jsonInputs.declared = Object.fromEntries(
-			Object.entries(value).map(([id, input]) => [id, comparable(input)]),
-		);
-	else (jsonInputs as Record<string, unknown>)[key] = comparable(value);
-}
 // Small-area census tables read raw files in both builds and are outside this migration.
 delete jsonInputs.censusSmallAreaRoot;
 const fromSqlite = (value: unknown) =>
