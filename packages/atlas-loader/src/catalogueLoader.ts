@@ -147,6 +147,11 @@ export type CatalogueOptions = {
 	mapAssetBaseUrl?: string;
 	mapTileBaseUrl?: string;
 	loadEvidenceDocuments?: boolean;
+	/**
+	 * Leaves the release manifest unread, for a build stage that runs before
+	 * `atlas-release` writes it and needs none of what it lists.
+	 */
+	loadAtlasRelease?: boolean;
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
 	crosswalkCacheBytes?: number;
@@ -173,7 +178,7 @@ export type CatalogueOptions = {
 	onStage?: (stage: string, milliseconds: number) => void;
 };
 
-export const readAtlasCatalogues = (
+const readCatalogues = (
 	repositoryRoot: string,
 	options: CatalogueOptions = {},
 ) => {
@@ -209,7 +214,9 @@ export const readAtlasCatalogues = (
 		readTerrainCatalogue(repositoryRoot),
 	);
 	const atlasRelease = stage("atlas-release", () =>
-		readAtlasRelease(repositoryRoot),
+		options.loadAtlasRelease === false
+			? undefined
+			: readAtlasRelease(repositoryRoot),
 	);
 	const documents = stage("evidence-documents", () =>
 		options.loadEvidenceDocuments === false
@@ -446,3 +453,24 @@ export const readAtlasCatalogues = (
 		analysisGeographyValidationInventory,
 	};
 };
+
+type Catalogues = ReturnType<typeof readCatalogues>;
+
+/**
+ * Every catalogue the build writes, read once. The release manifest is among
+ * them unless `loadAtlasRelease: false`, which leaves it `undefined`.
+ */
+export function readAtlasCatalogues(
+	repositoryRoot: string,
+	options: CatalogueOptions & { loadAtlasRelease: false },
+): Omit<Catalogues, "atlasRelease"> & { atlasRelease: undefined };
+export function readAtlasCatalogues(
+	repositoryRoot: string,
+	options?: CatalogueOptions,
+): Omit<Catalogues, "atlasRelease"> & { atlasRelease: AtlasRelease };
+export function readAtlasCatalogues(
+	repositoryRoot: string,
+	options: CatalogueOptions = {},
+) {
+	return readCatalogues(repositoryRoot, options);
+}

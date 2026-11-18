@@ -19,7 +19,6 @@ import {
 	findCurrentStages,
 } from "./build-data-digests.mjs";
 import { createStageCache } from "./build-data-cache.mjs";
-import { discardAtlasCacheWork } from "./src/storage/atlasCacheWork.ts";
 import { OUTPUT_MANIFEST_ENV } from "./src/storage/outputManifest.ts";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
@@ -44,7 +43,6 @@ const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
  *   createCache?: () => ReturnType<typeof createStageCache> | null,
- *   discardWork?: () => void,
  *   env?: Record<string, string | undefined>,
  * }} [options]
  */
@@ -55,7 +53,6 @@ export async function runBuild({
 	log = buildLog.info,
 	logError = buildLog.error,
 	createCache = () => null,
-	discardWork = () => {},
 	limits = { jobs: 1, memoryMb: Infinity },
 	env = process.env,
 } = {}) {
@@ -99,10 +96,6 @@ export async function runBuild({
 				selected.filter((stage) => stage.cacheable !== false),
 			);
 		}
-		// Stages that add to a shared file work on a copy until the build
-		// publishes it. A copy left by a build that stopped is thrown away
-		// before any stage is looked up, with the stamps that vouch for it.
-		if (!plan && !adopt && !checksOnly) discardWork();
 		// --from and --no-cache rerun every stage they select, and record them.
 		const reuse = cache !== null && useCache && from === undefined;
 		// A stage that always runs may know its work is already done, and then
@@ -158,10 +151,7 @@ export async function runBuild({
 			});
 		}
 		logRunProblems({ log, ...state });
-		if (state.failureStatus !== null) {
-			discardWork();
-			return state.failureStatus;
-		}
+		if (state.failureStatus !== null) return state.failureStatus;
 		// An undeclared write is a bug in the graph: the cache would not see it.
 		if (state.undeclaredStages.length || state.mismatchedStages.length) {
 			logError("Output verification failed.");
@@ -182,7 +172,6 @@ export async function runBuild({
 		return 0;
 	} catch (error) {
 		state.failed = true;
-		if (!plan && !adopt) discardWork();
 		throw error;
 	} finally {
 		reportSummary(state.failed);
@@ -241,7 +230,6 @@ if (isMainModule(import.meta.url)) {
 		process.exitCode = await runBuild({
 			argv: process.argv.slice(2),
 			createCache: createStageCache,
-			discardWork: () => discardAtlasCacheWork(repositoryRoot),
 			limits: resolveLimits(),
 		});
 	} catch (error) {

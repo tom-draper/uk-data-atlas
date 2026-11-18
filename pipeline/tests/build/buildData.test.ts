@@ -160,12 +160,12 @@ const apiOrder = [
 	"named-locations",
 	"location-projections",
 	"atlas-sqlite",
-	"geography-inventory",
-	"relationship-paths",
 	"statistics-vocabulary",
 	"data-catalog",
-	"analysis-geographies",
 	"statistics-read-path",
+	"geography-inventory",
+	"relationship-paths",
+	"analysis-geographies",
 	"analysis-geography-validation",
 	"geography-catalogues",
 	"postcode-index",
@@ -177,15 +177,14 @@ const apiOrder = [
 	"assemble-atlas",
 	"place-index",
 	"area-search-index",
+	"postcode-counts",
+	"assemble-cache",
 	"build-modules",
 	"export-manifest",
-	"postcode-counts",
 	"relationship-candidates",
 	"lookup-manifest",
 	"map-resource",
 	"validation-report",
-	"atlas-cache-stamp",
-	"atlas-release-initial",
 	"documents",
 	"atlas-lookups",
 	"atlas-release",
@@ -359,12 +358,12 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"crosswalk-inventory",
 		"location-projections",
 		"atlas-sqlite",
-		"geography-inventory",
-		"relationship-paths",
 		"statistics-vocabulary",
 		"data-catalog",
-		"analysis-geographies",
 		"statistics-read-path",
+		"geography-inventory",
+		"relationship-paths",
+		"analysis-geographies",
 		"analysis-geography-validation",
 		"geography-catalogues",
 		"measure-compatibility",
@@ -375,14 +374,13 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"assemble-atlas",
 		"place-index",
 		"area-search-index",
+		"postcode-counts",
+		"assemble-cache",
 		"build-modules",
 		"export-manifest",
-		"postcode-counts",
 		"relationship-candidates",
 		"lookup-manifest",
 		"validation-report",
-		"atlas-cache-stamp",
-		"atlas-release-initial",
 		"documents",
 		"atlas-lookups",
 		"atlas-release",
@@ -394,7 +392,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 	]);
 });
 
-test("documents rebuild pins the final manifest without rebuilding the initial manifest", (context) => {
+test("documents rebuild is followed by the release that lists its documents", (context) => {
 	const build = fixture(context);
 	assert.deepEqual(stages(build.run(["--from", "documents"])), [
 		"documents",
@@ -421,7 +419,7 @@ test("a plan selects the same stages without executing commands", (context) => {
 	]);
 	assert.match(
 		result.stdout,
-		/documents: would run\n.*\n {2}Depends on: atlas-sqlite, atlas-release-initial, operations, geometry-store\n/,
+		/documents: would run\n.*\n {2}Depends on: atlas-sqlite, operations, geometry-store, geography-catalogues, /,
 	);
 	assert.deepEqual(build.commands(), []);
 	assert.deepEqual(stages(build.run(args)), [
@@ -460,7 +458,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 		/^Error: relationship-paths failed with exit code 23 after \S+\. Build stopped$/m,
 	);
 	assert.match(result.stdout, /^Data build failed after /m);
-	assert.equal(build.commands().length, 5);
+	assert.equal(build.commands().length, 8);
 	assert.deepEqual(build.commands().at(-1), [
 		"pipeline/src/stages/build-relationship-paths.ts",
 	]);
@@ -570,33 +568,4 @@ process.exitCode = await runBuild({ argv: process.argv.slice(2), stages: ${JSON.
 		["right"],
 		["publish"],
 	]);
-});
-
-test("a build throws away a leftover working copy before it looks at any stage, and again if a stage fails", async () => {
-	const events: string[] = [];
-	const stages = [
-		{ name: "first", dependencies: [], args: ["first"] },
-		{ name: "second", dependencies: ["first"], args: ["second"] },
-	];
-	const run = (argv: string[], failing?: string) =>
-		runBuild({
-			argv,
-			stages,
-			log: () => {},
-			logError: () => {},
-			discardWork: () => events.push("discard"),
-			execute: (stage: { name: string }) => {
-				events.push(stage.name);
-				return stage.name === failing ? 1 : 0;
-			},
-		});
-	assert.equal(await run([]), 0);
-	assert.deepEqual(events, ["discard", "first", "second"]);
-	events.length = 0;
-	assert.equal(await run([], "second"), 1);
-	assert.deepEqual(events, ["discard", "first", "second", "discard"]);
-	// A plan runs nothing, so it leaves the copy alone.
-	events.length = 0;
-	assert.equal(await run(["--plan"]), 0);
-	assert.deepEqual(events, []);
 });

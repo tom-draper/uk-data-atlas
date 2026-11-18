@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { atlasCacheFile } from "@uk-data-atlas/atlas-db";
 import { unpackText } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
@@ -96,7 +96,7 @@ const readCached = (
 	output: string,
 	sourceSha256: string,
 ): StoredDatasetPayload | undefined => {
-	const path = atlasCachePath(root);
+	const path = atlasCacheFile(root, "datasets");
 	if (!existsSync(path)) return undefined;
 	const cache = openReadOnlyDatabase(path);
 	try {

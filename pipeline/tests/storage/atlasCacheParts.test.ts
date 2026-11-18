@@ -6,27 +6,26 @@ import {
 	readdirSync,
 	readFileSync,
 	rmSync,
-	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { onTestFinished, test } from "vitest";
-import { atlasCachePartPath, CACHE_VERSION } from "@uk-data-atlas/atlas-db";
 import {
-	atlasCacheWorkPath,
-	discardAtlasCacheWork,
-	publishAtlasCacheSteps,
+	atlasCachePartPath,
+	CACHE_VERSION,
+	cacheGeneration,
+} from "@uk-data-atlas/atlas-db";
+import {
+	assembleAtlasCache,
+	CACHE_COMPONENTS,
+	checkCachePart,
 	publishCacheTables,
 	stageStampPath,
 	writeCachePart,
 	writeCacheTables,
 	writeStageStamp,
 } from "../../src/storage";
-import {
-	checkStagedComponents,
-	stampAtlasCache,
-} from "../../src/storage/stampAtlasCache";
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));
@@ -47,7 +46,6 @@ function fixture() {
 	);
 	canonical.close();
 	const published = join(root, "data/build/atlas-cache.sqlite");
-	const work = atlasCacheWorkPath(root);
 	const place = (name = "Leeds") =>
 		writeCacheTables(root, "place-index", {
 			place_names: { columns: ["name TEXT"], rows: [[name]] },
@@ -73,7 +71,7 @@ function fixture() {
 			database.close();
 		}
 	};
-	return { root, published, work, place, search, counts, tablesIn };
+	return { root, published, place, search, counts, tablesIn };
 }
 
 const temporaryFiles = (directory: string) =>
@@ -168,15 +166,14 @@ test("a part is refused when the canonical inputs change while it is written", (
 	assert.equal(existsSync(atlasCachePartPath(root, "place-index")), false);
 });
 
-test("stamping copies every part into one working copy and publishes it once, with the content hash", () => {
-	const { root, published, work, place, search, counts, tablesIn } =
-		fixture();
+const COMPONENTS = ["place-index", "area-search", "postcode-counts"] as const;
+
+test("the cache is assembled from every part, with the content hash of the canonical database", () => {
+	const { root, published, place, search, counts, tablesIn } = fixture();
 	place();
 	search();
 	counts();
-	checkStagedComponents(root);
-	const hash = stampAtlasCache(root);
-	assert.equal(existsSync(work), false);
+	const hash = assembleAtlasCache(root, COMPONENTS);
 	assert.deepEqual(tablesIn(published), [
 		"area_search_codes",
 		"place_names",
@@ -184,13 +181,15 @@ test("stamping copies every part into one working copy and publishes it once, wi
 	]);
 	const cache = new DatabaseSync(published, { readOnly: true });
 	try {
-		assert.equal(
+		assert.deepEqual(
 			cache
-				.prepare(
-					"SELECT value FROM meta WHERE key = 'atlas-sqlite-content-hash'",
-				)
-				.get()?.value,
-			hash,
+				.prepare("SELECT key, value FROM meta ORDER BY key")
+				.all()
+				.map((row) => [row.key, row.value]),
+			[
+				["atlas-sqlite-content-hash", hash],
+				["cacheVersion", String(CACHE_VERSION)],
+			],
 		);
 		assert.deepEqual(
 			cache
@@ -201,127 +200,130 @@ test("stamping copies every part into one working copy and publishes it once, wi
 				.map((row) => row.component),
 			["area-search", "place-index", "postcode-counts"],
 		);
-	} finally {
-		cache.close();
-	}
-	assert.deepEqual(
-		JSON.parse(
-			readFileSync(stageStampPath(root, "atlas-cache-stamp"), "utf8"),
-		),
-		{ "atlas-sqlite-content-hash": hash },
-	);
-	assert.deepEqual(temporaryFiles(join(root, "data/build")), []);
-});
-
-test("stamping is refused for a part that is missing or was built for other inputs", () => {
-	const { root, place, search, counts } = fixture();
-	place();
-	search();
-	assert.throws(() => checkStagedComponents(root), /postcode-counts/);
-	counts();
-	checkStagedComponents(root);
-	rmSync(atlasCachePartPath(root, "area-search"));
-	assert.throws(() => checkStagedComponents(root), /no current area-search/);
-	search();
-	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	canonical.exec(
-		"UPDATE payloads SET payload = 'releases-2' WHERE id = 'boundary-releases'",
-	);
-	canonical.close();
-	assert.throws(() => checkStagedComponents(root), /no current place-index/);
-});
-
-test("a working copy left by a build that stopped is discarded", () => {
-	const { root, published, work, place, search, counts } = fixture();
-	place();
-	search();
-	counts();
-	assert.equal(discardAtlasCacheWork(root), false);
-	writeFileSync(work, "half a copy");
-	assert.equal(discardAtlasCacheWork(root), true);
-	assert.equal(existsSync(work), false);
-	assert.equal(existsSync(published), false);
-});
-
-test("one copy takes several components and publishes them together", () => {
-	const { root, published, tablesIn } = fixture();
-	publishAtlasCacheSteps(
-		root,
-		[
-			{
-				component: "place-index",
-				write: (database) =>
-					database.exec("CREATE TABLE place_names (name TEXT)"),
-			},
-			{
-				component: "area-search",
-				write: (database) =>
-					database.exec("CREATE TABLE area_search_codes (code TEXT)"),
-			},
-		],
-		{ vacuum: false },
-	);
-	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
-	const cache = new DatabaseSync(published, { readOnly: true });
-	try {
 		assert.deepEqual(
 			cache
-				.prepare(
-					"SELECT component FROM cache_generation ORDER BY component",
-				)
+				.prepare("SELECT name FROM sqlite_schema ORDER BY rowid")
 				.all()
-				.map((row) => row.component),
-			["area-search", "place-index"],
+				.map((row) => row.name),
+			[
+				"meta",
+				"payloads",
+				"cache_generation",
+				"place_names",
+				"area_search_codes",
+				"postcode_counts",
+			],
 		);
 	} finally {
 		cache.close();
 	}
-	assert.deepEqual(
-		temporaryFiles(join(root, "data/build")),
-		[],
-		"no temporary file is left behind",
-	);
+	assert.deepEqual(temporaryFiles(join(root, "data/build")), []);
 });
 
-/** A published cache written under another version, or by code that stored none. */
-const oldCaches = [
-	[
-		"an older version",
-		`INSERT INTO meta VALUES ('cacheVersion', '${CACHE_VERSION - 1}')`,
-	],
-	["no version", "SELECT 1"],
-] as const;
+test("the parts are assembled in the order of the cache's components", () => {
+	assert.deepEqual(CACHE_COMPONENTS, [
+		"projections",
+		"datasets",
+		"place-index",
+		"area-search",
+		"postcode-counts",
+	]);
+});
 
-for (const [label, version] of oldCaches) {
-	test(`a cache stored with ${label} is rebuilt from an empty file`, () => {
-		const { root, published, tablesIn } = fixture();
+test("assembling copies each table and its rows as the part holds them", () => {
+	const { root, published } = fixture();
+	writeCacheTables(root, "place-index", {
+		place_names: {
+			columns: ["name TEXT", "rank INTEGER"],
+			rows: [
+				["York", 2],
+				["Leeds", 1],
+				["Bath", 3],
+			],
+		},
+	});
+	writeCachePart(root, {
+		component: "area-search",
+		write: (database) => {
+			database.exec(
+				"CREATE TABLE area_search_codes (code TEXT PRIMARY KEY, note BLOB) STRICT, WITHOUT ROWID",
+			);
+			database
+				.prepare("INSERT INTO area_search_codes VALUES (?, ?)")
+				.run("E01", new Uint8Array([1, 2, 3]));
+			database
+				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
+				.run("index", "{}");
+		},
+	});
+	assembleAtlasCache(root, ["place-index", "area-search"]);
+	const cache = new DatabaseSync(published, { readOnly: true });
+	try {
+		assert.deepEqual(
+			cache
+				.prepare("SELECT name, rank FROM place_names")
+				.all()
+				.map((row) => [row.name, row.rank]),
+			[
+				["York", 2],
+				["Leeds", 1],
+				["Bath", 3],
+			],
+		);
+		assert.match(
+			String(
+				cache
+					.prepare(
+						"SELECT sql FROM sqlite_schema WHERE name = 'area_search_codes'",
+					)
+					.get()?.sql,
+			),
+			/PRIMARY KEY, note BLOB\) STRICT, WITHOUT ROWID$/,
+		);
+		assert.deepEqual(
+			[
+				...(cache.prepare("SELECT note FROM area_search_codes").get()!
+					.note as Uint8Array),
+			],
+			[1, 2, 3],
+		);
+		assert.equal(
+			cache
+				.prepare("SELECT payload FROM payloads WHERE id = 'index'")
+				.get()?.payload,
+			"{}",
+		);
+	} finally {
+		cache.close();
+	}
+});
+
+test("nothing of an earlier cache is kept, whatever version it was", () => {
+	const { root, published, place, tablesIn } = fixture();
+	place();
+	for (const version of [
+		`INSERT INTO meta VALUES ('cacheVersion', '${CACHE_VERSION - 1}')`,
+		`INSERT INTO meta VALUES ('cacheVersion', '${CACHE_VERSION}')`,
+		"SELECT 1",
+	]) {
+		rmSync(published, { force: true });
 		const old = new DatabaseSync(published);
 		old.exec(
 			[
 				"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
 				version,
-				// Tables under the retired names.
+				// Tables under the retired names, and one a stage no longer builds.
 				"CREATE TABLE area_search_codes (code TEXT)",
 				"CREATE TABLE place_index_places (name TEXT)",
 				"CREATE TABLE cache_generations (component TEXT, generation TEXT)",
 			].join(";"),
 		);
 		old.close();
-		publishCacheTables(root, "place-index", {
-			place_names: { columns: ["name TEXT"], rows: [["Leeds"]] },
-		});
+		assembleAtlasCache(root, ["place-index"]);
 		assert.deepEqual(tablesIn(published), ["place_names"]);
 		const cache = new DatabaseSync(published, { readOnly: true });
 		try {
 			assert.deepEqual(
-				cache
-					.prepare("SELECT key, value FROM meta ORDER BY key")
-					.all()
-					.map((row) => [row.key, row.value]),
-				[["cacheVersion", String(CACHE_VERSION)]],
-			);
-			// Compatibility views for the retired names are not written.
-			assert.equal(
 				cache
 					.prepare(
 						"SELECT count(*) AS n FROM sqlite_schema WHERE type = 'view'",
@@ -332,29 +334,81 @@ for (const [label, version] of oldCaches) {
 		} finally {
 			cache.close();
 		}
-	});
-}
-
-test("a cache stored with the current version keeps its other components", () => {
-	const { root, published, tablesIn } = fixture();
-	publishCacheTables(root, "place-index", {
-		place_names: { columns: ["name TEXT"], rows: [["Leeds"]] },
-	});
-	publishCacheTables(root, "area-search", {
-		area_search_codes: { columns: ["code TEXT"], rows: [["E01"]] },
-	});
-	const cache = new DatabaseSync(published, { readOnly: true });
-	try {
-		assert.equal(
-			cache
-				.prepare("SELECT value FROM meta WHERE key = 'cacheVersion'")
-				.get()?.value,
-			String(CACHE_VERSION),
-		);
-	} finally {
-		cache.close();
 	}
-	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
+});
+
+test("a cache is refused for a part that is missing or was built for other inputs", () => {
+	const { root, published, place, search, counts } = fixture();
+	place();
+	search();
+	assert.throws(
+		() => assembleAtlasCache(root, COMPONENTS),
+		/no current postcode-counts/,
+	);
+	counts();
+	checkCachePart(root, "postcode-counts");
+	rmSync(atlasCachePartPath(root, "area-search"));
+	assert.throws(
+		() => assembleAtlasCache(root, COMPONENTS),
+		/no current area-search/,
+	);
+	search();
+	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
+	canonical.exec(
+		"UPDATE payloads SET payload = 'releases-2' WHERE id = 'boundary-releases'",
+	);
+	canonical.close();
+	assert.throws(
+		() => assembleAtlasCache(root, COMPONENTS),
+		/no current place-index/,
+	);
+	// A refused build publishes nothing.
+	assert.equal(existsSync(published), false);
+	assert.deepEqual(temporaryFiles(join(root, "data/build")), []);
+});
+
+test("a published cache is left as it was when the assembly fails", () => {
+	const { root, published, place, search, counts } = fixture();
+	place();
+	search();
+	counts();
+	assembleAtlasCache(root, COMPONENTS);
+	const before = readFileSync(published);
+	rmSync(atlasCachePartPath(root, "place-index"));
+	assert.throws(() => assembleAtlasCache(root, COMPONENTS));
+	assert.deepEqual(readFileSync(published), before);
+});
+
+test("one part can be written for a canonical database that is not atlas.sqlite", () => {
+	const { root } = fixture();
+	const base = join(root, "data/build/atlas-base.sqlite");
+	const canonical = new DatabaseSync(base);
+	canonical.exec(
+		"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('base-areas')",
+	);
+	canonical.close();
+	writeCachePart(
+		root,
+		{
+			component: "area-search",
+			write: (database) =>
+				database.exec("CREATE TABLE area_search_codes (code TEXT)"),
+		},
+		{ canonical: base },
+	);
+	const part = new DatabaseSync(atlasCachePartPath(root, "area-search"), {
+		readOnly: true,
+	});
+	try {
+		const stored = part
+			.prepare("SELECT generation FROM cache_generation")
+			.get()?.generation;
+		// It names the inputs it was built from, not those of atlas.sqlite.
+		assert.notEqual(stored, cacheGeneration(root, "area-search"));
+		assert.equal(stored, cacheGeneration(root, "area-search", base));
+	} finally {
+		part.close();
+	}
 });
 
 test("a stamp is written in one step and replaced whole", () => {

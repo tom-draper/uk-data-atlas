@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { atlasCacheFile } from "@uk-data-atlas/atlas-db";
 import { readStoredAtlasPayload } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import {
@@ -33,7 +33,7 @@ export function readAtlasDatasetUrls(
 	);
 	try {
 		const cached = new Map<string, { source: string; hash: string }>();
-		const cachePath = atlasCachePath(repositoryRoot);
+		const cachePath = atlasCacheFile(repositoryRoot, "datasets");
 		if (existsSync(cachePath)) {
 			const cache = openReadOnlyDatabase(cachePath);
 			try {

@@ -560,7 +560,7 @@ test("production builders resolve without UI code and include declared workers a
 	]) {
 		assert.ok(inputs.get("atlas-sqlite")!.includes(path), path);
 	}
-	for (const stage of ["atlas-release-initial", "atlas-release"]) {
+	for (const stage of ["atlas-release"]) {
 		for (const path of [
 			"pipeline/src/stages/build-atlas-release.ts",
 			"pipeline/src/atlas/atlasRelease.ts",

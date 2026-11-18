@@ -1,13 +1,6 @@
 import { randomUUID } from "node:crypto";
-import {
-	constants,
-	copyFileSync,
-	existsSync,
-	mkdirSync,
-	renameSync,
-	rmSync,
-} from "node:fs";
-import { dirname } from "node:path";
+import { existsSync, mkdirSync, renameSync, rmSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 import {
@@ -18,34 +11,10 @@ import {
 	closeReadOnlyDatabase,
 	type CacheComponent,
 } from "@uk-data-atlas/atlas-db";
-import { atlasCacheWorkPath } from "./atlasCacheWork.ts";
+import { hashFile } from "../lib/fileHashCache.ts";
 import { publishVacuumed } from "./publishVacuumed.ts";
 
 const CACHE_VERSION_KEY = "cacheVersion";
-
-/**
- * Copy the published cache to the file a build changes, unless an older
- * compiler wrote it. Its tables and views may not match the current names, so
- * the build starts from an empty file and every component is rebuilt.
- */
-function copyCurrentCache(source: string, destination: string) {
-	if (!existsSync(source)) return;
-	let current = false;
-	try {
-		const database = new DatabaseSync(source, { readOnly: true });
-		try {
-			current =
-				database
-					.prepare("SELECT value FROM meta WHERE key = ?")
-					.get(CACHE_VERSION_KEY)?.value === String(CACHE_VERSION);
-		} finally {
-			database.close();
-		}
-	} catch {
-		// Not a cache this compiler wrote.
-	}
-	if (current) copyFileSync(source, destination, constants.COPYFILE_FICLONE);
-}
 
 /** The tables every cache file holds, whichever components are in it. */
 const SHARED_TABLES_DDL =
@@ -60,8 +29,9 @@ function applyStep(
 	database: DatabaseSync,
 	root: string,
 	{ component, write }: CacheStep,
+	canonical?: string,
 ) {
-	const generation = cacheGeneration(root, component);
+	const generation = cacheGeneration(root, component, canonical);
 	database.exec(`BEGIN; ${SHARED_TABLES_DDL}`);
 	database
 		.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
@@ -78,8 +48,9 @@ const guardGeneration = (
 	root: string,
 	component: CacheComponent,
 	generation: string,
+	canonical?: string,
 ) => {
-	if (cacheGeneration(root, component) !== generation)
+	if (cacheGeneration(root, component, canonical) !== generation)
 		throw new Error(
 			"Canonical cache inputs changed during compilation. Retry the cache build.",
 		);
@@ -93,7 +64,11 @@ const FAST_WRITES = "PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;";
  * file or the whole new one. Nothing else is read or kept from an earlier
  * build, so the part holds exactly what the stage just wrote.
  */
-export function writeCachePart(root: string, step: CacheStep) {
+export function writeCachePart(
+	root: string,
+	step: CacheStep,
+	{ canonical }: { canonical?: string } = {},
+) {
 	const path = atlasCachePartPath(root, step.component);
 	mkdirSync(dirname(path), { recursive: true });
 	const temporary = `${path}.${randomUUID()}.tmp`;
@@ -102,11 +77,11 @@ export function writeCachePart(root: string, step: CacheStep) {
 		let generation: string;
 		try {
 			database.exec(FAST_WRITES);
-			generation = applyStep(database, root, step);
+			generation = applyStep(database, root, step, canonical);
 		} finally {
 			database.close();
 		}
-		guardGeneration(root, step.component, generation);
+		guardGeneration(root, step.component, generation, canonical);
 		// Readers in this process must not keep the file about to be replaced.
 		closeReadOnlyDatabase(path);
 		renameSync(temporary, path);
@@ -180,94 +155,106 @@ function copyPartRows(
 }
 
 /**
- * The working copy, made from the published cache if the build has none yet.
+ * The components of the cache, in the order they are assembled. Each is built
+ * by a stage that keeps it in a part of its own.
  */
-export function ensureWorkingCopy(root: string) {
-	const work = atlasCacheWorkPath(root);
-	if (!existsSync(work)) copyCurrentCache(atlasCachePath(root), work);
-	return work;
+export const CACHE_COMPONENTS: readonly CacheComponent[] = [
+	"projections",
+	"datasets",
+	"place-index",
+	"area-search",
+	"postcode-counts",
+];
+
+/**
+ * The part holds its component for the canonical database as it is now, or
+ * this throws. A stage skipped as unchanged is only trusted while that holds,
+ * and so is one whose part was deleted or built for older inputs.
+ */
+export function checkCachePart(root: string, component: CacheComponent) {
+	const path = atlasCachePartPath(root, component);
+	let stored: unknown;
+	try {
+		const part = new DatabaseSync(path, { readOnly: true });
+		try {
+			stored = part
+				.prepare(
+					"SELECT generation FROM cache_generation WHERE component = ?",
+				)
+				.get(component)?.generation;
+		} finally {
+			part.close();
+		}
+	} catch {
+		// A missing or unreadable part has no generation.
+	}
+	if (stored !== cacheGeneration(root, component))
+		throw new Error(
+			`There are no current ${component} tables in ${path}. Run the data build again to rebuild them.`,
+		);
 }
 
 /**
- * Add components to the cache without exposing incomplete tables to API
- * readers: copy the cache once, apply every step to the copy, then publish it
- * with one `VACUUM INTO` and a rename. `vacuum: false` renames the copy as it
- * is and leaves the vacuum to a later publish.
+ * Assemble `atlas-cache.sqlite` from the parts of the stages that built each
+ * component, and stamp it with the content hash of the canonical database it
+ * was built for. The file is written whole beside the cache, vacuumed into
+ * place and renamed, so a reader sees the old cache or the new one. Nothing
+ * of an earlier cache is kept: every component comes from its part.
+ * Returns the hash.
  */
-export function publishAtlasCacheSteps(
+export function assembleAtlasCache(
 	root: string,
-	steps: readonly CacheStep[],
-	{ vacuum = true }: { vacuum?: boolean } = {},
+	components: readonly CacheComponent[] = CACHE_COMPONENTS,
 ) {
+	for (const component of components) checkCachePart(root, component);
+	const canonical = join(root, "data/build/atlas.sqlite");
+	const hash = hashFile(canonical);
 	const path = atlasCachePath(root);
 	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {
-		copyCurrentCache(path, temporary);
 		const database = new DatabaseSync(temporary);
-		const generations = new Map<CacheComponent, string>();
 		try {
 			database.exec(FAST_WRITES);
-			for (const step of steps)
-				generations.set(
-					step.component,
-					applyStep(database, root, step),
-				);
+			database.exec(SHARED_TABLES_DDL);
+			database
+				.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
+				.run(CACHE_VERSION_KEY, String(CACHE_VERSION));
+			for (const component of components)
+				copyCachePart(database, atlasCachePartPath(root, component));
+			database
+				.prepare("INSERT OR REPLACE INTO meta VALUES (?, ?)")
+				.run("atlas-sqlite-content-hash", hash);
 		} finally {
 			database.close();
 		}
-		for (const [component, generation] of generations)
-			guardGeneration(root, component, generation);
-		// Readers in this process must not keep the file about to be replaced.
-		if (vacuum)
-			publishVacuumed(temporary, path, {
-				atlasIdentity: false,
-				beforeReplace: () => closeReadOnlyDatabase(path),
-			});
-		else {
-			closeReadOnlyDatabase(path);
-			renameSync(temporary, path);
-		}
+		if (hashFile(canonical) !== hash)
+			throw new Error("atlas.sqlite changed while its cache was built");
+		publishVacuumed(temporary, path, {
+			atlasIdentity: false,
+			// Readers in this process must not keep the file about to be replaced.
+			beforeReplace: () => closeReadOnlyDatabase(path),
+		});
 	} finally {
 		rmSync(temporary, { force: true });
 	}
-	return path;
-}
-
-/** Replace one component without exposing incomplete tables to API readers. */
-export function publishAtlasCache(
-	root: string,
-	component: CacheComponent,
-	write: (database: DatabaseSync) => void,
-) {
-	return publishAtlasCacheSteps(root, [{ component, write }]);
+	return hash;
 }
 
 /**
- * Publish the working copy over the cache: one `VACUUM INTO` beside the cache
- * and a rename. The working copy is removed afterwards, and survives a
- * failure. Returns false when there is no working copy.
+ * Write one component's tables to its part and assemble the cache from the
+ * parts there are. For fixtures that need a cache holding some components.
  */
-export function publishAtlasCacheWork(root: string) {
-	const work = atlasCacheWorkPath(root);
-	if (!existsSync(work)) return false;
-	const path = atlasCachePath(root);
-	publishVacuumed(work, path, {
-		atlasIdentity: false,
-		// Readers in this process must not keep the file about to be replaced.
-		beforeReplace: () => closeReadOnlyDatabase(path),
-	});
-	rmSync(work, { force: true });
-	return true;
-}
-
 export function publishCacheTables(
 	root: string,
 	component: CacheComponent,
 	tables: Record<string, SqliteTable>,
 ) {
-	return publishAtlasCache(root, component, (database) => {
-		for (const name of Object.keys(tables))
-			database.exec(`DROP TABLE IF EXISTS ${name}`);
-		writeSqliteTables(database, tables);
-	});
+	writeCacheTables(root, component, tables);
+	assembleAtlasCache(
+		root,
+		CACHE_COMPONENTS.filter((name) =>
+			existsSync(atlasCachePartPath(root, name)),
+		),
+	);
+	return atlasCachePath(root);
 }

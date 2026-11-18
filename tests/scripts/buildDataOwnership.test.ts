@@ -55,20 +55,16 @@ test("a stage that declares nothing is refused unless it is the uncached downloa
 	);
 });
 
-test("only the known stages still share a path in the build graph", () => {
-	// Each step of #712 removes names from this list. It ends empty.
-	const sharing = new Set<string>();
-	for (const problem of ownershipProblems(buildDataStages as Stage[])) {
-		const [names] = problem.split(" both write ");
-		for (const name of names.split(" and ")) sharing.add(name);
-	}
-	assert.deepEqual(
-		[...sharing].sort(),
-		[
-			"atlas-cache-stamp",
-			"atlas-release",
-			"atlas-release-initial",
-			"atlas-sqlite",
-		].sort(),
+test("no two stages in the build graph declare the same path", () => {
+	assert.deepEqual(ownershipProblems(buildDataStages as Stage[]), []);
+	// A stage that is added without its paths, or with another's, is refused
+	// as the graph loads.
+	assert.throws(
+		() =>
+			assertStageOwnership([
+				...(buildDataStages as Stage[]),
+				{ name: "new-stage", writes: ["data/build/atlas.sqlite"] },
+			]),
+		/new-stage and assemble-atlas|assemble-atlas and new-stage/,
 	);
 });

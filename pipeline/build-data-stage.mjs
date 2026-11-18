@@ -13,9 +13,6 @@ const stage = (
 		requiredOutputs = [],
 		codeInputs = [],
 		rawInputs,
-		shared = [],
-		scratch = [],
-		finishedBy,
 		writes = [],
 	} = {},
 ) => ({
@@ -30,9 +27,6 @@ const stage = (
 	requiredOutputs,
 	codeInputs,
 	rawInputs,
-	shared,
-	scratch,
-	finishedBy,
 	writes,
 });
 

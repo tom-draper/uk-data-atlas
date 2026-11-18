@@ -1242,7 +1242,7 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 			...find(name),
 			dependencies: ["base"],
 		})),
-		{ ...find("atlas-cache-stamp"), dependencies: components },
+		{ ...find("assemble-cache"), dependencies: components },
 	];
 	let failing: string | null = null;
 	let version = 1;
@@ -1255,9 +1255,9 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 		};
 		if (current.name === "base") write("data/build/base.json", "{}");
 		else if (current.name === failing) return 1;
-		else if (current.name === "atlas-cache-stamp") {
+		else if (current.name === "assemble-cache") {
 			// The stage that assembles the cache reads every part and writes the
-			// cache and its own stamp, which are all it writes.
+			// cache, which is all it writes.
 			write(
 				"data/build/atlas-cache.sqlite",
 				components
@@ -1266,7 +1266,6 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 					)
 					.join("+"),
 			);
-			write("data/build/.stamps/atlas-cache-stamp.json", "{}");
 		} else write(partOf(current.name), `${current.name}:${version}`);
 		return 0;
 	};
@@ -1290,7 +1289,7 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 	assert.deepEqual((await run()).executed, [
 		"base",
 		...components,
-		"atlas-cache-stamp",
+		"assemble-cache",
 	]);
 	assert.equal(
 		readFileSync(published, "utf8"),
@@ -1305,7 +1304,7 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 	rmSync(join(root, partOf("postcode-counts")));
 	assert.deepEqual((await run()).executed, [
 		"postcode-counts",
-		"atlas-cache-stamp",
+		"assemble-cache",
 	]);
 	assert.equal(
 		readFileSync(published, "utf8"),
@@ -1324,10 +1323,7 @@ test("each cache stage rebuilds from its own part, and only a changed part rerun
 		"place-index:1+area-search-index:1+postcode-counts:2",
 	);
 	failing = null;
-	assert.deepEqual((await run()).executed, [
-		"place-index",
-		"atlas-cache-stamp",
-	]);
+	assert.deepEqual((await run()).executed, ["place-index", "assemble-cache"]);
 	assert.deepEqual((await run()).executed, []);
 });
 

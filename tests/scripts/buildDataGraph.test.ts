@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
-import { stageStampPath } from "@/pipeline/src/storage/stageStamp";
 
 type Stage = {
 	name: string;
@@ -70,8 +69,7 @@ test("the shared databases name every stage that writes them", () => {
 			.map(({ name }) => name);
 	assert.deepEqual(writers("data/build/atlas.sqlite"), ["assemble-atlas"]);
 	assert.deepEqual(writers("data/build/atlas-cache.sqlite"), [
-		"atlas-sqlite",
-		"atlas-cache-stamp",
+		"assemble-cache",
 	]);
 	assert.deepEqual(
 		writers("data/build/atlas-cache-parts/postcode-counts.sqlite"),
@@ -83,30 +81,7 @@ test("the shared databases name every stage that writes them", () => {
 	]);
 });
 
-test("the only stages that share a path are the cache writers and the two release builds", () => {
-	const shared = new Set<string>();
-	for (const [index, first] of stages.entries())
-		for (const second of stages.slice(index + 1))
-			if (
-				(stageScope(first) ?? []).some((a) =>
-					(stageScope(second) ?? []).some((b) => overlaps(a, b)),
-				)
-			) {
-				shared.add(first.name);
-				shared.add(second.name);
-			}
-	assert.deepEqual(
-		[...shared].sort(),
-		[
-			"atlas-cache-stamp",
-			"atlas-release",
-			"atlas-release-initial",
-			"atlas-sqlite",
-		].sort(),
-	);
-});
-
-test("each stage that builds a cache component writes a part of its own, which the stamp stage assembles", () => {
+test("each stage that builds a cache component writes a part of its own, which assemble-cache copies into the cache", () => {
 	const find = (name: string) => {
 		const found = stages.find((stage) => stage.name === name);
 		assert.ok(found, name);
@@ -123,23 +98,29 @@ test("each stage that builds a cache component writes a part of its own, which t
 		assert.deepEqual(find(name).requiredOutputs, [part], name);
 		assert.equal(find(name).cacheable, true, name);
 		assert.ok(
-			find("atlas-cache-stamp").dependencies.includes(name),
+			find("assemble-cache").dependencies.includes(name),
 			`${name} is assembled`,
 		);
 	}
 	assert.ok(
-		find("atlas-cache-stamp").requiredOutputs?.includes(
+		find("assemble-cache").requiredOutputs?.includes(
 			"data/build/atlas-cache.sqlite",
 		),
 	);
-	const stamp = stageStampPath("", "atlas-cache-stamp");
-	assert.ok(find("atlas-cache-stamp").requiredOutputs?.includes(stamp));
+	assert.deepEqual(find("assemble-cache").writes, [
+		"data/build/atlas-cache.sqlite",
+	]);
 	// Nothing reads the assembled cache before it is published.
-	assert.ok(
-		find("atlas-release-initial").dependencies.includes(
-			"atlas-cache-stamp",
-		),
-	);
+	assert.ok(find("documents").dependencies.includes("assemble-cache"));
+	// The base build leaves its two components in parts of its own, and the
+	// cache is not among the files it writes.
+	const base = find("atlas-sqlite");
+	assert.deepEqual(base.writes, [
+		"data/build/atlas-base.sqlite",
+		"data/build/atlas-cache-parts/projections.sqlite",
+		"data/build/atlas-cache-parts/datasets.sqlite",
+	]);
+	assert.ok(find("assemble-cache").dependencies.includes("atlas-sqlite"));
 });
 
 test("no stage is left uncacheable except the sources download", () => {

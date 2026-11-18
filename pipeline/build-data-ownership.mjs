@@ -35,7 +35,14 @@ export function ownershipProblems(stages) {
 	return [...new Set(problems)];
 }
 
-/** Throws unless every path in the graph has one owning stage. */
+/**
+ * Throws unless every path in the graph has one owning stage, and returns the
+ * stages as they were given.
+ *
+ * @template {{ name: string, cacheable?: boolean, writes?: string[], outputs?: string[], requiredOutputs?: string[] }} T
+ * @param {T[]} stages
+ * @returns {T[]}
+ */
 export function assertStageOwnership(stages) {
 	const problems = ownershipProblems(stages);
 	if (problems.length)

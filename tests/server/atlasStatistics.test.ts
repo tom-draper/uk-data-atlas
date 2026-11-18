@@ -23,8 +23,8 @@ import {
 	type SqliteTable,
 } from "../../pipeline/src/storage/index";
 
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
-import { publishDatasetPayloads } from "../../pipeline/src/storage/index";
+import { atlasCachePartPath } from "@uk-data-atlas/atlas-db";
+import { writeDatasetPayloads } from "../../pipeline/src/storage/index";
 
 const entry = {
 	output: "fuel-poverty",
@@ -286,12 +286,14 @@ describe("fuel poverty on the statistics model", () => {
 			expect(readVersionedAtlasDataset(root, "fuel-poverty", hash)).toBe(
 				text,
 			);
-			publishDatasetPayloads(root);
+			writeDatasetPayloads(root);
 			expect(readAtlasDatasetUrls(root)).toEqual({
 				"fuel-poverty": `/data/catalogue/${hash}/fuel-poverty.json`,
 			});
 			let stored: Buffer | undefined;
-			const cache = new DatabaseSync(atlasCachePath(root));
+			const cache = new DatabaseSync(
+				atlasCachePartPath(root, "datasets"),
+			);
 			try {
 				const rows = cache
 					.prepare("SELECT * FROM dataset_payload")
@@ -321,10 +323,13 @@ describe("fuel poverty on the statistics model", () => {
 				"cached",
 			);
 			// Rebuilding the same data stores the same bytes.
-			publishDatasetPayloads(root);
-			const rebuilt = new DatabaseSync(atlasCachePath(root), {
-				readOnly: true,
-			});
+			writeDatasetPayloads(root);
+			const rebuilt = new DatabaseSync(
+				atlasCachePartPath(root, "datasets"),
+				{
+					readOnly: true,
+				},
+			);
 			try {
 				expect(
 					Buffer.from(

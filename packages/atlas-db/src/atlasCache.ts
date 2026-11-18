@@ -50,16 +50,16 @@ export const atlasCachePartPath = (root: string, component: CacheComponent) =>
 
 /**
  * The semantic generation of the canonical inputs used by one compiler. Always
- * reads the file as it is now, so a writer can tell whether it changed.
+ * reads the file as it is now, so a writer can tell whether it changed. The
+ * base build reads `atlas-base.sqlite`, which holds its inputs before
+ * `atlas.sqlite` exists.
  */
 export function cacheGeneration(
 	root: string,
 	component: CacheComponent,
+	canonicalPath = join(root, "data/build/atlas.sqlite"),
 ): string {
-	const database = openReadOnlyDatabase(
-		join(root, "data/build/atlas.sqlite"),
-		{ fresh: true },
-	);
+	const database = openReadOnlyDatabase(canonicalPath, { fresh: true });
 	try {
 		const inputs = dependencies[component].map((dependency) => {
 			if (dependency.startsWith("query:"))
@@ -96,6 +96,16 @@ export function cacheGeneration(
 		database.release();
 	}
 }
+
+/**
+ * The file to read a component's rows from when the reader checks each row
+ * against `atlas.sqlite` itself: the stage's own part while a build tree has
+ * one, else the assembled cache.
+ */
+export const atlasCacheFile = (root: string, component: CacheComponent) => {
+	const part = atlasCachePartPath(root, component);
+	return existsSync(part) ? part : atlasCachePath(root);
+};
 
 /**
  * Components whose stored generation matched the canonical inputs, with the

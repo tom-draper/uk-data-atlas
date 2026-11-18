@@ -1,6 +1,5 @@
 import { sourcesMatchRelease } from "../scripts/data-release.mjs";
-import { ATLAS_CACHE_WORK } from "./src/storage/atlasCacheWork.ts";
-import { stage, checkStage, stampOf } from "./build-data-stage.mjs";
+import { stage, checkStage } from "./build-data-stage.mjs";
 import {
 	countyShapeInputs,
 	datasetInputs,
@@ -28,13 +27,10 @@ const catalogueFiles = [
 	"packages/datasets/src/declaration/declaredGuides.ts",
 	"packages/datasets/src/declaration/declaredSources.ts",
 ];
-// The atlas cache is assembled from parts. The base build writes its two
-// components straight to the cache, and `atlas-cache-stamp` copies the others
-// into a working copy of it and publishes that.
+// The atlas cache is assembled from parts. A stage that builds a component of
+// it keeps that component in a file of its own, and `assemble-cache` is the
+// only stage that writes the cache.
 const atlasCache = "data/build/atlas-cache.sqlite";
-
-// A stage that builds one component of the atlas cache keeps it in a file of
-// its own. `atlas-cache-stamp` copies the parts into the cache.
 const cachePart = (component) =>
 	`data/build/atlas-cache-parts/${component}.sqlite`;
 
@@ -122,23 +118,23 @@ export const apiStages = [
 		{
 			writes: [
 				"data/build/atlas-base.sqlite",
-				atlasCache,
-				ATLAS_CACHE_WORK,
-				stampOf("atlas-cache-stamp"),
+				cachePart("projections"),
+				cachePart("datasets"),
 			],
 			rawInputs: censusSmallAreaInputs,
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
 				"data/build/atlas-base.sqlite",
-				"data/build/atlas-cache.sqlite",
+				cachePart("projections"),
+				cachePart("datasets"),
 			],
 		},
 	),
-	// A check stage: it reads the cache `atlas-sqlite` wrote and compares each
+	// A check stage: it reads the cache `assemble-cache` wrote and compares each
 	// generated dataset payload with the compiler's copy. See `checkStage`.
 	checkStage(
 		"verify-dataset-payloads",
-		["datasets", "atlas-sqlite"],
+		["datasets", "atlas-sqlite", "assemble-cache"],
 		["pipeline/src/stages/verify-dataset-payloads.ts"],
 		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
@@ -448,7 +444,7 @@ export const apiStages = [
 		},
 	),
 	// Its tables are the postcode-counts component of the atlas cache, in a file
-	// that only this stage writes. `atlas-cache-stamp` copies it into the cache.
+	// that only this stage writes. `assemble-cache` copies it into the cache.
 	stage(
 		"postcode-counts",
 		["postcode-index", "assemble-atlas"],
@@ -650,11 +646,15 @@ export const apiStages = [
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
+	// Reads every catalogue the build has written so far, and so waits for them.
+	// The release lists its documents, so it is written after them.
 	stage(
-		"atlas-release-initial",
+		"documents",
 		[
-			"geography-catalogues",
 			"atlas-sqlite",
+			"operations",
+			"geometry-store",
+			"geography-catalogues",
 			"boundary-registry",
 			"derived-boundaries",
 			"area-inventory",
@@ -664,7 +664,7 @@ export const apiStages = [
 			"postcode-index",
 			"postcode-areas",
 			"postcode-counts",
-			"atlas-cache-stamp",
+			"assemble-cache",
 			"location-projections",
 			"data-catalog",
 			"measure-compatibility",
@@ -680,21 +680,6 @@ export const apiStages = [
 			"geography-inventory",
 			"validation-report",
 			"terrain-catalogue",
-		],
-		["pipeline/src/stages/build-atlas-release.ts"],
-		{
-			rawInputs: [],
-			writes: [`${artifacts}/atlas-release.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
-		},
-	),
-	stage(
-		"documents",
-		[
-			"atlas-sqlite",
-			"atlas-release-initial",
-			"operations",
-			"geometry-store",
 		],
 		[
 			"--max-old-space-size=3072",
@@ -736,34 +721,29 @@ export const apiStages = [
 			requiredOutputs: ["data/build/atlas-assets/atlas-lookups.json"],
 		},
 	),
+	// The only writer of the atlas cache: it copies the part of every stage
+	// that built a component into one file, stamped with the hash of
+	// `atlas.sqlite` it was built for.
 	stage(
-		"atlas-cache-stamp",
+		"assemble-cache",
 		[
+			"atlas-sqlite",
+			"assemble-atlas",
 			"place-index",
 			"area-search-index",
 			"postcode-counts",
-			"assemble-atlas",
 		],
-		["pipeline/src/stages/stamp-atlas-cache.ts"],
+		["pipeline/src/stages/assemble-cache.ts"],
 		{
 			writes: [atlasCache],
 			rawInputs: [],
-			// Publishes the working copy, so it owns the file and notices any
-			// change to it.
-			requiredOutputs: [atlasCache, stampOf("atlas-cache-stamp")],
-			scratch: [ATLAS_CACHE_WORK],
+			requiredOutputs: [atlasCache],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
 		"atlas-release",
-		[
-			"atlas-release-initial",
-			"documents",
-			"atlas-lookups",
-			"assemble-atlas",
-			"atlas-cache-stamp",
-		],
+		["documents", "atlas-lookups", "assemble-atlas", "assemble-cache"],
 		["pipeline/src/stages/build-atlas-release.ts"],
 		{
 			rawInputs: [],
