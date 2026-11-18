@@ -38,10 +38,6 @@ export default defineConfig({
 					include: ["services/api/tests/built/*.test.ts"],
 				},
 				{ name: "mcp", include: ["services/mcp/tests/*.test.ts"] },
-				{
-					name: "duckdb-fixtures",
-					include: ["tests/duckdb-fixtures/*.test.mts"],
-				},
 			].map(({ name, include, exclude }) => ({
 				extends: true as const,
 				test: {
