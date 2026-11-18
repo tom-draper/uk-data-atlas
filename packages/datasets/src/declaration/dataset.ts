@@ -128,10 +128,16 @@ export type IndicatorCatalogue = {
 	period?: string;
 	yearly?: true;
 	/**
-	 * Check every record belongs to the authorities of the population
-	 * estimate, and list any authority without a value.
+	 * Check every record belongs to a set of authorities, and list any
+	 * authority without a value: `authorities` are those of the population
+	 * estimate, `england2025` the English authorities on 2025 codes.
 	 */
-	codes?: "authorities";
+	codes?: "authorities" | "england2025";
+	/**
+	 * Read only the rows whose code matches, where the table interleaves other
+	 * areas (counties, regions) with its authorities.
+	 */
+	authorityCodes?: RegExp;
 	/** Reduce the April 2023 authorities and their districts to authorities. */
 	mergeApril2023?: true;
 	coverageNote: string;

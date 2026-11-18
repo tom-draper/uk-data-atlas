@@ -56,6 +56,7 @@ test("declared indicators generate canonical identities for single and yearly ob
 		} as unknown as DatasetDeclaration;
 		const single = compileDeclaredIndicators(manifest, declaration, path, {
 			authorities: [],
+			england2025: [],
 		})[0]!.artifact;
 		const yearly = compileYearlyIndicators(manifest, declaration, path)
 			.artifacts[0]!;
