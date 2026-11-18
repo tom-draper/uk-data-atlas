@@ -21,7 +21,6 @@ A dataset is described in separate places that nothing keeps in step:
 | `pipeline/src/catalog/<name>.ts`, `compileDataCatalog.ts`                                        | A second compiler for the API catalogue: indicator ids, units, notes, boundary year, period |
 | `pipeline/src/stages/build-data-catalog.ts`                                                      | Input file per dataset                                                                      |
 | `pipeline/src/statistics/bindCompiledFields.ts`                                                  | API measure id to dataset field                                                             |
-| `services/api/config/measure-dimensions.json`                                                    | API measure id to statistics measure and dimension members                                  |
 | `services/api/config/statistics-vocabulary.json`                                                 | Measure vocabulary (a snapshot of the declarations)                                         |
 | `packages/measures/src/catalogueUnits.ts`                                                        | Which unit strings are counts                                                               |
 | `lib/datasets/<camelCase>.ts`                                                                    | Website chart definition: topic, key, label, card, map value, colour range, legend          |
@@ -47,7 +46,7 @@ files name it:
   dimension, fields, header, `derived` youth rate).
 - API: `pipeline/src/catalog/claimantCount.ts` (indicators, notes, boundary
   year 2024, period `2026-04`), `compileDataCatalog.ts`, `build-data-catalog.ts`,
-  `bindCompiledFields.ts`, `measure-dimensions.json`, `statistics-vocabulary.json`,
+  `bindCompiledFields.ts`, `statistics-vocabulary.json`,
   `catalogueUnits.ts`.
 - Website chart: the declaration's `display` block, built by `lib/datasets/declared.ts`,
   then `generated.ts`, `generatedCharts.tsx`.
@@ -122,8 +121,8 @@ registry and the dataset record types from them.
 - `catalogue.indicators` is the API catalogue: each indicator names its
   measure id, the compiled field, the statistics measure and the fixed
   dimension members. The API's measure-to-dimension mapping and the pipeline's
-  field bindings are read from it, so `measure-dimensions.json` lists only
-  ids no declaration publishes.
+  field bindings are read from it, and the catalogue measures carry that
+  series identity themselves.
 
 ### Themes, topics and modules
 

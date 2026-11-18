@@ -163,11 +163,12 @@ identified below; they do not represent a fresh run of every original question.
    `party=lab`. Neither a breakdown, a geography nor a year is part of a
    measure id. A dimension left out takes its total where one is published,
    stated in `defaults`; `*` or a list answers several members as
-   `breakdown`. Retired path ids such as `crime-burglary` return a 404 with
-   the canonical measure and members, and so does a `measure` query
-   parameter, which also takes dimension filters (`measure=recorded-crimes&offence=burglary`).
-   `services/api/config/measure-dimensions.json` maps every catalogue id, and
-   the data build refuses an unmapped one.
+   `breakdown`. Retired path ids such as `crime-burglary` are a plain 404
+   `not_found`; the `measure` query parameter takes dimension filters
+   (`measure=recorded-crimes&offence=burglary`). Every catalogue measure
+   carries its own series identity, the data build refuses one the vocabulary
+   does not hold, and the computed measures and `defaults` live in
+   `packages/measures/src/computedMeasures.ts`.
 5. **Accept what people have.** Wherever an area is expected, accept a code,
    a name, a postcode or a named location, and resolve it the same way
    `/data/{measure}/value?place=` does, reporting the other matches.
