@@ -16,7 +16,10 @@ import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 /** The code sets a declared catalogue may check its records against. */
-export type DeclaredCodeSets = { authorities: Iterable<string> };
+export type DeclaredCodeSets = {
+	authorities: Iterable<string>;
+	england2025: Iterable<string>;
+};
 
 const aggregationOf = (
 	aggregation: IndicatorDeclaration["aggregation"],
@@ -60,6 +63,12 @@ export const compileDeclaredIndicators = (
 		period: catalogue.period,
 		...(catalogue.codes
 			? { expectedCodes: [...codeSets[catalogue.codes]] }
+			: {}),
+		...(catalogue.authorityCodes
+			? {
+					isAuthority: (code: string) =>
+						catalogue.authorityCodes!.test(code),
+				}
 			: {}),
 		...(catalogue.mergeApril2023 ? { mergeApril2023: true } : {}),
 		coverageNote: catalogue.coverageNote,

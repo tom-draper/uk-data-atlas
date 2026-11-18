@@ -94,6 +94,11 @@ describe("declaration validation", () => {
 			"indicator claimant-count names dimension sex, which is not declared",
 		],
 		[
+			"a stateful authority pattern",
+			(d: any) => (d.catalogue.authorityCodes = /^E0/g),
+			"catalogue.authorityCodes must not be global or sticky",
+		],
+		[
 			"a repeated indicator",
 			(d: any) => d.catalogue.indicators.push(d.catalogue.indicators[0]),
 			"catalogue repeats indicator claimant-count",

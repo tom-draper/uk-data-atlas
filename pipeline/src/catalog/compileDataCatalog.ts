@@ -232,7 +232,7 @@ export const compileDataCatalog = ({
 				catalogManifest,
 				declaration,
 				declaredFile(declaration.id),
-				{ authorities: populationCodes },
+				{ authorities: populationCodes, england2025 },
 			),
 		),
 		...compileHomelessness(catalogManifest, homelessnessPath, england2025),

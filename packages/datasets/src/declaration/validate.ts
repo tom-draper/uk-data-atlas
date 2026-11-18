@@ -143,6 +143,11 @@ export function declarationProblems(declaration: DatasetDeclaration): string[] {
 			problem("catalogue sets both period and yearly");
 		if (!catalogue.yearly && blank(catalogue.period))
 			problem("catalogue needs a period, or yearly");
+		if (
+			catalogue.authorityCodes?.global ||
+			catalogue.authorityCodes?.sticky
+		)
+			problem("catalogue.authorityCodes must not be global or sticky");
 		if (blank(catalogue.coverageNote))
 			problem("catalogue.coverageNote is empty");
 		for (const id of duplicates(catalogue.indicators.map(({ id }) => id)))
