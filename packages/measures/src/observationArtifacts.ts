@@ -1,5 +1,4 @@
 import {
-	findMeasureObservations,
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type MeasureObservation,
@@ -51,12 +50,9 @@ export const observationsFor = (
 	  })
 	| undefined => {
 	const all = artifacts.measureObservations ?? [];
-	const indexed = seriesObservations.get(all);
-	const artifact = indexed
-		? artifacts.seriesKey
-			? seriesObservationFor(all, artifacts.seriesKey, source)
-			: undefined
-		: findMeasureObservations(all, measureId, source);
+	const artifact = artifacts.seriesKey
+		? seriesObservationFor(all, artifacts.seriesKey, source)
+		: undefined;
 	const held = artifact?.periods.find(
 		(candidate) => candidate.period === period,
 	);
