@@ -1,9 +1,12 @@
 import type { HomelessnessDataset } from "../../../types/homelessness.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateHomelessness } from "../../../data/homelessness/aggregate.ts";
-import { loadHomelessness } from "../../../data/homelessness/loader.ts";
+import { homelessnessStatisticsParts } from "../../../data/homelessness/source.ts";
 
 export const homelessness = defineDataset<HomelessnessDataset>({
 	id: "homelessness",
@@ -26,7 +29,7 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 		cadence: "quarterly",
 		notes: [],
 	},
-	load: ({ odsTableRows }) => loadHomelessness(odsTableRows),
+	load: noCompiledPayload<HomelessnessDataset>(),
 	statistics: {
 		payload: {
 			parts: () => [
@@ -44,6 +47,11 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 				},
 			],
 			code: "ladCode",
+		},
+		direct: {
+			only: true,
+			read: ({ odsTableRows }) =>
+				homelessnessStatisticsParts(odsTableRows),
 		},
 		name: "ladName",
 		period: () => periods.quarter(2026, 1),
