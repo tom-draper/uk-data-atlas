@@ -1,12 +1,15 @@
 import type { BrexitConstituencyDataset } from "../../../types/referendum.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	ANSWER,
 	REFERENDUM,
 	referendumDay,
 } from "../../../data/brexit/referendum.ts";
-import { loadBrexitConstituency } from "../../../data/brexit-constituency/loader.ts";
+import { brexitConstituencyStatisticsParts } from "../../../data/brexit-constituency/source.ts";
 
 export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 	id: "brexit-constituency",
@@ -30,8 +33,7 @@ export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
-	load: async ({ xlsxSheet }) =>
-		loadBrexitConstituency((path) => xlsxSheet(path, "DATA")),
+	load: noCompiledPayload<BrexitConstituencyDataset>(),
 	placeHeadline: {
 		places: ["constituency"],
 		order: 20,
@@ -43,6 +45,13 @@ export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ xlsxSheet }) =>
+				brexitConstituencyStatisticsParts((path) =>
+					xlsxSheet(path, "DATA"),
+				),
+		},
 		payload: {
 			parts: yearParts(
 				"brexit-constituency",
