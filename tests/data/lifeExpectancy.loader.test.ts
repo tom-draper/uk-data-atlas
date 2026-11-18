@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { loadLE, sourceDir } from "@uk-data-atlas/datasets";
-import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
+import {
+	APRIL_2023_LAD_MERGERS,
+	lifeExpectancyStatisticsParts,
+	sourceDir,
+} from "@uk-data-atlas/datasets";
 
 const PREDECESSORS = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
 	({ predecessors }) => predecessors as readonly string[],
@@ -17,45 +20,61 @@ const columnsFor = (valueColumn: number, valueName: string) =>
 		[valueColumn, valueName],
 	]);
 
+const rowFor = (
+	valueColumn: number,
+	period: string,
+	code: string,
+	name: string,
+	sex: string,
+	value: number,
+) =>
+	new Map([
+		[0, period],
+		[2, "Local Areas"],
+		[3, code],
+		[4, name],
+		[5, sex],
+		[7, "<1"],
+		[valueColumn, String(value)],
+	]);
+
 const rowsFor = (valueColumn: number, valueName: string, offset: number) => {
 	const rows = [columnsFor(valueColumn, valueName)];
 	for (const [index, code] of ["E06000001", ...PREDECESSORS].entries()) {
+		const name = `Authority ${index}`;
 		rows.push(
-			new Map([
-				[0, "2022 to 2024"],
-				[2, "Local Areas"],
-				[3, code],
-				[4, `Authority ${index}`],
-				[5, "Male"],
-				[7, "<1"],
-				[valueColumn, String(offset + index)],
-			]),
-			new Map([
-				[0, "2022 to 2024"],
-				[2, "Local Areas"],
-				[3, code],
-				[4, `Authority ${index}`],
-				[5, "Female"],
-				[7, "<1"],
-				[valueColumn, String(offset + index + 10)],
-			]),
+			rowFor(
+				valueColumn,
+				"2022 to 2024",
+				code,
+				name,
+				"Male",
+				offset + index,
+			),
+			rowFor(
+				valueColumn,
+				"2022 to 2024",
+				code,
+				name,
+				"Female",
+				offset + index + 10,
+			),
 		);
 	}
 	rows.push(
-		new Map([
-			[0, "2021 to 2023"],
-			[2, "Local Areas"],
-			[3, "E06000001"],
-			[4, "Ignored"],
-			[5, "Male"],
-			[7, "<1"],
-			[valueColumn, "999"],
-		]),
+		rowFor(
+			valueColumn,
+			"2021 to 2023",
+			"E06000001",
+			"Ignored",
+			"Male",
+			999,
+		),
 	);
 	return rows;
 };
 
-describe("loadLE", () => {
+describe("lifeExpectancyStatisticsParts", () => {
 	it("reads only the columns needed for the latest local-area estimates", async () => {
 		const requests: Array<{ path: string; columns: readonly number[] }> =
 			[];
@@ -75,7 +94,7 @@ describe("loadLE", () => {
 				visit(row);
 		};
 
-		const datasets = await loadLE(readRows);
+		const parts = await lifeExpectancyStatisticsParts(readRows);
 
 		expect(requests).toEqual([
 			{
@@ -93,18 +112,24 @@ describe("loadLE", () => {
 				columns: [0, 2, 3, 4, 5, 7, 9],
 			},
 		]);
-		expect(datasets.le.data.E06000001).toMatchObject({
-			maleBirthLE: 70,
-			femaleBirthLE: 80,
-		});
-		expect(datasets.hle?.data.E06000001).toMatchObject({
-			maleBirthLE: 60,
-			femaleBirthLE: 70,
-		});
-		expect(datasets.le.data.E06000066).toMatchObject({
-			ladName: "Somerset",
-			derivedFromPredecessors:
-				APRIL_2023_LAD_MERGERS.E06000066.predecessors,
-		});
+		expect(parts.map(({ key }) => key)).toEqual(["le", "hle"]);
+		const [life, healthy] = parts;
+		const valuesOf = (record: {
+			values: readonly { value: number | null }[];
+		}) => record.values.map(({ value }) => value);
+		const first = life.records.find(({ code }) => code === "E06000001")!;
+		expect(valuesOf(first)).toEqual([70, 80]);
+		expect(first.values.map(({ members }) => members)).toEqual([
+			{ sex: "male" },
+			{ sex: "female" },
+		]);
+		expect(
+			valuesOf(healthy.records.find(({ code }) => code === "E06000001")!),
+		).toEqual([60, 70]);
+		const somerset = life.records.find(({ code }) => code === "E06000066")!;
+		expect(somerset.name).toBe("Somerset");
+		expect(
+			Object.values(somerset.parents ?? {}).map((parent) => parent?.code),
+		).toEqual(APRIL_2023_LAD_MERGERS.E06000066.predecessors);
 	});
 });

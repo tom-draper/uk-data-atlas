@@ -1,9 +1,7 @@
-import type {
-	LifeExpectancyDataset,
-	LifeExpectancyLADData,
-} from "../../types/lifeExpectancy.ts";
+import type { LifeExpectancyLADData } from "../../types/lifeExpectancy.ts";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations.ts";
 import type { DatasetReader } from "../catalog/types.ts";
+import type { DirectPart, DirectRecord } from "../../declaration/statistics.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
 const COMMON_COLUMNS = [
@@ -102,10 +100,34 @@ export function addMergedLifeExpectancyAuthorities(
 	}
 }
 
-export async function loadLE(
+/** A local authority's life expectancy as rows: one per sex. */
+const recordOf = (
+	record: LifeExpectancyLADData,
+	measure: string,
+): DirectRecord => ({
+	code: record.ladCode,
+	name: record.ladName,
+	parents: Object.fromEntries(
+		(record.derivedFromPredecessors ?? []).map((code, index) => [
+			`derivedFromPredecessors.${index}`,
+			{ code },
+		]),
+	),
+	values: [
+		{ measure, members: { sex: "male" }, value: record.maleBirthLE },
+		{ measure, members: { sex: "female" }, value: record.femaleBirthLE },
+	],
+});
+
+/**
+ * Life expectancy (part `le`) and healthy life expectancy (part `hle`) at
+ * birth, 2022 to 2024, for the UK's local authorities. An authority created in
+ * 2023 is the mean of its predecessors and names them as its parents.
+ */
+export async function lifeExpectancyStatisticsParts(
 	readRows: DatasetReader["xlsxSheetSelectedRows"],
-): Promise<Record<string, LifeExpectancyDataset>> {
-	const [leRecords, hleRecords] = await Promise.all([
+): Promise<DirectPart[]> {
+	const [life, healthy] = await Promise.all([
 		readLifeExpectancyRows(
 			readRows,
 			sourceDir("life-expectancy", "lifeexpectancylocalareas.xlsx"),
@@ -119,42 +141,20 @@ export async function loadLE(
 			"HLE",
 		),
 	]);
-	addMergedLifeExpectancyAuthorities(leRecords);
-
-	const result: Record<string, LifeExpectancyDataset> = {
-		le: {
-			id: "le",
-			year: 2024,
-			type: "life-expectancy",
-			boundaryType: "localAuthority",
-			boundaryYear: 2023,
-			dataPeriod: "2022–2024",
-			label: "Life Expectancy",
-			coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
-			data: leRecords,
-			metadata: {
-				source: "Office for National Statistics. Life expectancy for local areas of the UK: 2022 to 2024.",
-				notes: ["Life expectancy at birth. UK local authorities."],
-			},
+	addMergedLifeExpectancyAuthorities(life);
+	addMergedLifeExpectancyAuthorities(healthy);
+	return [
+		{
+			key: "le",
+			records: Object.values(life).map((record) =>
+				recordOf(record, "life-expectancy"),
+			),
 		},
-	};
-
-	addMergedLifeExpectancyAuthorities(hleRecords);
-	result.hle = {
-		id: "hle",
-		year: 2024,
-		type: "life-expectancy",
-		boundaryType: "localAuthority",
-		boundaryYear: 2023,
-		dataPeriod: "2022–2024",
-		label: "Healthy Life Expectancy",
-		coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
-		data: hleRecords,
-		metadata: {
-			source: "Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
-			notes: ["Healthy life expectancy at birth. UK local authorities."],
+		{
+			key: "hle",
+			records: Object.values(healthy).map((record) =>
+				recordOf(record, "healthy-life-expectancy"),
+			),
 		},
-	};
-
-	return result;
+	];
 }
