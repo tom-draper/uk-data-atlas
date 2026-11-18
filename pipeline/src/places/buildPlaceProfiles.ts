@@ -41,6 +41,14 @@ import {
 } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
 
+/**
+ * The crosswalks the profiles read are about 320 MB parsed, and the default
+ * 64 MB cache parsed 96 of the 166 a second time. The lookup's per-release
+ * index already keeps every crosswalk it has read alive, so holding them all
+ * costs no more memory.
+ */
+const CROSSWALK_CACHE_BYTES = 512 * 1024 * 1024;
+
 export function buildPlaceProfiles(ROOT: string) {
 	const readDataset = (output: string) => readBaseDatasetInput(ROOT, output);
 	const BOUNDARIES = join(
@@ -84,6 +92,7 @@ export function buildPlaceProfiles(ROOT: string) {
 	const resolver = readPlaceResolver(
 		ROOT,
 		join(ROOT, "data/build/atlas-base.sqlite"),
+		CROSSWALK_CACHE_BYTES,
 	);
 
 	type Identity = {

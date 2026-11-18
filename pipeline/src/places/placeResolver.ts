@@ -49,6 +49,12 @@ export const createPlaceResolver = (
 export const readPlaceResolver = (
 	repositoryRoot: string,
 	databasePath: string,
+	/**
+	 * Parsed crosswalks kept, in estimated bytes. A profile reads the crosswalks
+	 * of every release an area appeared in, so a cache that cannot hold them all
+	 * parses the same ones again for the next area.
+	 */
+	crosswalkCacheBytes?: number,
 ) => {
 	const areaInventory = readSqliteAreaInventory(repositoryRoot, databasePath);
 	const crosswalkInventory = readCrosswalkInventory(
@@ -66,7 +72,7 @@ export const readPlaceResolver = (
 		crosswalkLookup: readCrosswalkLookup(
 			repositoryRoot,
 			crosswalkInventory,
-			undefined,
+			crosswalkCacheBytes,
 			databasePath,
 		),
 		areaGeometryCache: createAreaGeometryCache(repositoryRoot),
