@@ -377,13 +377,9 @@ describe("directStatistics", () => {
 		}
 	});
 
-	it("refuses a declaration with more than one record set", () => {
+	it("refuses a declaration with election text", () => {
 		expect(() =>
-			directStatistics(
-				{ ...config, records: [{ from: "data" }, { from: "other" }] },
-				[],
-				entry,
-			),
-		).toThrow(/one record set/);
+			directStatistics({ ...config, election: {} as never }, [], entry),
+		).toThrow(/no election text/);
 	});
 });

@@ -114,7 +114,10 @@ export type DirectRecord = {
 export type DirectPart = {
 	/** The key of the part in the dataset's payload, as `payload.parts` gives it. */
 	key: string;
+	/** The records of the declaration's first record set. */
 	records: DirectRecord[];
+	/** The records of each further record set, by the set's `from` field. */
+	recordSets?: Record<string, DirectRecord[]>;
 	/** Header relationship mappings, keyed by their declared payload field. */
 	relationships?: Record<string, Record<string, string>>;
 };
