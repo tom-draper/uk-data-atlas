@@ -163,6 +163,10 @@
 		"sha256": "ab7c479d95c4fb4c96270869a500a51c66a923e282c6c84aa344a2e14c015bd7",
 		"bytes": 212839
 	},
+	"population": {
+		"sha256": "b1dc555a112a89806c6556cd1ae0941c2cd82f6d58423841ed4b989ddf4eac6e",
+		"bytes": 7333784
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

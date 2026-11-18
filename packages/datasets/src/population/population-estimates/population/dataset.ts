@@ -1,9 +1,12 @@
 import type { PopulationDataset } from "../../../types/population.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { CENSUS_LICENCE } from "../../../data/census/districts.ts";
-import { loadPopulation } from "../../../data/population/loader.ts";
+import { populationStatisticsParts } from "../../../data/population/source.ts";
 import { AGE, byAge } from "../../../data/population/statistics.ts";
 
 export const population = defineDataset<PopulationDataset>({
@@ -29,7 +32,7 @@ export const population = defineDataset<PopulationDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: ({ xlsxSheetRows }) => loadPopulation(xlsxSheetRows),
+	load: noCompiledPayload<PopulationDataset>(),
 	mapViews: [
 		{
 			id: "density",
@@ -77,6 +80,11 @@ export const population = defineDataset<PopulationDataset>({
 		},
 	],
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ xlsxSheetRows }) =>
+				populationStatisticsParts(xlsxSheetRows),
+		},
 		payload: {
 			parts: yearParts("population", "ward", 2023, {
 				coverageCountries: ["GB-ENG", "GB-WLS"],

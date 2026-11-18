@@ -309,6 +309,7 @@ it.each([
 	"house-price",
 	"child-poverty",
 	"crime",
+	"population",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts(type);
@@ -323,9 +324,13 @@ it.each([
 			direct.entry.output,
 		);
 		expect(directPayloadProblem(type, payload)).toBeUndefined();
-		expect(
-			snapshot(direct.path, direct.entry.output).observations.length,
-		).toBeGreaterThan(0);
+		// Counted, not read: the largest datasets hold millions of rows.
+		const stored = database
+			.prepare(
+				`SELECT COUNT(*) AS count FROM v_observation WHERE dataset = ?`,
+			)
+			.get(direct.entry.output) as { count: number };
+		expect(stored.count).toBeGreaterThan(0);
 	} finally {
 		database.close();
 	}
