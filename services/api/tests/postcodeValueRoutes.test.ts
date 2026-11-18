@@ -15,7 +15,10 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import { toWgs84Point } from "@uk-data-atlas/geography";
 import {
+	identityDimensions,
 	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
 	postcodeAreaReleases,
 } from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
@@ -27,9 +30,10 @@ import {
 } from "./postcodeFixtures";
 import {
 	dataCatalog,
+	combineObservations,
 	measureObservations,
-	populationLocalAuthorityObservations,
 	populationObservations,
+	populationLocalAuthorityObservations,
 } from "./routeFixtures";
 
 // Two wards a kilometre or so across either side of a point in London, one
@@ -196,11 +200,8 @@ const { index, texts } = postcodeIndexFor([
 const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
 	boundaryRegistry,
 	dataCatalog,
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		...measureObservations,
-	],
+	measureDimensions: identityDimensions(dataCatalog),
+	measureObservations: combineObservations(dataCatalog, measureObservations),
 	measureCompatibilityInventory,
 	areaValidation: createGeographyServices({}).validation,
 	postcodes: createGeographyServices({ postcodeIndex: index }).postcodes,
@@ -315,6 +316,21 @@ test("uses the selected public series for postcode lookups and links", () => {
 			},
 		},
 	});
+	const observations = [
+		populationObservations,
+		populationLocalAuthorityObservations,
+	];
+	const population = dimensional.dataCatalog!.measures[0]!;
+	registerSeriesObservations(
+		observations,
+		new Map(
+			population.sources.map((source, index) => [
+				measureSeriesSourceKey(population.series!, source),
+				observations[index]!,
+			]),
+		),
+	);
+	dimensional.measureObservations = observations;
 	const result = get(
 		"/v1/data/residents/value?postcode=EC1A1AA&age=all",
 		dimensional,

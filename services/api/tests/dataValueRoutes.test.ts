@@ -1,13 +1,13 @@
 import { routeWithData } from "./routeFixtures";
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { identityDimensions } from "@uk-data-atlas/measures";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import { route as routeRequest } from "../src/routes";
 import {
 	dataCatalog,
+	combineObservations,
 	measureObservations,
-	populationLocalAuthorityObservations,
-	populationObservations,
 	registry,
 	testContext,
 } from "./routeFixtures";
@@ -32,11 +32,11 @@ test("answers a measure for a place named in words", () => {
 		boundaryRegistry: registry,
 		areaLookup: namedAreas,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	});
 	const get = (url: string) => routeRequest("GET", url, context);
 
@@ -128,11 +128,11 @@ test("defaults an ambiguous place name and reports its other meanings", () => {
 		boundaryRegistry: registry,
 		areaLookup,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	});
 	const response = routeRequest(
 		"GET",
