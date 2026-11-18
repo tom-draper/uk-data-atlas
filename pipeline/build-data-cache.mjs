@@ -364,8 +364,19 @@ export function createStageCache({
 		if (audit) stampFiles(root, dataDirectory, stamps);
 		return stamps;
 	};
+	// A file a stage owns, or what it passes through on the way to it: the
+	// temporary file a database is written to before it is renamed into place
+	// (`x.sqlite.<id>.tmp`), and SQLite's journal beside it.
 	const within = (scope, path) =>
-		scope.some((own) => path === own || path.startsWith(`${own}/`));
+		scope.some(
+			(own) =>
+				path === own ||
+				path.startsWith(`${own}/`) ||
+				(path.startsWith(own) &&
+					/^[.-][\w.-]*(\.tmp|-journal|-wal|-shm)$/.test(
+						path.slice(own.length),
+					)),
+		);
 	const scopedSnapshot = (scope) => {
 		const stamps = new Map();
 		for (const path of scope) stampPath(root, path, stamps);
