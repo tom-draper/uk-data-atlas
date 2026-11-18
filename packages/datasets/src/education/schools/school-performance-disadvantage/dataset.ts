@@ -1,5 +1,8 @@
 import type { SchoolPerformanceGapDataset } from "../../../types/schoolPerformance.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import type {
@@ -14,7 +17,7 @@ import {
 	schoolYears,
 } from "../../../data/school-performance/statistics.ts";
 import { aggregateSchoolPerformanceGap } from "../../../data/school-performance-disadvantage/aggregate.ts";
-import { loadSchoolPerformanceDisadvantage } from "../../../data/school-performance-disadvantage/loader.ts";
+import { schoolPerformanceDisadvantageStatisticsParts } from "../../../data/school-performance-disadvantage/source.ts";
 
 const DISADVANTAGE: DeclaredDimension = {
 	slug: "disadvantage",
@@ -89,8 +92,13 @@ export const schoolPerformanceDisadvantage =
 			expectedBoundaryYears: [2024],
 			requiredDataFields: ["ladCode", "ladName"],
 		},
-		load: ({ text }) => loadSchoolPerformanceDisadvantage(text),
+		load: noCompiledPayload<SchoolPerformanceGapDataset>(),
 		statistics: {
+			direct: {
+				only: true,
+				read: ({ text }) =>
+					schoolPerformanceDisadvantageStatisticsParts(text),
+			},
 			payload: {
 				parts: yearParts(
 					"school-performance-disadvantage",

@@ -122,5 +122,13 @@
 	"qualification": {
 		"sha256": "7469ddb73261699096036a971a67f27e1e8044cbf746219e068533e849203d3b",
 		"bytes": 63545
+	},
+	"school-performance": {
+		"sha256": "affcb09fbd9ce75d6f55a0a107835963c514945771ecfb051f343799349151c0",
+		"bytes": 437081
+	},
+	"school-performance-disadvantage": {
+		"sha256": "9246f35556f3d7842379d35594b8c01ca3fb9024efecaaf8897c37152aa2df87",
+		"bytes": 376794
 	}
 }

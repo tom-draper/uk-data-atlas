@@ -1,12 +1,9 @@
-import {
-	type SchoolPerformanceGapData,
-	type SchoolPerformanceGapDataset,
-	type SchoolPerformanceGapMeasures,
-} from "../../types/schoolPerformance.ts";
+import type { DirectPart, DirectValue } from "../../declaration/statistics.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
-import { endYear } from "../education/ks4.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
+import { endYear } from "../education/ks4.ts";
 import { sourceDir } from "../../declaration/sources.ts";
+import { schoolYear } from "../school-performance/statistics.ts";
 
 /**
  * Both groups must reach this many pupils before a gap is reported. The
@@ -19,6 +16,15 @@ const MINIMUM_PUPILS = 6;
 
 const DISADVANTAGED = "Disadvantaged";
 const NOT_DISADVANTAGED = "Not known to be disadvantaged";
+
+interface Side {
+	att8: number | null;
+	engmath94: number | null;
+	pupils: number | null;
+	name: string;
+}
+
+const NO_SIDE: Side = { att8: null, engmath94: null, pupils: null, name: "" };
 
 /** The difference, or null when either side is missing or too small to report. */
 function difference(
@@ -35,13 +41,6 @@ function difference(
 	return Number((ahead - behind).toFixed(1));
 }
 
-interface Side {
-	att8: number | null;
-	engmath94: number | null;
-	pupils: number | null;
-	name: string;
-}
-
 function readSide(row: Record<string, string>): Side {
 	return {
 		att8: parseNullableNum(row["attainment8_average"]),
@@ -51,34 +50,57 @@ function readSide(row: Record<string, string>): Side {
 	};
 }
 
-function measures(
-	disadvantaged: Side | undefined,
-	notDisadvantaged: Side | undefined,
-): SchoolPerformanceGapMeasures {
-	const dis = disadvantaged ?? { att8: null, engmath94: null, pupils: null };
-	const not = notDisadvantaged ?? {
-		att8: null,
-		engmath94: null,
-		pupils: null,
-	};
-	return {
-		att8Disadvantaged: dis.att8,
-		att8NotDisadvantaged: not.att8,
-		att8Gap: difference(not.att8, dis.att8, not.pupils, dis.pupils),
-		engmath94Gap: difference(
-			not.engmath94,
-			dis.engmath94,
-			not.pupils,
-			dis.pupils,
+/**
+ * One year's values of a district: Attainment 8 and pupils of each side, and
+ * the English and maths gap. The Attainment 8 gap is computed from the two
+ * averages, not stored.
+ */
+function yearValues(
+	year: number,
+	disadvantaged: Side = NO_SIDE,
+	notDisadvantaged: Side = NO_SIDE,
+): DirectValue[] {
+	const period = schoolYear(String(year));
+	const side = (
+		measure: string,
+		group: string,
+		value: number | null,
+	): DirectValue => ({
+		measure,
+		members: { disadvantage: group },
+		value,
+		period,
+	});
+	return [
+		side("attainment-8", "disadvantaged", disadvantaged.att8),
+		side("attainment-8", "not-disadvantaged", notDisadvantaged.att8),
+		side("key-stage-4-pupils", "disadvantaged", disadvantaged.pupils),
+		side(
+			"key-stage-4-pupils",
+			"not-disadvantaged",
+			notDisadvantaged.pupils,
 		),
-		disadvantagedPupils: dis.pupils,
-		notDisadvantagedPupils: not.pupils,
-	};
+		{
+			measure: "gcse-english-maths-grade-4-gap",
+			value: difference(
+				notDisadvantaged.engmath94,
+				disadvantaged.engmath94,
+				notDisadvantaged.pupils,
+				disadvantaged.pupils,
+			),
+			period,
+		},
+	];
 }
 
-export async function loadSchoolPerformanceDisadvantage(
+/**
+ * How far non-disadvantaged pupils are ahead of disadvantaged pupils at key
+ * stage 4, by district, as the part of the latest year. Each district carries
+ * every year of the release.
+ */
+export async function schoolPerformanceDisadvantageStatisticsParts(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, SchoolPerformanceGapDataset>> {
+): Promise<DirectPart[]> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
 			sourceDir(
@@ -91,7 +113,6 @@ export async function loadSchoolPerformanceDisadvantage(
 
 	// Two rows per district per year, one for each side of the split.
 	const sides = new Map<number, Map<string, Record<string, Side>>>();
-
 	for (const row of data as Record<string, string>[]) {
 		if (row["geographic_level"] !== "Local authority district") continue;
 		if (row["geography_basis"] !== "Pupil residency") continue;
@@ -102,58 +123,43 @@ export async function loadSchoolPerformanceDisadvantage(
 
 		const year = endYear((row["time_period"] ?? "").trim());
 		if (year === null) continue;
-
 		const code = (row["lad_code"] ?? "").trim();
 		// Joint districts ("E07000010 / E07000009") have no boundary.
 		if (!/^E\d{8}$/.test(code)) continue;
 
-		let yearSides = sides.get(year);
-		if (!yearSides) {
-			yearSides = new Map();
-			sides.set(year, yearSides);
-		}
+		const yearSides =
+			sides.get(year) ?? new Map<string, Record<string, Side>>();
 		const forCode = yearSides.get(code) ?? {};
 		forCode[status] = readSide(row);
 		yearSides.set(code, forCode);
+		sides.set(year, yearSides);
 	}
 
 	const years = [...sides.keys()].sort((a, b) => a - b);
 	const latest = years[years.length - 1];
-	if (latest === undefined) {
+	if (latest === undefined)
 		throw new Error("KS4 disadvantage data contained no usable rows");
-	}
 
-	const records: Record<string, SchoolPerformanceGapData> = {};
-	for (const [code, forCode] of sides.get(latest)!) {
-		const series: Record<number, SchoolPerformanceGapMeasures> = {};
-		for (const year of years) {
-			const yearForCode = sides.get(year)?.get(code);
-			if (yearForCode) {
-				series[year] = measures(
-					yearForCode[DISADVANTAGED],
-					yearForCode[NOT_DISADVANTAGED],
-				);
-			}
-		}
-		records[code] = {
-			ladCode: code,
-			ladName:
-				forCode[NOT_DISADVANTAGED]?.name ??
-				forCode[DISADVANTAGED]?.name ??
-				"",
-			...measures(forCode[DISADVANTAGED], forCode[NOT_DISADVANTAGED]),
-			series,
-		};
-	}
-
-	return {
-		[latest]: {
-			id: `school-performance-disadvantage${latest}`,
-			type: "school-performance-disadvantage",
-			year: latest,
-			boundaryType: "localAuthority",
-			boundaryYear: 2024,
-			data: records,
+	return [
+		{
+			key: String(latest),
+			records: [...sides.get(latest)!].map(([code, forCode]) => ({
+				code,
+				name:
+					forCode[NOT_DISADVANTAGED]?.name ??
+					forCode[DISADVANTAGED]?.name ??
+					"",
+				values: years.flatMap((year) => {
+					const yearForCode = sides.get(year)?.get(code);
+					return yearForCode
+						? yearValues(
+								year,
+								yearForCode[DISADVANTAGED],
+								yearForCode[NOT_DISADVANTAGED],
+							)
+						: [];
+				}),
+			})),
 		},
-	};
+	];
 }
