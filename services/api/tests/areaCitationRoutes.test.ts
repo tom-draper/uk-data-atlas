@@ -3,6 +3,10 @@ import { test } from "vitest";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import {
 	registry,
@@ -12,6 +16,7 @@ import {
 	containmentCrosswalk,
 	crosswalkLookup,
 	dataCatalog,
+	combineObservations,
 	measureObservations,
 	populationObservations,
 	populationLocalAuthorityObservations,
@@ -117,11 +122,7 @@ const citationContext = testContext({
 			},
 		],
 	},
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		...measureObservations,
-	],
+	measureObservations: combineObservations(dataCatalog, measureObservations),
 	measureCompatibilityInventory,
 });
 
@@ -307,6 +308,21 @@ test("cites a selected dimensional series without rewriting its public measure",
 			},
 		},
 	});
+	const observations = [
+		populationObservations,
+		populationLocalAuthorityObservations,
+	];
+	const population = context.dataCatalog!.measures[0]!;
+	registerSeriesObservations(
+		observations,
+		new Map(
+			population.sources.map((source, index) => [
+				measureSeriesSourceKey(population.series!, source),
+				observations[index]!,
+			]),
+		),
+	);
+	context.measureObservations = observations;
 	const url =
 		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=citation&measure=residents&age=all";
 	const resolved = resolveDimensionRequest(url, context);

@@ -12,9 +12,8 @@ import {
 	namedLocationAreaLookup,
 	namedLocationInventory,
 	dataCatalog,
+	combineObservations,
 	measureObservations,
-	populationObservations,
-	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
 	testContext,
 } from "./routeFixtures";
@@ -29,11 +28,10 @@ test("reports an area's exact-release capability and availability matrix", () =>
 			crosswalkLookup,
 			namedLocationInventory,
 			dataCatalog,
-			measureObservations: [
-				populationObservations,
-				populationLocalAuthorityObservations,
-				...measureObservations,
-			],
+			measureObservations: combineObservations(
+				dataCatalog,
+				measureObservations,
+			),
 			measureCompatibilityInventory,
 		}),
 	);
