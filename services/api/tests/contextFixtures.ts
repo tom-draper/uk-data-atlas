@@ -1,6 +1,11 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { identityDimensions, measureSeriesKey } from "@uk-data-atlas/measures";
+import {
+	identityDimensions,
+	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -601,6 +606,33 @@ export const populationLocalAuthorityObservations: MeasureObservationArtifact =
 			},
 		],
 	};
+
+// These pairs are declared by the fixtures, including the dataset for each
+// artifact. Geography alone cannot distinguish two source datasets.
+const fixtureSources = [
+	["small-area-fixture", "small-area"],
+	["house-price-median", "house-price"],
+	["ghg-emissions", "ghg-emissions"],
+	["mobile-5g-coverage", "mobile-coverage"],
+	["travel-to-work-car", "travel-to-work"],
+] as const;
+registerSeriesObservations(
+	measureObservations,
+	new Map(
+		fixtureSources.map(([id, datasetId], index) => {
+			const measure = dataCatalog.measures.find(
+				(entry) => entry.id === id,
+			)!;
+			const source = measure.sources.find(
+				(entry) => entry.datasetId === datasetId,
+			)!;
+			return [
+				measureSeriesSourceKey({ measure: id }, source),
+				measureObservations[index]!,
+			] as const;
+		}),
+	),
+);
 
 export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 	schemaVersion: 1,
