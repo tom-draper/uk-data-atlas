@@ -56,6 +56,7 @@ export * from "./housing/homelessness/homelessness/dataset.ts";
 export * from "./data/jobs/aggregate.ts";
 export * from "./economy/labour-market/jobs/dataset.ts";
 export * from "./population/ethnicity-and-identity/ethnicity/dataset.ts";
+export * from "./population/ethnicity-and-identity/ethnicity/colors.ts";
 export * from "./population/population-estimates/population/dataset.ts";
 export * from "./data/car-availability/aggregate.ts";
 export * from "./transport/vehicles/car-availability/dataset.ts";

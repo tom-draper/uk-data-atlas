@@ -9,7 +9,7 @@ export {
 	renderGeneralElection,
 	renderLocalElection,
 } from "./elections";
-export { renderEthnicity } from "./demographics";
+export { renderCategories } from "./demographics";
 export { renderPopulationView } from "./population";
 export { renderNumericDataset } from "./numeric";
 export type { NumericDataset, NumericMapConfig } from "./numeric";

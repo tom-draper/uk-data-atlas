@@ -1,21 +1,29 @@
-import type { BoundaryGeojson, EthnicityDataset } from "@lib/types";
+import type { BoundaryGeojson, BoundaryType } from "@lib/types";
 import type { MapOptions } from "@lib/types/mapOptions";
+import type { CategoryRecords } from "../mapManager/featureBuilder";
 import type { MapRenderContext } from "./context";
-import { ethnicityMajorityPaint, ethnicityPercentagePaint } from "./fillPaint";
+import { categoryMajorityPaint, categoryPercentagePaint } from "./fillPaint";
 
-export function renderEthnicity(
+/**
+ * Draws a dataset mapped by its largest group: each area in the colour of its
+ * largest group, or one group's share. The colours are the dataset's own.
+ */
+export function renderCategories(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
-	dataset: EthnicityDataset,
+	dataset: CategoryRecords,
+	{
+		colors,
+		boundary,
+	}: { colors: Readonly<Record<string, string>>; boundary: BoundaryType },
 	mapOptions: MapOptions,
 	isDark = false,
 ): void {
-	const codeProp = ctx.codeProp("localAuthority", geojson.features);
+	const codeProp = ctx.codeProp(boundary, geojson.features);
+	const options = mapOptions[dataset.type];
+	const mode = options?.mode || "majority";
 
-	const mode = mapOptions.ethnicity?.mode || "majority";
-
-	// Build features based on mode
-	const features = ctx.featureBuilder.buildEthnicityFeatures(
+	const features = ctx.featureBuilder.buildCategoryFeatures(
 		geojson.features,
 		dataset,
 		codeProp,
@@ -27,8 +35,8 @@ export function renderEthnicity(
 
 	const paint =
 		mode === "percentage"
-			? ethnicityPercentagePaint(mapOptions.ethnicity, isDark)
-			: ethnicityMajorityPaint();
+			? categoryPercentagePaint(colors, options, isDark)
+			: categoryMajorityPaint(colors);
 	if (paint) {
 		ctx.layerManager.paintBoundaries(
 			transformedGeojson,

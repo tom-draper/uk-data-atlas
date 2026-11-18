@@ -35,7 +35,7 @@ export default function MeasureBreakdownChart({
 	codeMapper,
 	setActiveViz,
 }: ChartComponentProps) {
-	const { excludedEthnicities, selectedEthnicity } = useExcludedCategories();
+	const { categories } = useExcludedCategories();
 	const geography = breakdown?.request.geography;
 	const boundaryYear = breakdown?.request.boundaryYear;
 	const scope = useMemo(
@@ -61,7 +61,8 @@ export default function MeasureBreakdownChart({
 	const isActive =
 		activeDataset?.type === dataset.type && activeDataset.id === dataset.id;
 	// The legend filter only applies while this dataset is on the map.
-	const filtered = isActive && breakdown.legendFilter === "ethnicity";
+	const filtered = isActive && breakdown.legendFilter === true;
+	const legend = categories[dataset.type];
 
 	return (
 		<MeasureBreakdownCard
@@ -76,8 +77,8 @@ export default function MeasureBreakdownChart({
 				order: breakdown.order,
 				includes: filtered
 					? (label) =>
-							!excludedEthnicities.has(label) &&
-							(!selectedEthnicity || label === selectedEthnicity)
+							!legend?.excluded.has(label) &&
+							(!legend?.selected || label === legend.selected)
 					: undefined,
 			}}
 			heading={`${breakdown.heading} [${breakdown.period}]`}

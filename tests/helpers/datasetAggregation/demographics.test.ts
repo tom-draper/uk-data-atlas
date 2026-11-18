@@ -3,11 +3,11 @@ import {
 	aggregateLifeExpectancy,
 	aggregateQualifications,
 } from "@uk-data-atlas/datasets";
-import { aggregateEthnicity } from "@/lib/helpers/datasetAggregation/demographics";
+import { aggregateCategories } from "@/lib/helpers/datasetAggregation/demographics";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { CODE_KEY, features } from "./fixtures";
 
-describe("aggregateEthnicity", () => {
+describe("aggregateCategories", () => {
 	const data = {
 		E1: {
 			White: { English: { population: 100, code: "W1" } },
@@ -22,7 +22,7 @@ describe("aggregateEthnicity", () => {
 	} as any;
 
 	it("sums each subcategory across the covered local authorities", () => {
-		const result = aggregateEthnicity(
+		const result = aggregateCategories(
 			features(["E1", "E2"]),
 			CODE_KEY,
 			data,
@@ -40,7 +40,7 @@ describe("aggregateEthnicity", () => {
 	});
 
 	it("ignores local authorities with no record", () => {
-		const result = aggregateEthnicity(
+		const result = aggregateCategories(
 			features(["E2", "missing"]),
 			CODE_KEY,
 			data,
@@ -52,7 +52,7 @@ describe("aggregateEthnicity", () => {
 
 	it("returns an empty breakdown when nothing is covered", () => {
 		expect(
-			aggregateEthnicity(features(["missing"]), CODE_KEY, data),
+			aggregateCategories(features(["missing"]), CODE_KEY, data),
 		).toEqual({});
 	});
 });

@@ -6,7 +6,7 @@ import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 vi.mock("@/lib/helpers/mapRendering", () => ({
 	renderLocalElection: vi.fn(),
 	renderGeneralElection: vi.fn(),
-	renderEthnicity: vi.fn(),
+	renderCategories: vi.fn(),
 	renderBrexit: vi.fn(),
 	renderBrexitConstituency: vi.fn(),
 	renderPopulationView: vi.fn(),
@@ -15,7 +15,7 @@ vi.mock("@/lib/helpers/mapRendering", () => ({
 import * as rendering from "@/lib/helpers/mapRendering";
 import { brexitConstituencyDefinition } from "@/lib/datasets/brexitConstituency";
 import { brexitDefinition } from "@/lib/datasets/brexit";
-import { ethnicityDefinition } from "@/lib/datasets/ethnicity";
+import { CATEGORY_CHART_DEFINITIONS } from "@/lib/datasets/categories";
 import { generalElectionDefinition } from "@/lib/datasets/generalElection";
 import { localElectionDefinition } from "@/lib/datasets/localElection";
 import { populationDefinition } from "@/lib/datasets/population";
@@ -55,7 +55,8 @@ describe("chart map renderers", () => {
 	it("routes categorical datasets to their own recipes", () => {
 		render(generalElectionDefinition.mapRenderer, "renderGeneralElection");
 		render(localElectionDefinition.mapRenderer, "renderLocalElection");
-		render(ethnicityDefinition.mapRenderer, "renderEthnicity");
+		for (const definition of CATEGORY_CHART_DEFINITIONS)
+			render(definition.mapRenderer, "renderCategories");
 		render(brexitDefinition.mapRenderer, "renderBrexit");
 		render(
 			brexitConstituencyDefinition.mapRenderer,

@@ -17,6 +17,7 @@ import type { NetworkDataset } from "@/lib/types/network";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { CATEGORY_DATASET_TYPES } from "@/lib/datasets/categories";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
 import { MobilePanels } from "./ui-overlay/MobilePanels";
@@ -130,9 +131,11 @@ export default function UIOverlay({
 			mapOptions["local-election"].excluded,
 			mapOptions["local-election"].mode,
 			mapOptions["local-election"].selected,
-			mapOptions.ethnicity.excluded,
-			mapOptions.ethnicity.mode,
-			mapOptions.ethnicity.selected,
+			...CATEGORY_DATASET_TYPES.flatMap((type) => [
+				mapOptions[type].excluded,
+				mapOptions[type].mode,
+				mapOptions[type].selected,
+			]),
 			mapOptions.custom.excludedPointValues,
 			mapOptions.custom.selectedPointValue,
 		],

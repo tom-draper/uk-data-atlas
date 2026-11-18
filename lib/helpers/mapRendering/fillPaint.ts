@@ -3,9 +3,8 @@
  * no layers, so the colour rules can be read and tested on their own.
  */
 import { Party, PartyCode } from "@uk-data-atlas/datasets";
-import { MapOptions } from "@lib/types/mapOptions";
+import type { CategoryOptions, MapOptions } from "@lib/types/mapOptions";
 import { PARTIES } from "@uk-data-atlas/datasets";
-import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import {
 	categoryMatch,
@@ -48,27 +47,30 @@ export function partyPercentagePaint(
 	};
 }
 
-/** Each area in the colour of its largest ethnic group. */
-export function ethnicityMajorityPaint(): FillPaintConfig {
+/** Each area in the colour of its largest group. */
+export function categoryMajorityPaint(
+	colors: Readonly<Record<string, string>>,
+): FillPaintConfig {
 	return {
 		color: categoryMatch(
 			"majorityCategory",
-			Object.entries(ETHNICITY_COLORS),
+			Object.entries(colors),
 			NO_DATA_COLOR,
 		),
 		opacity: hoverOpacity,
 	};
 }
 
-/** One ethnic group's share, shaded from that group's colour. */
-export function ethnicityPercentagePaint(
-	options: MapOptions["ethnicity"],
+/** One group's share, shaded from that group's colour. */
+export function categoryPercentagePaint(
+	colors: Readonly<Record<string, string>>,
+	options: CategoryOptions,
 	isDark: boolean,
 ): FillPaintConfig | null {
 	if (!options.selected) return null;
 	return {
 		color: getPercentageColorExpression(
-			ETHNICITY_COLORS[options.selected],
+			colors[options.selected] ?? "#999999",
 			options,
 			isDark,
 		),

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { PARTIES } from "@uk-data-atlas/datasets";
-import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale/ethnicityColors";
+import { ETHNICITY_COLORS } from "@uk-data-atlas/datasets";
 import {
 	electionWinnerPaint,
-	ethnicityMajorityPaint,
-	ethnicityPercentagePaint,
+	categoryMajorityPaint,
+	categoryPercentagePaint,
 	featureColorPaint,
 	partyPercentagePaint,
 	valuePaint,
@@ -67,7 +67,7 @@ describe("partyPercentagePaint", () => {
 
 describe("ethnicity paints", () => {
 	it("matches each category to its colour for the majority view", () => {
-		const paint = ethnicityMajorityPaint();
+		const paint = categoryMajorityPaint(ETHNICITY_COLORS);
 		const expression = JSON.stringify(paint.color);
 
 		expect(expression).toContain("majorityCategory");
@@ -78,8 +78,9 @@ describe("ethnicity paints", () => {
 
 	it("shades from the selected category's colour", () => {
 		const selected = Object.keys(ETHNICITY_COLORS)[0];
-		const paint = ethnicityPercentagePaint(
-			{ ...DEFAULT_MAP_OPTIONS.ethnicity, selected } as never,
+		const paint = categoryPercentagePaint(
+			ETHNICITY_COLORS,
+			{ ...DEFAULT_MAP_OPTIONS.ethnicity, selected },
 			false,
 		);
 
@@ -89,7 +90,11 @@ describe("ethnicity paints", () => {
 
 	it("describes no paint at all when no category is selected", () => {
 		expect(
-			ethnicityPercentagePaint(DEFAULT_MAP_OPTIONS.ethnicity, false),
+			categoryPercentagePaint(
+				ETHNICITY_COLORS,
+				DEFAULT_MAP_OPTIONS.ethnicity,
+				false,
+			),
 		).toBeNull();
 	});
 });

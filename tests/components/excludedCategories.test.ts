@@ -29,8 +29,10 @@ describe("excludedCategoriesForMapOptions", () => {
 		expect(categories.excludedGeneralParties).toEqual(
 			new Set(["conservative"]),
 		);
-		expect(categories.selectedEthnicity).toBe("asian");
-		expect(categories.excludedEthnicities).toEqual(new Set(["white"]));
+		expect(categories.categories.ethnicity.selected).toBe("asian");
+		expect(categories.categories.ethnicity.excluded).toEqual(
+			new Set(["white"]),
+		);
 		expect(categories.selectedPointValue).toBe(10);
 		expect(categories.excludedPointValues).toEqual(new Set([20]));
 	});

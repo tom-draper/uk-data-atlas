@@ -10,18 +10,30 @@ import {
 	LocalElectionDataset,
 	GeneralElectionDataset,
 } from "@uk-data-atlas/datasets";
-import { EthnicityDataset } from "@uk-data-atlas/datasets";
 import {
 	BrexitLADDataset,
 	BrexitConstituencyDataset,
 } from "@uk-data-atlas/datasets";
-import { MapOptions } from "@lib/types/mapOptions";
+import type { CategoryDatasetId, MapOptions } from "@lib/types/mapOptions";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { getColorForBrexitLeave } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
 import { CustomPoint } from "@/lib/types/custom";
 
 export const DEFAULT_COLOR = "#cccccc";
+
+/**
+ * A dataset mapped by its largest group, which declares `categories`: each
+ * area's groups under their parents, and the largest group of each area.
+ */
+export type CategoryRecords = {
+	type: CategoryDatasetId;
+	data: Record<
+		string,
+		Record<string, Record<string, { population: number }>>
+	>;
+	results: Record<string, string>;
+};
 
 export class FeatureBuilder {
 	formatBoundaryGeoJson(features: Features): BoundaryGeojson {
@@ -124,25 +136,27 @@ export class FeatureBuilder {
 		});
 	}
 
-	buildEthnicityFeatures(
+	/** A dataset mapped by its largest group: that group, or one group's share. */
+	buildCategoryFeatures(
 		features: Features,
-		dataset: EthnicityDataset,
+		dataset: CategoryRecords,
 		codeProp: string,
 		options: MapOptions,
 	): Features {
-		const mode = options.ethnicity?.mode || "majority";
-		const excluded = new Set(options.ethnicity?.excluded ?? []);
+		const categoryOptions = options[dataset.type];
+		const mode = categoryOptions?.mode || "majority";
+		const excluded = new Set(categoryOptions?.excluded ?? []);
 
-		if (mode === "percentage" && options.ethnicity?.selected) {
-			return this.buildEthnicityPercentageFeatures(
+		if (mode === "percentage" && categoryOptions?.selected) {
+			return this.buildCategoryPercentageFeatures(
 				features,
 				dataset.data,
-				options.ethnicity.selected,
+				categoryOptions.selected,
 				codeProp,
 			);
 		}
 
-		return this.buildEthnicityMajorityFeatures(
+		return this.buildCategoryMajorityFeatures(
 			features,
 			codeProp,
 			dataset.results,
@@ -151,11 +165,11 @@ export class FeatureBuilder {
 		);
 	}
 
-	buildEthnicityMajorityFeatures(
+	buildCategoryMajorityFeatures(
 		features: Features,
 		codeProp: string,
-		results: EthnicityDataset["results"],
-		data?: EthnicityDataset["data"],
+		results: CategoryRecords["results"],
+		data?: CategoryRecords["data"],
 		excluded?: Set<string>,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
@@ -187,20 +201,20 @@ export class FeatureBuilder {
 		});
 	}
 
-	buildEthnicityPercentageFeatures(
+	buildCategoryPercentageFeatures(
 		features: Features,
-		data: EthnicityDataset["data"],
-		ethnicity: string,
+		data: CategoryRecords["data"],
+		category: string,
 		codeProp: string,
 	): Features {
 		const totals = new Map<string, { total: number; count: number }>();
 		for (const [code, locationData] of Object.entries(data)) {
 			let total = 0;
 			let count = 0;
-			for (const category of Object.values(locationData)) {
-				for (const [eth, d] of Object.entries(category)) {
+			for (const parent of Object.values(locationData)) {
+				for (const [name, d] of Object.entries(parent)) {
 					total += d.population || 0;
-					if (eth === ethnicity) count = d.population || 0;
+					if (name === category) count = d.population || 0;
 				}
 			}
 			totals.set(code, { total, count });
@@ -210,7 +224,7 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, codeProp) ?? "";
 			const { total = 0, count = 0 } = totals.get(code) ?? {};
 			const percentage = total > 0 ? (count / total) * 100 : 0;
-			return { percentage, categoryCode: ethnicity };
+			return { percentage, categoryCode: category };
 		});
 	}
 

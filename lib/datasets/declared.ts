@@ -20,6 +20,7 @@ import type { BarsCardConfig } from "../measures/barsConfig.ts";
 import type { DeprivationCardConfig } from "./deprivationCard.ts";
 import type { BreakdownCardConfig } from "../measures/breakdownConfig.ts";
 import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
+import { CATEGORY_CHART_DEFINITIONS } from "./categories.ts";
 import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
 
 /**
@@ -561,13 +562,16 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 	};
 };
 
-/** The chart definition of every declared dataset that has a display. */
+/** The chart definition of every declared dataset that has a display or categories. */
 export const DECLARED_CHART_DEFINITIONS: readonly ChartDatasetDefinition<CatalogueDataset>[] =
-	displayed.map(
-		(declaration) =>
-			chartDefinitionOf(
-				declaration,
-			) as unknown as ChartDatasetDefinition<CatalogueDataset>,
-	);
+	[
+		...displayed.map(
+			(declaration) =>
+				chartDefinitionOf(
+					declaration,
+				) as unknown as ChartDatasetDefinition<CatalogueDataset>,
+		),
+		...CATEGORY_CHART_DEFINITIONS,
+	];
 
 export type { DeclaredDatasetId };

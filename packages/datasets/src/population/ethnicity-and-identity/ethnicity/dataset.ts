@@ -9,6 +9,7 @@ import {
 	districts2021,
 } from "../../../data/census/districts.ts";
 import { loadEthnicity } from "../../../data/ethnicity/loader.ts";
+import { ETHNICITY_COLORS } from "./colors.ts";
 
 /** The census's code for each ethnic group. */
 export const ETHNICITY_CODES: Readonly<Record<string, string>> =
@@ -36,6 +37,13 @@ export const ETHNICITY_CODES: Readonly<Record<string, string>> =
 		].map((name, index) => [name, String(index + 1)]),
 	);
 
+/** Every ethnic group, by the census's code for it, in its own colour. */
+const ethnicityParts = Object.entries(ETHNICITY_CODES).map(([name, code]) => ({
+	code,
+	label: name,
+	color: ETHNICITY_COLORS[name] ?? "#6b7280",
+}));
+
 export const ethnicity = defineDataset<EthnicityDataset>({
 	id: "ethnicity",
 	topic: "ethnicity-and-identity",
@@ -54,6 +62,20 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		retrievedAt: "2026-09-05",
 	},
 	load: async ({ text }) => loadEthnicity(text),
+	categories: {
+		label: "Ethnicity [2021]",
+		year: 2021,
+		colors: ETHNICITY_COLORS,
+		breakdown: {
+			measure: "usual-residents",
+			dimension: "ethnic-group",
+			parts: ethnicityParts,
+			order: "largest",
+			heading: "Ethnicity",
+			period: "2021",
+			source: "Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk",
+		},
+	},
 	ranking: {
 		label: "White British residents",
 		format: { kind: "decimal", digits: 1, suffix: "%" },

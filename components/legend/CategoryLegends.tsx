@@ -1,8 +1,8 @@
 "use client";
 
-import type { MapOptions } from "@/lib/types/mapOptions";
+import type { CategoryDatasetId, MapOptions } from "@/lib/types/mapOptions";
 import { renderCategoryLegend } from "../legendUtils";
-import type { EthnicityDisplayData, PartyDisplayData } from "./types";
+import type { CategoryDisplayData, PartyDisplayData } from "./types";
 
 interface CategoryLegendProps {
 	displayOptions: MapOptions;
@@ -10,21 +10,23 @@ interface CategoryLegendProps {
 	isDark: boolean;
 }
 
-export function EthnicityLegend({
+export function CategoryLegend({
 	displayOptions,
 	overlayOpacity,
 	isDark,
-	ethnicities,
+	categories,
+	datasetType,
 	onClick,
 	onRightClick,
 }: CategoryLegendProps & {
-	ethnicities: EthnicityDisplayData[];
+	categories: CategoryDisplayData[];
+	datasetType: CategoryDatasetId;
 	onClick: (id: string) => void;
 	onRightClick: (id: string) => void;
 }) {
-	const options = displayOptions.ethnicity;
+	const options = displayOptions[datasetType];
 	return renderCategoryLegend(
-		ethnicities,
+		categories,
 		options?.mode === "percentage",
 		options?.selected,
 		onClick,

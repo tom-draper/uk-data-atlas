@@ -3,6 +3,7 @@ import {
 	declaredDefaultOptions,
 	declaredMapViewOptions,
 } from "../datasets/declared";
+import { declaredCategoryOptions } from "../datasets/categories";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
 const chartMapOptions: ChartMapOptions = Object.fromEntries(
@@ -35,11 +36,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 		MapOptions,
 		"ageDistribution" | "populationDensity" | "gender"
 	>),
-	ethnicity: {
-		mode: "majority",
-		percentageRange: { min: 0, max: 50 },
-		colorRange: { min: 0, max: 1 },
-	},
+	...declaredCategoryOptions(),
 	brexit: { colorRange: { min: 30, max: 70 } },
 	"brexit-constituency": { colorRange: { min: 30, max: 70 } },
 	custom: { colorRange: { min: 0, max: 100 } },

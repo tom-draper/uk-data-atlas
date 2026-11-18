@@ -4,7 +4,6 @@ import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import { aggregateCustomDataset } from "./economics";
 import {} from "@uk-data-atlas/datasets";
-import { aggregateEthnicity } from "./demographics";
 import {
 	aggregateBrexit,
 	aggregateBrexitConstituencies,
@@ -53,11 +52,6 @@ export const populationAggregation = boundaryAggregation(
 	"population-ward",
 	"ward",
 	aggregatePopulation,
-);
-export const ethnicityAggregation = boundaryAggregation(
-	"ethnicity",
-	"localAuthority",
-	aggregateEthnicity,
 );
 export const brexitAggregation = boundaryAggregation(
 	"brexit",

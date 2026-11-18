@@ -1,6 +1,11 @@
 import { useState } from "react";
-import type { Dataset, EthnicityCode, PartyCode } from "@/lib/types";
-import type { CategoryOptions, MapOptions } from "@/lib/types/mapOptions";
+import type { Dataset, PartyCode } from "@/lib/types";
+import { isCategoryDataset } from "@/lib/datasets/categories";
+import type {
+	CategoryDatasetId,
+	CategoryOptions,
+	MapOptions,
+} from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey, MapOptionsChangeHandler } from "./types";
 
 type ElectionType = "general-election" | "local-election";
@@ -38,11 +43,15 @@ export function useLegendControls(
 			? activeDataset.type
 			: null;
 	const electionOptions = electionType ? displayOptions[electionType] : null;
-	const ethnicityOptions = displayOptions.ethnicity;
+	const categoryType: CategoryDatasetId | null =
+		activeDataset && isCategoryDataset(activeDataset.type)
+			? activeDataset.type
+			: null;
+	const categoryOptions = categoryType ? displayOptions[categoryType] : null;
 
 	const toggleCategory = (
-		type: ElectionType | "ethnicity",
-		id: PartyCode | EthnicityCode,
+		type: ElectionType | CategoryDatasetId,
+		id: string,
 	) => {
 		const options = displayOptions[type];
 		if (options.mode === "percentage" && options.selected === id) {
@@ -59,8 +68,8 @@ export function useLegendControls(
 		}
 	};
 	const toggleExcluded = (
-		type: ElectionType | "ethnicity",
-		id: PartyCode | EthnicityCode,
+		type: ElectionType | CategoryDatasetId,
+		id: string,
 	) => {
 		const options = displayOptions[type];
 		const excluded = options.excluded ?? [];
@@ -123,19 +132,23 @@ export function useLegendControls(
 			});
 		setLiveOptions(null);
 	};
-	const handleEthnicityRangeInput = (min: number, max: number) => {
+	const handleCategoryRangeInput = (min: number, max: number) => {
+		if (!categoryType) return;
 		setLiveOptions((previous) => {
 			const base = previous || mapOptions;
 			return {
 				...base,
-				ethnicity: { ...base.ethnicity, percentageRange: { min, max } },
+				[categoryType]: {
+					...base[categoryType],
+					percentageRange: { min, max },
+				},
 			};
 		});
 	};
-	const handleEthnicityRangeChangeEnd = () => {
-		if (liveOptions)
-			onMapOptionsChange("ethnicity", {
-				percentageRange: liveOptions.ethnicity.percentageRange,
+	const handleCategoryRangeChangeEnd = () => {
+		if (liveOptions && categoryType)
+			onMapOptionsChange(categoryType, {
+				percentageRange: liveOptions[categoryType].percentageRange,
 			});
 		setLiveOptions(null);
 	};
@@ -146,9 +159,7 @@ export function useLegendControls(
 		electionOptions,
 		showElectionPct: electionOptions?.mode === "percentage",
 		showElectionTurnout: electionOptions?.metric === "turnout",
-		showEthnicityPct:
-			activeDataset?.type === "ethnicity" &&
-			ethnicityOptions.mode === "percentage",
+		categoryOptions,
 		electionRange: {
 			min: electionOptions?.percentageRange?.min ?? 0,
 			max:
@@ -159,11 +170,9 @@ export function useLegendControls(
 			min: 0,
 			max: 100,
 		},
-		ethnicityRange: {
-			min: ethnicityOptions.percentageRange?.min ?? 0,
-			max:
-				(ethnicityOptions as CategoryOptions).percentageRange?.max ??
-				100,
+		categoryRange: {
+			min: categoryOptions?.percentageRange?.min ?? 0,
+			max: categoryOptions?.percentageRange?.max ?? 100,
 		},
 		handleRangeInput,
 		handleRangeChangeEnd,
@@ -171,12 +180,10 @@ export function useLegendControls(
 			electionType && toggleCategory(electionType, id),
 		handlePartyRightClick: (id: PartyCode) =>
 			electionType && toggleExcluded(electionType, id),
-		handleEthnicityClick: (id: EthnicityCode) =>
-			activeDataset?.type === "ethnicity" &&
-			toggleCategory("ethnicity", id),
-		handleEthnicityRightClick: (id: EthnicityCode) =>
-			activeDataset?.type === "ethnicity" &&
-			toggleExcluded("ethnicity", id),
+		handleCategoryClick: (id: string) =>
+			categoryType && toggleCategory(categoryType, id),
+		handleCategoryRightClick: (id: string) =>
+			categoryType && toggleExcluded(categoryType, id),
 		handlePointLegendClick: (value: string) => {
 			if (
 				activeDataset?.type !== "custom" ||
@@ -241,7 +248,7 @@ export function useLegendControls(
 		handleElectionRangeChangeEnd,
 		handleElectionTurnoutRangeInput,
 		handleElectionTurnoutRangeChangeEnd,
-		handleEthnicityRangeInput,
-		handleEthnicityRangeChangeEnd,
+		handleCategoryRangeInput,
+		handleCategoryRangeChangeEnd,
 	};
 }
