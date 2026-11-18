@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { route as routeRequest } from "../src/routes";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import {
 	dataCatalog,
 	measureObservations,
 	routeWithCatalog,
+	testContext,
 } from "./routeFixtures";
 
 test("lists and downloads release-pinned whole observation artifacts", () => {
@@ -12,6 +18,15 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 	);
 	const source = measure?.sources[0];
 	assert.ok(measure && source);
+	registerSeriesObservations(
+		measureObservations,
+		new Map([
+			[
+				measureSeriesSourceKey(measure.series!, source),
+				measureObservations[0]!,
+			],
+		]),
+	);
 	const manifest = {
 		schemaVersion: 1 as const,
 		contentHash: "sha256:export-manifest",
@@ -62,11 +77,14 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 	assert.deepEqual(listedData?.exports, manifest.exports);
 	assert.match(listedData?.note ?? "", /publisher-observation/);
 
-	const downloaded = routeWithCatalog(
+	const downloaded = routeRequest(
+		"GET",
 		"/v1/exports/small-area-fixture",
-		dataCatalog,
-		measureObservations,
-		{ exportManifest: manifest },
+		testContext({
+			dataCatalog,
+			measureObservations,
+			exportManifest: manifest,
+		}),
 	);
 	assert.equal(downloaded.status, 200);
 	assert.equal(downloaded.representation?.contentType, "application/json");
