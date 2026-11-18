@@ -247,3 +247,116 @@ test("measures a neighbour from its geometry as it does from its whole index", (
 		undefined,
 	);
 });
+
+/** `borderIndex` as it was written when it keyed every vertex for each use. */
+const referenceBorderIndex = (rings: unknown[][]) => {
+	const key = ([longitude, latitude]: number[]) => `${longitude},${latitude}`;
+	const edges = new Map<string, number>();
+	const vertices = new Set<string>();
+	let bounds: number[] | undefined;
+	for (const ring of rings) {
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			const start = ring[j];
+			const end = ring[i];
+			if (!Array.isArray(start) || !Array.isArray(end)) continue;
+			vertices.add(key(start));
+			if (bounds) {
+				bounds[0] = Math.min(bounds[0]!, start[0]);
+				bounds[1] = Math.min(bounds[1]!, start[1]);
+				bounds[2] = Math.max(bounds[2]!, start[0]);
+				bounds[3] = Math.max(bounds[3]!, start[1]);
+			} else bounds = [start[0], start[1], start[0], start[1]];
+			if (key(start) === key(end)) continue;
+			const from = key(start);
+			const to = key(end);
+			const edge = from < to ? `${from}|${to}` : `${to}|${from}`;
+			if (!edges.has(edge))
+				edges.set(edge, edgeLengthM(start as never, end as never));
+		}
+	}
+	return { edges: [...edges], vertices: [...vertices], bounds };
+};
+
+test("indexes a border exactly as keying each vertex per use did", () => {
+	let seed = 12345;
+	const next = () => (seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31;
+	const point = () => [
+		Math.round(next() * 40) / 8 - 2,
+		Math.round(next() * 40) / 8 + 52,
+	];
+	const randomRing = (): unknown[] => {
+		const length = Math.floor(next() * 12);
+		const ring: unknown[] = Array.from({ length }, point);
+		// Repeats, a closing point, and entries that are not coordinates.
+		if (length > 2 && next() < 0.5) ring.push(ring[0]);
+		if (length > 3 && next() < 0.4) ring.splice(2, 0, ring[1]);
+		if (length > 3 && next() < 0.3)
+			ring[Math.floor(next() * length)] = null;
+		if (length > 1 && next() < 0.2) ring[length - 1] = "x";
+		return ring;
+	};
+	for (let round = 0; round < 300; round += 1) {
+		const polygons = Array.from(
+			{ length: 1 + Math.floor(next() * 3) },
+			() =>
+				Array.from({ length: 1 + Math.floor(next() * 2) }, randomRing),
+		);
+		const actual = borderIndex({
+			type: "MultiPolygon",
+			coordinates: polygons,
+		} as GeoJsonGeometry);
+		const expected = referenceBorderIndex(polygons.flat());
+		assert.deepEqual(
+			{
+				edges: [...actual.edges],
+				vertices: [...actual.vertices],
+				bounds: actual.bounds,
+			},
+			expected,
+			`round ${round}`,
+		);
+	}
+});
+
+test("measures a border against a whole geometry as against its full index", () => {
+	let seed = 987;
+	const next = () => (seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31;
+	// Corners on a coarse grid, so that two areas share many vertices and
+	// some edges, in both directions.
+	const point = () => [
+		Math.floor(next() * 5) / 4 - 1,
+		54 + Math.floor(next() * 5) / 4,
+	];
+	const area = (): GeoJsonGeometry => ({
+		type: "MultiPolygon",
+		coordinates: Array.from({ length: 1 + Math.floor(next() * 2) }, () => {
+			const corners = Array.from(
+				{ length: 3 + Math.floor(next() * 5) },
+				point,
+			);
+			return [[...corners, corners[0]!]];
+		}),
+	});
+	let meeting = 0;
+	for (let round = 0; round < 300; round += 1) {
+		const target = area();
+		const other = area();
+		const whole = sharedBorder(borderIndex(target), borderIndex(other));
+		const direct = sharedBorderWith(borderIndex(target), other);
+		assert.equal(direct?.touch, whole?.touch, `round ${round}`);
+		assert.equal(direct?.sharedEdges, whole?.sharedEdges, `round ${round}`);
+		assert.equal(
+			direct?.sharedVertices,
+			whole?.sharedVertices,
+			`round ${round}`,
+		);
+		assert.ok(
+			Math.abs(
+				(direct?.sharedBorderM ?? 0) - (whole?.sharedBorderM ?? 0),
+			) < 1e-6,
+			`round ${round}`,
+		);
+		if (whole?.touch === "edge") meeting += 1;
+	}
+	assert.ok(meeting > 20, `${meeting} rounds shared an edge`);
+});
