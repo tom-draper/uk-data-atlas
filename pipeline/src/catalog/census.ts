@@ -259,10 +259,11 @@ export const compileCensus = (
 			])[]
 		).map(([suffix, field, label, member]) => {
 			const measureId = `${breakdown.datasetId}-${suffix}`;
-			const seriesKey = measureSeriesKey({
+			const series = {
 				measure: breakdown.measure,
 				dimensions: { [breakdown.dimension]: member ?? suffix },
-			});
+			};
+			const seriesKey = measureSeriesKey(series);
 			const periods = localAuthorityFieldPeriods(
 				path,
 				breakdown.field ? `${breakdown.field}.${field}` : field,
@@ -288,6 +289,7 @@ export const compileCensus = (
 			return {
 				measure: {
 					id: measureId,
+					series,
 					label,
 					valueKind: "count",
 					unit: breakdown.unit,

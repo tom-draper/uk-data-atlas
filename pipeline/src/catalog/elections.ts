@@ -235,7 +235,7 @@ export const compileElections = (
 		];
 
 		return metrics.flatMap((metric) => {
-			const seriesKey = measureSeriesKey({
+			const series = {
 				measure:
 					metric.field.kind === "partyVotes"
 						? "party-votes"
@@ -254,7 +254,8 @@ export const compileElections = (
 						}
 					: {}),
 				datasetId: election.datasetId,
-			});
+			};
+			const seriesKey = measureSeriesKey(series);
 			const periods = electionFieldPeriods(
 				election.path,
 				election.geography,
@@ -317,6 +318,7 @@ export const compileElections = (
 				});
 			const measure: Measure = {
 				id: metric.id,
+				series,
 				label: metric.label,
 				valueKind:
 					metric.id.endsWith("turnout") ||
@@ -386,10 +388,11 @@ export const compileElections = (
 			byBoundaryYear.set(period.boundaryYear, partition);
 		}
 		const measureId = `${election.datasetId}-winning-party`;
-		const seriesKey = measureSeriesKey({
+		const series = {
 			measure: "winning-party",
 			datasetId: election.datasetId,
-		});
+		};
+		const seriesKey = measureSeriesKey(series);
 		const sources = [...byBoundaryYear.entries()]
 			.sort(([left], [right]) => left - right)
 			.map(([boundaryYear, sourcePeriods]) => ({
@@ -409,6 +412,7 @@ export const compileElections = (
 			}));
 		const measure: Measure = {
 			id: measureId,
+			series,
 			label: `${election.label} winning party`,
 			valueKind: "categorical",
 			unit: "party",

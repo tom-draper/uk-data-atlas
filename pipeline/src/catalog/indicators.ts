@@ -155,6 +155,7 @@ export const publishIndicators = (
 				: {}),
 			measure: {
 				id: indicator.id,
+				series: indicator.series,
 				label: indicator.label,
 				valueKind: indicator.valueKind,
 				unit: indicator.unit,

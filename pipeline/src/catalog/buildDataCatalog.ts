@@ -96,7 +96,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	// so an id that encodes a breakdown is never published unmapped.
 	const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
 	assertMeasureDimensions(sourceCatalog, config, vocabulary);
-	const catalog = catalogueWithSeries(sourceCatalog, config.ids);
+	const catalog = catalogueWithSeries(sourceCatalog);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	// Remove artifacts from older builds; observations now come from rows.
 	rmSync(compiledObservationDirectory(repositoryRoot), {

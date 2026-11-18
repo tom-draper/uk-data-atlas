@@ -103,10 +103,11 @@ export const compileYearlyIndicators = (
 		);
 	const published = catalogue.indicators.map((indicator) => {
 		const periods = localAuthorityFieldPeriods(path, indicator.field, year);
-		const seriesKey = measureSeriesKey({
+		const series = {
 			measure: indicator.measure,
 			dimensions: indicator.members,
-		});
+		};
+		const seriesKey = measureSeriesKey(series);
 		const content = JSON.stringify({
 			schemaVersion: 1,
 			measureId: seriesKey,
@@ -120,13 +121,14 @@ export const compileYearlyIndicators = (
 			sourceGeography: { type: "localAuthority", boundaryYear: year },
 			periods,
 		};
-		return { indicator, artifact };
+		return { indicator, series, artifact };
 	});
 	return {
-		measures: published.map(({ indicator, artifact }): Measure => {
+		measures: published.map(({ indicator, series, artifact }): Measure => {
 			const aggregation = aggregationOf(indicator.aggregation);
 			return {
 				id: indicator.id,
+				series,
 				label: indicator.label,
 				valueKind: indicator.valueKind,
 				unit: indicator.unit,
