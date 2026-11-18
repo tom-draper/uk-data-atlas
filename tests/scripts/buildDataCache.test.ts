@@ -1808,3 +1808,27 @@ test("an execution error records a failed run", async () => {
 	);
 	assert.equal(summary.stages[0].status, "failed");
 });
+
+test("boundary tile worker count does not change its stage cache key", () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-worker-key-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	const output = "data/build/boundaries/tiles.json";
+	mkdirSync(dirname(join(root, output)), { recursive: true });
+	writeFileSync(join(root, output), "fixture");
+	const current = {
+		name: "boundary-tiles",
+		args: ["pipeline/src/stages/compile-boundary-tiles.ts"],
+		dependencies: [],
+		rawInputs: [],
+		outputs: [output],
+	};
+	const cache = (workers: string) =>
+		createStageCache({
+			root,
+			stateFile: join(root, "cache/stages.json"),
+			codeFiles: () => [],
+			environment: { ATLAS_PRECOMPILE_JOBS: workers },
+		});
+	const adopted = cache("1").adopt(current, []);
+	assert.equal(cache("3").lookup(current, []), adopted.digest);
+});
