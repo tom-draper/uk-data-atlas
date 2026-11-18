@@ -20,11 +20,19 @@ import {
 	manifestFilePath,
 } from "../../src/modules/assembleModules";
 import { sha256OfFile, sqlitePath } from "../../src/modules/buildModules";
-import { classifyViews, readSchema } from "../../src/modules/moduleTables";
+import {
+	classifyViews,
+	readSchema,
+	tableOwner,
+} from "../../src/modules/moduleTables";
 import {
 	buildFixtureRelease,
 	writeFixtureAtlas,
 } from "../fixtures/moduleFixtures";
+
+test("area locations belong to core", () => {
+	assert.equal(tableOwner("area_location"), "core");
+});
 
 const scratch = (t: TestContext) => {
 	const root = mkdtempSync(join(tmpdir(), "module-build-"));
@@ -133,6 +141,13 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 	await buildFixtureRelease(root);
 	const core = open(join(root, "release", sqlitePath("core")));
 	try {
+		assert.equal(
+			count(
+				core,
+				"SELECT count(*) AS n FROM area_location WHERE longitude = -1.5",
+			),
+			1,
+		);
 		const tables = readSchema(core)
 			.filter((row) => row.type === "table")
 			.map((row) => row.name);

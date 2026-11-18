@@ -1,3 +1,4 @@
+import { writeAreaLocations } from "../storage/areaLocations.ts";
 import { buildProvenance } from "./buildProvenance.ts";
 import { weightInputPaths } from "../storage/crosswalkInputSources.ts";
 import { statisticsReadPathTables } from "../storage/statisticsReadPathTables.ts";
@@ -39,6 +40,7 @@ import { readJsonSync } from "../lib/json.ts";
  * converted series are built through those weights, so they go with them.
  * `documentSchema: false` skips the search table and the schema docs, which
  * describe the full build's tables and fail on a fixture's partial ones.
+ * `areaLocations: false` skips geometry for fixtures with no geometry store.
  */
 export function assembleAtlas(
 	root: string,
@@ -46,10 +48,12 @@ export function assembleAtlas(
 		crosswalkWeights = true,
 		convertedSeries = crosswalkWeights,
 		documentSchema = crosswalkWeights,
+		areaLocations = crosswalkWeights,
 	}: {
 		crosswalkWeights?: boolean;
 		convertedSeries?: boolean;
 		documentSchema?: boolean;
+		areaLocations?: boolean;
 	} = {},
 ) {
 	const directory = join(root, "data/build");
@@ -209,6 +213,7 @@ export function assembleAtlas(
 			if (convertedSeries) copyConvertedSeries(database, ids);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
+			if (areaLocations) writeAreaLocations(database, root);
 			// Last, so the docs see every table and a missing description
 			// fails the build.
 			if (documentSchema) {

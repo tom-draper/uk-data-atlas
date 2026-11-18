@@ -91,6 +91,26 @@ export const schemaGuide: readonly GuideTopic[] = [
 ];
 
 export const schemaTables: Readonly<Record<string, TableDoc>> = {
+	area_location: {
+		audience: "core",
+		description:
+			"A polygon interior point and bounding box for each area version, or a reason geometry is unavailable. This is not a population-weighted centroid.",
+		columns: {
+			area_version_id: "Area version (area_version.id).",
+			longitude: "Interior point longitude in WGS84 degrees.",
+			latitude: "Interior point latitude in WGS84 degrees.",
+			min_longitude:
+				"Western bound in WGS84 degrees, rounded outward to six decimal places.",
+			min_latitude:
+				"Southern bound in WGS84 degrees, rounded outward to six decimal places.",
+			max_longitude:
+				"Eastern bound in WGS84 degrees, rounded outward to six decimal places.",
+			max_latitude:
+				"Northern bound in WGS84 degrees, rounded outward to six decimal places.",
+			method: "polygon-interior-point: a scanline point strictly inside the polygon, not population weighted.",
+			gap: "no-geometry or no-interior-point when no location could be calculated; otherwise null.",
+		},
+	},
 	geography: {
 		audience: "core",
 		description:
@@ -1427,6 +1447,12 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 };
 
 export const schemaExamples: readonly SchemaExample[] = [
+	{
+		id: "area-location",
+		question: "Where is Manchester and what bounds does its area cover?",
+		sql: "SELECT v.geography, v.release, l.latitude, l.longitude, l.min_longitude, l.min_latitude, l.max_longitude, l.max_latitude, l.method, l.gap FROM v_area_version v JOIN area_location l ON l.area_version_id = v.area_version_id WHERE v.code = 'E08000003' ORDER BY v.geography, v.release",
+		expect: "A point and bounding box or an explicit gap for each Manchester area version.",
+	},
 	{
 		id: "measure-semantics",
 		question:

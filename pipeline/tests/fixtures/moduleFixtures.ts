@@ -21,6 +21,7 @@ CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)
 CREATE TABLE source (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL);
 CREATE TABLE area_releases (id INTEGER NOT NULL PRIMARY KEY, label TEXT NOT NULL);
 CREATE TABLE area_version (id INTEGER NOT NULL PRIMARY KEY, code TEXT NOT NULL);
+CREATE TABLE area_location (area_version_id INTEGER PRIMARY KEY REFERENCES area_version(id), longitude REAL) STRICT;
 CREATE TABLE period (id INTEGER NOT NULL PRIMARY KEY, label TEXT NOT NULL);
 CREATE TABLE status (id INTEGER NOT NULL PRIMARY KEY, slug TEXT NOT NULL UNIQUE, label TEXT NOT NULL);
 CREATE TABLE party (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL);
@@ -82,6 +83,7 @@ INSERT INTO payloads VALUES ('catalogue', x'01'), ('postcode-index', x'0203'), (
 INSERT INTO source VALUES (1, 'ons');
 INSERT INTO area_releases VALUES (1, '2024');
 INSERT INTO area_version VALUES (1, 'E01'), (2, 'E02'), (3, 'E03');
+INSERT INTO area_location VALUES (1, -1.5);
 INSERT INTO period VALUES (1, '2021'), (2, '2022'), (3, '2016-05-05'), (4, '2021-05-06');
 INSERT INTO status VALUES (1, 'ok', 'Ok'), (2, 'suppressed', 'Suppressed');
 INSERT INTO party VALUES (1, 'Alpha'), (2, 'Beta');
