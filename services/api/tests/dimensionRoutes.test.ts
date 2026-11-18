@@ -46,6 +46,7 @@ const wardMeasure = (
 ): Measure => ({
 	...template,
 	id,
+	series: undefined,
 	label,
 	unit: "offences",
 	sources: [
@@ -200,6 +201,11 @@ const measureDimensions: MeasureDimensions = {
 		},
 	},
 };
+
+catalog.measures = catalog.measures.map((measure) => ({
+	...measure,
+	series: measureDimensions.config.ids[measure.id],
+}));
 
 const context = testContext({
 	geographyInventory,

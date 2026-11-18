@@ -137,7 +137,20 @@ test("offers a conversion for an area only when it reaches that area", () => {
 });
 
 test("conversion links name the public measure and series members", () => {
-	const catalog = { ...dataCatalog };
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure.id === "population"
+				? {
+						...measure,
+						series: {
+							measure: "residents",
+							dimensions: { sex: "female" },
+						},
+					}
+				: measure,
+		),
+	};
 	const dimensions = identityDimensions(catalog);
 	const dimensionalContext = {
 		...context,

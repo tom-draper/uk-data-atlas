@@ -77,6 +77,18 @@ test("joins a dimensional series using its public measure id", () => {
 	const base = contextFor([record]);
 	const context = {
 		...base,
+		dataCatalog: {
+			...dataCatalog,
+			measures: dataCatalog.measures
+				.filter((measure) => measure.id === "population")
+				.map((measure) => ({
+					...measure,
+					series: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				})),
+		},
 		measureDimensions: {
 			vocabulary: {
 				schemaVersion: 1 as const,

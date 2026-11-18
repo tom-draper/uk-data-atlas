@@ -313,10 +313,15 @@ test("indexes canonical series separately from catalogue ids", () => {
 		measure: "recorded-crimes",
 		dimensions: { offence: "burglary" },
 	};
+	const fixture = catalog({ "crime-burglary": ["crime"] });
 	const indexed = dimensionCatalogue(
-		catalog({ "crime-burglary": ["crime"] }) as Parameters<
-			typeof dimensionCatalogue
-		>[0],
+		{
+			...fixture,
+			measures: fixture.measures.map((measure) => ({
+				...measure,
+				series: mapping,
+			})),
+		} as unknown as Parameters<typeof dimensionCatalogue>[0],
 		{ config: config({ "crime-burglary": mapping }), vocabulary },
 	);
 	const found = indexed.series(measureSeriesKey(mapping));
@@ -344,6 +349,21 @@ test("uses catalogue series identities without an id mapping", () => {
 		indexed.series(measureSeriesKey(identity))?.measure.id,
 		"recorded-crimes",
 	);
+});
+
+test("does not derive catalogue series from legacy id mappings", () => {
+	const mapping = {
+		measure: "recorded-crimes",
+		dimensions: { offence: "burglary" },
+	};
+	const data = catalog({ "crime-burglary": ["crime"] }) as Parameters<
+		typeof dimensionCatalogue
+	>[0];
+	const indexed = dimensionCatalogue(data, {
+		config: config({ "crime-burglary": mapping }),
+		vocabulary,
+	});
+	assert.equal(indexed.series(measureSeriesKey(mapping)), undefined);
 });
 
 test("builds fallback dimensions from embedded series identities", () => {

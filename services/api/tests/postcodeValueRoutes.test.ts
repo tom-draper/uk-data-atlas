@@ -261,7 +261,18 @@ test("answers for the finest area the data was published for that contains the p
 test("uses the selected public series for postcode lookups and links", () => {
 	const paths: string[] = [];
 	const dimensional = context({
-		dataCatalog: { ...dataCatalog },
+		dataCatalog: {
+			...dataCatalog,
+			measures: dataCatalog.measures
+				.filter((measure) => measure.id === "population")
+				.map((measure) => ({
+					...measure,
+					series: {
+						measure: "residents",
+						dimensions: { age: "all" },
+					},
+				})),
+		},
 		operationMatcher: (path) => {
 			paths.push(path);
 			return { route: "unmatched" };

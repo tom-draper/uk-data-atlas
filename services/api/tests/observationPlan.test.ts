@@ -46,7 +46,12 @@ test("selects weights using their canonical identity instead of the old id", () 
 		periods: ["2024"],
 		sourceGeography: { type: "ward", boundaryYear: 2024 },
 	};
-	const measure = { id: "actual-weight", label: "Weight", sources: [source] };
+	const measure = {
+		id: "actual-weight",
+		label: "Weight",
+		series: { measure: "actual-weight" },
+		sources: [source],
+	};
 	const catalog = { measures: [measure] } as unknown as DataCatalog;
 	const result = readWeightedSource({
 		context: {
