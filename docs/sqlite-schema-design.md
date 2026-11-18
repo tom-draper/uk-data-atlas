@@ -370,3 +370,18 @@ WHERE h.child_version_id = ?;
 Use `WHERE h.parent_version_id = ?` and join `h.child_version_id` instead to
 find children. These are direct links, and multiple releases can give multiple
 assignments.
+
+`place_location` supplies a polygon interior point for each named `place`,
+using the rounded geometry stored in `place_geometry`. The latter table already
+holds the WGS84 envelope (`min_x`, `min_y`, `max_x`, `max_y`). A missing or
+unusable polygon is recorded as a gap. `place` also has editorial bounding
+boxes, which can be broad approximations and are not substituted for missing
+geometry bounds. For example:
+
+```sql
+SELECT p.slug, l.longitude, l.latitude, l.method, l.gap,
+       g.min_x, g.min_y, g.max_x, g.max_y
+FROM place p JOIN place_location l ON l.place_id = p.id
+LEFT JOIN place_geometry g ON g.place_id = p.id
+WHERE p.slug = 'greater-manchester';
+```
