@@ -1,9 +1,9 @@
-import {
-	type CrimeCounts,
-	type CrimeDataset,
-	type CrimeLADData,
-	type CrimePartnershipData,
+import type {
+	CrimeCounts,
+	CrimeLADData,
+	CrimePartnershipData,
 } from "../../types/crime.ts";
+import type { DirectPart, DirectRecord } from "../../declaration/statistics.ts";
 import { parseCsv, findHeaderLine } from "../../helpers/parseCsv.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
@@ -12,13 +12,10 @@ import { sourceDir } from "../../declaration/sources.ts";
  * 2026". Refused if absent, so a new edition cannot be mislabelled with the
  * period of the one it replaced.
  */
-const periodFromTitle = (title: string) => {
+const yearFromTitle = (title: string) => {
 	const match = title.match(/year ending ([A-Z][a-z]+) (\d{4})/);
 	if (!match) throw new Error(`Crime table title names no period: ${title}`);
-	return {
-		dataDate: `year ending ${match[1]} ${match[2]}`,
-		year: Number(match[2]),
-	};
+	return Number(match[2]);
 };
 
 /** The count columns, in table order from the seventh column. */
@@ -101,15 +98,15 @@ const citedNotes = (cell: string) =>
  * partnership code, the force totals and the crimes left unassigned to any
  * partnership, are not areas and are skipped.
  */
-export async function loadCrime(
+export async function crimeStatisticsParts(
 	read: (path: string, sheet: string) => Promise<string>,
-): Promise<Record<string, CrimeDataset>> {
+): Promise<DirectPart[]> {
 	const workbook = sourceDir("crime", "pfatablesyemarch2026.xlsx");
 	const csvText = await read(workbook, "Table C2");
 	const unassigned = await unassignedNotes(
 		await read(workbook, "Notes - CSP"),
 	);
-	const { dataDate, year } = periodFromTitle(csvText.split("\n")[0] ?? "");
+	const year = yearFromTitle(csvText.split("\n")[0] ?? "");
 
 	const headerLine = findHeaderLine(csvText, "police force area code");
 	const { data: rows } = await parseCsv<string[]>(csvText, {
@@ -118,7 +115,6 @@ export async function loadCrime(
 	});
 
 	const partnerships: Record<string, CrimePartnershipData> = {};
-	const withheld: string[] = [];
 	for (const row of rows as string[][]) {
 		const partnershipCode = row[2]?.trim() ?? "";
 		// Only rows for a force are data; the header's cells span several
@@ -130,7 +126,6 @@ export async function loadCrime(
 			);
 		// The force name carries the notes, as "Kent [note 4]".
 		if (citedNotes(row[1] ?? "").some((note) => unassigned.has(note))) {
-			withheld.push(row[3]?.trim() || partnershipCode);
 			continue;
 		}
 		const authorityCode = row[4]?.trim() ?? "";
@@ -200,29 +195,58 @@ export async function loadCrime(
 		};
 	}
 
-	return {
-		[year]: {
-			id: `crime${year}`,
-			year,
-			type: "crime",
-			boundaryType: "localAuthority",
-			boundaryYear: year,
-			dataDate,
-			jurisdiction: "England and Wales",
-			data: records,
-			partnerships,
-			metadata: {
-				source: "Police recorded crime from the Home Office",
-				notes: [
-					"Police recorded crime statistics are published as official statistics, not accredited official statistics",
-					"Published by community safety partnership. An authority split between several partnerships is their sum; an authority inside a partnership covering several authorities has no value of its own.",
-					...(withheld.length > 0
-						? [
-								`No figures for ${withheld.join(", ")}: the police recorded their crime under the force's unassigned total, so the published counts are only a remnant.`,
-							]
-						: []),
-				],
+	const record = (
+		code: string,
+		name: string,
+		counts: CrimeCounts,
+		parents: DirectRecord["parents"],
+	): DirectRecord => ({
+		code,
+		name,
+		parents,
+		values: COUNT_FIELDS.map((field) => ({
+			measure: "recorded-crimes",
+			members: { offence: field },
+			value: counts[field],
+		})),
+	});
+	return [
+		{
+			key: String(year),
+			records: Object.values(records).map((authority) =>
+				record(authority.ladCode, authority.ladName ?? "", authority, {
+					policeForceAreaCode: {
+						code: authority.policeForceAreaCode!,
+						name: authority.policeForceAreaName,
+					},
+					...(authority.communitySafetyPartnershipCode
+						? {
+								communitySafetyPartnershipCode: {
+									code: authority.communitySafetyPartnershipCode,
+									name: authority.communitySafetyPartnershipName,
+								},
+							}
+						: {}),
+				}),
+			),
+			recordSets: {
+				partnerships: Object.values(partnerships).map((partnership) =>
+					record(
+						partnership.communitySafetyPartnershipCode,
+						partnership.communitySafetyPartnershipName,
+						partnership,
+						{
+							policeForceAreaCode: {
+								code: partnership.policeForceAreaCode,
+								name: partnership.policeForceAreaName,
+							},
+							localAuthorityCode: partnership.localAuthorityCode
+								? { code: partnership.localAuthorityCode }
+								: null,
+						},
+					),
+				),
 			},
 		},
-	};
+	];
 }

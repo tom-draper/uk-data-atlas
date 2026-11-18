@@ -155,6 +155,10 @@
 		"sha256": "1eddff7c3a794f62143873793c9a5111cb024d608ca02b6b004f06e610bbfaf2",
 		"bytes": 4255518
 	},
+	"crime": {
+		"sha256": "b90e8fde5a4da6f39338de8d8700dfc8e8cafe92743cde05dc3e907a925dedde",
+		"bytes": 463783
+	},
 	"child-poverty": {
 		"sha256": "ab7c479d95c4fb4c96270869a500a51c66a923e282c6c84aa344a2e14c015bd7",
 		"bytes": 212839
