@@ -37,7 +37,6 @@ const createRepository = async () => {
 		"pipeline/src/stages/build-catalogue-registry.ts",
 		"pipeline/src/stages/compile-website-data.ts",
 		"pipeline/src/precompile/fingerprint.mjs",
-		"pipeline/src/precompile/duckdbDatasetCsv.ts",
 		"packages/datasets/src/compileDataset.ts",
 		"packages/geography/src/index.ts",
 		"packages/map-tiles/package.json",
