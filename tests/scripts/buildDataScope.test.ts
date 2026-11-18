@@ -241,6 +241,30 @@ test("a file changed inside the scope of a stage running at the same time is not
 	]);
 });
 
+test("the temporary file a concurrent stage renames into place is not blamed on another", () => {
+	const { root, write, cache } = fixture();
+	const current = cache();
+	// beta is part way through writing its database beside it when alpha begins.
+	write("data/build/b.json.1234-abcd.tmp", "half");
+	write("data/build/b.json-journal", "j");
+	write("data/build/unrelated.tmp", "someone else's");
+	current.begin(alpha);
+	current.begin(beta);
+	write("data/build/b.json", "whole");
+	rmSync(join(root, "data/build/b.json.1234-abcd.tmp"));
+	rmSync(join(root, "data/build/b.json-journal"));
+	rmSync(join(root, "data/build/unrelated.tmp"));
+	write("data/build/a/one.json", "alpha's");
+	// What beta renamed away is beta's, but a file named like none of them is not.
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/build/unrelated.tmp",
+	]);
+	// A stage's own temporary file is its own.
+	assert.deepEqual(current.undeclaredChanges(beta), [
+		"data/build/unrelated.tmp",
+	]);
+});
+
 test("a stage that ended before another began shares nothing with it", () => {
 	const { write, cache } = fixture();
 	const current = cache();
