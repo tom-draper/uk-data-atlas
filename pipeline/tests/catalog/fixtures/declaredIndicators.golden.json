@@ -1,0 +1,169 @@
+{
+	"waste": [
+		{
+			"statisticsField": {
+				"dataset": "waste",
+				"field": "value",
+				"records": "data",
+				"sourcePeriod": "2025",
+				"publishedPeriod": "2024-25",
+				"geography": "localAuthority",
+				"boundaryYear": 2025,
+				"recordCount": 2,
+				"recordHash": "6c49e4ffd6fecc826ad23dd6b031db8bb3c1b7e96ad5f901002a2d7bf107ab0e"
+			},
+			"measure": {
+				"id": "waste",
+				"series": {
+					"measure": "collected-waste"
+				},
+				"label": "Local authority collected waste",
+				"valueKind": "quantity",
+				"unit": "tonnes",
+				"aggregation": {
+					"kind": "extensive",
+					"operation": "sum",
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "waste",
+						"periods": ["2024-25"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2025
+						},
+						"coverage": {
+							"kind": "source-reported",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Values are source-reported for the authorities included in the publisher's release."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/waste"
+				},
+				"notes": [
+					"Collection authorities only, avoiding double counting between collection and disposal authorities."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:7ca0f3ab61bdf9da302cd3e7ae815b51cd09210f98e74f1779e0202d5c302d77",
+				"measureId": "[\"collected-waste\",[],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2025
+				},
+				"periods": [
+					{
+						"period": "2024-25",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 42.5,
+								"status": "observed"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 7,
+								"status": "observed"
+							}
+						]
+					}
+				]
+			}
+		}
+	],
+	"planning-applications": [
+		{
+			"statisticsField": {
+				"dataset": "planning-applications",
+				"field": "value",
+				"records": "data",
+				"sourcePeriod": "2025",
+				"publishedPeriod": "2026-Q1",
+				"geography": "localAuthority",
+				"boundaryYear": 2025,
+				"recordCount": 2,
+				"recordHash": "32fb02cec168947d61d9b13795f8bf66d8677bad53f089fdf14cca36b9336fd8"
+			},
+			"measure": {
+				"id": "planning-applications",
+				"series": {
+					"measure": "planning-applications",
+					"dimensions": {
+						"application-stage": "received"
+					}
+				},
+				"label": "Planning applications received",
+				"valueKind": "count",
+				"unit": "applications",
+				"aggregation": {
+					"kind": "extensive",
+					"operation": "sum",
+					"available": true
+				},
+				"sources": [
+					{
+						"datasetId": "planning-applications",
+						"periods": ["2026-Q1"],
+						"sourceGeography": {
+							"type": "localAuthority",
+							"boundaryYear": 2025
+						},
+						"coverage": {
+							"kind": "source-reported",
+							"countries": ["GB-ENG"],
+							"recordCount": 2,
+							"note": "Values are source-reported for the authorities included in the publisher's release."
+						}
+					}
+				],
+				"availability": {
+					"sourceExact": true,
+					"conversion": false,
+					"aggregation": true
+				},
+				"links": {
+					"data": "/v1/data/planning-applications"
+				},
+				"notes": [
+					"Planning applications received during 2026 Q1; the publisher labels the areas local planning authorities but supplies local-authority district codes."
+				]
+			},
+			"artifact": {
+				"schemaVersion": 1,
+				"contentHash": "sha256:e523c0ed648a14c8cb4e3131decc7ab283c30c7ed632e64bb65ecb8b9c9beff0",
+				"measureId": "[\"planning-applications\",[[\"application-stage\",\"received\"]],null]",
+				"sourceGeography": {
+					"type": "localAuthority",
+					"boundaryYear": 2025
+				},
+				"periods": [
+					{
+						"period": "2026-Q1",
+						"records": [
+							{
+								"areaCode": "E06000001",
+								"value": 120,
+								"status": "observed"
+							},
+							{
+								"areaCode": "E06000002",
+								"value": 33,
+								"status": "observed"
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}

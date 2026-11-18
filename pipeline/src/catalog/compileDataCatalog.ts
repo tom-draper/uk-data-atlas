@@ -41,7 +41,6 @@ import { compileRegionalGdp } from "./regionalGdp.ts";
 import { compileEnergyConsumption } from "./energyConsumption.ts";
 import { compilePopulation } from "./population.ts";
 import { withNationalVariants } from "./nationalVariants.ts";
-import { compileNewDatasets, NEW_DATASET_MEASURES } from "./newDatasets.ts";
 
 /**
  * The compiled files the catalogue is built from, by name. Named rather than
@@ -78,8 +77,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	regionalGdp: Input;
 	electricityConsumption: Input;
 	gasConsumption: Input;
-	waste?: Input;
-	planningApplications?: Input;
 	/** The compiled file of each declared dataset that publishes measures, by id. */
 	declared?: Record<string, Input>;
 	/**
@@ -125,8 +122,6 @@ export const compileDataCatalog = ({
 	regionalGdp: regionalGdpPath,
 	electricityConsumption: electricityConsumptionPath,
 	gasConsumption: gasConsumptionPath,
-	waste: wastePath,
-	planningApplications: planningApplicationsPath,
 	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -259,17 +254,6 @@ export const compileDataCatalog = ({
 	indicatorObservations.push(
 		...compileAirQuality(catalogManifest, airQualityPath, populationCodes),
 	);
-	const newDatasetPaths = {
-		waste: wastePath,
-		planningApplications: planningApplicationsPath,
-	};
-	if (Object.values(newDatasetPaths).every((path): path is string => !!path))
-		indicatorObservations.push(
-			...compileNewDatasets(
-				catalogManifest,
-				NEW_DATASET_MEASURES(newDatasetPaths),
-			),
-		);
 	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);
 
 	const density = compilePopulationDensity(

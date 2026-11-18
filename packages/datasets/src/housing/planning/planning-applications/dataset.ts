@@ -36,7 +36,9 @@ export const planningApplications = defineDataset<
 		description:
 			"Planning applications received, decided and withdrawn by English local planning authority during 2026 Q1.",
 		cadence: "quarterly",
-		notes: [],
+		notes: [
+			"Planning applications received during 2026 Q1; the publisher labels the areas local planning authorities but supplies local-authority district codes.",
+		],
 	},
 	ingestion: {
 		minimumDataRecords: 100,
@@ -130,6 +132,25 @@ export const planningApplications = defineDataset<
 			{
 				path: "metrics.{application-stage}",
 				measure: "planning-applications",
+			},
+		],
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2026-Q1",
+		coverageNote:
+			"Values are source-reported for the authorities included in the publisher's release.",
+		indicators: [
+			{
+				id: "planning-applications",
+				label: "Planning applications received",
+				field: "value",
+				valueKind: "count",
+				unit: "applications",
+				aggregation: "sum",
+				notes: [],
+				measure: "planning-applications",
+				members: { "application-stage": "received" },
 			},
 		],
 	},

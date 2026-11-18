@@ -54,8 +54,6 @@ export const datasetCatalogInputs = (
 		regionalGdp: precompiled("regional-gdp.json"),
 		electricityConsumption: precompiled("electricity-consumption.json"),
 		gasConsumption: precompiled("gas-consumption.json"),
-		waste: precompiled("waste.json"),
-		planningApplications: precompiled("planning-applications.json"),
 		declared: Object.fromEntries(
 			DATASET_DECLARATIONS.filter(
 				(declaration) => declaration.catalogue,
