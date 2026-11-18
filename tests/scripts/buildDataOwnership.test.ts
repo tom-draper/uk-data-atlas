@@ -71,7 +71,6 @@ test("only the known stages still share a path in the build graph", () => {
 			"atlas-release-initial",
 			"atlas-sqlite",
 			"place-index",
-			"postcode-counts",
 		].sort(),
 	);
 });

@@ -17,6 +17,7 @@ import {
 	removeStageStamps,
 	stageStampPath,
 	stampCacheStage,
+	writeCacheTables,
 } from "../../src/storage";
 import { checkStagedComponents } from "../../src/storage/stampAtlasCache";
 
@@ -191,7 +192,6 @@ test("removing stamps leaves other files alone", () => {
 	assert.deepEqual(CACHE_STAGES, [
 		"place-index",
 		"area-search-index",
-		"postcode-counts",
 		"atlas-cache-stamp",
 	]);
 });
@@ -200,7 +200,7 @@ test("the final stamp stage accepts a current cache and drops the stamp of a sta
 	const { root, place, search } = cacheFixture();
 	place([["Leeds"]]);
 	search([["E1"]]);
-	publishCacheTables(root, "postcode-counts", {
+	writeCacheTables(root, "postcode-counts", {
 		postcode_counts: { columns: ["code TEXT"], rows: [["A"]] },
 	});
 	checkStagedComponents(root);

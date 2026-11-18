@@ -1219,7 +1219,7 @@ test("restoring a deleted shared API cache rebuilds every component", async () =
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
 	const path = join(root, "data/build/atlas-cache.sqlite");
-	const components = ["place-index", "area-search-index", "postcode-counts"];
+	const components = ["place-index", "area-search-index"];
 	const selected = components.map((name) => {
 		const original = buildDataStages.find(
 			(entry: Stage) => entry.name === name,
@@ -1240,7 +1240,6 @@ test("restoring a deleted shared API cache rebuilds every component", async () =
 						writes: [
 							"data/build/.stamps/place-index.json",
 							"data/build/.stamps/area-search-index.json",
-							"data/build/.stamps/postcode-counts.json",
 						],
 					},
 					...selected,
@@ -1296,7 +1295,7 @@ test("stages that add to a working copy are skipped once it is published, and re
 	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
 	const published = join(root, "data/build/atlas-cache.sqlite");
 	const work = join(root, "data/build/.atlas-cache.sqlite.work");
-	const components = ["place-index", "area-search-index", "postcode-counts"];
+	const components = ["place-index", "area-search-index"];
 	const stamp = (name: string) =>
 		join(root, `data/build/.stamps/${name}.json`);
 	const find = (name: string) => {
@@ -1389,20 +1388,20 @@ test("stages that add to a working copy are skipped once it is published, and re
 	assert.deepEqual((await run()).executed, []);
 	// One stage fails halfway through a build. Its copy is thrown away with
 	// the stamps, so the stages that wrote to it rebuild next time.
+	rmSync(stamp("place-index"));
+	failing = "area-search-index";
 	rmSync(stamp("area-search-index"));
-	failing = "postcode-counts";
-	rmSync(stamp("postcode-counts"));
 	const failed = await run();
 	assert.equal(failed.status, 1);
-	assert.deepEqual(failed.executed, ["area-search-index", "postcode-counts"]);
+	assert.deepEqual(failed.executed, ["place-index", "area-search-index"]);
 	assert.equal(existsSync(work), false);
 	assert.deepEqual(read(published), components);
 	assert.equal(existsSync(stamp("area-search-index")), false);
 	failing = null;
 	const retry = await run();
 	assert.deepEqual(retry.executed, [
+		"place-index",
 		"area-search-index",
-		"postcode-counts",
 		"atlas-cache-stamp",
 	]);
 	assert.equal(existsSync(work), false);

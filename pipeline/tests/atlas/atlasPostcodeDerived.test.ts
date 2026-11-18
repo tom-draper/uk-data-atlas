@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { atlasCachePartPath } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	copyFileSync,
@@ -492,25 +492,9 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 	const { root, apiRoot, path, compiled, texts } = fixture(t);
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	assert.deepEqual(validateShards(root).areas, compiled.artifact);
-	writeFileSync(
-		join(
-			artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
-			"postcode-counts.json",
-		),
-		"obsolete",
-	);
 	const built = await buildDuckdbPostcodeCounts(root);
 	assert.equal(built.countedAreas, 2);
 	assert.deepEqual(readSqlitePostcodeCounts(root), built.artifact);
-	assert.equal(
-		existsSync(
-			join(
-				artifactDirectory(resolveRepositoryRoot(apiRoot, "../..")),
-				"postcode-counts.json",
-			),
-		),
-		false,
-	);
 	const postcodes = readPostcodeIndex(root);
 	const areas = new PostcodeAreaIndex(compiled.artifact, postcodes, (path) =>
 		readSqlitePostcodeAreaShard(root, path),
@@ -544,7 +528,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		() => readPostcodeCounts(root, postcodes, stale),
 		/current postcode area index/,
 	);
-	const db = new DatabaseSync(atlasCachePath(root));
+	const db = new DatabaseSync(atlasCachePartPath(root, "postcode-counts"));
 	db.exec("UPDATE postcode_counts SET live = 99");
 	db.close();
 	assert.throws(
