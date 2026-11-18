@@ -7,6 +7,10 @@ import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
 import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
+import {
 	compatibleWardAreaLookup,
 	dataCatalog,
 	measureCompatibilityInventory,
@@ -113,17 +117,29 @@ const records: PopulationObservation[] = [
 	{ areaCode: "E05000001", value: 5, status: "observed" },
 	{ areaCode: "W05000001", value: 9, status: "observed" },
 ];
-const context = (overrides: Partial<RouteContext> = {}): RouteContext =>
-	testContext({
+const context = (overrides: Partial<RouteContext> = {}): RouteContext => {
+	const artifact = {
+		...populationObservations,
+		periods: [{ period: "2022", records }],
+	};
+	const artifacts = [artifact];
+	const source = dataCatalog.measures
+		.find((measure) => measure.id === "population")!
+		.sources.find((entry) => entry.datasetId === "population")!;
+	registerSeriesObservations(
+		artifacts,
+		new Map([
+			[
+				measureSeriesSourceKey({ measure: "population" }, source),
+				artifact,
+			],
+		]),
+	);
+	return testContext({
 		areaLookup: compatibleWardAreaLookup,
 		dataCatalog,
 		measureCompatibilityInventory,
-		measureObservations: [
-			{
-				...populationObservations,
-				periods: [{ period: "2022", records }],
-			},
-		],
+		measureObservations: artifacts,
 		mapResources: {
 			resources: [
 				withFiles,
@@ -167,6 +183,7 @@ const context = (overrides: Partial<RouteContext> = {}): RouteContext =>
 		} as never,
 		...overrides,
 	});
+};
 
 // The harness keys a response by method, path and label, so requests that
 // differ only in their headers are told apart by them.
