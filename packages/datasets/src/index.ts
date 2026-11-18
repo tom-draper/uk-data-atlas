@@ -137,7 +137,7 @@ export * from "./data/public-health/measures.ts";
 export * from "./data/public-health/source.ts";
 export * from "./data/pupil-absence/source.ts";
 export * from "./data/qualification/source.ts";
-export * from "./data/road-safety/authorityLoader.ts";
+export * from "./data/road-safety/source.ts";
 export * from "./data/simd/source.ts";
 export * from "./data/spreadsheet/ods.ts";
 export * from "./data/spreadsheet/xls.ts";

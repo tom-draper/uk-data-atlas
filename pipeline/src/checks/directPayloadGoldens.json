@@ -187,6 +187,10 @@
 		"sha256": "627a065dad024df38fab7fd0d0a7e15e5734b7f4083ed6a698f43e12c66978db",
 		"bytes": 63897
 	},
+	"road-collisions": {
+		"sha256": "eba453f551008ce9c87a1b1abac63105eff9da4d431a9f5ff00403320e9eeb96",
+		"bytes": 4689665
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

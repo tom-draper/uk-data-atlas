@@ -13,7 +13,6 @@ import { out } from "./output.ts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.ts";
 import { createTrackedReader } from "./trackedReader.ts";
 import { compileDirectDataset } from "./compileDirectDataset.ts";
-import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import { withDuckdbLocalElection } from "./duckdbDatasetCsv.ts";
 import type {
 	CatalogueDefinition,
@@ -112,23 +111,11 @@ export async function compileStaleDataset(
 	let preserved: ExistingManifestDataset | undefined;
 	try {
 		compiled =
-			definition.type === "road-collisions"
-				? await compileDatasetContents(
-						{
-							...definition,
-							precompile: () =>
-								compileDuckdbRoadCollisions(artifacts),
-						},
-						reader,
+			definition.type === "local-election"
+				? await withDuckdbLocalElection(reader, artifacts, (input) =>
+						compileDatasetContents(definition, input),
 					)
-				: definition.type === "local-election"
-					? await withDuckdbLocalElection(
-							reader,
-							artifacts,
-							(input) =>
-								compileDatasetContents(definition, input),
-						)
-					: await compileDatasetContents(definition, reader);
+				: await compileDatasetContents(definition, reader);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
