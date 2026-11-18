@@ -17,6 +17,9 @@ const BINDING = /\{([^}]+)\}/g;
 const blank = (value: unknown): boolean =>
 	typeof value !== "string" || value.trim() === "";
 
+const sorted = (members: Readonly<Record<string, string>> | undefined) =>
+	Object.entries(members ?? {}).sort(([a], [b]) => (a < b ? -1 : 1));
+
 const duplicates = (values: readonly string[]): string[] =>
 	values.filter((value, index) => values.indexOf(value) !== index);
 
@@ -163,6 +166,22 @@ export function declarationProblems(declaration: DatasetDeclaration): string[] {
 					`${where} reads measure ${indicator.measure}, which is not declared`,
 				);
 			checkMembers(where, indicator.members);
+			// A field the indicator reads by its own path must be the series
+			// the indicator names, so the API and the rows never disagree.
+			if (Array.isArray(statistics.fields)) {
+				const read = statistics.fields.find(
+					(field) => field.path === indicator.field,
+				);
+				if (
+					read &&
+					(read.measure !== indicator.measure ||
+						JSON.stringify(sorted(read.members)) !==
+							JSON.stringify(sorted(indicator.members)))
+				)
+					problem(
+						`${where} reads field ${indicator.field}, which is declared as a different series`,
+					);
+			}
 			const { aggregation } = indicator;
 			if (aggregation !== "sum" && aggregation.kind === "weighted-mean")
 				if (blank(aggregation.weight.datasetField))
