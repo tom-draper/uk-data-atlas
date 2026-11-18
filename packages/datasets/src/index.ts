@@ -105,7 +105,7 @@ export * from "./data/education/ks4.ts";
 export * from "./data/election/general-election/config.ts";
 export * from "./data/election/general-election/source.ts";
 export * from "./data/election/local-election/config.ts";
-export * from "./data/election/local-election/load.ts";
+export * from "./data/election/local-election/source.ts";
 export * from "./data/election/local-election/servedWardCodes.ts";
 export * from "./data/election/parties.ts";
 export * from "./data/ethnicity/source.ts";

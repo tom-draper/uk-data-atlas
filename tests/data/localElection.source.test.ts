@@ -1,6 +1,7 @@
 import {
 	effectiveVotes,
-	loadLocalElection,
+	localElectionRecords,
+	localElectionStatisticsParts,
 	parseLeapLocalElection,
 	parseLocalElectionTable,
 	wardCodesByName,
@@ -67,7 +68,7 @@ const uncodedConfig: ElectionTableSourceConfig = {
 	},
 };
 
-describe("local election loader", () => {
+describe("local election source", () => {
 	it("counts each party's highest-polling candidate and names the top candidate's party", () => {
 		expect(
 			effectiveVotes([
@@ -269,6 +270,45 @@ Nowhere,Example Council,LAB,100`,
 		expect(dataset.results).toEqual({ E05008579: "LAB" });
 	});
 
+	it("stores party votes by party and the code a ward was published under as its parent", () => {
+		const [record] = localElectionRecords(
+			parseLocalElectionTable(
+				`Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate
+E05099999,Park,Example Council,E06000001,40,2000`,
+				`Ward code,Ward name,Local authority name,Party name,Votes
+E05099999,Park,Example Council,LAB,450
+E05099999,Park,Example Council,CON,300`,
+				{ ...codedConfig, wardCodeMap: { E05099999: "E05000001" } },
+			),
+			true,
+		);
+
+		expect(record).toEqual({
+			code: "E05000001",
+			parents: { sourceWardCode: { code: "E05099999" } },
+			contest: {
+				area_name: "Park",
+				authority_code: "E06000001",
+				authority_name: "Example Council",
+				winner: "LAB",
+			},
+			values: [
+				{
+					measure: "party-votes",
+					members: { party: "LAB" },
+					value: 450,
+				},
+				{
+					measure: "party-votes",
+					members: { party: "CON" },
+					value: 300,
+				},
+				{ measure: "electorate", value: 2000 },
+				{ measure: "turnout", value: 40 },
+			],
+		});
+	});
+
 	it("reads each configured ward sheet, candidate sheet and ward list", async () => {
 		const wardSheet = (config: ElectionTableSourceConfig) => {
 			const { fields } = config;
@@ -307,7 +347,7 @@ Nowhere,Example Council,LAB,100`,
 			return `${headers.join(",")}\n${values.join(",")}`;
 		};
 		const reads: string[] = [];
-		const datasets = await loadLocalElection({
+		const parts = await localElectionStatisticsParts({
 			text: async (path) => {
 				reads.push(path);
 				if (path.endsWith(".geojson")) {
@@ -338,7 +378,7 @@ Nowhere,Example Council,LAB,100`,
 			},
 		});
 
-		expect(Object.keys(datasets).sort()).toEqual([
+		expect(parts.map((part) => part.key)).toEqual([
 			"2016",
 			"2017",
 			"2018",
@@ -349,13 +389,22 @@ Nowhere,Example Council,LAB,100`,
 			"2024",
 			"2025",
 		]);
-		for (const dataset of Object.values(datasets)) {
-			expect(dataset.data.E05000001).toMatchObject({
-				wardName: "Central",
-				partyVotes: { LAB: 300 },
+		for (const part of parts) {
+			expect(part.records).toHaveLength(1);
+			expect(part.records[0]).toMatchObject({
+				code: "E05000001",
+				contest: { area_name: "Central", winner: "LAB" },
 			});
+			const measures = part.records[0]!.values.map(
+				({ measure }) => measure,
+			);
+			// LEAP, the source to 2019, publishes no electorate or turnout.
+			expect(measures).toEqual(
+				Number(part.key) >= 2021
+					? ["party-votes", "electorate", "turnout"]
+					: ["party-votes"],
+			);
 		}
-		expect(datasets[2023].wardCodes).toBe("name-matched");
 		expect(reads).toContain(
 			`${sourceDir("local-election-2023", "LEH-Candidates-2023.xlsx")}#Cand_Table`,
 		);
