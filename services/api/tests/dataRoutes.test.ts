@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { route as routeRequest } from "../src/routes";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import type {
 	CategoricalObservation,
 	MeasureObservationArtifact,
@@ -8,6 +12,7 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import {
 	compatibleWardAreaLookup,
+	combineObservations,
 	dataCatalog,
 	measureCompatibilityInventory,
 	measureObservations,
@@ -217,10 +222,10 @@ test("publishes datasets, measures and source-exact population observations", ()
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
 			dataCatalog,
-			measureObservations: [
-				populationObservations,
-				populationLocalAuthorityObservations,
-			],
+			measureObservations: combineObservations(
+				dataCatalog,
+				measureObservations,
+			),
 			measureCompatibilityInventory,
 		}),
 	);
@@ -322,6 +327,7 @@ test("serves categorical winners without numeric operations", () => {
 			...dataCatalog.measures,
 			{
 				id: measureId,
+				series: { measure: measureId },
 				label: "General election winning party",
 				valueKind: "categorical",
 				unit: "party",
@@ -375,10 +381,23 @@ test("serves categorical winners without numeric operations", () => {
 			},
 		],
 	};
+	const winnerObservations = [winners];
+	registerSeriesObservations(
+		winnerObservations,
+		new Map([
+			[
+				measureSeriesSourceKey(
+					{ measure: measureId },
+					catalog.measures.at(-1)!.sources[0]!,
+				),
+				winners,
+			],
+		]),
+	);
 	const response = routeWithCatalog(
 		`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024`,
 		catalog,
-		[...measureObservations, winners],
+		winnerObservations,
 	);
 	assert.equal(response.status, 200);
 	assert.deepEqual(
@@ -393,7 +412,7 @@ test("serves categorical winners without numeric operations", () => {
 		routeWithCatalog(
 			`/v1/data/${measureId}/rankings?period=2024&geography=ward&codeYear=2024`,
 			catalog,
-			[...measureObservations, winners],
+			winnerObservations,
 		).status,
 		422,
 	);
@@ -401,7 +420,7 @@ test("serves categorical winners without numeric operations", () => {
 		routeWithCatalog(
 			`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024&format=csv`,
 			catalog,
-			[...measureObservations, winners],
+			winnerObservations,
 		).status,
 		422,
 	);
@@ -409,7 +428,7 @@ test("serves categorical winners without numeric operations", () => {
 		routeWithCatalog(
 			`/v1/data/${measureId}?period=2024&geography=ward&codeYear=2024&units=canonical`,
 			catalog,
-			[...measureObservations, winners],
+			winnerObservations,
 		).status,
 		422,
 	);
