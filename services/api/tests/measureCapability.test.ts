@@ -5,7 +5,12 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
-import { identityDimensions, measureCapability } from "@uk-data-atlas/measures";
+import {
+	identityDimensions,
+	measureCapability,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import {
 	containmentCrosswalk,
 	dataCatalog,
@@ -41,15 +46,33 @@ const complete = crosswalk("wards-to-lad-a", "2023-a", [
 ]);
 const incomplete = crosswalk("wards-to-lad-b", "2023-b", ["E05000001"]);
 
+const population = dataCatalog.measures.find(
+	(measure) => measure.id === "population",
+)!;
+const observations = [
+	populationObservations,
+	populationLocalAuthorityObservations,
+	...measureObservations,
+];
+registerSeriesObservations(
+	observations,
+	new Map([
+		[
+			measureSeriesSourceKey(population.series!, population.sources[0]!),
+			populationObservations,
+		],
+		[
+			measureSeriesSourceKey(population.series!, population.sources[1]!),
+			populationLocalAuthorityObservations,
+		],
+	]),
+);
+
 const context = testContext({
 	boundaryRegistry: registry,
 	dataCatalog,
 	measureCompatibilityInventory,
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		...measureObservations,
-	],
+	measureObservations: observations,
 	crosswalkLookup: new Map([
 		[complete.id, complete],
 		[incomplete.id, incomplete],
@@ -70,10 +93,6 @@ const context = testContext({
 		})),
 	} satisfies CrosswalkInventory,
 });
-
-const population = dataCatalog.measures.find(
-	(measure) => measure.id === "population",
-)!;
 
 test("answers from a source published on the release", () => {
 	const capability = measureCapability(context, population, {
