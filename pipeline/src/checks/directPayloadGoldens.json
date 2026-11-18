@@ -155,6 +155,10 @@
 		"sha256": "1eddff7c3a794f62143873793c9a5111cb024d608ca02b6b004f06e610bbfaf2",
 		"bytes": 4255518
 	},
+	"child-poverty": {
+		"sha256": "ab7c479d95c4fb4c96270869a500a51c66a923e282c6c84aa344a2e14c015bd7",
+		"bytes": 212839
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

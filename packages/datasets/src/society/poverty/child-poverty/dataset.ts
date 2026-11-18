@@ -1,10 +1,13 @@
 import type { ChildPovertyDataset } from "../../../types/childPoverty.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateChildPoverty } from "../../../data/child-poverty/aggregate.ts";
-import { loadChildPoverty } from "../../../data/child-poverty/loader.ts";
+import { childPovertyStatisticsParts } from "../../../data/child-poverty/source.ts";
 
 export const childPoverty = defineDataset<ChildPovertyDataset>({
 	id: "child-poverty",
@@ -29,7 +32,7 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 			"Children under 16 in families with below 60% of median income before housing costs.",
 		],
 	},
-	load: ({ odsTableRows }) => loadChildPoverty(odsTableRows),
+	load: noCompiledPayload<ChildPovertyDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 50,
@@ -48,6 +51,11 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 			code: "ladCode",
 		},
 		name: "ladName",
+		direct: {
+			only: true,
+			read: ({ odsTableRows }) =>
+				childPovertyStatisticsParts(odsTableRows),
+		},
 		/** Keys are the financial year's end. */
 		period: (key) => periods.financialYear(Number(key) - 1),
 		measures: [
