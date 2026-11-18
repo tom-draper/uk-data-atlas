@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import { identityDimensions } from "@uk-data-atlas/measures";
 import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
@@ -11,6 +12,7 @@ import {
 } from "./httpCharacterization";
 import {
 	areaLookup,
+	combineObservations,
 	containmentCrosswalk,
 	crosswalkArtifact,
 	crosswalkInventory,
@@ -19,8 +21,6 @@ import {
 	geographyInventory,
 	measureCompatibilityInventory,
 	measureObservations,
-	populationLocalAuthorityObservations,
-	populationObservations,
 	testContext,
 } from "./routeFixtures";
 
@@ -49,11 +49,7 @@ const context = testContext({
 	]),
 	dataCatalog,
 	measureCompatibilityInventory,
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		...measureObservations,
-	],
+	measureObservations: combineObservations(dataCatalog, measureObservations),
 });
 
 const ward = "period=2022&geography=ward&codeYear=2023";
@@ -223,11 +219,11 @@ test("measure values for a place keep their HTTP responses", async (t) => {
 	const named = testContext({
 		areaLookup: namedAreas,
 		dataCatalog,
-		measureObservations: [
-			populationObservations,
-			populationLocalAuthorityObservations,
-			...measureObservations,
-		],
+		measureDimensions: identityDimensions(dataCatalog),
+		measureObservations: combineObservations(
+			dataCatalog,
+			measureObservations,
+		),
 	});
 	const send = await startCharacterization(t, named);
 	const value = `/v1/data/${MEASURE}/value`;
