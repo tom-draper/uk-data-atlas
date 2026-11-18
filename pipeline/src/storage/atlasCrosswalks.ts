@@ -80,15 +80,47 @@ const WEIGHT_BASES: Record<string, string> = {
 	population: "Residents in the overlap",
 };
 
-/** Find or add an endpoint's area version, recording source area facts. */
+/** What an endpoint needs from its area version, as the database holds it. */
+type KnownVersion = {
+	id: number;
+	areaM2: number | null;
+	population: number | null;
+};
+
+/**
+ * Find or add an endpoint's area version, recording source area facts. Every
+ * crosswalk record names two endpoints, and the same areas recur in each
+ * crosswalk of a release, so a release's versions are read once, on first
+ * use, rather than looked up by code millions of times. The only writes to
+ * `area_version` in between are this function's own, and each one is
+ * mirrored in what it remembers.
+ */
 const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 	const find = database.prepare(
 		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.id = ?) AND v.release_id = ?",
+	);
+	const readRelease = database.prepare(
+		"SELECT a.code AS code, v.id AS id, v.area_m2 AS areaM2, v.population AS population FROM area_version v CROSS JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.id = ?)",
 	);
 	const add = addAreaVersion(database, ids);
 	const updateFacts = database.prepare(
 		"UPDATE area_version SET area_m2 = coalesce(area_m2, ?), population = coalesce(population, ?) WHERE id = ?",
 	);
+	const known = new Map<number, Map<string, KnownVersion>>();
+	const versionsOf = (release: number) => {
+		let versions = known.get(release);
+		if (!versions) {
+			versions = new Map();
+			for (const row of readRelease.iterate(release, release))
+				versions.set(row.code as string, {
+					id: Number(row.id),
+					areaM2: row.areaM2 as number | null,
+					population: row.population as number | null,
+				});
+			known.set(release, versions);
+		}
+		return versions;
+	};
 	return (value: Endpoint, release: number, isSource: boolean) => {
 		if (
 			typeof value.code !== "string" ||
@@ -96,7 +128,8 @@ const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 			value.labels.some((label) => typeof label !== "string")
 		)
 			throw new Error(`Invalid crosswalk area ${release}/${value.code}`);
-		let area = find.get(value.code, release, release);
+		const versions = versionsOf(release);
+		let area = versions.get(value.code);
 		if (!area) {
 			add(
 				release,
@@ -104,7 +137,13 @@ const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 				value.labels[0] ?? "",
 				JSON.stringify(value.labels.slice(1)),
 			);
-			area = find.get(value.code, release, release)!;
+			const added = find.get(value.code, release, release)!;
+			area = {
+				id: Number(added.id),
+				areaM2: added.areaM2 as number | null,
+				population: added.population as number | null,
+			};
+			versions.set(value.code, area);
 		}
 		if (isSource) {
 			for (const key of ["areaM2", "population"] as const) {
@@ -119,14 +158,21 @@ const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 						`Conflicting crosswalk area fact ${release}/${value.code}/${key}`,
 					);
 			}
-			if (value.areaM2 !== undefined || value.population !== undefined)
+			if (value.areaM2 !== undefined || value.population !== undefined) {
 				updateFacts.run(
 					(value.areaM2 as number | undefined) ?? null,
 					(value.population as number | undefined) ?? null,
-					area.id as number,
+					area.id,
 				);
+				area.areaM2 =
+					area.areaM2 ?? (value.areaM2 as number | undefined) ?? null;
+				area.population =
+					area.population ??
+					(value.population as number | undefined) ??
+					null;
+			}
 		}
-		return { id: Number(area.id) };
+		return { id: area.id };
 	};
 };
 
