@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { MeasureObservationArtifact } from "@uk-data-atlas/catalogue/node";
 import Fastify from "fastify";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import { similarAreasFastifyRoutes } from "../src/areas/similarAreasFastifyRoutes";
 import {
 	dataCatalog,
@@ -22,6 +26,7 @@ const extraMeasures = ["income", "health"].map((id) => ({
 	...population,
 	id,
 	label: id,
+	series: { measure: id },
 	sources: [{ ...localAuthoritySource, datasetId: id }],
 	links: { data: `/v1/data/${id}` },
 }));
@@ -63,6 +68,27 @@ const similarObservations = [
 		],
 	},
 ] satisfies MeasureObservationArtifact[];
+registerSeriesObservations(
+	similarObservations,
+	new Map([
+		[
+			measureSeriesSourceKey(
+				{ measure: "population" },
+				localAuthoritySource,
+			),
+			populationLocalAuthorityObservations,
+		],
+		...extraMeasures.map(
+			(measure, index) =>
+				[
+					measureSeriesSourceKey(measure.series, measure.sources[0]!),
+					similarObservations[
+						measureObservations.length + 1 + index
+					]!,
+				] as const,
+		),
+	]),
+);
 
 const request =
 	"/v1/areas/localAuthority/E06000001/similar?measures=population,income,health&period=2024";

@@ -14,6 +14,12 @@ import {
 } from "@uk-data-atlas/places";
 import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
+import {
+	measureSeriesKey,
+	measureSeriesKeySourceKey,
+	registerSeriesObservations,
+	seriesObservationFor,
+} from "@uk-data-atlas/measures";
 import { createOperationMatcher } from "../src/runtime/index.ts";
 import { parse } from "yaml";
 import {
@@ -196,6 +202,29 @@ export const namedLocationLookup = createNamedLocationLookup(
 export const routeWithData = (url: string) =>
 	routeWithCatalog(url, dataCatalog, measureObservations);
 
+const combineObservations = (
+	catalog: DataCatalog,
+	observations: NonNullable<RouteContext["measureObservations"]>,
+) => {
+	const combined = [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		...observations,
+	];
+	const index = new Map();
+	for (const measure of catalog.measures) {
+		if (!measure.series) continue;
+		const key = measureSeriesKey(measure.series);
+		for (const source of measure.sources) {
+			const artifact = seriesObservationFor(observations, key, source);
+			if (artifact)
+				index.set(measureSeriesKeySourceKey(key, source), artifact);
+		}
+	}
+	if (index.size) registerSeriesObservations(combined, index);
+	return combined;
+};
+
 const fixtureDataRoute =
 	(send: typeof routeRequest) =>
 	(
@@ -228,11 +257,9 @@ const fixtureDataRoute =
 					measureCompatibilityInventory,
 				analysisGeographyInventory:
 					overrides.analysisGeographyInventory,
-				measureObservations: [
-					populationObservations,
-					populationLocalAuthorityObservations,
-					...(observations ?? []),
-				],
+				measureObservations: observations
+					? combineObservations(catalog, observations)
+					: undefined,
 				exportManifest: overrides.exportManifest,
 				exportFiles: overrides.exportFiles,
 				relationshipPathInventory: overrides.relationshipPathInventory,
