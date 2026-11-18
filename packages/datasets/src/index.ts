@@ -156,6 +156,7 @@ export * from "./declaration/statistics.ts";
 export * from "./declaration/taxonomy.ts";
 export * from "./declaration/tree.ts";
 export * from "./declaration/vocabulary.ts";
+export * from "./declaration/validate.ts";
 export * from "./declaration/yearParts.ts";
 export * from "./helpers/datasetAggregation/deprivation.ts";
 export * from "./helpers/parseCsv.ts";
