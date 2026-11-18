@@ -1,10 +1,13 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { USUAL_RESIDENTS } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { sumMetrics } from "../../../helpers/sumMetrics.ts";
-import { loadGeneralHealth } from "../../../data/general-health/loader.ts";
+import { generalHealthStatisticsParts } from "../../../data/general-health/source.ts";
 
 export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 	id: "general-health",
@@ -31,8 +34,12 @@ export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 		expectedBoundaryYears: [2021],
 		requiredDataFields: ["value", "metrics"],
 	},
-	load: ({ csvRows }) => loadGeneralHealth(csvRows),
+	load: noCompiledPayload<IndicatorDataset<"general-health">>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ csvRows }) => generalHealthStatisticsParts(csvRows),
+		},
 		payload: {
 			parts: yearParts(
 				"general-health",

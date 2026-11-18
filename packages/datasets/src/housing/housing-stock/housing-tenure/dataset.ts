@@ -1,10 +1,13 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { sumMetrics } from "../../../helpers/sumMetrics.ts";
-import { loadHousingTenure } from "../../../data/housing-tenure/loader.ts";
+import { housingTenureStatisticsParts } from "../../../data/housing-tenure/source.ts";
 
 export const housingTenure = defineDataset<IndicatorDataset<"housing-tenure">>({
 	id: "housing-tenure",
@@ -31,8 +34,12 @@ export const housingTenure = defineDataset<IndicatorDataset<"housing-tenure">>({
 		expectedBoundaryYears: [2021],
 		requiredDataFields: ["value", "metrics"],
 	},
-	load: ({ csvRows }) => loadHousingTenure(csvRows),
+	load: noCompiledPayload<IndicatorDataset<"housing-tenure">>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ csvRows }) => housingTenureStatisticsParts(csvRows),
+		},
 		payload: {
 			parts: yearParts(
 				"housing-tenure",

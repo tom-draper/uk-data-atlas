@@ -12,10 +12,7 @@ import { canReuseDataset, NO_REUSE } from "./cache.ts";
 import { out } from "./output.ts";
 import { COMPILED_DATASETS, SOURCE_DATA } from "./paths.ts";
 import { createTrackedReader } from "./trackedReader.ts";
-import {
-	withDuckdbCensusLsoa,
-	withDuckdbPublicHealth,
-} from "./duckdbPublicHealth.ts";
+import { withDuckdbPublicHealth } from "./duckdbPublicHealth.ts";
 import { compileDirectDataset } from "./compileDirectDataset.ts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
 import { withDuckdbLocalElection } from "./duckdbDatasetCsv.ts";
@@ -120,31 +117,23 @@ export async function compileStaleDataset(
 				? await withDuckdbPublicHealth(reader, artifacts, (input) =>
 						compileDatasetContents(definition, input),
 					)
-				: definition.type === "general-health" ||
-					  definition.type === "housing-tenure"
-					? await withDuckdbCensusLsoa(reader, artifacts, (input) =>
-							compileDatasetContents(definition, input),
+				: definition.type === "road-collisions"
+					? await compileDatasetContents(
+							{
+								...definition,
+								precompile: () =>
+									compileDuckdbRoadCollisions(artifacts),
+							},
+							reader,
 						)
-					: definition.type === "road-collisions"
-						? await compileDatasetContents(
-								{
-									...definition,
-									precompile: () =>
-										compileDuckdbRoadCollisions(artifacts),
-								},
+					: definition.type === "local-election"
+						? await withDuckdbLocalElection(
 								reader,
+								artifacts,
+								(input) =>
+									compileDatasetContents(definition, input),
 							)
-						: definition.type === "local-election"
-							? await withDuckdbLocalElection(
-									reader,
-									artifacts,
-									(input) =>
-										compileDatasetContents(
-											definition,
-											input,
-										),
-								)
-							: await compileDatasetContents(definition, reader);
+						: await compileDatasetContents(definition, reader);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&

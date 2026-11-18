@@ -130,5 +130,13 @@
 	"school-performance-disadvantage": {
 		"sha256": "9246f35556f3d7842379d35594b8c01ca3fb9024efecaaf8897c37152aa2df87",
 		"bytes": 376794
+	},
+	"general-health": {
+		"sha256": "09c60d9e098d88a13249c61c20f71a5372f2aedcd2293de500b5081ed500663f",
+		"bytes": 6658148
+	},
+	"housing-tenure": {
+		"sha256": "8934fdbc11a7d6107e9262e914050c7451351220c7b0871541296a8265e93027",
+		"bytes": 7153907
 	}
 }
