@@ -151,3 +151,33 @@ test("rounding keeps seven decimal places of every coordinate", () => {
 		],
 	});
 });
+
+test("round-trips positions of every width exactly", () => {
+	for (const stride of [1, 2, 3, 4]) {
+		const position = (seed: number) =>
+			Array.from({ length: stride }, (_, axis) => seed + axis / 8 - 0);
+		const geometry: GeoJsonGeometry = {
+			type: "Polygon",
+			coordinates: [[position(0), position(1), position(2), position(0)]],
+		};
+		assert.deepEqual(unpackGeometry(packGeometry(geometry)), geometry);
+	}
+	const signed: GeoJsonGeometry = {
+		type: "LineString",
+		coordinates: [
+			[-0, 1.5],
+			[0, -1.5],
+		],
+	};
+	assert.deepEqual(unpackGeometry(packGeometry(signed)), signed);
+	assert.ok(
+		Object.is(
+			(
+				unpackGeometry(packGeometry(signed)) as {
+					coordinates: number[][];
+				}
+			).coordinates[0]![0],
+			-0,
+		),
+	);
+});
