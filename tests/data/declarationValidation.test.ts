@@ -94,6 +94,11 @@ describe("declaration validation", () => {
 			"indicator claimant-count names dimension sex, which is not declared",
 		],
 		[
+			"an indicator whose field is declared as another series",
+			(d: any) => (d.catalogue.indicators[0].field = "totalRate"),
+			"indicator claimant-count reads field totalRate, which is declared as a different series",
+		],
+		[
 			"a stateful authority pattern",
 			(d: any) => (d.catalogue.authorityCodes = /^E0/g),
 			"catalogue.authorityCodes must not be global or sticky",
