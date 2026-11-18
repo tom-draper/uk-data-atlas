@@ -35,7 +35,11 @@ const measurePosition = (segments: string[]) => {
 		return { index: 2, operation: segments[3] ?? "table" };
 	if (segments[1] === "measures" && segments.length === 3)
 		return { index: 2, operation: "measure" };
-	if (segments[1] === "map-resources" && segments[4] === "join")
+	if (
+		segments[1] === "map-resources" &&
+		segments[4] === "join" &&
+		segments[5] !== undefined
+	)
 		return { index: 5, operation: "join" };
 	return undefined;
 };
