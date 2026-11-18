@@ -117,7 +117,7 @@ export * from "./data/general-health/source.ts";
 export * from "./data/historical-general-election/constituencies.ts";
 export * from "./data/historical-general-election/loader.ts";
 export * from "./data/homelessness/source.ts";
-export * from "./data/house-price/loader.ts";
+export * from "./data/house-price/source.ts";
 export * from "./data/house-price/wardCodes.ts";
 export * from "./data/housing-tenure/source.ts";
 export * from "./data/jobs/source.ts";

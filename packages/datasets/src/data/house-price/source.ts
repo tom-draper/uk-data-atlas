@@ -1,7 +1,5 @@
-import {
-	type HousePriceDataset,
-	type HousePriceWardData,
-} from "../../types/housePrice.ts";
+import type { DirectPart, DirectRecord } from "../../declaration/statistics.ts";
+import { periods } from "../../declaration/statistics.ts";
 import { parseNullableNum } from "../../helpers/parseNumber.ts";
 import { SALFORD_WARD_CODE_REMAP } from "./wardCodes.ts";
 import { sourceDir } from "../../declaration/sources.ts";
@@ -23,7 +21,12 @@ type XlsSheetRowReader = (
 
 type PriceColumn = { index: number; year: number };
 
-type PriceRow = Omit<HousePriceWardData, "prices" | "meanPrices"> & {
+type PriceRow = {
+	ladCode: string;
+	ladName: string;
+	wardCode: string;
+	wardName: string;
+	sourceWardCode?: string;
 	prices: Record<number, number>;
 };
 
@@ -110,9 +113,22 @@ const readPriceRows = async (
 		);
 };
 
-export async function loadHousePrice(
+/** A ward's price for each year, as rows of one measure. */
+const priceValues = (measure: string, prices: Record<number, number>) =>
+	Object.entries(prices).map(([year, value]) => ({
+		measure,
+		value,
+		period: periods.year(Number(year)),
+	}));
+
+/**
+ * Median and mean house prices paid in each ward of England and Wales, for
+ * every year of the final ONS ward edition. Salford's wards move onto their
+ * 2021 codes and keep the code they were published under as a parent.
+ */
+export async function housePriceStatisticsParts(
 	readRows: XlsSheetRowReader,
-): Promise<Record<string, HousePriceDataset>> {
+): Promise<DirectPart[]> {
 	const medianByWard: Record<string, PriceRow> = {};
 	const meanByWard: Record<string, PriceRow> = {};
 	await Promise.all([
@@ -134,30 +150,32 @@ export async function loadHousePrice(
 		),
 	]);
 
-	const wardData: Record<string, HousePriceWardData> = {};
-	for (const [wardCode, median] of Object.entries(medianByWard)) {
-		wardData[wardCode] = {
-			...median,
-			meanPrices: meanByWard[wardCode]?.prices ?? {},
-		};
+	const records: DirectRecord[] = [];
+	for (const wardCode of new Set([
+		...Object.keys(medianByWard),
+		...Object.keys(meanByWard),
+	])) {
+		const ward = medianByWard[wardCode] ?? meanByWard[wardCode];
+		records.push({
+			code: wardCode,
+			name: ward.wardName,
+			parents: {
+				ladCode: { code: ward.ladCode, name: ward.ladName },
+				...(ward.sourceWardCode
+					? { sourceWardCode: { code: ward.sourceWardCode } }
+					: {}),
+			},
+			values: [
+				...priceValues(
+					"house-price-median",
+					medianByWard[wardCode]?.prices ?? {},
+				),
+				...priceValues(
+					"house-price-mean",
+					meanByWard[wardCode]?.prices ?? {},
+				),
+			],
+		});
 	}
-	for (const [wardCode, mean] of Object.entries(meanByWard)) {
-		if (wardData[wardCode]) continue;
-		wardData[wardCode] = {
-			...mean,
-			prices: {},
-			meanPrices: mean.prices,
-		};
-	}
-
-	return {
-		2023: {
-			id: "house-price2023",
-			type: "house-price",
-			year: 2023,
-			boundaryYear: 2021,
-			boundaryType: "ward",
-			data: wardData,
-		},
-	};
+	return [{ key: "2023", records }];
 }

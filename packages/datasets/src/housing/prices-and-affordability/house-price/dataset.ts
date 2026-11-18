@@ -1,9 +1,12 @@
 import type { HousePriceDataset } from "../../../types/housePrice.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
-import { loadHousePrice } from "../../../data/house-price/loader.ts";
+import { housePriceStatisticsParts } from "../../../data/house-price/source.ts";
 import { aggregateHousePrices } from "./aggregate.ts";
 
 export const housePrice = defineDataset<HousePriceDataset>({
@@ -29,14 +32,12 @@ export const housePrice = defineDataset<HousePriceDataset>({
 		notes: [],
 	},
 	// Table 1a of each workbook, read from inside the published zips.
-	load: ({ xlsSheetRows }) => loadHousePrice(xlsSheetRows),
-	placeHeadline: {
-		places: ["ward"],
-		order: 10,
-		label: "House prices",
-		about: "Median price paid for homes sold",
-	},
+	load: noCompiledPayload<HousePriceDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ xlsSheetRows }) => housePriceStatisticsParts(xlsSheetRows),
+		},
 		payload: {
 			parts: yearParts(
 				"house-price",
@@ -106,6 +107,12 @@ export const housePrice = defineDataset<HousePriceDataset>({
 				period: (index) =>
 					periods.year(Number(header.priceYearsFrom) + Number(index)),
 			})),
+	},
+	placeHeadline: {
+		places: ["ward"],
+		order: 10,
+		label: "House prices",
+		about: "Median price paid for homes sold",
 	},
 	ranking: {
 		label: "Median price paid",
