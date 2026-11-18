@@ -3,6 +3,7 @@ import {
 	type DeclaredDataset,
 	type DeclaredField,
 	type DeclaredHeader,
+	type DeclaredRecords,
 	type DeclaredRelease,
 	type DirectPart,
 	type AreaRelationship,
@@ -26,8 +27,8 @@ import {
  * dataset: the same fields name the measures and dimensions, the same
  * assembly plans the series and the same writer stores them.
  *
- * Only what a single table of areas needs is supported: one record set, no
- * election text or discovered (undeclared) dimension parents.
+ * Only what tables of areas need is supported: no election text or
+ * discovered (undeclared) dimension parents.
  */
 export function directStatistics(
 	config: DeclaredDataset,
@@ -39,13 +40,11 @@ export function directStatistics(
 		throw new Error(
 			`${type}: a direct dataset needs a payload declaration`,
 		);
-	if (config.election || (config.records && config.records.length !== 1))
-		throw new Error(`${type}: a direct dataset has one record set`);
-	const set = config.records?.[0] ?? {
-		from: "data",
-		release: config.release,
-		alsoIn: config.alsoIn,
-	};
+	if (config.election)
+		throw new Error(`${type}: a direct dataset has no election text`);
+	const sets = config.records ?? [
+		{ from: "data", release: config.release, alsoIn: config.alsoIn },
+	];
 	const measures = new Set(config.measures.map(({ slug }) => slug));
 	const dimensions = new Set(
 		(config.dimensions ?? []).map(({ slug }) => slug),
@@ -71,7 +70,7 @@ export function directStatistics(
 		typeof config.fields === "function"
 			? undefined
 			: shapesOf(config.fields);
-	const nameField =
+	const nameFieldOf = (set: DeclaredRecords) =>
 		typeof config.name === "string"
 			? config.name
 			: typeof config.name === "function" || config.name === undefined
@@ -89,7 +88,10 @@ export function directStatistics(
 				throw new Error(`${type}: the payload has no part ${key}`);
 			return found.header;
 		};
-		const releasesOf = (header: DeclaredHeader): DeclaredRelease[] => [
+		const releasesOf = (
+			set: DeclaredRecords,
+			header: DeclaredHeader,
+		): DeclaredRelease[] => [
 			set.release
 				? set.release(header)
 				: {
@@ -145,112 +147,131 @@ export function directStatistics(
 							) => DeclaredField[]
 						)(part.key, header),
 					);
-				const candidates = heldOf(releasesOf(header), context);
 				const codeOf = (key: string) =>
 					typeof config.keys === "function"
 						? config.keys(key, header)
 						: (config.keys?.[key] ?? key);
-				for (const record of part.records) {
-					const code = codeOf(record.code);
-					const release = candidates.find((candidate) =>
-						areas.has(candidate, code),
-					);
-					if (!release) {
-						if (
-							config.exclude?.some(({ codes }) =>
-								codes.test(code),
-							)
-						)
-							continue;
+				for (const [index, set] of sets.entries()) {
+					const candidates = heldOf(releasesOf(set, header), context);
+					const nameField = nameFieldOf(set);
+					const records =
+						index === 0
+							? part.records
+							: part.recordSets?.[set.from];
+					if (!records)
 						throw new Error(
-							`${context}: area ${code} is in no listed release`,
+							`${context} has no ${set.from} records`,
 						);
-					}
-					if (nameField !== undefined && record.name !== undefined)
-						onName?.(release, code, record.name);
-					if (code !== record.code)
-						onKey?.(release, code, record.code);
-					for (const parent of config.parents ?? []) {
-						if (!(parent.sets ?? [set.from]).includes(set.from))
-							continue;
-						const found = record.parents?.[parent.code];
-						if (
-							found === undefined ||
-							(found === null && parent.nullable)
-						)
-							continue;
-						if (
-							!found ||
-							(parent.name !== undefined &&
-								typeof found.name !== "string")
-						)
-							throw new Error(
-								`${context}: record ${code} has no ${[parent.code, parent.name].filter(Boolean).join(" and ")}`,
-							);
-						const parentRelease = heldOf(
-							[parent.release, ...(parent.alsoIn ?? [])],
-							context,
-						).find((candidate) => areas.has(candidate, found.code));
-						if (!parentRelease)
-							throw new Error(
-								`${context}: ${parent.code} ${found.code} is in no listed release`,
-							);
-						if (found.name !== undefined)
-							onName?.(parentRelease, found.code, found.name);
-						onRelation?.({
-							relation: parent.relation ?? "parent",
-							period: topPeriod.label,
-							child: { release, code },
-							parent: {
-								release: parentRelease,
-								code: found.code,
-							},
-						});
-					}
-					for (const value of record.values) {
-						if (!measures.has(value.measure))
-							throw new Error(
-								`${context}: ${value.measure} is not a declared measure`,
-							);
-						const named = Object.keys(value.members ?? {});
-						const fits = shapes.some(
-							(shape) =>
-								shape.measure === value.measure &&
-								shape.slugs.size === named.length &&
-								named.every((slug) => shape.slugs.has(slug)),
+					for (const record of records) {
+						const code = codeOf(record.code);
+						const release = candidates.find((candidate) =>
+							areas.has(candidate, code),
 						);
-						if (!fits)
+						if (!release) {
+							if (
+								config.exclude?.some(({ codes }) =>
+									codes.test(code),
+								)
+							)
+								continue;
 							throw new Error(
-								`${context}: ${value.measure} on ${named.join(", ") || "no dimension"} fits none of the declared fields`,
+								`${context}: area ${code} is in no listed release`,
 							);
-						const members: Record<string, string> = {};
-						for (const [slug, key] of Object.entries(
-							value.members ?? {},
-						)) {
-							if (!dimensions.has(slug))
-								throw new Error(
-									`${type}: ${slug} is not a declared dimension`,
-								);
-							const codes = declared.get(slug);
-							if (codes && !codes.has(key))
-								throw new Error(
-									`${context}: ${key} is not a declared ${slug}`,
-								);
-							onMember?.(slug, key);
-							members[slug] = codes?.get(key) ?? memberCode(key);
 						}
-						if (value.value === null) continue;
-						yield {
-							measure: value.measure,
-							members,
-							release,
-							code,
-							period: value.period ?? topPeriod,
-							value: value.value,
-							lower: value.lower,
-							upper: value.upper,
-							status: value.status,
-						};
+						if (
+							nameField !== undefined &&
+							record.name !== undefined
+						)
+							onName?.(release, code, record.name);
+						if (code !== record.code)
+							onKey?.(release, code, record.code);
+						for (const parent of config.parents ?? []) {
+							if (!(parent.sets ?? [set.from]).includes(set.from))
+								continue;
+							const found = record.parents?.[parent.code];
+							if (
+								found === undefined ||
+								(found === null && parent.nullable)
+							)
+								continue;
+							if (
+								!found ||
+								(parent.name !== undefined &&
+									typeof found.name !== "string")
+							)
+								throw new Error(
+									`${context}: record ${code} has no ${[parent.code, parent.name].filter(Boolean).join(" and ")}`,
+								);
+							const parentRelease = heldOf(
+								[parent.release, ...(parent.alsoIn ?? [])],
+								context,
+							).find((candidate) =>
+								areas.has(candidate, found.code),
+							);
+							if (!parentRelease)
+								throw new Error(
+									`${context}: ${parent.code} ${found.code} is in no listed release`,
+								);
+							if (found.name !== undefined)
+								onName?.(parentRelease, found.code, found.name);
+							onRelation?.({
+								relation: parent.relation ?? "parent",
+								period: topPeriod.label,
+								child: { release, code },
+								parent: {
+									release: parentRelease,
+									code: found.code,
+								},
+							});
+						}
+						for (const value of record.values) {
+							if (!measures.has(value.measure))
+								throw new Error(
+									`${context}: ${value.measure} is not a declared measure`,
+								);
+							const named = Object.keys(value.members ?? {});
+							const fits = shapes.some(
+								(shape) =>
+									shape.measure === value.measure &&
+									shape.slugs.size === named.length &&
+									named.every((slug) =>
+										shape.slugs.has(slug),
+									),
+							);
+							if (!fits)
+								throw new Error(
+									`${context}: ${value.measure} on ${named.join(", ") || "no dimension"} fits none of the declared fields`,
+								);
+							const members: Record<string, string> = {};
+							for (const [slug, key] of Object.entries(
+								value.members ?? {},
+							)) {
+								if (!dimensions.has(slug))
+									throw new Error(
+										`${type}: ${slug} is not a declared dimension`,
+									);
+								const codes = declared.get(slug);
+								if (codes && !codes.has(key))
+									throw new Error(
+										`${context}: ${key} is not a declared ${slug}`,
+									);
+								onMember?.(slug, key);
+								members[slug] =
+									codes?.get(key) ?? memberCode(key);
+							}
+							if (value.value === null) continue;
+							yield {
+								measure: value.measure,
+								members,
+								release,
+								code,
+								period: value.period ?? topPeriod,
+								value: value.value,
+								lower: value.lower,
+								upper: value.upper,
+								status: value.status,
+							};
+						}
 					}
 				}
 				for (const link of config.headerRelationships ?? []) {
