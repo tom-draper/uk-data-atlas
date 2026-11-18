@@ -1,5 +1,9 @@
 import { it, expect } from "vitest";
-import { averagePublicHealth, loadPublicHealth } from "@uk-data-atlas/datasets";
+import {
+	averagePublicHealth,
+	publicHealthStatisticsParts,
+} from "@uk-data-atlas/datasets";
+
 it("uses the latest common indicator period without falling back past suppression", async () => {
 	const row = {
 		"Indicator ID": "92443",
@@ -14,21 +18,33 @@ it("uses the latest common indicator period without falling back past suppressio
 		"Time period": "2024",
 		Value: "12",
 	};
-	const data = await loadPublicHealth(async (path, _options, visit) => {
-		if (!path.includes("health-improvement")) return;
-		visit({
-			...row,
-			"Time period Sortable": "20230000",
-			"Time period": "2023",
-			Value: "20",
-		});
-		visit(row);
-		visit({ ...row, "Area Code": "E06000002", Value: ".." });
-		visit({ ...row, Sex: "Male", Value: "99" });
+	const parts = await publicHealthStatisticsParts(
+		async (path, _options, visit) => {
+			if (!path.includes("health-improvement")) return;
+			visit({
+				...row,
+				"Time period Sortable": "20230000",
+				"Time period": "2023",
+				Value: "20",
+			});
+			visit(row);
+			visit({ ...row, "Area Code": "E06000002", Value: ".." });
+			visit({ ...row, Sex: "Male", Value: "99" });
+		},
+	);
+	expect(parts.map((part) => part.key)).toEqual(["2025"]);
+	expect(parts[0].records).toHaveLength(1);
+	const [record] = parts[0].records;
+	expect(record).toMatchObject({ code: "E06000001", name: "Area" });
+	expect(record.values).toHaveLength(1);
+	expect(record.values[0]).toMatchObject({
+		measure: "smoking-prevalence",
+		value: 12,
 	});
-	expect(data[2025].data.E06000001.metrics.smoking).toBe(12);
-	expect(data[2025].data.E06000002).toBeUndefined();
-	expect(data[2025].periods.smoking).toBe("2024");
+	expect(record.values[0].period?.label).toBe("2024");
+});
+
+it("averages the indicators an authority has", () => {
 	expect(
 		averagePublicHealth([
 			{ code: "1", name: "A", metrics: { smoking: 10 } },

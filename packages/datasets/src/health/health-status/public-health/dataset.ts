@@ -1,9 +1,13 @@
-import type { PublicHealthDataset } from "../../../data/public-health/loader.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import type { PublicHealthDataset } from "../../../data/public-health/measures.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
+import type { StatisticsPeriod } from "../../../declaration/vocabulary.ts";
 import { averagePublicHealth } from "../../../data/public-health/aggregate.ts";
-import { loadPublicHealth } from "../../../data/public-health/loader.ts";
+import { publicHealthStatisticsParts } from "../../../data/public-health/source.ts";
 
 export const publicHealth = defineDataset<PublicHealthDataset>({
 	id: "public-health",
@@ -31,8 +35,12 @@ export const publicHealth = defineDataset<PublicHealthDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["metrics"],
 	},
-	load: ({ csvRows }) => loadPublicHealth(csvRows),
+	load: noCompiledPayload<PublicHealthDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ csvRows }) => publicHealthStatisticsParts(csvRows),
+		},
 		payload: {
 			parts: () => [
 				{
@@ -111,32 +119,43 @@ export const publicHealth = defineDataset<PublicHealthDataset>({
 				"Age-standardised deaths from causes considered preventable, per 100,000 people.",
 			),
 		],
-		fields: (_key, header) => {
-			const published = header.periods as Record<string, string>;
-			/** NCMP years are school years; the survey years are financial years. */
-			const at = (metric: string, school: boolean) => {
-				const label = published[metric];
-				const year = /^(\d{4})\/\d{2}$/.exec(label);
-				if (year)
-					return school
-						? periods.academicYear(Number(year[1]))
-						: periods.financialYear(Number(year[1]));
-				if (/^\d{4}$/.test(label)) return periods.year(Number(label));
-				throw new Error(`Unknown public health period ${label}`);
-			};
-			return [
-				["receptionExcessWeight", "reception-excess-weight", true],
-				["year6ExcessWeight", "year-6-excess-weight", true],
-				["adultExcessWeight", "adult-excess-weight", false],
-				["activity", "physically-active-adults", false],
-				["smoking", "smoking-prevalence", false],
-				["preventableMortality", "preventable-mortality", false],
-			].map(([metric, slug, school]) => ({
-				path: `metrics.${metric}`,
-				measure: slug as string,
-				at: at(metric as string, school as boolean),
-			}));
-		},
+		/**
+		 * The period each indicator is held at. The source's own period for it
+		 * must be this one, or the payload rebuilt from its rows loses the value.
+		 * Child weight is by school year, the surveys by financial year.
+		 */
+		fields: [
+			[
+				"receptionExcessWeight",
+				"reception-excess-weight",
+				periods.academicYear(2024),
+			],
+			[
+				"year6ExcessWeight",
+				"year-6-excess-weight",
+				periods.academicYear(2024),
+			],
+			[
+				"adultExcessWeight",
+				"adult-excess-weight",
+				periods.financialYear(2024),
+			],
+			[
+				"activity",
+				"physically-active-adults",
+				periods.financialYear(2024),
+			],
+			["smoking", "smoking-prevalence", periods.year(2024)],
+			[
+				"preventableMortality",
+				"preventable-mortality",
+				periods.year(2024),
+			],
+		].map(([metric, measure, at]) => ({
+			path: `metrics.${metric as string}`,
+			measure: measure as string,
+			at: at as StatisticsPeriod,
+		})),
 	},
 	display: {
 		label: "Public Health [2024-2025]",
