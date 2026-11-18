@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { loadCrime } from "@uk-data-atlas/datasets";
+import {
+	crimeStatisticsParts,
+	type DirectRecord,
+} from "@uk-data-atlas/datasets";
 
 const counts = (total: number) =>
 	[total, ...Array.from({ length: 22 }, () => 1)].join(",");
@@ -40,11 +43,24 @@ const readWith = (table: string) => async (_path: string, sheet: string) =>
 
 const read = readWith(csv);
 
-describe("loadCrime", () => {
-	it("keeps every partnership, including those covering several authorities", async () => {
-		const [dataset] = Object.values(await loadCrime(read));
+const readParts = async (reader = read) => {
+	const [part] = await crimeStatisticsParts(reader);
+	return {
+		part: part!,
+		authorities: part!.records,
+		partnerships: part!.recordSets!.partnerships!,
+	};
+};
+const offence = (record: DirectRecord | undefined, key: string) =>
+	record?.values.find((value) => value.members?.offence === key)?.value;
+const find = (records: DirectRecord[], code: string) =>
+	records.find((record) => record.code === code);
 
-		expect(Object.keys(dataset.partnerships).sort()).toEqual([
+describe("crimeStatisticsParts", () => {
+	it("keeps every partnership, including those covering several authorities", async () => {
+		const { partnerships } = await readParts();
+
+		expect(partnerships.map((record) => record.code).sort()).toEqual([
 			"E22000063",
 			"E22000064",
 			"E22000100",
@@ -54,53 +70,53 @@ describe("loadCrime", () => {
 			"E22000362",
 			"E22000363",
 		]);
-		expect(dataset.partnerships.E22000363).toMatchObject({
-			communitySafetyPartnershipName: "North Devon",
-			localAuthorityCode: null,
-			totalRecordedCrime: 9618,
-		});
+		const north = find(partnerships, "E22000363");
+		expect(north?.name).toBe("North Devon");
+		expect(north?.parents?.localAuthorityCode).toBeNull();
+		expect(offence(north, "totalRecordedCrime")).toBe(9618);
 	});
 
 	it("gives an authority split between partnerships their sum", async () => {
-		const [dataset] = Object.values(await loadCrime(read));
+		const { authorities } = await readParts();
+		const split = find(authorities, "E06000058");
 
-		expect(dataset.data.E06000058.totalRecordedCrime).toBe(15000);
-		expect(dataset.data.E06000058.ladName).toBe(
-			"Bournemouth, Christchurch and Poole",
+		expect(offence(split, "totalRecordedCrime")).toBe(15000);
+		expect(split?.name).toBe("Bournemouth, Christchurch and Poole");
+		expect(offence(split, "homicide")).toBe(2);
+		expect(split?.parents?.communitySafetyPartnershipCode).toBeUndefined();
+		const single = find(authorities, "E06000026");
+		expect(single?.parents?.communitySafetyPartnershipCode?.code).toBe(
+			"E22000100",
 		);
-		expect(dataset.data.E06000058.homicide).toBe(2);
-		expect(
-			dataset.data.E06000058.communitySafetyPartnershipCode,
-		).toBeUndefined();
-		expect(dataset.data.E06000026).toMatchObject({
-			communitySafetyPartnershipCode: "E22000100",
-			totalRecordedCrime: 20000,
-		});
+		expect(offence(single, "totalRecordedCrime")).toBe(20000);
 	});
 
-	it("labels the dataset with the twelve months its title names", async () => {
-		const datasets = await loadCrime(read);
+	it("labels the part with the year its title names", async () => {
+		const { part } = await readParts();
 
-		expect(Object.keys(datasets)).toEqual(["2026"]);
-		expect(datasets[2026]).toMatchObject({
-			id: "crime2026",
-			dataDate: "year ending March 2026",
-		});
+		expect(part.key).toBe("2026");
+	});
+
+	it("refuses a table whose title names no period", async () => {
+		await expect(
+			crimeStatisticsParts(
+				readWith(csv.replace("year ending March 2026", "last year")),
+			),
+		).rejects.toThrow(/names no period/);
 	});
 
 	it("names a split authority only where its rows agree on the name", async () => {
-		const [dataset] = Object.values(await loadCrime(read));
+		const { authorities } = await readParts();
+		const split = find(authorities, "E07000244");
 
-		expect(dataset.data.E07000244).toMatchObject({
-			ladName: "",
-			totalRecordedCrime: 12397,
-		});
+		expect(split?.name).toBe("");
+		expect(offence(split, "totalRecordedCrime")).toBe(12397);
 	});
 
 	it("gives no authority value for a partnership covering several, and no placeholder key", async () => {
-		const [dataset] = Object.values(await loadCrime(read));
+		const { authorities } = await readParts();
 
-		expect(Object.keys(dataset.data).sort()).toEqual([
+		expect(authorities.map((record) => record.code).sort()).toEqual([
 			"E06000026",
 			"E06000058",
 			"E07000105",
@@ -113,22 +129,18 @@ describe("loadCrime", () => {
 			`E06000026,Plymouth,${counts(20000)}`,
 			`E06000026,Plymouth,[x],${counts(1).slice(2)}`,
 		);
-		await expect(loadCrime(readWith(unavailable))).rejects.toThrow(
-			/E22000100 totalRecordedCrime is not a count/,
-		);
+		await expect(
+			crimeStatisticsParts(readWith(unavailable)),
+		).rejects.toThrow(/E22000100 totalRecordedCrime is not a count/);
 	});
 
 	it("withholds a partnership whose crime its force recorded as unassigned", async () => {
-		const [dataset] = Object.values(await loadCrime(read));
+		const { authorities, partnerships } = await readParts();
 
-		expect(dataset.partnerships.E22000143).toBeUndefined();
-		expect(dataset.data.E06000035).toBeUndefined();
-		expect(dataset.data.E07000105).toMatchObject({
-			policeForceAreaName: "Kent",
-			totalRecordedCrime: 9197,
-		});
-		expect(dataset.metadata.notes.at(-1)).toMatch(
-			/^No figures for Medway: /,
-		);
+		expect(find(partnerships, "E22000143")).toBeUndefined();
+		expect(find(authorities, "E06000035")).toBeUndefined();
+		const ashford = find(authorities, "E07000105");
+		expect(ashford?.parents?.policeForceAreaCode?.name).toBe("Kent");
+		expect(offence(ashford, "totalRecordedCrime")).toBe(9197);
 	});
 });

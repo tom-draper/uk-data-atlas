@@ -1,9 +1,12 @@
 import type { CrimeDataset } from "../../../types/crime.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateCrime } from "../../../data/crime/aggregate.ts";
-import { loadCrime } from "../../../data/crime/loader.ts";
+import { crimeStatisticsParts } from "../../../data/crime/source.ts";
 
 const offence = (
 	key: string,
@@ -37,7 +40,7 @@ export const crime = defineDataset<CrimeDataset>({
 	// Table C2 is recorded crime by community safety partnership area, read
 	// straight out of the published workbook rather than from an extract,
 	// with the notes that say which areas' figures are incomplete.
-	load: ({ xlsxSheet }) => loadCrime(xlsxSheet),
+	load: noCompiledPayload<CrimeDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 80,
@@ -46,6 +49,10 @@ export const crime = defineDataset<CrimeDataset>({
 		column: 0,
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ xlsxSheet }) => crimeStatisticsParts(xlsxSheet),
+		},
 		name: {
 			data: "ladName",
 			partnerships: "communitySafetyPartnershipName",
