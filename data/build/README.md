@@ -882,6 +882,19 @@ once, not parsing more than they needed.
   through the same loader, one crosswalk at a time and with one pass over
   them. It was 21.5 s and 1.56 GB, and is 17.5 s and 0.97 GB, with identical
   projections.
+- `documents` converts every measure through the crosswalks its sources reach:
+  165 of the 208, 370 MB as stored and about 0.9 GB held, each wanted by up to
+  89 measures. The default 64 MB crosswalk cache held a fraction of them, and
+  every measure walks the same set in the same order, so nearly every one of
+  its 14,700 conversion lookups missed and read the crosswalk from
+  `atlas.sqlite` again, 72% of the stage's time. The stage sets
+  `crosswalkCacheBytes` to 400 MiB so each is read once, groups a release's
+  areas by country once instead of once per measure, and runs with a 128 MB
+  young generation (`--max-semi-space-size`). It was 379 s, 473 s CPU and
+  2.8 GB peak RSS, and is 47 s, 57 s CPU and 3.0 GB, with the same documents.
+  The documents carry the stage's `compilerHash`, which follows its code. A
+  cache that held all 208 crosswalks would need 1.4 GB, which does not fit the
+  stage's 3 GB.
 
 `pipeline/src/storage/buildIntermediates.ts` also has `readAreas({ geography,
 release, fields })`, which streams the requested columns, `readAreaInventory`,
