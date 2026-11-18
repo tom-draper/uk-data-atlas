@@ -690,6 +690,9 @@ export const apiStages = [
 		],
 		[
 			"--max-old-space-size=3072",
+			// The stage allocates short-lived rows for every measure; a larger
+			// young generation spends far less of its time collecting them.
+			"--max-semi-space-size=128",
 			"pipeline/src/stages/build-evidence-documents.ts",
 		],
 		{
