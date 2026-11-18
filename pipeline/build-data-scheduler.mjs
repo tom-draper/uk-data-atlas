@@ -83,24 +83,20 @@ export function expectedDurationMs(timing) {
 	return commandMs;
 }
 
-const overlaps = (a, b) =>
-	a === b || a.startsWith(`${b}/`) || b.startsWith(`${a}/`);
-
-/** True when the stages may not run at the same time. */
+/**
+ * True when the stages may not run at the same time. Every stage owns its
+ * paths alone, so stages never wait for each other's files. A stage with no
+ * declared paths could touch anything, so it runs alone, and so does one that
+ * rewrites files the other stages import.
+ */
 export function conflicts(a, b) {
-	const first = stageScope(a);
-	const second = stageScope(b);
-	// A stage with no declared paths could touch anything, so it runs alone.
-	// So does one that rewrites files the other stages import.
-	if (!first || !second || a.exclusive || b.exclusive) return true;
-	return first.some((path) => second.some((other) => overlaps(path, other)));
+	return !stageScope(a) || !stageScope(b) || a.exclusive || b.exclusive;
 }
 
 /**
  * For each stage, the planned stages that must finish before it starts: its
- * dependencies, and every earlier stage it conflicts with. Ordering conflicting
- * stages as the plan does keeps their outputs and the cache as a one-at-a-time
- * build leaves them.
+ * dependencies, and every earlier stage it conflicts with. Ordering those as
+ * the plan does keeps the build as a one-at-a-time build leaves it.
  */
 export function blockersOf(stages) {
 	const names = new Set(stages.map((stage) => stage.name));
