@@ -62,5 +62,5 @@ for (const [name, json] of outputs) {
 			wardAreas[code] = profile.areaKm2;
 }
 pages.set("ward-areas", JSON.stringify(wardAreas));
-writeAtlasPages(ROOT, pages);
+await writeAtlasPages(ROOT, pages);
 buildLog.info(`Wrote ${formatCount(pages.size)} atlas page artifacts`);
