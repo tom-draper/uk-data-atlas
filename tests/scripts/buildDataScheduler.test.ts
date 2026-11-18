@@ -140,38 +140,36 @@ test("stages are held back when their heap limits exceed the memory budget", asy
 	assert.equal(stageMemoryMb(stage("plain")), 1024);
 });
 
-test("stages that share a path, or declare none, never overlap and keep plan order", async () => {
+test("a stage that declares no paths, or is exclusive, runs alone and keeps plan order", async () => {
 	const stages = [
-		stage("first", [], { writes: ["data/build/shared.sqlite"] }),
+		stage("first"),
 		stage("free-one"),
-		stage("second", [], { writes: ["data/build/shared.sqlite"] }),
-		stage("free-two"),
 		stage("unknown", [], { writes: [] }),
+		stage("free-two"),
 		stage("after"),
 	];
-	const { events, execute } = recorder({ first: 40, second: 10 });
+	const { events, execute } = recorder({ first: 40 });
 	await build(stages, { execute, limits: unlimited });
-	// The shared writers run one after the other, in plan order.
-	assert.ok(events.indexOf("end first") < events.indexOf("start second"));
-	// The free stages overlap them.
+	// The stages that own paths overlap each other.
 	assert.ok(events.indexOf("start free-one") < events.indexOf("end first"));
 	// A stage with no declared paths waits for everything before it and holds
 	// back everything after it.
 	const start = events.indexOf("start unknown");
-	for (const name of ["first", "free-one", "second", "free-two"])
+	for (const name of ["first", "free-one"])
 		assert.ok(events.indexOf(`end ${name}`) < start, name);
 	assert.ok(events.indexOf("end unknown") < events.indexOf("start after"));
-	assert.ok(
-		conflicts(
-			stage("a", [], { writes: ["x/y"] }),
-			stage("b", [], { writes: ["x"] }),
-		),
-	);
+	assert.ok(events.indexOf("end unknown") < events.indexOf("start free-two"));
+	// Owning paths is what lets stages run together, whatever the paths are.
+	assert.ok(!conflicts(stage("a"), stage("b")));
 	assert.ok(
 		!conflicts(
 			stage("a", [], { writes: ["x/y"] }),
 			stage("b", [], { writes: ["x/z"] }),
 		),
+	);
+	assert.ok(conflicts(stage("a"), stage("b", [], { writes: [] })));
+	assert.ok(
+		conflicts(stage("a"), { ...stage("b"), exclusive: true } as Stage),
 	);
 });
 
@@ -315,8 +313,8 @@ test("running stages together leaves the same outputs, digests and skips as one 
 		stage("download", [], { cacheable: false }),
 		stage("left", ["download"]),
 		stage("right", ["download"]),
-		stage("cache-a", ["left"], { writes: ["data/build/cache.sqlite"] }),
-		stage("cache-b", ["right"], { writes: ["data/build/cache.sqlite"] }),
+		stage("cache-a", ["left"], { writes: ["data/build/cache-a.sqlite"] }),
+		stage("cache-b", ["right"], { writes: ["data/build/cache-b.sqlite"] }),
 		stage("join", ["cache-a", "cache-b"]),
 	];
 	const attempt = async (jobs: string) => {
@@ -328,7 +326,7 @@ test("running stages together leaves the same outputs, digests and skips as one 
 			await sleep(current.name === "left" ? 30 : 5);
 			const files =
 				current.name === "cache-a" || current.name === "cache-b"
-					? ["data/build/cache.sqlite"]
+					? [`data/build/${current.name}.sqlite`]
 					: [`data/build/${current.name}/out.json`];
 			for (const file of files) {
 				mkdirSync(dirname(join(root, file)), { recursive: true });
@@ -555,7 +553,7 @@ test("a plan lists the waves of stages that can run together and the critical pa
 	]);
 });
 
-test("the real graph runs with overlap but never breaks a dependency or a shared path", async () => {
+test("the real graph runs with overlap but never breaks a dependency or a stage that runs alone", async () => {
 	const stages = buildDataStages as Stage[];
 	const current = new Set(
 		await Promise.all(
