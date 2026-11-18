@@ -110,11 +110,13 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		INSERT INTO observation VALUES (1, 1, 1, 42, NULL, NULL, 1);
 	`);
 	database.close();
+	const identity = { measure: "count", dimensions: { kind: "all" } };
 	const catalog = {
 		contentHash: "fixture-hash",
 		measures: [
 			{
 				id: "count",
+				series: identity,
 				sources: [
 					{
 						datasetId: "fixture",
@@ -138,7 +140,6 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		},
 		observations: {},
 	};
-	const identity = { measure: "count", dimensions: { kind: "all" } };
 	const source = catalog.measures[0]!.sources[0]!;
 	const key = measureSeriesSourceKey(identity, source);
 	const initialReadPath = {
@@ -146,15 +147,10 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		series: { [key]: readPath.statistics!["count-observations"]! },
 	};
 	assert.throws(
-		() =>
-			readMeasureObservations(root, catalog, 0, readPath, {
-				count: identity,
-			}),
+		() => readMeasureObservations(root, catalog, 0, readPath),
 		/Missing statistics selector/,
 	);
-	const [view] = readMeasureObservations(root, catalog, 0, initialReadPath, {
-		count: identity,
-	});
+	const [view] = readMeasureObservations(root, catalog, 0, initialReadPath);
 	assert.deepEqual(view?.periods[0]?.records, [
 		{ areaCode: "E1", value: 42, status: "observed" },
 	]);
@@ -163,7 +159,6 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		catalog,
 		4096,
 		initialReadPath,
-		{ count: identity },
 	);
 	assert.deepEqual(cached?.periods[0]?.records[0], {
 		areaCode: "E1",
@@ -187,7 +182,6 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		catalog,
 		0,
 		canonicalReadPath,
-		{ count: identity },
 	);
 	const [canonical] = canonicalArtifacts;
 	assert.deepEqual(
@@ -211,16 +205,10 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		measures: [measureSeriesKey(identity)],
 		columns: [{ measure: "count", dimensions: {} }],
 	};
-	const tableViews = readMeasureObservations(
-		root,
-		catalog,
-		4096,
-		{
-			...canonicalReadPath,
-			series: { [key]: tableSelector },
-		},
-		{ count: identity },
-	);
+	const tableViews = readMeasureObservations(root, catalog, 4096, {
+		...canonicalReadPath,
+		series: { [key]: tableSelector },
+	});
 	assert.deepEqual(tableViews[0]!.periods[0]!.records, [
 		{ areaCode: "E1", value: 42, status: "observed" },
 	]);
@@ -229,9 +217,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	]);
 	const cache = new ObservationCache();
 	const databasePath = join(root, "data/build/atlas.sqlite");
-	cache.bindCatalogue(databasePath, catalog, canonicalReadPath, {
-		count: identity,
-	});
+	cache.bindCatalogue(databasePath, catalog, canonicalReadPath);
 	assert.equal(cache.has(databasePath, key), true);
 	assert.equal(cache.has(databasePath, "count-observations"), false);
 	assert.deepEqual(canonical?.periods[0]?.records[0], {
@@ -239,13 +225,10 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		value: 42,
 		status: "observed",
 	});
-	const [canonicalOnly] = readMeasureObservations(
-		root,
-		catalog,
-		0,
-		{ ...canonicalReadPath, statistics: undefined },
-		{ count: identity },
-	);
+	const [canonicalOnly] = readMeasureObservations(root, catalog, 0, {
+		...canonicalReadPath,
+		statistics: undefined,
+	});
 	assert.deepEqual(canonicalOnly?.periods[0]?.records[0], {
 		areaCode: "E1",
 		value: 42,
@@ -273,17 +256,26 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	);
 	assert.throws(
 		() =>
-			readMeasureObservations(
-				root,
-				catalog,
-				0,
-				{ ...canonicalReadPath, series: {} },
-				{ count: identity },
-			),
+			readMeasureObservations(root, catalog, 0, {
+				...canonicalReadPath,
+				series: {},
+			}),
 		/Missing statistics selector/,
 	);
 	assert.throws(
-		() => readMeasureObservations(root, catalog, 0, canonicalReadPath, {}),
+		() =>
+			readMeasureObservations(
+				root,
+				{
+					...catalog,
+					measures: catalog.measures.map((measure) => ({
+						...measure,
+						series: undefined,
+					})),
+				},
+				0,
+				canonicalReadPath,
+			),
 		/Missing series identity/,
 	);
 	const update = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
@@ -302,16 +294,10 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	});
 	assert.throws(
 		() =>
-			readMeasureObservations(
-				root,
-				catalog,
-				0,
-				{
-					...initialReadPath,
-					observations: { extra: "missing" },
-				},
-				{ count: identity },
-			),
+			readMeasureObservations(root, catalog, 0, {
+				...initialReadPath,
+				observations: { extra: "missing" },
+			}),
 		/unsupported observation artifacts/,
 	);
 });

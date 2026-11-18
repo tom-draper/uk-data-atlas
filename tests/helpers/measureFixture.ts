@@ -416,8 +416,15 @@ export const createMeasureFixture = (): {
 	const path = join(directory, "atlas.sqlite");
 	writeDatabase(path, fixtureSeries);
 	normalise(path);
-	const catalog = fixtureCatalog();
 	const measureDimensions = fixtureDimensions();
+	const fixture = fixtureCatalog();
+	const catalog = {
+		...fixture,
+		measures: fixture.measures.map((entry) => ({
+			...entry,
+			series: measureDimensions.config.ids[entry.id]!,
+		})),
+	};
 	const statistics: NonNullable<StatisticsReadPath["statistics"]> = {};
 	const bySeries = (id: string) => {
 		const mapped = measureDimensions.config.ids[id]!;
@@ -456,7 +463,7 @@ export const createMeasureFixture = (): {
 		),
 	};
 	const cache = new ObservationCache();
-	cache.bindCatalogue(path, catalog, readPath, measureDimensions.config.ids);
+	cache.bindCatalogue(path, catalog, readPath);
 	return {
 		path,
 		catalog,

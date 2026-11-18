@@ -7,7 +7,6 @@ import {
 	registerSeriesObservations,
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
-	type MeasureSeriesIdentity,
 } from "./index.ts";
 import {
 	lazySourceObservations,
@@ -27,15 +26,14 @@ export const readMeasureObservations = (
 	readPath: StatisticsReadPath = readAtlasStatisticsReadPath(
 		atlasDatabasePath(repositoryRoot),
 	),
-	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): AnyMeasureObservationArtifact[] => {
 	const databasePath = atlasDatabasePath(repositoryRoot);
 	const tables = new ObservationCache(maxBytes);
-	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
+	tables.bindCatalogue(databasePath, dataCatalog, readPath);
 	const bySeriesSource = new Map<string, AnyMeasureObservationArtifact>();
 	const observations = dataCatalog.measures.flatMap((measure) =>
 		measure.sources.map((source) => {
-			const identity = measure.series ?? identities?.[measure.id];
+			const identity = measure.series;
 			if (!identity)
 				throw new Error(`Missing series identity for ${measure.id}.`);
 			const view = lazySourceObservations(
