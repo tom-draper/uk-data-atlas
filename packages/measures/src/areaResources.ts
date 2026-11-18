@@ -1,7 +1,7 @@
 import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { DataCatalog } from "./index.ts";
 import type { measureCoverage } from "./index.ts";
-import { observationsFor } from "./index.ts";
+import { measureSeriesKey, observationsFor } from "./index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 export const findArea = (
@@ -47,7 +47,12 @@ export const areaMeasureSources = (
 						measure.id,
 						source,
 						period,
-						artifacts,
+						{
+							...artifacts,
+							seriesKey:
+								measure.series &&
+								measureSeriesKey(measure.series),
+						},
 					);
 					const record = observations?.recordFor(code);
 					return observations

@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { measureQuality } from "@uk-data-atlas/catalogue/node";
 import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
+import {
 	dataCatalog,
 	measureCompatibilityInventory,
 	measureObservations,
@@ -46,5 +50,36 @@ test("reports missing observations and unknown measures", () => {
 			{},
 		),
 		undefined,
+	);
+});
+
+test("uses the canonical series index when reporting quality", () => {
+	const identity = { measure: "fixture", dimensions: { kind: "total" } };
+	const original = dataCatalog.measures.find(
+		(measure) => measure.id === "small-area-fixture",
+	)!;
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure === original ? { ...measure, series: identity } : measure,
+		),
+	};
+	const artifact = { ...measureObservations[0]!, measureId: "different-id" };
+	const observations = [artifact];
+	registerSeriesObservations(
+		observations,
+		new Map([
+			[measureSeriesSourceKey(identity, original.sources[0]!), artifact],
+		]),
+	);
+	const data = measureQuality(
+		catalog,
+		measureCompatibilityInventory,
+		original.id,
+		{ measureObservations: observations },
+	);
+	assert.equal(
+		data?.sources[0]?.periods[0]?.contentHash,
+		artifact.contentHash,
 	);
 });

@@ -11,6 +11,7 @@ import {
 } from "./dataCatalog.ts";
 import { measureCoverage } from "./measureCoverage.ts";
 import { observationsFor } from "./observationArtifacts.ts";
+import { measureSeriesKey } from "./measureDimensions.ts";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import { buildTranslationSteps } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
@@ -279,6 +280,7 @@ export const reconcileMeasure = (
 		};
 	const artifacts = {
 		measureObservations: context.measureObservations,
+		seriesKey: measure.series && measureSeriesKey(measure.series),
 	};
 	// Each side is paired with the partition published on the release its end
 	// of the crosswalk uses. Where the compatibility inventory has assessed
