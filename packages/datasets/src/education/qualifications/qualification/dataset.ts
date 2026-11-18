@@ -1,5 +1,8 @@
 import type { QualificationDataset } from "../../../types/qualification.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -7,7 +10,7 @@ import {
 	districts2021,
 } from "../../../data/census/districts.ts";
 import { aggregateQualifications } from "../../../data/qualification/aggregate.ts";
-import { loadQualification } from "../../../data/qualification/loader.ts";
+import { qualificationStatisticsParts } from "../../../data/qualification/source.ts";
 
 export const qualification = defineDataset<QualificationDataset>({
 	id: "qualification",
@@ -26,7 +29,7 @@ export const qualification = defineDataset<QualificationDataset>({
 		cadence: "decennial",
 		notes: [],
 	},
-	load: ({ text }) => loadQualification(text),
+	load: noCompiledPayload<QualificationDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 100,
@@ -34,6 +37,10 @@ export const qualification = defineDataset<QualificationDataset>({
 		about: "Residents with a degree-level qualification or above",
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => qualificationStatisticsParts(text),
+		},
 		payload: {
 			parts: () => [
 				{

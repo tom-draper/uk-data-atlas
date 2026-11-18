@@ -114,5 +114,13 @@
 	"air-quality": {
 		"sha256": "b2cdb61cbaa5e42d85017ecafc4fb6267224dc3a935cc0b78bd3b06be1f6c6b5",
 		"bytes": 72573
+	},
+	"pupil-absence": {
+		"sha256": "de7b69f3419766de1b5eb958982bbff682989921306ba2ade23aa4537b9b64bc",
+		"bytes": 34163
+	},
+	"qualification": {
+		"sha256": "7469ddb73261699096036a971a67f27e1e8044cbf746219e068533e849203d3b",
+		"bytes": 63545
 	}
 }

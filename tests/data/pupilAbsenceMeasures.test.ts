@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { loadPupilAbsence } from "@uk-data-atlas/datasets";
+import { pupilAbsenceStatisticsParts } from "@uk-data-atlas/datasets";
 import { sumMetrics } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
@@ -14,33 +14,74 @@ const absenceRate = (record: unknown, measure: string) =>
 	});
 const sumAbsence = (records: Parameters<typeof sumMetrics>[0]) =>
 	sumMetrics(records, "overall", "sessions");
-it("filters the full-year total and uses sessions or enrolments as appropriate", async () => {
-	const row = {
-		time_period: "202425",
-		geographic_level: "Local authority",
-		education_phase: "Total",
-		year_breakdown: "Six half terms",
-		new_la_code: "E10000001",
-		la_name: "County",
-		sess_possible: "1000",
-		enrolments: "100",
-		sess_overall: "80",
-		sess_authorised: "50",
-		sess_unauthorised: "30",
-		enrolments_pa_10_exact: "20",
-		enrolments_pa_50_exact: "2",
-	};
-	const result = await loadPupilAbsence(async (_path, visit, member) => {
-		expect(member).toBe("data/1_Absence_3term_nat_reg_la.csv");
-		visit(row);
-		visit({
-			...row,
-			new_la_code: "E09000001",
-			education_phase: "State-funded primary",
-		});
+const row = {
+	time_period: "202425",
+	geographic_level: "Local authority",
+	education_phase: "Total",
+	year_breakdown: "Six half terms",
+	new_la_code: "E10000001",
+	la_name: "County",
+	sess_possible: "1000",
+	enrolments: "100",
+	sess_overall: "80",
+	sess_authorised: "50",
+	sess_unauthorised: "30",
+	enrolments_pa_10_exact: "20",
+	enrolments_pa_50_exact: "2",
+};
+
+it("reads the full-year total of each county and unitary authority", async () => {
+	const parts = await pupilAbsenceStatisticsParts(
+		async (_path, visit, member) => {
+			expect(member).toBe("data/1_Absence_3term_nat_reg_la.csv");
+			visit(row);
+			visit({
+				...row,
+				new_la_code: "E09000001",
+				education_phase: "State-funded primary",
+			});
+			visit({ ...row, new_la_code: "E10000002", sess_possible: "0" });
+		},
+	);
+	expect(parts).toHaveLength(1);
+	expect(parts[0].key).toBe("2025");
+	expect(parts[0].records).toHaveLength(1);
+	const [record] = parts[0].records;
+	expect(record).toMatchObject({ code: "E10000001", name: "County" });
+	const counts = Object.fromEntries(
+		record.values.map((value) => [
+			Object.values(value.members ?? {})[0],
+			value.value,
+		]),
+	);
+	expect(counts).toEqual({
+		sessions: 1000,
+		overall: 80,
+		authorised: 50,
+		unauthorised: 30,
+		enrolments: 100,
+		persistent: 20,
+		severe: 2,
 	});
-	const records = Object.values(result[2025].data);
-	expect(records).toHaveLength(1);
+});
+
+it("uses sessions or enrolments as appropriate", () => {
+	const records = [
+		{
+			code: "E10000001",
+			name: "County",
+			value: 8,
+			metrics: {
+				sessions: 1000,
+				enrolments: 100,
+				overall: 80,
+				authorised: 50,
+				unauthorised: 30,
+				persistent: 20,
+				severe: 2,
+			},
+		},
+	];
 	expect(absenceRate(records[0], "overall")).toBe(8);
 	expect(absenceRate(records[0], "persistent")).toBe(20);
 	expect(absenceRate(sumAbsence(records), "severe")).toBe(2);
