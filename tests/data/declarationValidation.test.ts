@@ -49,6 +49,16 @@ describe("declaration validation", () => {
 			"guide.summary is empty, leave it out instead",
 		],
 		[
+			"a source folder with an empty name",
+			(d: any) => (d.sources = [{ name: "" }]),
+			"a source folder has an empty name",
+		],
+		[
+			"an empty source list",
+			(d: any) => (d.sources = []),
+			"sources is empty, leave it out to read the folder named for the id",
+		],
+		[
 			"a blank source term",
 			(d: any) => (d.source.licence = " "),
 			"source.licence is empty",

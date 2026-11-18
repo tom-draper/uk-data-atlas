@@ -68,6 +68,18 @@ export function declarationProblems(declaration: DatasetDeclaration): string[] {
 	if (!Array.isArray(source.notes) || source.notes.some(blank))
 		problem("source.notes must be a list of non-empty sentences");
 
+	for (const folder of declaration.sources ?? []) {
+		for (const key of ["name", "folder", "exception"] as const)
+			if (folder[key] !== undefined && blank(folder[key]))
+				problem(`a source folder has an empty ${key}`);
+		if (folder.name !== undefined && !/^[a-z][a-z0-9-]*$/.test(folder.name))
+			problem(`source name ${folder.name} is not kebab-case`);
+	}
+	if (declaration.sources?.length === 0)
+		problem(
+			"sources is empty, leave it out to read the folder named for the id",
+		);
+
 	const { year } = declaration.boundary;
 	if (!Number.isInteger(year) || year < 1900 || year > 2100)
 		problem(`boundary.year ${year} is not a year`);

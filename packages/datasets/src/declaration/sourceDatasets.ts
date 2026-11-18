@@ -1,3 +1,5 @@
+import { DECLARED_DATASET_SOURCES } from "./declaredSources.ts";
+
 /**
  * Every dataset each folder in `data/source` feeds. A `meta.json` names one of
  * them in `dataset` (docs/data-organisation.md, task 11), the one the folder is
@@ -23,7 +25,11 @@ export type DatasetSource = readonly [
 	exception?: string,
 ];
 
-export const DATASET_SOURCES: readonly DatasetSource[] = [
+/**
+ * The folders of sources no declaration owns: the census tables, and the
+ * datasets they feed that are declared name themselves in their declarations.
+ */
+const UNDECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 	[
 		"population/population-estimates/census-2021-ts001",
 		["census-2021-ts001"],
@@ -40,135 +46,35 @@ export const DATASET_SOURCES: readonly DatasetSource[] = [
 		"population/ethnicity-and-identity/census-2021-ts021",
 		["census-2021-ts021"],
 	],
-	[
-		"health/health-status/census-2021-ts037",
-		["census-2021-ts037", "general-health"],
-	],
-	[
-		"housing/housing-stock/census-2021-ts054",
-		["census-2021-ts054", "housing-tenure"],
-	],
+	["health/health-status/census-2021-ts037", ["census-2021-ts037"]],
+	["housing/housing-stock/census-2021-ts054", ["census-2021-ts054"]],
 	["economy/labour-market/census-2021-ts066", ["census-2021-ts066"]],
-	["population/ethnicity-and-identity/ethnicity", ["ethnicity"]],
-	["population/population-estimates/population-uk", ["population-uk"]],
-	[
-		"population/population-estimates/population-constituency",
-		["population-constituency"],
-	],
-	["population/population-estimates/population", ["population"]],
-	["society/deprivation/imd", ["imd"]],
-	["society/deprivation/nimdm", ["nimdm"]],
-	["society/deprivation/simd", ["simd"]],
-	["society/deprivation/wimd", ["wimd"]],
-	["economy/business/business-activity", ["business-activity"]],
-	["society/poverty/child-poverty", ["child-poverty"]],
-	["economy/labour-market/claimant-count", ["claimant-count"]],
-	["society/crime-and-justice/crime", ["crime"]],
-	["society/poverty/fuel-poverty", ["fuel-poverty"]],
-	["housing/homelessness/homelessness", ["homelessness"]],
-	[
-		"housing/prices-and-affordability/house-price/mean-price-by-ward",
-		["house-price"],
-	],
-	[
-		"housing/prices-and-affordability/house-price/median-price-by-ward",
-		["house-price"],
-	],
-	[
-		"housing/housing-stock/net-additional-dwellings",
-		["net-additional-dwellings"],
-	],
-	["economy/earnings-and-income/income", ["income", "workplace-income"]],
-	["economy/labour-market/jobs", ["jobs"]],
-	[
-		"economy/public-finance/local-government-finance",
-		["local-government-finance"],
-	],
-	["housing/housing-stock/council-tax", ["council-tax"]],
-	["economy/economic-output/regional-gdp", ["regional-gdp"]],
-	["economy/labour-market/unemployment", ["unemployment"]],
-	[
-		"housing/prices-and-affordability/housing-affordability",
-		["housing-affordability"],
-	],
-	[
-		"education/schools/school-performance-constituency",
-		["school-performance"],
-		"The constituency half of school-performance, a separate file bundle from the local authority one.",
-	],
-	[
-		"education/schools/school-performance",
-		["school-performance", "school-performance-disadvantage"],
-	],
-	["education/schools/pupil-absence", ["pupil-absence"]],
-	["education/qualifications/qualification", ["qualification"]],
-	["environment/air-quality/air-quality", ["air-quality"]],
-	[
-		"environment/energy/energy-consumption",
-		["electricity-consumption", "gas-consumption"],
-		"One download feeds both datasets, and neither id names it.",
-	],
-	["environment/emissions/ghg-emissions", ["ghg-emissions"]],
-	["environment/waste/waste", ["waste"]],
-	["core/land-area", ["land-area"]],
-	[
-		"health/social-care/adult-social-care-activity",
-		["adult-social-care-activity"],
-	],
-	[
-		"health/social-care/adult-social-care-outcomes",
-		["adult-social-care-outcomes"],
-	],
-	[
-		"health/life-expectancy/life-expectancy",
-		["life-expectancy", "life-expectancy-series"],
-	],
-	["health/nhs-services/nhs-waiting", ["nhs-waiting"]],
-	["health/health-status/public-health", ["public-health"]],
-	["housing/planning/planning-applications", ["planning-applications"]],
-	[
-		"politics/general-elections/historical-general-election",
-		["historical-general-election"],
-	],
-	...["2010", "2015", "2017", "2019", "2024"].map(
-		(year) =>
-			[
-				`politics/general-elections/general-election/${year}`,
-				["general-election"],
-			] as const,
-	),
-	...[
-		"2016",
-		"2017",
-		"2018",
-		"2019",
-		"2021",
-		"2022",
-		"2023",
-		"2024",
-		"2025",
-	].map(
-		(year) =>
-			[
-				`politics/local-elections/local-election/${year}`,
-				["local-election"],
-			] as const,
-	),
-	["politics/referendums/brexit-constituency", ["brexit-constituency"]],
-	["politics/referendums/brexit", ["brexit"]],
-	["infrastructure/digital-connectivity/broadband", ["broadband"]],
-	[
-		"infrastructure/digital-connectivity/mobile-coverage",
-		["mobile-coverage"],
-	],
-	["transport/vehicles/car-availability", ["car-availability"]],
-	[
-		"transport/vehicles/electric-vehicle-chargers",
-		["electric-vehicle-chargers"],
-	],
-	["transport/road-safety/road-collisions", ["road-collisions"]],
-	["transport/commuting/travel-to-work", ["travel-to-work"]],
 ];
+
+/**
+ * Every folder with the datasets it feeds: the declared datasets' (a folder
+ * two declarations name feeds both) beside the undeclared ones.
+ */
+export const DATASET_SOURCES: readonly DatasetSource[] = [
+	...UNDECLARED_DATASET_SOURCES,
+	...DECLARED_DATASET_SOURCES,
+]
+	.reduce<DatasetSource[]>((rows, [folder, datasets, exception]) => {
+		const at = rows.findIndex(([known]) => known === folder);
+		if (at === -1) return [...rows, [folder, datasets, exception]];
+		const [, known, reason] = rows[at];
+		rows[at] = [
+			folder,
+			[...known, ...datasets.filter((id) => !known.includes(id))],
+			reason ?? exception,
+		];
+		return rows;
+	}, [])
+	.map(([folder, datasets, exception]) =>
+		exception === undefined
+			? [folder, datasets]
+			: [folder, datasets, exception],
+	);
 
 const CROSSWALK_INPUT =
 	"Read as a crosswalk weight input, so it feeds no dataset of its own.";

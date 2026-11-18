@@ -21,6 +21,13 @@ export const electricityConsumption =
 			summary:
 				"Metered electricity used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly. The map legend switches between all, domestic and non-domestic meters, in total GWh or GWh per 100,000 residents. Cards show the selected meter group in total GWh; regional figures sum consumption.",
 		},
+		sources: [
+			{
+				name: "energy-consumption",
+				exception:
+					"One download feeds both datasets, and neither id names it.",
+			},
+		],
 		source: {
 			name: SOURCE.name,
 			publisher: SOURCE.source,
