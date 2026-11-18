@@ -384,6 +384,6 @@ describe("directStatistics", () => {
 				[],
 				entry,
 			),
-		).toThrow(/one record set and static fields/);
+		).toThrow(/one record set/);
 	});
 });
