@@ -892,6 +892,36 @@ once, not parsing more than they needed.
   The documents carry the stage's `compilerHash`, which follows its code. A
   cache that held all 208 crosswalks would need 1.4 GB, which does not fit the
   stage's 3 GB.
+- `assemble-atlas` looked up each of 212,000 postcode area codes with a join
+  that SQLite planned from the release's side. The file has no planner
+  statistics until its closing `ANALYZE`, so each lookup read every area
+  version of the release and tested its code: 78 s of the stage. The join
+  order is now fixed (`CROSS JOIN`), so the code index comes first. The stage
+  also finds an interior point for each of 1,013,570 area versions (25 s of
+  geometry work) on up to four worker threads, and writes the rows in the
+  order one thread would. `ATLAS_SQLITE_WORKERS` sets the count (`1` keeps the
+  work in the stage's own thread); like the other worker settings it is not
+  part of the cache key, and the worker module is listed in the stage's
+  `codeInputs`, since a worker is started by path and not found by import. It
+  was 159.5 s, 155 s CPU and 1.7 to 2.1 GB peak RSS, and is 66.8 s, 97 s CPU
+  and 2.7 to 2.8 GB (84 s with the join change alone), with a byte for byte
+  identical `atlas.sqlite`. Its heap fits 1 GB.
+- `atlas-sqlite` looked up both areas of each of 2.2 million crosswalk edges by
+  code (4.3 million queries, 43 s). It now reads a release's area versions once,
+  when the first crosswalk reaches it. It was 138 s and 175 s CPU, and is
+  100.5 s and 138 s CPU, with `atlas-base.sqlite` and `atlas-cache.sqlite` byte
+  for byte identical. Its heap does not fit 2 GB (it needs between 2 and 3 GB) and its peak
+  RSS is 4.9 to 5.6 GB, against the 1 GB the scheduler assumes while the
+  stage sets no `--max-old-space-size`. Tried and left out: a 256 MB page
+  cache with in-memory temporary tables, a 1 GB memory map and a 128 MB young
+  generation, each within 2% of the run without it, and rebuilding the dataset
+  payloads on worker threads, 5 s faster for 38 s more CPU.
+
+Both stages already wrote with `journal_mode = OFF`, `synchronous = OFF` and a few
+large transactions, and build secondary indexes after their rows, so the
+build settings were not where the time went. The published `atlas.sqlite` has
+`journal_mode = delete`, `page_size = 4096`, `application_id = 1430996033` and
+`user_version = 3`, as before.
 
 `pipeline/src/storage/buildIntermediates.ts` also has `readAreas({ geography,
 release, fields })`, which streams the requested columns, `readAreaInventory`,
