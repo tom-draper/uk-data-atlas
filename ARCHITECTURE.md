@@ -213,29 +213,53 @@ so it needs a usable recorded duration for each of them. A stage with no
 recorded duration, a failed last run or a corrupt record is treated as unknown,
 and while one is running nothing starts ahead of the waiting stage, as before.
 A stage that overruns its record only delays the waiting stage until it
-finishes. Dependencies, shared paths, `--jobs` and the memory budget hold at
-every start, and none of this changes a stage's key or outputs.
+finishes. Dependencies, `--jobs`, the memory budget and the stages that run
+alone hold at every start, and none of this changes a stage's key or outputs.
 
 With several jobs, each output line is prefixed with `[stage]`, and `--plan`
 ends with the waves of stages that can run together and the critical path.
 
-Each graph stage lists the paths it changes in `stageWrites` (in
-`pipeline/build-data-graph.mjs`), beyond its `outputs` and `requiredOutputs`.
-Stages that share a path, such as the writers of `atlas-cache.sqlite`, never
-overlap and run in plan order. A stage with no declared paths (`sources`, which
-rewrites `data/source`) runs alone, as does an `exclusive` stage. The two
-registries are `exclusive`: they rewrite checked-in code that other stages
-import. Add the paths of any new stage, or it will run alone.
-`pnpm data:build --verify-outputs` (or `DATA_BUILD_VERIFY_OUTPUTS=1`; `--check-writes` is the
-old name) runs one stage at a time, scans the whole output tree before and after
-each, and fails the build naming any file a stage changed outside its declared
-paths. The normal build looks only at declared paths, so a stage that writes
-elsewhere is not noticed and its dependants are not invalidated. Run the
-verification after adding or changing a stage, and before trusting a cache that
-a new stage has built. It also checks the hashes described below. A full data
-build needs the pinned source release, so CI runs only the unit tests that
-exercise it on a fixture graph. They cover the parity checks too, and a pipeline
-run with `CI` set (a fixture build, once CI has one) runs them and fails on a mismatch.
+### Stage ownership
+
+A stage owns the paths it declares, in `writes` beside its `outputs` and
+`requiredOutputs`, and writes nothing else. No path has two owners: a file is
+written by one stage, and every stage that needs it reads it after that stage
+and depends on it. Two stages never share a SQLite file, a manifest or a
+folder, so none writes a working copy for others to finish, none leaves a
+stamp that stands for part of a file, and the scheduler has no shared paths
+to order stages by.
+
+The orchestrator holds every stage to this:
+
+- `pipeline/build-data-ownership.mjs` checks the graph as
+  `pipeline/build-data-graph.mjs` loads it. A path declared by two stages, or
+  one inside another's, and a stage that declares none, stop the build before
+  any stage runs. Only `sources` declares none (it rewrites `data/source`, not
+  build outputs), and so it runs alone, as does an `exclusive` stage. The two
+  registries are `exclusive`: they rewrite checked-in code that other stages
+  import.
+- After each stage runs, the runner compares `data/build` and `public/data`
+  with how they were when it began. A file the stage changed or removed
+  outside its declared paths fails the build with the files named, and the
+  stage is not recorded, so it runs again. A file inside the paths of a stage
+  that ran at the same time is not blamed on either, since neither can be told
+  from the other. `pnpm data:build --verify-outputs` (or
+  `DATA_BUILD_VERIFY_OUTPUTS=1`; `--check-writes` is the old name) runs one
+  stage at a time, so every change is attributed, adds the raw sources to what
+  is compared, and checks the hashes described below.
+
+A new stage declares the files and folders it writes, or the graph does not
+load. `pipeline/tests/` and `tests/scripts/` cover both rules on a fixture
+graph and on the real one. A full data build needs the pinned source release,
+so CI runs only the unit tests that exercise it on a fixture graph. They cover
+the parity checks too, and a pipeline run with `CI` set (a fixture build, once
+CI has one) runs them and fails on a mismatch.
+
+A stage's outputs are keyed by its inputs. Its record in `.cache/data-build/`
+is valid while the hash of its command, code, raw inputs and the output digests
+of the stages it reads is unchanged and its own files are as recorded, and its
+digest is the hash of those files alone. A stage that rewrites the same bytes
+leaves its digest unchanged, and what reads it stays cached.
 
 ### Parity checks
 
@@ -245,7 +269,8 @@ JSON, and a sample of the postcode areas against a live lookup. These parity
 checks are separate stages (`check: true` in the graph, built with `checkStage`
 in `pipeline/build-data-graph.mjs`), so the stage that produces an output writes
 it once and computes no second copy. Each check reads outputs, writes only a
-stamp in `data/build/.stamps/`, and nothing depends on it.
+stamp in `data/build/.stamps/` (the record that it passed), and nothing depends
+on it.
 
 | Check stage               | Reads                                                | Compares                                                                        |
 | ------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -274,7 +299,8 @@ again next time. `--checks --no-cache` runs them all regardless.
 published files. The parity checks read build intermediates that the website
 server may not hold, and a failed check is no reason to regenerate data.
 
-`--verify` is not `--verify-outputs`: the latter audits what each stage writes.
+`--verify` is not `--verify-outputs`: the latter attributes every change to one
+stage and checks the output hashes.
 `statistics-read-path` derives selectors from declared rules and the
 statistics registry. In particular, datasets partitioned by code year name
 that rule explicitly; fixture tests cover it.
@@ -335,8 +361,9 @@ without declared paths is tracked across both trees and runs alone.
 
 A stage's output digest hashes the contents of its output files, not their
 mtimes. After a stage runs, the runner stats only the paths the stage declares
-(`stageWrites`, `outputs`, `requiredOutputs`), never the whole tree; only a stage
-with no declared paths (`sources`) scans both trees. Each recorded file stores
+(`writes`, `outputs`, `requiredOutputs`) to record its files; only a stage with no
+declared paths (`sources`) scans both trees. The check that it changed nothing
+else scans the output trees once more, which takes a few tens of milliseconds. Each recorded file stores
 `{size, mtimeMs, ino, sha256}`. A file is hashed, in streamed chunks, only when
 no hash can be trusted for it. Three sources are trusted, each only for a file
 whose size, mtime and inode all match the stat taken with the hash:
@@ -355,12 +382,8 @@ whose size, mtime and inode all match the stat taken with the hash:
   changed after its hash was recorded no longer matches and is hashed again.
 
 The skip check on later builds compares size and mtime alone. SQLite files are
-still hashed as files. The content stamps in `stageStamp.ts` keep standing in for
-the shared `atlas-cache.sqlite`, which several stages write. A stage that rewrites
-identical bytes therefore keeps its digest, and its dependants are skipped (early
-cutoff). If it instead restores a shared file that a downstream stage had
-changed, such as `atlas.sqlite`, that downstream stage is invalidated and
-rebuilds.
+hashed as files. A stage that rewrites identical bytes therefore keeps its
+digest, and its dependants are skipped (early cutoff).
 
 `pipeline/build-data-code.mjs` uses esbuild's dependency metadata to trace local
 imports, including workspace package sources, without executing builders.
@@ -393,43 +416,45 @@ deleting or editing one reruns its stage. Their definitions are imported by
 path, so the whole definition directories are `codeInputs`. After a registry
 writes code, the code hashes of later stages are computed again.
 
-`place-index`, `area-search-index` and `postcode-counts` add tables to
-`atlas-cache.sqlite`, which also holds other stages' tables. A build copies the
-file once for all three. The first of them to write copies the published cache
-to a working copy, `data/build/.atlas-cache.sqlite.work`, the others change that
-copy where it is (the runner sets `ATLAS_CACHE_WORK=1` for its stages, and
-stages run by hand still publish their own change), and `atlas-cache-stamp`
-vacuums it once, with `VACUUM INTO` a temporary file beside the cache, and
-renames that over the cache. The stages list the cache as
-`shared`, so its bytes are not their output, and the working copy as `scratch`,
-a path they may write that is neither tracked as an output nor required to
-exist. Both make them run one at a time. Each leaves a stamp at
-`data/build/.stamps/<stage>.json` holding the cache component's generation and
-a hash of the stage's own tables (and, for `postcode-counts`, its `payloads`
-row), plus the id of the working copy it wrote to. The stamp is the stage's
-required output and its digest, so the stage's readers rerun only when its
-tables change, and the id makes it new in any build that made a copy, so the
-publishing stage always runs after a writer does. `--only` on one of the three
-also selects `atlas-cache-stamp` (`finishedBy`), and `atlas-release-initial`
-waits for it, because the published cache is the only one other stages read.
-`atlas-sqlite` writes its projection and dataset components into one copy of the
-published cache and renames it at once, since stages that need those run before
-the late stages finish. It clears the stamps and any working copy, which reruns
-all four.
+### The atlas cache
 
-A build that stops leaves no half-published cache: only the rename publishes,
-and the working copy is discarded, never resumed. The runner removes a leftover
-copy before it looks at any stage, and again when a stage fails, together with
-the stamps of the stages that wrote to it (found by the copy's id; all of them
-if the copy cannot be read). A stage that fails inside the copy does the same
-at once, as its pages cannot be rolled back. A stage with no stamp reruns, so
-a cached stage never leaves the published cache without its tables. Stages
-stamped by earlier builds keep their stamps, as the next copy starts from the
-published cache that holds their tables. `atlas-cache-stamp` owns the
-published file's bytes, so any other change to it reruns that stage. Its
-script checks that the cache it is about to publish holds each stage's
-component for the current `atlas.sqlite`, and fails with the stale stage's
-stamp removed if it does not.
+`atlas-cache.sqlite` holds five components, and each is built by one stage into
+a file only that stage writes, in `data/build/atlas-cache-parts/`:
+
+| Part                     | Component         | Built by            |
+| ------------------------ | ----------------- | ------------------- |
+| `projections.sqlite`     | `projections`     | `atlas-sqlite`      |
+| `datasets.sqlite`        | `datasets`        | `atlas-sqlite`      |
+| `place-index.sqlite`     | `place-index`     | `place-index`       |
+| `area-search.sqlite`     | `area-search`     | `area-search-index` |
+| `postcode-counts.sqlite` | `postcode-counts` | `postcode-counts`   |
+
+A part holds the component's tables, its `payloads` rows, its row of
+`cache_generation` and `meta.cacheVersion`. It is built beside its place and
+renamed, so a reader sees the old part or the new one. Its generation is that of
+the canonical inputs it was built from: `atlas-sqlite` builds from
+`atlas-base.sqlite`, since `atlas.sqlite` does not exist yet, and the other
+stages from `atlas.sqlite`. A part is the stage's output, so the stage's
+readers rerun only when its tables change, and a stage that is skipped keeps its
+part.
+
+`assemble-cache` is the only stage that writes `atlas-cache.sqlite`. It checks
+that each part holds its component for the `atlas.sqlite` it finds (and fails
+naming the part if not), copies the parts into a new file in the order above,
+adds the content hash of `atlas.sqlite` as `meta.atlas-sqlite-content-hash`,
+vacuums it with `VACUUM INTO` a temporary file beside the cache and renames that
+over the cache. Nothing of an earlier cache is carried over, so a cache from
+another `cacheVersion` needs no special case. A build that stops leaves the
+published cache as it was, because only that rename publishes.
+
+Stages that read a component before the assembly read its part: `requireAtlasCache`
+in `packages/atlas-db` returns the part when there is one built for the current
+`atlas.sqlite`, else the cache, and `atlasCacheFile` does so for the dataset
+payloads, which readers check row by row. A release holds only the assembled
+cache, so servers read that. `assemble-cache` waits for `atlas-sqlite`,
+`assemble-atlas` and the three late stages, so what reads the assembled cache
+(`documents`, `verify-dataset-payloads`) depends on it.
+
 `pipeline/build-data-cache.mjs` stores the cache in
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
