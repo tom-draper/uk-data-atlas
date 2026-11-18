@@ -32,7 +32,7 @@ test("unemployment partitions use canonical identities and matching hashes", () 
 		))
 			data[code] = {
 				derivedFromPredecessors: predecessors,
-			} as (typeof data)[string];
+			} as unknown as (typeof data)[string];
 		writeFileSync(
 			path,
 			JSON.stringify({
