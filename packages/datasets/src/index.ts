@@ -16,7 +16,7 @@ export * from "./politics/general-elections/general-election/dataset.ts";
 export * from "./politics/local-elections/local-election/dataset.ts";
 export * from "./data/election/pollingDays.ts";
 export * from "./infrastructure/digital-connectivity/broadband/aggregate.ts";
-export * from "./data/car-availability/loader.ts";
+export * from "./data/car-availability/source.ts";
 export * from "./health/social-care/adult-social-care-activity/dataset.ts";
 export * from "./health/social-care/adult-social-care-outcomes/dataset.ts";
 export * from "./economy/business/business-activity/dataset.ts";

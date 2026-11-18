@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadCarAvailability } from "@uk-data-atlas/datasets";
+import { carAvailabilityStatisticsParts } from "@uk-data-atlas/datasets";
 import { aggregateCarAvailability } from "@uk-data-atlas/datasets";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
@@ -29,10 +29,21 @@ const csvFor = (codes: readonly string[]) =>
 
 const read = async () => csvFor(["E06000001", ...ALL_PREDECESSORS]);
 
-describe("loadCarAvailability", () => {
+/** The part's households, by the vehicles they have, for one authority. */
+const households = async (code: string, source = read) => {
+	const [part] = await carAvailabilityStatisticsParts(source);
+	const record = part!.records.find((candidate) => candidate.code === code)!;
+	return Object.fromEntries(
+		record.values.map(({ members, value }) => [
+			members!["cars-or-vans"],
+			value,
+		]),
+	);
+};
+
+describe("carAvailabilityStatisticsParts", () => {
 	it("counts households by how many vehicles they have", async () => {
-		const { breakdown } = (await loadCarAvailability(read))[2021].data
-			.E06000001;
+		const breakdown = await households("E06000001");
 
 		expect(breakdown.noCar).toBe(250);
 		expect(breakdown.oneCar).toBe(400);
@@ -41,39 +52,47 @@ describe("loadCarAvailability", () => {
 	});
 
 	it("keeps the does-not-apply row out of the household total", async () => {
-		const { breakdown } = (await loadCarAvailability(read))[2021].data
-			.E06000001;
+		const breakdown = await households("E06000001");
 
 		expect(breakdown.total).toBe(1000);
-		expect((breakdown.noCar / breakdown.total) * 100).toBeCloseTo(25);
+		expect((breakdown.noCar! / breakdown.total!) * 100).toBeCloseTo(25);
 	});
 
 	it("builds the 2023 authorities the census predates by summing predecessors", async () => {
-		const datasets = await loadCarAvailability(read);
-		const somerset = datasets[2021].data.E06000066;
+		const [part] = await carAvailabilityStatisticsParts(read);
+		const breakdown = await households("E06000066");
 
-		expect(somerset.breakdown.noCar).toBe(
+		expect(part!.key).toBe("2021");
+		expect(breakdown.noCar).toBe(
 			250 * APRIL_2023_LAD_MERGERS.E06000066.predecessors.length,
 		);
-		expect(datasets[2021]).toMatchObject({
-			id: "car-availability2021",
-			type: "car-availability",
-			boundaryType: "localAuthority",
-			boundaryYear: 2025,
-		});
 	});
 
 	it("refuses to invent a merged authority from incomplete predecessors", async () => {
 		const [dropped, ...rest] = ALL_PREDECESSORS;
 		await expect(
-			loadCarAvailability(async () => csvFor(rest)),
+			carAvailabilityStatisticsParts(async () => csvFor(rest)),
 		).rejects.toThrow(`Missing car availability predecessor ${dropped}`);
 	});
 });
 
 describe("aggregateCarAvailability", () => {
 	it("sums households across an area, counting an authority once", async () => {
-		const datasets = await loadCarAvailability(read);
+		const data = Object.fromEntries([
+			[
+				"E06000001",
+				{
+					ladCode: "E06000001",
+					breakdown: {
+						noCar: 250,
+						oneCar: 400,
+						twoCars: 250,
+						threeOrMoreCars: 100,
+						total: 1000,
+					},
+				},
+			],
+		]);
 		const features = [
 			{ properties: { LAD25CD: "E06000001" } },
 			{ properties: { LAD25CD: "E06000001" } },
@@ -82,7 +101,7 @@ describe("aggregateCarAvailability", () => {
 		const { breakdown } = aggregateCarAvailability(
 			collectBoundaryRecords(
 				features as never,
-				datasets[2021].data,
+				data,
 				["LAD25CD"] as never,
 				true,
 			),

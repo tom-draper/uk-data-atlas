@@ -1,5 +1,8 @@
 import type { CarAvailabilityDataset } from "../../../types/carAvailability.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -7,7 +10,7 @@ import {
 	districts2021,
 } from "../../../data/census/districts.ts";
 import { aggregateCarAvailability } from "../../../data/car-availability/aggregate.ts";
-import { loadCarAvailability } from "../../../data/car-availability/loader.ts";
+import { carAvailabilityStatisticsParts } from "../../../data/car-availability/source.ts";
 
 export const carAvailability = defineDataset<CarAvailabilityDataset>({
 	id: "car-availability",
@@ -31,8 +34,12 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["ladCode", "breakdown"],
 	},
-	load: ({ text }) => loadCarAvailability(text),
+	load: noCompiledPayload<CarAvailabilityDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => carAvailabilityStatisticsParts(text),
+		},
 		payload: {
 			parts: () => [
 				{

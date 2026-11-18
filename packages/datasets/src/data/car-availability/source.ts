@@ -1,7 +1,5 @@
-import type {
-	CarAvailabilityBreakdown,
-	CarAvailabilityDataset,
-} from "../../types/carAvailability.ts";
+import type { CarAvailabilityBreakdown } from "../../types/carAvailability.ts";
+import type { DirectPart } from "../../declaration/statistics.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
@@ -43,9 +41,15 @@ export function addMergedCarAvailabilityAuthorities(
 	addMergedCountAuthorities(data, emptyBreakdown, "car availability");
 }
 
-export async function loadCarAvailability(
+/**
+ * Census 2021 car or van availability (TS045) by local authority, as the
+ * single part `2021`: households with each number of vehicles, and in total.
+ * Authorities that merged in 2023 are given the sum of their predecessors, as
+ * the table has not been published on the new codes.
+ */
+export async function carAvailabilityStatisticsParts(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, CarAvailabilityDataset>> {
+): Promise<DirectPart[]> {
 	const { data } = await parseCsv(
 		await read(sourceDir("car-availability", "TS045-2021-4.csv")),
 		{ header: true },
@@ -76,25 +80,17 @@ export async function loadCarAvailability(
 	}
 	addMergedCarAvailabilityAuthorities(laData);
 
-	const records: CarAvailabilityDataset["data"] = {};
-	for (const [ladCode, breakdown] of Object.entries(laData))
-		records[ladCode] = { ladCode, breakdown };
-
-	return {
-		2021: {
-			id: "car-availability2021",
-			type: "car-availability",
-			year: 2021,
-			boundaryType: "localAuthority",
-			boundaryYear: 2025,
-			data: records,
-			metadata: {
-				source: "Office for National Statistics. Census 2021: Car or van availability, England and Wales. TS045.",
-				notes: [
-					"England and Wales only. Shares are of households, not of people.",
-					"The top category is open-ended, so the table gives no vehicle count.",
-				],
-			},
+	return [
+		{
+			key: "2021",
+			records: Object.entries(laData).map(([code, breakdown]) => ({
+				code,
+				values: Object.entries(breakdown).map(([key, value]) => ({
+					measure: "households",
+					members: { "cars-or-vans": key },
+					value,
+				})),
+			})),
 		},
-	};
+	];
 }
