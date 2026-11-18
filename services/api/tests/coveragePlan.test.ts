@@ -3,6 +3,10 @@ import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import { coveragePlanEvidence } from "../../../pipeline/src/evidence/measureReports";
 import { coveragePlan } from "@uk-data-atlas/catalogue/node";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
@@ -65,16 +69,34 @@ const crosswalk: PropertyCrosswalkArtifact = {
 	})),
 };
 
+const population = dataCatalog.measures.find(
+	(measure) => measure.id === "population",
+)!;
+const observations = [
+	populationObservations,
+	populationLocalAuthorityObservations,
+	...measureObservations,
+];
+registerSeriesObservations(
+	observations,
+	new Map([
+		[
+			measureSeriesSourceKey(population.series!, population.sources[0]!),
+			populationObservations,
+		],
+		[
+			measureSeriesSourceKey(population.series!, population.sources[1]!),
+			populationLocalAuthorityObservations,
+		],
+	]),
+);
+
 const context = testContext({
 	boundaryRegistry: registry,
 	areaLookup,
 	dataCatalog,
 	measureCompatibilityInventory,
-	measureObservations: [
-		populationObservations,
-		populationLocalAuthorityObservations,
-		...measureObservations,
-	],
+	measureObservations: observations,
 	crosswalkLookup: new Map([[crosswalk.id, crosswalk]]),
 	crosswalkInventory: {
 		schemaVersion: 1,
@@ -94,10 +116,6 @@ const context = testContext({
 		],
 	} satisfies CrosswalkInventory,
 });
-
-const population = dataCatalog.measures.find(
-	(measure) => measure.id === "population",
-)!;
 
 test("answers each country on its own, and names the one with no source", () => {
 	const plan = coveragePlan(context, population, {
