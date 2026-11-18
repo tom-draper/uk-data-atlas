@@ -138,5 +138,9 @@
 	"housing-tenure": {
 		"sha256": "8934fdbc11a7d6107e9262e914050c7451351220c7b0871541296a8265e93027",
 		"bytes": 7153907
+	},
+	"public-health": {
+		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
+		"bytes": 35992
 	}
 }

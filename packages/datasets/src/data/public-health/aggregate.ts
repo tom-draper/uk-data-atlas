@@ -1,4 +1,4 @@
-import { PUBLIC_HEALTH_MEASURES, type PublicHealthRecord } from "./loader.ts";
+import { PUBLIC_HEALTH_MEASURES, type PublicHealthRecord } from "./measures.ts";
 
 /** Regional summaries are unweighted means of the authorities' estimates. */
 export function averagePublicHealth(
