@@ -6,25 +6,22 @@ import {
 	readdirSync,
 	readFileSync,
 	rmSync,
-	statSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { onTestFinished, test, vi } from "vitest";
-import { CACHE_VERSION } from "@uk-data-atlas/atlas-db";
+import { onTestFinished, test } from "vitest";
+import { atlasCachePartPath, CACHE_VERSION } from "@uk-data-atlas/atlas-db";
 import {
-	ATLAS_CACHE_WORK_ENV,
 	atlasCacheWorkPath,
 	discardAtlasCacheWork,
-	publishAtlasCache,
 	publishAtlasCacheSteps,
-	publishAtlasCacheWork,
-	writeCachePart,
 	publishCacheTables,
 	stageStampPath,
-	stampCacheStage,
+	writeCachePart,
+	writeCacheTables,
+	writeStageStamp,
 } from "../../src/storage";
 import {
 	checkStagedComponents,
@@ -33,10 +30,7 @@ import {
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));
-	onTestFinished(() => {
-		vi.unstubAllEnvs();
-		rmSync(root, { recursive: true, force: true });
-	});
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
 	canonical.exec(
@@ -54,32 +48,24 @@ function fixture() {
 	canonical.close();
 	const published = join(root, "data/build/atlas-cache.sqlite");
 	const work = atlasCacheWorkPath(root);
-	const place = (name = "Leeds") => {
-		publishCacheTables(root, "place-index", {
+	const place = (name = "Leeds") =>
+		writeCacheTables(root, "place-index", {
 			place_names: { columns: ["name TEXT"], rows: [[name]] },
 		});
-		return stampCacheStage(root, {
-			stage: "place-index",
-			component: "place-index",
-			tables: ["place_names"],
-		});
-	};
-	const search = (code = "E01") => {
-		publishCacheTables(root, "area-search", {
+	const search = (code = "E01") =>
+		writeCacheTables(root, "area-search", {
 			area_search_codes: { columns: ["code TEXT"], rows: [[code]] },
 		});
-		return stampCacheStage(root, {
-			stage: "area-search-index",
-			component: "area-search",
-			tables: ["area_search_codes"],
+	const counts = () =>
+		writeCacheTables(root, "postcode-counts", {
+			postcode_counts: { columns: ["code TEXT"], rows: [["A"]] },
 		});
-	};
 	const tablesIn = (path: string) => {
 		const database = new DatabaseSync(path, { readOnly: true });
 		try {
 			return database
 				.prepare(
-					"SELECT name FROM sqlite_schema WHERE type = 'table' AND name IN ('place_names', 'area_search_codes') ORDER BY name",
+					"SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT IN ('meta', 'payloads', 'cache_generation') ORDER BY name",
 				)
 				.all()
 				.map((row) => String(row.name));
@@ -87,175 +73,117 @@ function fixture() {
 			database.close();
 		}
 	};
-	const stamp = (stage: string) =>
-		JSON.parse(readFileSync(stageStampPath(root, stage), "utf8")) as Record<
-			string,
-			string
-		>;
-	return { root, published, work, place, search, tablesIn, stamp };
+	return { root, published, work, place, search, counts, tablesIn };
 }
 
-test("run by hand, a cache stage publishes its own change", () => {
-	const { published, work, place, tablesIn } = fixture();
-	place();
-	assert.deepEqual(tablesIn(published), ["place_names"]);
-	assert.equal(existsSync(work), false);
-});
+const temporaryFiles = (directory: string) =>
+	readdirSync(directory).filter((name) => name.endsWith(".tmp"));
 
-test("in a data build, stages share one working copy and leave the published cache alone", () => {
-	const { root, published, work, place, search, tablesIn } = fixture();
-	place();
-	const before = readFileSync(published);
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
+test("a stage's part holds its component, the shared tables and nothing of any other stage", () => {
+	const { root, place, search, tablesIn } = fixture();
+	const part = place();
+	assert.equal(part, atlasCachePartPath(root, "place-index"));
 	search();
-	assert.deepEqual(readFileSync(published), before);
-	assert.deepEqual(tablesIn(published), ["place_names"]);
-	// The working copy started from the published file, so it has both.
-	assert.deepEqual(tablesIn(work), ["area_search_codes", "place_names"]);
-	const created = statSync(work).ino;
-	place("York");
-	assert.equal(statSync(work).ino, created);
-	assert.deepEqual(readFileSync(published), before);
-
-	assert.equal(publishAtlasCacheWork(root), true);
-	assert.equal(existsSync(work), false);
-	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
-	const cache = new DatabaseSync(published, { readOnly: true });
+	assert.deepEqual(tablesIn(part), ["place_names"]);
+	const database = new DatabaseSync(part, { readOnly: true });
 	try {
-		assert.equal(
-			cache.prepare("SELECT name FROM place_names").get()?.name,
-			"York",
+		assert.deepEqual(
+			database
+				.prepare("SELECT key, value FROM meta")
+				.all()
+				.map((row) => [row.key, row.value]),
+			[["cacheVersion", String(CACHE_VERSION)]],
 		);
-		// The id that marks the copy does not outlive it.
-		assert.equal(
-			cache
-				.prepare(
-					"SELECT value FROM meta WHERE key = 'atlas-cache-work'",
-				)
-				.get(),
-			undefined,
+		assert.deepEqual(
+			database
+				.prepare("SELECT component FROM cache_generation")
+				.all()
+				.map((row) => row.component),
+			["place-index"],
 		);
 	} finally {
-		cache.close();
+		database.close();
 	}
-	assert.equal(publishAtlasCacheWork(root), false);
+	// Writing the stage's part again replaces it, and touches no other.
+	const other = readFileSync(atlasCachePartPath(root, "area-search"));
+	place("York");
+	assert.deepEqual(
+		readFileSync(atlasCachePartPath(root, "area-search")),
+		other,
+	);
+	const again = new DatabaseSync(part, { readOnly: true });
+	try {
+		assert.deepEqual(
+			again
+				.prepare("SELECT name FROM place_names")
+				.all()
+				.map((row) => row.name),
+			["York"],
+		);
+	} finally {
+		again.close();
+	}
 });
 
-test("a stage's stamp changes with each working copy even when its tables do not", () => {
-	const { root, place, stamp } = fixture();
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
-	place();
-	const first = stamp("place-index");
-	place();
-	// Same copy, same id: the stage reran inside one build.
-	assert.deepEqual(stamp("place-index"), first);
-	publishAtlasCacheWork(root);
-	place();
-	const third = stamp("place-index");
-	assert.equal(third.content, first.content);
-	assert.notEqual(third.session, first.session);
-});
-
-test("a stage that fails drops the working copy and never touches the published cache", () => {
-	const { root, published, work, place, search, tablesIn } = fixture();
-	place();
-	const before = readFileSync(published);
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
-	search();
-	assert.equal(existsSync(work), true);
+test("a stage that fails leaves its earlier part as it was, and no temporary file", () => {
+	const { root, place } = fixture();
+	const part = place();
+	const before = readFileSync(part);
 	assert.throws(
 		() =>
-			publishAtlasCache(root, "area-search", (database) => {
-				database.exec("CREATE TABLE half (x TEXT)");
-				throw new Error("stage failed");
+			writeCachePart(root, {
+				component: "place-index",
+				write: (database) => {
+					database.exec("CREATE TABLE half (x TEXT)");
+					throw new Error("stage failed");
+				},
 			}),
 		/stage failed/,
 	);
-	assert.equal(existsSync(work), false);
-	assert.deepEqual(readFileSync(published), before);
-	// The stamp of the stage that wrote to the copy goes with it. The one made
-	// by hand, before the build, held its tables in the published file.
-	assert.equal(existsSync(stageStampPath(root, "area-search-index")), false);
-	assert.equal(existsSync(stageStampPath(root, "place-index")), true);
-	// The next stage starts again from the published file.
-	publishAtlasCache(root, "place-index", (database) =>
-		database.exec(
-			"DROP TABLE IF EXISTS place_names; CREATE TABLE place_names (name TEXT)",
-		),
+	assert.deepEqual(readFileSync(part), before);
+	assert.deepEqual(
+		temporaryFiles(join(root, "data/build/atlas-cache-parts")),
+		[],
 	);
-	assert.deepEqual(tablesIn(work), ["place_names"]);
 });
 
-test("publishing refuses a stamp whose tables were lost with a working copy", () => {
-	const { root, published, work, place, search } = fixture();
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
-	place();
-	search();
-	// The copy that held both is lost; a later stage starts a new one.
-	rmSync(work);
-	place("York");
+test("a part is refused when the canonical inputs change while it is written", () => {
+	const { root } = fixture();
 	assert.throws(
-		() => checkStagedComponents(root),
-		/no current area-search tables/,
+		() =>
+			writeCachePart(root, {
+				component: "place-index",
+				write: () => {
+					const canonical = new DatabaseSync(
+						join(root, "data/build/atlas.sqlite"),
+					);
+					canonical.exec(
+						"UPDATE area_inventory_metadata SET content_hash = 'areas-2'",
+					);
+					canonical.close();
+				},
+			}),
+		/Canonical cache inputs changed/,
 	);
-	assert.equal(existsSync(stageStampPath(root, "area-search-index")), false);
-	assert.equal(existsSync(published), false);
+	assert.equal(existsSync(atlasCachePartPath(root, "place-index")), false);
 });
 
-test("a copy left by a build that stopped is discarded with the stamps that vouch for it", () => {
-	const { root, published, work, place, search, stamp } = fixture();
-	place();
-	const before = readFileSync(published);
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
-	search();
-	assert.ok(stamp("area-search-index"));
-	assert.equal(discardAtlasCacheWork(root), true);
-	assert.equal(existsSync(work), false);
-	assert.equal(existsSync(stageStampPath(root, "area-search-index")), false);
-	// A stamp from before the copy was made vouches for published tables.
-	assert.ok(stamp("place-index"));
-	assert.deepEqual(readFileSync(published), before);
-	// A copy that cannot be read takes every stamp with it.
-	search();
-	writeFileSync(work, "not a database");
-	assert.equal(discardAtlasCacheWork(root), true);
-	assert.equal(existsSync(stageStampPath(root, "place-index")), false);
-	assert.equal(existsSync(stageStampPath(root, "area-search-index")), false);
-	// With no copy there is nothing to discard, and stamps are kept.
-	vi.unstubAllEnvs();
-	place();
-	assert.equal(discardAtlasCacheWork(root), false);
-	assert.ok(stamp("place-index"));
-});
-
-test("stamping publishes the working copy once, with the content hash", () => {
-	const { root, published, work, place, search, tablesIn, stamp } = fixture();
-	vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
+test("stamping copies every part into one working copy and publishes it once, with the content hash", () => {
+	const { root, published, work, place, search, counts, tablesIn } =
+		fixture();
 	place();
 	search();
-	assert.equal(existsSync(published), false);
-	// Only the two cache stages are staged here; the third is not under test.
-	assert.throws(() => checkStagedComponents(root), /postcode-counts/);
-	writeCachePart(root, {
-		component: "postcode-counts",
-		write: (database) =>
-			database.exec("CREATE TABLE postcode_counts (x TEXT)"),
-	});
+	counts();
 	checkStagedComponents(root);
 	const hash = stampAtlasCache(root);
 	assert.equal(existsSync(work), false);
-	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
+	assert.deepEqual(tablesIn(published), [
+		"area_search_codes",
+		"place_names",
+		"postcode_counts",
+	]);
 	const cache = new DatabaseSync(published, { readOnly: true });
 	try {
-		// The stage that owns the part wrote it, and the stamp copied it in.
-		assert.equal(
-			cache
-				.prepare(
-					"SELECT 1 AS found FROM sqlite_schema WHERE name = 'postcode_counts'",
-				)
-				.get()?.found,
-			1,
-		);
 		assert.equal(
 			cache
 				.prepare(
@@ -264,10 +192,55 @@ test("stamping publishes the working copy once, with the content hash", () => {
 				.get()?.value,
 			hash,
 		);
+		assert.deepEqual(
+			cache
+				.prepare(
+					"SELECT component FROM cache_generation ORDER BY component",
+				)
+				.all()
+				.map((row) => row.component),
+			["area-search", "place-index", "postcode-counts"],
+		);
 	} finally {
 		cache.close();
 	}
-	assert.equal(stamp("atlas-cache-stamp")["atlas-sqlite-content-hash"], hash);
+	assert.deepEqual(
+		JSON.parse(
+			readFileSync(stageStampPath(root, "atlas-cache-stamp"), "utf8"),
+		),
+		{ "atlas-sqlite-content-hash": hash },
+	);
+	assert.deepEqual(temporaryFiles(join(root, "data/build")), []);
+});
+
+test("stamping is refused for a part that is missing or was built for other inputs", () => {
+	const { root, place, search, counts } = fixture();
+	place();
+	search();
+	assert.throws(() => checkStagedComponents(root), /postcode-counts/);
+	counts();
+	checkStagedComponents(root);
+	rmSync(atlasCachePartPath(root, "area-search"));
+	assert.throws(() => checkStagedComponents(root), /no current area-search/);
+	search();
+	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
+	canonical.exec(
+		"UPDATE payloads SET payload = 'releases-2' WHERE id = 'boundary-releases'",
+	);
+	canonical.close();
+	assert.throws(() => checkStagedComponents(root), /no current place-index/);
+});
+
+test("a working copy left by a build that stopped is discarded", () => {
+	const { root, published, work, place, search, counts } = fixture();
+	place();
+	search();
+	counts();
+	assert.equal(discardAtlasCacheWork(root), false);
+	writeFileSync(work, "half a copy");
+	assert.equal(discardAtlasCacheWork(root), true);
+	assert.equal(existsSync(work), false);
+	assert.equal(existsSync(published), false);
 });
 
 test("one copy takes several components and publishes them together", () => {
@@ -286,7 +259,7 @@ test("one copy takes several components and publishes them together", () => {
 					database.exec("CREATE TABLE area_search_codes (code TEXT)"),
 			},
 		],
-		{ defer: false, vacuum: false },
+		{ vacuum: false },
 	);
 	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
 	const cache = new DatabaseSync(published, { readOnly: true });
@@ -321,7 +294,7 @@ const oldCaches = [
 
 for (const [label, version] of oldCaches) {
 	test(`a cache stored with ${label} is rebuilt from an empty file`, () => {
-		const { published, work, place, search, tablesIn } = fixture();
+		const { root, published, tablesIn } = fixture();
 		const old = new DatabaseSync(published);
 		old.exec(
 			[
@@ -334,7 +307,9 @@ for (const [label, version] of oldCaches) {
 			].join(";"),
 		);
 		old.close();
-		place();
+		publishCacheTables(root, "place-index", {
+			place_names: { columns: ["name TEXT"], rows: [["Leeds"]] },
+		});
 		assert.deepEqual(tablesIn(published), ["place_names"]);
 		const cache = new DatabaseSync(published, { readOnly: true });
 		try {
@@ -357,40 +332,17 @@ for (const [label, version] of oldCaches) {
 		} finally {
 			cache.close();
 		}
-		// The build's working copy starts from an empty file the same way.
-		rmSync(published);
-		const stale = new DatabaseSync(published);
-		stale.exec(
-			[
-				"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID",
-				version,
-				"CREATE TABLE leftover (code TEXT)",
-			].join(";"),
-		);
-		stale.close();
-		vi.stubEnv(ATLAS_CACHE_WORK_ENV, "1");
-		search();
-		const copy = new DatabaseSync(work, { readOnly: true });
-		try {
-			assert.equal(
-				copy
-					.prepare(
-						"SELECT count(*) AS n FROM sqlite_schema WHERE name = 'leftover'",
-					)
-					.get()?.n,
-				0,
-			);
-		} finally {
-			copy.close();
-		}
-		assert.deepEqual(tablesIn(work), ["area_search_codes"]);
 	});
 }
 
 test("a cache stored with the current version keeps its other components", () => {
-	const { published, place, search, tablesIn } = fixture();
-	place();
-	search();
+	const { root, published, tablesIn } = fixture();
+	publishCacheTables(root, "place-index", {
+		place_names: { columns: ["name TEXT"], rows: [["Leeds"]] },
+	});
+	publishCacheTables(root, "area-search", {
+		area_search_codes: { columns: ["code TEXT"], rows: [["E01"]] },
+	});
 	const cache = new DatabaseSync(published, { readOnly: true });
 	try {
 		assert.equal(
@@ -405,5 +357,13 @@ test("a cache stored with the current version keeps its other components", () =>
 	assert.deepEqual(tablesIn(published), ["area_search_codes", "place_names"]);
 });
 
-const temporaryFiles = (directory: string) =>
-	readdirSync(directory).filter((name) => name.endsWith(".tmp"));
+test("a stamp is written in one step and replaced whole", () => {
+	const { root } = fixture();
+	writeStageStamp(root, "verify-x", { checked: "1" });
+	writeStageStamp(root, "verify-x", { checked: "2" });
+	assert.deepEqual(
+		JSON.parse(readFileSync(stageStampPath(root, "verify-x"), "utf8")),
+		{ checked: "2" },
+	);
+	assert.deepEqual(temporaryFiles(join(root, "data/build/.stamps")), []);
+});

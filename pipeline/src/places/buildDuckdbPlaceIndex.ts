@@ -1,7 +1,5 @@
 import { compileDuckdbPlaceIndex } from "./duckdbPlaceIndex.ts";
-import { rmSync } from "node:fs";
-import { join } from "node:path";
-import { publishCacheTables, stampCacheStage } from "../storage/index.ts";
+import { writeCacheTables } from "../storage/index.ts";
 
 import {
 	readAreaLookup,
@@ -11,7 +9,6 @@ import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "
 import { readGeographyCatalogue } from "@uk-data-atlas/catalogue/node";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "../storage/index.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const readBoundaryRegistry = (repositoryRoot: string) =>
 	readGeographyCatalogue<BoundaryRegistry>(
@@ -30,24 +27,7 @@ export const buildDuckdbPlaceIndex = async (repositoryRoot: string) => {
 		readBoundaryRegistry(repositoryRoot),
 	);
 	const tables = placeIndexTables(index);
-	const outputPath = publishCacheTables(
-		repositoryRoot,
-		"place-index",
-		tables,
-	);
-	stampCacheStage(repositoryRoot, {
-		stage: "place-index",
-		component: "place-index",
-		tables: Object.keys(tables),
-	});
-	for (const filename of [
-		"place-index.sqlite",
-		"place-index.json",
-		"place-index.json.gz",
-	])
-		rmSync(join(artifactDirectory(repositoryRoot), filename), {
-			force: true,
-		});
+	const outputPath = writeCacheTables(repositoryRoot, "place-index", tables);
 
 	return {
 		outputPath,

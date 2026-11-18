@@ -1,14 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
-import { planBuild } from "@/pipeline/build-data.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
-import { conflicts } from "@/pipeline/build-data-scheduler.mjs";
-import { ATLAS_CACHE_WORK } from "@/pipeline/src/storage/atlasCacheWork";
-import {
-	CACHE_STAGES,
-	stageStampPath,
-} from "@/pipeline/src/storage/stageStamp";
+import { stageStampPath } from "@/pipeline/src/storage/stageStamp";
 
 type Stage = {
 	name: string;
@@ -77,8 +71,6 @@ test("the shared databases name every stage that writes them", () => {
 	assert.deepEqual(writers("data/build/atlas.sqlite"), ["assemble-atlas"]);
 	assert.deepEqual(writers("data/build/atlas-cache.sqlite"), [
 		"atlas-sqlite",
-		"place-index",
-		"area-search-index",
 		"atlas-cache-stamp",
 	]);
 	assert.deepEqual(
@@ -106,67 +98,48 @@ test("the only stages that share a path are the cache writers and the two releas
 	assert.deepEqual(
 		[...shared].sort(),
 		[
-			"area-search-index",
 			"atlas-cache-stamp",
 			"atlas-release",
 			"atlas-release-initial",
 			"atlas-sqlite",
-			"place-index",
 		].sort(),
 	);
 });
 
-test("every cache stage tracks its own stamp, and the base build clears them", () => {
+test("each stage that builds a cache component writes a part of its own, which the stamp stage assembles", () => {
 	const find = (name: string) => {
 		const found = stages.find((stage) => stage.name === name);
 		assert.ok(found, name);
 		return found;
 	};
-	for (const name of CACHE_STAGES) {
-		const stamp = stageStampPath("", name);
-		const stage = find(name);
-		assert.equal(stage.cacheable, true, name);
-		assert.ok(stage.requiredOutputs?.includes(stamp), name);
-		assert.ok(find("atlas-sqlite").writes?.includes(stamp), name);
+	const parts = {
+		"place-index": "place-index",
+		"area-search-index": "area-search",
+		"postcode-counts": "postcode-counts",
+	};
+	for (const [name, component] of Object.entries(parts)) {
+		const part = `data/build/atlas-cache-parts/${component}.sqlite`;
+		assert.deepEqual(find(name).writes, [part], name);
+		assert.deepEqual(find(name).requiredOutputs, [part], name);
+		assert.equal(find(name).cacheable, true, name);
+		assert.ok(
+			find("atlas-cache-stamp").dependencies.includes(name),
+			`${name} is assembled`,
+		);
 	}
-	// The stages that add to the cache share it and its one working copy; the
-	// last one publishes the copy, so it owns the cache's bytes.
-	for (const name of ["place-index", "area-search-index"]) {
-		assert.deepEqual(find(name).shared, ["data/build/atlas-cache.sqlite"]);
-		assert.deepEqual(find(name).scratch, [ATLAS_CACHE_WORK]);
-		assert.equal(find(name).finishedBy, "atlas-cache-stamp");
-	}
-	assert.deepEqual(find("atlas-cache-stamp").shared, []);
-	assert.deepEqual(find("atlas-cache-stamp").scratch, [ATLAS_CACHE_WORK]);
 	assert.ok(
 		find("atlas-cache-stamp").requiredOutputs?.includes(
 			"data/build/atlas-cache.sqlite",
 		),
 	);
-	// Nothing reads the cache between the stages and the publish.
+	const stamp = stageStampPath("", "atlas-cache-stamp");
+	assert.ok(find("atlas-cache-stamp").requiredOutputs?.includes(stamp));
+	// Nothing reads the assembled cache before it is published.
 	assert.ok(
 		find("atlas-release-initial").dependencies.includes(
 			"atlas-cache-stamp",
 		),
 	);
-});
-
-test("building a cache stage also builds the stage that publishes its working copy", () => {
-	for (const name of ["place-index", "area-search-index"])
-		assert.ok(
-			planBuild(stages, undefined, [name]).some(
-				(stage: { name: string }) => stage.name === "atlas-cache-stamp",
-			),
-			name,
-		);
-});
-
-test("the base build and the cache stages never run at once", () => {
-	const named = (name: string) => stages.find((stage) => stage.name === name);
-	for (const name of ["place-index", "area-search-index"]) {
-		assert.ok(conflicts(named("atlas-sqlite"), named(name)), name);
-		assert.ok(conflicts(named("atlas-cache-stamp"), named(name)), name);
-	}
 });
 
 test("no stage is left uncacheable except the sources download", () => {

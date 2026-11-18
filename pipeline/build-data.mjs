@@ -19,10 +19,7 @@ import {
 	findCurrentStages,
 } from "./build-data-digests.mjs";
 import { createStageCache } from "./build-data-cache.mjs";
-import {
-	ATLAS_CACHE_WORK_ENV,
-	discardAtlasCacheWork,
-} from "./src/storage/atlasCacheWork.ts";
+import { discardAtlasCacheWork } from "./src/storage/atlasCacheWork.ts";
 import { OUTPUT_MANIFEST_ENV } from "./src/storage/outputManifest.ts";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
@@ -210,8 +207,6 @@ function executeStage(
 	delete env[OUTPUT_MANIFEST_ENV];
 	// Where the stage may note the hashes of files it hashed while writing.
 	if (outputManifest) env[OUTPUT_MANIFEST_ENV] = outputManifest;
-	// Stages add to shared files in a working copy, which the build publishes.
-	env[ATLAS_CACHE_WORK_ENV] = "1";
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
 	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;
 	return new Promise((resolveStatus, reject) => {

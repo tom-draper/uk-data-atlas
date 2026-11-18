@@ -1,10 +1,7 @@
-import { rmSync } from "node:fs";
-import { join } from "node:path";
 import { areaSearchIndexTables } from "../storage/index.ts";
 import { readAreaLookup, readSqliteAreaInventory } from "@uk-data-atlas/areas";
 
-import { publishCacheTables, stampCacheStage } from "../storage/index.ts";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import { writeCacheTables } from "../storage/index.ts";
 import { compileDuckdbAreaSearchIndex } from "./duckdbAreaSearch.ts";
 
 export async function buildDuckdbAreaSearchIndex(root: string) {
@@ -14,18 +11,7 @@ export async function buildDuckdbAreaSearchIndex(root: string) {
 		inventory.contentHash,
 	);
 	const tables = areaSearchIndexTables(index);
-	const outputPath = publishCacheTables(root, "area-search", tables);
-	stampCacheStage(root, {
-		stage: "area-search-index",
-		component: "area-search",
-		tables: Object.keys(tables),
-	});
-	for (const name of [
-		"area-search-index.sqlite",
-		"area-search-index.json",
-		"area-search-index.json.gz",
-	])
-		rmSync(join(artifactDirectory(root), name), { force: true });
+	const outputPath = writeCacheTables(root, "area-search", tables);
 	return {
 		outputPath,
 		areas: index.releases.reduce(

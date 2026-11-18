@@ -15,12 +15,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { publishAtlasCacheSteps } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
-import {
-	CACHE_STAGES,
-	datasetPayloadStep,
-	discardAtlasCacheWork,
-	removeStageStamps,
-} from "../storage/index.ts";
+import { datasetPayloadStep, discardAtlasCacheWork } from "../storage/index.ts";
 import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
 import {
 	type LocationProjectionInventory,
@@ -183,10 +178,7 @@ export const buildAtlasSqlite = (
 ) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
-	// The cache is extended below, so what the later stages added to it is
-	// no longer known to be there. Their stamps go, and they rebuild. So does
-	// any working copy, which was started from the cache as it was.
-	removeStageStamps(repositoryRoot, CACHE_STAGES);
+	// A working copy was started from the cache as it was before this build.
 	discardAtlasCacheWork(repositoryRoot);
 	const path = join(directory, "atlas-base.sqlite");
 	// Every id is the one its natural key was first given, from the committed
@@ -405,7 +397,7 @@ export const buildAtlasSqlite = (
 				},
 				datasetPayloadStep(cacheRoot),
 			],
-			{ defer: false, vacuum: false },
+			{ vacuum: false },
 		);
 		// Nothing in this process may hold the files about to be replaced or removed.
 		closeAllReadOnlyDatabases();
