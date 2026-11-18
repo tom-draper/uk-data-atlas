@@ -120,7 +120,11 @@ export type IndicatorWeightedShare = {
 		description: string;
 		/** The compiled dataset's field holding the weight. */
 		datasetField: string;
+		/** The measure that serves the weight, when the API serves it. */
+		measureId?: string;
 	};
+	/** True where the API serves the weighted mean, which needs the weight served too. */
+	available?: true;
 };
 
 /** A published statistic that cannot be combined across areas. */
@@ -149,6 +153,11 @@ export type IndicatorDeclaration = {
 	measure: string;
 	/** Fixed members of the measure's dimensions. */
 	members?: Readonly<Record<string, string>>;
+	/**
+	 * `derived` for values the atlas computed rather than read from the
+	 * publisher, such as a mean over a published grid.
+	 */
+	status?: "derived";
 };
 
 /**

@@ -27,7 +27,6 @@ import {
 import { compileRoadCollisions } from "./roadCollisions.ts";
 import { compileCrime } from "./crime.ts";
 import { compileUnemployment } from "./unemployment.ts";
-import { compileAirQuality } from "./airQuality.ts";
 import { compileCensus } from "./census.ts";
 import { compileCensusSmallArea } from "./censusSmallArea.ts";
 import { withAliases } from "./measureAliases.ts";
@@ -56,7 +55,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	ethnicity: Input;
 	roadCollisions: Input;
 	crime: Input;
-	airQuality: Input;
 	unemployment: Input;
 	jobs: Input;
 	landArea: Input;
@@ -98,7 +96,6 @@ export const compileDataCatalog = ({
 	ethnicity: ethnicityPath,
 	roadCollisions: roadCollisionsPath,
 	crime: crimePath,
-	airQuality: airQualityPath,
 	unemployment: unemploymentPath,
 	jobs: jobsPath,
 	landArea: landAreaPath,
@@ -230,11 +227,6 @@ export const compileDataCatalog = ({
 		catalogManifest,
 		unemploymentPath,
 		populationCodes,
-	);
-	// Air quality is published with the indicators but has always been
-	// compiled after unemployment, so a malformed input fails the same check.
-	indicatorObservations.push(
-		...compileAirQuality(catalogManifest, airQualityPath, populationCodes),
 	);
 	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);
 

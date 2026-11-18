@@ -34,7 +34,10 @@ export const airQuality = defineDataset<AirQualityDataset>({
 		description:
 			"Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local authority, averaged from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.",
 		cadence: "annual",
-		notes: [],
+		notes: [
+			"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+			"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none.",
+		],
 	},
 	load: noCompiledPayload<AirQualityDataset>(),
 	statistics: {
@@ -114,6 +117,135 @@ export const airQuality = defineDataset<AirQualityDataset>({
 			},
 			{
 				path: "pm25PopulationWeightedAnthropogenic",
+				measure: "pm25-population-weighted-anthropogenic",
+			},
+		],
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2024",
+		codes: "authorities",
+		coverageNote:
+			"Every local authority in all four UK nations has a value.",
+		indicators: [
+			{
+				id: "air-quality-grid-cells",
+				label: "PCM grid cells",
+				field: "gridCells",
+				valueKind: "count",
+				unit: "1x1 km grid cells",
+				aggregation: "sum",
+				notes: [
+					"How many of Defra's 1x1 km PCM cells have their centre in the authority, roughly its land area in square kilometres. It is the weight for the area means.",
+				],
+				measure: "air-quality-grid-cells",
+				status: "derived",
+			},
+			{
+				id: "no2-background-mean",
+				label: "Background nitrogen dioxide, area mean",
+				field: "no2Mean",
+				valueKind: "quantity",
+				unit: "µg/m³",
+				aggregation: {
+					kind: "weighted-mean",
+					weight: {
+						description:
+							"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						datasetField: "gridCells",
+						measureId: "air-quality-grid-cells",
+					},
+					available: true,
+				},
+				notes: [
+					"The mean of Defra's modelled 2024 annual mean background nitrogen dioxide (NO2) concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+				],
+				measure: "background-concentration",
+				members: { pollutant: "no2" },
+				status: "derived",
+			},
+			{
+				id: "pm10-background-mean",
+				label: "Background PM10, area mean",
+				field: "pm10Mean",
+				valueKind: "quantity",
+				unit: "µg/m³",
+				aggregation: {
+					kind: "weighted-mean",
+					weight: {
+						description:
+							"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						datasetField: "gridCells",
+						measureId: "air-quality-grid-cells",
+					},
+					available: true,
+				},
+				notes: [
+					"The mean of Defra's modelled 2024 annual mean background PM10, in gravimetric units, concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+				],
+				measure: "background-concentration",
+				members: { pollutant: "pm10" },
+				status: "derived",
+			},
+			{
+				id: "pm25-background-mean",
+				label: "Background PM2.5, area mean",
+				field: "pm25Mean",
+				valueKind: "quantity",
+				unit: "µg/m³",
+				aggregation: {
+					kind: "weighted-mean",
+					weight: {
+						description:
+							"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+						datasetField: "gridCells",
+						measureId: "air-quality-grid-cells",
+					},
+					available: true,
+				},
+				notes: [
+					"The mean of Defra's modelled 2024 annual mean background PM2.5 concentration over the 1x1 km cells whose centres lie in the authority: an average across its area, not weighted by where people live.",
+				],
+				measure: "background-concentration",
+				members: { pollutant: "pm25" },
+				status: "derived",
+			},
+			{
+				id: "pm25-population-weighted",
+				label: "Population-weighted PM2.5",
+				field: "pm25PopulationWeighted",
+				valueKind: "quantity",
+				unit: "µg/m³",
+				aggregation: {
+					kind: "weighted-mean",
+					weight: {
+						description:
+							"The resident population Defra weighted each authority's concentrations by, which it does not publish with the table.",
+						datasetField: "population",
+					},
+				},
+				notes: [
+					"Defra's published population-weighted annual mean PM2.5 for 2024, total of anthropogenic and non-anthropogenic, which Defra advises for estimating the health burden of long-term exposure.",
+				],
+				measure: "pm25-population-weighted",
+			},
+			{
+				id: "pm25-population-weighted-anthropogenic",
+				label: "Population-weighted anthropogenic PM2.5",
+				field: "pm25PopulationWeightedAnthropogenic",
+				valueKind: "quantity",
+				unit: "µg/m³",
+				aggregation: {
+					kind: "weighted-mean",
+					weight: {
+						description:
+							"The resident population Defra weighted each authority's concentrations by, which it does not publish with the table.",
+						datasetField: "population",
+					},
+				},
+				notes: [
+					"The anthropogenic part of Defra's population-weighted PM2.5 for 2024, excluding natural sources such as sea salt.",
+				],
 				measure: "pm25-population-weighted-anthropogenic",
 			},
 		],

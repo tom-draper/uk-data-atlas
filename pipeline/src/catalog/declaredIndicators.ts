@@ -32,7 +32,7 @@ const aggregationOf = (
 					kind: "intensive",
 					operation: "weighted-mean",
 					weight: { ...aggregation.weight },
-					available: false,
+					available: aggregation.available === true,
 				};
 
 const catalogueOf = (declaration: DatasetDeclaration) => {
@@ -85,6 +85,7 @@ export const compileDeclaredIndicators = (
 			unit: indicator.unit,
 			aggregation: aggregationOf(indicator.aggregation),
 			notes: [...indicator.notes],
+			...(indicator.status ? { status: indicator.status } : {}),
 		})),
 	});
 };

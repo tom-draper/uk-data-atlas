@@ -10,8 +10,8 @@ import type { CatalogManifest } from "../../src/catalog/manifest.ts";
  * the table interleaves with its authorities.
  */
 const file = (boundaryYear: number, data: Record<string, unknown>) => ({
-	"2025": {
-		year: 2025,
+	[String(boundaryYear)]: {
+		year: boundaryYear,
 		boundaryYear,
 		boundaryType: "localAuthority",
 		data,
@@ -26,6 +26,24 @@ export const INDICATOR_FIXTURES: Record<string, unknown> = {
 	"planning-applications": file(2025, {
 		E06000001: { value: 120 },
 		E06000002: { value: 33 },
+	}),
+	"air-quality": file(2024, {
+		E06000001: {
+			gridCells: 24,
+			no2Mean: 11.5,
+			pm10Mean: 13.25,
+			pm25Mean: 7.75,
+			pm25PopulationWeighted: 8.5,
+			pm25PopulationWeightedAnthropogenic: 5.5,
+		},
+		E06000002: {
+			gridCells: 9,
+			no2Mean: 14,
+			pm10Mean: 12,
+			pm25Mean: 8,
+			pm25PopulationWeighted: 9,
+			pm25PopulationWeightedAnthropogenic: 6,
+		},
 	}),
 	homelessness: file(2025, {
 		E06000001: {
@@ -71,10 +89,16 @@ export function withFixtureFiles<T>(
 		}
 		const manifest = {
 			manifestPath: join(directory, "dataset-manifest.json"),
-			datasets: Object.keys(INDICATOR_FIXTURES).map((id) => ({
-				id,
-				summary: { boundaryYears: [2025] },
-			})),
+			datasets: Object.entries(INDICATOR_FIXTURES).map(
+				([id, content]) => ({
+					id,
+					summary: {
+						boundaryYears: Object.values(
+							content as Record<string, { boundaryYear: number }>,
+						).map(({ boundaryYear }) => boundaryYear),
+					},
+				}),
+			),
 		} as CatalogManifest;
 		return run(paths, manifest);
 	} finally {
