@@ -40,6 +40,15 @@ export const atlasCachePath = (root: string) =>
 	join(root, "data/build/atlas-cache.sqlite");
 
 /**
+ * Where the stage that builds a component leaves it, before `assemble-cache`
+ * puts every component into `atlas-cache.sqlite`. Each file has one writer and
+ * holds the component's tables, its `payloads` rows and its generation. A
+ * release carries only the assembled cache, so these exist in a build tree.
+ */
+export const atlasCachePartPath = (root: string, component: CacheComponent) =>
+	join(root, "data/build/atlas-cache-parts", `${component}.sqlite`);
+
+/**
  * The semantic generation of the canonical inputs used by one compiler. Always
  * reads the file as it is now, so a writer can tell whether it changed.
  */
@@ -95,41 +104,55 @@ export function cacheGeneration(
  */
 const verified = new Map<string, string>();
 
+/**
+ * The file that holds a component built from the current `atlas.sqlite`: the
+ * stage's own part while a build tree has one, else the assembled cache. A
+ * stage that reads a component right after the stage that wrote it therefore
+ * does not wait for the assembly, and a deployment with only the cache reads
+ * the cache. A file with another generation is passed over.
+ */
 export function requireAtlasCache(
 	root: string,
 	component: CacheComponent,
 ): string {
 	const path = atlasCachePath(root);
-	try {
-		const canonical = openReadOnlyDatabase(
-			join(root, "data/build/atlas.sqlite"),
-		);
-		const database = openReadOnlyDatabase(path);
+	const candidates = [atlasCachePartPath(root, component), path].filter(
+		(candidate) => existsSync(candidate),
+	);
+	let failure: unknown = new Error("No atlas cache file");
+	for (const candidate of candidates) {
 		try {
-			const key = `${path}:${component}`;
-			const stamp = `${canonical.generation}:${database.generation}`;
-			if (verified.get(key) !== stamp) {
-				verified.delete(key);
-				const stored = database
-					.prepare(
-						"SELECT generation FROM cache_generation WHERE component = ?",
-					)
-					.get(component)?.generation;
-				if (stored !== cacheGeneration(root, component))
-					throw new Error(`Stale ${component} generation`);
-				verified.set(key, stamp);
+			const canonical = openReadOnlyDatabase(
+				join(root, "data/build/atlas.sqlite"),
+			);
+			const database = openReadOnlyDatabase(candidate);
+			try {
+				const key = `${candidate}:${component}`;
+				const stamp = `${canonical.generation}:${database.generation}`;
+				if (verified.get(key) !== stamp) {
+					verified.delete(key);
+					const stored = database
+						.prepare(
+							"SELECT generation FROM cache_generation WHERE component = ?",
+						)
+						.get(component)?.generation;
+					if (stored !== cacheGeneration(root, component))
+						throw new Error(`Stale ${component} generation`);
+					verified.set(key, stamp);
+				}
+			} finally {
+				database.release();
+				canonical.release();
 			}
-		} finally {
-			database.release();
-			canonical.release();
+			return candidate;
+		} catch (cause) {
+			failure = cause;
 		}
-	} catch (cause) {
-		throw new Error(
-			`Missing or stale ${component} cache at ${path}. Download the matching atlas data release.`,
-			{ cause },
-		);
 	}
-	return path;
+	throw new Error(
+		`Missing or stale ${component} cache at ${path}. Download the matching atlas data release.`,
+		{ cause: failure },
+	);
 }
 
 export function readCachePayload(

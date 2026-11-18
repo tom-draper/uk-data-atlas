@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+	atlasCachePartPath,
 	atlasCachePath,
 	cacheGeneration,
 	closeAllReadOnlyDatabases,
@@ -110,6 +111,44 @@ describe("atlas.sqlite and atlas-cache.sqlite", () => {
 		} finally {
 			rmSync(other, { recursive: true, force: true });
 		}
+	});
+
+	it("reads a component from the part its stage wrote while there is one", () => {
+		mkdirSync(join(root, "data/build/atlas-cache-parts"), {
+			recursive: true,
+		});
+		const part = atlasCachePartPath(root, "area-search");
+		const write = (payload: string, hash = "a") =>
+			replace(part, (database) => {
+				database.exec(
+					"CREATE TABLE cache_generation (component TEXT PRIMARY KEY, generation TEXT NOT NULL); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL)",
+				);
+				database
+					.prepare("INSERT INTO cache_generation VALUES (?, ?)")
+					.run(
+						"area-search",
+						hash === "a"
+							? cacheGeneration(root, "area-search")
+							: "another generation",
+					);
+				database
+					.prepare("INSERT INTO payloads VALUES (?, ?)")
+					.run("index", payload);
+			});
+		write("part");
+		expect(requireAtlasCache(root, "area-search")).toBe(part);
+		expect(readCachePayload(root, "area-search", "index")).toBe("part");
+		// A part built for other inputs is passed over for the cache.
+		write("stale part", "other");
+		expect(requireAtlasCache(root, "area-search")).toBe(
+			atlasCachePath(root),
+		);
+		expect(readCachePayload(root, "area-search", "index")).toBe("first");
+		// Another component has no part, so it is not read from this one.
+		rmSync(part);
+		expect(requireAtlasCache(root, "area-search")).toBe(
+			atlasCachePath(root),
+		);
 	});
 
 	it("reports a missing cache", () => {
