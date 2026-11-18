@@ -18,10 +18,7 @@ import {
 } from "./duckdbPublicHealth.ts";
 import { compileDirectDataset } from "./compileDirectDataset.ts";
 import { compileDuckdbRoadCollisions } from "./duckdbRoadCollisions.ts";
-import {
-	withDuckdbLocalElection,
-	withDuckdbSchoolPerformance,
-} from "./duckdbDatasetCsv.ts";
+import { withDuckdbLocalElection } from "./duckdbDatasetCsv.ts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
@@ -147,25 +144,7 @@ export async function compileStaleDataset(
 											input,
 										),
 								)
-							: definition.type === "school-performance" ||
-								  definition.type ===
-										"school-performance-disadvantage"
-								? await withDuckdbSchoolPerformance(
-										reader,
-										artifacts,
-										definition.type === "school-performance"
-											? "Total"
-											: "Disadvantage status",
-										(input) =>
-											compileDatasetContents(
-												definition,
-												input,
-											),
-									)
-								: await compileDatasetContents(
-										definition,
-										reader,
-									);
+							: await compileDatasetContents(definition, reader);
 	} catch (error) {
 		const missingRawSource =
 			typeof error === "object" &&
