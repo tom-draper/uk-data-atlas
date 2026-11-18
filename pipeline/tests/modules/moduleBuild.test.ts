@@ -33,6 +33,7 @@ import {
 test("area locations belong to core", () => {
 	assert.equal(tableOwner("area_location"), "core");
 	assert.equal(tableOwner("area_hierarchy"), "core");
+	assert.equal(tableOwner("place_location"), "core");
 });
 
 const scratch = (t: TestContext) => {
@@ -154,6 +155,10 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 				core,
 				"SELECT count(*) AS n FROM area_hierarchy WHERE parent_version_id = 2",
 			),
+			1,
+		);
+		assert.equal(
+			count(core, "SELECT count(*) AS n FROM place_location"),
 			1,
 		);
 		const tables = readSchema(core)

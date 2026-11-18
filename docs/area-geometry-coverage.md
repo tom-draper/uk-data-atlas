@@ -49,3 +49,15 @@ SELECT v.geography, v.release, v.code, l.latitude, l.longitude,
 FROM v_area_version v JOIN area_location l ON l.area_version_id = v.area_version_id
 WHERE v.code = 'E08000003';
 ```
+
+Named places are recorded separately in `place_location`. In the investigated
+snapshot, all 249 places with a stored `place_geometry` produced an interior
+point; 22 had no stored geometry. To list gaps in any build, run:
+
+```sql
+SELECT p.slug, p.kind, l.gap FROM place p
+JOIN place_location l ON l.place_id = p.id WHERE l.gap IS NOT NULL;
+```
+
+The editorial boxes in `place` are not necessarily polygon envelopes, so they
+are not used as substitutes for missing geometry bounds.

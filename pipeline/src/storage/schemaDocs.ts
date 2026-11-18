@@ -1169,6 +1169,18 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			member_of: "The other place the rest belongs to (place.id).",
 		},
 	},
+	place_location: {
+		audience: "core",
+		description:
+			"A representative point for each named place, calculated from its stored place_geometry. Join place_geometry for its WGS84 bounding box. A gap records where no usable polygon exists.",
+		columns: {
+			place_id: "The named place (place.id).",
+			longitude: "WGS84 longitude in decimal degrees, null for a gap.",
+			latitude: "WGS84 latitude in decimal degrees, null for a gap.",
+			method: "polygon-interior-point, a point strictly inside the stored polygon, not a population-weighted centroid.",
+			gap: "no-geometry or no-interior-point; null when a point is available.",
+		},
+	},
 	place_geometry: {
 		audience: "reference",
 		description:
