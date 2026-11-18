@@ -21,6 +21,13 @@ export const housePrice = defineDataset<HousePriceDataset>({
 		summary:
 			"Median prices paid for homes in every ward in England and Wales, for each year from 1995 to 2022. This was the final ONS ward-level edition, and its partial 2023 is left out because it isn't comparable.",
 	},
+	sources: [
+		{ name: "house-price-mean", folder: "house-price/mean-price-by-ward" },
+		{
+			name: "house-price-median",
+			folder: "house-price/median-price-by-ward",
+		},
+	],
 	source: {
 		name: "House Prices",
 		publisher: "Office for National Statistics",

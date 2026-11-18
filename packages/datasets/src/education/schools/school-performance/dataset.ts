@@ -37,6 +37,14 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 		title: "School Performance (KS4)",
 		about: "GCSE results for state-funded schools in England, grouped by local authority and, for the latest two years, by Westminster constituency. It includes Attainment 8, the average grade across a pupil's best eight subjects, and Progress 8, how much progress pupils made compared with others who started secondary school at a similar level.",
 	},
+	sources: [
+		{ name: "school-performance" },
+		{
+			name: "school-performance-constituency",
+			exception:
+				"The constituency half of school-performance, a separate file bundle from the local authority one.",
+		},
+	],
 	source: {
 		name: "School Performance (KS4)",
 		publisher: "Department for Education",

@@ -16,6 +16,7 @@ export const landArea = defineDataset<LandAreaDataset>({
 		title: "Land Area",
 		about: "The official size of each local authority in hectares, measured by the Office for National Statistics. Land area is what population density is calculated from, so it excludes lakes, reservoirs and other inland water.",
 	},
+	sources: [{ name: "land-area", core: true }],
 	source: {
 		name: "Land Area",
 		publisher: "Office for National Statistics",

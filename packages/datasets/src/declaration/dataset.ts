@@ -62,6 +62,33 @@ export type DeclaredGuide = Pick<
 	"title" | "about" | "summary" | "publishedOn"
 >;
 
+/**
+ * A folder of `data/source` the dataset reads. Without `sources` a dataset
+ * reads one folder named for its id, under its theme and topic. Say it where a
+ * folder is shared, split or named otherwise, so the folder tables are written
+ * from the declarations (`docs/data-organisation.md`, "Layout").
+ */
+export type DeclaredSourceFolder = {
+	/** The name code passes to `sourceDir`. Defaults to the dataset id. */
+	name?: string;
+	/** The folder under `<theme>/<topic>/` when it is not the name, such as a part or a year. */
+	folder?: string;
+	/** Foundation data, filed under `core/` instead of the topic. */
+	core?: true;
+	/** Why the folder is not named for a dataset it feeds, where that is so. */
+	exception?: string;
+};
+
+/** The year folders of an election, named `<prefix>-<year>` and held in `<prefix>/<year>`. */
+export const yearFolders = (
+	prefix: string,
+	years: readonly number[],
+): DeclaredSourceFolder[] =>
+	years.map((year) => ({
+		name: `${prefix}-${year}`,
+		folder: `${prefix}/${year}`,
+	}));
+
 /** The boundary release a dataset's records are keyed by. */
 export type DeclaredBoundary = { type: BoundaryType; year: number };
 
@@ -172,6 +199,8 @@ export type DatasetDeclaration<
 	/** What the docs and `/datasets` pages say about the dataset. */
 	guide: DeclaredGuide;
 	source: DeclaredSource;
+	/** The `data/source` folders it reads, when not one named for its id. */
+	sources?: readonly DeclaredSourceFolder[];
 	boundary: DeclaredBoundary;
 	/**
 	 * Further geography levels the dataset is published at, each on the same

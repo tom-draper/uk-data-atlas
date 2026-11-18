@@ -1,6 +1,7 @@
 import type { LocalElectionDataset } from "../../../types/elections.ts";
 import {
 	defineDataset,
+	yearFolders,
 	noCompiledPayload,
 } from "../../../declaration/dataset.ts";
 import {
@@ -74,6 +75,10 @@ export const localElection = defineDataset<LocalElectionDataset>({
 		summary:
 			"Ward-level local election results for England and Wales from 2016 to 2025: votes by party, the winning party, and turnout from 2021 onwards.",
 	},
+	sources: yearFolders(
+		"local-election",
+		[2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025],
+	),
 	source: {
 		name: "Local Election Results",
 		publisher:

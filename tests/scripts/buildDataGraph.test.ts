@@ -47,6 +47,7 @@ test("the catalogue registry tracks the checked-in files it generates", () => {
 		"packages/datasets/src/data/catalog/generated.ts",
 		"packages/datasets/src/data/declarations.ts",
 		"packages/datasets/src/declaration/declaredGuides.ts",
+		"packages/datasets/src/declaration/declaredSources.ts",
 	]);
 });
 
