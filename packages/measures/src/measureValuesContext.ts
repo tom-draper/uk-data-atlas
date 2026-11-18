@@ -30,8 +30,6 @@ export const readMeasureValuesContext = (
 			repositoryRoot,
 			dataCatalog,
 			options.observationCacheBytes,
-			undefined,
-			measureDimensions.config.ids,
 		),
 	};
 };

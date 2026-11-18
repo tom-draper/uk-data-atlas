@@ -16,7 +16,6 @@ import type {
 	MeasureObservationArtifact,
 	PopulationObservation,
 	SourceGeography,
-	MeasureSeriesIdentity,
 } from "./index.ts";
 
 import { isMeasureTable, type MeasureTableArtifact } from "./measureTable.ts";
@@ -150,7 +149,6 @@ export class ObservationCache {
 		databasePath: string,
 		catalog: DataCatalog,
 		readPath: StatisticsReadPath,
-		identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 	) {
 		if (readPath.dataCatalogHash !== catalog.contentHash)
 			throw new Error(
@@ -175,7 +173,7 @@ export class ObservationCache {
 		const seriesKeys = new Set<string>();
 		for (const measure of catalog.measures)
 			for (const source of measure.sources) {
-				const identity = measure.series ?? identities?.[measure.id];
+				const identity = measure.series;
 				if (!identity)
 					throw new Error(
 						`Missing series identity for ${measure.id}.`,

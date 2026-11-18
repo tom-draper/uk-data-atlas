@@ -27,7 +27,6 @@ export const readApiCatalogues = (
 		statisticsReadPath: readAtlasStatisticsReadPath(
 			atlasDatabasePath(repositoryRoot),
 		),
-		seriesIdentities: dimensions.config.ids,
 		...options,
 	});
 	assertMeasureDimensions(
