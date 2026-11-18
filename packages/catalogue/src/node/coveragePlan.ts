@@ -69,6 +69,21 @@ const countriesOf = (codes: Iterable<string>) => {
 };
 
 /**
+ * The areas of a release by country. A release's areas are the same whichever
+ * measure asks, so the grouping is made once per release rather than once per
+ * measure and release: it was most of what a plan cost.
+ */
+const releaseCountries = new WeakMap<object, ReturnType<typeof countriesOf>>();
+const countriesOfRelease = (areas: ReadonlyMap<string, unknown>) => {
+	let held = releaseCountries.get(areas);
+	if (!held) {
+		held = countriesOf(areas.keys());
+		releaseCountries.set(areas, held);
+	}
+	return held;
+};
+
+/**
  * What a measure can answer on one release, country by country.
  *
  * The capability answer for a release is one word for the whole of it, and
@@ -95,7 +110,7 @@ export const coveragePlan = (
 		target.boundaryRelease,
 	);
 	if (!areas) return undefined;
-	const targetByCountry = countriesOf(areas.keys());
+	const targetByCountry = countriesOfRelease(areas);
 	const coverage = measureCoverage(
 		dataCatalog,
 		measureCompatibilityInventory,
