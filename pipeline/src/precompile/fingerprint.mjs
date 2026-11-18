@@ -28,7 +28,6 @@ const datasetCompilerInputs = [
 	"pipeline/src/precompile/compileDataset.ts",
 	"pipeline/src/precompile/compileDirectDataset.ts",
 	"pipeline/src/statistics/directDigest.ts",
-	"pipeline/src/precompile/duckdbDatasetCsv.ts",
 	"packages/datasets/src/compileDataset.ts",
 ];
 
