@@ -6,10 +6,15 @@ import { afterAll, expect, it } from "vitest";
 
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
-import { STATISTICS_DATASETS, directStatistics } from "@uk-data-atlas/measures";
+import {
+	STATISTICS_DATASETS,
+	directStatistics,
+	type StatisticsInput,
+} from "@uk-data-atlas/measures";
 import { directPayloadProblem } from "../../src/checks/directPayloadGoldens.ts";
 import { IdRegistries } from "../../src/ids/idRegistries.ts";
 import { readDirectPartsFor } from "../../src/statistics/directSources.ts";
+import { electionWinnerStatistics } from "../../src/statistics/electionWinnerStatistics.ts";
 import {
 	areaTables,
 	statisticsTables,
@@ -69,7 +74,13 @@ async function statisticsOf(type: string) {
 		(candidate) => candidate.type === type,
 	)!;
 	const parts = await readParts(type);
-	return { entry, input: directStatistics(config, parts.get(type)!, entry) };
+	const statistics = directStatistics(config, parts.get(type)!, entry);
+	// The build adds each contest's winning party to these two.
+	const input: StatisticsInput =
+		type === "general-election" || type === "local-election"
+			? (areas) => electionWinnerStatistics(statistics(areas))
+			: statistics;
+	return { entry, input };
 }
 
 /** Writes one dataset's rows, and those it needs, onto the real area tables. */
@@ -182,6 +193,14 @@ it.each([
 			)
 			.get(direct.entry.output) as { count: number };
 		expect(stored.count).toBeGreaterThan(0);
+		if (type === "general-election" || type === "local-election") {
+			const winners = database
+				.prepare(
+					`SELECT COUNT(*) AS count FROM v_observation WHERE dataset = ? AND measure = 'source-winning-party'`,
+				)
+				.get(direct.entry.output) as { count: number };
+			expect(winners.count).toBeGreaterThan(0);
+		}
 	} finally {
 		database.close();
 		// Several are gigabytes, and /tmp may be memory.

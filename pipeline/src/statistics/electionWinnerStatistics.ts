@@ -1,9 +1,5 @@
-import { closeSync, openSync, readSync } from "node:fs";
-import { JSONParser } from "@streamparser/json";
-import { type DeclaredDataset } from "@uk-data-atlas/measures";
 import {
 	seriesKey,
-	type AreaIndex,
 	type StatisticsDataset,
 	type StatisticsObservation,
 } from "@uk-data-atlas/measures";
@@ -29,69 +25,12 @@ const codes = [
 	"UUP",
 ];
 
-function* results(path: string): Generator<{
-	year: string;
-	code: string;
-	category: string;
-	header: Record<string, string | number>;
-}> {
-	const parser = new JSONParser({
-		paths: [
-			"$.*.year",
-			"$.*.boundaryYear",
-			"$.*.boundaryType",
-			"$.*.results.*",
-		],
-		keepStack: false,
-	});
-	const headers = new Map<string, Record<string, string | number>>();
-	let ready: {
-		year: string;
-		code: string;
-		category: string;
-		header: Record<string, string | number>;
-	}[] = [];
-	parser.onValue = ({ key, value, stack }) => {
-		const year = String(stack[1]?.key);
-		const header = headers.get(year) ?? {};
-		headers.set(year, header);
-		if (stack.at(-1)?.key === "results") {
-			if (
-				typeof key !== "string" ||
-				typeof value !== "string" ||
-				!codes.includes(value)
-			)
-				throw new Error(
-					`${path}: invalid winning party ${String(value)}`,
-				);
-			ready.push({ year, code: key, category: value, header });
-		} else if (
-			typeof key === "string" &&
-			(typeof value === "string" || typeof value === "number")
-		)
-			header[key] = value;
-	};
-	const fd = openSync(path, "r");
-	const buffer = Buffer.alloc(64 * 1024);
-	try {
-		let size: number;
-		while ((size = readSync(fd, buffer, 0, buffer.length, null)) !== 0) {
-			parser.write(buffer.subarray(0, size));
-			yield* ready;
-			ready = [];
-		}
-		if (!parser.isEnded) parser.end();
-		yield* ready;
-	} finally {
-		closeSync(fd);
-	}
-}
-
+/**
+ * Adds each contest's winning party, as the source reports it, to the
+ * election's statistics as a category measure beside its votes.
+ */
 export function electionWinnerStatistics(
 	base: StatisticsDataset,
-	areas: AreaIndex,
-	config: DeclaredDataset,
-	path: string,
 ): StatisticsDataset {
 	const releases = [
 		...new Map(
@@ -106,43 +45,34 @@ export function electionWinnerStatistics(
 		release,
 	}));
 	const observations = function* (): Generator<StatisticsObservation> {
-		for (const { year, code, category, header } of results(path)) {
-			const first = config.release
-				? config.release(header)
-				: {
-						geography: String(header.boundaryType),
-						year: Number(header.boundaryYear),
-					};
-			const rest =
-				typeof config.alsoIn === "function"
-					? config.alsoIn(header)
-					: (config.alsoIn ?? []);
-			const release = [first, ...rest]
-				.map((item) => areas.find(item.geography, item.year))
-				.find((item) => item && areas.has(item, code));
-			if (!release)
-				throw new Error(
-					`${path}: no boundary release for ${year} ${code}`,
-				);
-			const index = releases.findIndex(
-				(item) =>
-					item.geography === release.geography &&
-					item.id === release.id,
-			);
+		for (const election of base.elections?.() ?? []) {
 			const period = base.periods.find((item) =>
-				item.label.startsWith(`${year}-`),
+				item.label.startsWith(`${election.label}-`),
 			);
-			if (index < 0 || !period)
-				throw new Error(
-					`${path}: no series or period for ${year} ${code}`,
+			for (const { release, code, contest } of election.contests) {
+				const category = contest?.winner;
+				if (category === undefined || category === null) continue;
+				if (!codes.includes(category))
+					throw new Error(
+						`${base.slug}: invalid winning party ${category}`,
+					);
+				const index = releases.findIndex(
+					(item) =>
+						item.geography === release.geography &&
+						item.id === release.id,
 				);
-			yield {
-				series: base.series.length + index,
-				code,
-				period: period.label,
-				value: null,
-				category,
-			};
+				if (index < 0 || !period)
+					throw new Error(
+						`${base.slug}: no series or period for ${election.label} ${code}`,
+					);
+				yield {
+					series: base.series.length + index,
+					code,
+					period: period.label,
+					value: null,
+					category,
+				};
+			}
 		}
 	};
 	return {

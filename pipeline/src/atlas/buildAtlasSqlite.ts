@@ -120,15 +120,7 @@ const statisticsInputs = (
 				entry.type === "general-election" ||
 				entry.type === "local-election"
 			)
-				return [
-					(areas) =>
-						electionWinnerStatistics(
-							statistics(areas),
-							areas,
-							config,
-							join(directory, `datasets/${entry.output}.json`),
-						),
-				];
+				return [(areas) => electionWinnerStatistics(statistics(areas))];
 			return [statistics];
 		}
 		if (entry.type in unstored) {
