@@ -377,9 +377,51 @@ describe("directStatistics", () => {
 		}
 	});
 
-	it("refuses a declaration with election text", () => {
-		expect(() =>
-			directStatistics({ ...config, election: {} as never }, [], entry),
-		).toThrow(/no election text/);
+	it("reads each contest's text from its record", () => {
+		const input = directStatistics(
+			{
+				...config,
+				election: {
+					kind: "general",
+					date: () => "2024-07-04",
+				},
+			},
+			parts({
+				code: "E06000001",
+				name: "Hartlepool",
+				contest: { area_name: "Hartlepool", winner: "LAB" },
+				elected: { family_name: "Brown" },
+				values: [value("theft", 3)],
+			}),
+			entry,
+		);
+		const database = write(input);
+		try {
+			expect(
+				database
+					.prepare(
+						"SELECT area_code, area_name, winner, election, kind, polling_day FROM v_contest",
+					)
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([
+				{
+					area_code: "E06000001",
+					area_name: "Hartlepool",
+					winner: "LAB",
+					election: "2024",
+					kind: "general",
+					polling_day: "2024-07-04",
+				},
+			]);
+			expect(
+				database
+					.prepare("SELECT family_name, elected FROM candidacy")
+					.all()
+					.map((row) => ({ ...row })),
+			).toEqual([{ family_name: "Brown", elected: 1 }]);
+		} finally {
+			database.close();
+		}
 	});
 });

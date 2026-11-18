@@ -107,6 +107,12 @@ export type DirectRecord = {
 	name?: string;
 	/** Parent areas keyed by the declaration's parent code field. */
 	parents?: Record<string, { code: string; name?: string } | null>;
+	/**
+	 * For a dataset declaring an `election`, the text columns of this
+	 * contest, including its `winner`, and of the candidate it elected.
+	 */
+	contest?: Partial<Record<ContestColumn, string | null>>;
+	elected?: Partial<Record<CandidacyColumn, string | null>>;
 	values: DirectValue[];
 };
 
