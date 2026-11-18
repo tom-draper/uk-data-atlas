@@ -805,7 +805,9 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	);
 	base.close();
 	vi.stubEnv("SOURCE_DATE_EPOCH", "1700000000");
-	t.onTestFinished(() => vi.unstubAllEnvs());
+	t.onTestFinished(() => {
+		vi.unstubAllEnvs();
+	});
 	const assemble = () => assembleAtlas(root, { crosswalkWeights: false });
 	const metadata = () => {
 		const db = new DatabaseSync(path, { readOnly: true });
