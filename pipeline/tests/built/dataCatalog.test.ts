@@ -217,6 +217,8 @@ const writeSources = (
 	const homelessness = join(directory, "homelessness.json");
 	const roadCollisions = join(directory, "road-collisions.json");
 	const income = join(directory, "income.json");
+	const waste = join(directory, "waste.json");
+	const planningApplications = join(directory, "planning-applications.json");
 	const crime = join(directory, "crime.json");
 	const unemployment = join(directory, "unemployment.json");
 	const airQuality = join(directory, "air-quality.json");
@@ -245,6 +247,8 @@ const writeSources = (
 				dataset("homelessness", 1, 1, 2025),
 				dataset("road-collisions", 2, 1, 2024),
 				dataset("income", 2, 1, 2025),
+				dataset("waste", 2, 1, 2025),
+				dataset("planning-applications", 2, 1, 2025),
 				dataset("crime", 1, 1, 2026),
 				dataset("unemployment", 1, 1, 2024),
 				dataset("air-quality", 4, 1, 2024),
@@ -620,6 +624,21 @@ const writeSources = (
 			},
 		}),
 	);
+	for (const [path, value] of [
+		[waste, 1234.5],
+		[planningApplications, 321],
+	] as const)
+		writeFileSync(
+			path,
+			JSON.stringify({
+				"2025": {
+					year: 2025,
+					boundaryYear: 2025,
+					boundaryType: "localAuthority",
+					data: { E06000001: { value }, E06000002: { value: 8 } },
+				},
+			}),
+		);
 	const offences = (total: number) => ({
 		totalRecordedCrime: total,
 		violenceAgainstPerson: 10,
@@ -1114,6 +1133,8 @@ const writeSources = (
 			"business-activity": business,
 			"mobile-coverage": mobileCoverage,
 			broadband,
+			waste,
+			"planning-applications": planningApplications,
 		},
 		homelessness,
 		roadCollisions,
@@ -1146,7 +1167,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 37);
+		assert.equal(result.catalog.datasets.length, 39);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

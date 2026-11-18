@@ -66,7 +66,9 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 		description:
 			"Local-authority collected waste in England; collection authorities only to avoid double counting.",
 		cadence: "annual",
-		notes: [],
+		notes: [
+			"Collection authorities only, avoiding double counting between collection and disposal authorities.",
+		],
 	},
 	ingestion: {
 		minimumDataRecords: 100,
@@ -117,6 +119,24 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 			only: true,
 			read: ({ odsTableRows }) => wasteStatisticsPart(odsTableRows),
 		},
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2024-25",
+		coverageNote:
+			"Values are source-reported for the authorities included in the publisher's release.",
+		indicators: [
+			{
+				id: "waste",
+				label: "Local authority collected waste",
+				field: "value",
+				valueKind: "quantity",
+				unit: "tonnes",
+				aggregation: "sum",
+				notes: [],
+				measure: "collected-waste",
+			},
+		],
 	},
 	display: {
 		label: "Collected Waste [2025]",
