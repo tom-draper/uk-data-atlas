@@ -73,14 +73,34 @@ export function readPublishedCentroids(root: string) {
 	return points;
 }
 
+type AreaLocation = NonNullable<ReturnType<typeof areaLocation>>;
+
+/** One area's place, or why it has none. */
+export type AreaLocationResult =
+	"no-geometry" | "no-interior-point" | AreaLocation;
+
+type GeometryLookup = Pick<ReturnType<typeof createAreaGeometryCache>, "get">;
+
+/** The place of one area of a release, from its geometry. */
+export function locateArea(
+	cache: GeometryLookup,
+	sources: ReturnType<typeof readGeometrySources>,
+	geography: string,
+	release: string,
+	code: string,
+): AreaLocationResult {
+	const geometry = sources.has(`${geography}/${release}`)
+		? cache.get(geography, release, code)
+		: undefined;
+	if (!geometry) return "no-geometry";
+	return areaLocation(geometry) ?? "no-interior-point";
+}
+
 /** Writes one row for every area version, including an explicit reason for gaps. */
 export function writeAreaLocations(
 	database: DatabaseSync,
 	root: string,
-	cache: Pick<
-		ReturnType<typeof createAreaGeometryCache>,
-		"get"
-	> = createAreaGeometryCache(root, 1),
+	cache: GeometryLookup = createAreaGeometryCache(root, 1),
 	sources = readGeometrySources(root),
 	centroids = readPublishedCentroids(root),
 ) {
@@ -98,20 +118,16 @@ export function writeAreaLocations(
 	const versions = database.prepare(
 		`SELECT v.id, a.code, r.geography, r.release FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id ORDER BY r.geography, r.release, a.code`,
 	);
-	for (const row of versions.iterate()) {
-		const geometry = sources.has(
-			`${String(row.geography)}/${String(row.release)}`,
-		)
-			? cache.get(
-					String(row.geography),
-					String(row.release),
-					String(row.code),
-				)
-			: undefined;
-		const location = geometry && areaLocation(geometry);
-		if (!location)
+	type Version = {
+		id: number;
+		code: string;
+		geography: string;
+		release: string;
+	};
+	const write = (row: Version, location: AreaLocationResult) => {
+		if (typeof location === "string")
 			insert.run(
-				row.id as number,
+				row.id,
 				null,
 				null,
 				null,
@@ -119,13 +135,13 @@ export function writeAreaLocations(
 				null,
 				null,
 				null,
-				geometry ? "no-interior-point" : "no-geometry",
+				location,
 			);
 		else {
 			const published =
 				row.geography === "outputArea" &&
 				row.release === "2021-12-ew-bgc-v2"
-					? centroids.get(String(row.code))
+					? centroids.get(row.code)
 					: undefined;
 			const usable =
 				published &&
@@ -134,7 +150,7 @@ export function writeAreaLocations(
 				published[1] >= location.minLatitude &&
 				published[1] <= location.maxLatitude;
 			insert.run(
-				row.id as number,
+				row.id,
 				usable ? published[0] : location.longitude,
 				usable ? published[1] : location.latitude,
 				location.minLongitude,
@@ -147,5 +163,21 @@ export function writeAreaLocations(
 				null,
 			);
 		}
-	}
+	};
+	for (const row of versions.iterate())
+		write(
+			{
+				id: row.id as number,
+				code: String(row.code),
+				geography: String(row.geography),
+				release: String(row.release),
+			},
+			locateArea(
+				cache,
+				sources,
+				String(row.geography),
+				String(row.release),
+				String(row.code),
+			),
+		);
 }
