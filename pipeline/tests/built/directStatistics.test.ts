@@ -294,6 +294,8 @@ it.each([
 	"electric-vehicle-chargers",
 	"electricity-consumption",
 	"gas-consumption",
+	"ghg-emissions",
+	"air-quality",
 ])("rebuilds the %s payload from direct source rows", async (type) => {
 	const config = STATISTICS_DATASETS.find((entry) => entry.type === type)!;
 	const parts = await readParts(type);
