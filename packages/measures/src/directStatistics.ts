@@ -80,9 +80,11 @@ export function directStatistics(
 
 	return (areas) => {
 		const headerOf = (key: string): DeclaredHeader => {
-			const found = config
-				.payload!.parts([key])
-				.find((part) => part.key === key);
+			// A part named by a label ("2001-2003") is the one part it yields.
+			const parts = config.payload!.parts([key]);
+			const found =
+				parts.find((part) => part.key === key) ??
+				(parts.length === 1 ? parts[0] : undefined);
 			if (!found)
 				throw new Error(`${type}: the payload has no part ${key}`);
 			return found.header;
