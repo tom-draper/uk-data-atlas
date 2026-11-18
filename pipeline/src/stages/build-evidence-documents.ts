@@ -61,12 +61,14 @@ const compilerHash = sha256(
 		.join("\n"),
 );
 
-const inputsHash = (context: ReturnType<typeof readAtlasCatalogues>) =>
+const inputsHash = (context: Parameters<typeof evidenceInputsHash>[1]) =>
 	evidenceInputsHash(directory, context);
 
 const main = () => {
 	const context = readAtlasCatalogues(repositoryRoot, {
 		loadEvidenceDocuments: false,
+		// The release lists these documents, so it is written after them.
+		loadAtlasRelease: false,
 		crosswalkCacheBytes: CROSSWALK_CACHE_BYTES,
 	});
 	const documents = [

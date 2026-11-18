@@ -3,9 +3,8 @@ import { mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 /**
- * A stage whose output is only a record leaves a stamp here: a check stage,
- * as the record that it passed, and `atlas-cache-stamp`, as the hash of the
- * `atlas.sqlite` it stamped the cache with.
+ * A check stage leaves a stamp here, as the record that it passed. The data
+ * build tracks the stamp as the stage's output.
  */
 export const STAMP_DIRECTORY = "data/build/.stamps";
 

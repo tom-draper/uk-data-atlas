@@ -15,7 +15,7 @@ import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { atlasCachePartPath } from "@uk-data-atlas/atlas-db";
 
 let root: string;
 const stored = gzipSync('{"2024":{"value":42}}\n', { level: 9 });
@@ -39,7 +39,7 @@ function cacheSample() {
 		"UPDATE dataset SET compiled_sha256 = 'source', payload_id = NULL WHERE slug = 'sample'",
 	);
 	database.close();
-	const cache = new DatabaseSync(atlasCachePath(root));
+	const cache = new DatabaseSync(atlasCachePartPath(root, "datasets"));
 	cache
 		.prepare("INSERT INTO dataset_payload VALUES (?, ?, ?, ?, ?)")
 		.run("sample", "source", sha256, Buffer.byteLength(payload), stored);

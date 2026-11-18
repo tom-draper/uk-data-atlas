@@ -11,7 +11,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
-import { atlasCachePath, requireAtlasCache } from "@uk-data-atlas/atlas-db";
+import {
+	atlasCachePartPath,
+	atlasCachePath,
+	requireAtlasCache,
+} from "@uk-data-atlas/atlas-db";
 import { publishCacheTables } from "./pipelineFixtures";
 
 function fixture(t: { onTestFinished: (fn: () => void) => void }) {
@@ -37,7 +41,10 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 	);
 	const before = readFileSync(canonical);
 	publishCacheTables(root, "area-search", tables);
-	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
+	assert.equal(
+		requireAtlasCache(root, "area-search"),
+		atlasCachePartPath(root, "area-search"),
+	);
 	assert.deepEqual(readFileSync(canonical), before);
 	const database = new DatabaseSync(canonical);
 	database.exec("UPDATE area_inventory_metadata SET content_hash = 'second'");
@@ -47,7 +54,10 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 		/stale.*area-search|area-search.*matching atlas data release/,
 	);
 	publishCacheTables(root, "area-search", tables);
-	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
+	assert.equal(
+		requireAtlasCache(root, "area-search"),
+		atlasCachePartPath(root, "area-search"),
+	);
 });
 
 test("a failed cache replacement preserves the published component", (t) => {
@@ -65,7 +75,10 @@ test("a failed cache replacement preserves the published component", (t) => {
 		/NOT NULL/,
 	);
 	assert.deepEqual(readFileSync(atlasCachePath(root)), before);
-	assert.equal(requireAtlasCache(root, "area-search"), atlasCachePath(root));
+	assert.equal(
+		requireAtlasCache(root, "area-search"),
+		atlasCachePartPath(root, "area-search"),
+	);
 });
 
 test("the split comparison checks actual table contents and fails on a changed value", (t) => {

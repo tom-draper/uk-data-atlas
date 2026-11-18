@@ -35,8 +35,6 @@ export function planBuild(stages, from, roots) {
 			if (!stage) throw new Error(`Unknown target stage: ${name}`);
 			needed.add(name);
 			for (const dependency of stage.dependencies) need(dependency);
-			// Work left in a shared scratch file is lost unless this stage runs.
-			if (stage.finishedBy) need(stage.finishedBy);
 		};
 		for (const root of roots) need(root);
 		planned = ordered.filter((stage) => needed.has(stage.name));

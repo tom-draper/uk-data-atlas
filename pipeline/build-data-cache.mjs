@@ -68,15 +68,13 @@ function stampPath(root, path, stamps = new Map()) {
 }
 
 /**
- * The paths a stage may change: its declared `writes`, `shared`, `scratch`,
- * `outputs` and `requiredOutputs`. A stage that declares none is tracked across all of
+ * The paths a stage owns, and may change: its declared `writes`, `outputs` and
+ * `requiredOutputs`. A stage that declares none is tracked across all of
  * OUTPUT_ROOTS, so it must run alone.
  */
 export function stageScope(stage) {
 	const paths = [
 		...(stage.writes ?? []),
-		...(stage.shared ?? []),
-		...(stage.scratch ?? []),
 		...(stage.outputs ?? []),
 		...(stage.requiredOutputs ?? []),
 	];
@@ -585,12 +583,9 @@ export function createStageCache({
 			const record = state.stages[stage.name];
 			if (!record || record.key !== keyFor(stage, dependencyDigests))
 				return null;
-			// A later stage can own the current bytes of a shared output. Its
-			// original builder must still recreate it when the file is missing.
+			// A required output that is gone is recreated by its stage.
 			if (stage.requiredOutputs?.some((path) => !isPresent(path)))
 				return null;
-			// A shared file is not the stage's output, but it must still exist.
-			if (stage.shared?.some((path) => !isPresent(path))) return null;
 			for (const [path, entry] of Object.entries(record.outputs))
 				if (!sameStamp(fileStamp(path), entry)) return null;
 			return record.digest;
@@ -723,20 +718,11 @@ export function createStageCache({
 			const outputs = new Map();
 			// Hashes of unchanged files come from records the next loop prunes.
 			const known = knownHashes();
-			// A shared file holds other stages' work, so its bytes are not this
-			// stage's digest. The stage tracks what it owns in a stamp instead.
-			// Rewriting it still takes it from whichever stage recorded it. A
-			// scratch file is the same, except that it is gone once the build
-			// is done with it, so it is not required to exist either.
-			const isShared = (path) =>
-				[...(stage.shared ?? []), ...(stage.scratch ?? [])].some(
-					(own) => path === own || path.startsWith(`${own}/`),
-				);
 			const rewritten = [];
 			for (const [path, stamp] of after)
 				if (!sameFile(before.get(path), stamp)) {
 					rewritten.push(path);
-					if (!isShared(path)) outputs.set(path, stamp);
+					outputs.set(path, stamp);
 				}
 			// Rewriting checked-in code changes what later stages hash as code.
 			const codeChanged = [...after].some(

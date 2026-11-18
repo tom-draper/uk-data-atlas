@@ -2,7 +2,11 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import { openReadOnlyDatabase, unpackText } from "@uk-data-atlas/atlas-db";
+import {
+	atlasCacheFile,
+	openReadOnlyDatabase,
+	unpackText,
+} from "@uk-data-atlas/atlas-db";
 import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
 
 /** Rebuild a catalogue input from the base database and its matching cache. */
@@ -39,7 +43,7 @@ export function readBaseDatasetInput(root: string, output: string): string {
 			return text;
 		}
 		let text: string | undefined;
-		const cachePath = join(root, "data/build/atlas-cache.sqlite");
+		const cachePath = atlasCacheFile(root, "datasets");
 		if (existsSync(cachePath)) {
 			const cache = openReadOnlyDatabase(cachePath);
 			try {

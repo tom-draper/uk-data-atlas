@@ -3,13 +3,14 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
 import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
-import { publishAtlasCacheSteps, type CacheStep } from "./atlasCacheWriter.ts";
+import { writeCachePart, type CacheStep } from "./atlasCacheWriter.ts";
 
 /**
- * Rebuild every dataset served from rows into the cache, gzipped. Level 9
- * writes no mtime or name, so one build always stores the same bytes.
+ * Rebuild every dataset served from rows into the cache, gzipped, from the
+ * database at `canonical`. Level 9 writes no mtime or name, so one build
+ * always stores the same bytes.
  */
-export const datasetPayloadStep = (root: string): CacheStep => ({
+export const datasetPayloadStep = (canonical: string): CacheStep => ({
 	component: "datasets",
 	write: (cache) => {
 		cache.exec(
@@ -18,10 +19,7 @@ export const datasetPayloadStep = (root: string): CacheStep => ({
 		const insert = cache.prepare(
 			"INSERT INTO dataset_payload VALUES (?, ?, ?, ?, ?)",
 		);
-		const database = new DatabaseSync(
-			join(root, "data/build/atlas.sqlite"),
-			{ readOnly: true },
-		);
+		const database = new DatabaseSync(canonical, { readOnly: true });
 		try {
 			for (const row of database
 				.prepare(
@@ -48,5 +46,8 @@ export const datasetPayloadStep = (root: string): CacheStep => ({
 	},
 });
 
-export const publishDatasetPayloads = (root: string) =>
-	publishAtlasCacheSteps(root, [datasetPayloadStep(root)]);
+/** Write the datasets part from the canonical database in a build tree. */
+export const writeDatasetPayloads = (root: string) => {
+	const canonical = join(root, "data/build/atlas.sqlite");
+	return writeCachePart(root, datasetPayloadStep(canonical));
+};

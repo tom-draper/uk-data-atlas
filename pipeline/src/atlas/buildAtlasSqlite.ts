@@ -13,9 +13,9 @@ import {
 	STATISTICS_DATASETS,
 	UNSTORED_DATASETS,
 } from "@uk-data-atlas/measures";
-import { publishAtlasCacheSteps } from "../storage/index.ts";
+import { writeCachePart } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
-import { datasetPayloadStep, discardAtlasCacheWork } from "../storage/index.ts";
+import { datasetPayloadStep } from "../storage/index.ts";
 import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
 import {
 	type LocationProjectionInventory,
@@ -36,16 +36,8 @@ import {
 	type CensusTable,
 } from "../catalog/censusSmallArea.ts";
 import { sha256Hex } from "../lib/hash.ts";
-import {
-	existsSync,
-	mkdirSync,
-	mkdtempSync,
-	readFileSync,
-	renameSync,
-	rmSync,
-	symlinkSync,
-} from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import {
 	artifactDirectory,
 	closeAllReadOnlyDatabases,
@@ -178,8 +170,6 @@ export const buildAtlasSqlite = (
 ) => {
 	const directory = join(repositoryRoot, "data/build");
 	mkdirSync(directory, { recursive: true });
-	// A working copy was started from the cache as it was before this build.
-	discardAtlasCacheWork(repositoryRoot);
 	const path = join(directory, "atlas-base.sqlite");
 	// Every id is the one its natural key was first given, from the committed
 	// registries in pipeline/ids. A build only adds keys it has not met.
@@ -361,51 +351,35 @@ export const buildAtlasSqlite = (
 		written.close();
 	}
 	ids.save();
-	const cacheRoot = mkdtempSync(join(directory, ".atlas-base-cache-"));
-	const cacheDirectory = join(cacheRoot, "data/build");
-	try {
-		mkdirSync(cacheDirectory, { recursive: true });
-		symlinkSync(resolve(path), join(cacheDirectory, "atlas.sqlite"));
-		const cachePath = join(directory, "atlas-cache.sqlite");
-		const componentCache = join(cacheDirectory, "atlas-cache.sqlite");
-		if (existsSync(cachePath))
-			symlinkSync(resolve(cachePath), componentCache);
-		// One copy of the published cache takes both components. Later stages
-		// add to it in the build's working copy, which is vacuumed once.
-		publishAtlasCacheSteps(
-			cacheRoot,
-			[
-				{
-					component: "projections",
-					write: (database) => {
-						const tables = locationProjectionTables({
-							artifacts,
-							parentArtifacts,
-						});
-						for (const name of Object.keys(tables))
-							database.exec(`DROP TABLE IF EXISTS ${name}`);
-						writeSqliteTables(database, tables);
-						database
-							.prepare(
-								"INSERT OR REPLACE INTO payloads VALUES (?, ?)",
-							)
-							.run(
-								"location-projection-inventory",
-								JSON.stringify(projectionInventory),
-							);
-					},
-				},
-				datasetPayloadStep(cacheRoot),
-			],
-			{ vacuum: false },
-		);
-		// Nothing in this process may hold the files about to be replaced or removed.
-		closeAllReadOnlyDatabases();
-		renameSync(componentCache, cachePath);
-	} finally {
-		closeAllReadOnlyDatabases();
-		rmSync(cacheRoot, { recursive: true, force: true });
-	}
+	// Each component is written to a part that this stage owns. The generation
+	// of each is taken from this database, as `atlas.sqlite` does not exist yet.
+	writeCachePart(
+		repositoryRoot,
+		{
+			component: "projections",
+			write: (database) => {
+				const tables = locationProjectionTables({
+					artifacts,
+					parentArtifacts,
+				});
+				for (const name of Object.keys(tables))
+					database.exec(`DROP TABLE IF EXISTS ${name}`);
+				writeSqliteTables(database, tables);
+				database
+					.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
+					.run(
+						"location-projection-inventory",
+						JSON.stringify(projectionInventory),
+					);
+			},
+		},
+		{ canonical: path },
+	);
+	writeCachePart(repositoryRoot, datasetPayloadStep(path), {
+		canonical: path,
+	});
+	// Nothing in this process may keep a part about to be read as new.
+	closeAllReadOnlyDatabases();
 
 	rmSync(join(publicDirectory, "location-projections.sqlite"), {
 		force: true,
