@@ -38,7 +38,9 @@ test("a measure with no declared series serves the measure of its own id", () =>
 
 test("writes the series after the other measure fields", () => {
 	const result = catalogueWithSeries(
-		catalogueOf([{ id: "owned", series: { measure: "a" }, label: "Owned" }]),
+		catalogueOf([
+			{ id: "owned", series: { measure: "a" }, label: "Owned" },
+		]),
 	);
 	assert.deepEqual(Object.keys(result.measures[0]!), [
 		"id",

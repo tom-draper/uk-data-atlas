@@ -11,7 +11,10 @@ import { DatabaseSync } from "node:sqlite";
 import { buildAnalysisGeographyValidation } from "../../src/geographies/buildAnalysisGeographyValidation";
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { measureSeriesKey, measureSeriesSourceKey } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+} from "@uk-data-atlas/measures";
 import { validateAnalysisGeographies } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
