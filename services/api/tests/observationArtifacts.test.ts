@@ -94,6 +94,17 @@ test("is undefined for a period the artifact does not hold", () => {
 	);
 });
 
+test("does not select an unindexed artifact by legacy measure and geography", () => {
+	const artifact = tableMeasureObservations(table, "owned");
+	assert.equal(
+		observationsFor("owned", source, "2021", {
+			measureObservations: [artifact],
+			seriesKey: measureSeriesKey({ measure: "owned" }),
+		}),
+		undefined,
+	);
+});
+
 test("selects observations by canonical series and source", () => {
 	const first = tableMeasureObservations(table, "owned");
 	const second = tableMeasureObservations(
