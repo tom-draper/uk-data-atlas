@@ -46,10 +46,11 @@ export const compileLifeExpectancy = (
 		.sort((left, right) => left.period.localeCompare(right.period));
 	const lifeExpectancyMeasures = (["male", "female"] as const).map((sex) => {
 		const measureId = `life-expectancy-${sex}`;
-		const seriesKey = measureSeriesKey({
+		const series = {
 			measure: "life-expectancy",
 			dimensions: { sex },
-		});
+		};
+		const seriesKey = measureSeriesKey(series);
 		const periods = lifeExpectancyPeriods.map(({ period, data }) => ({
 			period,
 			records: Object.entries(data)
@@ -92,6 +93,7 @@ export const compileLifeExpectancy = (
 		const latestRecords = periods.at(-1)?.records ?? [];
 		const measure: Measure = {
 			id: measureId,
+			series,
 			label: `${sex === "male" ? "Male" : "Female"} life expectancy at birth`,
 			valueKind: "quantity",
 			unit: "years",

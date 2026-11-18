@@ -11,10 +11,11 @@ export const compileEmissions = (
 	{ manifestPath, datasets }: CatalogManifest,
 	ghgEmissionsPath: DatasetInput,
 ): CompiledMeasure => {
-	const seriesKey = measureSeriesKey({
+	const series = {
 		measure: "ghg-emissions",
 		dimensions: { "emissions-sector": "total" },
-	});
+	};
+	const seriesKey = measureSeriesKey(series);
 	const emissions = datasets.find(
 		(dataset) => dataset.id === "ghg-emissions",
 	);
@@ -49,6 +50,7 @@ export const compileEmissions = (
 	}
 	const emissionsMeasure: Measure = {
 		id: "ghg-emissions",
+		series,
 		label: "Greenhouse gas emissions",
 		valueKind: "quantity",
 		unit: "kt CO2e",

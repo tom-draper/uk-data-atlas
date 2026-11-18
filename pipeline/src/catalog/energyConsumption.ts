@@ -94,10 +94,11 @@ export const compileEnergyConsumption = (
 		const path = paths[fuel.dataset];
 		for (const segment of SEGMENTS) {
 			const measureId = `${fuel.fuel}-consumption${segment.id}`;
-			const seriesKey = measureSeriesKey({
+			const series = {
 				measure: fuel.dataset,
 				dimensions: { "meter-type": segment.member },
-			});
+			};
+			const seriesKey = measureSeriesKey(series);
 			const periods = localAuthorityFieldPeriods(
 				path,
 				segment.field,
@@ -160,6 +161,7 @@ export const compileEnergyConsumption = (
 			observationDatasets.set(artifact, fuel.dataset);
 			measures.push({
 				id: measureId,
+				series,
 				label: `${fuel.label} consumption${segment.label}`,
 				valueKind: "quantity",
 				unit: "GWh",

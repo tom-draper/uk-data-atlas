@@ -265,6 +265,12 @@ export const compileUnemployment = (
 		);
 		unemploymentMeasures.push({
 			id: spec.id,
+			series: {
+				measure:
+					spec.valueField === "levels"
+						? "unemployed-people"
+						: "unemployment-rate",
+			},
 			label: spec.label,
 			valueKind: spec.valueKind,
 			unit: spec.unit,
