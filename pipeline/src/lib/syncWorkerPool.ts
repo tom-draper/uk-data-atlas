@@ -21,7 +21,7 @@ import {
 const STALL_MS = 10 * 60 * 1000;
 
 type Reply<Result> = { ticket: number } & (
-	{ result: Result } | { error: string }
+	{ result: Result } | { error: { message: string; stack?: string } }
 );
 
 /** Workers to use: `environment` if it is a positive integer, else up to `most`. */
@@ -94,7 +94,11 @@ export class SyncWorkerPool<Job, Result> {
 			const reply = this.done.get(ticket);
 			if (reply) {
 				this.done.delete(ticket);
-				if ("error" in reply) throw new Error(reply.error);
+				if ("error" in reply)
+					// The worker's own stack says where the job failed.
+					throw Object.assign(new Error(reply.error.message), {
+						stack: reply.error.stack,
+					});
 				return reply.result;
 			}
 			const remaining = lastProgress + STALL_MS - performance.now();
@@ -133,8 +137,8 @@ export function serveSyncJobs<Job, Result, Options = unknown>(
 				ticket,
 				error:
 					error instanceof Error
-						? (error.stack ?? error.message)
-						: String(error),
+						? { message: error.message, stack: error.stack }
+						: { message: String(error) },
 			};
 		}
 		data.port.postMessage(reply);
