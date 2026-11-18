@@ -103,7 +103,9 @@ export const coveragePlan = (
 	);
 	const artifacts = {
 		measureObservations: context.measureObservations,
-		seriesKey: measure.series ? measureSeriesKey(measure.series) : undefined,
+		seriesKey: measure.series
+			? measureSeriesKey(measure.series)
+			: undefined,
 	};
 
 	// What each partition published on the release itself carries, taken from
