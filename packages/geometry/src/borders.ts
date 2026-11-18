@@ -37,12 +37,6 @@ export type BorderIndex = {
 const vertexKey = ([longitude, latitude]: Coordinate) =>
 	`${longitude},${latitude}`;
 
-const edgeKey = (start: Coordinate, end: Coordinate) => {
-	const from = vertexKey(start);
-	const to = vertexKey(end);
-	return from < to ? `${from}|${to}` : `${to}|${from}`;
-};
-
 const ringsOf = (geometry: GeoJsonGeometry): Coordinate[][] => {
 	if (geometry.type === "GeometryCollection")
 		return (geometry.geometries ?? []).flatMap(ringsOf);
@@ -65,11 +59,17 @@ export const borderIndex = (geometry: GeoJsonGeometry): BorderIndex => {
 	const vertices = new Set<string>();
 	let bounds: BorderIndex["bounds"];
 	for (const ring of ringsOf(geometry)) {
-		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+		// Each vertex is keyed once. It ends one edge and starts the next, so
+		// the key of the vertex just passed is the next edge's start.
+		const last = ring.length - 1;
+		let startKey = Array.isArray(ring[last]) ? vertexKey(ring[last]!) : "";
+		for (let i = 0, j = last; i < ring.length; j = i++) {
 			const start = ring[j]!;
 			const end = ring[i]!;
+			const fromKey = startKey;
+			startKey = Array.isArray(end) ? vertexKey(end) : "";
 			if (!Array.isArray(start) || !Array.isArray(end)) continue;
-			vertices.add(vertexKey(start));
+			vertices.add(fromKey);
 			if (bounds) {
 				bounds[0] = Math.min(bounds[0], start[0]);
 				bounds[1] = Math.min(bounds[1], start[1]);
@@ -80,8 +80,11 @@ export const borderIndex = (geometry: GeoJsonGeometry): BorderIndex => {
 			// that repeat with the original. Left in, that zero-length edge
 			// would key on a single vertex, and two areas meeting at nothing
 			// but that vertex would read as sharing a border.
-			if (vertexKey(start) === vertexKey(end)) continue;
-			const key = edgeKey(start, end);
+			if (fromKey === startKey) continue;
+			const key =
+				fromKey < startKey
+					? `${fromKey}|${startKey}`
+					: `${startKey}|${fromKey}`;
 			if (!edges.has(key))
 				edges.set(key, edgeLengthM(start as Pair, end as Pair));
 		}
@@ -153,16 +156,22 @@ export const sharedBorderWith = (
 	const sharedEdgeKeys = new Set<string>();
 	let sharedBorderM = 0;
 	for (const ring of ringsOf(geometry)) {
+		// The key of the vertex an edge ends at, kept for the edge that starts
+		// there, when it was needed.
+		let carried: string | undefined;
 		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
 			const start = ring[j]!;
 			const end = ring[i]!;
+			const known = carried;
+			carried = undefined;
 			if (!Array.isArray(start) || !Array.isArray(end)) continue;
 			if (!inside(start)) continue;
-			const from = vertexKey(start);
+			const from = known ?? vertexKey(start);
 			if (!target.vertices.has(from)) continue;
 			sharedVertexKeys.add(from);
 			if (!inside(end)) continue;
 			const to = vertexKey(end);
+			carried = to;
 			// The wrap-around pair of a closed ring repeats one vertex.
 			if (from === to) continue;
 			const key = from < to ? `${from}|${to}` : `${to}|${from}`;
