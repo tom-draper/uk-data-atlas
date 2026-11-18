@@ -21,6 +21,10 @@ export type DisplayFormat =
 			locale?: string;
 			/** Round to a whole number first. */
 			round?: true;
+			/** Always write this many decimal places, grouped like the rest. */
+			digits?: number;
+			/** Multiply the value first, where the source is in thousands. */
+			scale?: number;
 			prefix?: string;
 			suffix?: string;
 	  }
@@ -312,6 +316,17 @@ export type DisplayDeprivation = {
 export type DisplayComputed = "total" | "medianAge" | "genderBalance";
 
 /**
+ * How a dataset reads in a table of its areas ranked: what the value column
+ * measures, and its format where the map's card or legend format is too
+ * coarse for a table.
+ */
+export type DisplayRanking = {
+	/** Where the dataset's name does not say; the name is used without it. */
+	label?: string;
+	format?: DisplayFormat;
+};
+
+/**
  * One way a map colours a dataset whose several views each have a chart of
  * their own, chosen by the `view` in a link. The website draws the fill, the
  * legend and the colour range control from it.
@@ -333,6 +348,8 @@ export type DisplayMapView = {
 	legend: { min: number; max: number };
 	/** Colour about zero, from one end to the other, not along the theme's ramp. */
 	palette?: "gender";
+	/** How this view reads in a ranking, instead of the dataset's own. */
+	ranking?: DisplayRanking;
 };
 
 /** Combining records over the areas a place is made of. */
