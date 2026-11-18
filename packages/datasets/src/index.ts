@@ -130,6 +130,7 @@ export * from "./data/new-datasets/loader.ts";
 export * from "./data/nhs-waiting/icbToGss.ts";
 export * from "./data/population-constituency/loader.ts";
 export * from "./data/population/metrics.ts";
+export * from "./data/population/source.ts";
 export * from "./data/population/ukLoader.ts";
 export * from "./data/public-health/measures.ts";
 export * from "./data/public-health/source.ts";

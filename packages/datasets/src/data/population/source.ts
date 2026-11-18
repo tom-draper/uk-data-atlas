@@ -1,5 +1,4 @@
-import { type AgeData } from "../../types/common.ts";
-import { type PopulationDataset } from "../../types/population.ts";
+import type { DirectPart, DirectValue } from "../../declaration/statistics.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
 type XlsxSheetRowReader = (
@@ -13,10 +12,11 @@ type AgeColumn = { index: number; age: string; sex: "F" | "M" };
 const cell = (row: ReadonlyMap<number, string>, index: number) =>
 	row.get(index)?.trim() ?? "";
 
-export async function loadPopulation(
+/** Mid-2022 population estimates by ward, sex and single year of age. */
+export async function populationStatisticsParts(
 	readRows: XlsxSheetRowReader,
-): Promise<Record<string, PopulationDataset>> {
-	const combinedData: PopulationDataset["data"] = {};
+): Promise<DirectPart[]> {
+	const records: DirectPart["records"] = [];
 	let rowIndex = 0;
 	let ageColumns: AgeColumn[] | undefined;
 	await readRows(
@@ -55,9 +55,9 @@ export async function loadPopulation(
 			const wardCode = cell(row, 2);
 			if (!laCode || !wardCode) return;
 
-			const females: AgeData = {};
-			const males: AgeData = {};
-			const total: AgeData = {};
+			const females: Record<string, number> = {};
+			const males: Record<string, number> = {};
+			const total: Record<string, number> = {};
 			for (const { index, age, sex } of ageColumns) {
 				const value = cell(row, index);
 				if (!value) continue;
@@ -69,25 +69,26 @@ export async function loadPopulation(
 			}
 			if (Object.keys(total).length === 0) return;
 
-			combinedData[wardCode] = {
-				total,
-				males,
-				females,
-				wardName: cell(row, 3),
-				ladCode: laCode,
-				ladName: cell(row, 1),
-			};
+			const values: DirectValue[] = [];
+			for (const [sex, counts] of [
+				["all", total],
+				["male", males],
+				["female", females],
+			] as const)
+				for (const [age, value] of Object.entries(counts))
+					values.push({
+						measure: "population",
+						members: { sex, age },
+						value,
+					});
+			records.push({
+				code: wardCode,
+				name: cell(row, 3),
+				parents: { ladCode: { code: laCode, name: cell(row, 1) } },
+				values,
+			});
 		},
 	);
 
-	return {
-		2022: {
-			id: "population2022",
-			type: "population",
-			year: 2022,
-			boundaryYear: 2023,
-			boundaryType: "ward",
-			data: combinedData,
-		},
-	};
+	return [{ key: "2022", records }];
 }
