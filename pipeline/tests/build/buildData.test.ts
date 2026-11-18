@@ -403,6 +403,7 @@ test("documents rebuild pins the final manifest without rebuilding the initial m
 	assert.deepEqual(build.commands(), [
 		[
 			"--max-old-space-size=3072",
+			"--max-semi-space-size=128",
 			"pipeline/src/stages/build-evidence-documents.ts",
 		],
 		["pipeline/src/stages/build-atlas-release.ts"],
