@@ -390,11 +390,7 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/measure-compatibility.json`],
-			codeInputs: [
-				"pipeline/package.json",
-				"pipeline/tsconfig.json",
-				"services/api/config/measure-dimensions.json",
-			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -405,11 +401,7 @@ export const apiStages = [
 			writes: ["data/build/statistics-read-path.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-read-path.json"],
-			codeInputs: [
-				"pipeline/package.json",
-				"pipeline/tsconfig.json",
-				"services/api/config/measure-dimensions.json",
-			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
