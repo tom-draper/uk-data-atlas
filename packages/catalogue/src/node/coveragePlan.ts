@@ -4,7 +4,7 @@ import {
 	conversionCoverageOnto,
 	type MeasureConversionPath,
 } from "@uk-data-atlas/measures";
-import { measureCoverage } from "@uk-data-atlas/measures";
+import { measureCoverage, measureSeriesKey } from "@uk-data-atlas/measures";
 import { observationsFor } from "@uk-data-atlas/measures";
 import type { MeasureContext } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
@@ -103,6 +103,7 @@ export const coveragePlan = (
 	);
 	const artifacts = {
 		measureObservations: context.measureObservations,
+		seriesKey: measure.series ? measureSeriesKey(measure.series) : undefined,
 	};
 
 	// What each partition published on the release itself carries, taken from
