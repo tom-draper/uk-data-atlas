@@ -19,6 +19,7 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 		summary:
 			"Households living in temporary accommodation in each English local authority, including households with children and the number of children.",
 	},
+	mapName: "Homelessness",
 	source: {
 		name: "Temporary Accommodation",
 		publisher: "Ministry of Housing, Communities and Local Government",

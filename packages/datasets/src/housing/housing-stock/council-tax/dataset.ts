@@ -26,6 +26,7 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 		summary:
 			"The council tax levels billing authorities in England set for 2026-27.",
 	},
+	mapName: "Council Tax",
 	source: {
 		name: "Council Tax levels in England",
 		publisher: "Ministry of Housing, Communities and Local Government",

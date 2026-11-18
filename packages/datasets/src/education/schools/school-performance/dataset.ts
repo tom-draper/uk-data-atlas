@@ -45,6 +45,7 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 				"The constituency half of school-performance, a separate file bundle from the local authority one.",
 		},
 	],
+	mapName: "GCSE Results",
 	source: {
 		name: "School Performance (KS4)",
 		publisher: "Department for Education",

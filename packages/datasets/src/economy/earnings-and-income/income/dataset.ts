@@ -19,6 +19,7 @@ export const income = defineDataset<IncomeDataset>({
 		summary:
 			"Median and mean annual and hourly pay for employees in each English local authority, by where workers live. The income legend switches between annual and hourly pay and between median and mean. Regional cards show an unweighted average of the available authority estimates, rather than a pooled regional median or mean.",
 	},
+	mapName: "Income",
 	source: {
 		name: "Income",
 		publisher: "Office for National Statistics",

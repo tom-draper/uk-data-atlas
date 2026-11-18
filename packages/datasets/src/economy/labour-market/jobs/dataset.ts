@@ -19,6 +19,7 @@ export const jobs = defineDataset<JobsDataset>({
 		summary:
 			"The total number of jobs in each local authority from 2011 to 2024, counted where people work rather than where they live.",
 	},
+	mapName: "Jobs",
 	source: {
 		name: "Jobs",
 		publisher: "Office for National Statistics",

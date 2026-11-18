@@ -28,6 +28,7 @@ export const crime = defineDataset<CrimeDataset>({
 			"Police recorded crime in England and Wales for the year to March 2026, in total and for more than twenty types of offence, for each community safety partnership. Fraud isn't included.",
 		publishedOn: "communitySafetyPartnership",
 	},
+	mapName: "Crime Rates",
 	source: {
 		name: "Crime",
 		publisher: "Office for National Statistics",

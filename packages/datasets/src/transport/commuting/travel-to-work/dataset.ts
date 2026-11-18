@@ -24,6 +24,7 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 		summary:
 			"How working residents of each local authority in England and Wales get to work, from driving and public transport to cycling and working from home, from Census 2021.",
 	},
+	mapName: "Commuting",
 	source: {
 		name: "Travel to Work",
 		publisher: "Office for National Statistics",

@@ -28,6 +28,7 @@ export const housePrice = defineDataset<HousePriceDataset>({
 			folder: "house-price/median-price-by-ward",
 		},
 	],
+	mapName: "House Prices",
 	source: {
 		name: "House Prices",
 		publisher: "Office for National Statistics",

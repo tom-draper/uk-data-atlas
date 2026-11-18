@@ -18,6 +18,7 @@ export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 		title: "Pupil absence",
 		about: "Full-year 2024/25 pupil absence in English state-funded primary, secondary and special schools, mapped on county and unitary authority boundaries. Overall, authorised and unauthorised measures divide missed sessions by possible sessions. Persistent and severe absence count enrolments missing at least 10% and 50% of sessions. Regional rates divide summed counts by the corresponding summed denominators.",
 	},
+	mapName: "Pupil Absence",
 	source: {
 		name: "Pupil absence",
 		publisher: "Department for Education",

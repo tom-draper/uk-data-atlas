@@ -23,6 +23,7 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		summary:
 			"How many households in each local authority in England and Wales have no car, one, two, or three or more, from Census 2021.",
 	},
+	mapName: "Car Ownership",
 	source: {
 		name: "Car Availability",
 		publisher: "Office for National Statistics",

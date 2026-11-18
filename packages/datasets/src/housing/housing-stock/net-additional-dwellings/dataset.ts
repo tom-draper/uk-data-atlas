@@ -23,6 +23,7 @@ export const netAdditionalDwellings = defineDataset<
 		about: "How much the number of homes in each English local authority grew over the year, counting new builds and conversions, minus demolitions. It's the government's main measure of housing supply.",
 		summary: "New homes added by English local authorities.",
 	},
+	mapName: "New Homes",
 	source: {
 		name: "Housing supply: net additional dwellings",
 		publisher: "Ministry of Housing, Communities and Local Government",

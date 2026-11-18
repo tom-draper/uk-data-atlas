@@ -18,6 +18,7 @@ export const publicHealth = defineDataset<PublicHealthDataset>({
 		title: "Public health indicators",
 		about: "Enable the Public Health card to compare smoking, adult overweight including obesity, physical activity, childhood excess weight and preventable mortality under 75. Figures cover persons in English counties and unitary authorities. Smoking and mortality use 2024, and the other measures use 2024/25. Regional summaries average available authority estimates without population weighting. Mortality is age-standardised per 100,000. Missing estimates remain unavailable.",
 	},
+	mapName: "Public Health Indicators",
 	source: {
 		name: "Public health indicators",
 		publisher: "Office for Health Improvement and Disparities",

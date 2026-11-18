@@ -1,5 +1,9 @@
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import type { DatasetTheme, PlaceKind } from "@uk-data-atlas/datasets";
+import {
+	DATASET_DECLARATIONS,
+	type DatasetTheme,
+	type PlaceKind,
+} from "@uk-data-atlas/datasets";
 import type { DatasetSource } from "@uk-data-atlas/datasets";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetType } from "@/lib/datasets";
@@ -36,59 +40,19 @@ const COVERAGE_OVERRIDES: Partial<
 	wimd: ["GB-WLS"],
 };
 
-/** What each map shows, as people search for it. Keyed by map slug. */
-export const MAP_NAMES: Readonly<Record<string, string>> = {
-	"workplace-income": "Workplace Pay",
-	"housing-tenure": "Housing Tenure",
-	"general-health": "General Health",
-	"pupil-absence": "Pupil Absence",
-	"public-health": "Public Health Indicators",
-	"adult-social-care-activity": "Adult Social Care Support",
-	"adult-social-care-outcomes": "Adult Social Care Quality of Life",
-	"air-quality": "Air Pollution (NO₂)",
-	brexit: "EU Referendum Results",
-	"brexit-constituency": "EU Referendum Estimates by Constituency",
-	broadband: "Broadband Coverage",
-	"business-activity": "Businesses",
-	"car-availability": "Car Ownership",
-	"child-poverty": "Child Poverty",
-	"claimant-count": "Claimant Count",
-	"council-tax": "Council Tax",
-	crime: "Crime Rates",
-	"electric-vehicle-chargers": "EV Charging Points",
-	"electricity-consumption": "Electricity Consumption",
-	ethnicity: "Ethnicity",
-	"fuel-poverty": "Fuel Poverty",
-	"gas-consumption": "Gas Consumption",
-	"general-election": "General Election Results",
-	"ghg-emissions": "Greenhouse Gas Emissions",
-	homelessness: "Homelessness",
-	"house-price": "House Prices",
-	"housing-affordability": "Housing Affordability",
-	imd: "Deprivation (IMD)",
-	income: "Income",
-	jobs: "Jobs",
-	"life-expectancy": "Life Expectancy",
-	"local-election": "Local Election Results",
-	"local-government-finance": "Council Education Spending",
-	"mobile-coverage": "Mobile Coverage",
-	"net-additional-dwellings": "New Homes",
-	"nhs-waiting": "NHS Waiting Times",
-	nimdm: "Deprivation (NIMDM)",
-	"planning-applications": "Planning Applications",
-	"population-density": "Population Density",
-	"population-age": "Age Distribution",
-	"population-gender": "Gender Balance",
-	qualification: "Qualifications",
-	"regional-gdp": "Regional GDP",
-	"school-performance": "GCSE Results",
-	"school-performance-disadvantage": "Disadvantaged Pupil Attainment Gap",
-	simd: "Deprivation (SIMD)",
-	"travel-to-work": "Commuting",
-	unemployment: "Unemployment",
-	waste: "Household Waste",
-	wimd: "Deprivation (WIMD)",
-};
+/**
+ * What each map shows, as people search for it, keyed by map slug. Each
+ * dataset names its own map in its declaration, and a dataset with several
+ * views names each view's.
+ */
+export const MAP_NAMES: Readonly<Record<string, string>> = Object.fromEntries(
+	DATASET_DECLARATIONS.flatMap(({ id, mapName, mapViews }) => [
+		...(mapName === undefined ? [] : [[id, mapName] as const]),
+		...(mapViews ?? []).map(
+			(view) => [`${id}-${view.id}`, view.name] as const,
+		),
+	]),
+);
 
 const AREA_NOUNS: Readonly<Record<string, string>> = {
 	ward: "ward",

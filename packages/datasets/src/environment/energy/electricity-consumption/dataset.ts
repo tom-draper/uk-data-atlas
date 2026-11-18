@@ -28,6 +28,7 @@ export const electricityConsumption =
 					"One download feeds both datasets, and neither id names it.",
 			},
 		],
+		mapName: "Electricity Consumption",
 		source: {
 			name: SOURCE.name,
 			publisher: SOURCE.source,

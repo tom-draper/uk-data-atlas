@@ -58,6 +58,7 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 		summary:
 			"Local-authority collected waste in England, including material sent for recycling, composting and reuse. The atlas legend switches between collected tonnes, recycled tonnes and the recycling percentage. Tonnage measures can also be shown per 100,000 residents. For authorities with data, regional recycling percentages divide summed recycled tonnes by summed collected tonnes.",
 	},
+	mapName: "Household Waste",
 	source: {
 		name: "Local authority collected waste management",
 		publisher: "Department for Environment, Food and Rural Affairs",

@@ -27,6 +27,7 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 		summary:
 			"The share of premises in each UK local authority covered by 4G and 5G from all four mobile networks, from Ofcom. The legend selects indoor 4G, outdoor 5G or landmass coverage, using any operator or all four where published. Premises measures use premises-weighted regional averages; landmass measures use an unweighted mean of authorities, not a combined landmass percentage.",
 	},
+	mapName: "Mobile Coverage",
 	source: {
 		name: "Mobile Coverage",
 		publisher: "Ofcom",

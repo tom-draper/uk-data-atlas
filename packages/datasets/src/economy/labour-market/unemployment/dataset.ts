@@ -35,6 +35,7 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 		summary:
 			"The ONS's final model-based estimates of unemployment for local authorities in Great Britain, from 1996 to 2021, as a rate and a count, with confidence intervals. ONS discontinued this series in August 2022.",
 	},
+	mapName: "Unemployment",
 	source: {
 		name: "Unemployment",
 		publisher: "Office for National Statistics",

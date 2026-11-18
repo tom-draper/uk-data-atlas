@@ -42,6 +42,7 @@ export const population = defineDataset<PopulationDataset>({
 	mapViews: [
 		{
 			id: "density",
+			name: "Population Density",
 			ranking: {
 				label: "Residents per km²",
 				format: {
@@ -61,6 +62,7 @@ export const population = defineDataset<PopulationDataset>({
 		},
 		{
 			id: "age",
+			name: "Age Distribution",
 			ranking: {
 				label: "Median age",
 				format: { kind: "decimal", digits: 1, suffix: " years" },
@@ -75,6 +77,7 @@ export const population = defineDataset<PopulationDataset>({
 		},
 		{
 			id: "gender",
+			name: "Gender Balance",
 			value: { computed: "genderBalance" },
 			optionsKey: "gender",
 			colorRange: { min: -0.1, max: 0.1 },

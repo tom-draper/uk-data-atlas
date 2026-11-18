@@ -29,6 +29,7 @@ export const wimd = defineDataset<WIMDDataset>({
 		summary:
 			"The Welsh Index of Multiple Deprivation, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
 	},
+	mapName: "Deprivation (WIMD)",
 	source: {
 		name: "Welsh Index of Multiple Deprivation",
 		publisher: "Welsh Government",

@@ -45,6 +45,7 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 			"Results for every Westminster constituency at the 2010, 2015, 2017, 2019 and 2024 general elections: votes for each party, vote shares, turnout and the winner.",
 	},
 	sources: yearFolders("general-election", [2010, 2015, 2017, 2019, 2024]),
+	mapName: "General Election Results",
 	source: {
 		name: "General Election Results",
 		publisher: "House of Commons Library",

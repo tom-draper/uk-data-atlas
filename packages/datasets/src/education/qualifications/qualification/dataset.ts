@@ -23,6 +23,7 @@ export const qualification = defineDataset<QualificationDataset>({
 		summary:
 			"The highest qualification held by residents aged 16 and over in each local authority in England and Wales, from Census 2021.",
 	},
+	mapName: "Qualifications",
 	source: {
 		name: "Qualifications",
 		publisher: "Office for National Statistics",

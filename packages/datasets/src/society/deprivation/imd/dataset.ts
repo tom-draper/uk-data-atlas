@@ -116,6 +116,7 @@ export const imd = defineDataset<IMDDataset>({
 		summary:
 			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles.",
 	},
+	mapName: "Deprivation (IMD)",
 	source: {
 		name: "Indices of Multiple Deprivation",
 		publisher: "Ministry of Housing, Communities & Local Government",

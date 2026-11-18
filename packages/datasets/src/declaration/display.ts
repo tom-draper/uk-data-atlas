@@ -334,6 +334,8 @@ export type DisplayRanking = {
 export type DisplayMapView = {
 	/** The `view` in a link that selects it. */
 	id: string;
+	/** The name of this view's map as people search for it, on its atlas page. */
+	name: string;
 	/** The figure each area is coloured by. */
 	value: {
 		computed: DisplayComputed;

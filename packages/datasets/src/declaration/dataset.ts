@@ -207,6 +207,12 @@ export type DatasetDeclaration<
 	related?: readonly DatasetTopic[];
 	/** What the docs and `/datasets` pages say about the dataset. */
 	guide: DeclaredGuide;
+	/**
+	 * The name of the dataset's map as people search for it, on its atlas page.
+	 * Left out for a dataset with no map, or whose views are named one by one
+	 * (`mapViews`).
+	 */
+	mapName?: string;
 	source: DeclaredSource;
 	/** The `data/source` folders it reads, when not one named for its id. */
 	sources?: readonly DeclaredSourceFolder[];
