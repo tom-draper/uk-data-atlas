@@ -221,7 +221,30 @@ const combineObservations = (
 				index.set(measureSeriesKeySourceKey(key, source), artifact);
 		}
 	}
-	if (index.size) registerSeriesObservations(combined, index);
+	if (index.size) {
+		const population = catalog.measures.find(
+			(measure) =>
+				measure.id === "population" &&
+				measure.series?.measure === "population",
+		);
+		for (const [datasetId, artifact] of [
+			["population", populationObservations],
+			["population-uk", populationLocalAuthorityObservations],
+		] as const) {
+			const source = population?.sources.find(
+				(entry) => entry.datasetId === datasetId,
+			);
+			if (source)
+				index.set(
+					measureSeriesKeySourceKey(
+						measureSeriesKey(population!.series!),
+						source,
+					),
+					artifact,
+				);
+		}
+		registerSeriesObservations(combined, index);
+	}
 	return combined;
 };
 

@@ -7,7 +7,11 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { type MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
-import { tableMeasureObservations } from "@uk-data-atlas/measures";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+	tableMeasureObservations,
+} from "@uk-data-atlas/measures";
 import {
 	crosswalkArtifact,
 	dataCatalog,
@@ -122,11 +126,24 @@ test("reads a table-backed series without materialising every area's records", (
 			},
 		],
 	};
+	const artifacts = [observations];
+	registerSeriesObservations(
+		artifacts,
+		new Map([
+			[
+				measureSeriesSourceKey(
+					measure.series!,
+					catalog.measures[0]!.sources[0]!,
+				),
+				observations,
+			],
+		]),
+	);
 	const seriesFor = (code: string) =>
 		routeWithCatalog(
 			`/v1/data/${measure.id}/series?place=${code}&geography=lsoa&codeYear=2011`,
 			catalog,
-			[observations],
+			artifacts,
 		);
 	const response = seriesFor("E01000001");
 	assert.equal(response.status, 200);
