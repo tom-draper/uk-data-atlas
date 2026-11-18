@@ -3,21 +3,17 @@ import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
-import type { MeasureDimensions } from "@uk-data-atlas/measures";
 import { seriesCompatibility } from "./seriesCompatibility";
 
 /** Return boundary releases whose codes are safe for aggregate coverage checks. */
 export const compatibleReleasesForAggregation = ({
 	measureCompatibilityInventory,
-	measureId,
 	seriesKey,
 	source,
 	period,
 }: {
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
-	measureId: string;
 	seriesKey?: string;
-	measureDimensions?: MeasureDimensions;
 	source: MeasureSource;
 	period: string;
 }): CompatibilityCandidate[] =>
@@ -25,7 +21,6 @@ export const compatibleReleasesForAggregation = ({
 		seriesCompatibility(
 			measureCompatibilityInventory,
 			seriesKey,
-			measureId,
 		)?.sources.find(
 			(candidate) =>
 				candidate.datasetId === source.datasetId &&

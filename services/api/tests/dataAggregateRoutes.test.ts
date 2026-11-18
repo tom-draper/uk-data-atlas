@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import { identityDimensions, measureSeriesKey } from "@uk-data-atlas/measures";
 import { route as routeRequest } from "../src/routes";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import {
@@ -152,6 +153,7 @@ test("aggregates a region through an explicit complete crosswalk", () => {
 			...measureCompatibilityInventory.measures,
 			{
 				measureId: "ghg-emissions",
+				seriesKey: measureSeriesKey({ measure: "ghg-emissions" }),
 				sources: [
 					{
 						datasetId: "ghg-emissions",
@@ -187,6 +189,7 @@ test("aggregates a region through an explicit complete crosswalk", () => {
 		dataCatalog,
 		measureObservations,
 		{
+			measureDimensions: identityDimensions(dataCatalog),
 			crosswalkLookup: new Map([
 				...crosswalkLookup,
 				[crosswalkId, regionalCrosswalk],
@@ -605,6 +608,7 @@ test("flags a country total that leaves out areas a matching release holds", () 
 		"/v1/data/ghg-emissions/value?period=2024&geography=localAuthority&codeYear=2025&place=E92000001";
 	const context = testContext({
 		boundaryRegistry: registry,
+		measureDimensions: identityDimensions(dataCatalog),
 		areaLookup: createAreaLookup([
 			{
 				schemaVersion: 1,
@@ -627,6 +631,7 @@ test("flags a country total that leaves out areas a matching release holds", () 
 			measures: [
 				{
 					measureId: "ghg-emissions",
+					seriesKey: measureSeriesKey({ measure: "ghg-emissions" }),
 					sources: [
 						{
 							datasetId: "ghg-emissions",
@@ -751,6 +756,7 @@ const containmentCompatibility: MeasureCompatibilityInventory = {
 		...measureCompatibilityInventory.measures,
 		{
 			measureId: "ghg-emissions",
+			seriesKey: measureSeriesKey({ measure: "ghg-emissions" }),
 			sources: [
 				{
 					datasetId: "ghg-emissions",
@@ -788,6 +794,7 @@ const aggregateOnto = (query: string, crosswalk: CrosswalkArtifact) =>
 		dataCatalog,
 		measureObservations,
 		{
+			measureDimensions: identityDimensions(dataCatalog),
 			crosswalkLookup: new Map([
 				...crosswalkLookup,
 				[crosswalk.id, crosswalk],
@@ -889,6 +896,7 @@ const aggregateThrough = (
 		dataCatalog,
 		measureObservations,
 		{
+			measureDimensions: identityDimensions(dataCatalog),
 			crosswalkLookup: new Map([
 				...crosswalkLookup,
 				...steps.map(

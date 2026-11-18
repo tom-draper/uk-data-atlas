@@ -103,12 +103,12 @@ test("selects compatibility by canonical series instead of the supplied old id",
 	const inventory = {
 		measures: [first, second],
 	} as unknown as MeasureCompatibilityInventory;
-	assert.equal(seriesCompatibility(inventory, key, "legacy-owned"), second);
+	assert.equal(seriesCompatibility(inventory, key), second);
+	assert.equal(seriesCompatibility(inventory, undefined), undefined);
 	assert.equal(
 		seriesCompatibility(
 			inventory,
 			measureSeriesKey({ measure: "missing" }),
-			"legacy-owned",
 		),
 		undefined,
 	);
@@ -123,12 +123,11 @@ test("selects published canonical compatibility without the legacy mapping", () 
 	const inventory = {
 		measures: [entry],
 	} as unknown as MeasureCompatibilityInventory;
-	assert.equal(seriesCompatibility(inventory, key, "unrelated"), entry);
+	assert.equal(seriesCompatibility(inventory, key), entry);
 	assert.equal(
 		seriesCompatibility(
 			inventory,
 			measureSeriesKey({ measure: "missing" }),
-			"legacy-rented",
 		),
 		undefined,
 	);
