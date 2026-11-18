@@ -27,7 +27,10 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 		description:
 			"Households in temporary accommodation by English local authority, including households with children.",
 		cadence: "quarterly",
-		notes: [],
+		notes: [
+			"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
+			"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight.",
+		],
 	},
 	load: noCompiledPayload<HomelessnessDataset>(),
 	statistics: {
@@ -118,6 +121,53 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 	},
 	ranking: {
 		label: "Households in temporary accommodation per 1,000",
+	},
+	catalogue: {
+		kind: "indicators",
+		period: "2026-Q1",
+		codes: "england2025",
+		coverageNote:
+			"Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero.",
+		indicators: [
+			{
+				id: "temporary-accommodation-households",
+				label: "Households in temporary accommodation",
+				field: "householdsInTemporaryAccommodation",
+				valueKind: "count",
+				unit: "households",
+				aggregation: "sum",
+				notes: [
+					"Every household in temporary accommodation, with or without children.",
+				],
+				measure: "households-in-temporary-accommodation",
+				members: { "household-type": "all" },
+			},
+			{
+				id: "temporary-accommodation-households-with-children",
+				label: "Households with children in temporary accommodation",
+				field: "householdsWithChildren",
+				valueKind: "count",
+				unit: "households",
+				aggregation: "sum",
+				notes: [
+					"Households with dependent children, a subset of all households in temporary accommodation.",
+				],
+				measure: "households-in-temporary-accommodation",
+				members: { "household-type": "with-children" },
+			},
+			{
+				id: "temporary-accommodation-children",
+				label: "Children in temporary accommodation",
+				field: "childrenInTemporaryAccommodation",
+				valueKind: "count",
+				unit: "children",
+				aggregation: "sum",
+				notes: [
+					"Dependent children living in those households, counted as people rather than households.",
+				],
+				measure: "children-in-temporary-accommodation",
+			},
+		],
 	},
 	display: {
 		label: "Homelessness [2026]",

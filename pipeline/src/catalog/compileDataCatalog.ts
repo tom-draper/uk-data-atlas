@@ -24,9 +24,7 @@ import {
 	compileDeclaredIndicators,
 	compileYearlyIndicators,
 } from "./declaredIndicators.ts";
-import { compileHomelessness } from "./homelessness.ts";
 import { compileRoadCollisions } from "./roadCollisions.ts";
-import { compileIncome } from "./income.ts";
 import { compileCrime } from "./crime.ts";
 import { compileUnemployment } from "./unemployment.ts";
 import { compileAirQuality } from "./airQuality.ts";
@@ -56,10 +54,7 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	carAvailability: Input;
 	qualification: Input;
 	ethnicity: Input;
-	homelessness: Input;
 	roadCollisions: Input;
-	income: Input;
-	workplaceIncome: Input;
 	crime: Input;
 	airQuality: Input;
 	unemployment: Input;
@@ -101,10 +96,7 @@ export const compileDataCatalog = ({
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
-	homelessness: homelessnessPath,
 	roadCollisions: roadCollisionsPath,
-	income: incomePath,
-	workplaceIncome: workplaceIncomePath,
 	crime: crimePath,
 	airQuality: airQualityPath,
 	unemployment: unemploymentPath,
@@ -170,9 +162,6 @@ export const compileDataCatalog = ({
 		throw new Error(`${manifestPath} has duplicate dataset outputs`);
 	}
 	const catalogManifest: CatalogManifest = { manifestPath, datasets };
-	const hasWorkplaceIncome = datasets.some(
-		(dataset) => dataset.id === "workplace-income",
-	);
 	const population = compilePopulation(
 		catalogManifest,
 		populationPath,
@@ -230,18 +219,11 @@ export const compileDataCatalog = ({
 				{ authorities: populationCodes, england2025 },
 			),
 		),
-		...compileHomelessness(catalogManifest, homelessnessPath, england2025),
 		...compileRoadCollisions(
 			catalogManifest,
 			roadCollisionsPath,
 			populationCodes,
 		),
-		...compileIncome(catalogManifest, incomePath, england2025),
-		...(hasWorkplaceIncome
-			? compileIncome(catalogManifest, workplaceIncomePath, england2025, {
-					datasetId: "workplace-income",
-				})
-			: []),
 		...compileCrime(catalogManifest, crimePath),
 	];
 	const unemployment = compileUnemployment(
