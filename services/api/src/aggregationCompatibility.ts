@@ -11,7 +11,6 @@ export const compatibleReleasesForAggregation = ({
 	measureCompatibilityInventory,
 	measureId,
 	seriesKey,
-	measureDimensions,
 	source,
 	period,
 }: {
@@ -25,7 +24,6 @@ export const compatibleReleasesForAggregation = ({
 	(
 		seriesCompatibility(
 			measureCompatibilityInventory,
-			measureDimensions?.config,
 			seriesKey,
 			measureId,
 		)?.sources.find(

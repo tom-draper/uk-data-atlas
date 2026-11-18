@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
@@ -77,6 +78,16 @@ test("joins a dimensional series using its public measure id", () => {
 	const base = contextFor([record]);
 	const context = {
 		...base,
+		measureCompatibilityInventory: {
+			...measureCompatibilityInventory,
+			measures: measureCompatibilityInventory.measures.map((measure) => ({
+				...measure,
+				seriesKey: measureSeriesKey({
+					measure: "residents",
+					dimensions: { age: "all" },
+				}),
+			})),
+		},
 		dataCatalog: {
 			...dataCatalog,
 			measures: dataCatalog.measures

@@ -142,11 +142,7 @@ export type ResolverInput = {
  * catalogue order.
  */
 export const resolveObservations = (
-	{
-		dataCatalog,
-		measureCompatibilityInventory,
-		measureDimensions,
-	}: ResolverInput,
+	{ dataCatalog, measureCompatibilityInventory }: ResolverInput,
 	request: ObservationRequest,
 ): Resolution => {
 	const refuse = (refusal: ObservationRefusal): Resolution => ({
@@ -228,7 +224,6 @@ export const resolveObservations = (
 
 	const compatibility = seriesCompatibility(
 		measureCompatibilityInventory,
-		measureDimensions?.config,
 		request.seriesKey,
 		measure.id,
 	)?.sources.find(
