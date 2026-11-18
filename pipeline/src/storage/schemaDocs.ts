@@ -58,7 +58,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "statistics",
-		body: "A measure is what is counted, in one unit (population, recorded-crimes, unemployment-rate). A dimension is a breakdown of a measure (sex, age, offence, tenure, party) and a dimension_member is one value of it (offence=burglary). Members can have a parent, and the total is usually the root member with code 'total' or 'all'. A series is one dataset's figures for one measure, one set of members and one boundary release. An observation is one value of a series for one area_version and one period. In v_observation the members column lists the fixed members as 'dimension=code; dimension=code'. A measure with dimensions has one series per combination of members, so filter members (or join series_member) to avoid adding a total to its own parts. measure_default_member names the member to use when a question gives none.",
+		body: "A measure is what is counted, in one unit (population, recorded-crimes, unemployment-rate). A dimension is a breakdown of a measure (sex, age, offence, tenure, party) and a dimension_member is one value of it (offence=burglary). Members can have a parent, and the total is usually the root member with code 'total' or 'all'. A series is one dataset's figures for one measure, one set of members and one boundary release. An observation is one value of a series for one area_version and one period. In v_observation the members column lists the fixed members as 'dimension=code; dimension=code'. A measure with dimensions has one series per combination of members, so filter members (or join series_member) to avoid adding a total to its own parts.",
 	},
 	{
 		topic: "published-and-converted",
@@ -499,16 +499,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			series_id: "The series (series.id).",
 			dimension_id: "The dimension (dimension.id).",
 			member_id: "The member (dimension_member.id).",
-		},
-	},
-	measure_default_member: {
-		audience: "core",
-		description:
-			"The member to use for a dimension when a question names none, usually the total.",
-		columns: {
-			measure: "Measure slug.",
-			dimension: "Dimension slug.",
-			member: "Member code.",
 		},
 	},
 	observation: {
@@ -1319,35 +1309,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		audience: "internal",
 		description:
 			"Brotli-compressed JSON documents the API and website load whole, such as the boundary release list. Not readable in plain SQL.",
-		columns: {},
-	},
-	catalogue_measure: {
-		audience: "internal",
-		description:
-			"Maps the API's older catalogue measure ids to a measure and dataset.",
-		columns: {},
-	},
-	catalogue_measure_member: {
-		audience: "internal",
-		description:
-			"The dimension members fixed by each older catalogue measure id.",
-		columns: {},
-	},
-	additional_measure: {
-		audience: "internal",
-		description:
-			"Measure vocabulary the API names but the statistics tables do not store, such as a total computed from parts, with the reason.",
-		columns: {},
-	},
-	additional_dimension: {
-		audience: "internal",
-		description:
-			"Dimension vocabulary the API names but the statistics tables do not store.",
-		columns: {},
-	},
-	additional_dimension_member: {
-		audience: "internal",
-		description: "Members of additional_dimension.",
 		columns: {},
 	},
 	statistics_read_path: {

@@ -498,12 +498,9 @@ WHERE purpose = 'election_poll'
 The entries are curated in `pipeline/src/geographies/verifiedBoundaryValidity.ts`;
 they are not inferred from release names or from the next held snapshot.
 
-`catalogue_measure` and `catalogue_measure_member` map API catalogue IDs to
-statistics measures and fixed members. `measure_default_member` records
-defaults; `additional_measure`, `additional_dimension`, and
-`additional_dimension_member` hold reviewed vocabulary not in the statistics
-tables. The statistics vocabulary itself is read from `measure`, `dimension`,
-and `dimension_member`.
+The statistics vocabulary is read from `measure`, `dimension`, and
+`dimension_member`. Each catalogue measure carries its own series identity,
+and the computed measures and defaults are in code.
 
 Area identity is three `STRICT` tables:
 
