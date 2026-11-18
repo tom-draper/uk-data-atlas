@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadTravelToWork } from "@uk-data-atlas/datasets";
+import { travelToWorkStatisticsParts } from "@uk-data-atlas/datasets";
 import { aggregateTravelToWork } from "@uk-data-atlas/datasets";
 import { collectBoundaryRecords } from "@/lib/helpers/datasetAggregation/numeric";
 import { APRIL_2023_LAD_MERGERS } from "@uk-data-atlas/datasets";
@@ -39,10 +39,21 @@ const csv = csvFor(["E06000001", ...ALL_PREDECESSORS]);
 
 const read = async () => csv;
 
-describe("loadTravelToWork", () => {
+/** The part's people in employment, by travel mode, for one authority. */
+const people = async (code: string) => {
+	const [part] = await travelToWorkStatisticsParts(read);
+	const record = part!.records.find((candidate) => candidate.code === code)!;
+	return Object.fromEntries(
+		record.values.map(({ members, value }) => [
+			members!["travel-method"],
+			value,
+		]),
+	);
+};
+
+describe("travelToWorkStatisticsParts", () => {
 	it("folds the census categories into travel modes", async () => {
-		const { breakdown } = (await loadTravelToWork(read))[2021].data
-			.E06000001;
+		const breakdown = await people("E06000001");
 
 		expect(breakdown.workFromHome).toBe(100);
 		// Metro, train and bus are three categories but one mode.
@@ -53,41 +64,50 @@ describe("loadTravelToWork", () => {
 	});
 
 	it("counts shares against people in employment, not everyone", async () => {
-		const { breakdown } = (await loadTravelToWork(read))[2021].data
-			.E06000001;
+		const breakdown = await people("E06000001");
 
 		// 100 + 60 + 250 + 5 + 5 + 25 + 50 + 5, with the 9,999 not in
 		// employment left out.
 		expect(breakdown.total).toBe(500);
-		expect((breakdown.car / breakdown.total) * 100).toBeCloseTo(50);
+		expect((breakdown.car! / breakdown.total!) * 100).toBeCloseTo(50);
 	});
 
 	it("builds the 2023 authorities the census predates by summing predecessors", async () => {
-		const datasets = await loadTravelToWork(read);
-		const somerset = datasets[2021].data.E06000066;
+		const [part] = await travelToWorkStatisticsParts(read);
+		const breakdown = await people("E06000066");
 
-		expect(somerset.breakdown.car).toBe(
+		expect(part!.key).toBe("2021");
+		expect(breakdown.car).toBe(
 			250 * APRIL_2023_LAD_MERGERS.E06000066.predecessors.length,
 		);
-		expect(datasets[2021]).toMatchObject({
-			id: "travel-to-work2021",
-			type: "travel-to-work",
-			boundaryType: "localAuthority",
-			boundaryYear: 2025,
-		});
 	});
 
 	it("refuses to invent a merged authority from incomplete predecessors", async () => {
 		const [dropped, ...rest] = ALL_PREDECESSORS;
 		await expect(
-			loadTravelToWork(async () => csvFor(rest)),
+			travelToWorkStatisticsParts(async () => csvFor(rest)),
 		).rejects.toThrow(`Missing travel to work predecessor ${dropped}`);
 	});
 });
 
 describe("aggregateTravelToWork", () => {
 	it("sums each mode across an area, counting an authority once", async () => {
-		const datasets = await loadTravelToWork(read);
+		const data = {
+			E06000001: {
+				ladCode: "E06000001",
+				breakdown: {
+					workFromHome: 100,
+					publicTransport: 60,
+					car: 250,
+					taxi: 5,
+					motorcycle: 5,
+					bicycle: 25,
+					onFoot: 50,
+					other: 5,
+					total: 500,
+				},
+			},
+		};
 		const features = [
 			{ properties: { LAD25CD: "E06000001" } },
 			{ properties: { LAD25CD: "E06000001" } },
@@ -96,7 +116,7 @@ describe("aggregateTravelToWork", () => {
 		const { breakdown } = aggregateTravelToWork(
 			collectBoundaryRecords(
 				features as never,
-				datasets[2021].data,
+				data,
 				["LAD25CD"] as never,
 				true,
 			),

@@ -142,7 +142,7 @@ export * from "./data/simd/source.ts";
 export * from "./data/spreadsheet/ods.ts";
 export * from "./data/spreadsheet/xls.ts";
 export * from "./data/spreadsheet/xlsx.ts";
-export * from "./data/travel-to-work/loader.ts";
+export * from "./data/travel-to-work/source.ts";
 export * from "./data/unemployment/source.ts";
 export * from "./data/wimd/source.ts";
 export * from "./declaration/dataset.ts";
