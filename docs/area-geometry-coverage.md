@@ -32,6 +32,10 @@ its own inputs rather than rely on these counts.
 interior it records WGS84 longitude and latitude and the western, southern,
 eastern and northern bounds. The point uses the polygon interior scanline
 method, recorded as `polygon-interior-point`; it is not population weighted.
+The 2021 England and Wales output areas instead use published ONS
+population-weighted centroids where they lie within the bounds, recorded as
+`ons-population-weighted-2021`. In the investigated snapshot, five published
+points were outside their stored geometry bounds and use interior points.
 Bounds are rounded outward to six decimal places. Rows without a usable
 polygon or interior point carry `gap` and null coordinates. Query the file's
 own gap rows for its actual coverage:

@@ -340,8 +340,9 @@ bookkeeping tables are not migrated; rebuilding a cache is a separate operation.
 ### Area locations
 
 `area_location` is a core table with one row per area version. Its WGS84
-longitude and latitude are a polygon interior point, not a population-weighted
-centroid; `method` identifies the algorithm. The bounding box uses WGS84
+longitude and latitude use the published ONS population-weighted centroid for
+the 2021 England and Wales output area release where it lies within the bounds.
+Otherwise they use a polygon interior point; `method` identifies the source. The bounding box uses WGS84
 longitude and latitude rounded outward to six decimal places. `gap` explains
 why a row has no coordinates. See [the coverage audit](area-geometry-coverage.md)
 for the observed gaps and example queries.
