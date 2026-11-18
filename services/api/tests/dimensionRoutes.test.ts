@@ -15,6 +15,7 @@ import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
+import { seriesResponse } from "../src/dimensions/dimensionResponses";
 import {
 	areaLookup,
 	containmentCrosswalk,
@@ -383,6 +384,10 @@ test("routes comparisons by public measure and selected members", () => {
 	assert.equal(resolved.series.dimensions.offence, "burglary");
 	const response = get(url);
 	assert.equal(response.status, 200);
+	assert.doesNotMatch(
+		JSON.stringify(response.body),
+		/\/v1\/(?:data|measures)\/crime-burglary/,
+	);
 	assert.equal(
 		(data(response).measure as { id: string }).id,
 		"recorded-crimes",
@@ -428,6 +433,10 @@ test("pages dimensional conversions without mixing series", () => {
 	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/convert\?/);
 	const first = route("GET", base, conversionContext);
 	assert.equal(first.status, 200, JSON.stringify(first.body));
+	assert.doesNotMatch(
+		JSON.stringify(first.body),
+		/\/v1\/(?:data|measures)\/crime-burglary/,
+	);
 	assert.equal(
 		(data(first).records as Array<{ value: number }>)[0]?.value,
 		5,
@@ -489,6 +498,10 @@ test("pages dimensional change without mixing series", () => {
 	assert.match(resolved.url, /^\/v1\/data\/recorded-crimes\/change\?/);
 	const first = route("GET", base, changeContext);
 	assert.equal(first.status, 200, JSON.stringify(first.body));
+	assert.doesNotMatch(
+		JSON.stringify(first.body),
+		/\/v1\/(?:data|measures)\/crime-burglary/,
+	);
 	const cursor = (first.body as { meta: { nextCursor: string } }).meta
 		.nextCursor;
 	assert.ok(cursor);
@@ -590,6 +603,24 @@ test("reads a measure with a member filter as that series", () => {
 	assert.equal(body.resolvedFrom, undefined);
 	assert.match(String(body.via), /^\/v1\/data\/recorded-crimes\/series\?/);
 	assert.match(String(body.via), /offence=burglary/);
+});
+
+test("preserves response content when adding the selected dimensions", () => {
+	const resolved = resolveDimensionRequest(
+		"/v1/data/recorded-crimes?offence=burglary",
+		context,
+	);
+	assert.equal(resolved.kind, "series");
+	if (resolved.kind !== "series") throw new Error("Expected a series");
+	const original = get("/v1/data/recorded-crimes?offence=burglary");
+	if (!("data" in original.body)) throw new Error("Expected data");
+	const note = "The source mentions /v1/data/crime-burglary in its notes.";
+	const response = seriesResponse(
+		{ ...original, body: { ...original.body, data: { note } } },
+		resolved.series,
+		resolved.reading,
+	);
+	assert.equal(data(response).note, note);
 });
 
 test("dispatches nested value lookups with the selected public series", () => {
@@ -942,7 +973,10 @@ test("resolves relationship readiness from the selected dimensional series", () 
 	};
 	assert.equal(readiness.measure.id, "recorded-crimes");
 	assert.equal(readiness.publishedSourcePartitions[0]?.datasetId, "crime");
-	assert.doesNotMatch(JSON.stringify(response.body), /crime-burglary/);
+	assert.doesNotMatch(
+		JSON.stringify(response.body),
+		/\/v1\/(?:data|measures)\/crime-burglary/,
+	);
 });
 
 test("applies a filter to each listed measure that has the dimension", () => {
