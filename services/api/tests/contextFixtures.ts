@@ -640,6 +640,7 @@ export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 	inputs: {
 		dataCatalog: "sha256:data-catalog",
 		boundaryRegistry: "sha256:registry",
+		measureObservations: {},
 		areaArtifacts: { "ward/2023-05-uk-bgc": "sha256:areas" },
 	},
 	measures: [

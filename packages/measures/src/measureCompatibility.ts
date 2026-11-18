@@ -47,6 +47,8 @@ export type MeasureCompatibilityInventory = {
 	inputs: {
 		dataCatalog: string;
 		boundaryRegistry: string;
+		/** Observation artifact hashes, by series and source partition. */
+		measureObservations: Record<string, string>;
 		areaArtifacts: Record<string, string>;
 	};
 	measures: Array<{

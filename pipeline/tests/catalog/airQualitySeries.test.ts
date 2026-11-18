@@ -2,7 +2,10 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, test } from "vitest";
-import { measureSeriesKey } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	type MeasureSeriesIdentity,
+} from "@uk-data-atlas/measures";
 import { compileAirQuality } from "../../src/catalog/airQuality.ts";
 import type { CatalogManifest } from "../../src/catalog/manifest.ts";
 import { sha256 } from "../../src/catalog/values.ts";
@@ -37,17 +40,16 @@ test("air quality observations use the expected series identities and hashes", (
 				{ id: "air-quality", summary: { boundaryYears: [2024] } },
 			],
 		} as CatalogManifest;
-		const expected = new Map([
+		const expected = new Map<string, MeasureSeriesIdentity>([
 			["air-quality-grid-cells", { measure: "air-quality-grid-cells" }],
 			...["no2", "pm10", "pm25"].map(
-				(pollutant) =>
-					[
-						`${pollutant}-background-mean`,
-						{
-							measure: "background-concentration",
-							dimensions: { pollutant },
-						},
-					] as const,
+				(pollutant): [string, MeasureSeriesIdentity] => [
+					`${pollutant}-background-mean`,
+					{
+						measure: "background-concentration",
+						dimensions: { pollutant },
+					},
+				],
 			),
 			[
 				"pm25-population-weighted",
