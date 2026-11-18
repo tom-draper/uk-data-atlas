@@ -1,9 +1,12 @@
 import type { AirQualityDataset } from "../../../types/airQuality.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateAirQuality } from "../../../data/air-quality/aggregate.ts";
-import { loadAirQuality } from "../../../data/air-quality/loader.ts";
+import { airQualityStatisticsParts } from "../../../data/air-quality/source.ts";
 
 const concentration = (name: string) =>
 	({ kind: "decimal", digits: 0, suffix: ` µg/m³ ${name}` }) as const;
@@ -27,8 +30,12 @@ export const airQuality = defineDataset<AirQualityDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: ({ text }) => loadAirQuality(text),
+	load: noCompiledPayload<AirQualityDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => airQualityStatisticsParts(text),
+		},
 		payload: {
 			parts: yearParts("air-quality", "localAuthority", 2024),
 			code: "ladCode",

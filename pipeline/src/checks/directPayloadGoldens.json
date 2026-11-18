@@ -106,5 +106,13 @@
 	"gas-consumption": {
 		"sha256": "0d30a180744faf4e0d3962e9bfdefb2699c2f04cbccf708b477eab28da08e47e",
 		"bytes": 823637
+	},
+	"ghg-emissions": {
+		"sha256": "219d694d537a0ff62d505e292b87655e858364a41726d315ed67e88268888b06",
+		"bytes": 2481185
+	},
+	"air-quality": {
+		"sha256": "b2cdb61cbaa5e42d85017ecafc4fb6267224dc3a935cc0b78bd3b06be1f6c6b5",
+		"bytes": 72573
 	}
 }

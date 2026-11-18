@@ -1,9 +1,12 @@
 import type { GhgEmissionsDataset } from "../../../types/ghgEmissions.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateGhgEmissions } from "../../../data/ghg-emissions/aggregate.ts";
-import { loadGhgEmissions } from "../../../data/ghg-emissions/loader.ts";
+import { ghgEmissionsStatisticsParts } from "../../../data/ghg-emissions/source.ts";
 
 export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 	id: "ghg-emissions",
@@ -32,7 +35,7 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["totalKtCO2e", "perPersonTCO2e"],
 	},
-	load: ({ text }) => loadGhgEmissions(text),
+	load: noCompiledPayload<GhgEmissionsDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 110,
@@ -40,6 +43,10 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		about: "Greenhouse gases per resident, in CO2e",
 	},
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => ghgEmissionsStatisticsParts(text),
+		},
 		payload: {
 			parts: yearParts("ghg-emissions", "localAuthority", 2025, {
 				coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
