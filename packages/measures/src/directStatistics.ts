@@ -12,6 +12,7 @@ import type {
 	AreaIndex,
 	AreaRelease,
 	StatisticsDataset,
+	StatisticsElection,
 	StatisticsPeriod,
 } from "./atlasStatistics.ts";
 import {
@@ -27,8 +28,9 @@ import {
  * dataset: the same fields name the measures and dimensions, the same
  * assembly plans the series and the same writer stores them.
  *
- * Only what tables of areas need is supported: no election text or
- * discovered (undeclared) dimension parents.
+ * Only what tables of areas and elections need is supported: no discovered
+ * (undeclared) dimension parents. An election's contest and elected text is
+ * given by each record, and its `contest` and `elected` paths are not read.
  */
 export function directStatistics(
 	config: DeclaredDataset,
@@ -40,8 +42,6 @@ export function directStatistics(
 		throw new Error(
 			`${type}: a direct dataset needs a payload declaration`,
 		);
-	if (config.election)
-		throw new Error(`${type}: a direct dataset has no election text`);
 	const sets = config.records ?? [
 		{ from: "data", release: config.release, alsoIn: config.alsoIn },
 	];
@@ -124,6 +124,7 @@ export function directStatistics(
 				child: { release: AreaRelease; code: string };
 				parent: { release: AreaRelease; code: string };
 			}) => void,
+			onElection?: (election: StatisticsElection) => void,
 		) {
 			for (const part of parts) {
 				const context = `${type} ${part.key}`;
@@ -151,6 +152,7 @@ export function directStatistics(
 					typeof config.keys === "function"
 						? config.keys(key, header)
 						: (config.keys?.[key] ?? key);
+				const contests: StatisticsElection["contests"] = [];
 				for (const [index, set] of sets.entries()) {
 					const candidates = heldOf(releasesOf(set, header), context);
 					const nameField = nameFieldOf(set);
@@ -185,6 +187,17 @@ export function directStatistics(
 							onName?.(release, code, record.name);
 						if (code !== record.code)
 							onKey?.(release, code, record.code);
+						if (index === 0 && config.election)
+							contests.push({
+								release,
+								code,
+								...(record.contest
+									? { contest: record.contest }
+									: {}),
+								...(record.elected
+									? { elected: record.elected }
+									: {}),
+							});
 						for (const parent of config.parents ?? []) {
 							if (!(parent.sets ?? [set.from]).includes(set.from))
 								continue;
@@ -273,6 +286,18 @@ export function directStatistics(
 							};
 						}
 					}
+				}
+				if (config.election) {
+					onElection?.({
+						label: part.key,
+						kind: config.election.kind,
+						date: config.election.date(part.key, header),
+						release: heldOf(
+							releasesOf(sets[0]!, header),
+							context,
+						)[0]!,
+						contests,
+					});
 				}
 				for (const link of config.headerRelationships ?? []) {
 					const links = part.relationships?.[link.field];
