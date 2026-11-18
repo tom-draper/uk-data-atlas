@@ -9,11 +9,7 @@ import {
 	databaseGeneration,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
-import {
-	measureSeriesKey,
-	measureSeriesSourceKey,
-	observationArtifactName,
-} from "./index.ts";
+import { measureSeriesKey, measureSeriesSourceKey } from "./index.ts";
 import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
@@ -176,49 +172,29 @@ export class ObservationCache {
 			throw new Error(
 				"The statistics read path contains unsupported observation artifacts.",
 			);
-		const names = new Set<string>();
 		const seriesKeys = new Set<string>();
-		const canonical = Boolean(
-			readPath.series &&
-			(identities || catalog.measures.some((measure) => measure.series)),
-		);
 		for (const measure of catalog.measures)
 			for (const source of measure.sources) {
-				const name = observationArtifactName(measure.id, source);
 				const identity = measure.series ?? identities?.[measure.id];
-				if (canonical && !identity)
+				if (!identity)
 					throw new Error(
 						`Missing series identity for ${measure.id}.`,
 					);
-				const key =
-					identity && measureSeriesSourceKey(identity, source);
-				const selector =
-					canonical && key
-						? readPath.series?.[key]
-						: readPath.statistics?.[name];
+				const key = measureSeriesSourceKey(identity, source);
+				const selector = readPath.series?.[key];
 				if (!selector)
-					throw new Error(
-						`Missing statistics selector for ${key ?? name}.`,
-					);
-				if (canonical && key) seriesKeys.add(key);
-				names.add(name);
-				const cacheKey = canonical && key ? key : name;
-				this.statistics.set(`${databasePath}:${cacheKey}`, {
+					throw new Error(`Missing statistics selector for ${key}.`);
+				seriesKeys.add(key);
+				this.statistics.set(`${databasePath}:${key}`, {
 					selector,
 					artifact: {
-						measureId:
-							canonical && identity
-								? measureSeriesKey(identity)
-								: measure.id,
+						measureId: measureSeriesKey(identity),
 						sourceGeography: source.sourceGeography,
 						periods: source.periods,
 					},
 				});
 			}
-		for (const name of Object.keys(readPath.statistics ?? {}))
-			if (!names.has(name))
-				throw new Error(`Unexpected statistics selector: ${name}.`);
-		if (readPath.series && canonical)
+		if (readPath.series)
 			for (const key of Object.keys(readPath.series))
 				if (!seriesKeys.has(key))
 					throw new Error(

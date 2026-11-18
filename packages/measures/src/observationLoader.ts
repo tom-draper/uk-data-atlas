@@ -2,7 +2,6 @@ import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 import { readAtlasStatisticsReadPath } from "./atlasStatisticsReadPath.ts";
 import type { StatisticsReadPath } from "./atlasStatisticsObservations.ts";
 import {
-	observationArtifactName,
 	measureSeriesSourceKey,
 	measureSeriesKey,
 	registerSeriesObservations,
@@ -34,32 +33,23 @@ export const readMeasureObservations = (
 	const tables = new ObservationCache(maxBytes);
 	tables.bindCatalogue(databasePath, dataCatalog, readPath, identities);
 	const bySeriesSource = new Map<string, AnyMeasureObservationArtifact>();
-	const canonical = Boolean(
-		readPath.series &&
-		(identities || dataCatalog.measures.some((measure) => measure.series)),
-	);
 	const observations = dataCatalog.measures.flatMap((measure) =>
 		measure.sources.map((source) => {
 			const identity = measure.series ?? identities?.[measure.id];
+			if (!identity)
+				throw new Error(`Missing series identity for ${measure.id}.`);
 			const view = lazySourceObservations(
 				databasePath,
-				canonical && identity
-					? measureSeriesSourceKey(identity, source)
-					: observationArtifactName(measure.id, source),
+				measureSeriesSourceKey(identity, source),
 				measure.id,
 				source.sourceGeography,
 				tables,
-				canonical && identity ? measureSeriesKey(identity) : measure.id,
+				measureSeriesKey(identity),
 			);
-			if (identity)
-				bySeriesSource.set(
-					measureSeriesSourceKey(identity, source),
-					view,
-				);
+			bySeriesSource.set(measureSeriesSourceKey(identity, source), view);
 			return view;
 		}),
 	);
-	if (identities || dataCatalog.measures.some((measure) => measure.series))
-		registerSeriesObservations(observations, bySeriesSource);
+	registerSeriesObservations(observations, bySeriesSource);
 	return observations;
 };

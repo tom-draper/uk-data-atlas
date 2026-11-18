@@ -10,6 +10,8 @@ import {
 import {
 	ObservationCache,
 	lazySourceObservations,
+	measureSeriesSourceKey,
+	measureSeriesKey,
 	type MeasureDimensions,
 	type MeasureValuesContext,
 	type StatisticsReadPath,
@@ -440,9 +442,21 @@ export const createMeasureFixture = (): {
 		dataCatalogHash: catalog.contentHash,
 		observations: {},
 		statistics,
+		series: Object.fromEntries(
+			catalog.measures.map((entry) => {
+				const source = entry.sources[0]!;
+				return [
+					measureSeriesSourceKey(
+						measureDimensions.config.ids[entry.id]!,
+						source,
+					),
+					statistics[observationArtifactName(entry.id, source)]!,
+				];
+			}),
+		),
 	};
 	const cache = new ObservationCache();
-	cache.bindCatalogue(path, catalog, readPath);
+	cache.bindCatalogue(path, catalog, readPath, measureDimensions.config.ids);
 	return {
 		path,
 		catalog,
@@ -452,10 +466,14 @@ export const createMeasureFixture = (): {
 			measureObservations: catalog.measures.map((entry) =>
 				lazySourceObservations(
 					path,
-					observationArtifactName(entry.id, entry.sources[0]!),
+					measureSeriesSourceKey(
+						measureDimensions.config.ids[entry.id]!,
+						entry.sources[0]!,
+					),
 					entry.id,
 					entry.sources[0]!.sourceGeography,
 					cache,
+					measureSeriesKey(measureDimensions.config.ids[entry.id]!),
 				),
 			),
 		},
