@@ -7,6 +7,10 @@ import type {
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
 import { compileMeasureCompatibility } from "../../src/statistics/measureCompatibility";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+} from "@uk-data-atlas/measures";
 
 const dataCatalog: DataCatalog = {
 	schemaVersion: 1,
@@ -134,7 +138,7 @@ const artifacts: AreaReleaseArtifact[] = [
 const wardObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:ward-observations",
-	measureId: "population",
+	measureId: measureSeriesKey(dataCatalog.measures[0]!.series!),
 	sourceGeography: { type: "ward", boundaryYear: 2023 },
 	periods: [
 		{
@@ -150,7 +154,7 @@ const wardObservations: MeasureObservationArtifact = {
 const localAuthorityObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:local-authority-observations",
-	measureId: "population",
+	measureId: measureSeriesKey(dataCatalog.measures[0]!.series!),
 	sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 	periods: [
 		{
@@ -172,12 +176,40 @@ const emissionsObservations: MeasureObservationArtifact = {
 	periods: [],
 };
 
+const sourceObservations = (observations: MeasureObservationArtifact[]) =>
+	new Map(
+		dataCatalog.measures[0]!.sources.flatMap((source) => {
+			const artifact = observations.find(
+				(candidate) =>
+					candidate.sourceGeography.type ===
+						source.sourceGeography.type &&
+					candidate.sourceGeography.boundaryYear ===
+						source.sourceGeography.boundaryYear,
+			);
+			return artifact
+				? [
+						[
+							measureSeriesSourceKey(
+								dataCatalog.measures[0]!.series!,
+								source,
+							),
+							artifact,
+						] as const,
+					]
+				: [];
+		}),
+	);
+
 test("reports code compatibility without claiming geometry equivalence", () => {
 	const inventory = compileMeasureCompatibility(
 		dataCatalog,
 		boundaryRegistry,
 		artifacts,
-		[wardObservations, localAuthorityObservations, emissionsObservations],
+		sourceObservations([
+			wardObservations,
+			localAuthorityObservations,
+			emissionsObservations,
+		]),
 	);
 	const sources = inventory.measures[0]?.sources;
 	assert.equal(sources?.[0]?.candidates[0]?.status, "code-set-compatible");
@@ -186,6 +218,54 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 	assert.equal(sources?.[1]?.candidates[0]?.status, "exact-code-set");
 	assert.match(sources?.[0]?.note ?? "", /code-set compatibility only/);
 	assert.match(inventory.contentHash, /^sha256:[a-f0-9]{64}$/);
+});
+
+test("distinguishes sources sharing a series and geography", () => {
+	const measure = dataCatalog.measures[0]!;
+	const first = measure.sources[0]!;
+	const second = { ...first, datasetId: "other" };
+	const catalogue = {
+		...dataCatalog,
+		measures: [{ ...measure, sources: [first, second] }],
+	};
+	const other = {
+		...wardObservations,
+		contentHash: "other-hash",
+		periods: [
+			{
+				period: "2022",
+				records: [
+					{
+						areaCode: "S13000001",
+						value: 1,
+						status: "observed" as const,
+					},
+				],
+			},
+		],
+	};
+	const inputs = new Map([
+		[measureSeriesSourceKey(measure.series!, first), wardObservations],
+		[measureSeriesSourceKey(measure.series!, second), other],
+	]);
+	const result = compileMeasureCompatibility(
+		catalogue,
+		boundaryRegistry,
+		artifacts,
+		inputs,
+	);
+	assert.deepEqual(
+		result.measures[0]!.sources.map(
+			(source) => source.candidates[0]!.sourceCodeCount,
+		),
+		[2, 1],
+	);
+	assert.equal(
+		result.inputs.measureObservations[
+			measureSeriesSourceKey(measure.series!, second)
+		],
+		"other-hash",
+	);
 });
 
 test("publishes canonical series identities and rejects missing identities", () => {
@@ -198,7 +278,7 @@ test("publishes canonical series identities and rejects missing identities", () 
 		dataCatalog,
 		boundaryRegistry,
 		artifacts,
-		observations,
+		sourceObservations(observations),
 	);
 	const reorderedCatalog = {
 		...dataCatalog,
@@ -214,7 +294,7 @@ test("publishes canonical series identities and rejects missing identities", () 
 		reorderedCatalog,
 		boundaryRegistry,
 		artifacts,
-		observations,
+		sourceObservations(observations),
 	);
 	assert.ok(inventory.measures[0]?.seriesKey);
 	assert.equal(
@@ -233,7 +313,7 @@ test("publishes canonical series identities and rejects missing identities", () 
 				},
 				boundaryRegistry,
 				artifacts,
-				observations,
+				sourceObservations(observations),
 			),
 		/Missing series identity for population/,
 	);
@@ -255,7 +335,7 @@ test("assesses the codes of every period in a partition, not only the first", ()
 		catalogue,
 		boundaryRegistry,
 		artifacts,
-		[
+		sourceObservations([
 			wardObservations,
 			{
 				...localAuthorityObservations,
@@ -279,7 +359,7 @@ test("assesses the codes of every period in a partition, not only the first", ()
 				],
 			},
 			emissionsObservations,
-		],
+		]),
 	);
 	const candidate = inventory.measures[0]?.sources[1]?.candidates[0];
 	assert.equal(candidate?.status, "partial-code-overlap");
@@ -291,11 +371,11 @@ test("assesses the codes of every period in a partition, not only the first", ()
 				catalogue,
 				boundaryRegistry,
 				artifacts,
-				[
+				sourceObservations([
 					wardObservations,
 					localAuthorityObservations,
 					emissionsObservations,
-				],
+				]),
 			),
 		/No population observations exist for localAuthority in 2025\./,
 	);

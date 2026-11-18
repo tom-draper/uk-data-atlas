@@ -11,7 +11,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import { observationPartitionKey } from "@uk-data-atlas/catalogue/node";
+import { measureSeriesSourceKey } from "@uk-data-atlas/measures";
 import { openapiDocumentHash } from "@uk-data-atlas/artifacts";
 import { readStoredText, storedTextExists } from "@uk-data-atlas/artifacts";
 import {
@@ -205,14 +205,21 @@ test("builds the validation report from the current catalogue and config", () =>
 
 test("builds measure compatibility from the current observations and areas", () => {
 	const { inputs } = read("measure-compatibility.json");
+	const catalog = readDataCatalog(resolve(apiRoot, "../.."));
+	const observations = readMeasureObservations(
+		resolve(apiRoot, "../.."),
+		catalog,
+	);
+	const keys = catalog.measures.flatMap((measure) => {
+		if (!measure.series)
+			throw new Error(`Missing series identity for ${measure.id}.`);
+		return measure.sources.map((source) =>
+			measureSeriesSourceKey(measure.series!, source),
+		);
+	});
+	assert.equal(keys.length, observations.length);
 	const observationHashes = new Map(
-		readMeasureObservations(
-			resolve(apiRoot, "../.."),
-			readDataCatalog(resolve(apiRoot, "../..")),
-		).map((artifact) => [
-			observationPartitionKey(artifact),
-			artifact.contentHash,
-		]),
+		keys.map((key, index) => [key, observations[index]!.contentHash]),
 	);
 	const areaHashes = new Map(
 		(read("area-inventory.json").releases as any[]).flatMap((release) =>

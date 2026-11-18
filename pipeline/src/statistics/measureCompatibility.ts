@@ -3,14 +3,15 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseKey } from "@uk-data-atlas/geography";
 import {
 	type DataCatalog,
-	findMeasureObservations,
 	type AnyMeasureObservationArtifact,
 	type MeasureSource,
 } from "@uk-data-atlas/catalogue/node";
-import { measureSeriesKey } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+} from "@uk-data-atlas/measures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
-	observationPartitionKey,
 	type CompatibilityCandidate,
 	type CompatibilityStatus,
 	type MeasureCompatibilityInventory,
@@ -26,13 +27,9 @@ const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 const sourceCodes = (
 	measureId: string,
 	source: MeasureSource,
-	measureObservations: AnyMeasureObservationArtifact[],
+	observations: AnyMeasureObservationArtifact | undefined,
 ) => {
-	const periods = findMeasureObservations(
-		measureObservations,
-		measureId,
-		source,
-	)?.periods;
+	const periods = observations?.periods;
 	const codes = new Set<string>();
 	for (const period of source.periods) {
 		const records = periods?.find(
@@ -89,7 +86,7 @@ export const compileMeasureCompatibility = (
 	dataCatalog: DataCatalog,
 	boundaryRegistry: BoundaryRegistry,
 	areaArtifacts: AreaReleaseArtifact[],
-	measureObservations: AnyMeasureObservationArtifact[],
+	measureObservations: ReadonlyMap<string, AnyMeasureObservationArtifact>,
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -102,7 +99,15 @@ export const compileMeasureCompatibility = (
 	);
 	const sourcesFor = (measure: (typeof dataCatalog.measures)[number]) =>
 		measure.sources.map((source) => {
-			const codes = sourceCodes(measure.id, source, measureObservations);
+			if (!measure.series)
+				throw new Error(`Missing series identity for ${measure.id}.`);
+			const codes = sourceCodes(
+				measure.id,
+				source,
+				measureObservations.get(
+					measureSeriesSourceKey(measure.series, source),
+				),
+			);
 			const candidates = boundaryRegistry.releases
 				.filter(
 					(release) =>
@@ -164,11 +169,8 @@ export const compileMeasureCompatibility = (
 		// Keyed by partition: a measure published at several source
 		// geographies has one artifact for each, and each must be recorded.
 		measureObservations: Object.fromEntries(
-			measureObservations
-				.map((observations) => [
-					observationPartitionKey(observations),
-					observations.contentHash,
-				])
+			[...measureObservations]
+				.map(([key, observations]) => [key, observations.contentHash])
 				.sort(([left], [right]) =>
 					String(left).localeCompare(String(right)),
 				),
