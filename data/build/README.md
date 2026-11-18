@@ -6,12 +6,11 @@ with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 The stage cache in `.cache/data-build/` records recent stage timings and the latest
 build summary. Run `pnpm data:build --plan` to see available timing estimates and
 which stages can run in parallel. A build where nothing changed runs no stage.
-The `.stamps/` folder here holds one small file for each stage that adds tables
-to `atlas-cache.sqlite`. It records the hash of that stage's tables, which is
-how the cache tracks work inside a shared file. Delete a stamp to rebuild its
-stage. The parity check stages (`verify-dataset-payloads`, `verify-postcode-areas`)
-leave a stamp there too, as the record that they passed; a local build skips them
-unless given `--verify`, and `pnpm data:verify` runs them.
+Every file here is written by one stage, and no stage writes a file another
+owns. The `.stamps/` folder holds one small file for each parity check stage
+(`verify-dataset-payloads`, `verify-postcode-areas`), as the record that it
+passed; delete one to run its check again. A local build skips the checks unless
+given `--verify`, and `pnpm data:verify` runs them.
 
 ```text
 data/source/          raw sources, restored from the pinned data release
@@ -70,32 +69,23 @@ website URL) and `gzip`, the JSON compressed at level 9 with a zero mtime and no
 file name, so one build always stores the same bytes. Brotli is not stored: it
 saved 30% over gzip only at quality 11, which took minutes per build. Readers
 that need the text, such as the API, gunzip the row. The cache is stamped with the
-SHA-256 hash of the final canonical database. The API opens both files read-only
+SHA-256 hash of the final canonical database (`meta.atlas-sqlite-content-hash`). The API opens both files read-only
 and fails readiness if the cache is missing, stale, lacks required payloads or
 predates the gzip column.
 The cache records the version of the cache compiler in its `meta` table as
-`cacheVersion`. A build that finds a cache with another version, or none,
-does not copy it: it starts from an empty file and rebuilds every component,
-and the API rejects such a cache as stale.
+`cacheVersion`, and the API rejects a cache with another version as stale.
 `verify-dataset-payloads` reads these rows back and compares each with the
 compiler's JSON by value, so the build computes the generated payload once.
-The stages that fill it (`place-index`, `area-search-index`, `postcode-counts`,
-then `atlas-cache-stamp`) are skipped when unchanged. Each leaves a stamp in
-`.stamps/`, and `atlas-sqlite` clears them all when it extends the cache.
 
-A build copies the cache once for those stages. The first to write copies
-`atlas-cache.sqlite` to `.atlas-cache.sqlite.work`, the rest change that copy,
-and `atlas-cache-stamp` vacuums it once, with `VACUUM INTO` a temporary file
-beside the cache, and renames that over the cache, so the published file is
-replaced in one step at the end. If the build stops first, the
-published cache is untouched. The next build discards the copy, with the stamps
-of the stages that wrote to it, so they run again; it never resumes from the
-copy, because a stage killed midway leaves pages that cannot be trusted. The
-file only exists while a build runs. `atlas-sqlite` extends the cache in one
-copy of its own, without a vacuum, and publishes it before the later stages
-start, since stages between them read its projections. Stages run by hand (not
-through `pnpm data:build`) publish their own change directly, with their own
-copy and vacuum, as before.
+Each stage that builds a component of the cache writes it to a part of its own
+in `atlas-cache-parts/` (`projections` and `datasets` from `atlas-sqlite`,
+`place-index`, `area-search` and `postcode-counts` from the stage of that name).
+`assemble-cache` is the only stage that writes `atlas-cache.sqlite`: it copies
+the parts into a new file, adds the content hash of `atlas.sqlite`, and replaces
+the cache in one step with `VACUUM INTO` and a rename. If the build stops first,
+the published cache is untouched. Nothing of an earlier cache is kept, so every
+component comes from its part. The parts are build intermediates, not part of a
+release. See "The atlas cache" in `ARCHITECTURE.md`.
 
 ### Vacuuming
 
@@ -114,15 +104,15 @@ for the in-place form, and its output is byte for byte the same on every run.
   `atlas-base.sqlite` and `postcode-index.sqlite` are components and are not
   vacuumed. `website-assets.sqlite` is written in one pass and renamed, with
   nothing to reclaim.
-- `atlas-cache.sqlite`: `atlas-cache-stamp` publishes the working copy with
-  `publishVacuumed`. A stage run by hand publishes its own copy the same way.
+- `atlas-cache.sqlite`: `assemble-cache` publishes the assembled file with
+  `publishVacuumed`. The parts it is assembled from are written in one pass and
+  renamed, with nothing to reclaim.
 
 The copy keeps the source's `page_size`, `auto_vacuum`, `user_version` and
 `application_id`. It does not keep `journal_mode` (a WAL database comes out in
 the default mode), and the writers use `journal_mode = OFF`, which is not stored
 in the file. The stage cache is unaffected: stage digests hash the bytes of the
-file a stage published, and the vacuum is deterministic, while the cache stages
-are tracked by stamps that hash table content.
+file a stage published, and the vacuum is deterministic.
 After restoring source data with `pnpm data:download`, run `pnpm data:build`
 to build both files. Deploy them together from the same build. See
 [generated API data](../../docs/api-generated-data.md).
