@@ -132,6 +132,7 @@ export * from "./data/population-constituency/source.ts";
 export * from "./data/population/metrics.ts";
 export * from "./data/population/source.ts";
 export * from "./data/population/ukLoader.ts";
+export * from "./data/population/ukSource.ts";
 export * from "./data/public-health/measures.ts";
 export * from "./data/public-health/source.ts";
 export * from "./data/pupil-absence/source.ts";

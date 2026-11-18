@@ -1,8 +1,11 @@
 import type { PopulationUkDataset } from "../../../types/population.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { AGE, byAge } from "../../../data/population/statistics.ts";
-import { loadPopulationUk } from "../../../data/population/ukLoader.ts";
+import { populationUkStatisticsParts } from "../../../data/population/ukSource.ts";
 
 export const populationUk = defineDataset<PopulationUkDataset>({
 	id: "population-uk",
@@ -31,8 +34,12 @@ export const populationUk = defineDataset<PopulationUkDataset>({
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["total", "males", "females", "ladName"],
 	},
-	load: async ({ xlsxSheet }) => loadPopulationUk(xlsxSheet),
+	load: noCompiledPayload<PopulationUkDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ xlsxSheet }) => populationUkStatisticsParts(xlsxSheet),
+		},
 		name: "ladName",
 		payload: { arrays: ["total", "males", "females"] },
 		measures: [POPULATION],

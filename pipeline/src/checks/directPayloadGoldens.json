@@ -175,6 +175,10 @@
 		"sha256": "b171993f609f6cd64cad6e065c7f9bdf572a108ad1134129fa2e4d2921b3bfb3",
 		"bytes": 590656
 	},
+	"population-uk": {
+		"sha256": "2f2b3844f3c06ac6a1677a65f0f2196ede883694922fba643695f5ce675e84a0",
+		"bytes": 6532310
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992

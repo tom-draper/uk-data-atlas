@@ -24,9 +24,9 @@ const emptyRecord = (ladName: string): PopulationLocalAuthorityData => ({
  * The sheet ends in footnote rows and carries a title above its header, so a
  * row is used only when it names a real local authority, sex and age.
  */
-export async function loadPopulationUk(
+export async function readPopulationUkYears(
 	readSheet: (path: string, sheet: string) => Promise<string>,
-): Promise<Record<string, PopulationUkDataset>> {
+): Promise<Map<number, Record<string, PopulationLocalAuthorityData>>> {
 	const { data } = await parseCsv<string[]>(
 		await readSheet(
 			sourceDir("population-uk", "myebtablesuk20112024.xlsx"),
@@ -35,7 +35,7 @@ export async function loadPopulationUk(
 		{ header: false, skipLines: 1 },
 	);
 	const rows = data as string[][];
-	if (rows.length === 0) return {};
+	if (rows.length === 0) return new Map();
 
 	const headerRow = rows[0];
 	const yearCols: Array<{ index: number; year: number }> = [];
@@ -77,8 +77,14 @@ export async function loadPopulationUk(
 		}
 	}
 
+	return byYear;
+}
+
+export async function loadPopulationUk(
+	readSheet: (path: string, sheet: string) => Promise<string>,
+): Promise<Record<string, PopulationUkDataset>> {
 	const datasets: Record<string, PopulationUkDataset> = {};
-	for (const [year, yearData] of byYear) {
+	for (const [year, yearData] of await readPopulationUkYears(readSheet)) {
 		if (Object.keys(yearData).length === 0) continue;
 		datasets[year] = {
 			id: `population-uk${year}`,
