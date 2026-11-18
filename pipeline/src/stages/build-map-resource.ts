@@ -6,7 +6,7 @@ import { buildMapResources } from "../maps/buildMapResource.ts";
 
 const path = fileURLToPath(import.meta.url);
 if (isMainModule(import.meta.url)) {
-	const result = buildMapResources(
+	const result = await buildMapResources(
 		resolve(dirname(path), "../../.."),
 		(line) => buildLog.detail(line),
 	);

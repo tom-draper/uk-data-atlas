@@ -922,7 +922,12 @@ to compare every payload with its compiler intermediate byte for byte.
 
 Boundary tiles are built in `data/build/boundaries/` for the website and
 `data/build/map-resources/` for the API, alongside its feature downloads and
-resumable build state. The API reads these assets directly. The website hard-links
+resumable build state. The API reads these assets directly. The map-resource stage uses worker threads,
+reserving 2 GiB for the parent and budgeting 4 GiB per worker, up to four workers
+and one fewer than the available CPUs. Releases with at least 100,000 areas run
+one at a time. Set `ATLAS_MAP_RESOURCE_JOBS` to override the worker count; each
+worker has a 3 GiB old-generation heap limit. This override is independent of
+`ATLAS_PRECOMPILE_JOBS` and does not affect cache keys. The website hard-links
 its archives into `public/data/boundaries/` during data and app builds, preserving
 static URLs with one stored copy. Both directories must share a filesystem.
 Every website release has an archive. Releases rejected by shared-arc

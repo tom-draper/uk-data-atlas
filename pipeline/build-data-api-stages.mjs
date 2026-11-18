@@ -622,6 +622,8 @@ export const apiStages = [
 			codeInputs: [
 				"packages/map-tiles/src/node/mapResource",
 				"pipeline/src/maps/compileGeometryValidity.ts",
+				"pipeline/src/maps/mapResourcePool.ts",
+				"pipeline/src/maps/mapResourceWorker.ts",
 			],
 		},
 	),

@@ -1,7 +1,10 @@
 import { buildArtifactPath } from "@uk-data-atlas/areas";
 import {
+	copyFileSync,
 	existsSync,
 	mkdirSync,
+	mkdtempSync,
+	renameSync,
 	readdirSync,
 	readFileSync,
 	rmSync,
@@ -11,21 +14,23 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { compileFlatDownloads } from "../atlas/flatDownloads.ts";
-import { writeFileHashedSync } from "../storage/outputManifest.ts";
+import { recordOutputHash } from "../storage/outputManifest.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { roundKeepingValidity } from "./compileGeometryValidity.ts";
+import type { BoundaryReleaseSummary } from "./compileMapResource.ts";
 import {
-	compileMapResource,
-	type BoundaryReleaseSummary,
-} from "./compileMapResource.ts";
+	mapResourceConcurrency,
+	runMapResourceJobs,
+	type Job,
+	type Result,
+	type Unavailable,
+} from "./mapResourcePool.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import {
 	artifactDirectory,
 	formatBytes,
 	formatCount,
-	formatDuration,
 } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
 
@@ -61,6 +66,7 @@ const COMPILER_SOURCES = [
 	"packages/artifacts/src/parquet.ts",
 	"pipeline/src/atlas/flatDownloads.ts",
 	"pipeline/src/maps/compileMapResource.ts",
+	"pipeline/src/maps/mapResourceWorker.ts",
 	"pipeline/src/maps/buildMapResource.ts",
 	// How areas are read, corrected and rounded, which the geometry store
 	// shares: the full tier is built from the store and must match.
@@ -79,14 +85,7 @@ const COMPILER_SOURCES = [
 	"packages/shapefile/src/dbf.ts",
 ];
 
-type Unavailable = {
-	geography: string;
-	boundaryRelease: string;
-	reason: string;
-	features?: MapResourceDescriptor["features"];
-};
-
-export const buildMapResources = (
+export const buildMapResources = async (
 	root: string,
 	log: (line: string) => void = () => {},
 ) => {
@@ -104,11 +103,12 @@ export const buildMapResources = (
 			id: string;
 			status: string;
 			artifact: string;
+			recordCount?: number;
 		}>;
 	};
 	const geometrySources = readGeometrySourceLookup(root);
-	// Releases are compiled one at a time, so only the current one is held.
-	// Keeping two of the output area releases at once runs out of heap.
+	// The parent only uses this cache for provenance. Each worker has its own
+	// one-release cache for geometry and compilation.
 	const cache = new AreaGeometryCache(
 		root,
 		geometrySources,
@@ -120,6 +120,9 @@ export const buildMapResources = (
 	const assets = join(root, "data/build");
 	const directory = join(assets, "map-resources");
 	mkdirSync(directory, { recursive: true });
+	for (const name of readdirSync(directory))
+		if (name.startsWith(".staging-"))
+			rmSync(join(directory, name), { recursive: true, force: true });
 
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>
@@ -138,101 +141,170 @@ export const buildMapResources = (
 		| { key: string; unavailable: Unavailable }
 	> = existsSync(statePath) ? readJsonSync(statePath) : {};
 	const state = { ...previous };
-	const saveState = () =>
-		writeFileSync(statePath, JSON.stringify(state) + "\n");
+	const saveState = () => {
+		const temporary = join(directory, ".build-state.tmp");
+		writeFileSync(temporary, JSON.stringify(state) + "\n");
+		renameSync(temporary, statePath);
+	};
 	const manifestPath = join(out, "map-resources.json");
 
 	const resources: MapResourceDescriptor[] = [];
 	const unavailable: Unavailable[] = [];
 	const compiledIds = new Set<string>();
-	for (const identity of inventory.releases) {
-		if (identity.status !== "available") continue;
-		const { geography, id: boundaryRelease } = identity;
-		const release = registry.releases.find(
-			(candidate) =>
-				candidate.geography === geography &&
-				candidate.id === boundaryRelease,
-		);
-		if (!release)
-			throw new Error(
-				`No boundary release ${geography}/${boundaryRelease} to compile as a map resource.`,
+	const jobs: Job[] = [];
+	const ordered: Array<{
+		id: string;
+		key: string;
+		result?: Result;
+		job?: number;
+	}> = [];
+	const staging = mkdtempSync(join(directory, ".staging-"));
+	const oldState = existsSync(statePath)
+		? readFileSync(statePath)
+		: undefined;
+	const backups: Array<{ path: string; backup?: string }> = [];
+	try {
+		for (const identity of inventory.releases) {
+			if (identity.status !== "available") continue;
+			const { geography, id: boundaryRelease } = identity;
+			const release = registry.releases.find(
+				(candidate) =>
+					candidate.geography === geography &&
+					candidate.id === boundaryRelease,
 			);
-		const areas = readJsonSync(join(out, identity.artifact)) as {
-			areas: Array<{ code: string; name: string }>;
-		};
-		const names = new Map(
-			areas.areas.map((area) => [area.code, area.name]),
-		);
-		const id = releaseKey(geography, boundaryRelease);
-		const key = sha256(
-			JSON.stringify({
-				compiler,
-				geometry: cache.provenance(geography, boundaryRelease)
-					.inputHash,
-				names: [...names].sort(([a], [b]) => a.localeCompare(b)),
-				release,
-			}),
-		);
-		const kept = previous[id];
-		// A full-tier download has no file: it is built from the geometry
-		// store when asked for.
-		const stored = (entry: { artifact?: string }) =>
-			!entry.artifact || existsSync(join(assets, entry.artifact));
-		if (
-			kept?.key === key &&
-			"descriptor" in kept &&
-			[kept.descriptor.tiles, ...kept.descriptor.features].every(stored)
-		) {
-			resources.push(kept.descriptor);
-			compiledIds.add(id);
-			continue;
-		}
-		if (
-			kept?.key === key &&
-			"unavailable" in kept &&
-			(kept.unavailable.features ?? []).every(stored)
-		) {
-			unavailable.push(kept.unavailable);
-			compiledIds.add(id);
-			continue;
-		}
-
-		const artifact = `map-resources/${geography}-${boundaryRelease}.pmtiles`;
-		const started = performance.now();
-		let compiled: ReturnType<typeof compileMapResource>;
-		try {
-			compiled = compileMapResource(cache, release, names, artifact);
-		} catch (error) {
-			// A release that is not a coverage cannot be tiled without drawing one
-			// area over another. It stays served area by area, and is listed
-			// here with the reason, rather than failing every other release; if
-			// its areas can be read it is still downloadable whole.
-			const reason = (error as Error).message;
-			const flat = compileFlatDownloads(cache, release, names, reason);
-			const entry: Unavailable = {
-				geography,
-				boundaryRelease,
-				reason,
-				...(flat ? { features: flat.features } : {}),
+			if (!release)
+				throw new Error(
+					`No boundary release ${geography}/${boundaryRelease} to compile as a map resource.`,
+				);
+			const areas = readJsonSync(join(out, identity.artifact)) as {
+				areas: Array<{ code: string; name: string }>;
 			};
-			unavailable.push(entry);
-			compiledIds.add(id);
-			state[id] = { key, unavailable: entry };
-			saveState();
-			log(
-				`${id}: not tiled, ${reason}${flat ? `. Downloads at full detail: ${flat.features.map((feature) => `${feature.format} ${formatBytes(feature.gzipBytes ?? feature.bytes)}`).join(", ")}` : ""}`,
+			const names = new Map(
+				areas.areas.map((area) => [area.code, area.name]),
 			);
-			continue;
+			const id = releaseKey(geography, boundaryRelease);
+			const key = sha256(
+				JSON.stringify({
+					compiler,
+					geometry: cache.provenance(geography, boundaryRelease)
+						.inputHash,
+					names: [...names].sort(([a], [b]) => a.localeCompare(b)),
+					release,
+				}),
+			);
+			const kept = previous[id];
+			// A full-tier download has no file: it is built from the geometry
+			// store when asked for.
+			const stored = (entry: { artifact?: string }) =>
+				!entry.artifact || existsSync(join(assets, entry.artifact));
+			if (
+				kept?.key === key &&
+				"descriptor" in kept &&
+				[kept.descriptor.tiles, ...kept.descriptor.features].every(
+					stored,
+				)
+			) {
+				ordered.push({
+					id,
+					key,
+					result: { descriptor: kept.descriptor },
+				});
+				continue;
+			}
+			if (
+				kept?.key === key &&
+				"unavailable" in kept &&
+				(kept.unavailable.features ?? []).every(stored)
+			) {
+				ordered.push({
+					id,
+					key,
+					result: { unavailable: kept.unavailable },
+				});
+				continue;
+			}
+
+			const artifact = `map-resources/${geography}-${boundaryRelease}.pmtiles`;
+			const job = jobs.length;
+			jobs.push({
+				root,
+				release,
+				names: [...names],
+				artifact,
+				path: join(staging, `${job}.pmtiles`),
+				large: (identity.recordCount ?? 0) >= 100000,
+			});
+			ordered.push({ id, key, job });
 		}
-		const { archive, descriptor } = compiled;
-		writeFileHashedSync(join(assets, artifact), archive);
-		resources.push(descriptor);
-		compiledIds.add(id);
-		state[id] = { key, descriptor };
-		saveState();
-		log(
-			`${descriptor.id}: ${formatCount(descriptor.areaCount)} areas, ${formatCount(descriptor.tiles.tileCount)} tiles, ${formatBytes(descriptor.tiles.bytes)}; features ${descriptor.features.map((entry) => `${entry.tier} ${entry.format} ${formatBytes(entry.gzipBytes ?? entry.bytes)}`).join(", ")}; ${formatDuration(performance.now() - started)}`,
+		const results: Array<Result | undefined> = new Array(jobs.length);
+		let cursor = 0;
+		const publishReady = () => {
+			while (cursor < ordered.length) {
+				const item = ordered[cursor]!;
+				const result = item.result ?? results[item.job!];
+				if (!result) break;
+				compiledIds.add(item.id);
+				if ("descriptor" in result) {
+					const descriptor = result.descriptor;
+					if (item.job !== undefined) {
+						const target = join(assets, descriptor.tiles.artifact);
+						const backup = existsSync(target)
+							? join(staging, `backup-${item.job}`)
+							: undefined;
+						if (backup) copyFileSync(target, backup);
+						backups.push({ path: target, backup });
+						renameSync(jobs[item.job]!.path, target);
+						recordOutputHash(
+							join(assets, descriptor.tiles.artifact),
+							descriptor.tiles.contentHash.replace(
+								/^sha256:/,
+								"",
+							),
+						);
+						state[item.id] = { key: item.key, descriptor };
+						saveState();
+						log(
+							`${descriptor.id}: ${formatCount(descriptor.areaCount)} areas, ${formatCount(descriptor.tiles.tileCount)} tiles, ${formatBytes(descriptor.tiles.bytes)}`,
+						);
+					}
+					resources.push(descriptor);
+				} else {
+					unavailable.push(result.unavailable);
+					if (item.job !== undefined) {
+						state[item.id] = {
+							key: item.key,
+							unavailable: result.unavailable,
+						};
+						saveState();
+						log(
+							`${item.id}: not tiled, ${result.unavailable.reason}`,
+						);
+					}
+				}
+				cursor++;
+			}
+		};
+		publishReady();
+		await runMapResourceJobs(
+			jobs,
+			mapResourceConcurrency(),
+			undefined,
+			(index, result) => {
+				results[index] = result;
+				publishReady();
+			},
 		);
+	} catch (error) {
+		for (const { path, backup } of backups.reverse()) {
+			if (backup) renameSync(backup, path);
+			else rmSync(path, { force: true });
+		}
+		rmSync(join(directory, ".build-state.tmp"), { force: true });
+		if (oldState) writeFileSync(statePath, oldState);
+		else rmSync(statePath, { force: true });
+		throw error;
+	} finally {
+		rmSync(staging, { recursive: true, force: true });
 	}
 
 	// Files left by a release that is no longer compiled, or by an artifact
