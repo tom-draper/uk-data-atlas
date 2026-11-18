@@ -138,19 +138,38 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		},
 		observations: {},
 	};
-	const [view] = readMeasureObservations(root, catalog, 0, readPath);
+	const identity = { measure: "count", dimensions: { kind: "all" } };
+	const source = catalog.measures[0]!.sources[0]!;
+	const key = measureSeriesSourceKey(identity, source);
+	const initialReadPath = {
+		...readPath,
+		series: { [key]: readPath.statistics!["count-observations"]! },
+	};
+	assert.throws(
+		() =>
+			readMeasureObservations(root, catalog, 0, readPath, {
+				count: identity,
+			}),
+		/Missing statistics selector/,
+	);
+	const [view] = readMeasureObservations(root, catalog, 0, initialReadPath, {
+		count: identity,
+	});
 	assert.deepEqual(view?.periods[0]?.records, [
 		{ areaCode: "E1", value: 42, status: "observed" },
 	]);
-	const [cached] = readMeasureObservations(root, catalog, 4096, readPath);
+	const [cached] = readMeasureObservations(
+		root,
+		catalog,
+		4096,
+		initialReadPath,
+		{ count: identity },
+	);
 	assert.deepEqual(cached?.periods[0]?.records[0], {
 		areaCode: "E1",
 		value: 42,
 		status: "observed",
 	});
-	const identity = { measure: "count", dimensions: { kind: "all" } };
-	const source = catalog.measures[0]!.sources[0]!;
-	const key = measureSeriesSourceKey(identity, source);
 	const canonicalReadPath = {
 		...readPath,
 		statistics: {
@@ -283,10 +302,16 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 	});
 	assert.throws(
 		() =>
-			readMeasureObservations(root, catalog, 0, {
-				...readPath,
-				observations: { extra: "missing" },
-			}),
+			readMeasureObservations(
+				root,
+				catalog,
+				0,
+				{
+					...initialReadPath,
+					observations: { extra: "missing" },
+				},
+				{ count: identity },
+			),
 		/unsupported observation artifacts/,
 	);
 });

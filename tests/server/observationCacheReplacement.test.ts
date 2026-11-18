@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { type DataCatalog } from "@uk-data-atlas/catalogue/node";
 import {
 	ObservationCache,
+	measureSeriesSourceKey,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import {
@@ -58,6 +59,7 @@ const catalog = {
 	measures: [
 		{
 			id: "lab-votes",
+			series: { measure: "party-votes", dimensions: { party: "lab" } },
 			sources: [
 				{
 					sourceGeography: { type: "ward", boundaryYear: 2019 },
@@ -73,8 +75,11 @@ const readPath = {
 	schemaVersion: 1,
 	dataCatalogHash: "catalogue",
 	observations: {},
-	statistics: {
-		"lab-votes-observations": {
+	series: {
+		[measureSeriesSourceKey(
+			catalog.measures[0]!.series!,
+			catalog.measures[0]!.sources[0]!,
+		)]: {
 			datasetId: "local-election",
 			measure: "party-votes",
 			dimensions: { party: "lab" },
@@ -83,9 +88,13 @@ const readPath = {
 	},
 } as unknown as StatisticsReadPath;
 
+const key = measureSeriesSourceKey(
+	catalog.measures[0]!.series!,
+	catalog.measures[0]!.sources[0]!,
+);
 const votes = (cache: ObservationCache) =>
 	(
-		JSON.parse(cache.text(path, "lab-votes-observations")) as {
+		JSON.parse(cache.text(path, key)) as {
 			periods: Array<{ records: Array<{ value: number }> }>;
 		}
 	).periods[0]!.records[0]!.value;
@@ -108,8 +117,8 @@ describe("observation cache and a replaced database", () => {
 		const cache = new ObservationCache();
 		cache.bindCatalogue(path, catalog, readPath);
 		expect(votes(cache)).toBe(300);
-		const first = cache.text(path, "lab-votes-observations");
-		expect(cache.text(path, "lab-votes-observations")).toBe(first);
+		const first = cache.text(path, key);
+		expect(cache.text(path, key)).toBe(first);
 	});
 
 	it("reads the new database after a replacement, not the cached text", () => {
