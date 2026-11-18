@@ -115,8 +115,14 @@ export function createStageRunner({
 		}
 		return true;
 	};
+	// What the scheduler says about a stage's wait, as it is recorded.
+	const queueFields = ({ queuedMs, memoryWaitMs } = {}) =>
+		typeof queuedMs === "number" && typeof memoryWaitMs === "number"
+			? { queueMs: queuedMs, memoryWaitMs }
+			: {};
 	// Runs a stage's command and records it. Returns false when it failed.
-	const run = async (stage) => {
+	// `waited` is how long the scheduler held the stage back.
+	const run = async (stage, waited = {}) => {
 		const stageStartedAt = startedAtOf.get(stage.name);
 		const dependencies = dependencyDigests(stage);
 		state.started += 1;
@@ -135,11 +141,18 @@ export function createStageRunner({
 			});
 		} catch (error) {
 			const command = performance.now() - commandStartedAt;
-			const total = recordTiming(stage.name, stageStartedAt, command);
+			const total = recordTiming(
+				stage.name,
+				stageStartedAt,
+				command,
+				false,
+				waited,
+			);
 			timings.at(-1).failed = true;
 			cache?.recordTiming(stage.name, {
 				commandMs: command,
 				totalMs: total,
+				...queueFields(waited),
 				finishedAt: new Date().toISOString(),
 				failed: true,
 			});
@@ -150,11 +163,18 @@ export function createStageRunner({
 			logError(
 				`${stage.name} failed with exit code ${status} after ${formatDuration(command)}. Build stopped`,
 			);
-			const total = recordTiming(stage.name, stageStartedAt, command);
+			const total = recordTiming(
+				stage.name,
+				stageStartedAt,
+				command,
+				false,
+				waited,
+			);
 			timings.at(-1).failed = true;
 			cache?.recordTiming(stage.name, {
 				commandMs: command,
 				totalMs: total,
+				...queueFields(waited),
 				finishedAt: new Date().toISOString(),
 				failed: true,
 			});
@@ -191,10 +211,17 @@ export function createStageRunner({
 				log(`  and ${formatCount(wrongHashes.length - 10)} more`);
 		}
 		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
-		const total = recordTiming(stage.name, stageStartedAt, command);
+		const total = recordTiming(
+			stage.name,
+			stageStartedAt,
+			command,
+			false,
+			waited,
+		);
 		cache?.recordTiming(stage.name, {
 			commandMs: command,
 			totalMs: total,
+			...queueFields(waited),
 			finishedAt: new Date().toISOString(),
 			failed: false,
 		});
