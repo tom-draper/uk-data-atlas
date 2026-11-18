@@ -1,6 +1,5 @@
 import { sourcesMatchRelease } from "../scripts/data-release.mjs";
 import { ATLAS_CACHE_WORK } from "./src/storage/atlasCacheWork.ts";
-import { CACHE_STAGES } from "./src/storage/stageStamp.ts";
 import { stage, checkStage, stampOf } from "./build-data-stage.mjs";
 import {
 	countyShapeInputs,
@@ -29,15 +28,10 @@ const catalogueFiles = [
 	"packages/datasets/src/declaration/declaredGuides.ts",
 	"packages/datasets/src/declaration/declaredSources.ts",
 ];
-// The atlas cache is one file with several writers. Each stage after the base
-// build adds tables to it, and tracks them through a stamp of its own. They
-// add to one working copy, which `atlas-cache-stamp` publishes.
+// The atlas cache is assembled from parts. The base build writes its two
+// components straight to the cache, and `atlas-cache-stamp` copies the others
+// into a working copy of it and publishes that.
 const atlasCache = "data/build/atlas-cache.sqlite";
-const cacheWorkingCopy = {
-	shared: [atlasCache],
-	scratch: [ATLAS_CACHE_WORK],
-	finishedBy: "atlas-cache-stamp",
-};
 
 // A stage that builds one component of the atlas cache keeps it in a file of
 // its own. `atlas-cache-stamp` copies the parts into the cache.
@@ -130,7 +124,7 @@ export const apiStages = [
 				"data/build/atlas-base.sqlite",
 				atlasCache,
 				ATLAS_CACHE_WORK,
-				...CACHE_STAGES.map(stampOf),
+				stampOf("atlas-cache-stamp"),
 			],
 			rawInputs: censusSmallAreaInputs,
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
@@ -241,8 +235,8 @@ export const apiStages = [
 		["pipeline/src/stages/build-place-index.ts"],
 		{
 			rawInputs: [],
-			...cacheWorkingCopy,
-			requiredOutputs: [stampOf("place-index")],
+			writes: [cachePart("place-index")],
+			requiredOutputs: [cachePart("place-index")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
@@ -252,8 +246,8 @@ export const apiStages = [
 		["pipeline/src/stages/build-area-search-index.ts"],
 		{
 			rawInputs: [],
-			...cacheWorkingCopy,
-			requiredOutputs: [stampOf("area-search-index")],
+			writes: [cachePart("area-search")],
+			requiredOutputs: [cachePart("area-search")],
 			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),

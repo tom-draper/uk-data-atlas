@@ -1214,90 +1214,10 @@ test("a rebuild says which stages are unchanged and leaves them out of the ranki
 	assert.match(log.at(-ranking.length - 2)!, /\(1 ran, 3 unchanged\)$/);
 });
 
-test("restoring a deleted shared API cache rebuilds every component", async () => {
-	const root = mkdtempSync(join(tmpdir(), "atlas-component-build-"));
+test("each cache stage rebuilds from its own part, and only a changed part reruns the stage that assembles them", async () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-parts-build-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
-	const path = join(root, "data/build/atlas-cache.sqlite");
-	const components = ["place-index", "area-search-index"];
-	const selected = components.map((name) => {
-		const original = buildDataStages.find(
-			(entry: Stage) => entry.name === name,
-		);
-		assert.ok(original);
-		return { ...original, dependencies: ["base"] };
-	});
-	const run = async () => {
-		const executed: string[] = [];
-		assert.equal(
-			await runBuild({
-				stages: [
-					{
-						name: "base",
-						dependencies: [],
-						args: [],
-						requiredOutputs: ["data/build/atlas-cache.sqlite"],
-						writes: [
-							"data/build/.stamps/place-index.json",
-							"data/build/.stamps/area-search-index.json",
-						],
-					},
-					...selected,
-				],
-				log: () => {},
-				createCache: () =>
-					createStageCache({
-						root,
-						stateFile: join(root, ".cache/stages.json"),
-						codeFiles: () => [],
-						environment: {},
-					}),
-				execute: (current: { name: string }) => {
-					executed.push(current.name);
-					// The base build starts the cache again and clears the stamps.
-					if (current.name === "base") {
-						writeFileSync(path, "[]");
-						for (const name of components)
-							rmSync(
-								join(root, `data/build/.stamps/${name}.json`),
-								{
-									force: true,
-								},
-							);
-						return 0;
-					}
-					const values = JSON.parse(readFileSync(path, "utf8"));
-					writeFileSync(
-						path,
-						JSON.stringify([...new Set([...values, current.name])]),
-					);
-					writeFileSync(
-						join(root, `data/build/.stamps/${current.name}.json`),
-						current.name,
-					);
-					return 0;
-				},
-			}),
-			0,
-		);
-		assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), components);
-		return executed;
-	};
-	assert.deepEqual(await run(), ["base", ...components]);
-	assert.deepEqual(await run(), []);
-	unlinkSync(path);
-	assert.deepEqual(await run(), ["base", ...components]);
-});
-
-test("stages that add to a working copy are skipped once it is published, and rerun after a failed build", async () => {
-	const root = mkdtempSync(join(tmpdir(), "atlas-work-copy-build-"));
-	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
-	mkdirSync(join(root, "data/build/.stamps"), { recursive: true });
-	const published = join(root, "data/build/atlas-cache.sqlite");
-	const work = join(root, "data/build/.atlas-cache.sqlite.work");
-	const components = ["place-index", "area-search-index"];
-	const stamp = (name: string) =>
-		join(root, `data/build/.stamps/${name}.json`);
+	const components = ["place-index", "area-search-index", "postcode-counts"];
 	const find = (name: string) => {
 		const original = buildDataStages.find(
 			(entry: Stage) => entry.name === name,
@@ -1305,64 +1225,57 @@ test("stages that add to a working copy are skipped once it is published, and re
 		assert.ok(original);
 		return original;
 	};
-	const selected = [
+	const partOf = (name: string) => {
+		const [path] = find(name).requiredOutputs;
+		assert.match(path, /^data\/build\/atlas-cache-parts\/[a-z-]+\.sqlite$/);
+		return path;
+	};
+	const published = join(root, "data/build/atlas-cache.sqlite");
+	const stages = [
+		{
+			name: "base",
+			dependencies: [],
+			args: [],
+			writes: ["data/build/base.json"],
+		},
 		...components.map((name) => ({
 			...find(name),
 			dependencies: ["base"],
 		})),
 		{ ...find("atlas-cache-stamp"), dependencies: components },
 	];
-	const base = {
-		name: "base",
-		dependencies: [],
-		args: [],
-		requiredOutputs: ["data/build/atlas-cache.sqlite"],
-		writes: ["data/build/.stamps"],
-	};
 	let failing: string | null = null;
-	// The stages that wrote to the working copy, as its id does for stamps.
-	let writers: string[] = [];
-	const read = (path: string): string[] =>
-		existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : [];
-	// The same steps the real stages take, on plain files.
+	let version = 1;
+	const executed: string[] = [];
 	const execute = (current: { name: string }) => {
-		if (current.name === "base") {
-			writeFileSync(published, "[]");
-			return 0;
-		}
-		if (current.name === "atlas-cache-stamp") {
-			if (existsSync(work)) {
-				writeFileSync(published, readFileSync(work));
-				rmSync(work);
-				writers = [];
-			}
-			writeFileSync(stamp(current.name), "stamp");
-			return 0;
-		}
-		if (current.name === failing) return 1;
-		const values = read(existsSync(work) ? work : published);
-		writers.push(current.name);
-		writeFileSync(work, JSON.stringify([...values, current.name]));
-		// A stamp is new for each working copy, as the real ones are.
-		writeFileSync(
-			stamp(current.name),
-			`${current.name}:${work}:${values.length}`,
-		);
+		executed.push(current.name);
+		const write = (path: string, text: string) => {
+			mkdirSync(dirname(join(root, path)), { recursive: true });
+			writeFileSync(join(root, path), text);
+		};
+		if (current.name === "base") write("data/build/base.json", "{}");
+		else if (current.name === failing) return 1;
+		else if (current.name === "atlas-cache-stamp") {
+			// The stage that assembles the cache reads every part and writes the
+			// cache and its own stamp, which are all it writes.
+			write(
+				"data/build/atlas-cache.sqlite",
+				components
+					.map((name) =>
+						readFileSync(join(root, partOf(name)), "utf8"),
+					)
+					.join("+"),
+			);
+			write("data/build/.stamps/atlas-cache-stamp.json", "{}");
+		} else write(partOf(current.name), `${current.name}:${version}`);
 		return 0;
 	};
-	const discard = () => {
-		if (!existsSync(work)) return;
-		for (const name of writers) rmSync(stamp(name), { force: true });
-		writers = [];
-		rmSync(work);
-	};
 	const run = async () => {
-		const executed: string[] = [];
+		executed.length = 0;
 		const status = await runBuild({
-			stages: [base, ...selected],
+			stages,
 			log: () => {},
 			logError: () => {},
-			discardWork: discard,
 			createCache: () =>
 				createStageCache({
 					root,
@@ -1370,51 +1283,52 @@ test("stages that add to a working copy are skipped once it is published, and re
 					codeFiles: () => [],
 					environment: {},
 				}),
-			execute: (current: { name: string }) => {
-				executed.push(current.name);
-				return execute(current);
-			},
+			execute,
 		});
-		return { status, executed };
+		return { status, executed: [...executed] };
 	};
 	assert.deepEqual((await run()).executed, [
 		"base",
 		...components,
 		"atlas-cache-stamp",
 	]);
-	assert.deepEqual(read(published), components);
-	assert.equal(existsSync(work), false);
-	// Nothing changed: the working copy is gone and that is not a change.
+	assert.equal(
+		readFileSync(published, "utf8"),
+		"place-index:1+area-search-index:1+postcode-counts:1",
+	);
 	assert.deepEqual((await run()).executed, []);
-	// One stage fails halfway through a build. Its copy is thrown away with
-	// the stamps, so the stages that wrote to it rebuild next time.
-	rmSync(stamp("place-index"));
-	failing = "area-search-index";
-	rmSync(stamp("area-search-index"));
-	const failed = await run();
-	assert.equal(failed.status, 1);
-	assert.deepEqual(failed.executed, ["place-index", "area-search-index"]);
-	assert.equal(existsSync(work), false);
-	assert.deepEqual(read(published), components);
-	assert.equal(existsSync(stamp("area-search-index")), false);
-	failing = null;
-	const retry = await run();
-	assert.deepEqual(retry.executed, [
-		"place-index",
-		"area-search-index",
+	// A part that is deleted is rebuilt by its own stage, and the assembling
+	// stage reruns only if the part came back different.
+	rmSync(join(root, partOf("area-search-index")));
+	assert.deepEqual((await run()).executed, ["area-search-index"]);
+	version = 2;
+	rmSync(join(root, partOf("postcode-counts")));
+	assert.deepEqual((await run()).executed, [
+		"postcode-counts",
 		"atlas-cache-stamp",
 	]);
-	assert.equal(existsSync(work), false);
-	assert.deepEqual(new Set(read(published)), new Set(components));
-	assert.deepEqual((await run()).executed, []);
-	// A stage that reruns with the same tables still gets the stamp stage to
-	// publish its copy, because the stamp carries the copy's id.
-	rmSync(stamp("place-index"));
+	assert.equal(
+		readFileSync(published, "utf8"),
+		"place-index:1+area-search-index:1+postcode-counts:2",
+	);
+	// A stage that fails leaves the published cache as it was, and nothing
+	// after it runs.
+	rmSync(join(root, partOf("place-index")));
+	failing = "place-index";
+	version = 3;
+	const failed = await run();
+	assert.equal(failed.status, 1);
+	assert.deepEqual(failed.executed, ["place-index"]);
+	assert.equal(
+		readFileSync(published, "utf8"),
+		"place-index:1+area-search-index:1+postcode-counts:2",
+	);
+	failing = null;
 	assert.deepEqual((await run()).executed, [
 		"place-index",
 		"atlas-cache-stamp",
 	]);
-	assert.equal(existsSync(work), false);
+	assert.deepEqual((await run()).executed, []);
 });
 
 test("adopt reuses current outputs after a cache version change without executing stages", async () => {

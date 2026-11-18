@@ -65,12 +65,10 @@ test("only the known stages still share a path in the build graph", () => {
 	assert.deepEqual(
 		[...sharing].sort(),
 		[
-			"area-search-index",
 			"atlas-cache-stamp",
 			"atlas-release",
 			"atlas-release-initial",
 			"atlas-sqlite",
-			"place-index",
 		].sort(),
 	);
 });
