@@ -43,6 +43,7 @@ import { readJsonSync } from "../lib/json.ts";
  * `documentSchema: false` skips the search table and the schema docs, which
  * describe the full build's tables and fail on a fixture's partial ones.
  * `areaLocations: false` skips geometry for fixtures with no geometry store.
+ * `placeProducts: false` skips hierarchy and named-place products in partial fixtures.
  */
 export function assembleAtlas(
 	root: string,
@@ -51,11 +52,13 @@ export function assembleAtlas(
 		convertedSeries = crosswalkWeights,
 		documentSchema = crosswalkWeights,
 		areaLocations = crosswalkWeights,
+		placeProducts = crosswalkWeights,
 	}: {
 		crosswalkWeights?: boolean;
 		convertedSeries?: boolean;
 		documentSchema?: boolean;
 		areaLocations?: boolean;
+		placeProducts?: boolean;
 	} = {},
 ) {
 	const directory = join(root, "data/build");
@@ -215,8 +218,10 @@ export function assembleAtlas(
 			if (convertedSeries) copyConvertedSeries(database, ids);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
-			writeAreaHierarchy(database);
-			writePlaceLocations(database);
+			if (placeProducts) {
+				writeAreaHierarchy(database);
+				writePlaceLocations(database);
+			}
 			if (areaLocations) writeAreaLocations(database, root);
 			// Last, so the docs see every table and a missing description
 			// fails the build.
