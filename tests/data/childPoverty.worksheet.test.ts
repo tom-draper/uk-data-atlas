@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadChildPoverty } from "@uk-data-atlas/datasets";
+import { childPovertyStatisticsParts } from "@uk-data-atlas/datasets";
 import { odsTableRows } from "@uk-data-atlas/datasets";
 
 const worksheet = `
@@ -19,26 +19,25 @@ const worksheet = `
 	</table:table-row>
 </table:table>`;
 
-describe("loadChildPoverty", () => {
+describe("childPovertyStatisticsParts", () => {
 	it("extracts annual local-authority counts and rates from the official ODS worksheet", async () => {
-		const datasets = await loadChildPoverty(
+		const datasets = await childPovertyStatisticsParts(
 			async (_path, options, visit) => {
 				for (const row of odsTableRows(worksheet, options)) visit(row);
 			},
 		);
 
-		expect(datasets[2022].data.E06000001.childCount).toBe(4538);
-		expect(datasets[2025].data.E06000001.childPovertyRate).toBeCloseTo(
-			27.1839948,
-		);
-		expect(datasets[2025].data.E06000001.childrenPopulation).toBeCloseTo(
-			18544,
-		);
-		expect(datasets[2025]).toMatchObject({
-			id: "child-poverty2025",
-			type: "child-poverty",
-			boundaryType: "localAuthority",
-			boundaryYear: 2024,
-		});
+		const values = (key: string) =>
+			Object.fromEntries(
+				datasets
+					.find((part) => part.key === key)!
+					.records.find((record) => record.code === "E06000001")!
+					.values.map((value) => [value.measure, value.value]),
+			);
+
+		expect(values("2022")["children-in-relative-low-income"]).toBe(4538);
+		expect(
+			values("2025")["children-in-relative-low-income-rate"],
+		).toBeCloseTo(27.1839948);
 	});
 });

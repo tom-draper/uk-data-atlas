@@ -95,7 +95,7 @@ export * from "./economy/earnings-and-income/workplace-income/dataset.ts";
 export * from "./data/income/aggregate.ts";
 export * from "./data/income/statistics.ts";
 export * from "./data/catalog/meta.ts";
-export * from "./data/child-poverty/loader.ts";
+export * from "./data/child-poverty/source.ts";
 export * from "./economy/labour-market/claimant-count/aggregate.ts";
 export * from "./data/claimant-count/source.ts";
 export * from "./data/crime/loader.ts";
