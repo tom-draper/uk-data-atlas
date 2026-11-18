@@ -88,6 +88,7 @@ const COMPILER_SOURCES = [
 export const buildMapResources = async (
 	root: string,
 	log: (line: string) => void = () => {},
+	workerUrl?: URL,
 ) => {
 	const out = artifactDirectory(root);
 	if (!existsSync(out))
@@ -288,7 +289,7 @@ export const buildMapResources = async (
 		await runMapResourceJobs(
 			jobs,
 			mapResourceConcurrency(),
-			undefined,
+			workerUrl,
 			(index, result) => {
 				results[index] = result;
 				publishReady();

@@ -224,4 +224,33 @@ test("map builds retain tiles, remove obsolete variants and reuse completed rele
 		readdirSync(join(root, "data/build/map-resources")).sort(),
 		["build-state.json", "ward-test.pmtiles"],
 	);
+	const crashLogs: string[] = [];
+	await assert.rejects(
+		buildMapResources(
+			root,
+			(line) => crashLogs.push(line),
+			new URL("./fixtures/crashResourceWorker.mjs", import.meta.url),
+		),
+		/ward\/missing worker failed.*stopped early \(17\)/,
+	);
+	assert.ok(
+		crashLogs.some((line) => line.startsWith("ward/test:")),
+		"the first release was published before the crash",
+	);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/map-resources/ward-test.pmtiles")),
+		archive,
+	);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/map-resources/build-state.json")),
+		state,
+	);
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/artifacts/map-resources.json")),
+		manifest,
+	);
+	assert.deepEqual(
+		readdirSync(join(root, "data/build/map-resources")).sort(),
+		["build-state.json", "ward-test.pmtiles"],
+	);
 });
