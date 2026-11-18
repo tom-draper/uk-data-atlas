@@ -1,6 +1,8 @@
-import { loadSchoolPerformanceConstituency } from "../../../data/school-performance/constituencyLoader.ts";
 import type { SchoolPerformanceDataset } from "../../../types/schoolPerformance.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	SCHOOL_MEASURES,
@@ -12,7 +14,7 @@ import {
 	latestCopyRules,
 } from "../../../data/school-performance/statistics.ts";
 import { aggregateSchoolPerformance } from "../../../data/school-performance/aggregate.ts";
-import { loadSchoolPerformance } from "../../../data/school-performance/loader.ts";
+import { schoolPerformanceStatisticsParts } from "../../../data/school-performance/source.ts";
 
 const LA_NULLS = [
 	"avgP8score",
@@ -49,15 +51,12 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 	},
 	additionalBoundaryTypes: ["constituency"],
 	ingestion: { minimumDatasets: 2 },
-	load: async ({ text }) => ({
-		...(await loadSchoolPerformance(text)),
-		// The charts read only the primary local authority parts, so the
-		// constituency parts are typed as the dataset's shape here.
-		...((await loadSchoolPerformanceConstituency(
-			text,
-		)) as unknown as Record<string, SchoolPerformanceDataset>),
-	}),
+	load: noCompiledPayload<SchoolPerformanceDataset>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ text }) => schoolPerformanceStatisticsParts(text),
+		},
 		payload: {
 			parts: (labels) => [
 				...yearParts(
