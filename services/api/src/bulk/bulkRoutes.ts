@@ -6,7 +6,6 @@ import {
 	namedLocationMembersTable,
 	renderLookup,
 } from "@uk-data-atlas/areas";
-import { findMeasureObservations } from "@uk-data-atlas/catalogue/node";
 import {
 	envelope,
 	invalidQuery,
@@ -14,7 +13,12 @@ import {
 	type ApiResponse,
 } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { observationTableOf, observationTextOf } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	observationTableOf,
+	observationTextOf,
+	seriesObservationFor,
+} from "@uk-data-atlas/measures";
 import { choices, readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 
@@ -223,10 +227,10 @@ export const handleBulkRoutes = ({
 				),
 		);
 		const artifact =
-			measure && source
-				? findMeasureObservations(
+			measure?.series && source
+				? seriesObservationFor(
 						measureObservations ?? [],
-						measure.id,
+						measureSeriesKey(measure.series),
 						source,
 					)
 				: undefined;

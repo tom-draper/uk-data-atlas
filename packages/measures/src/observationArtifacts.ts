@@ -25,6 +25,15 @@ export const registerSeriesObservations = (
 	seriesObservations.set(artifacts, bySeriesSource);
 };
 
+export const seriesObservationFor = (
+	artifacts: AnyMeasureObservationArtifact[],
+	seriesKey: string,
+	source: MeasureSource,
+): AnyMeasureObservationArtifact | undefined =>
+	seriesObservations
+		.get(artifacts)
+		?.get(measureSeriesKeySourceKey(seriesKey, source));
+
 /**
  * Resolve a source/period to its immutable observation artifact. `records` is
  * read when first used, since a table's records are built on demand; a caller
@@ -45,9 +54,7 @@ export const observationsFor = (
 	const indexed = seriesObservations.get(all);
 	const artifact =
 		artifacts.seriesKey && indexed
-			? indexed.get(
-					measureSeriesKeySourceKey(artifacts.seriesKey, source),
-				)
+			? seriesObservationFor(all, artifacts.seriesKey, source)
 			: findMeasureObservations(all, measureId, source);
 	const held = artifact?.periods.find(
 		(candidate) => candidate.period === period,

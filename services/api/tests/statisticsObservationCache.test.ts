@@ -14,6 +14,7 @@ import {
 	measureSeriesKey,
 	observationsFor,
 	observationTextOf,
+	seriesObservationFor,
 } from "@uk-data-atlas/measures";
 
 test("indexes each shared table column by its series and source", () => {
@@ -184,6 +185,21 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		canonicalReadPath,
 	);
 	const [canonical] = canonicalArtifacts;
+	assert.equal(
+		seriesObservationFor(
+			canonicalArtifacts,
+			measureSeriesKey(identity),
+			source,
+		),
+		canonical,
+	);
+	assert.equal(
+		seriesObservationFor(canonicalArtifacts, measureSeriesKey(identity), {
+			...source,
+			datasetId: "other",
+		}),
+		undefined,
+	);
 	assert.deepEqual(
 		observationsFor("unused", source, "2024", {
 			measureObservations: canonicalArtifacts,

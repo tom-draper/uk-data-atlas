@@ -21,6 +21,10 @@ import {
 } from "./httpCharacterization";
 import { dataCatalog, measureObservations } from "./routeFixtures";
 import { testContext } from "./routeFixtures";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 
 const fixturePath = fileURLToPath(
 	new URL("./fixtures/bulk-export.csv", import.meta.url),
@@ -219,10 +223,24 @@ const registry = {
 	releases: [],
 };
 
+const series = { measure: measure.id };
+const seriesCatalog = {
+	...dataCatalog,
+	measures: dataCatalog.measures.map((candidate) =>
+		candidate.id === measure.id ? { ...candidate, series } : candidate,
+	),
+};
+const indexedObservations = [...measureObservations];
+registerSeriesObservations(
+	indexedObservations,
+	new Map([
+		[measureSeriesSourceKey(series, source), measureObservations[0]!],
+	]),
+);
 const context = testContext({
 	boundaryRegistry: registry,
-	dataCatalog,
-	measureObservations,
+	dataCatalog: seriesCatalog,
+	measureObservations: indexedObservations,
 	exportManifest,
 	exportFiles,
 	areaInventory,
