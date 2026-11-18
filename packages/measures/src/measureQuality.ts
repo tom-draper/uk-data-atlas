@@ -5,6 +5,7 @@ import {
 } from "./observationArtifacts.ts";
 import type { DataCatalog } from "./dataCatalog.ts";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility.ts";
+import { measureSeriesKey } from "./measureDimensions.ts";
 
 /** Published observation status and boundary-coverage quality for one measure. */
 export const measureQuality = (
@@ -42,6 +43,8 @@ export const measureQuality = (
 					period,
 					{
 						measureObservations,
+						seriesKey:
+							measure.series && measureSeriesKey(measure.series),
 					},
 				);
 				const statusCounts = observations?.records.reduce(

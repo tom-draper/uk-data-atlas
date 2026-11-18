@@ -9,6 +9,7 @@ import type { MeasureContext } from "./measureContext.ts";
 import type { MeasureDimensions } from "./measureDimensionsLoader.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { publicSeries } from "./dimensionCatalogue.ts";
+import { measureSeriesKey } from "./measureDimensions.ts";
 
 export type MeasureCapabilityContext = Omit<
 	MeasureContext,
@@ -84,6 +85,7 @@ export const conversionCoverageOnto = (
 	}
 	const artifacts = {
 		measureObservations: context.measureObservations,
+		seriesKey: measure.series && measureSeriesKey(measure.series),
 	};
 	return measure.sources.flatMap((source) =>
 		crosswalks

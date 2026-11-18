@@ -17,6 +17,7 @@ import { publishedPartitions } from "../dataDefaults";
 import { QUERY_RULES } from "../queryRules";
 import { selectSourcePartition } from "../sourcePartition";
 import { similarAreas } from "../similarAreas";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 const MAX_MEASURES = 10;
 const SIMILAR = QUERY_RULES["GET /areas/{geography}/{code}/similar"];
@@ -143,6 +144,9 @@ export const handleSimilarAreaRoutes = ({
 	const observations = partitions.map((partition, index) =>
 		observationsFor(measures[index]!.id, partition.plan.source, period, {
 			measureObservations,
+			seriesKey:
+				measures[index]!.series &&
+				measureSeriesKey(measures[index]!.series!),
 		}),
 	);
 	const missingObservationsIndex = observations.findIndex((value) => !value);
