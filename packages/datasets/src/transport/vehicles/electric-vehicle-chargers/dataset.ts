@@ -22,6 +22,7 @@ export const electricVehicleChargers = defineDataset<
 		summary:
 			"Public electric vehicle charger counts by UK local authority.",
 	},
+	mapName: "EV Charging Points",
 	source: {
 		name: "Public electric vehicle chargers by local authority",
 		publisher: "Department for Transport",

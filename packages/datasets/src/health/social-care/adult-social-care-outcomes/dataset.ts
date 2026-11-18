@@ -24,6 +24,7 @@ export const adultSocialCareOutcomes = defineDataset<
 		summary:
 			"The care-related quality-of-life outcome score reported by English councils.",
 	},
+	mapName: "Adult Social Care Quality of Life",
 	source: {
 		name: "Adult Social Care Outcomes Framework, England",
 		publisher: "Department of Health and Social Care",

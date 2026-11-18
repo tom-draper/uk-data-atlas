@@ -20,6 +20,7 @@ export const brexitConstituency = defineDataset<BrexitConstituencyDataset>({
 		title: "EU Referendum Results (Constituency Estimates)",
 		about: "Estimates of how each Westminster constituency voted in the 2016 EU referendum. Votes were counted by local authority, so these figures are modelled by the political scientist Chris Hanretty rather than official.",
 	},
+	mapName: "EU Referendum Estimates by Constituency",
 	source: {
 		name: "EU Referendum Results (Constituency Estimates)",
 		publisher:

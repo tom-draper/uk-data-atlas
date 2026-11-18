@@ -19,6 +19,7 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		summary:
 			"Net greenhouse gas emissions produced within each UK local authority every year from 2005 to 2024, in kilotonnes of CO2 equivalent. The legend also maps transport, domestic, industrial, commercial, public-sector, agricultural, waste and land-use emissions separately in kt CO2e. Land use can be negative where removals exceed emissions; regional sector totals sum the authorities.",
 	},
+	mapName: "Greenhouse Gas Emissions",
 	source: {
 		name: "Greenhouse Gas Emissions",
 		publisher: "Department for Energy Security and Net Zero",

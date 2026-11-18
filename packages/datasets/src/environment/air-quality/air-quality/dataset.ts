@@ -21,6 +21,7 @@ export const airQuality = defineDataset<AirQualityDataset>({
 		summary:
 			"Average background levels of nitrogen dioxide and particulate matter (PM10 and PM2.5) in each UK local authority, from Defra's modelled pollution maps.",
 	},
+	mapName: "Air Pollution (NO₂)",
 	source: {
 		name: "Air Quality",
 		publisher: "Department for Environment, Food and Rural Affairs",

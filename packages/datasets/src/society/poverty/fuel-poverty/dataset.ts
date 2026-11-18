@@ -25,6 +25,7 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 		summary:
 			"The share of households in fuel poverty in each small neighbourhood of England. The fuel poverty map switches between the household rate and the number of affected households. Area summaries sum household counts and recompute the rate.",
 	},
+	mapName: "Fuel Poverty",
 	source: {
 		name: "Fuel Poverty",
 		publisher: "Department for Energy Security and Net Zero",

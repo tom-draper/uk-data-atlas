@@ -28,6 +28,7 @@ export const planningApplications = defineDataset<
 		summary:
 			"Planning applications received by English local authorities. The planning legend switches between applications received, decided and withdrawn during 2026 Q1. Outstanding counts are unavailable in this release. Regional cards sum available authority counts; suppressed measures remain unavailable.",
 	},
+	mapName: "Planning Applications",
 	source: {
 		name: "Planning applications in England",
 		publisher: "Ministry of Housing, Communities and Local Government",

@@ -76,6 +76,7 @@ export const schoolPerformanceDisadvantage =
 			about: "How far disadvantaged pupils in each English local authority trail their classmates at GCSE. Disadvantaged pupils are those eligible for free school meals in recent years or who have been in care.",
 		},
 		sources: [{ name: "school-performance" }],
+		mapName: "Disadvantaged Pupil Attainment Gap",
 		source: {
 			name: "Attainment 8 Gap",
 			publisher: "Department for Education",

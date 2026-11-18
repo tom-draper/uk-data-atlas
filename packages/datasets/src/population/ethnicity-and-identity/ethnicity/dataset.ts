@@ -70,6 +70,7 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		summary:
 			"How many residents of each local authority in England and Wales belong to each of the nineteen ethnic groups recorded in Census 2021.",
 	},
+	mapName: "Ethnicity",
 	source: {
 		name: "Ethnicity",
 		publisher: "Office for National Statistics",

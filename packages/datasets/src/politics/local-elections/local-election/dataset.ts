@@ -79,6 +79,7 @@ export const localElection = defineDataset<LocalElectionDataset>({
 		"local-election",
 		[2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2025],
 	),
+	mapName: "Local Election Results",
 	source: {
 		name: "Local Election Results",
 		publisher:

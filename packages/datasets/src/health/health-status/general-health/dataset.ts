@@ -19,6 +19,7 @@ export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 		about: "Self-reported general health in Census 2021 for LSOAs in England and Wales. The legend selects good or very good health, each separate good-health category, fair, bad or very bad health. Regional percentages divide summed resident category counts by summed total residents. These are crude percentages and do not adjust for differences in age.",
 	},
 	sources: [{ name: "census-2021-ts037" }],
+	mapName: "General Health",
 	source: {
 		name: "General health",
 		publisher: "Office for National Statistics",

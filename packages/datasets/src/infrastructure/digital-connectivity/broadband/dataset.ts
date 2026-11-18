@@ -28,6 +28,7 @@ export const broadband = defineDataset<BroadbandDataset>({
 		summary:
 			"The share of premises in each UK local authority that can get superfast, ultrafast, full fibre and gigabit broadband, from Ofcom.",
 	},
+	mapName: "Broadband Coverage",
 	source: {
 		name: "Broadband Coverage",
 		publisher: "Ofcom",

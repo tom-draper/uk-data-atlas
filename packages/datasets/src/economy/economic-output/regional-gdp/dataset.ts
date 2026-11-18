@@ -28,6 +28,7 @@ export const regionalGdp = defineDataset<RegionalGdpDataset>({
 		summary:
 			"Gross domestic product and gross value added for every UK region at all three tiers of the International Territorial Level geography, from 1998 to 2023. ITL1 is the top tier, ITL2 the middle and ITL3 the most detailed, mostly individual or paired local authorities. Output is counted where it is produced, not where the people who earn it live. Use the map legend to switch between GDP at market prices and GVA at basic prices. Both measures are monetary totals, summed across selected ITL3 areas.",
 	},
+	mapName: "Regional GDP",
 	source: {
 		name: "Regional gross domestic product",
 		publisher: REGIONAL_GDP_SOURCE.source,

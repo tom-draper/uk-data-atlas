@@ -67,6 +67,7 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 		title: "Life Expectancy",
 		about: "How long a baby born today could expect to live, and how many of those years in good health, if current death rates held. Figures are averaged over three years for each local area, and are one of the clearest measures of health inequality between places.",
 	},
+	mapName: "Life Expectancy",
 	source: {
 		name: "Life Expectancy",
 		publisher: "Office for National Statistics",

@@ -17,6 +17,7 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 		summary:
 			"How many people in each local authority count as claimants of Universal Credit or Jobseeker's Allowance, in total and for 16 to 24 year olds.",
 	},
+	mapName: "Claimant Count",
 	source: {
 		name: "Claimant Count",
 		publisher: "Office for National Statistics",

@@ -23,6 +23,7 @@ export const adultSocialCareActivity = defineDataset<
 		about: "How many adults receive long-term social care support from their council in England, such as care at home or in a care home, split between working-age adults and people aged 65 and over.",
 		summary: "Adult social care activity reported by English councils.",
 	},
+	mapName: "Adult Social Care Support",
 	source: {
 		name: "Adult social care activity in England",
 		publisher: "Department of Health and Social Care",

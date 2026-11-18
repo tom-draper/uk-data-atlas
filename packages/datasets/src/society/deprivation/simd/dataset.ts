@@ -23,6 +23,7 @@ export const simd = defineDataset<SIMDDataset>({
 		summary:
 			"The Scottish Index of Multiple Deprivation, ranking small neighbourhoods from most to least deprived. Each nation measures deprivation its own way, so ranks can't be compared across borders.",
 	},
+	mapName: "Deprivation (SIMD)",
 	source: {
 		name: "Scottish Index of Multiple Deprivation",
 		publisher: "Scottish Government",

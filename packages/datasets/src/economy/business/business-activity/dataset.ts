@@ -21,6 +21,7 @@ export const businessActivity = defineDataset<
 		summary:
 			"VAT and/or PAYE based enterprises in each UK local authority, published by broad industry group.",
 	},
+	mapName: "Businesses",
 	source: {
 		name: "UK business: activity, size and location",
 		publisher: "Office for National Statistics",
