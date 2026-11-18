@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadPopulationConstituencyYear } from "@uk-data-atlas/datasets";
+import { populationConstituencyYear } from "@uk-data-atlas/datasets";
 
 // Three preamble lines, then the header, then England's and Wales's rows.
 const sheet = (rows: string[]) =>
@@ -11,9 +11,9 @@ const sheet = (rows: string[]) =>
 		...rows,
 	].join("\n");
 
-describe("loadPopulationConstituencyYear", () => {
+describe("populationConstituencyYear", () => {
 	it("reads each constituency's published total", async () => {
-		const dataset = await loadPopulationConstituencyYear(
+		const part = await populationConstituencyYear(
 			2022,
 			sheet([
 				"E14001063,Aldershot,119256,678,697",
@@ -22,23 +22,24 @@ describe("loadPopulationConstituencyYear", () => {
 			]),
 		);
 
-		expect(dataset).toMatchObject({
-			type: "population-constituency",
-			year: 2022,
-			boundaryType: "constituency",
-			boundaryYear: 2024,
-		});
-		expect(dataset.data.E14001063).toEqual({
-			constituencyCode: "E14001063",
-			constituencyName: "Aldershot",
-			total: 119256,
-		});
-		expect(Object.keys(dataset.data)).toEqual(["E14001063", "W07000081"]);
+		expect(part.key).toBe("2022");
+		expect(part.records).toEqual([
+			{
+				code: "E14001063",
+				name: "Aldershot",
+				values: [{ measure: "population", value: 119256 }],
+			},
+			{
+				code: "W07000081",
+				name: "Aberafan Maesteg",
+				values: [{ measure: "population", value: 90000 }],
+			},
+		]);
 	});
 
 	it("refuses a constituency with no usable total", async () => {
 		await expect(
-			loadPopulationConstituencyYear(
+			populationConstituencyYear(
 				2022,
 				sheet(["E14001063,Aldershot,,1,2"]),
 			),

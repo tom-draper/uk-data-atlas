@@ -1,16 +1,10 @@
 import type { PopulationConstituencyDataset } from "../../../types/populationConstituency.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
-import { POPULATION } from "../../../declaration/measures.ts";
 import {
-	loadPopulationConstituencyYear,
-	POPULATION_CONSTITUENCY_SHEETS,
-} from "../../../data/population-constituency/loader.ts";
-import { sourceDir } from "../../../declaration/sources.ts";
-
-const WORKBOOK = sourceDir(
-	"population-constituency",
-	"sapepconstablefinal.xlsx",
-);
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
+import { POPULATION } from "../../../declaration/measures.ts";
+import { populationConstituencyStatisticsParts } from "../../../data/population-constituency/source.ts";
 
 export const populationConstituency =
 	defineDataset<PopulationConstituencyDataset>({
@@ -41,21 +35,13 @@ export const populationConstituency =
 			expectedBoundaryYears: [2024],
 			requiredDataFields: ["total"],
 		},
-		load: async ({ xlsxSheet }) =>
-			Object.fromEntries(
-				await Promise.all(
-					Object.entries(POPULATION_CONSTITUENCY_SHEETS).map(
-						async ([year, sheet]) => [
-							year,
-							await loadPopulationConstituencyYear(
-								Number(year),
-								await xlsxSheet(WORKBOOK, sheet),
-							),
-						],
-					),
-				),
-			),
+		load: noCompiledPayload<PopulationConstituencyDataset>(),
 		statistics: {
+			direct: {
+				only: true,
+				read: ({ xlsxSheet }) =>
+					populationConstituencyStatisticsParts(xlsxSheet),
+			},
 			payload: {
 				header: { coverageCountries: ["GB-ENG", "GB-WLS"] },
 				code: "constituencyCode",
