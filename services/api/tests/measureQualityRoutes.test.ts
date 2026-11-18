@@ -12,11 +12,29 @@ import {
 } from "./routeFixtures";
 
 test("reports a measure quality matrix before querying its observations", () => {
+	const identity = { measure: "small-area-fixture" };
+	const measure = dataCatalog.measures.find(
+		(entry) => entry.id === "small-area-fixture",
+	)!;
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((entry) =>
+			entry === measure ? { ...entry, series: identity } : entry,
+		),
+	};
+	const artifact = measureObservations[0]!;
+	const observations = [artifact];
+	registerSeriesObservations(
+		observations,
+		new Map([
+			[measureSeriesSourceKey(identity, measure.sources[0]!), artifact],
+		]),
+	);
 	const data = measureQuality(
-		dataCatalog,
+		catalog,
 		measureCompatibilityInventory,
 		"small-area-fixture",
-		{ measureObservations },
+		{ measureObservations: observations },
 	);
 	assert.ok(data);
 	assert.deepEqual(data.measure.id, "small-area-fixture");
