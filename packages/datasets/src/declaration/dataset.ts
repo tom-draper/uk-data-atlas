@@ -20,6 +20,8 @@ import type {
 	DisplayRanking,
 } from "./display.ts";
 import { yearParts } from "./yearParts.ts";
+import type { UpdateCadence } from "./cadence.ts";
+import { declarationProblems } from "./validate.ts";
 
 /**
  * Everything the atlas knows about one dataset, in one module. The API
@@ -28,15 +30,7 @@ import { yearParts } from "./yearParts.ts";
  * `DeclaredDataset`, which is how a compiled dataset is read into rows.
  */
 
-export const UPDATE_CADENCES = [
-	"monthly",
-	"quarterly",
-	"annual",
-	"decennial",
-	"irregular",
-	"discontinued",
-] as const;
-export type UpdateCadence = (typeof UPDATE_CADENCES)[number];
+export { UPDATE_CADENCES, type UpdateCadence } from "./cadence.ts";
 
 export type DeclaredSource = {
 	/** The dataset's title. */
@@ -233,6 +227,11 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 ): DatasetDeclaration<T> {
 	if (!KEBAB.test(declaration.id))
 		throw new Error(`Dataset id ${declaration.id} is not kebab-case`);
+	const invalid = declarationProblems(declaration);
+	if (invalid.length > 0)
+		throw new Error(
+			`Dataset ${declaration.id} is not a valid declaration: ${invalid.join("; ")}`,
+		);
 	if (declaration.publishMapValues && !declaration.display)
 		throw new Error(
 			`Dataset ${declaration.id} needs a display measure for map values`,
