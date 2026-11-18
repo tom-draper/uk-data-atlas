@@ -1,6 +1,6 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { measureSeriesKey } from "@uk-data-atlas/measures";
+import { identityDimensions, measureSeriesKey } from "@uk-data-atlas/measures";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -116,6 +116,11 @@ export const testContext = (
 	});
 	return {
 		...resources,
+		measureDimensions:
+			inputs.measureDimensions ??
+			(inputs.dataCatalog && inputs.measureCompatibilityInventory
+				? identityDimensions(inputs.dataCatalog)
+				: undefined),
 		areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
 		boundaryRegistry: withRegistry.boundaryRegistry,
 		geographyResolver: inputs.geographyResolver ?? built.resolver,

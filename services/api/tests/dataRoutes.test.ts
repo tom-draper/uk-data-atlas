@@ -126,6 +126,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
+		dimensions: {},
 		records: [populationObservations.periods[0]!.records[0]],
 	});
 	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
@@ -146,6 +147,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
+		dimensions: {},
 		records: [populationObservations.periods[0]!.records[1]],
 	});
 
@@ -168,6 +170,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 			),
 			conversion: null,
 			aggregation: null,
+			dimensions: {},
 			records: [
 				{ areaCode: "N09000001", value: 400, status: "observed" },
 			],
@@ -203,6 +206,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
+		dimensions: {},
 		records: [populationObservations.periods[0]!.records[0]],
 	});
 
