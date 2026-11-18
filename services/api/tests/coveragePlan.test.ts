@@ -192,3 +192,34 @@ test("builds coverage evidence and retains missing-release details", () => {
 	assert.equal(missing.status, 404);
 	assert.equal(missing.data.title, "Not Found");
 });
+
+test("groups a release's areas by country once, however many plans use it", () => {
+	const target = { geography: "ward", boundaryRelease: "2023-05-uk-bgc" };
+	const areas = context.geographyResolver.releaseAreas(
+		target.geography,
+		target.boundaryRelease,
+	)!;
+	const listAreas = areas.keys.bind(areas);
+	let listings = 0;
+	areas.keys = () => {
+		listings += 1;
+		return listAreas();
+	};
+	try {
+		const first = coveragePlan(context, population, target)!;
+		const other = dataCatalog.measures.find(
+			(measure) => measure.id !== population.id,
+		)!;
+		const second = coveragePlan(context, other, target)!;
+		const again = coveragePlan(context, population, target)!;
+		// Another test may already have grouped this release; three plans must
+		// not have grouped it three times.
+		assert.ok(listings <= 1, `${listings} listings`);
+		// Sharing the grouping carries nothing from one plan into the next.
+		assert.deepEqual(again, first);
+		assert.equal(second.measure.id, other.id);
+		assert.equal(second.summary.areaCount, 3);
+	} finally {
+		areas.keys = listAreas;
+	}
+});
