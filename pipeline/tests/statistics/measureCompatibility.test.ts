@@ -19,6 +19,10 @@ const dataCatalog: DataCatalog = {
 	measures: [
 		{
 			id: "population",
+			series: {
+				measure: "population",
+				dimensions: { tenure: "owned", age: "all" },
+			},
 			label: "Population estimate",
 			valueKind: "count",
 			unit: "people",
@@ -184,7 +188,7 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 	assert.match(inventory.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
 
-test("publishes canonical series identities and rejects missing mappings", () => {
+test("publishes canonical series identities and rejects missing identities", () => {
 	const observations = [
 		wardObservations,
 		localAuthorityObservations,
@@ -195,31 +199,8 @@ test("publishes canonical series identities and rejects missing mappings", () =>
 		boundaryRegistry,
 		artifacts,
 		observations,
-		{
-			population: {
-				measure: "population",
-				dimensions: { tenure: "owned", age: "all" },
-			},
-		},
 	);
-	const reordered = compileMeasureCompatibility(
-		dataCatalog,
-		boundaryRegistry,
-		artifacts,
-		observations,
-		{
-			population: {
-				measure: "population",
-				dimensions: { age: "all", tenure: "owned" },
-			},
-		},
-	);
-	assert.ok(inventory.measures[0]?.seriesKey);
-	assert.equal(
-		inventory.measures[0]?.seriesKey,
-		reordered.measures[0]?.seriesKey,
-	);
-	const embedded = {
+	const reorderedCatalog = {
 		...dataCatalog,
 		measures: dataCatalog.measures.map((measure) => ({
 			...measure,
@@ -229,23 +210,30 @@ test("publishes canonical series identities and rejects missing mappings", () =>
 			},
 		})),
 	};
+	const reordered = compileMeasureCompatibility(
+		reorderedCatalog,
+		boundaryRegistry,
+		artifacts,
+		observations,
+	);
+	assert.ok(inventory.measures[0]?.seriesKey);
 	assert.equal(
-		compileMeasureCompatibility(
-			embedded,
-			boundaryRegistry,
-			artifacts,
-			observations,
-		).measures[0]?.seriesKey,
 		inventory.measures[0]?.seriesKey,
+		reordered.measures[0]?.seriesKey,
 	);
 	assert.throws(
 		() =>
 			compileMeasureCompatibility(
-				dataCatalog,
+				{
+					...dataCatalog,
+					measures: dataCatalog.measures.map((measure) => ({
+						...measure,
+						series: undefined,
+					})),
+				},
 				boundaryRegistry,
 				artifacts,
 				observations,
-				{},
 			),
 		/Missing series identity for population/,
 	);

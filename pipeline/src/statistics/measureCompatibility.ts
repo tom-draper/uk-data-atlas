@@ -7,10 +7,7 @@ import {
 	type AnyMeasureObservationArtifact,
 	type MeasureSource,
 } from "@uk-data-atlas/catalogue/node";
-import {
-	measureSeriesKey,
-	type MeasureSeriesIdentity,
-} from "@uk-data-atlas/measures";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	observationPartitionKey,
@@ -93,7 +90,6 @@ export const compileMeasureCompatibility = (
 	boundaryRegistry: BoundaryRegistry,
 	areaArtifacts: AreaReleaseArtifact[],
 	measureObservations: AnyMeasureObservationArtifact[],
-	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -134,12 +130,12 @@ export const compileMeasureCompatibility = (
 			};
 		});
 	const measures = dataCatalog.measures.map((measure) => {
-		const identity = measure.series ?? identities?.[measure.id];
-		if (identities && !identity)
+		const identity = measure.series;
+		if (!identity)
 			throw new Error(`Missing series identity for ${measure.id}.`);
 		return {
 			measureId: measure.id,
-			...(identity ? { seriesKey: measureSeriesKey(identity) } : {}),
+			seriesKey: measureSeriesKey(identity),
 			sources: sourcesFor(measure),
 		};
 	});
