@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { measureSeriesKey } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
 import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
@@ -55,19 +59,39 @@ const resource: MapResourceDescriptor = {
 };
 const url =
 	"/v1/map-resources/ward/2023-05-uk-bgc/join/population?period=2022&geography=ward&codeYear=2023";
-const contextFor = (records: PopulationObservation[]) =>
-	testContext({
+const contextFor = (records: PopulationObservation[]) => {
+	const artifact = {
+		...populationObservations,
+		periods: [{ period: "2022", records }],
+	};
+	const artifacts = [artifact];
+	const source = dataCatalog.measures
+		.find((measure) => measure.id === "population")!
+		.sources.find((entry) => entry.datasetId === "population")!;
+	registerSeriesObservations(
+		artifacts,
+		new Map([
+			[
+				measureSeriesSourceKey({ measure: "population" }, source),
+				artifact,
+			],
+			[
+				measureSeriesSourceKey(
+					{ measure: "residents", dimensions: { age: "all" } },
+					source,
+				),
+				artifact,
+			],
+		]),
+	);
+	return testContext({
 		areaLookup: compatibleWardAreaLookup,
 		dataCatalog,
 		measureCompatibilityInventory,
-		measureObservations: [
-			{
-				...populationObservations,
-				periods: [{ period: "2022", records }],
-			},
-		],
+		measureObservations: artifacts,
 		mapResources: { resources: [resource] },
 	});
+};
 const record: PopulationObservation = {
 	areaCode: "E05000001",
 	value: 5,
