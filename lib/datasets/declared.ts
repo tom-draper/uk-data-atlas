@@ -6,6 +6,7 @@ import type {
 	DisplayField,
 	DisplayFormat,
 	DisplayMapView,
+	DisplayRanking,
 	DisplayMeasure,
 } from "@uk-data-atlas/datasets";
 import { getFeatureProp } from "@/lib/types";
@@ -41,12 +42,28 @@ export const DECLARED_CHART_COMPONENT = "@/components/ValueCard";
 export const declaredChartKey = (declaration: Displayed) =>
 	`${themeOfTopic(declaration.topic)}-${declaration.id}`;
 
+function formatCountValue(
+	format: Extract<DisplayFormat, { kind: "count" }>,
+	value: number,
+) {
+	const scaled = format.scale === undefined ? value : value * format.scale;
+	if (format.digits !== undefined)
+		return scaled.toLocaleString(format.locale, {
+			minimumFractionDigits: format.digits,
+			maximumFractionDigits: format.digits,
+		});
+	const whole = format.round ? Math.round(scaled) : scaled;
+	return format.locale
+		? whole.toLocaleString(format.locale)
+		: formatCount(whole);
+}
+
 export function formatDisplay(format: DisplayFormat, value: number): string {
 	switch (format.kind) {
 		case "decimal":
 			return `${format.prefix ?? ""}${value.toFixed(format.digits)}${format.suffix ?? ""}`;
 		case "count":
-			return `${format.prefix ?? ""}${format.locale ? value.toLocaleString(format.locale) : formatCount(format.round ? Math.round(value) : value)}${format.suffix ?? ""}`;
+			return `${format.prefix ?? ""}${formatCountValue(format, value)}${format.suffix ?? ""}`;
 		case "compact":
 			return `${formatCompactCount(value)}${format.suffix ?? ""}`;
 		case "rank": {
@@ -157,6 +174,18 @@ export const declaredMapView = (
 ): DisplayMapView | undefined => {
 	const views = declaredMapViews(type);
 	return views?.find(({ id }) => id === view) ?? views?.[0];
+};
+
+/** How a map's areas read in a ranking, if its dataset declares it. */
+export const declaredRanking = (
+	dataset: string,
+	view: string | undefined,
+): DisplayRanking | undefined => {
+	const declaration = DATASET_DECLARATIONS.find(({ id }) => id === dataset);
+	return (
+		declaration?.mapViews?.find(({ id }) => id === view)?.ranking ??
+		declaration?.ranking
+	);
 };
 
 /** The initial colour range of every declared map view, by its options group. */

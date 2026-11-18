@@ -16,6 +16,7 @@ import type {
 	DatasetDisplay,
 	DisplayFormat,
 	DisplayMapView,
+	DisplayRanking,
 } from "./display.ts";
 import { yearParts } from "./yearParts.ts";
 
@@ -184,6 +185,8 @@ export type DatasetDeclaration<
 	display?: DatasetDisplay;
 	/** The views of a dataset whose map has several, the first being the default. */
 	mapViews?: readonly [DisplayMapView, ...DisplayMapView[]];
+	/** How the dataset's areas read when ranked, for datasets with one map. */
+	ranking?: DisplayRanking;
 	/** The key figure place pages show for the dataset, if it has one. */
 	placeHeadline?: PlaceHeadlineDeclaration;
 };
