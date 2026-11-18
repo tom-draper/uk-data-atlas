@@ -1,10 +1,13 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import { defineDataset } from "../../../declaration/dataset.ts";
+import {
+	defineDataset,
+	noCompiledPayload,
+} from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { sumMetrics } from "../../../helpers/sumMetrics.ts";
-import { loadPupilAbsence } from "../../../data/pupil-absence/loader.ts";
+import { pupilAbsenceStatisticsParts } from "../../../data/pupil-absence/source.ts";
 
 export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 	id: "pupil-absence",
@@ -32,8 +35,12 @@ export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value", "metrics"],
 	},
-	load: ({ zipCsvRows }) => loadPupilAbsence(zipCsvRows),
+	load: noCompiledPayload<IndicatorDataset<"pupil-absence">>(),
 	statistics: {
+		direct: {
+			only: true,
+			read: ({ zipCsvRows }) => pupilAbsenceStatisticsParts(zipCsvRows),
+		},
 		payload: {
 			parts: yearParts(
 				"pupil-absence",

@@ -1,13 +1,11 @@
-import {
-	type QualificationDataset,
-	type QualificationBreakdown,
-} from "../../types/qualification.ts";
+import type { DirectPart } from "../../declaration/statistics.ts";
 import { parseCsv } from "../../helpers/parseCsv.ts";
 import { parseNullableInt } from "../../helpers/parseNumber.ts";
 import { addMergedCountAuthorities } from "../localAuthority/reorganisations.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
-const CATEGORY_MAP: Record<string, keyof QualificationBreakdown> = {
+/** The census's highest-qualification categories, by their source code. */
+const CATEGORY_MAP = {
 	"0": "noQualifications",
 	"1": "level1",
 	"2": "level2",
@@ -15,7 +13,12 @@ const CATEGORY_MAP: Record<string, keyof QualificationBreakdown> = {
 	"4": "level3",
 	"5": "level4Plus",
 	"6": "other",
-};
+} as const;
+
+type QualificationBreakdown = Record<
+	(typeof CATEGORY_MAP)[keyof typeof CATEGORY_MAP] | "total",
+	number
+>;
 
 function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
@@ -43,9 +46,15 @@ export function addMergedQualificationAuthorities(
 	addMergedCountAuthorities(data, emptyBreakdown, "qualification");
 }
 
-export async function loadQualification(
+/**
+ * Census 2021 highest level of qualification (TS067) for usual residents aged
+ * 16 and over, as the one part `2021`. The total is the sum of the categories
+ * counted, and the four authorities created in 2023 are the sums of their
+ * predecessors.
+ */
+export async function qualificationStatisticsParts(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, QualificationDataset>> {
+): Promise<DirectPart[]> {
 	const { data } = await parseCsv(
 		await read(sourceDir("qualification", "TS067-2021-3.csv")),
 		{ header: true },
@@ -73,7 +82,7 @@ export async function loadQualification(
 		);
 		if (!catCode || catCode === "-8") continue;
 
-		const field = CATEGORY_MAP[catCode];
+		const field = CATEGORY_MAP[catCode as keyof typeof CATEGORY_MAP];
 		if (!field) continue;
 
 		const count = parseNullableInt(
@@ -87,25 +96,17 @@ export async function loadQualification(
 	}
 	addMergedQualificationAuthorities(laData);
 
-	const records: QualificationDataset["data"] = {};
-	for (const [ladCode, breakdown] of Object.entries(laData)) {
-		records[ladCode] = { ladCode, breakdown };
-	}
-
-	return {
-		2021: {
-			id: "qualifications2021",
-			type: "qualification",
-			year: 2021,
-			boundaryType: "localAuthority",
-			boundaryYear: 2025,
-			data: records,
-			metadata: {
-				source: "Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067.",
-				notes: [
-					"England and Wales only. Covers usual residents aged 16 and over; residents under 16, whom the table records as 'Does not apply', are excluded.",
-				],
-			},
+	return [
+		{
+			key: "2021",
+			records: Object.entries(laData).map(([code, breakdown]) => ({
+				code,
+				values: Object.entries(breakdown).map(([key, value]) => ({
+					measure: "usual-residents-16-plus",
+					members: { "highest-qualification": key },
+					value,
+				})),
+			})),
 		},
-	};
+	];
 }
