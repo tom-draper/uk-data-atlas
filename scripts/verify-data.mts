@@ -4,16 +4,11 @@ import {
 } from "@uk-data-atlas/areas";
 import { buildLog, readAtlasAssetText } from "@uk-data-atlas/atlas-db";
 
-import {
-	comparableCompiled,
-	servedFromRows,
-	readAtlasPayload,
-} from "@uk-data-atlas/catalogue/node";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { ATLAS_LOOKUP_NAMES } from "./atlas-lookups";
 import { createHash } from "node:crypto";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { isDeepStrictEqual } from "node:util";
 import { fileURLToPath } from "node:url";
 import { directPayloadProblem } from "../pipeline/src/checks/directPayloadGoldens.ts";
 import { precompileFingerprints } from "../pipeline/src/precompile/fingerprint.mjs";
@@ -114,27 +109,14 @@ for (const dataset of manifest.datasets ?? []) {
 			`Precompiled ${dataset.type} does not match dataset-manifest.json.`,
 		);
 	const payload = readAtlasPayload(root, `dataset:${dataset.output}`);
-	if (servedFromRows(dataset.type)) {
-		if (
-			!isDeepStrictEqual(
-				JSON.parse(payload),
-				comparableCompiled(
-					dataset.type,
-					JSON.parse(compiled.toString()),
-				),
-			)
-		)
-			fail(`Atlas rows do not match precompiled ${dataset.type}.`);
-	} else {
-		const digest = createHash("sha256").update(payload).digest("hex");
-		if (
-			Buffer.byteLength(payload) !== dataset.compiled.bytes ||
-			digest !== dataset.compiled.sha256
-		)
-			fail(
-				`Precompiled ${dataset.type} does not match dataset-manifest.json.`,
-			);
-	}
+	const digest = createHash("sha256").update(payload).digest("hex");
+	if (
+		Buffer.byteLength(payload) !== dataset.compiled.bytes ||
+		digest !== dataset.compiled.sha256
+	)
+		fail(
+			`Precompiled ${dataset.type} does not match dataset-manifest.json.`,
+		);
 }
 
 await stat(join(root, "public", "data", "boundaries"));
