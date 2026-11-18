@@ -1118,7 +1118,6 @@ const writeSources = (
 		manifest,
 		population,
 		populationUk,
-		ghgEmissions,
 		travelToWork: censusPaths["travel-to-work"],
 		carAvailability: censusPaths["car-availability"],
 		qualification: censusPaths.qualification,
@@ -1140,6 +1139,11 @@ const writeSources = (
 			waste,
 			"planning-applications": planningApplications,
 			"air-quality": airQuality,
+			"ghg-emissions": ghgEmissions,
+			imd,
+			nimdm,
+			wimd,
+			simd,
 		},
 		roadCollisions,
 		crime,
@@ -1147,10 +1151,6 @@ const writeSources = (
 		jobs,
 		landArea,
 		housePrice,
-		imd,
-		nimdm,
-		wimd,
-		simd,
 		lifeExpectancySeries,
 		populationConstituency,
 		generalElection,
@@ -1682,7 +1682,12 @@ test("publishes deprivation rank and decile as they were published", () => {
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		const [rank, decile] = result.imdObservations;
+		const [rank, decile] = ["imd-rank", "imd-decile"].map((measure) =>
+			result.yearlyIndicatorObservations.find(
+				(artifact) =>
+					artifact.measureId === measureSeriesKey({ measure }),
+			),
+		);
 
 		assert.equal(
 			rank?.measureId,
@@ -1724,10 +1729,16 @@ test("publishes the northern irish rank on its own nisra codes", () => {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
 		assert.deepEqual(
-			result.nimdmObservations.periods[0]?.records.map((record) => [
-				record.areaCode,
-				record.value,
-			]),
+			result.yearlyIndicatorObservations
+				.find(
+					(artifact) =>
+						artifact.measureId ===
+						measureSeriesKey({ measure: "nimdm-rank" }),
+				)
+				?.periods[0]?.records.map((record) => [
+					record.areaCode,
+					record.value,
+				]),
 			[
 				["95AA01S1", 516],
 				["95ZZ06W1", 1],

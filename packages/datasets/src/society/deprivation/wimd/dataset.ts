@@ -173,6 +173,50 @@ export const wimd = defineDataset<WIMDDataset>({
 		label: "Neighbourhoods in Wales' most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
 	},
+	catalogue: {
+		kind: "indicators",
+		yearly: true,
+		partial: true,
+		checks: ["manifest-areas"],
+		coverageNote:
+			"Wales only. The other three nations publish their own indices, which are not comparable with this one.",
+		indicators: [
+			{
+				id: "wimd-rank",
+				label: "Welsh Index of Multiple Deprivation rank",
+				field: "wimdRank",
+				valueKind: "ordinal",
+				unit: "rank of {areas} LSOAs, where 1 is the most deprived",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "rank",
+					note: "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				},
+				notes: [
+					"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"Taken from the Welsh Government's published ranks. The separately published scores are rounded to one decimal place, so ranking them does not reproduce these ranks.",
+				],
+				measure: "wimd-rank",
+			},
+			{
+				id: "wimd-decile",
+				label: "Welsh Index of Multiple Deprivation decile",
+				field: "wimdDecile",
+				valueKind: "ordinal",
+				unit: "decile, where 1 is the most deprived tenth of LSOAs",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "decile",
+					note: "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's LSOAs in each decile is the defensible summary instead.",
+				},
+				notes: [
+					"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+					"Taken from the Welsh Government's published deciles.",
+				],
+				measure: "wimd-decile",
+			},
+		],
+	},
 	display: rankDisplay({
 		prefix: "wimd",
 		label: "Deprivation (WIMD) [2019]",

@@ -142,6 +142,7 @@ export type IndicatorDeclaration = {
 	/** Path of the compiled record field holding the value. */
 	field: string;
 	valueKind: IndicatorValueKind;
+	/** The unit; `{areas}` stands for the records of the dataset's manifest entry. */
 	unit: string;
 	/**
 	 * The aggregation the API offers: a plain sum over areas, or a share that
@@ -186,6 +187,21 @@ export type IndicatorCatalogue = {
 	authorityCodes?: RegExp;
 	/** Reduce the April 2023 authorities and their districts to authorities. */
 	mergeApril2023?: true;
+	/**
+	 * For a `yearly` file: the source covers only part of the UK, so the
+	 * measures are published as partly covering it, and `coverageNote` says
+	 * which part and why the rest is not served.
+	 */
+	partial?: true;
+	/**
+	 * For a `yearly` file: what the build checks against the dataset's manifest
+	 * entry. `manifest-records` is the records over every period,
+	 * `manifest-periods` the number of periods, and `manifest-areas` the
+	 * records of the first period, for an index published once.
+	 */
+	checks?: readonly (
+		"manifest-records" | "manifest-periods" | "manifest-areas"
+	)[];
 	coverageNote: string;
 	indicators: readonly IndicatorDeclaration[];
 };

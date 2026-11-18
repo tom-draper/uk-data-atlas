@@ -6,6 +6,7 @@ import type {
 	Measure,
 	MeasureAggregation,
 	MeasureObservationArtifact,
+	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { type DatasetInput } from "./input.ts";
@@ -111,24 +112,60 @@ export const compileYearlyIndicators = (
 		throw new Error(
 			`${manifestPath}: ${id} must declare boundary year ${year}`,
 		);
+	const geography = declaration.boundary.type as SourceGeography["type"];
+	const areas = () => dataset.summary.dataRecordCount.toLocaleString("en-GB");
 	const published = catalogue.indicators.map((indicator) => {
-		const periods = localAuthorityFieldPeriods(path, indicator.field, year);
+		const periods = localAuthorityFieldPeriods(
+			path,
+			indicator.field,
+			year,
+			geography,
+		);
+		const records = periods.reduce(
+			(total, period) => total + period.records.length,
+			0,
+		);
+		const { summary } = dataset;
+		const checks = catalogue.checks ?? [];
+		if (
+			checks.includes("manifest-records") &&
+			records !== summary.dataRecordCount
+		)
+			throw new Error(
+				`${path}: expected ${summary.dataRecordCount} records from the manifest, found ${records}`,
+			);
+		if (
+			checks.includes("manifest-periods") &&
+			periods.length !== summary.datasetCount
+		)
+			throw new Error(
+				`${path}: expected ${summary.datasetCount} periods from the manifest, found ${periods.length}`,
+			);
+		const first = periods[0]?.records.length ?? 0;
+		if (
+			checks.includes("manifest-areas") &&
+			first !== summary.dataRecordCount
+		)
+			throw new Error(
+				`${path}: expected ${summary.dataRecordCount} areas from the manifest, found ${first}`,
+			);
 		const series = {
 			measure: indicator.measure,
 			dimensions: indicator.members,
 		};
 		const seriesKey = measureSeriesKey(series);
+		const sourceGeography = { type: geography, boundaryYear: year };
 		const content = JSON.stringify({
 			schemaVersion: 1,
 			measureId: seriesKey,
-			sourceGeography: { type: "localAuthority", boundaryYear: year },
+			sourceGeography,
 			periods,
 		});
 		const artifact: MeasureObservationArtifact = {
 			schemaVersion: 1,
 			contentHash: sha256(content),
 			measureId: seriesKey,
-			sourceGeography: { type: "localAuthority", boundaryYear: year },
+			sourceGeography,
 			periods,
 		};
 		return { indicator, series, artifact };
@@ -141,18 +178,22 @@ export const compileYearlyIndicators = (
 				series,
 				label: indicator.label,
 				valueKind: indicator.valueKind,
-				unit: indicator.unit,
+				unit: indicator.unit.includes("{areas}")
+					? indicator.unit.replace("{areas}", areas())
+					: indicator.unit,
 				aggregation,
 				sources: [
 					{
 						datasetId: id,
 						periods: artifact.periods.map(({ period }) => period),
 						sourceGeography: {
-							type: "localAuthority",
+							type: geography,
 							boundaryYear: year,
 						},
 						coverage: {
-							kind: "source-reported",
+							kind: catalogue.partial
+								? "partial"
+								: "source-reported",
 							countries: countriesFor(
 								artifact.periods[0]?.records ?? [],
 							),

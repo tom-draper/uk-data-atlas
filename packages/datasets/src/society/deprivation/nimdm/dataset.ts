@@ -43,7 +43,11 @@ export const nimdm = defineDataset<NIMDMDataset>({
 		description:
 			"Deprivation scores, ranks and deciles by super output area for Northern Ireland.",
 		cadence: "irregular",
-		notes: [],
+		notes: [
+			"A position within Northern Ireland alone. The English, Welsh and Scottish indices use different methods, domains and dates, so a rank cannot be compared across nations.",
+			"The publisher labels these areas SOA2001. Super output areas were drawn for the 2001 census and reused unchanged for 2011, and every code matches the 2011 release.",
+			"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered.",
+		],
 	},
 	load: noCompiledPayload<NIMDMDataset>(),
 	placeHeadline: {
@@ -127,6 +131,29 @@ export const nimdm = defineDataset<NIMDMDataset>({
 	ranking: {
 		label: "Neighbourhoods in Northern Ireland's most deprived 10%",
 		format: { kind: "decimal", digits: 1, suffix: "%" },
+	},
+	catalogue: {
+		kind: "indicators",
+		yearly: true,
+		partial: true,
+		coverageNote:
+			"Northern Ireland only. The other three nations publish their own indices, which are not comparable with this one.",
+		indicators: [
+			{
+				id: "nimdm-rank",
+				label: "Northern Ireland Multiple Deprivation Measure rank",
+				field: "nimdmRank",
+				valueKind: "ordinal",
+				unit: "rank of 890 super output areas, where 1 is the most deprived",
+				aggregation: {
+					kind: "non-aggregatable",
+					statistic: "rank",
+					note: "A rank records an order, not a distance. Averaging ranks over areas produces a number with no meaning.",
+				},
+				notes: [],
+				measure: "nimdm-rank",
+			},
+		],
 	},
 	display: rankDisplay({
 		prefix: "nimdm",
