@@ -179,6 +179,10 @@
 		"sha256": "2f2b3844f3c06ac6a1677a65f0f2196ede883694922fba643695f5ce675e84a0",
 		"bytes": 6532310
 	},
+	"car-availability": {
+		"sha256": "201a74c392764ecb0009227342259ce35284a84e835e0e9b17088c29e3805fca",
+		"bytes": 44564
+	},
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992
