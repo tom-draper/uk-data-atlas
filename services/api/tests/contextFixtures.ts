@@ -1,5 +1,6 @@
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import { measureSeriesKey } from "@uk-data-atlas/measures";
 import {
 	createGeographyResolver,
 	createGeographyServices,
@@ -607,6 +608,7 @@ export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 	measures: [
 		{
 			measureId: "population",
+			seriesKey: measureSeriesKey({ measure: "population" }),
 			sources: [
 				{
 					datasetId: "population",

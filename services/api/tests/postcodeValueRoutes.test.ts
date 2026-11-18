@@ -14,7 +14,10 @@ import type {
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
 import { toWgs84Point } from "@uk-data-atlas/geography";
-import { postcodeAreaReleases } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKey,
+	postcodeAreaReleases,
+} from "@uk-data-atlas/measures";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
@@ -148,6 +151,7 @@ const measureCompatibilityInventory = {
 	measures: [
 		{
 			measureId: "population",
+			seriesKey: measureSeriesKey({ measure: "population" }),
 			sources: [
 				{
 					datasetId: "population",

@@ -7,6 +7,7 @@ import type {
 } from "@uk-data-atlas/relationships";
 import {
 	availableReconciliations,
+	measureSeriesKey,
 	reconcileMeasure,
 } from "@uk-data-atlas/measures";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
@@ -408,6 +409,7 @@ test("lists only a composed path that reconciles, between releases the partition
 			measures: [
 				{
 					measureId: measure.id,
+					seriesKey: measureSeriesKey(measure.series!),
 					sources: measure.sources.map((source) => ({
 						datasetId: source.datasetId,
 						sourceGeography: source.sourceGeography,

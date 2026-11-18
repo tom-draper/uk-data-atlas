@@ -58,9 +58,7 @@ export const resolveAggregationPartition = ({
 	const { source } = resolved.plan;
 	const compatibleReleases = compatibleReleasesForAggregation({
 		measureCompatibilityInventory: context.measureCompatibilityInventory,
-		measureId,
 		seriesKey,
-		measureDimensions: context.measureDimensions,
 		source,
 		period,
 	});

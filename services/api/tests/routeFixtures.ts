@@ -206,6 +206,7 @@ const fixtureDataRoute =
 			TestContextInputs,
 			| "crosswalkLookup"
 			| "measureCompatibilityInventory"
+			| "measureDimensions"
 			| "analysisGeographyInventory"
 			| "exportManifest"
 			| "exportFiles"
@@ -221,6 +222,7 @@ const fixtureDataRoute =
 				crosswalkInventory,
 				crosswalkLookup: overrides.crosswalkLookup ?? crosswalkLookup,
 				dataCatalog: catalog,
+				measureDimensions: overrides.measureDimensions,
 				measureCompatibilityInventory:
 					overrides.measureCompatibilityInventory ??
 					measureCompatibilityInventory,

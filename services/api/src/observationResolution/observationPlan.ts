@@ -225,7 +225,6 @@ export const resolveObservations = (
 	const compatibility = seriesCompatibility(
 		measureCompatibilityInventory,
 		request.seriesKey,
-		measure.id,
 	)?.sources.find(
 		(entry) =>
 			entry.datasetId === source.datasetId &&
