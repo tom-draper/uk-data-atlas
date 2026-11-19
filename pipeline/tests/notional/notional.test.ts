@@ -8,7 +8,10 @@ import {
 	type Partition,
 	type Piece,
 } from "../../src/notional/estimate.ts";
-import type { NotionalInputs } from "../../src/notional/inputs.ts";
+import {
+	isShareAlikeLocal,
+	type NotionalInputs,
+} from "../../src/notional/inputs.ts";
 import { parseScottishLocal } from "../../src/notional/scotland.ts";
 
 const piece = (
@@ -144,4 +147,11 @@ test("sums Scottish first preferences by party and skips other nations", () => {
 		con: 1000,
 		other: 50,
 	});
+});
+
+test("local results from 2016 to 2019 are share-alike", () => {
+	assert.equal(isShareAlikeLocal("2015-05-07"), false);
+	assert.equal(isShareAlikeLocal("2016-05-05"), true);
+	assert.equal(isShareAlikeLocal("2019-05-02"), true);
+	assert.equal(isShareAlikeLocal("2021-05-06"), false);
 });

@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { DATASET_SPLIT_MODULES } from "@uk-data-atlas/datasets/registry";
 import { readPlacement } from "../crosswalk-weights/placements.ts";
 import {
 	readStoredAtoms,
@@ -25,6 +26,8 @@ export type LocalSource = {
 	release: string;
 	wards: Map<string, Votes>;
 	keys: string[];
+	/** Under CC BY-SA, so anything built from it must be too. */
+	shareAlike: boolean;
 };
 
 export type NotionalInputs = {
@@ -56,6 +59,20 @@ export const CENSUS_DATASETS = [
 	"ts054",
 	"ts066",
 ] as const;
+
+/**
+ * Whether local results polled on this day are under a share-alike licence,
+ * by the date ranges of the licensed-rows modules that take local elections.
+ */
+export const isShareAlikeLocal = (period: string) =>
+	DATASET_SPLIT_MODULES.some(
+		(split) =>
+			split.holds === "licensed-rows" &&
+			(split.datasets as readonly string[]).includes("local-election") &&
+			split.electionDates !== undefined &&
+			period >= split.electionDates.from &&
+			period <= split.electionDates.to,
+	);
 
 type ValueRow = { key: string; code: string; period: string; value: number };
 
@@ -119,6 +136,7 @@ export const readNotionalInputs = (root: string): NotionalInputs => {
 				release,
 				wards: new Map(),
 				keys: [],
+				shareAlike: isShareAlikeLocal(row.period),
 			}));
 			group<Votes>(source.wards, row.code, () => ({}))[party(row.key)] =
 				row.value;
