@@ -377,6 +377,10 @@ export function createStageCache({
 						path.slice(own.length),
 					)),
 		);
+	// A stage's scratch directory, made with `mkdtemp` beside its output
+	// (`.postcode-index-PntIuI/`) and removed when the stage ends. A stage
+	// running at the same time sees it come and go, and it is no output.
+	const scratch = (path) => /(^|\/)\.[\w-]+-[A-Za-z0-9]{6}\//.test(path);
 	const scopedSnapshot = (scope) => {
 		const stamps = new Map();
 		for (const path of scope) stampPath(root, path, stamps);
@@ -670,6 +674,7 @@ export function createStageCache({
 					(path) =>
 						!sameFile(watch.tree.get(path), after.get(path)) &&
 						!within(scope, path) &&
+						!scratch(path) &&
 						![...together].some((other) =>
 							within(owned.get(other) ?? [], path),
 						),

@@ -287,6 +287,23 @@ test("a stage's database temporary file and journal are its own when no id follo
 	]);
 });
 
+test("another stage's scratch directory is not blamed on a stage running beside it", () => {
+	const { root, write, cache } = fixture();
+	const current = cache();
+	current.begin(alpha);
+	current.begin(beta);
+	// beta stages files in a directory of its own, then removes it.
+	write("data/build/.staging-PntIuI/0", "shard");
+	write("data/build/.staging-PntIuI/1", "shard");
+	write("data/build/a/one.json", "alpha's");
+	rmSync(join(root, "data/build/.staging-PntIuI"), { recursive: true });
+	write("data/build/.other-PntIuI/0", "left behind");
+	write("data/build/hidden/file", "not scratch");
+	assert.deepEqual(current.undeclaredChanges(alpha), [
+		"data/build/hidden/file",
+	]);
+});
+
 test("a stage that ended before another began shares nothing with it", () => {
 	const { write, cache } = fixture();
 	const current = cache();
