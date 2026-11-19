@@ -1,7 +1,4 @@
-import {
-	DEFAULT_STAGE_WEIGHT_MS,
-	expectedDurationMs,
-} from "./build-data-scheduler.mjs";
+import { DEFAULT_STAGE_WEIGHT_MS } from "./build-data-scheduler.mjs";
 import { plural } from "./build-data-report.mjs";
 import {
 	formatCount,
@@ -59,11 +56,6 @@ export function createStageRunner({
 			? (cache?.lastTiming(stage.name)?.totalMs ??
 				DEFAULT_STAGE_WEIGHT_MS)
 			: 0;
-	// How long a stage is expected to hold its slot, when it is known.
-	const expectedMs = (stage) =>
-		toRun.has(stage.name)
-			? expectedDurationMs(cache?.lastTiming(stage.name))
-			: null;
 	// Handles a stage that needs no command: adopted, unchanged or only
 	// planned. Returns true when the stage has to run.
 	const settle = (stage) => {
@@ -255,5 +247,5 @@ export function createStageRunner({
 		log(`${stage.name}: done in ${formatDuration(total)}`);
 		return true;
 	};
-	return { settle, run, weightOf, expectedMs };
+	return { settle, run, weightOf };
 }

@@ -204,17 +204,9 @@ free memory, capped at three quarters of the total). A stage costs its
 budget runs alone. `--jobs 1` runs one stage at a time in plan order.
 
 Stages start in order of the work still ahead of them. When the next stage does
-not fit in the memory left, it waits, and a smaller ready stage may start ahead
-of it only if that cannot delay it. That holds when the smaller stage is
-expected to finish before the waiting stage could start (its last recorded
-duration, plus a quarter), or when the budget has room for both even while the
-smaller stage still runs. The wait is estimated from the stages already running,
-so it needs a usable recorded duration for each of them. A stage with no
-recorded duration, a failed last run or a corrupt record is treated as unknown,
-and while one is running nothing starts ahead of the waiting stage, as before.
-A stage that overruns its record only delays the waiting stage until it
-finishes. Dependencies, `--jobs`, the memory budget and the stages that run
-alone hold at every start, and none of this changes a stage's key or outputs.
+not fit in the memory left, it waits, and no stage starts behind it, so smaller
+stages cannot keep taking the memory it needs. Dependencies, `--jobs`, the
+memory budget and the stages that run alone hold at every start.
 
 With several jobs, each output line is prefixed with `[stage]`, and `--plan`
 ends with the waves of stages that can run together and the critical path.
@@ -469,9 +461,7 @@ between the scheduler settling it and starting its command, and `memoryWaitMs`,
 the part of that spent held back by memory with a job slot free. `totalMs` still
 includes the queue, so `totalMs - commandMs` is not wait alone: it also holds
 the cache check and recording around the command. The stage record in
-`stages.json` keeps the same two fields beside `commandMs` and `totalMs`, and the
-scheduler takes `totalMs - queueMs` off such a record as the stage's expected
-duration.
+`stages.json` keeps the same two fields beside `commandMs` and `totalMs`.
 
 `--plan` shows available previous durations and estimates the total for stages
 expected to run. The estimate can be partial and actual stages may differ if
