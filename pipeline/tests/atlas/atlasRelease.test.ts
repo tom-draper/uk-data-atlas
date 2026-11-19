@@ -19,6 +19,10 @@ const fixture = (context: TestContext) => {
 		join(root, "data/build/atlas.sqlite"),
 		Buffer.from([0, 255, 128, 3]),
 	);
+	writeFileSync(
+		join(root, "data/build/atlas-build.sqlite"),
+		Buffer.from([7, 8, 9]),
+	);
 	for (const id of [
 		"boundary-releases",
 		"derived-boundaries",
@@ -64,6 +68,16 @@ test("identifies binary data and remaining runtime files without migrated JSON o
 			path: "data/build/atlas.sqlite",
 			contentHash: `sha256:${createHash("sha256")
 				.update(Buffer.from([0, 255, 128, 3]))
+				.digest("hex")}`,
+		},
+	);
+	assert.deepEqual(
+		release.artifacts.find((x) => x.id === "atlas-build-sqlite"),
+		{
+			id: "atlas-build-sqlite",
+			path: "data/build/atlas-build.sqlite",
+			contentHash: `sha256:${createHash("sha256")
+				.update(Buffer.from([7, 8, 9]))
 				.digest("hex")}`,
 		},
 	);
