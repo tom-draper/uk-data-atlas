@@ -2,7 +2,8 @@
 
 Estimates of the 2019 general election result on the 2024 Westminster
 constituencies, and how close they come to the published notionals (roadmap
-task 46, issue #415).
+task 46, issue #415). The same stage makes notional local election results on
+wards new at each boundary review, see [Local elections](#local-elections).
 
 Every number here comes from one run of
 `pipeline/src/stages/build-notional-elections.ts` on 2026-11-17, against the
@@ -350,6 +351,97 @@ Valid votes depend only on the residents split, so both share one factor. A
 party that did not stand in 2019 has an exact previous share, so its change
 carries no width.
 
+## Local elections
+
+A ward created by a boundary review has no result of its own until its first
+election, so its previous result is notional: the votes of the old wards it
+was drawn from at the latest earlier election (`pipeline/src/notional/local`).
+
+- **Targets.** Every ward release an election is published on after the
+  first, and the latest release (`2026-05-uk-bgc`, ahead of the 7 May 2026
+  polls). Each target's new wards are the codes not on the release before it.
+- **Source election.** The latest election before the target's own (or before
+  7 May 2026), within 4.5 years, whose old wards with a usable result (two or
+  more parties with votes) hold at least 90% of the new ward's adults. A day's
+  results are read from the release holding most of its wards.
+- **Split.** Old and new wards are overlaid on the weight atoms by adults
+  (residents times their LSOA's census adult share). A piece under 2% of its
+  old ward's adults is drift between two drawings of the same line and joins
+  the old ward's largest piece. Each old ward's votes are spread uniformly by
+  adults, summed, and scaled up by the share of adults covered.
+- **Status.** A ward of whole old wards is `derived`; any other is `estimated`,
+  and each party's at-risk votes are its votes less those from whole old
+  wards.
+
+| Ward release        | Election   | New wards | Notionals | Derived | From         |
+| ------------------- | ---------- | --------- | --------- | ------- | ------------ |
+| `2017-12-gb-bgc`    | 2017-05-04 | 345       | 0         | 0       |              |
+| `2018-12-uk-bgc`    | 2018-05-03 | 918       | 273       | 43      | 2016 to 2017 |
+| `2019-12-uk-bgc`    | 2019-05-02 | 1,409     | 94        | 14      | 2016 to 2018 |
+| `2021-12-uk-bgc`    | 2021-05-06 | 507       | 359       | 46      | 2017 to 2019 |
+| `2022-12-uk-bgc`    | 2022-05-05 | 1,648     | 849       | 178     | 2018 to 2021 |
+| `2023-12-uk-bgc`    | 2023-05-04 | 1,181     | 1,120     | 259     | 2019 to 2022 |
+| `2024-12-uk-bgc`    | 2024-05-02 | 346       | 332       | 82      | 2021 to 2023 |
+| `2025-05-uk-bgc-v2` | 2025-05-01 | 335       | 334       | 68      | 2021 to 2024 |
+| `2026-05-uk-bgc`    | none yet   | 371       | 370       | 101     | 2023 to 2024 |
+
+3,731 notionals, 791 derived. The 2017 to 2019 reviews are mostly missed: the
+councils redrawn then last polled all-out in 2012 to 2015, before the atlas's
+first local results (2016), including the Scottish councils in 2017.
+
+### Backtest
+
+No benchmark of local notionals is published, so they are scored by what they
+predict. A new ward's notional share plus its council's swing (all its other
+wards, leaving the ward out) is compared with the ward's actual result at the
+target election, for each of Conservative, Labour, Liberal Democrat, Green and
+Reform where the party stood both times. Wards whose boundaries did not change
+are scored the same way from their own previous result, which measures the
+year-to-year noise both share. Root mean square error, in share of the vote:
+
+| Years between | New wards | Unchanged wards |
+| ------------- | --------- | --------------- |
+| 1             | 0.070     | 0.066           |
+| 2             | 0.086     | 0.078           |
+| 3             | 0.096     | 0.098           |
+| 4             | 0.094     | 0.107           |
+
+New wards predict about as well as unchanged ones, so the notional adds
+little error beyond the noise between elections. The 4-year rows differ in
+make-up (new wards are mostly all-out councils), which is why new wards score
+better there.
+
+A within-council census model, as in the general election method, was tried
+for the split pieces and dropped: it moved the backtest spread from 0.0767 to
+0.0744 only, since census covariates explain little of the variation between
+wards in one council (r² 0.32 Conservative, 0.35 Labour, 0.07 Liberal
+Democrat, 0.12 Green).
+
+### Bounds
+
+Estimated values carry `value ± 0.23 × at-risk votes`. The factor is fitted on
+the new wards: within each target and gap in years, the squared error is
+regressed on the squared at-risk share, so derived wards set the shared noise
+and split ones add their own error; 1.96 times the square root of the slope is
+0.23, and between 0.08 and 0.37 across groups. The stage logs the factor it
+measures on each run, and ships the fixed one. Unlike the general election
+bounds, these cover the notional's own error only, not the change between
+elections.
+
+### Licences and storage
+
+Notionals from the 2016 to 2019 results are under CC BY-SA 3.0 as
+`notional-local-sharealike`, and ship in `politics-sharealike`; later ones are
+`notional-local-open` in `politics`. Both have bound factor 0.23. The component
+holds `local_notional_model`, `local_notional_input`, `local_notional_estimate`
+(per model, new ward and release, party: value, bounds, status, at-risk votes,
+coverage, the old ward release, period and old wards) and
+`local_notional_score` (the backtest above). `assemble-atlas` copies them as
+one modelled series per model, party, old ward release and new ward release,
+derived from the old wards' published series, on the period of the old
+election:
+`local-election/party-votes/ward:2019-12-uk-bgc/party=con~notional-local-open:ward:2022-12-uk-bgc`.
+
 ## Known weak areas
 
 - Places where local and national voting differ: strong local Liberal
@@ -372,3 +464,5 @@ carries no width.
   known to diverge.
 - Postal-vote and polling district results where councils publish them.
 - Census data for Scotland at small-area level, so the model can run there.
+- Local results from 2012 to 2015, so the 2017 to 2019 ward reviews get
+  notionals.
