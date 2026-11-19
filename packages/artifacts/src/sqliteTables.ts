@@ -14,9 +14,24 @@ export type SqliteTable = {
 	constraints?: string[];
 	/** Reject values that do not match their column's declared type. */
 	strict?: boolean;
+	/**
+	 * The table is build metadata (hashes, artifact paths, counts of the
+	 * build's own artifacts), so it is written to the build metadata file
+	 * beside the database and not into the database. See `splitBuildTables`.
+	 */
+	build?: boolean;
 	/** Columns per index, named `<table>_<n>` unless given a name. */
 	indexes?: (string[] | { name: string; columns: string[] })[];
 	views?: Record<string, string>;
+};
+
+/** Divide tables into those for the database and those for its build metadata file. */
+export const splitBuildTables = (tables: Record<string, SqliteTable>) => {
+	const domain: Record<string, SqliteTable> = {};
+	const build: Record<string, SqliteTable> = {};
+	for (const [name, table] of Object.entries(tables))
+		(table.build ? build : domain)[name] = table;
+	return { domain, build };
 };
 
 /** Write declared tables into a database owned by the caller's transaction. */

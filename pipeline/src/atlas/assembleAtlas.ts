@@ -131,7 +131,7 @@ export function assembleAtlas(
 				insertStored.run(id, packText(text));
 			for (const { id, payload } of payloads) insertPayload(id, payload);
 			writeSqliteTables(
-				database,
+				build,
 				statisticsReadPathTables(
 					readJsonSync(
 						join(directory, "statistics-read-path.json"),

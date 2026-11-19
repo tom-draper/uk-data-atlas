@@ -1404,92 +1404,11 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description: "View: postcode_area_match with codes and names.",
 		columns: {},
 	},
-	postcode_area_shard_hash: {
-		audience: "internal",
-		description:
-			"Integrity hashes of postcode area shards and stored coordinates.",
-		columns: {},
-	},
 	meta: {
 		audience: "reference",
 		description:
 			"File settings and provenance: schemaVersion matches PRAGMA user_version. buildId hashes the assembled work file and provenance; buildTimestamp is present only when SOURCE_DATE_EPOCH is supplied. gitCommit and gitDirty are present when Git is available; gitDirty includes non-ignored untracked files. dataRelease is present when data-release.json exists. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
 		columns: { key: "Setting name.", value: "Setting value." },
-	},
-	statistics_read_path: {
-		audience: "internal",
-		description: "Version and hash of the API's statistics selectors.",
-		columns: {},
-	},
-	statistics_selector: {
-		audience: "internal",
-		description:
-			"How the API reads each of its older endpoints from the statistics tables.",
-		columns: {},
-	},
-	statistics_selector_code: {
-		audience: "internal",
-		description: "Area code mappings for statistics_selector.",
-		columns: {},
-	},
-	statistics_selector_column: {
-		audience: "internal",
-		description: "Output columns of a statistics_selector.",
-		columns: {},
-	},
-	statistics_selector_column_member: {
-		audience: "internal",
-		description: "Members fixed by a selector column.",
-		columns: {},
-	},
-	statistics_selector_list: {
-		audience: "internal",
-		description: "List options of a statistics_selector.",
-		columns: {},
-	},
-	statistics_selector_member: {
-		audience: "internal",
-		description: "Members fixed by a statistics_selector.",
-		columns: {},
-	},
-	statistics_selector_option: {
-		audience: "internal",
-		description: "Flags of a statistics_selector.",
-		columns: {},
-	},
-	statistics_observation_fallback: {
-		audience: "internal",
-		description:
-			"Selectors that could not be read from rows, with the reason. Expected to be empty.",
-		columns: {},
-	},
-	area_inventory_metadata: {
-		audience: "internal",
-		description: "Version and hashes of the area inventory the build used.",
-		columns: {},
-	},
-	boundary_registry: {
-		audience: "internal",
-		description:
-			"Version and hash of the boundary registry the build used.",
-		columns: {},
-	},
-	crosswalk_inventory_metadata: {
-		audience: "internal",
-		description:
-			"Version and hashes of the crosswalk inventory the build used.",
-		columns: {},
-	},
-	crosswalk_coverage_entry: {
-		audience: "internal",
-		description:
-			"Per release, how many areas any crosswalk relates. Used by the API inventory.",
-		columns: {},
-	},
-	named_location_inventory_metadata: {
-		audience: "internal",
-		description: "Version and hashes of the named location inventory.",
-		columns: {},
 	},
 	schema_table: {
 		audience: "core",

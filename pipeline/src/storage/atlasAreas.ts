@@ -173,6 +173,7 @@ export const areaTables = (
 	}
 	return {
 		area_inventory_metadata: {
+			build: true,
 			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",

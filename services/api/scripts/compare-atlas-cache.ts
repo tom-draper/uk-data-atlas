@@ -79,9 +79,14 @@ export function compareAtlasCache(beforePath: string, apiRoot: string) {
 					matches: old.rows === next.rows && old.hash === next.hash,
 				};
 			});
-		for (const row of before
-			.prepare("SELECT id, payload FROM payloads ORDER BY id")
-			.all()) {
+		// A database from before the payload documents moved to the build
+		// metadata file has no `payloads` table, so there is nothing to compare.
+		const hasPayloads = tables.includes("payloads");
+		for (const row of hasPayloads
+			? before
+					.prepare("SELECT id, payload FROM payloads ORDER BY id")
+					.all()
+			: []) {
 			const id = String(row.id);
 			const destination = cachePayloads.has(id) ? cache : canonical;
 			// The canonical database stores payloads compressed.

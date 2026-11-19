@@ -180,7 +180,7 @@ export function readPostcodeAreaShard(
 	};
 	const text = `${JSON.stringify(shard)}\n`;
 	if (verify) {
-		const expected = database
+		const expected = build
 			.prepare(
 				"SELECT sha256 FROM postcode_area_shard_hash WHERE district = ?",
 			)

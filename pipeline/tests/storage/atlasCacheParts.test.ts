@@ -31,21 +31,25 @@ import {
 	writeBuildMetadata,
 } from "../../src/storage/buildMetadataWriter";
 
+/** The inventory headers the cache components are generated from. */
+const inventories = (areas: string, locations: string) => ({
+	area_inventory_metadata: {
+		columns: ["content_hash TEXT"],
+		rows: [[areas]],
+	},
+	named_location_inventory_metadata: {
+		columns: ["content_hash TEXT"],
+		rows: [[locations]],
+	},
+});
+
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
-	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	canonical.exec(
-		[
-			"CREATE TABLE area_inventory_metadata (content_hash TEXT)",
-			"INSERT INTO area_inventory_metadata VALUES ('areas-1')",
-			"CREATE TABLE named_location_inventory_metadata (content_hash TEXT)",
-			"INSERT INTO named_location_inventory_metadata VALUES ('locations-1')",
-		].join(";"),
-	);
-	canonical.close();
+	new DatabaseSync(join(root, "data/build/atlas.sqlite")).close();
 	writeBuildMetadata(join(root, "data/build/atlas.sqlite"), {
+		...inventories("areas-1", "locations-1"),
 		payload: payloadTable([
 			["boundary-releases", "releases-1"],
 			["postcode-index", "index-1"],
@@ -159,13 +163,13 @@ test("a part is refused when the canonical inputs change while it is written", (
 			writeCachePart(root, {
 				component: "place-index",
 				write: () => {
-					const canonical = new DatabaseSync(
-						join(root, "data/build/atlas.sqlite"),
+					const build = new DatabaseSync(
+						join(root, "data/build/atlas-build.sqlite"),
 					);
-					canonical.exec(
+					build.exec(
 						"UPDATE area_inventory_metadata SET content_hash = 'areas-2'",
 					);
-					canonical.close();
+					build.close();
 				},
 			}),
 		/Canonical cache inputs changed/,
@@ -361,6 +365,7 @@ test("a cache is refused for a part that is missing or was built for other input
 	);
 	search();
 	writeBuildMetadata(join(root, "data/build/atlas.sqlite"), {
+		...inventories("areas-1", "locations-1"),
 		payload: payloadTable([
 			["boundary-releases", "releases-2"],
 			["postcode-index", "index-1"],
@@ -391,11 +396,22 @@ test("a published cache is left as it was when the assembly fails", () => {
 test("one part can be written for a canonical database that is not atlas.sqlite", () => {
 	const { root } = fixture();
 	const base = join(root, "data/build/atlas-base.sqlite");
-	const canonical = new DatabaseSync(base);
-	canonical.exec(
-		"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('base-areas')",
-	);
-	canonical.close();
+	new DatabaseSync(base).close();
+	writeBuildMetadata(base, {
+		area_inventory_metadata: {
+			columns: ["content_hash TEXT"],
+			rows: [["base-areas"]],
+		},
+		named_location_inventory_metadata: {
+			columns: ["content_hash TEXT"],
+			rows: [["base-locations"]],
+		},
+		crosswalk_inventory_metadata: {
+			columns: ["content_hash TEXT"],
+			rows: [["base-crosswalks"]],
+		},
+		payload: payloadTable([]),
+	});
 	writeCachePart(
 		root,
 		{

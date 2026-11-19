@@ -4,7 +4,10 @@ import type {
 	PostcodeShard,
 } from "@uk-data-atlas/geography";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 
 export const postcodeFields = [
 	"postcode",
@@ -42,11 +45,17 @@ export const readSqlitePostcodeShard = (
 				row.latitude_microdegrees,
 				row.longitude_microdegrees,
 			]);
-			const expected = database
-				.prepare(
-					"SELECT coordinates_sha256 FROM postcode_area_shard_hash WHERE district = ?",
-				)
-				.get(entry.district)?.coordinates_sha256;
+			const build = openBuildMetadata(databasePath);
+			let expected: unknown;
+			try {
+				expected = build
+					.prepare(
+						"SELECT coordinates_sha256 FROM postcode_area_shard_hash WHERE district = ?",
+					)
+					.get(entry.district)?.coordinates_sha256;
+			} finally {
+				build.release();
+			}
 			if (expected !== sha256(JSON.stringify(coordinates)))
 				throw new Error(
 					`Invalid SQLite postcode coordinates for district ${entry.district}`,

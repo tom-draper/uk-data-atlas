@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	atlasCachePartPath,
 	atlasCachePath,
+	buildMetadataPathOf,
 	cacheGeneration,
 	closeAllReadOnlyDatabases,
 	configureReadOnlyDatabases,
@@ -26,12 +27,16 @@ const replace = (path: string, build: (database: DatabaseSync) => void) => {
 	renameSync(temporary, path);
 };
 
-const writeAtlas = (hash: string) =>
-	replace(atlasPath(), (database) =>
+/** The database, replaced with the inventory hash its build metadata holds. */
+const writeAtlasAt = (path: string, hash: string) => {
+	replace(path, () => {});
+	replace(buildMetadataPathOf(path), (database) =>
 		database.exec(
 			`CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('${hash}')`,
 		),
 	);
+};
+const writeAtlas = (hash: string) => writeAtlasAt(atlasPath(), hash);
 
 const writeCache = (payload: string) =>
 	replace(atlasCachePath(root), (database) => {
@@ -88,13 +93,7 @@ describe("atlas.sqlite and atlas-cache.sqlite", () => {
 		const other = mkdtempSync(join(tmpdir(), "atlas-cache-other-"));
 		try {
 			mkdirSync(join(other, "data/build"), { recursive: true });
-			const stale = new DatabaseSync(
-				join(other, "data/build/atlas.sqlite"),
-			);
-			stale.exec(
-				"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('z')",
-			);
-			stale.close();
+			writeAtlasAt(join(other, "data/build/atlas.sqlite"), "z");
 			const generation = cacheGeneration(other, "area-search");
 			closeAllReadOnlyDatabases();
 			replace(atlasCachePath(root), (database) => {

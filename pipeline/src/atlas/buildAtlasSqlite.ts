@@ -18,7 +18,6 @@ import { servedFromRows } from "@uk-data-atlas/catalogue/node";
 import { datasetPayloadStep } from "../storage/index.ts";
 import {
 	payloadTable,
-	writeBuildMetadata,
 	writeSqliteIndex,
 	writeSqliteTables,
 } from "../storage/index.ts";
@@ -294,50 +293,50 @@ export const buildAtlasSqlite = (
 				yield [`dataset:${entry.output}`, content] as const;
 		}
 	}
+	const tables = {
+		...areaTables(artifactDirectory(repositoryRoot), ids),
+		...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),
+		...crosswalkTables(artifactDirectory(repositoryRoot), ids),
+		...namedLocationTables(artifactDirectory(repositoryRoot), ids),
+		...statisticsTables(
+			[
+				...statisticsInputs(
+					directory,
+					manifest.datasets,
+					{
+						...UNSTORED_DATASETS,
+						...unstored,
+					},
+					direct,
+				),
+				// After the declared datasets, whose measures and members
+				// the census tables share.
+				...censusSmallAreaStatistics(repositoryRoot, censusTables),
+			],
+			ids,
+			new Map(
+				manifest.datasets.map((entry) => [
+					entry.output,
+					{
+						type: entry.type,
+						sha256: entry.compiled.sha256,
+						bytes: entry.compiled.bytes,
+						payloadId: servedFromRows(entry.type)
+							? null
+							: `dataset:${entry.output}`,
+					},
+				]),
+			),
+		),
+		...datasetCoverageGapTables(directory, manifest.datasets, direct),
+		...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
+		...crosswalkInputSourceTables(repositoryRoot, ids),
+	};
 	writeSqliteIndex(
 		path,
 		{ schemaVersion: String(ATLAS_SCHEMA_VERSION) },
-		{
-			...areaTables(artifactDirectory(repositoryRoot), ids),
-			...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),
-			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
-			...namedLocationTables(artifactDirectory(repositoryRoot), ids),
-			...statisticsTables(
-				[
-					...statisticsInputs(
-						directory,
-						manifest.datasets,
-						{
-							...UNSTORED_DATASETS,
-							...unstored,
-						},
-						direct,
-					),
-					// After the declared datasets, whose measures and members
-					// the census tables share.
-					...censusSmallAreaStatistics(repositoryRoot, censusTables),
-				],
-				ids,
-				new Map(
-					manifest.datasets.map((entry) => [
-						entry.output,
-						{
-							type: entry.type,
-							sha256: entry.compiled.sha256,
-							bytes: entry.compiled.bytes,
-							payloadId: servedFromRows(entry.type)
-								? null
-								: `dataset:${entry.output}`,
-						},
-					]),
-				),
-			),
-			...datasetCoverageGapTables(directory, manifest.datasets, direct),
-			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
-			...crosswalkInputSourceTables(repositoryRoot, ids),
-		},
+		{ ...tables, payload: payloadTable(storedPayloads()) },
 	);
-	writeBuildMetadata(path, { payload: payloadTable(storedPayloads()) });
 	const written = new DatabaseSync(path, { readOnly: true });
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
-import { readBuildPayload } from "./buildMetadata.ts";
+import { openBuildMetadata, readBuildPayload } from "./buildMetadata.ts";
 
 export type CacheComponent =
 	| "area-search"
@@ -18,17 +18,21 @@ export type CacheComponent =
  * stored under another version from an empty file.
  */
 export const CACHE_VERSION = 4;
+/**
+ * What each component is built from. `query:` runs on the database, `build:`
+ * on its build metadata file, and `payload:` reads a payload document there.
+ */
 const dependencies: Record<CacheComponent, string[]> = {
-	"area-search": ["query:SELECT content_hash FROM area_inventory_metadata"],
+	"area-search": ["build:SELECT content_hash FROM area_inventory_metadata"],
 	"place-index": [
-		"query:SELECT content_hash FROM area_inventory_metadata",
-		"query:SELECT content_hash FROM named_location_inventory_metadata",
+		"build:SELECT content_hash FROM area_inventory_metadata",
+		"build:SELECT content_hash FROM named_location_inventory_metadata",
 		"payload:boundary-releases",
 	],
 	projections: [
-		"query:SELECT content_hash FROM area_inventory_metadata",
-		"query:SELECT content_hash FROM named_location_inventory_metadata",
-		"query:SELECT content_hash FROM crosswalk_inventory_metadata",
+		"build:SELECT content_hash FROM area_inventory_metadata",
+		"build:SELECT content_hash FROM named_location_inventory_metadata",
+		"build:SELECT content_hash FROM crosswalk_inventory_metadata",
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
 	datasets: [
@@ -60,10 +64,16 @@ export function cacheGeneration(
 	canonicalPath = join(root, "data/build/atlas.sqlite"),
 ): string {
 	const database = openReadOnlyDatabase(canonicalPath, { fresh: true });
+	const build = openBuildMetadata(canonicalPath, { fresh: true });
 	try {
 		const inputs = dependencies[component].map((dependency) => {
 			if (dependency.startsWith("query:"))
 				return database
+					.prepare(dependency.slice(6))
+					.all()
+					.map((row) => Object.values(row));
+			if (dependency.startsWith("build:"))
+				return build
 					.prepare(dependency.slice(6))
 					.all()
 					.map((row) => Object.values(row));
@@ -73,10 +83,7 @@ export function cacheGeneration(
 						fresh: true,
 					}) ?? null
 				);
-			return (
-				database.prepare(`SELECT contentHash FROM ${dependency}`).get()
-					?.contentHash ?? null
-			);
+			throw new Error(`Unknown cache dependency ${dependency}`);
 		});
 		return createHash("sha256")
 			.update(
@@ -89,6 +96,7 @@ export function cacheGeneration(
 			)
 			.digest("hex");
 	} finally {
+		build.release();
 		database.release();
 	}
 }
@@ -131,10 +139,13 @@ export function requireAtlasCache(
 			const canonical = openReadOnlyDatabase(
 				join(root, "data/build/atlas.sqlite"),
 			);
+			const canonicalBuild = openBuildMetadata(
+				join(root, "data/build/atlas.sqlite"),
+			);
 			const database = openReadOnlyDatabase(candidate);
 			try {
 				const key = `${candidate}:${component}`;
-				const stamp = `${canonical.generation}:${database.generation}`;
+				const stamp = `${canonical.generation}:${canonicalBuild.generation}:${database.generation}`;
 				if (verified.get(key) !== stamp) {
 					verified.delete(key);
 					const stored = database
@@ -148,6 +159,7 @@ export function requireAtlasCache(
 				}
 			} finally {
 				database.release();
+				canonicalBuild.release();
 				canonical.release();
 			}
 			return candidate;

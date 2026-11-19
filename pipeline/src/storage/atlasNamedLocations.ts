@@ -44,6 +44,7 @@ export const namedLocationTables = (
 	};
 	return {
 		named_location_inventory_metadata: {
+			build: true,
 			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",
