@@ -361,7 +361,7 @@ holds:
   `postcode_area_releases`, `postcode_area_set`, `postcode_area_shard_hash`,
   `postcode_counts`) still use camelCase and plural names. The wide tables name
   a column per boundary release, so renaming them changes the layout marker.
-- Build metadata in `area_release`, `crosswalk`, `dataset`,
+- Build metadata (separation part of #713, handled separately) in `area_release`, `crosswalk`, `dataset`,
   `boundary_registry`, `postcode_area_shard_hash` and the `statistics_selector*`
   tables.
 - The `payloads` table, which the API reads at request time, so moving it is a
