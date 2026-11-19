@@ -6,9 +6,12 @@ task 46, issue #415).
 
 Every number here comes from one run of
 `pipeline/src/stages/build-notional-elections.ts` on 2026-11-17, against the
-atlas base built from `main` at `f9b424b65`. The stage is run by hand and is not
-in the build graph. It writes `data/build/notional-elections/notional-elections.sqlite`
-and the tables below to `data/build/notional-elections/notional-elections.md`.
+atlas base built from `main` at `f9b424b65`. The build runs the stage as
+`notional-elections`, after `crosswalk-weights` and `weight-atoms` and before
+`assemble-atlas`, with no benchmark. It writes
+`data/build/notional-elections/notional-elections.sqlite`, and the tables below
+to `data/build/notional-elections/notional-elections.md`. To score it, run it by
+hand:
 
 ```sh
 cd pipeline
@@ -24,6 +27,10 @@ tsx src/stages/build-notional-elections.ts --source <built checkout> --benchmark
 - **England and Scotland gain most** (0.74 to 0.40, and 0.57 to 0.23). Wales
   gains less (0.56 to 0.51), since 15% of its adults live in wards with no
   usable contest.
+- **An open variant ships beside it.** The main method reads local results
+  under CC BY-SA 3.0. The open variant leaves them out and scores 0.45 (0.51
+  on changed seats). Both are in the atlas, in different modules (see
+  [Licences](#licences)).
 - **Northern Ireland is excluded.** The weight atoms do not cover it, and the
   benchmark has no Northern Ireland seats to score against.
 
@@ -132,6 +139,7 @@ more whole 2019 seats. The rows add each part of the main method in turn.
 | Local results, seat average where missing    | 0.40           | 0.45               | 7              |
 | Plus UKIP for the Brexit Party               | 0.40           | 0.44               | 7              |
 | Plus census model and adult raking (main)    | 0.39           | 0.43               | 8              |
+| Main, without CC BY-SA local results (open)  | 0.45           | 0.51               | 9              |
 
 By nation (seats):
 
@@ -141,6 +149,7 @@ By nation (seats):
 | Local results only | 0.41          | 0.52       | 0.22          |
 | Plus UKIP          | 0.41          | 0.52       | 0.22          |
 | Main               | 0.40          | 0.51       | 0.23          |
+| Open               | 0.44          | 0.49       | 0.57          |
 
 By party, mean absolute error (mean signed error):
 
@@ -150,6 +159,7 @@ By party, mean absolute error (mean signed error):
 | Local results only | 0.68 (+0.05) | 0.65 (-0.08) | 0.40 (+0.03) | 0.41 (-0.02) | 0.47 (+0.06) | 0.15 (+0.00) | 0.17 (-0.02) | 0.18 (+0.01) |
 | Plus UKIP          | 0.68 (+0.05) | 0.65 (-0.08) | 0.40 (+0.03) | 0.41 (-0.02) | 0.47 (+0.06) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
 | Main               | 0.67 (+0.06) | 0.63 (-0.09) | 0.39 (+0.02) | 0.40 (-0.02) | 0.46 (+0.05) | 0.15 (+0.00) | 0.15 (-0.02) | 0.18 (+0.01) |
+| Open               | 0.76 (+0.06) | 0.70 (-0.09) | 0.50 (+0.02) | 0.86 (-0.03) | 0.47 (+0.05) | 0.17 (+0.00) | 0.18 (-0.02) | 0.19 (+0.01) |
 
 Of the 8 seats where the main method's winner differs from the benchmark, 5
 are within 1,000 votes in the estimate. One is Scottish: Moray West, Nairn and
@@ -227,6 +237,9 @@ bounds, 91% within 0.2, and 99% within 1.1. It is fitted on the same benchmark
 it is checked against, so its coverage on another boundary change is not
 proven.
 
+The open variant has wider bounds, a factor of 0.38, fitted the same way on its
+own errors.
+
 ## Residents, not electors
 
 The weights count census residents in 2021, not electors in December 2019. The
@@ -240,37 +253,63 @@ turnout, mostly inner cities. Raking to adults moved the error from 0.428 to
 bias but are not in the atlas. Scotland has no LSOA census data in the atlas,
 so its adults are taken as the England and Wales average share of residents.
 
+## Licences
+
+The Local Elections Archive Project results for 2016 to 2019, and its 2017
+Scottish council file, are under CC BY-SA 3.0, so an estimate built from them
+must be shared under the same licence. The atlas keeps those results in the
+`politics-sharealike` add-on module, not in `politics`. The stage records the
+licence of every local source it reads, and `notional_model` the licence each
+shipped estimate carries.
+
+Two estimates ship:
+
+| Model                 | Method | Licence      | Bound factor | Module                |
+| --------------------- | ------ | ------------ | ------------ | --------------------- |
+| `notional-sharealike` | Main   | CC BY-SA 3.0 | 0.32         | `politics-sharealike` |
+| `notional-open`       | Open   | none added   | 0.38         | `politics`            |
+
+The open variant reads only local results from 2021 to 2023 and none for
+Scotland, which is why Scotland falls back to the baseline (0.57).
+
 ## Storage
 
-The estimates are a build output for now:
-`data/build/notional-elections/notional-elections.sqlite`, with:
+The stage writes `data/build/notional-elections/notional-elections.sqlite`:
 
 - `notional_estimate`: votes per 2024 seat and party for each method, with
   `lower`, `upper`, `status` (`derived` or `estimated`), `at_risk` and the 2019
   seats it draws on.
-- `notional_input`: every series key read (general election, local elections by
-  date, census tables), the Scottish council file, and the weights used.
+- `notional_input`: per method, every series key read (general election, local
+  elections by date, census tables), the Scottish council file, and the weights
+  used.
+- `notional_model`: the methods shipped in the atlas, with model id, label,
+  licence and bound factor.
 - `notional_piece`: each piece, its local contest or fallback reason, and the
   parties the model or seat average filled in.
 - `notional_seat_source`, `notional_score`, `notional_seat_score`: where at-risk
-  votes came from, and accuracy against the benchmark.
+  votes came from, and accuracy against the benchmark. Empty in the build,
+  which has no benchmark.
 
-Proposal for the atlas: store the main estimate as series rows, one per party,
-with `method = 'modelled'`, keyed like converted series:
-`general-election/party-votes/constituency:2019-12-uk-bgc/party=con~modelled:constituency:2024-07-uk-bgc`,
-period `2019-12-12`, `derived_from_id` pointing at the published 2019 series,
-observations with status 6 (derived) or 2 (estimated) and lower and upper
-bounds as above. The contest tables are the wrong place: they hold real
-contests with candidates, and a notional has neither.
+`assemble-atlas` copies the shipped methods into `atlas.sqlite` as series with
+`method = 'modelled'`, one per party and model, keyed like converted series:
+`general-election/party-votes/constituency:2019-12-uk-bgc/party=con~notional-open:constituency:2024-07-uk-bgc`.
+Each is in period `2019-12-12` on the 2024 constituencies, has
+`derived_from_id` pointing at the published 2019 series, and shares its
+members. Observations are status 6 (derived) with no bounds, or 2 (estimated)
+with lower and upper bounds. The contest tables are the wrong place: they hold
+real contests with candidates, and a notional has neither.
 
-This needs a schema change, so it stops here. `series_input` is keyed on
-`(series_id, role)` with `role` limited to value, numerator, denominator and
-weight, so it cannot name the several inputs (the general election, local
-elections from several years, five census tables, the weights). Either
-`series_input` gains a free list of inputs per series, or a `modelled` input
-role that may repeat. `series_conversion.rule` is limited to `sum` and
-`rebuild`, so it also needs a `modelled` rule or the series stays out of that
-table.
+Three tables describe them, rather than `series_input` (one input per role)
+or `series_conversion` (sum or rebuild):
+
+- `model`: id, label, licence, bound factor and a description.
+- `model_input`: the series keys and files each model read, as text, since
+  some (census counts, a source file) are not in the module that ships it.
+- `series_model`: the model each modelled series is from.
+
+The module build moves the observations of a model under a split's licence
+into that split's add-on, in every period. It refuses to build a module that
+would ship a share-alike model no add-on takes.
 
 ## Known weak areas
 
