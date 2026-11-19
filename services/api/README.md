@@ -14,7 +14,7 @@ metadata. Source dataset payloads retain fields absent from observation contract
 they are not interchangeable copies of those contracts.
 
 `data/build/atlas-cache.sqlite` contains `area_search_*`, `place_index_*`,
-`location_projection_*`, `postcode_counts`, dataset payloads rebuilt from rows,
+`location_projection_*`, `postcode_count`, dataset payloads rebuilt from rows,
 and projection and counts metadata. The pipeline builds these components and
 stamps the cache with the SHA-256 hash of the final canonical database.
 
@@ -1089,9 +1089,9 @@ fetch the postcode directory from ONS.
       20 minutes with three workers, reuses any release whose postcodes, areas
       and geometry are unchanged. SQLite stores the placements as release-specific
       integer area IDs once per distinct combination in `postcode_area_set`, with
-      one set reference and the distances on `postcodes`, plus relational rows for
+      one set reference and the distances on `postcode`, plus relational rows for
       multiple matches. It reconstructs and hash-checks district shards on read.
-      `postcodes_decoded` exposes codes, and `postcode_area_releases` lists the
+      `postcode_decoded` exposes codes, and `postcode_area_release` lists the
       columns and their exact boundary releases. See
       [the SQLite schema](../../data/build/README.md#postcode-areas).
 - [x] Count live and terminated postcodes in each compiled postcode-area

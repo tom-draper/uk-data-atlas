@@ -16,7 +16,7 @@ detail is under [Progress notes](#progress-notes).
 Measured on the local build of 2026-11-19 unless stated.
 
 - `atlas.sqlite` is 942 MB, up from 742 MB on 2026-11-05.
-- Largest objects: `postcodes` 284 MB, `observation` 214 MB, `area_location`
+- Largest objects: `postcode` 284 MB, `observation` 214 MB, `area_location`
   89 MB, `crosswalk_edge_check` 49 MB, `crosswalk_edge` 38 MB plus its two
   indexes 61 MB, `area_version` 35 MB, `area_hierarchy` 29 MB plus its parent
   index 18 MB, `crosswalk_weight` 19 MB, `search` 14 MB.
@@ -68,13 +68,13 @@ Measured on the local build of 2026-11-19 unless stated.
 
 Task 12 measured (2026-11-15), on the 363,363 postcodes starting with S
 (13.6% of 2,665,797), scaled up and accurate to about 10%. The file then was
-268 MB: `postcodes` holds one distance per release that has its own value and
+268 MB: `postcode` holds one distance per release that has its own value and
 shares one `postcode_area_set` row between the 63,452 distinct combinations of
 areas.
 
 | Shape                                                                      | Estimated size | Against today |
 | -------------------------------------------------------------------------- | -------------- | ------------- |
-| Wide `postcodes` plus `postcode_area_set` (today)                          | 268 MB         | 1×            |
+| Wide `postcode` plus `postcode_area_set` (today)                           | 268 MB         | 1×            |
 | Long `postcode_area`, every distance stored (9.8M rows per 363k postcodes) | 1,440 MB       | 5.4×          |
 | Long `postcode_area`, distance only where stored                           | 1,330 MB       | 5.0×          |
 | Sets and stored distances as long tables, postcodes keep `area_set_id`     | 680 MB         | 2.5×          |

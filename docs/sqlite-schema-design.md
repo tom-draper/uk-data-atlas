@@ -333,9 +333,9 @@ are no longer written (see `data/build/README.md`). No reader used them.
 Ordinary tables in `atlas.sqlite` and sold modules use `STRICT`. SQLite FTS
 virtual tables and their shadow tables are managed by SQLite and cannot be
 declared STRICT. The internal place index uses `ANY` for packed labels because
-the writer stores either a binary posting list or JSON text. The postcode area
-layout marker is unchanged: STRICT adds type enforcement without changing the
-columns or how readers interpret existing files. The cache's `meta`,
+the writer stores either a binary posting list or JSON text. STRICT adds type
+enforcement without changing the columns or how readers interpret existing
+files. The cache's `meta`,
 `payloads` and `cache_generation` tables are STRICT too: the cache is always
 written whole, so nothing is copied forward from an older file.
 
@@ -346,8 +346,9 @@ Every database in `data/build` follows these rules (#713):
 - Tables are STRICT, except FTS5 virtual and shadow tables.
 - Table, view and column names are snake_case, and table names are singular
   (`area_release`, not `area_releases`).
-- A reference to another table is a declared foreign key. `area_release.geography`
-  references `geography(slug)`; `area` and the release tables use integer ids.
+- A reference to another table is a declared foreign key. `boundary_release.geography`
+  and `statistics_selector.geography` reference `geography(slug)`; `area` and
+  the release tables use integer ids.
 - Domain tables hold data, not build metadata (artifact paths, content hashes,
   byte counts), and the canonical file holds no payload blobs.
 
@@ -357,16 +358,24 @@ The test carries one allowlist of what still breaks the rules, so the list
 shrinks as work lands and an entry that stops matching fails the test. Today it
 holds:
 
-- The postcode tables (`postcodes`, `postcode_area_matches`,
-  `postcode_area_releases`, `postcode_area_set`, `postcode_area_shard_hash`,
-  `postcode_counts`) still use camelCase and plural names. The wide tables name
-  a column per boundary release, so renaming them changes the layout marker.
 - Build metadata (separation part of #713, handled separately) in `area_release`, `crosswalk`, `dataset`,
   `boundary_registry`, `postcode_area_shard_hash` and the `statistics_selector*`
   tables.
 - The `payloads` table, which the API reads at request time, so moving it is a
   change to the runtime readers and the cache generation hash, not only to the
   writer.
+
+Some references stay undeclared on purpose:
+
+- `crosswalk_coverage_entry.geography`: declaring it needs a `geography` parent
+  row in every fixture that builds a crosswalk, which touches about fourteen
+  tests for no change in behaviour.
+- `place_geometry` has no geography column to declare.
+- The QA `conversion_*` tables share `BACKTEST_SCHEMA` with the
+  `converted_component` database, which has no `weight_basis` table to
+  reference.
+- `v_source_terms` keeps its name: "terms" is the legal vocabulary (licence
+  terms), the object is a view, and the conventions check covers tables only.
 
 ### Area locations
 
