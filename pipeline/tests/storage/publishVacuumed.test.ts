@@ -28,7 +28,7 @@ function bloated(path: string) {
 	const database = new DatabaseSync(path);
 	try {
 		database.exec(
-			"PRAGMA page_size = 8192; PRAGMA auto_vacuum = 2; PRAGMA user_version = 3; PRAGMA application_id = 1430996033; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;",
+			`PRAGMA page_size = 8192; PRAGMA auto_vacuum = 2; PRAGMA user_version = ${ATLAS_SCHEMA_VERSION}; PRAGMA application_id = 1430996033; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;`,
 		);
 		database.exec(
 			"CREATE TABLE t (id INTEGER PRIMARY KEY, body BLOB NOT NULL); BEGIN",
