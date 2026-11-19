@@ -79,6 +79,12 @@ describe("road collisions by local authority", () => {
 			E01002443: { collisions: 1, fatal: 0, serious: 0, slight: 1 },
 			E01002444: { collisions: 1, fatal: 0, serious: 0, slight: 1 },
 		});
+		// What has no authority or no LSOA is kept as the part's gaps.
+		expect(part.gaps).toEqual([
+			{ kind: "collision-area", code: "EHEATHROW", collisions: 2 },
+			{ kind: "collision-without-lsoa", country: "GB-SCT", collisions: 1 },
+			{ kind: "collision-without-lsoa", country: "GB-ENG", collisions: 1 },
+		]);
 	});
 
 	it("refuses months that are not consecutive and unrecognised severities", async () => {

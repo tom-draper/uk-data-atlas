@@ -536,6 +536,14 @@ export const localElectionStatisticsParts = async (
 			key: String(config.year),
 			// LEAP, the source to 2019, publishes no electorate or turnout.
 			records: localElectionRecords(dataset, config.year >= 2021),
+			...(dataset.excludedWards?.length
+				? {
+						gaps: dataset.excludedWards.map((ward) => ({
+							kind: "election-ward" as const,
+							...ward,
+						})),
+					}
+				: {}),
 		});
 	}
 	return parts;

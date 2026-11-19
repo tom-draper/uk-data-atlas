@@ -117,6 +117,21 @@ export type DirectRecord = {
 };
 
 /** The records of one payload part, such as the edition of one year. */
+/**
+ * A publisher record left out of an otherwise published part, kept beside its
+ * rows as a coverage gap. The rows have no place for it.
+ */
+export type DirectGap =
+	| {
+			kind: "election-ward";
+			wardName: string;
+			ladName: string;
+			wardCode?: string;
+			reason: string;
+	  }
+	| { kind: "collision-area"; code: string; collisions: number }
+	| { kind: "collision-without-lsoa"; country: string; collisions: number };
+
 export type DirectPart = {
 	/** The key of the part in the dataset's payload, as `payload.parts` gives it. */
 	key: string;
@@ -126,6 +141,8 @@ export type DirectPart = {
 	recordSets?: Record<string, DirectRecord[]>;
 	/** Header relationship mappings, keyed by their declared payload field. */
 	relationships?: Record<string, Record<string, string>>;
+	/** Records the declaration's `dropped` fields name, in publication order. */
+	gaps?: DirectGap[];
 };
 
 /**

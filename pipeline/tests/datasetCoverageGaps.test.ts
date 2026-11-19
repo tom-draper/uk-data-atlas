@@ -83,3 +83,101 @@ test("stores election and collision coverage gaps as queryable rows", () => {
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("stores the gaps a direct-only dataset's source returned, with no compiled file", () => {
+	const db = new DatabaseSync(":memory:");
+	try {
+		db.exec(
+			"PRAGMA foreign_keys=ON; CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT UNIQUE); INSERT INTO dataset VALUES (1, 'local-election'), (2, 'road-collisions')",
+		);
+		const direct = new Map([
+			[
+				"local-election",
+				[
+					{
+						key: "2022",
+						records: [],
+						gaps: [
+							{
+								kind: "election-ward" as const,
+								wardName: "Ward",
+								ladName: "Council",
+								reason: "name-ambiguous",
+							},
+						],
+					},
+				],
+			],
+			[
+				"road-collisions",
+				[
+					{
+						key: "2024",
+						records: [],
+						gaps: [
+							{
+								kind: "collision-area" as const,
+								code: "EHEATHROW",
+								collisions: 2,
+							},
+							{
+								kind: "collision-without-lsoa" as const,
+								country: "GB-SCT",
+								collisions: 1,
+							},
+						],
+					},
+				],
+			],
+		]);
+		writeSqliteTables(
+			db,
+			datasetCoverageGapTables(
+				"/nowhere",
+				[
+					{
+						output: "local-election",
+						type: "local-election",
+						direct: true,
+					},
+					{
+						output: "road-collisions",
+						type: "road-collisions",
+						direct: true,
+					},
+				],
+				direct,
+			),
+		);
+		expect(
+			db
+				.prepare(
+					"SELECT dataset_id, edition, kind, position, area_code, area_name, parent_name, reason, count FROM dataset_coverage_gap ORDER BY dataset_id, kind",
+				)
+				.all(),
+		).toEqual([
+			expect.objectContaining({
+				dataset_id: 1,
+				kind: "election-ward",
+				area_code: null,
+				area_name: "Ward",
+				parent_name: "Council",
+				reason: "name-ambiguous",
+			}),
+			expect.objectContaining({
+				dataset_id: 2,
+				kind: "collision-area",
+				area_code: "EHEATHROW",
+				count: 2,
+			}),
+			expect.objectContaining({
+				dataset_id: 2,
+				kind: "collision-without-lsoa",
+				area_code: "GB-SCT",
+				count: 1,
+			}),
+		]);
+	} finally {
+		db.close();
+	}
+});

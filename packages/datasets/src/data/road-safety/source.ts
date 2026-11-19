@@ -1,5 +1,9 @@
 import type { DatasetReader } from "../catalog/types.ts";
-import type { DirectPart, DirectRecord } from "../../declaration/statistics.ts";
+import type {
+	DirectGap,
+	DirectPart,
+	DirectRecord,
+} from "../../declaration/statistics.ts";
 import { sourceDir } from "../../declaration/sources.ts";
 
 export const ROAD_COLLISION_SOURCES = [
@@ -12,6 +16,12 @@ export const ROAD_COLLISION_SOURCES = [
 		"dft-road-casualty-statistics-collision-2025.csv",
 	),
 ] as const;
+
+const NATIONS: Record<string, string> = {
+	E: "GB-ENG",
+	W: "GB-WLS",
+	S: "GB-SCT",
+};
 
 const SEVERITY: Record<string, "fatal" | "serious" | "slight"> = {
 	"1": "fatal",
@@ -58,7 +68,8 @@ const records = (counts: Map<string, Counts>): DirectRecord[] =>
  * counted by the authority DfT assigns each to, `local_authority_ons_district`,
  * and by the LSOA of the collision where it has one. A collision whose
  * authority is not a code, such as `EHEATHROW` for the airport, or that has
- * no LSOA, has no area to sit on and is left out of that set.
+ * no LSOA, has no area to sit on and is left out of that set. Each is
+ * counted as a gap of the part.
  */
 async function readEdition(
 	read: DatasetReader["csvRows"],
@@ -66,6 +77,8 @@ async function readEdition(
 ): Promise<DirectPart> {
 	const authorities = new Map<string, Counts>();
 	const lsoas = new Map<string, Counts>();
+	const excluded = new Map<string, number>();
+	const withoutLsoa = new Map<string, number>();
 	const months = new Set<string>();
 	let year: number | undefined;
 	await read(source, {}, (row) => {
@@ -83,7 +96,12 @@ async function readEdition(
 		months.add(month);
 		const lsoaCode = row["lsoa_of_accident_location"]?.trim() ?? "";
 		if (/^[EW]01\d{6}$/.test(lsoaCode)) count(lsoas, lsoaCode, severity);
+		else {
+			const nation = NATIONS[code[0] ?? ""] ?? "unknown";
+			withoutLsoa.set(nation, (withoutLsoa.get(nation) ?? 0) + 1);
+		}
 		if (/^[EWS]\d{8}$/.test(code)) count(authorities, code, severity);
+		else excluded.set(code, (excluded.get(code) ?? 0) + 1);
 	});
 	if (year === undefined) throw new Error(`${source}: no collisions`);
 	const covered = [...months].map(Number).sort((left, right) => left - right);
@@ -91,10 +109,25 @@ async function readEdition(
 	const last = covered.at(-1);
 	if (!first || !last || covered.length !== last - first + 1)
 		throw new Error(`${source}: the months covered are not consecutive`);
+	const gaps: DirectGap[] = [
+		...[...excluded]
+			.map(([code, collisions]) => ({
+				kind: "collision-area" as const,
+				code,
+				collisions,
+			}))
+			.sort((left, right) => left.code.localeCompare(right.code)),
+		...[...withoutLsoa].map(([country, collisions]) => ({
+			kind: "collision-without-lsoa" as const,
+			country,
+			collisions,
+		})),
+	];
 	return {
 		key: String(year),
 		records: records(authorities),
 		recordSets: { lsoas: records(lsoas) },
+		...(gaps.length > 0 ? { gaps } : {}),
 	};
 }
 

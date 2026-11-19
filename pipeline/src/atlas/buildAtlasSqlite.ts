@@ -337,7 +337,7 @@ export const buildAtlasSqlite = (
 					]),
 				),
 			),
-			...datasetCoverageGapTables(directory, manifest.datasets),
+			...datasetCoverageGapTables(directory, manifest.datasets, direct),
 			...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
 			...crosswalkInputSourceTables(repositoryRoot, ids),
 		},
