@@ -25,26 +25,11 @@ const manifest = JSON.parse(manifestText) as {
 };
 assert.ok(manifest.datasets.length > 0);
 for (const { type, output, direct } of manifest.datasets) {
-	if (direct) {
-		// No compiled file: the payload generated from its rows must be the golden.
-		assert.equal(
-			directPayloadProblem(
-				type,
-				readAtlasPayload(root, `dataset:${output}`),
-			),
-			undefined,
-			output,
-		);
-		continue;
-	}
-	assert.deepEqual(
-		JSON.parse(readAtlasPayload(root, `dataset:${output}`)),
-		JSON.parse(
-			readFileSync(
-				join(root, "data/build/datasets", `${output}.json`),
-				"utf8",
-			),
-		),
+	assert.ok(direct, `${type} is not read straight from its sources`);
+	// The payload generated from the rows must be the golden.
+	assert.equal(
+		directPayloadProblem(type, readAtlasPayload(root, `dataset:${output}`)),
+		undefined,
 		output,
 	);
 }
