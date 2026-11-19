@@ -88,24 +88,6 @@ export const websiteStages = [
 			],
 		},
 	),
-	// The arrays the map colours areas from use database-backed datasets and
-	// boundary sidecars.
-	stage(
-		"website-map-values",
-		["website-datasets"],
-		["--import", "tsx", "pipeline/src/stages/build-map-values.ts"],
-		{
-			writes: ["public/data/map-values"],
-			outputs: ["public/data/map-values"],
-			rawInputs: [],
-			codeInputs: [
-				"package.json",
-				"packages/datasets",
-				"packages/map-tiles",
-				"pipeline/src/precompile/paths.ts",
-			],
-		},
-	),
 	stage(
 		"website-registry",
 		["website-datasets"],

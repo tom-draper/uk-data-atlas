@@ -201,13 +201,12 @@ test("default build executes both products in dependency order", async (context)
 		"website-tiles",
 		"website-lookups",
 		"website-datasets",
-		"website-map-values",
 		"website-registry",
 	];
 	assert.deepEqual(stages(build.run([])), await expectedStages(expected));
 	assert.equal(
 		build.commands().length,
-		(await expectedStages(apiOrder)).length + 7,
+		(await expectedStages(apiOrder)).length + 6,
 	);
 });
 
@@ -253,7 +252,6 @@ test("rebuilding atlas pages refreshes the website assets and leaves the API rel
 		"atlas-pages",
 		"website-lookups",
 		"website-datasets",
-		"website-map-values",
 		"website-registry",
 	]);
 	assert.ok(
@@ -389,7 +387,6 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"atlas-pages",
 		"website-lookups",
 		"website-datasets",
-		"website-map-values",
 		"website-registry",
 	]);
 });
