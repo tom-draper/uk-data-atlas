@@ -26,6 +26,7 @@ const SUMMARY =
 const NOTES = [
 	`Base URL: ${API_BASE_URL}. Every request below is a plain GET unless it says otherwise; no key is needed.`,
 	"A successful JSON response wraps its result in `data`, with `atlasRelease` naming the exact build that produced it. Failures are problem documents with a stable `code`.",
+	`A time series on one boundary release: \`${API_BASE_URL}/data/population/series?place=localAuthority/E06000001&on=localAuthority/2026-05-uk-bgc\` rebuilds every period on today's council boundaries. Each value has a \`method\` (\`native\`, \`exact\` or \`weighted\`) and a \`source\`; \`summary.warnings\` and \`gaps\` say what to treat with care. Standard releases: localAuthority/2026-05-uk-bgc, ward/2026-05-uk-bgc, constituency/2024-07-uk-bgc, lsoa/2021-12-ew-bgc-v5.`,
 ];
 
 /** Markdown links, `code` and bold marks removed, for a plain-text summary. */
