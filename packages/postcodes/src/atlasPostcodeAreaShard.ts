@@ -14,7 +14,7 @@ import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
-export const POSTCODE_AREA_LAYOUT = "8";
+export const POSTCODE_AREA_LAYOUT = "9";
 
 /** Refuse a database built before stored postcode coordinates were added. */
 export function requirePostcodeAreaLayout(database: SqlReader) {
@@ -81,7 +81,7 @@ export function readPostcodeAreaShard(
 	database: SqlReader,
 	artifact: PostcodeAreasArtifact,
 	path: string,
-	table = "postcodes",
+	table = "postcode",
 	verify = true,
 ): string {
 	const entry = artifact.shards.find((e) => e.path === path);

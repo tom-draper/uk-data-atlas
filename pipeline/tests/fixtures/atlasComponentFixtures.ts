@@ -10,7 +10,7 @@ export function writeEmptyPostcodeComponent(root: string) {
 		join(root, "data/build/postcode-index.sqlite"),
 	);
 	database.exec(
-		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('postcode-index', '{"contentHash":"empty","shards":[]}'); CREATE TABLE postcodes (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT, country TEXT, introduced INTEGER, terminated INTEGER, largeUser TEXT) WITHOUT ROWID`,
+		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('postcode-index', '{"contentHash":"empty","shards":[]}'); CREATE TABLE postcode (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, quality TEXT, country TEXT, introduced INTEGER, terminated INTEGER, large_user TEXT) WITHOUT ROWID`,
 	);
 	database.close();
 	writeEmptyPostcodeAreas(root);

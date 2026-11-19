@@ -59,7 +59,7 @@ CREATE TABLE model (id TEXT PRIMARY KEY, label TEXT NOT NULL, licence_id TEXT, b
 CREATE TABLE model_input (model_id TEXT NOT NULL REFERENCES model(id), role TEXT NOT NULL, key TEXT NOT NULL, PRIMARY KEY (model_id, role, key)) WITHOUT ROWID, STRICT;
 CREATE TABLE series_model (series_id INTEGER PRIMARY KEY REFERENCES series(id), model_id TEXT NOT NULL REFERENCES model(id)) STRICT;
 CREATE TABLE postcode_unit (id INTEGER NOT NULL PRIMARY KEY, postcode TEXT NOT NULL, area_version_id INTEGER NOT NULL REFERENCES area_version(id));
-CREATE TABLE postcodes (postcode TEXT PRIMARY KEY, latitudeMicrodegrees INTEGER, longitudeMicrodegrees INTEGER) WITHOUT ROWID;
+CREATE TABLE postcode (postcode TEXT PRIMARY KEY, latitude_microdegrees INTEGER, longitude_microdegrees INTEGER) WITHOUT ROWID;
 CREATE INDEX postcode_unit_code ON postcode_unit (postcode);
 CREATE VIEW area_label AS SELECT id, code FROM area_version;
 CREATE VIEW observation_labelled AS SELECT o.series_id, a.code, m.slug AS measure, o.value FROM observation o JOIN area_version a ON a.id = o.area_version_id JOIN series s ON s.id = o.series_id JOIN measure m ON m.id = s.measure_id;
@@ -132,7 +132,7 @@ INSERT INTO election VALUES (1, 4, 'GE 2024', '2024-07-04', 1), (2, 5, 'Local 20
 INSERT INTO contest VALUES (1, 1, 1, 1), (2, 1, 2, 2), (3, 2, 1, 1), (4, 3, 2, 2);
 INSERT INTO candidacy VALUES (1, 1, 'Smith'), (1, 2, 'Jones'), (2, 1, 'Khan'), (3, 1, 'Cooper'), (4, 1, 'Dean');
 INSERT INTO postcode_unit VALUES (1, 'AA1 1AA', 1), (2, 'AA1 1AB', 2);
-INSERT INTO postcodes VALUES ('AA11AA', 51500000, -120000);
+INSERT INTO postcode VALUES ('AA11AA', 51500000, -120000);
 `);
 	} finally {
 		database.close();

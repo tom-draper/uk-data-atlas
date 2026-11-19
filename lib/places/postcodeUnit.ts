@@ -162,7 +162,7 @@ const databasePath = () => join(process.cwd(), "data/build/atlas.sqlite");
 
 // A district's postcodes, in the order its area placements are numbered.
 const DISTRICT_ROWS =
-	"SELECT postcode, easting, northing, quality, country, introduced, terminated, largeUser FROM postcodes WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? ORDER BY postcode";
+	"SELECT postcode, easting, northing, quality, country, introduced, terminated, large_user AS largeUser FROM postcode WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? ORDER BY postcode";
 const districtRange = (district: string) =>
 	[district, `${district}\x7f`, district.length + 3] as const;
 
@@ -227,7 +227,7 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 			if (!found) return undefined;
 			const placed = database
 				.prepare(
-					`SELECT a.code FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.${quote(found.column)} JOIN area a ON a.id = v.area_id WHERE p.postcode = ?`,
+					`SELECT a.code FROM postcode p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.${quote(found.column)} JOIN area a ON a.id = v.area_id WHERE p.postcode = ?`,
 				)
 				.get(compact);
 			const edge = placed
@@ -253,7 +253,7 @@ export function sectorPostcodes(sector: string) {
 	try {
 		return database
 			.prepare(
-				"SELECT postcode FROM postcodes WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? AND terminated = 0 ORDER BY postcode",
+				"SELECT postcode FROM postcode WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? AND terminated = 0 ORDER BY postcode",
 			)
 			.all(...districtRange(district!))
 			.map((row) => String(row.postcode))

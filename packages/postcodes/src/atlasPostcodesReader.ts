@@ -26,10 +26,10 @@ export const readSqlitePostcodeIndex = (
 	);
 	let hasPoints: boolean;
 	try {
-		const columns = database.prepare("PRAGMA table_info(postcodes)").all();
+		const columns = database.prepare("PRAGMA table_info(postcode)").all();
 		hasPoints =
-			columns.some((column) => column.name === "latitudeMicrodegrees") &&
-			columns.some((column) => column.name === "longitudeMicrodegrees");
+			columns.some((column) => column.name === "latitude_microdegrees") &&
+			columns.some((column) => column.name === "longitude_microdegrees");
 		if (!options.standalone || hasPoints)
 			requirePostcodeAreaLayout(database);
 		if (!options.standalone && !hasPoints)

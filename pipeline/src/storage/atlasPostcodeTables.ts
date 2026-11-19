@@ -43,7 +43,7 @@ export const postcodeTables = (
 		}
 	}
 	return {
-		postcodes: {
+		postcode: {
 			strict: true,
 			columns: [
 				"postcode TEXT NOT NULL",
@@ -53,7 +53,7 @@ export const postcodeTables = (
 				"country TEXT NOT NULL",
 				"introduced INTEGER NOT NULL",
 				"terminated INTEGER NOT NULL",
-				"largeUser TEXT NOT NULL",
+				"large_user TEXT NOT NULL",
 			],
 			key: ["postcode"],
 			rows: rows(),
