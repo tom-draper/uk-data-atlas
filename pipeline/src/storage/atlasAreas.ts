@@ -187,13 +187,20 @@ export const areaTables = (
 				],
 			],
 		},
+		geography: {
+			rowid: true,
+			strict: true,
+			columns: ["id INTEGER", "slug TEXT NOT NULL UNIQUE"],
+			key: ["id"],
+			rows: [...geographies].map(([slug, id]) => [id, slug]),
+		},
 		area_release: {
 			strict: true,
 			columns: [
 				// The release's stable id, assigned once and never reused. It is
 				// not an order: `inventory_position` is.
 				"id INTEGER NOT NULL UNIQUE",
-				"geography TEXT NOT NULL",
+				"geography TEXT NOT NULL REFERENCES geography(slug)",
 				// The boundary release's name, such as `2024-12-uk-bgc`.
 				"release TEXT NOT NULL",
 				"inventory_position INTEGER NOT NULL UNIQUE",
@@ -240,13 +247,6 @@ export const areaTables = (
 							release.reason,
 						],
 			),
-		},
-		geography: {
-			rowid: true,
-			strict: true,
-			columns: ["id INTEGER", "slug TEXT NOT NULL UNIQUE"],
-			key: ["id"],
-			rows: [...geographies].map(([slug, id]) => [id, slug]),
 		},
 		area: {
 			rowid: true,
