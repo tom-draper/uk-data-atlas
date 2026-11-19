@@ -197,7 +197,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			retrieved_at: "When they were downloaded.",
 			licence: "Licence name as the publisher states it.",
 			licence_url: "Licence URL.",
-			metadata_hash: "Hash of the registry entry, for change detection.",
 			deprecated:
 				"1 if the atlas no longer recommends this release, else 0.",
 			sunset: "Date after which a deprecated release may be removed.",
