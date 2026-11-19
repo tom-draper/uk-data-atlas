@@ -28,7 +28,9 @@ test("records boundary provenance and isolates historical local election licence
 	try {
 		db.exec(`PRAGMA foreign_keys = ON;
 		CREATE TABLE source (id INTEGER PRIMARY KEY, publisher TEXT NOT NULL, url TEXT, licence TEXT NOT NULL, licence_url TEXT, citation TEXT);
+		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT NOT NULL);
+		INSERT INTO geography VALUES (1, 'ward');
 		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, date TEXT NOT NULL);
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, provenance TEXT NOT NULL);
 		INSERT INTO source VALUES (1, 'mixed', 'https://example.org/mixed', 'Open Parliament Licence (2021–2025); CC BY-SA 3.0 (2016–2019)', NULL, NULL);

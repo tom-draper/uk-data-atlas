@@ -89,7 +89,7 @@ export function boundaryReleaseTables(
 		boundary_release: {
 			strict: true,
 			columns: [
-				"geography TEXT NOT NULL",
+				"geography TEXT NOT NULL REFERENCES geography(slug)",
 				"release TEXT NOT NULL",
 				"title TEXT NOT NULL",
 				"description TEXT",

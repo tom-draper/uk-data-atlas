@@ -68,7 +68,19 @@ test("round trips each selector kind and optional transformation", () => {
 		},
 	};
 	try {
-		writeSqliteIndex(path, {}, statisticsReadPathTables(plan));
+		writeSqliteIndex(
+			path,
+			{},
+			{
+				geography: {
+					strict: true,
+					columns: ["slug TEXT NOT NULL"],
+					key: ["slug"],
+					rows: [["ward"], ["lsoa"]],
+				},
+				...statisticsReadPathTables(plan),
+			},
+		);
 		expect(readAtlasStatisticsReadPath(path)).toEqual(plan);
 	} finally {
 		closeAllReadOnlyDatabases();

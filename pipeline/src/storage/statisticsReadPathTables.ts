@@ -32,7 +32,7 @@ export function statisticsReadPathTables(
 				"artifact TEXT NOT NULL",
 				"kind TEXT NOT NULL CHECK (kind IN ('series','measure-table'))",
 				"dataset TEXT NOT NULL",
-				"geography TEXT NOT NULL",
+				"geography TEXT NOT NULL REFERENCES geography(slug)",
 				"measure TEXT",
 				"absent_as_zero INTEGER",
 				"status TEXT",
