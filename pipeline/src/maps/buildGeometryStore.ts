@@ -28,7 +28,6 @@ import {
 	formatDuration,
 } from "@uk-data-atlas/atlas-db";
 import { hashFile } from "../lib/fileHashCache.ts";
-import { recordOutputHash } from "../storage/outputManifest.ts";
 import { readJsonSync } from "../lib/json.ts";
 
 /**
@@ -163,8 +162,6 @@ export const buildGeometryStore = (
 		// never sees half a file.
 		writeFileSync(join(directory, `${file}.partial`), body);
 		renameSync(join(directory, `${file}.partial`), join(directory, file));
-		// The build need not read the store back to hash it.
-		recordOutputHash(join(directory, file), sha256Hex(body));
 		state[identity] = key;
 		saveState();
 		compiled += 1;

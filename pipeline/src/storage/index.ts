@@ -8,7 +8,6 @@ export * from "./atlasCacheWriter.ts";
 export * from "./stageStamp.ts";
 export * from "./sqliteIndexWriter.ts";
 export * from "./publishVacuumed.ts";
-export * from "./outputManifest.ts";
 export * from "./datasetPayloadWriter.ts";
 export * from "./storePostcodeCounts.ts";
 export * from "./namedLocationStorage.ts";

@@ -141,15 +141,10 @@ test("an adopt header skips the check and job notes", () => {
 
 test("run problems list the stages involved and nothing when clean", () => {
 	const { lines, log } = collect();
-	logRunProblems({ log, undeclaredStages: [], mismatchedStages: [] });
+	logRunProblems({ log, undeclaredStages: [] });
 	assert.deepEqual(lines, []);
-	logRunProblems({
-		log,
-		undeclaredStages: ["a"],
-		mismatchedStages: ["b", "c"],
-	});
-	assert.match(lines[0], /^Undeclared writes in 1 stage: a\./);
-	assert.match(lines[1], /^Wrong output hashes in 2 stages: b, c\./);
+	logRunProblems({ log, undeclaredStages: ["a", "b"] });
+	assert.match(lines[0], /^Undeclared writes in 2 stages: a, b\./);
 });
 
 test("the plan forecast logs the estimate and the schedule only for a plan", () => {

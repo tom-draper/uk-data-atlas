@@ -6,11 +6,10 @@ import {
 	readdirSync,
 	readFileSync,
 	renameSync,
-	rmSync,
 	statSync,
 	writeFileSync,
 } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { STAGING_DIR } from "../packages/datasets/src/declaration/sources.ts";
 import { sha256FileHexSync, sha256Hex } from "./src/lib/hash.ts";
@@ -148,49 +147,6 @@ const sameFile = (a, b) =>
 /** Names a file by inode, size and mtime, so its links share a hash. */
 const identityOf = (stamp) =>
 	stamp.ino ? `${stamp.ino}:${stamp.size}:${stamp.mtimeMs}` : null;
-
-/**
- * The hashes a stage recorded for the files it wrote, by repo path. The file
- * holds one JSON object per line, as the stage appended them; a later line
- * for a path replaces an earlier one, and an unreadable line is ignored. A
- * hash only counts when the file still has the stat it had then.
- */
-function readManifest(file, root) {
-	let text;
-	try {
-		text = readFileSync(file, "utf8");
-	} catch (error) {
-		if (error?.code === "ENOENT") return new Map();
-		throw error;
-	}
-	const claimed = new Map();
-	for (const line of text.split("\n")) {
-		let entry;
-		try {
-			entry = JSON.parse(line);
-		} catch {
-			continue;
-		}
-		if (
-			typeof entry?.path !== "string" ||
-			!/^[0-9a-f]{64}$/.test(entry.sha256) ||
-			!Number.isFinite(entry.size) ||
-			!Number.isFinite(entry.mtimeMs)
-		)
-			continue;
-		const path = relative(root, resolve(root, entry.path))
-			.split(sep)
-			.join("/");
-		if (!path || path.startsWith("..") || isAbsolute(path)) continue;
-		claimed.set(path, {
-			size: entry.size,
-			mtimeMs: entry.mtimeMs,
-			ino: entry.ino,
-			sha256: entry.sha256,
-		});
-	}
-	return claimed;
-}
 
 /** Reads recorded outputs, upgrading `size:mtimeMs` strings from old records. */
 function readOutputs(outputs) {
@@ -427,16 +383,10 @@ export function createStageCache({
 
 	/**
 	 * Output records for these files. A file is read and hashed only when no
-	 * hash can be trusted: its own record, the stage's manifest, or a link to a
-	 * file already hashed all need the same size, mtime and inode. With
-	 * `verify`, a manifest hash is checked against the bytes instead of trusted,
-	 * and any that differ are added to `mismatches`.
+	 * hash can be trusted: its own record, or a link to a file already hashed,
+	 * needs the same size, mtime and inode.
 	 */
-	const withHashes = (
-		stamps,
-		known = knownHashes(),
-		{ trusted = new Map(), verify = false, mismatches = [] } = {},
-	) => {
+	const withHashes = (stamps, known = knownHashes()) => {
 		const linked = new Map();
 		for (const entry of known.values()) {
 			const identity = identityOf(entry);
@@ -448,16 +398,9 @@ export function createStageCache({
 				.sort(([a], [b]) => a.localeCompare(b))
 				.map(([path, stamp]) => {
 					const entry = known.get(path);
-					const claimed = trusted.get(path);
 					const identity = identityOf(stamp);
-					const claims = claimed && sameFile(claimed, stamp);
 					let sha256;
-					if (verify && claims) {
-						sha256 = hashFile(join(root, path));
-						if (sha256 !== claimed.sha256) mismatches.push(path);
-					} else if (entry && sameFile(entry, stamp))
-						sha256 = entry.sha256;
-					else if (claims) sha256 = claimed.sha256;
+					if (entry && sameFile(entry, stamp)) sha256 = entry.sha256;
 					else if (identity && linked.has(identity))
 						sha256 = linked.get(identity);
 					else sha256 = hashFile(join(root, path));
@@ -528,23 +471,7 @@ export function createStageCache({
 		);
 	};
 
-	// Where a running stage appends the hashes it computed while writing.
-	const manifestFile = (name) =>
-		join(dirname(stateFile), "outputs", `${name}.jsonl`);
-	// Recorded hashes that did not match the bytes, found in verify mode.
-	const mismatched = new Map();
-
 	return {
-		/** Where the named stage may append the hashes of the files it writes. */
-		manifestPath: manifestFile,
-
-		/** The files whose recorded hash did not match, after a verified record. */
-		manifestMismatches(name) {
-			const paths = mismatched.get(name) ?? [];
-			mismatched.delete(name);
-			return paths.sort();
-		},
-
 		lastTiming(name) {
 			return state.stages[name]?.timing ?? null;
 		},
@@ -554,7 +481,6 @@ export function createStageCache({
 			begun.delete(name);
 			watched.delete(name);
 			alongside.delete(name);
-			rmSync(manifestFile(name), { force: true });
 			state.stages[name] ??= { key: null, digest: null, outputs: {} };
 			state.stages[name].timing = timing;
 			save();
@@ -638,8 +564,6 @@ export function createStageCache({
 				alongside.set(name, together);
 				for (const other of together) alongside.get(other)?.add(name);
 			}
-			// Hashes left by an earlier run say nothing about this one.
-			rmSync(manifestFile(name), { force: true });
 			begun.set(name, {
 				scope,
 				before: scope ? scopedSnapshot(scope) : currentSnapshot(),
@@ -686,18 +610,8 @@ export function createStageCache({
 		 * Records a stage that just ran successfully, after `begin`, and returns its output
 		 * digest. Pass `cacheable: false` for a stage that is never skipped;
 		 * its effects reach later stages through their inputs instead.
-		 * Hashes the stage appended to its manifest are used for files that still
-		 * have the stat recorded with them, so those are not read again. With
-		 * `verify` they are checked against the bytes, and `manifestMismatches`
-		 * names any that were wrong.
 		 */
-		record(
-			stage,
-			dependencyDigests,
-			{ cacheable = true, verify = false } = {},
-		) {
-			const trusted = readManifest(manifestFile(stage.name), root);
-			rmSync(manifestFile(stage.name), { force: true });
+		record(stage, dependencyDigests, { cacheable = true } = {}) {
 			const { scope, before } = begun.get(stage.name) ?? {
 				scope: null,
 				before: currentSnapshot(),
@@ -788,13 +702,7 @@ export function createStageCache({
 					)
 						outputs.set(path, stamp);
 			}
-			const mismatches = [];
-			const hashed = withHashes(outputs, known, {
-				trusted,
-				verify,
-				mismatches,
-			});
-			if (mismatches.length) mismatched.set(stage.name, mismatches);
+			const hashed = withHashes(outputs, known);
 			const digest = hashOutputs(hashed);
 			state.stages[stage.name] = {
 				timing: state.stages[stage.name]?.timing,

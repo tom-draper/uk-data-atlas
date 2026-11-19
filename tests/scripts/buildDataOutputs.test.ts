@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import {
-	appendFileSync,
 	linkSync,
 	mkdirSync,
 	mkdtempSync,
@@ -17,12 +16,6 @@ import { dirname, join } from "node:path";
 import { onTestFinished, test } from "vitest";
 import { createStageCache } from "@/pipeline/build-data-cache.mjs";
 import { runBuild } from "@/pipeline/build-data.mjs";
-import {
-	OUTPUT_MANIFEST_ENV,
-	recordOutputHash,
-	writeFileHashedSync,
-} from "../../pipeline/src/storage/outputManifest";
-import { sha256Hex } from "../../pipeline/src/lib/hash";
 
 type Stage = {
 	name: string;
@@ -138,91 +131,10 @@ test("a link to a file already hashed shares its hash", () => {
 	);
 });
 
-test("hashes a stage recorded while writing are trusted without reading the file", () => {
-	const { root, write, cache, hashed } = fixture();
-	const stages = cache();
-	stages.begin(alpha);
-	const manifest = stages.manifestPath("alpha");
-	write("data/build/a/streamed.bin", "streamed");
-	recordOutputHash(
-		join(root, "data/build/a/streamed.bin"),
-		sha256Hex("streamed"),
-		manifest,
-	);
-	write("data/build/a/plain.bin", "plain");
-	const digest = stages.record(alpha, []);
-	assert.deepEqual(hashed, ["data/build/a/plain.bin"]);
-	// The digest is what hashing every file would have given.
-	const reference = fixture();
-	const other = reference.cache();
-	other.begin(alpha);
-	reference.write("data/build/a/streamed.bin", "streamed");
-	reference.write("data/build/a/plain.bin", "plain");
-	assert.equal(digest, other.record(alpha, []));
-	assert.throws(() => statSync(manifest));
-});
-
-test("a recorded hash is ignored once the file has changed since", () => {
-	const { root, write, cache, hashed } = fixture();
-	const stages = cache();
-	stages.begin(alpha);
-	const manifest = stages.manifestPath("alpha");
-	write("data/build/a/file.bin", "first");
-	recordOutputHash(
-		join(root, "data/build/a/file.bin"),
-		sha256Hex("first"),
-		manifest,
-	);
-	write("data/build/a/file.bin", "second, and longer");
-	stages.record(alpha, []);
-	assert.deepEqual(hashed, ["data/build/a/file.bin"]);
-	assert.equal(
-		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
-		digestOf("second, and longer"),
-	);
-});
-
-test("a manifest tolerates damage and paths outside the repository", () => {
-	const { root, write, cache, hashed } = fixture();
-	const stages = cache();
-	stages.begin(alpha);
-	const manifest = stages.manifestPath("alpha");
-	write("data/build/a/file.bin", "file");
-	recordOutputHash(
-		join(root, "data/build/a/file.bin"),
-		sha256Hex("file"),
-		manifest,
-	);
-	appendFileSync(manifest, '{"path": "/etc/passwd", "sha256": "0"}\n');
-	appendFileSync(
-		manifest,
-		`${JSON.stringify({ path: "../escape", size: 1, mtimeMs: 1, sha256: "a".repeat(64) })}\n`,
-	);
-	appendFileSync(manifest, '{"path": "data/build/a/trunc');
-	stages.record(alpha, []);
-	assert.deepEqual(hashed, []);
-});
-
-test("the stage helpers write the file and only note a hash when the build asks", () => {
-	const { root } = fixture();
-	const path = join(root, "out/file.bin");
-	mkdirSync(dirname(path), { recursive: true });
-	assert.equal(process.env[OUTPUT_MANIFEST_ENV], undefined);
-	writeFileHashedSync(path, "content");
-	assert.equal(readFileSync(path, "utf8"), "content");
-	const manifest = join(root, "manifest/alpha.jsonl");
-	writeFileHashedSync(path, "content", manifest);
-	const [line] = readFileSync(manifest, "utf8").trim().split("\n");
-	assert.deepEqual(
-		{ path: JSON.parse(line).path, sha256: JSON.parse(line).sha256 },
-		{ path, sha256: sha256Hex("content") },
-	);
-});
-
 const runVerified = async (
 	root: string,
 	stages: Stage[],
-	execute: (stage: Stage, options: { outputManifest?: string }) => number,
+	execute: (stage: Stage) => number,
 	argv: string[] = ["--verify-outputs", "--no-cache"],
 ) => {
 	const log: string[] = [];
@@ -277,44 +189,6 @@ test("a write outside the declared outputs fails the build, with or without veri
 		readFileSync(join(root, ".cache/stages.json"), "utf8"),
 	);
 	assert.equal(state.stages.alpha.key, null);
-});
-
-test("verify mode catches a stage that recorded a hash its file does not have", async () => {
-	const { root, write } = fixture();
-	const stages: Stage[] = [alpha];
-	const lying = (
-		stage: Stage,
-		{ outputManifest }: { outputManifest?: string },
-	) => {
-		assert.ok(outputManifest);
-		write("data/build/a/file.bin", "real");
-		recordOutputHash(
-			join(root, "data/build/a/file.bin"),
-			sha256Hex("not the real bytes"),
-			outputManifest,
-		);
-		return stage.name === "alpha" ? 0 : 1;
-	};
-	const verified = await runVerified(root, stages, lying);
-	assert.equal(verified.status, 1);
-	assert.ok(
-		verified.log.includes(
-			"alpha: recorded a hash that does not match 1 file",
-		),
-	);
-	assert.ok(verified.log.includes("  data/build/a/file.bin"));
-	// The record holds what the bytes hash to, so the lie never reaches a digest.
-	assert.equal(
-		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
-		digestOf("real"),
-	);
-	// Without verification the cache takes the stage at its word.
-	const trusting = await runVerified(root, stages, lying, ["--no-cache"]);
-	assert.equal(trusting.status, 0);
-	assert.equal(
-		recorded(root, "alpha")["data/build/a/file.bin"].sha256,
-		sha256Hex("not the real bytes"),
-	);
 });
 
 test("--verify-outputs and DATA_BUILD_VERIFY_OUTPUTS verify as well", async () => {

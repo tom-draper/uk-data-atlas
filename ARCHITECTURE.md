@@ -238,7 +238,7 @@ The orchestrator holds every stage to this:
   from the other. `pnpm data:build --verify-outputs` (or
   `DATA_BUILD_VERIFY_OUTPUTS=1`) runs one
   stage at a time, so every change is attributed, adds the raw sources to what
-  is compared, and checks the hashes described below.
+  is compared.
 
 A new stage declares the files and folders it writes, or the graph does not
 load. `pipeline/tests/` and `tests/scripts/` cover both rules on a fixture
@@ -357,21 +357,17 @@ mtimes. After a stage runs, the runner stats only the paths the stage declares
 declared paths (`sources`) scans both trees. The check that it changed nothing
 else scans the output trees once more, which takes a few tens of milliseconds. Each recorded file stores
 `{size, mtimeMs, ino, sha256}`. A file is hashed, in streamed chunks, only when
-no hash can be trusted for it. Three sources are trusted, each only for a file
+no hash can be trusted for it. Two sources are trusted, each only for a file
 whose size, mtime and inode all match the stat taken with the hash:
 
 - the file's own earlier record, so unchanged multi-gigabyte outputs such as
   `atlas.sqlite` are not read again;
 - a link to a file already hashed, whichever stage recorded it, so
   `public/data/boundaries` (hard links of `data/build/boundaries`) is not read
-  again;
-- a hash the stage recorded while writing the file. A stage calls
-  `recordOutputHash` or `writeFileHashedSync` from
-  `pipeline/src/storage/outputManifest.ts` with the hash of the bytes it wrote
-  (`geometry-store` and `map-resource` do). The runner gives each stage a
-  manifest path in `DATA_BUILD_OUTPUT_MANIFEST` (under the cache folder, one
-  JSON line per file), reads it when the stage finishes, then deletes it. A file
-  changed after its hash was recorded no longer matches and is hashed again.
+  again.
+
+A stage does not hash the files it writes for the runner, so a new or rewritten
+file is read once after the stage finishes.
 
 The skip check on later builds compares size and mtime alone. SQLite files are
 hashed as files. A stage that rewrites identical bytes therefore keeps its

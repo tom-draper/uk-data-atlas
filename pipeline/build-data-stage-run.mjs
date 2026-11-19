@@ -14,7 +14,6 @@ export function createRunState() {
 		failed: false,
 		failureStatus: null,
 		undeclaredStages: [],
-		mismatchedStages: [],
 	};
 }
 
@@ -137,7 +136,6 @@ export function createStageRunner({
 			status = await execute(stage, {
 				verbose,
 				prefixed: jobs > 1,
-				outputManifest: cache?.manifestPath(stage.name),
 			});
 		} catch (error) {
 			const command = performance.now() - commandStartedAt;
@@ -215,20 +213,7 @@ export function createStageRunner({
 		}
 		const digest = cache?.record(stage, dependencies, {
 			cacheable: stage.cacheable !== false,
-			verify: verifyOutputs,
 		});
-		const wrongHashes = verifyOutputs
-			? (cache?.manifestMismatches(stage.name) ?? [])
-			: [];
-		if (wrongHashes.length) {
-			state.mismatchedStages.push(stage.name);
-			log(
-				`${stage.name}: recorded a hash that does not match ${plural(wrongHashes.length, "file")}`,
-			);
-			for (const path of wrongHashes.slice(0, 10)) log(`  ${path}`);
-			if (wrongHashes.length > 10)
-				log(`  and ${formatCount(wrongHashes.length - 10)} more`);
-		}
 		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
 		const total = recordTiming(
 			stage.name,

@@ -227,15 +227,11 @@ export function logBuildHeader({
 	log("");
 }
 
-/** Notes the stages that wrote outside their declarations or recorded a wrong hash. */
-export function logRunProblems({ log, undeclaredStages, mismatchedStages }) {
+/** Notes the stages that wrote outside their declarations. */
+export function logRunProblems({ log, undeclaredStages }) {
 	if (undeclaredStages.length)
 		log(
 			`Undeclared writes in ${plural(undeclaredStages.length, "stage")}: ${undeclaredStages.join(", ")}. Declare their writes in the stage definition.`,
-		);
-	if (mismatchedStages.length)
-		log(
-			`Wrong output hashes in ${plural(mismatchedStages.length, "stage")}: ${mismatchedStages.join(", ")}. Each recorded a hash its file does not have, so the build would have trusted it.`,
 		);
 }
 
