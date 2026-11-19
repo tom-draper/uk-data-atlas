@@ -128,10 +128,30 @@ export function createStageRunner({
 		typeof queuedMs === "number" && typeof memoryWaitMs === "number"
 			? { queueMs: queuedMs, memoryWaitMs }
 			: {};
+	// Records how long a stage took, in this build's report and in the cache,
+	// and returns its total time. A failed stage is marked so the next build
+	// does not take its timing as a guide.
+	const finishTiming = (stage, command, waited, failed) => {
+		const total = recordTiming(
+			stage.name,
+			startedAtOf.get(stage.name),
+			command,
+			false,
+			waited,
+		);
+		if (failed) timings.at(-1).failed = true;
+		cache?.recordTiming(stage.name, {
+			commandMs: command,
+			totalMs: total,
+			...queueFields(waited),
+			finishedAt: new Date().toISOString(),
+			failed,
+		});
+		return total;
+	};
 	// Runs a stage's command and records it. Returns false when it failed.
 	// `waited` is how long the scheduler held the stage back.
 	const run = async (stage, waited = {}) => {
-		const stageStartedAt = startedAtOf.get(stage.name);
 		const dependencies = dependencyDigests(stage);
 		state.started += 1;
 		log(
@@ -149,21 +169,7 @@ export function createStageRunner({
 			});
 		} catch (error) {
 			const command = performance.now() - commandStartedAt;
-			const total = recordTiming(
-				stage.name,
-				stageStartedAt,
-				command,
-				false,
-				waited,
-			);
-			timings.at(-1).failed = true;
-			cache?.recordTiming(stage.name, {
-				commandMs: command,
-				totalMs: total,
-				...queueFields(waited),
-				finishedAt: new Date().toISOString(),
-				failed: true,
-			});
+			finishTiming(stage, command, waited, true);
 			throw error;
 		}
 		const command = performance.now() - commandStartedAt;
@@ -171,21 +177,7 @@ export function createStageRunner({
 			logError(
 				`${stage.name} failed with exit code ${status} after ${formatDuration(command)}. Build stopped`,
 			);
-			const total = recordTiming(
-				stage.name,
-				stageStartedAt,
-				command,
-				false,
-				waited,
-			);
-			timings.at(-1).failed = true;
-			cache?.recordTiming(stage.name, {
-				commandMs: command,
-				totalMs: total,
-				...queueFields(waited),
-				finishedAt: new Date().toISOString(),
-				failed: true,
-			});
+			finishTiming(stage, command, waited, true);
 			state.failed = true;
 			state.failureStatus ??= status;
 			return false;
@@ -202,21 +194,7 @@ export function createStageRunner({
 			for (const path of undeclared.slice(0, 10)) log(`  ${path}`);
 			if (undeclared.length > 10)
 				log(`  and ${formatCount(undeclared.length - 10)} more`);
-			const total = recordTiming(
-				stage.name,
-				stageStartedAt,
-				command,
-				false,
-				waited,
-			);
-			timings.at(-1).failed = true;
-			cache?.recordTiming(stage.name, {
-				commandMs: command,
-				totalMs: total,
-				...queueFields(waited),
-				finishedAt: new Date().toISOString(),
-				failed: true,
-			});
+			finishTiming(stage, command, waited, true);
 			state.failed = true;
 			state.failureStatus ??= 1;
 			return false;
@@ -238,20 +216,7 @@ export function createStageRunner({
 				log(`  and ${formatCount(wrongHashes.length - 10)} more`);
 		}
 		if (stage.cacheable !== false) digests.set(stage.name, digest ?? null);
-		const total = recordTiming(
-			stage.name,
-			stageStartedAt,
-			command,
-			false,
-			waited,
-		);
-		cache?.recordTiming(stage.name, {
-			commandMs: command,
-			totalMs: total,
-			...queueFields(waited),
-			finishedAt: new Date().toISOString(),
-			failed: false,
-		});
+		const total = finishTiming(stage, command, waited, false);
 		log(`${stage.name}: done in ${formatDuration(total)}`);
 		return true;
 	};
