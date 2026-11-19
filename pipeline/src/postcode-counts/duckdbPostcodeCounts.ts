@@ -16,7 +16,7 @@ export async function aggregateCounts(path: string, threads?: number) {
 		);
 		const releases = (
 			await connection.runAndReadAll(
-				"SELECT position, geography, boundaryRelease, areaColumn FROM atlas.postcode_area_releases ORDER BY position",
+				"SELECT position, geography, boundary_release, area_column FROM atlas.postcode_area_release ORDER BY position",
 			)
 		)
 			.getRows()
@@ -43,7 +43,7 @@ export async function aggregateCounts(path: string, threads?: number) {
 			);
 		}
 		await connection.run(
-			`INSERT INTO counts WITH districts AS (SELECT DISTINCT district FROM atlas.postcode_area_matches), numbered AS (SELECT p.postcode, p.terminated, p.largeUser, left(p.postcode, length(p.postcode) - 3) AS district, row_number() OVER (PARTITION BY left(p.postcode, length(p.postcode) - 3) ORDER BY p.postcode) - 1 AS idx FROM atlas.postcodes p JOIN districts d ON left(p.postcode, length(p.postcode) - 3) = d.district) SELECT m.releasePosition, a.code, count(*) FILTER (WHERE n.terminated = 0), count(*) FILTER (WHERE n.terminated <> 0), count(*) FILTER (WHERE n.terminated = 0 AND n.largeUser = '1') FROM atlas.postcode_area_matches m JOIN numbered n ON m.district = n.district AND m.postcodePosition = n.idx JOIN atlas.area_version v ON m.areaId = v.id JOIN atlas.area a ON a.id = v.area_id GROUP BY m.releasePosition, a.code`,
+			`INSERT INTO counts WITH districts AS (SELECT DISTINCT district FROM atlas.postcode_area_match), numbered AS (SELECT p.postcode, p.terminated, p.largeUser, left(p.postcode, length(p.postcode) - 3) AS district, row_number() OVER (PARTITION BY left(p.postcode, length(p.postcode) - 3) ORDER BY p.postcode) - 1 AS idx FROM atlas.postcodes p JOIN districts d ON left(p.postcode, length(p.postcode) - 3) = d.district) SELECT m.release_position, a.code, count(*) FILTER (WHERE n.terminated = 0), count(*) FILTER (WHERE n.terminated <> 0), count(*) FILTER (WHERE n.terminated = 0 AND n.largeUser = '1') FROM atlas.postcode_area_match m JOIN numbered n ON m.district = n.district AND m.postcode_position = n.idx JOIN atlas.area_version v ON m.area_id = v.id JOIN atlas.area a ON a.id = v.area_id GROUP BY m.release_position, a.code`,
 		);
 		const counts = (
 			await connection.runAndReadAll(

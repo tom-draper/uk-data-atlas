@@ -14,7 +14,7 @@ import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
-export const POSTCODE_AREA_LAYOUT = "7";
+export const POSTCODE_AREA_LAYOUT = "8";
 
 /** Refuse a database built before stored postcode coordinates were added. */
 export function requirePostcodeAreaLayout(database: SqlReader) {
@@ -32,6 +32,13 @@ export function requirePostcodeAreaLayout(database: SqlReader) {
 		);
 }
 
+/** A release stem as a snake_case column prefix: `dataZone` and `ward_2025-05` become `data_zone` and `ward_2025_05`. */
+export const columnStem = (stem: string) =>
+	stem
+		.replace(/([a-z0-9])([A-Z])/g, "$1_$2")
+		.replace(/[^A-Za-z0-9]+/g, "_")
+		.toLowerCase();
+
 export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
 	artifact.releases.map((release) => {
 		const repeated =
@@ -44,8 +51,8 @@ export const postcodeAreaColumns = (artifact: PostcodeAreasArtifact) =>
 		return {
 			...release,
 			key: releaseKey(release.geography, release.boundaryRelease),
-			area: `${stem}AreaId`,
-			distance: `${stem}DistanceCm`,
+			area: `${columnStem(stem)}_area_id`,
+			distance: `${columnStem(stem)}_distance_cm`,
 		};
 	});
 
@@ -58,14 +65,14 @@ export function distanceFallbacks(database: SqlReader) {
 	return new Map(
 		database
 			.prepare(
-				"SELECT position, distanceFallback FROM postcode_area_releases",
+				"SELECT position, distance_fallback FROM postcode_area_release",
 			)
 			.all()
 			.map((row) => [
 				Number(row.position),
-				row.distanceFallback === null
+				row.distance_fallback === null
 					? null
-					: Number(row.distanceFallback),
+					: Number(row.distance_fallback),
 			]),
 	);
 }
@@ -123,13 +130,13 @@ export function readPostcodeAreaShard(
 	for (const [position, column] of columns.entries()) {
 		const matches = database
 			.prepare(
-				"SELECT * FROM postcode_area_matches WHERE district = ? AND releasePosition = ? ORDER BY postcodePosition, position",
+				"SELECT * FROM postcode_area_match WHERE district = ? AND release_position = ? ORDER BY postcode_position, position",
 			)
 			.all(entry.district, position);
 		const ids = new Set<number>();
 		for (const row of rows)
 			if (row[column.area] !== null) ids.add(Number(row[column.area]));
-		for (const match of matches) ids.add(Number(match.areaId));
+		for (const match of matches) ids.add(Number(match.area_id));
 		const areaCodes = new Map<number, string>();
 		for (const id of ids) {
 			const code = findCode.get(id)?.code;
@@ -143,11 +150,11 @@ export function readPostcodeAreaShard(
 		const codePositions = new Map(sorted.map(([id], at) => [id, at]));
 		const several: NonNullable<PostcodeAreaColumn["several"]> = {};
 		for (const match of matches) {
-			const at = String(match.postcodePosition);
+			const at = String(match.postcode_position);
 			(several[at] ??= []).push([
-				codePositions.get(Number(match.areaId))!,
+				codePositions.get(Number(match.area_id))!,
 				match.containment as "boundary" | "interior",
-				Number(match.distanceCm),
+				Number(match.distance_cm),
 			]);
 		}
 		releases[column.key] = {

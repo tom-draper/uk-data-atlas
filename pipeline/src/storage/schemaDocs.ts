@@ -1243,7 +1243,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	postcodes: {
 		audience: "core",
 		description:
-			"Every UK postcode, live and terminated, with its location and the areas it falls in. Columns ending AreaId point at area_version.id through postcode_area_set; postcodes_decoded gives codes.",
+			"Every UK postcode, live and terminated, with its location and the areas it falls in. Columns ending _area_id point at area_version.id through postcode_area_set; postcodes_decoded gives codes.",
 		columns: {
 			postcode:
 				"The postcode in upper case with no space, such as M11AE. Strip spaces from user input before matching.",
@@ -1263,8 +1263,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		},
 		columnPatterns: [
 			{
-				pattern: "<geography>_<release>DistanceCm",
-				suffix: "DistanceCm",
+				pattern: "<geography>_<release>_distance_cm",
+				suffix: "_distance_cm",
 				description:
 					"Distance in centimetres from the postcode to the nearest boundary of its area in that release. Null when the postcode is inside it. A column without a release covers the geography's only held release.",
 			},
@@ -1277,8 +1277,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		columns: { id: "Set id." },
 		columnPatterns: [
 			{
-				pattern: "<geography>_<release>AreaId",
-				suffix: "AreaId",
+				pattern: "<geography>_<release>_area_id",
+				suffix: "_area_id",
 				description:
 					"The area the postcode falls in for that release (area_version.id), or null if outside its coverage.",
 			},
@@ -1305,36 +1305,36 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		},
 		columnPatterns: [
 			{
-				pattern: "<geography>_<release>AreaId",
-				suffix: "AreaId",
+				pattern: "<geography>_<release>_area_id",
+				suffix: "_area_id",
 				description: "As postcode_area_set.",
 			},
 			{
-				pattern: "<geography>_<release>DistanceCm",
-				suffix: "DistanceCm",
+				pattern: "<geography>_<release>_distance_cm",
+				suffix: "_distance_cm",
 				description: "As postcodes.",
 			},
 			{
-				pattern: "<geography>_<release>Code",
-				suffix: "Code",
+				pattern: "<geography>_<release>_code",
+				suffix: "_code",
 				description: "The area code for that release.",
 			},
 		],
 	},
-	postcode_area_releases: {
+	postcode_area_release: {
 		audience: "internal",
 		description: "Which postcode columns hold which geography and release.",
 		columns: {},
 	},
-	postcode_area_matches: {
+	postcode_area_match: {
 		audience: "internal",
 		description:
 			"Postcodes near a boundary that match more than one area, with containment and distance. Used by the API.",
 		columns: {},
 	},
-	postcode_area_matches_decoded: {
+	postcode_area_match_decoded: {
 		audience: "internal",
-		description: "View: postcode_area_matches with codes and names.",
+		description: "View: postcode_area_match with codes and names.",
 		columns: {},
 	},
 	postcode_area_shard_hash: {
@@ -1640,8 +1640,8 @@ export const schemaExamples: readonly SchemaExample[] = [
 	{
 		id: "postcode-lookup",
 		question: "Which council and ward is postcode M1 1AE in?",
-		sql: "SELECT postcode, latitude, longitude, \"localAuthority_2026-05-uk-bgcCode\" AS council, \"ward_2026-05-uk-bgcCode\" AS ward, terminated FROM postcodes_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
-		expect: "E08000003 (Manchester) and its 2026 ward. Postcodes are stored without a space, and column names carry the release, so quote them.",
+		sql: "SELECT postcode, latitude, longitude, local_authority_2026_05_uk_bgc_code AS council, ward_2026_05_uk_bgc_code AS ward, terminated FROM postcodes_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
+		expect: "E08000003 (Manchester) and its 2026 ward. Postcodes are stored without a space, and column names carry the release.",
 	},
 ];
 

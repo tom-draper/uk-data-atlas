@@ -14,9 +14,8 @@ import {
  * outstanding work, not a decision: the test fails when one stops matching,
  * so fixing a table means deleting its line.
  *
- * - postcode: the wide postcode tables still use camelCase and plural names
- *   (`postcodes`, `postcode_area_matches`, `postcode_area_releases`), and
- *   `postcode_area_set` has one hyphenated column per boundary release.
+ * - postcode: the wide `postcodes` table and its `postcodes_decoded` view
+ *   still use camelCase and a plural name.
  * - build metadata and payloads (#713, separation part, owned by the
  *   `refactor/build-metadata-separation` branch): artifact paths, content
  *   hashes and byte counts still sit in the domain tables listed, and
@@ -34,21 +33,8 @@ const SELECTOR_TABLES = [
 ];
 
 const CANONICAL: ConventionAllowlist = {
-	"camel-case": [
-		"postcode_area_matches.*",
-		"postcode_area_matches_decoded.*",
-		"postcode_area_releases.*",
-		"postcode_area_set.*",
-		"postcode_area_shard_hash.*",
-		"postcodes.*",
-		"postcodes_decoded.*",
-	],
-	"plural-table": [
-		"payloads",
-		"postcode_area_matches",
-		"postcode_area_releases",
-		"postcodes",
-	],
+	"camel-case": ["postcodes.*", "postcodes_decoded.*"],
+	"plural-table": ["payloads", "postcodes"],
 	"payload-table": ["payloads"],
 	"build-metadata": [
 		"area_release.artifact",
