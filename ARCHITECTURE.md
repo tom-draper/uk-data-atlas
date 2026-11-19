@@ -244,7 +244,7 @@ The orchestrator holds every stage to this:
   stage is not recorded, so it runs again. A file inside the paths of a stage
   that ran at the same time is not blamed on either, since neither can be told
   from the other. `pnpm data:build --verify-outputs` (or
-  `DATA_BUILD_VERIFY_OUTPUTS=1`; `--check-writes` is the old name) runs one
+  `DATA_BUILD_VERIFY_OUTPUTS=1`) runs one
   stage at a time, so every change is attributed, adds the raw sources to what
   is compared, and checks the hashes described below.
 

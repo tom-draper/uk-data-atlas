@@ -317,7 +317,7 @@ test("verify mode catches a stage that recorded a hash its file does not have", 
 	);
 });
 
-test("--check-writes and DATA_BUILD_VERIFY_OUTPUTS verify as well", async () => {
+test("--verify-outputs and DATA_BUILD_VERIFY_OUTPUTS verify as well", async () => {
 	const { root, write } = fixture();
 	const stray = () => {
 		write("data/build/stray.json", "{}");
@@ -326,7 +326,7 @@ test("--check-writes and DATA_BUILD_VERIFY_OUTPUTS verify as well", async () => 
 	assert.equal(
 		(
 			await runVerified(root, [alpha], stray, [
-				"--check-writes",
+				"--verify-outputs",
 				"--no-cache",
 			])
 		).status,
