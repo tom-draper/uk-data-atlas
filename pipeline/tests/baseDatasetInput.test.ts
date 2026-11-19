@@ -7,6 +7,10 @@ import { gzipSync } from "node:zlib";
 import { expect, test } from "vitest";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { readBaseDatasetInput } from "../src/catalog/baseDatasetInput.ts";
+import {
+	payloadTable,
+	writeBuildMetadata,
+} from "../src/storage/buildMetadataWriter.ts";
 
 test("reads base-database inputs and restores queryable coverage gaps", () => {
 	const root = mkdtempSync(join(tmpdir(), "base-dataset-input-"));
@@ -15,9 +19,13 @@ test("reads base-database inputs and restores queryable coverage gaps", () => {
 	const db = new DatabaseSync(join(dir, "atlas-base.sqlite"));
 	const cache = new DatabaseSync(join(dir, "atlas-cache.sqlite"));
 	try {
-		db.exec(`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT);
-			INSERT INTO payloads VALUES ('dataset-manifest', '{"datasets":[]}'), ('dataset:whole', '{"whole":true}');
-			CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT);
+		writeBuildMetadata(join(dir, "atlas-base.sqlite"), {
+			payload: payloadTable([
+				["dataset-manifest", '{"datasets":[]}'],
+				["dataset:whole", '{"whole":true}'],
+			]),
+		});
+		db.exec(`CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT);
 			INSERT INTO dataset VALUES (1, 'local-election', 'localElection', 'source', NULL), (2, 'whole', 'whole', 'hash', 'dataset:whole'), (3, 'road-collisions', 'road-collisions', 'source', NULL);
 			CREATE TABLE dataset_coverage_gap (dataset_id INTEGER, edition TEXT, kind TEXT, position INTEGER, area_code TEXT, area_name TEXT, parent_name TEXT, reason TEXT, count INTEGER);
 			INSERT INTO dataset_coverage_gap VALUES (1, '2022', 'election-ward', 0, 'E1', 'Ward', 'Council', 'ambiguous', NULL), (3, '2024', 'collision-area', 0, 'AIRPORT', NULL, NULL, NULL, 33), (3, '2024', 'collision-without-lsoa', 0, 'GB-SCT', NULL, NULL, NULL, 20);`);

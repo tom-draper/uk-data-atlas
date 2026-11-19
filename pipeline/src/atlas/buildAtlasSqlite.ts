@@ -16,7 +16,12 @@ import {
 import { writeCachePart } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
 import { datasetPayloadStep } from "../storage/index.ts";
-import { writeSqliteIndex, writeSqliteTables } from "../storage/index.ts";
+import {
+	payloadTable,
+	writeBuildMetadata,
+	writeSqliteIndex,
+	writeSqliteTables,
+} from "../storage/index.ts";
 import {
 	type LocationProjectionInventory,
 	type LocationProjectionArtifact,
@@ -41,7 +46,6 @@ import { join } from "node:path";
 import {
 	artifactDirectory,
 	closeAllReadOnlyDatabases,
-	packText,
 } from "@uk-data-atlas/atlas-db";
 import { boundaryReleaseTables } from "../storage/boundaryReleaseTables.ts";
 import { readBuildBoundaryRegistry } from "../geographies/buildBoundaryRegistry.ts";
@@ -261,10 +265,7 @@ export const buildAtlasSqlite = (
 			throw new Error(`Invalid parent projections in ${shard.artifact}`);
 		return artifact;
 	});
-	/** Payloads are stored as compressed blobs. */
-	function* payloads() {
-		for (const [id, text] of storedPayloads()) yield [id, packText(text)];
-	}
+	/** The documents the API and the build load whole, kept beside the database. */
 	function* storedPayloads() {
 		yield ["terrain-catalogue", payload] as const;
 		yield ["dataset-manifest", manifestPayload] as const;
@@ -301,12 +302,6 @@ export const buildAtlasSqlite = (
 			...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),
 			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
 			...namedLocationTables(artifactDirectory(repositoryRoot), ids),
-			payloads: {
-				strict: true,
-				columns: ["id TEXT NOT NULL", "payload BLOB NOT NULL"],
-				key: ["id"],
-				rows: payloads(),
-			},
 			...statisticsTables(
 				[
 					...statisticsInputs(
@@ -342,6 +337,7 @@ export const buildAtlasSqlite = (
 			...crosswalkInputSourceTables(repositoryRoot, ids),
 		},
 	);
+	writeBuildMetadata(path, { payload: payloadTable(storedPayloads()) });
 	const written = new DatabaseSync(path, { readOnly: true });
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)

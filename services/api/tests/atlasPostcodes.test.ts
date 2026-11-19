@@ -18,7 +18,10 @@ import { gzipSync } from "node:zlib";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { storePostcodeIndex as writePostcodeIndex } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
-import { writeEmptyPostcodeAreas } from "./atlasComponentFixtures";
+import {
+	writeBaseBuildMetadata,
+	writeEmptyPostcodeAreas,
+} from "./atlasComponentFixtures";
 import { buildPostcodeIndex } from "./pipelineFixtures";
 import { readPostcodeIndex } from "@uk-data-atlas/atlas-loader";
 import {
@@ -65,15 +68,12 @@ function fixture(t: TestContext) {
 		},
 	);
 	const path = join(root, "data/build/atlas.sqlite");
-	const database = new DatabaseSync(path);
-	database.exec(
-		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
-	);
-	database.close();
+	new DatabaseSync(path).close();
 	copyFileSync(
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
+	writeBaseBuildMetadata(root, [["dataset:existing", "retained"]]);
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
 		join(root, "data/build/statistics-read-path.json"),

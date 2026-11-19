@@ -8,6 +8,8 @@ import { hashFile } from "../lib/fileHashCache.ts";
 export function buildProvenance(
 	root: string,
 	workPath: string,
+	/** The build metadata assembled with the database, which the id also covers. */
+	buildWorkPath: string,
 ): Record<string, string> {
 	const facts: Record<string, string> = {};
 	const releasePath = join(root, "data-release.json");
@@ -45,10 +47,16 @@ export function buildProvenance(
 			);
 		facts.buildTimestamp = new Date(Number(epoch) * 1000).toISOString();
 	}
-	// The temporary assembled database predates provenance and final VACUUM.
-	// It avoids a circular file hash and changes when the assembled content does.
+	// The temporary assembled files predate provenance and final VACUUM.
+	// They avoid a circular file hash and change when the assembled content does.
 	facts.buildId = `sha256:${createHash("sha256")
-		.update(JSON.stringify({ workHash: hashFile(workPath), facts }))
+		.update(
+			JSON.stringify({
+				workHash: hashFile(workPath),
+				buildWorkHash: hashFile(buildWorkPath),
+				facts,
+			}),
+		)
 		.digest("hex")}`;
 	return facts;
 }

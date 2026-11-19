@@ -5,6 +5,10 @@ import { DatabaseSync } from "node:sqlite";
 import { expect, test } from "vitest";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { publishDatasets } from "../../src/precompile/publishDatasets.ts";
+import {
+	payloadTable,
+	writeBuildMetadata,
+} from "../../src/storage/buildMetadataWriter.ts";
 import type {
 	CatalogueDefinition,
 	CompiledDatasets,
@@ -17,15 +21,18 @@ test("publishes from base-database metadata and loads regional payloads lazily",
 	const db = new DatabaseSync(join(dir, "atlas-base.sqlite"));
 	try {
 		db.exec(
-			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT); CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT)",
+			"CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT)",
 		);
 		const manifest = {
 			datasets: [{ type: "sample", output: "sample", fingerprint: "v1" }],
 		};
 		const payload = { 2024: { data: { A: { value: 1 } } } };
-		const insert = db.prepare("INSERT INTO payloads VALUES (?, ?)");
-		insert.run("dataset-manifest", JSON.stringify(manifest));
-		insert.run("dataset:sample", JSON.stringify(payload));
+		writeBuildMetadata(join(dir, "atlas-base.sqlite"), {
+			payload: payloadTable([
+				["dataset-manifest", JSON.stringify(manifest)],
+				["dataset:sample", JSON.stringify(payload)],
+			]),
+		});
 		db.exec(
 			"INSERT INTO dataset VALUES ('sample', 'sample', 'hash', 'dataset:sample')",
 		);

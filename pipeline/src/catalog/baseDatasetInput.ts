@@ -5,20 +5,17 @@ import { gunzipSync } from "node:zlib";
 import {
 	atlasCacheFile,
 	openReadOnlyDatabase,
-	unpackText,
+	readBuildPayload,
 } from "@uk-data-atlas/atlas-db";
 import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
 
 /** Rebuild a catalogue input from the base database and its matching cache. */
 export function readBaseDatasetInput(root: string, output: string): string {
-	const db = openReadOnlyDatabase(join(root, "data/build/atlas-base.sqlite"));
+	const basePath = join(root, "data/build/atlas-base.sqlite");
+	const db = openReadOnlyDatabase(basePath);
 	try {
 		if (output === "dataset-manifest") {
-			const text = unpackText(
-				db
-					.prepare("SELECT payload FROM payloads WHERE id = ?")
-					.get(output)?.payload,
-			);
+			const text = readBuildPayload(basePath, output);
 			if (text === undefined)
 				throw new Error(
 					"Missing dataset manifest in atlas-base.sqlite",
@@ -33,11 +30,7 @@ export function readBaseDatasetInput(root: string, output: string): string {
 		if (!row || typeof row.compiled_type !== "string")
 			throw new Error(`Missing dataset ${output} in atlas-base.sqlite`);
 		if (typeof row.payload_id === "string") {
-			const text = unpackText(
-				db
-					.prepare("SELECT payload FROM payloads WHERE id = ?")
-					.get(row.payload_id)?.payload,
-			);
+			const text = readBuildPayload(basePath, row.payload_id);
 			if (text === undefined)
 				throw new Error(`Missing payload ${row.payload_id}`);
 			return text;

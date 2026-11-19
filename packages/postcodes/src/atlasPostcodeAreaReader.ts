@@ -5,8 +5,10 @@ import {
 } from "./atlasPostcodeAreaShard.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
-import { unpackText } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 
 export function readSqlitePostcodeAreas(
 	repositoryRoot: string,
@@ -18,19 +20,19 @@ export function readSqlitePostcodeAreaShard(
 	repositoryRoot: string,
 	path: string,
 ): string {
-	const database = openReadOnlyDatabase(atlasDatabasePath(repositoryRoot));
+	const databasePath = atlasDatabasePath(repositoryRoot);
+	const database = openReadOnlyDatabase(databasePath);
 	try {
 		requirePostcodeAreaLayout(database);
-		const artifact: PostcodeAreasArtifact = JSON.parse(
-			unpackText(
-				database
-					.prepare(
-						"SELECT payload FROM payloads WHERE id = 'postcode-areas'",
-					)
-					.get()!.payload,
-			)!,
-		);
-		return readPostcodeAreaShard(database, artifact, path);
+		const build = openBuildMetadata(databasePath);
+		try {
+			const artifact: PostcodeAreasArtifact = JSON.parse(
+				requireAtlasPayload(repositoryRoot, "postcode-areas"),
+			);
+			return readPostcodeAreaShard(database, build, artifact, path);
+		} finally {
+			build.release();
+		}
 	} finally {
 		database.release();
 	}

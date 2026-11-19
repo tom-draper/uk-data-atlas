@@ -14,6 +14,7 @@ import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
 import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/atlas/buildAtlasAssets";
 import { assembleAtlas } from "@/pipeline/src/atlas/assembleAtlas";
 import { readAtlasAssetText } from "@uk-data-atlas/atlas-db";
+import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
 const buildAtlasAssets = (root: string) => {
@@ -192,13 +193,7 @@ describe("SQLite website assets", () => {
 					)
 					.get(),
 			).toEqual({ n: 0 });
-			expect(
-				atlas
-					.prepare(
-						"SELECT payload FROM payloads WHERE id = 'fixture'",
-					)
-					.get()?.payload,
-			).toBe("preserved");
+			expect(readAtlasPayload(fixture.root, "fixture")).toBe("preserved");
 		} finally {
 			atlas.close();
 			assets.close();

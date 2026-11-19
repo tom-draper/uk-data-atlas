@@ -46,6 +46,11 @@ export function openBuildMetadata(
 	options: { fresh?: boolean } = {},
 ): ReadOnlyDatabase {
 	const path = buildMetadataPathOf(databasePath);
+	// Metadata describes a database, and is no use without it.
+	if (!existsSync(databasePath))
+		throw new Error(
+			`unable to open database file ${databasePath}. Run pnpm data:build.`,
+		);
 	if (!existsSync(path))
 		throw new Error(
 			`Missing build metadata ${path} for ${databasePath}. Run pnpm data:build.`,
@@ -57,8 +62,9 @@ export function openBuildMetadata(
 export function readBuildPayload(
 	databasePath: string,
 	id: string,
+	options: { fresh?: boolean } = {},
 ): string | undefined {
-	const database = openBuildMetadata(databasePath);
+	const database = openBuildMetadata(databasePath, options);
 	try {
 		return unpackText(
 			database.prepare("SELECT payload FROM payload WHERE id = ?").get(id)

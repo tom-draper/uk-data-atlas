@@ -123,12 +123,14 @@ export const apiStages = [
 		{
 			writes: [
 				"data/build/atlas-base.sqlite",
+				"data/build/atlas-base-build.sqlite",
 				cachePart("projections"),
 				cachePart("datasets"),
 			],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
 				"data/build/atlas-base.sqlite",
+				"data/build/atlas-base-build.sqlite",
 				cachePart("projections"),
 				cachePart("datasets"),
 			],
@@ -246,8 +248,14 @@ export const apiStages = [
 		["sources"],
 		["pipeline/src/stages/build-postcode-index.ts"],
 		{
-			writes: ["data/build/postcode-index.sqlite"],
-			requiredOutputs: ["data/build/postcode-index.sqlite"],
+			writes: [
+				"data/build/postcode-index.sqlite",
+				"data/build/postcode-index-build.sqlite",
+			],
+			requiredOutputs: [
+				"data/build/postcode-index.sqlite",
+				"data/build/postcode-index-build.sqlite",
+			],
 			rawInputs: postcodeInputs,
 		},
 	),
@@ -363,9 +371,15 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{
-			writes: ["data/build/atlas.sqlite"],
+			writes: [
+				"data/build/atlas.sqlite",
+				"data/build/atlas-build.sqlite",
+			],
 			rawInputs: crosswalkWeightInputs,
-			requiredOutputs: ["data/build/atlas.sqlite"],
+			requiredOutputs: [
+				"data/build/atlas.sqlite",
+				"data/build/atlas-build.sqlite",
+			],
 			// A worker is started by path, not imported, so it is listed here.
 			codeInputs: [
 				"pipeline/package.json",

@@ -12,9 +12,10 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import {
 	artifactDirectory,
+	buildMetadataPathOf,
 	closeReadOnlyDatabase,
 	packText,
-	unpackText,
+	readBuildPayload,
 } from "@uk-data-atlas/atlas-db";
 import {
 	publishVacuumed,
@@ -88,10 +89,19 @@ export function assembleAtlas(
 	// registries are the ones the base database was built with.
 	const ids = loadIdRegistries(root);
 	const temporary = `${path}.${randomUUID()}.tmp`;
+	// The build metadata is assembled beside the database the same way: the
+	// base stage's file is copied, and this stage adds its own documents.
+	const buildPath = buildMetadataPathOf(path);
+	const buildTemporary = `${buildPath}.${randomUUID()}.tmp`;
 	try {
 		copyFileSync(components[0], temporary);
+		copyFileSync(buildMetadataPathOf(components[0]), buildTemporary);
 		const database = new DatabaseSync(temporary);
+		const build = new DatabaseSync(buildTemporary);
 		try {
+			build.exec(
+				"PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
+			);
 			database
 				.prepare("ATTACH DATABASE ? AS postcode_component")
 				.run(components[1]);
@@ -114,8 +124,8 @@ export function assembleAtlas(
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
-			const insertStored = database.prepare(
-				"INSERT OR REPLACE INTO payloads (id, payload) VALUES (?, ?)",
+			const insertStored = build.prepare(
+				"INSERT OR REPLACE INTO payload (id, payload) VALUES (?, ?)",
 			);
 			const insertPayload = (id: string, text: string) =>
 				insertStored.run(id, packText(text));
@@ -128,12 +138,9 @@ export function assembleAtlas(
 					) as StatisticsReadPath,
 				),
 			);
-			const postcode = database
-				.prepare(
-					"SELECT payload FROM postcode_component.payloads WHERE id = 'postcode-index'",
-				)
-				.get();
-			if (!postcode) throw new Error("Missing postcode index payload");
+			const postcode = readBuildPayload(components[1], "postcode-index");
+			if (postcode === undefined)
+				throw new Error("Missing postcode index payload");
 			const schema = database
 				.prepare(
 					"SELECT sql FROM postcode_component.sqlite_schema WHERE type = 'table' AND name = 'postcode'",
@@ -144,10 +151,11 @@ export function assembleAtlas(
 			database.exec(
 				"INSERT INTO main.postcode SELECT * FROM postcode_component.postcode",
 			);
-			insertPayload("postcode-index", unpackText(postcode.payload)!);
+			insertPayload("postcode-index", postcode);
 			database.exec("COMMIT; PRAGMA foreign_keys = ON; BEGIN");
 			writePostcodeAreas(
 				database,
+				build,
 				postcodeAreas,
 				(name) => readPostcodeAreaComponent(root, name),
 				ids,
@@ -261,7 +269,9 @@ export function assembleAtlas(
 				writeSchemaDocs(database);
 			}
 			database.exec("COMMIT");
+			build.exec("COMMIT");
 		} finally {
+			build.close();
 			database.close();
 		}
 		const hasMeta = new DatabaseSync(temporary, { readOnly: true });
@@ -274,10 +284,17 @@ export function assembleAtlas(
 					)
 					.get()
 			)
-				provenance = buildProvenance(root, temporary);
+				provenance = buildProvenance(root, temporary, buildTemporary);
 		} finally {
 			hasMeta.close();
 		}
+		// The build metadata goes first, so a reader that finds the new
+		// database always finds the metadata it was built with.
+		publishVacuumed(buildTemporary, buildPath, {
+			atlasIdentity: false,
+			check: "integrity_check",
+			beforeReplace: () => closeReadOnlyDatabase(buildPath),
+		});
 		// The build's one vacuum of atlas.sqlite: written once beside the
 		// release, then renamed over it.
 		publishVacuumed(temporary, path, {
@@ -303,6 +320,7 @@ export function assembleAtlas(
 		ids.save();
 	} finally {
 		rmSync(temporary, { force: true });
+		rmSync(buildTemporary, { force: true });
 	}
 	for (const id of geographyCatalogues)
 		rmSync(join(artifactDirectory(root), `${id}.json`), { force: true });

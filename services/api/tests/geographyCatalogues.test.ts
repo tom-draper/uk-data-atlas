@@ -16,7 +16,10 @@ import { test, type TestContext } from "vitest";
 
 import { buildGeographyCatalogues } from "./pipelineFixtures";
 import { assembleAtlas } from "./pipelineFixtures";
-import { writeEmptyPostcodeComponent } from "./atlasComponentFixtures";
+import {
+	writeBaseBuildMetadata,
+	writeEmptyPostcodeComponent,
+} from "./atlasComponentFixtures";
 import { buildArtifactPath, geographyCatalogues } from "@uk-data-atlas/areas";
 import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import { readGeographyInventory } from "@uk-data-atlas/atlas-loader";
@@ -35,15 +38,12 @@ const fixture = (t: TestContext) => {
 	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	mkdirSync(artifactDirectory(root), { recursive: true });
-	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	database.exec(
-		"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID; INSERT INTO payloads VALUES ('dataset:existing', 'retained');",
-	);
-	database.close();
+	new DatabaseSync(join(root, "data/build/atlas.sqlite")).close();
 	copyFileSync(
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
+	writeBaseBuildMetadata(root, [["dataset:existing", "retained"]]);
 	writeEmptyPostcodeComponent(root);
 	for (const id of geographyCatalogues) {
 		const path = buildArtifactPath(root, `${id}.json`);
@@ -200,10 +200,10 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 	const { root, apiRoot } = fixture(t);
 	const path = join(root, "data/build/atlas.sqlite");
 	const database = new DatabaseSync(
-		join(root, "data/build/atlas-base.sqlite"),
+		join(root, "data/build/atlas-base-build.sqlite"),
 	);
 	database.exec(
-		"CREATE TRIGGER reject_catalogue BEFORE INSERT ON payloads WHEN NEW.id = 'analysis-geographies' BEGIN SELECT RAISE(ABORT, 'rejected catalogue'); END;",
+		"CREATE TRIGGER reject_catalogue BEFORE INSERT ON payload WHEN NEW.id = 'analysis-geographies' BEGIN SELECT RAISE(ABORT, 'rejected catalogue'); END;",
 	);
 	database.close();
 	const before = readFileSync(path);
@@ -213,6 +213,10 @@ test("a failed SQLite update keeps the previous database and removes its tempora
 		/rejected catalogue/,
 	);
 	assert.deepEqual(readFileSync(path), before);
+	assert.equal(
+		existsSync(join(root, "data/build/atlas-build.sqlite")),
+		false,
+	);
 	assert.equal(existsSync(`${path}.geography.tmp`), false);
 	assert.equal(
 		existsSync(

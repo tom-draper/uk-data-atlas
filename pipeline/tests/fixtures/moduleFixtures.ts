@@ -17,7 +17,6 @@ import { buildModules } from "../../src/modules/buildModules";
  */
 export const ATLAS_DDL = `
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID;
-CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) WITHOUT ROWID;
 CREATE TABLE source (id INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL);
 CREATE TABLE area_release (id INTEGER NOT NULL PRIMARY KEY, label TEXT NOT NULL);
 CREATE TABLE area_version (id INTEGER NOT NULL PRIMARY KEY, code TEXT NOT NULL);
@@ -89,7 +88,6 @@ INSERT INTO meta VALUES ('release', 'fixture'), ('buildId', 'fixture-build'), ('
 INSERT INTO schema_table VALUES ('crosswalk_edge_check'), ('crosswalk');
 INSERT INTO schema_column VALUES ('crosswalk_edge_check', 'match'), ('crosswalk', 'id');
 INSERT INTO crosswalk_edge_check VALUES (1, 'identical');
-INSERT INTO payloads VALUES ('catalogue', x'01'), ('postcode-index', x'0203'), ('postcode-areas', x'04');
 INSERT INTO source VALUES (1, 'ons');
 INSERT INTO area_release VALUES (1, '2024');
 INSERT INTO area_version VALUES (1, 'E01'), (2, 'E02'), (3, 'E03');

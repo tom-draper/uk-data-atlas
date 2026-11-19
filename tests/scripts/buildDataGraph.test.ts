@@ -68,6 +68,9 @@ test("the shared databases name every stage that writes them", () => {
 			)
 			.map(({ name }) => name);
 	assert.deepEqual(writers("data/build/atlas.sqlite"), ["assemble-atlas"]);
+	assert.deepEqual(writers("data/build/atlas-build.sqlite"), [
+		"assemble-atlas",
+	]);
 	assert.deepEqual(writers("data/build/atlas-cache.sqlite"), [
 		"assemble-cache",
 	]);
@@ -76,6 +79,9 @@ test("the shared databases name every stage that writes them", () => {
 		["postcode-counts"],
 	);
 	assert.deepEqual(writers("data/build/atlas-base.sqlite"), ["atlas-sqlite"]);
+	assert.deepEqual(writers("data/build/atlas-base-build.sqlite"), [
+		"atlas-sqlite",
+	]);
 	assert.deepEqual(writers("data/build/website-assets.sqlite"), [
 		"website-lookups",
 	]);
@@ -117,6 +123,7 @@ test("each stage that builds a cache component writes a part of its own, which a
 	const base = find("atlas-sqlite");
 	assert.deepEqual(base.writes, [
 		"data/build/atlas-base.sqlite",
+		"data/build/atlas-base-build.sqlite",
 		"data/build/atlas-cache-parts/projections.sqlite",
 		"data/build/atlas-cache-parts/datasets.sqlite",
 	]);

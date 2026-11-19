@@ -137,6 +137,10 @@ beforeEach(() => {
 		censusTables: [],
 	});
 	symlinkSync("atlas-base.sqlite", join(root, "data/build/atlas.sqlite"));
+	symlinkSync(
+		"atlas-base-build.sqlite",
+		join(root, "data/build/atlas-build.sqlite"),
+	);
 	// The request must work without either product's JSON copies.
 	rmSync(join(root, "data/build/datasets"), { recursive: true });
 	rmSync(artifactDirectory(root), { recursive: true });

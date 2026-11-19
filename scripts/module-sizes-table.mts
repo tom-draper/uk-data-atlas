@@ -23,8 +23,8 @@ export interface ModuleSize {
 	parquetFiles: number;
 }
 
-/** Tables that are not data: the payload store and the build's own info. */
-const NOT_DATA = new Set(["payloads", "module_info"]);
+/** Tables that are not data: the build's own info. */
+const NOT_DATA = new Set(["module_info"]);
 
 export const moduleSizes = (
 	builds: Readonly<Record<string, ModuleBuild>>,

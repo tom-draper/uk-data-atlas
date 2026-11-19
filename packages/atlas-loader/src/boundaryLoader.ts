@@ -1,5 +1,5 @@
 import { requireAtlasCache } from "@uk-data-atlas/atlas-db";
-import { unpackText } from "@uk-data-atlas/atlas-db";
+import { readStoredAtlasPayload } from "@uk-data-atlas/atlas-db";
 import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
@@ -30,7 +30,6 @@ import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
 import { publicPath } from "@uk-data-atlas/atlas-db";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 
 export const readGeographyInventory = (
 	repositoryRoot: string,
@@ -46,25 +45,14 @@ export const readTerrainCatalogue = (
 	repositoryRoot: string,
 ): TerrainCatalogue => {
 	const path = atlasDatabasePath(repositoryRoot);
-	const database = openReadOnlyDatabase(path);
-	try {
-		const row = database
-			.prepare("SELECT payload FROM payloads WHERE id = ?")
-			.get("terrain-catalogue");
-		const text = unpackText(row?.payload);
-		if (text === undefined)
-			throw new Error(`Missing terrain catalogue at ${path}`);
-		const catalogue = JSON.parse(text) as TerrainCatalogue;
-		if (
-			catalogue.schemaVersion !== 1 ||
-			!Array.isArray(catalogue.products)
-		) {
-			throw new Error(`Invalid terrain catalogue at ${path}`);
-		}
-		return catalogue;
-	} finally {
-		database.release();
+	const text = readStoredAtlasPayload(repositoryRoot, "terrain-catalogue");
+	if (text === undefined)
+		throw new Error(`Missing terrain catalogue at ${path}`);
+	const catalogue = JSON.parse(text) as TerrainCatalogue;
+	if (catalogue.schemaVersion !== 1 || !Array.isArray(catalogue.products)) {
+		throw new Error(`Invalid terrain catalogue at ${path}`);
 	}
+	return catalogue;
 };
 
 export const readAreaInventory = readSqliteAreaInventory;

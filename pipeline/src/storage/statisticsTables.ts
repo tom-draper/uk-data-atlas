@@ -166,7 +166,7 @@ export function statisticsTables(
 				"compiled_type TEXT UNIQUE",
 				"compiled_sha256 TEXT",
 				"compiled_bytes INTEGER",
-				"payload_id TEXT REFERENCES payloads(id)",
+				"payload_id TEXT",
 			],
 			key: ["id"],
 			constraints: [
