@@ -234,7 +234,7 @@ test("readers refuse a database built before postcode area sets", (t) => {
 	db.close();
 	assert.throws(
 		() => readSqlitePostcodeAreaShard(root, file),
-		/postcode area layout 6 but this code needs 7/,
+		/postcode area layout 6 but this code needs 8/,
 	);
 });
 
@@ -310,7 +310,7 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 		{
 			...db
 				.prepare(
-					"SELECT p.postcode, a.code, v.name FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.wardAreaId JOIN area a ON a.id = v.area_id",
+					"SELECT p.postcode, a.code, v.name FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id JOIN area_version v ON v.id = s.ward_area_id JOIN area a ON a.id = v.area_id",
 				)
 				.get(),
 		},
@@ -327,20 +327,22 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 	assert.equal(
 		db
 			.prepare(
-				"SELECT wardCode FROM postcodes_decoded WHERE postcode = 'M11AA'",
+				"SELECT ward_code FROM postcodes_decoded WHERE postcode = 'M11AA'",
 			)
-			.get()!.wardCode,
+			.get()!.ward_code,
 		"A",
 	);
 	// Postcodes with the same areas share one numbered set, first seen first.
 	assert.deepEqual(
 		db
-			.prepare("SELECT id, wardAreaId FROM postcode_area_set ORDER BY id")
+			.prepare(
+				"SELECT id, ward_area_id FROM postcode_area_set ORDER BY id",
+			)
 			.all()
 			.map((row) => ({ ...row })),
 		[
-			{ id: 1, wardAreaId: 1 },
-			{ id: 2, wardAreaId: null },
+			{ id: 1, ward_area_id: 1 },
+			{ id: 2, ward_area_id: null },
 		],
 	);
 	assert.deepEqual(
@@ -358,8 +360,8 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 	);
 	for (const name of [
 		"postcodes",
-		"postcode_area_releases",
-		"postcode_area_matches",
+		"postcode_area_release",
+		"postcode_area_match",
 		"postcode_area_set",
 		"postcode_area_shard_hash",
 	]) {
@@ -393,24 +395,24 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 			"largeUser",
 			"latitude",
 			"longitude",
-			"wardAreaId",
-			"wardDistanceCm",
-			"wardCode",
+			"ward_area_id",
+			"ward_distance_cm",
+			"ward_code",
 		],
 	);
 	assert.deepEqual(
 		{
 			...db
 				.prepare(
-					"SELECT wardAreaId, wardDistanceCm FROM postcodes_decoded WHERE postcode = 'M11AA'",
+					"SELECT ward_area_id, ward_distance_cm FROM postcodes_decoded WHERE postcode = 'M11AA'",
 				)
 				.get(),
 		},
-		{ wardAreaId: 1, wardDistanceCm: 1234 },
+		{ ward_area_id: 1, ward_distance_cm: 1234 },
 	);
 	assert.equal(
 		db
-			.prepare("SELECT count(*) AS n FROM postcode_area_matches_decoded")
+			.prepare("SELECT count(*) AS n FROM postcode_area_match_decoded")
 			.get()!.n,
 		2,
 	);
@@ -626,7 +628,7 @@ test("stored area corruption fails the shard hash check", (t) => {
 	storePostcodeAreas(root, compiled.artifact, (path) => texts.get(path)!);
 	const db = new DatabaseSync(path);
 	db.exec(
-		"UPDATE postcodes SET wardDistanceCm = 99 WHERE postcode = 'M11AA'",
+		"UPDATE postcodes SET ward_distance_cm = 99 WHERE postcode = 'M11AA'",
 	);
 	db.close();
 	assert.throws(
@@ -674,7 +676,7 @@ test("repeated geographies use exact releases and canonical release order", (t) 
 	assert.equal(
 		after
 			.prepare(
-				'SELECT s."ward_2025AreaId" AS old, s."ward_2026AreaId" AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?',
+				"SELECT s.ward_2025_area_id AS old, s.ward_2026_area_id AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?",
 			)
 			.get("M11AA")!.old,
 		3,
@@ -682,7 +684,7 @@ test("repeated geographies use exact releases and canonical release order", (t) 
 	assert.equal(
 		after
 			.prepare(
-				'SELECT s."ward_2025AreaId" AS old, s."ward_2026AreaId" AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?',
+				"SELECT s.ward_2025_area_id AS old, s.ward_2026_area_id AS current FROM postcodes p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE p.postcode = ?",
 			)
 			.get("M11AA")!.current,
 		1,
@@ -736,14 +738,14 @@ test("a release stores null where an earlier release has the same distance", (t)
 	assert.deepEqual(
 		after
 			.prepare(
-				"SELECT position, distanceFallback FROM postcode_area_releases ORDER BY position",
+				"SELECT position, distance_fallback FROM postcode_area_release ORDER BY position",
 			)
 			.all()
 			.map((row) => ({ ...row })),
 		[
-			{ position: 0, distanceFallback: null },
-			{ position: 1, distanceFallback: null },
-			{ position: 2, distanceFallback: 1 },
+			{ position: 0, distance_fallback: null },
+			{ position: 1, distance_fallback: null },
+			{ position: 2, distance_fallback: 1 },
 		],
 	);
 	// Stored: only the repeated, nonzero distance is null.
@@ -751,7 +753,7 @@ test("a release stores null where an earlier release has the same distance", (t)
 		{
 			...after
 				.prepare(
-					'SELECT "ward_2024DistanceCm" AS a, "ward_2025DistanceCm" AS b, "ward_2026DistanceCm" AS c FROM postcodes WHERE postcode = ?',
+					"SELECT ward_2024_distance_cm AS a, ward_2025_distance_cm AS b, ward_2026_distance_cm AS c FROM postcodes WHERE postcode = ?",
 				)
 				.get("M11AA"),
 		},
@@ -761,7 +763,7 @@ test("a release stores null where an earlier release has the same distance", (t)
 		{
 			...after
 				.prepare(
-					'SELECT "ward_2026DistanceCm" AS c FROM postcodes WHERE postcode = ?',
+					"SELECT ward_2026_distance_cm AS c FROM postcodes WHERE postcode = ?",
 				)
 				.get("M11AB"),
 		},
@@ -772,7 +774,7 @@ test("a release stores null where an earlier release has the same distance", (t)
 		{
 			...after
 				.prepare(
-					'SELECT "ward_2024DistanceCm" AS a, "ward_2025DistanceCm" AS b, "ward_2026DistanceCm" AS c FROM postcodes_decoded WHERE postcode = ?',
+					"SELECT ward_2024_distance_cm AS a, ward_2025_distance_cm AS b, ward_2026_distance_cm AS c FROM postcodes_decoded WHERE postcode = ?",
 				)
 				.get("M11AA"),
 		},

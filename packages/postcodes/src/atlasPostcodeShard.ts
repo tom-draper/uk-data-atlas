@@ -44,9 +44,9 @@ export const readSqlitePostcodeShard = (
 			]);
 			const expected = database
 				.prepare(
-					"SELECT coordinatesSha256 FROM postcode_area_shard_hash WHERE district = ?",
+					"SELECT coordinates_sha256 FROM postcode_area_shard_hash WHERE district = ?",
 				)
-				.get(entry.district)?.coordinatesSha256;
+				.get(entry.district)?.coordinates_sha256;
 			if (expected !== sha256(JSON.stringify(coordinates)))
 				throw new Error(
 					`Invalid SQLite postcode coordinates for district ${entry.district}`,

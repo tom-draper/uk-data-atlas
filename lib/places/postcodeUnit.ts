@@ -209,14 +209,14 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 		const columns = new Map(
 			database
 				.prepare(
-					"SELECT position, geography, boundaryRelease, areaColumn FROM postcode_area_releases",
+					"SELECT position, geography, boundary_release, area_column FROM postcode_area_release",
 				)
 				.all()
 				.map((row) => [
-					`${row.geography}/${row.boundaryRelease}`,
+					`${row.geography}/${row.boundary_release}`,
 					{
 						position: Number(row.position),
-						column: String(row.areaColumn),
+						column: String(row.area_column),
 					},
 				]),
 		);
@@ -234,7 +234,7 @@ export function lookupPostcodeUnit(compact: string): PostcodeUnit | undefined {
 				? undefined
 				: database
 						.prepare(
-							"SELECT a.code FROM postcode_area_matches m JOIN area_version v ON v.id = m.areaId JOIN area a ON a.id = v.area_id WHERE m.district = ? AND m.releasePosition = ? AND m.postcodePosition = ? ORDER BY m.position LIMIT 1",
+							"SELECT a.code FROM postcode_area_match m JOIN area_version v ON v.id = m.area_id JOIN area a ON a.id = v.area_id WHERE m.district = ? AND m.release_position = ? AND m.postcode_position = ? ORDER BY m.position LIMIT 1",
 						)
 						.get(district, found.position, at);
 			const code = (placed ?? edge)?.code;
