@@ -131,7 +131,11 @@ export type ReleaseGap = {
 	periodId: number;
 	period: string;
 	/** The releases that publish the period, each with its reason. */
-	sources: Array<{ release: string; reason: ReleaseGapReason; note?: string }>;
+	sources: Array<{
+		release: string;
+		reason: ReleaseGapReason;
+		note?: string;
+	}>;
 };
 
 export type ReleaseSeries = {
@@ -196,7 +200,8 @@ const publishedOf = (database: SqlReader, part: ReleaseSeriesPart) => {
 			([dimension, code]) => held.get(dimension) === code,
 		);
 		const extra = [...held.keys()].some(
-			(dimension) => !(dimension in part.dimensions) && !summed.has(dimension),
+			(dimension) =>
+				!(dimension in part.dimensions) && !summed.has(dimension),
 		);
 		if (!fixed || extra) continue;
 		kept.push({
@@ -368,7 +373,9 @@ const readQuantity = (
 				reached.add(period);
 				put(period, series.signature, {
 					kind: "gap",
-					sources: [{ release: series.release, reason: String(row.reason) }],
+					sources: [
+						{ release: series.release, reason: String(row.reason) },
+					],
 				});
 			}
 		}
@@ -386,18 +393,23 @@ const readQuantity = (
 						? rows.map((row) => ({
 								release: series.release,
 								reason: String(row.reason),
-								...(row.note === null ? {} : { note: String(row.note) }),
+								...(row.note === null
+									? {}
+									: { note: String(row.note) }),
 							}))
 						: [{ release: series.release, reason: "no-route" }];
 				})();
 		for (const period of left)
-			put(period, series.signature, { kind: "gap", sources: why.map((w) => ({ ...w })) });
+			put(period, series.signature, {
+				kind: "gap",
+				sources: why.map((w) => ({ ...w })),
+			});
 	}
 	return { cells, converted };
 };
 
 type Combined =
-	| Extract<Cell, { kind: "value" }> & { convertedIds: number[] }
+	| (Extract<Cell, { kind: "value" }> & { convertedIds: number[] })
 	| Extract<Cell, { kind: "gap" }>;
 
 const RANK: Record<ReleaseValueMethod, number> = {
@@ -411,24 +423,41 @@ const RANK: Record<ReleaseValueMethod, number> = {
  * every part holds one, else a gap that gives every part's reason.
  */
 const combine = (parts: Map<string, Cell>): Combined => {
-	const cells = [...parts.values()];
+	// A member of a sum with no source value for the area, such as a party
+	// that did not stand, is absent rather than missing, as it is when the
+	// sum is read on the source release, while another member holds a value.
+	const held = [...parts.values()];
+	const absent = (cell: Cell) =>
+		cell.kind === "gap" &&
+		cell.sources.every((source) => source.reason === "no-source-value");
+	const cells = held.some((cell) => cell.kind === "value")
+		? held.filter((cell) => !absent(cell))
+		: held;
 	const gapped = cells.filter(
 		(cell): cell is Extract<Cell, { kind: "gap" }> => cell.kind === "gap",
 	);
 	if (gapped.length > 0) {
-		const sources = new Map<string, { release: string; reason: string; note?: string }>();
+		const sources = new Map<
+			string,
+			{ release: string; reason: string; note?: string }
+		>();
 		for (const cell of gapped)
 			for (const source of cell.sources)
 				sources.set(`${source.release}|${source.reason}`, source);
 		// A source left to a better route says why only when nothing else does.
 		const reasons = [...sources.values()];
-		const told = reasons.filter((source) => source.reason !== "better-route");
+		const told = reasons.filter(
+			(source) => source.reason !== "better-route",
+		);
 		return { kind: "gap", sources: told.length > 0 ? told : reasons };
 	}
 	const values = cells as Array<Extract<Cell, { kind: "value" }>>;
 	if (values.length === 1) {
 		const [only] = values;
-		return { ...only!, convertedIds: only!.converted ? [only!.converted] : [] };
+		return {
+			...only!,
+			convertedIds: only!.converted ? [only!.converted] : [],
+		};
 	}
 	let value = 0;
 	let lower = 0;
@@ -449,12 +478,19 @@ const combine = (parts: Map<string, Cell>): Combined => {
 	return {
 		kind: "value",
 		value,
-		status: statuses.size === 1 ? [...statuses][0]! : method === "weighted" ? "estimated" : "derived",
+		status:
+			statuses.size === 1
+				? [...statuses][0]!
+				: method === "weighted"
+					? "estimated"
+					: "derived",
 		lower: bounded ? lower : null,
 		upper: bounded ? upper : null,
 		method,
 		estimated,
-		convertedIds: values.flatMap((cell) => (cell.converted ? [cell.converted] : [])),
+		convertedIds: values.flatMap((cell) =>
+			cell.converted ? [cell.converted] : [],
+		),
 	};
 };
 
@@ -478,7 +514,8 @@ const conversionOf = (database: SqlReader, series: number): ConversionRow => {
 			WHERE c.series_id = ?`,
 		)
 		.get(series);
-	if (!row) throw new Error(`Converted series ${series} has no conversion row.`);
+	if (!row)
+		throw new Error(`Converted series ${series} has no conversion row.`);
 	const crosswalks = database
 		.prepare(
 			"SELECT x.slug FROM series_crosswalk sc JOIN crosswalk x ON x.id = sc.crosswalk_id WHERE sc.series_id = ? ORDER BY sc.position",
@@ -509,7 +546,9 @@ export const readReleaseSeries = (
 	cacheKey: object = database,
 ): ReleaseSeries | undefined => {
 	const release = database
-		.prepare("SELECT id FROM area_releases WHERE geography = ? AND release = ?")
+		.prepare(
+			"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
+		)
 		.get(target.geography, target.release);
 	if (!release) return undefined;
 	const targetRelease = {
@@ -536,9 +575,21 @@ export const readReleaseSeries = (
 			.all()
 			.map((row) => [Number(row.id), String(row.start)]),
 	);
-	const value = readQuantity(database, cacheKey, spec.parts, targetRelease, area);
+	const value = readQuantity(
+		database,
+		cacheKey,
+		spec.parts,
+		targetRelease,
+		area,
+	);
 	const denominator = spec.ratio
-		? readQuantity(database, cacheKey, spec.ratio.parts, targetRelease, area)
+		? readQuantity(
+				database,
+				cacheKey,
+				spec.ratio.parts,
+				targetRelease,
+				area,
+			)
 		: undefined;
 
 	const conversions = new Map<number, ConversionRow>();
@@ -566,7 +617,12 @@ export const readReleaseSeries = (
 				JOIN observation o ON o.series_id = s.id AND o.area_version_id = ?
 				WHERE d.slug = ? AND m.slug = ? AND s.release_id = ? AND s.method = 'published'`,
 			)
-			.all(area, spec.parts[0]!.datasetId, spec.parts[0]!.measure, targetRelease.id)
+			.all(
+				area,
+				spec.parts[0]!.datasetId,
+				spec.parts[0]!.measure,
+				targetRelease.id,
+			)
 			.map((row) => Number(row.period));
 		for (const period of held)
 			if (!value.cells.has(period)) {
@@ -590,8 +646,9 @@ export const readReleaseSeries = (
 				periods.add(period);
 			}
 	}
-	const ordered = [...periods].sort((a, b) =>
-		(starts.get(a) ?? "").localeCompare(starts.get(b) ?? "") || a - b,
+	const ordered = [...periods].sort(
+		(a, b) =>
+			(starts.get(a) ?? "").localeCompare(starts.get(b) ?? "") || a - b,
 	);
 	for (const periodId of ordered) {
 		const period = periodLabel(labels.get(periodId) ?? String(periodId));
@@ -635,7 +692,9 @@ export const readReleaseSeries = (
 			}
 			const { scale, scaleQuotient } = spec.ratio;
 			const method: ReleaseValueMethod =
-				RANK[cell.method] >= RANK[under.method] ? cell.method : under.method;
+				RANK[cell.method] >= RANK[under.method]
+					? cell.method
+					: under.method;
 			cell = {
 				...cell,
 				value: scaleQuotient
@@ -658,13 +717,19 @@ export const readReleaseSeries = (
 		const releases = new Set(sources.map((s) => s.release));
 		if (releases.size > 1) {
 			gap(
-				[...releases].map((release) => ({ release, reason: "mixed-sources" })),
+				[...releases].map((release) => ({
+					release,
+					reason: "mixed-sources",
+				})),
 			);
 			continue;
 		}
 		const exactShare =
 			cell.method === "weighted" && cell.value !== 0
-				? Math.max(0, Math.min(1, 1 - cell.estimated / Math.abs(cell.value)))
+				? Math.max(
+						0,
+						Math.min(1, 1 - cell.estimated / Math.abs(cell.value)),
+					)
 				: cell.method === "weighted"
 					? 0
 					: 1;
@@ -674,7 +739,9 @@ export const readReleaseSeries = (
 			const first = sources[0]!;
 			source = {
 				release: first.release,
-				rule: sources.some((s) => s.rule === "rebuild") ? "rebuild" : "sum",
+				rule: sources.some((s) => s.rule === "rebuild")
+					? "rebuild"
+					: "sum",
 				basis: first.basis,
 				crosswalks: [...new Set(sources.flatMap((s) => s.crosswalks))],
 				seriesCoverage: Math.min(...sources.map((s) => s.coverage)),
@@ -716,7 +783,8 @@ export const readReleaseSeries = (
 			? {
 					conversion: {
 						rule: String(rule.rule),
-						reason: rule.reason === null ? null : String(rule.reason),
+						reason:
+							rule.reason === null ? null : String(rule.reason),
 					},
 				}
 			: {}),
