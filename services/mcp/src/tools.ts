@@ -164,7 +164,9 @@ export const getSeries = defineTool({
 		"`defaults` lists what the API chose for you (source geography, boundary year); repeat those when " +
 		"describing the series. A name meaning several areas fails with the choices, so pass a place reference " +
 		"from find_place. Use get_value instead for a single figure. Filter a measure's dimensions with " +
-		"`dimensions`, as in get_value.",
+		"`dimensions`, as in get_value. To read every period on today's boundaries, pass `on`, such as " +
+		"`localAuthority/2026-05-uk-bgc`: each value then says whether it is native, exactly regrouped or " +
+		"weighted, and `summary.warnings` and `gaps` say what to caveat.",
 	inputSchema: {
 		measure: z
 			.string()
@@ -195,10 +197,18 @@ export const getSeries = defineTool({
 			.describe(
 				"Choose a dataset when the measure has several for the same geography and year.",
 			),
+		on: z
+			.string()
+			.optional()
+			.describe(
+				"A standard boundary release to rebuild the series on, as `geography/release`: " +
+					"`localAuthority/2026-05-uk-bgc`, `ward/2026-05-uk-bgc`, `constituency/2024-07-uk-bgc` " +
+					"or `lsoa/2021-12-ew-bgc-v5`. `place` must then be an area of that release.",
+			),
 		dimensions: dimensionsInput,
 	},
 	run: (
-		{ measure, place, geography, codeYear, datasetId, dimensions },
+		{ measure, place, geography, codeYear, datasetId, on, dimensions },
 		client,
 	) =>
 		call(client, `/data/${segment(measure)}/series`, {
@@ -206,6 +216,7 @@ export const getSeries = defineTool({
 			geography,
 			codeYear,
 			datasetId,
+			on,
 			...dimensionQuery(dimensions),
 		}),
 });
