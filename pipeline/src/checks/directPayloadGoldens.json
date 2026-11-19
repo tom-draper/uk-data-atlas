@@ -4,7 +4,7 @@
 		"bytes": 5137280
 	},
 	"land-area": {
-		"sha256": "1ab9a3209ef9737cbb3afd51d2f6c231e4fcf3a103d4c841e07139d9a85e2738",
+		"sha256": "0623f804871677fa1078eab90b509cb63f821c4d251c06bd9528404e0b4a28bb",
 		"bytes": 58477
 	},
 	"council-tax": {
@@ -36,7 +36,7 @@
 		"bytes": 31651
 	},
 	"broadband": {
-		"sha256": "55c225945486b540ba3281e2681e944bc7e1504f67e422ad50a38ba424dc9385",
+		"sha256": "602ad31ba5ce0e9ec4e174fbd0a00690250b779b5e4f2a723f913a455d4ea4c2",
 		"bytes": 57924
 	},
 	"mobile-coverage": {
@@ -60,15 +60,15 @@
 		"bytes": 335071
 	},
 	"imd": {
-		"sha256": "903e7cffea7c392168f61be0bb4cde82bc736fb5facd862664f4c0e2df3f7f5c",
+		"sha256": "916a79b6427e380a2823368bfc4461180fe32089f823c0d17dcebcb258ae8649",
 		"bytes": 11547834
 	},
 	"income": {
-		"sha256": "73bd3fe38c9a75e7c8844372f7ba30b43a64b8eedc30e80348644dc93b75858f",
+		"sha256": "004e746643ec6b37d7457ee1cf1278cc4607ebc951cff6f1b19d02c611f9e390",
 		"bytes": 181712
 	},
 	"workplace-income": {
-		"sha256": "b50d02f9e42b7be407188ae03f5d8959e785d27b9dc4d13e867220052e4e6de8",
+		"sha256": "314a39c39fd4d9a7f2e5aff1f4deb742a4fcf24de43b50e29f9120b66316b3df",
 		"bytes": 181715
 	},
 	"claimant-count": {
@@ -108,7 +108,7 @@
 		"bytes": 823637
 	},
 	"ghg-emissions": {
-		"sha256": "219d694d537a0ff62d505e292b87655e858364a41726d315ed67e88268888b06",
+		"sha256": "a4039f4f0499a90c8af1cfc5db1605b3074b8386ce44b2667866335f7edfccd2",
 		"bytes": 2481185
 	},
 	"air-quality": {
@@ -116,11 +116,11 @@
 		"bytes": 72573
 	},
 	"pupil-absence": {
-		"sha256": "de7b69f3419766de1b5eb958982bbff682989921306ba2ade23aa4537b9b64bc",
+		"sha256": "daf4d4267f80e61e81f30c731cbc2f268ce768e2010b1e65574d084ffae1c55b",
 		"bytes": 34163
 	},
 	"qualification": {
-		"sha256": "7469ddb73261699096036a971a67f27e1e8044cbf746219e068533e849203d3b",
+		"sha256": "54481848d5c5a4cb379b752476f7426296503d3be1b9e6fad545895ac516401f",
 		"bytes": 63545
 	},
 	"school-performance": {
@@ -132,19 +132,19 @@
 		"bytes": 376794
 	},
 	"general-health": {
-		"sha256": "09c60d9e098d88a13249c61c20f71a5372f2aedcd2293de500b5081ed500663f",
+		"sha256": "154287303379de63e4ca732bb90ca0a370ef25bcb257d3a29f14d8dbf0f44397",
 		"bytes": 6658148
 	},
 	"housing-tenure": {
-		"sha256": "8934fdbc11a7d6107e9262e914050c7451351220c7b0871541296a8265e93027",
+		"sha256": "aa0b5a48e77b9f01bbf327c6c538ef45fe1825c6dced0ff3f87424235de89b2c",
 		"bytes": 7153907
 	},
 	"life-expectancy": {
-		"sha256": "5ecbcc4528bd63c9ea5d9a44c6a152d048f80f5f5eec8ee946dbb7d0a6c2fb16",
+		"sha256": "89e95841f1d50b663fd1a7dbf0cd6ab79fd301da7c3261e7645ab94c211278ad",
 		"bytes": 60555
 	},
 	"life-expectancy-series": {
-		"sha256": "2c099c49acfdd5f6a44cec28886b16390e51ad846fcb681a155ecd13bb8909f0",
+		"sha256": "b16ebec049c066a202f7c78c59a239b551c8c800770490caa33dfdb537699aef",
 		"bytes": 1247085
 	},
 	"homelessness": {
@@ -156,7 +156,7 @@
 		"bytes": 4255518
 	},
 	"crime": {
-		"sha256": "b90e8fde5a4da6f39338de8d8700dfc8e8cafe92743cde05dc3e907a925dedde",
+		"sha256": "4ca6d0cecbafc20c8bb33af52a196f459476c11efadfab087cde5e4d5c8c3a0b",
 		"bytes": 463783
 	},
 	"child-poverty": {
@@ -172,7 +172,7 @@
 		"bytes": 113484
 	},
 	"ethnicity": {
-		"sha256": "b171993f609f6cd64cad6e065c7f9bdf572a108ad1134129fa2e4d2921b3bfb3",
+		"sha256": "314a62b181d747ef1216ad591c641089c560a7368c14167140cb1235226f8fc6",
 		"bytes": 590656
 	},
 	"population-uk": {
@@ -180,11 +180,11 @@
 		"bytes": 6532310
 	},
 	"car-availability": {
-		"sha256": "201a74c392764ecb0009227342259ce35284a84e835e0e9b17088c29e3805fca",
+		"sha256": "31e2a69c67f1ab6a5da06f75087c8fa7d316bfd5764a228da1b9d7ff833c0db6",
 		"bytes": 44564
 	},
 	"travel-to-work": {
-		"sha256": "627a065dad024df38fab7fd0d0a7e15e5734b7f4083ed6a698f43e12c66978db",
+		"sha256": "b5b8e544497abba9632f439920cd1940c3ac4d2c8173e5935d831accc548094a",
 		"bytes": 63897
 	},
 	"road-collisions": {
@@ -192,7 +192,7 @@
 		"bytes": 4689665
 	},
 	"brexit": {
-		"sha256": "5634d6873e314cbc0be8d50d7356d3fc5041929713c85ff5e8513ae6026b51c9",
+		"sha256": "001d8ea33a9f345a9ce0de1326c957a48387089b9bd1abb55915ec71b70721cf",
 		"bytes": 104393
 	},
 	"brexit-constituency": {
@@ -200,15 +200,15 @@
 		"bytes": 78357
 	},
 	"general-election": {
-		"sha256": "fb0e430ca658325cce6e2b91acea64e7bef9fbb107b9a0151e5494e65e88b00f",
+		"sha256": "431b0866163c35ae762552c3575e6ec7bea1bca2d8c7413f36c7f6e33fe4125d",
 		"bytes": 1587386
 	},
 	"historical-general-election": {
-		"sha256": "8b0898595ee234d3c0388fe1180367224a7c629099ab00085e984a26d4c3622a",
+		"sha256": "ad7724feb380603e4999fb5e6fa661acfe87783c17da9be97999af561f802f80",
 		"bytes": 4792783
 	},
 	"local-election": {
-		"sha256": "52a0b1adf955c6728bdf171c5ff2143c01799f672db706bfbd2efeb54df99200",
+		"sha256": "ff7e89cc6aa6a91d9b185063d1e311a2e37cbd7a0c55ba2f0453e978feec01ef",
 		"bytes": 6900208
 	},
 	"public-health": {
