@@ -211,6 +211,40 @@ memory budget and the stages that run alone hold at every start.
 With several jobs, each output line is prefixed with `[stage]`, and `--plan`
 ends with the waves of stages that can run together and the critical path.
 
+### Why a custom build core
+
+The build is about 4,100 lines of Node in `pipeline/build-data*.mjs`. A standard
+tool was weighed against it and none replaced it, because the stages need
+five things together and no tool supplies them:
+
+- a stage digest made from the contents of its outputs, so a stage that
+  rewrites the same bytes leaves what reads it cached;
+- raw inputs chosen per stage from `data/source` metadata, not from globs;
+- a code hash that follows the imports esbuild resolves;
+- memory-aware admission, with a smaller stage allowed ahead of a waiting one
+  only when it cannot delay it;
+- the ownership audit of what each stage wrote.
+
+| Option                      | What it lacks for this build                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| Make, Ninja (generated)     | Cuts off on mtime, not content; no memory resource; needs a generator and a wrapper      |
+| just                        | No dependency caching                                                                    |
+| Snakemake                   | Mtime triggers; memory resources without backfill; adds Python to dev, CI and the server |
+| DVC                         | Static paths only and no parallel `repro`; `dvc.lock` would record about 7,700 files     |
+| Nx, Turborepo, Wireit, Moon | Keys on declared globs, so any code change reruns every dependant                        |
+| Bazel, Dagster, Airflow     | Sandboxes against in-place outputs, and a rewrite of 54 stages                           |
+
+A tool that did fit would still leave the declarations, input selectors, code
+hashing and audit to write, as a generator plus a wrapper of about the same
+size as the scheduling and argument code it would delete. Only about 1,000
+lines are generic orchestration. The rest is what this repository's stages need.
+
+What the build cannot do yet is run on a fresh machine, which a build off the
+server needs (#711). Raw inputs are keyed on size and mtime, so a new download
+invalidates every key, and a hit leaves outputs where they are, so a runner
+cannot restore them. Keying on the hashes in `.source-release.json` and storing
+outputs by content are the two changes that would close that gap.
+
 ### Stage ownership
 
 A stage owns the paths it declares, in `writes` beside its `outputs` and
@@ -390,7 +424,10 @@ release is tracked for precompile fingerprinting and when imported or declared. 
 documentation and unimported shared code are excluded unless declared.
 Ordinary UI files are excluded unless a builder imports them.
 Builders that read code or templates directly from disk declare those paths in
-`codeInputs` in the build graph. Include worker entry points there too. Added and
+`codeInputs` in the build graph. Include worker entry points there too. A stage
+that declares none is keyed on `pipeline/package.json` and
+`pipeline/tsconfig.json`; one that declares a list replaces that default, so it
+names those two files itself when it needs them. Added and
 removed files under declared directories change the cache key. Generated files
 are tracked as stage outputs rather than bundled as code inputs. Unresolved
 local imports fail the check rather than reuse a stale result.
