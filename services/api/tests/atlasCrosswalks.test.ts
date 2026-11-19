@@ -22,7 +22,10 @@ import {
 } from "@uk-data-atlas/relationships";
 import { writeSqliteIndex } from "./pipelineFixtures";
 import { crosswalkArtifact, crosswalkInventory } from "./routeFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 import {
 	buildModuleManifests,
 	CORE_COMPATIBILITY_KEY,
@@ -356,6 +359,9 @@ test("crosswalk edges rebuild artifacts with zero weights, labels and empty targ
 		modules: [manifest.id],
 		out: assembled,
 	});
+	// The reader checks each crosswalk against its build metadata, which the
+	// assembled modules do not carry, so the serving fixture's file stands in.
+	copyFileSync(buildMetadataPathOf(path), buildMetadataPathOf(assembled));
 	const servingLookup = readCrosswalkLookup(root, inventory, 0, path);
 	const assembledLookup = readCrosswalkLookup(root, inventory, 0, assembled);
 	for (const item of inventory.crosswalks) {

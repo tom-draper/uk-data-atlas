@@ -11,7 +11,10 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { readCrosswalkLookup } from "@uk-data-atlas/relationships";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 
 const entry = (id: string, geography: string) => ({
 	id,
@@ -158,9 +161,13 @@ test("refuses a missing database and stale SQLite artifact", () => {
 		artifact(directory, "ward-to-lad");
 		store(directory, inventory);
 		const database = new DatabaseSync(
-			join(directory, "../../data/build/atlas.sqlite"),
+			buildMetadataPathOf(
+				join(directory, "../../data/build/atlas.sqlite"),
+			),
 		);
-		database.prepare("UPDATE crosswalk SET content_hash = 'stale'").run();
+		database
+			.prepare("UPDATE crosswalk_build SET content_hash = 'stale'")
+			.run();
 		database.close();
 		assert.throws(
 			() =>

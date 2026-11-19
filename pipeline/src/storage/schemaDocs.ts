@@ -885,13 +885,9 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			weighting: "JSON description of how weights were computed, if any.",
 			basis_id:
 				"The crosswalk's main weight basis (weight_basis.id), or null.",
-			record_count: "Number of source areas.",
-			artifact: "Internal path of the compiled crosswalk.",
-			content_hash: "Hash of the compiled crosswalk.",
 			provenance:
 				"JSON: sources and inputs the crosswalk was built from.",
 			validation: "JSON: checks run on the crosswalk and their results.",
-			bytes: "Internal: size of the compiled crosswalk in bytes.",
 		},
 	},
 	crosswalk_edge: {

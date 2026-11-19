@@ -167,7 +167,7 @@ export function assembleAtlas(
 						"SELECT value FROM weights_component.meta WHERE key = 'crosswalk_inventory_hash'",
 					)
 					.get();
-				if (component?.value !== crosswalkSetHash(database))
+				if (component?.value !== crosswalkSetHash(database, build))
 					throw new Error(
 						"The crosswalk weights were computed for other crosswalks: rebuild crosswalk-weights",
 					);

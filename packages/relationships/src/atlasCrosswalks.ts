@@ -82,6 +82,7 @@ export const readSqliteCrosswalkInventory = (
 		const build = openBuildMetadata(databasePath);
 		let header;
 		let coverage: unknown[] = [];
+		let built = new Map<string, Record<string, unknown>>();
 		try {
 			header = build
 				.prepare(
@@ -93,6 +94,14 @@ export const readSqliteCrosswalkInventory = (
 					"SELECT geography, boundary_release AS boundaryRelease, area_count AS areaCount, related_area_count AS relatedAreaCount FROM crosswalk_coverage_entry ORDER BY position",
 				)
 				.all();
+			built = new Map(
+				build
+					.prepare(
+						"SELECT slug, record_count AS recordCount, artifact, content_hash AS contentHash FROM crosswalk_build",
+					)
+					.all()
+					.map((row) => [row.slug as string, row]),
+			);
 		} finally {
 			build.release();
 		}
@@ -103,26 +112,31 @@ export const readSqliteCrosswalkInventory = (
 				"SELECT c.*, f.geography AS fromGeography, f.release AS fromRelease, t.geography AS toGeography, t.release AS toRelease FROM crosswalk c JOIN area_release f ON f.id = c.from_release_id JOIN area_release t ON t.id = c.to_release_id ORDER BY c.inventory_position",
 			)
 			.all()
-			.map((row) => ({
-				id: row.slug,
-				from: {
-					geography: row.fromGeography,
-					boundaryRelease: row.fromRelease,
-				},
-				to: {
-					geography: row.toGeography,
-					boundaryRelease: row.toRelease,
-				},
-				method: row.method,
-				quality: row.quality,
-				...(row.purpose === null
-					? {}
-					: { relationshipPurpose: row.purpose }),
-				weighting: JSON.parse(row.weighting as string),
-				recordCount: row.record_count,
-				artifact: row.artifact,
-				contentHash: row.content_hash,
-			}));
+			.map((row) => {
+				const artifact = built.get(row.slug as string);
+				if (!artifact)
+					throw new Error(`Missing crosswalk build row ${row.slug}`);
+				return {
+					id: row.slug,
+					from: {
+						geography: row.fromGeography,
+						boundaryRelease: row.fromRelease,
+					},
+					to: {
+						geography: row.toGeography,
+						boundaryRelease: row.toRelease,
+					},
+					method: row.method,
+					quality: row.quality,
+					...(row.purpose === null
+						? {}
+						: { relationshipPurpose: row.purpose }),
+					weighting: JSON.parse(row.weighting as string),
+					recordCount: artifact.recordCount,
+					artifact: artifact.artifact,
+					contentHash: artifact.contentHash,
+				};
+			});
 		return {
 			schemaVersion: 1,
 			contentHash: header.contentHash,
@@ -172,7 +186,18 @@ export const readSqliteCrosswalk = (
 				"SELECT c.*, f.geography AS from_geography, f.release AS from_release, t.geography AS to_geography, t.release AS to_release FROM crosswalk c JOIN area_release f ON f.id = c.from_release_id JOIN area_release t ON t.id = c.to_release_id WHERE c.slug = ?",
 			)
 			.get(expected.id);
-		if (!row || row.content_hash !== expected.contentHash)
+		const build = openBuildMetadata(databasePath);
+		let built;
+		try {
+			built = build
+				.prepare(
+					"SELECT content_hash AS contentHash, bytes FROM crosswalk_build WHERE slug = ?",
+				)
+				.get(expected.id);
+		} finally {
+			build.release();
+		}
+		if (!row || !built || built.contentHash !== expected.contentHash)
 			throw new Error(`Invalid crosswalk artifact ${expected.id}`);
 		const id = row.id as number;
 		const basis = row.basis_id as string | null;
@@ -273,9 +298,9 @@ export const readSqliteCrosswalk = (
 					? {}
 					: { validation: JSON.parse(row.validation as string) }),
 				records,
-				contentHash: row.content_hash,
+				contentHash: built.contentHash,
 			} as CrosswalkArtifact,
-			bytes: row.bytes as number,
+			bytes: built.bytes as number,
 		};
 	} finally {
 		database.release();

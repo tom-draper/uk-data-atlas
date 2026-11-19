@@ -212,8 +212,12 @@ export const crosswalkTables = (
 				throw new Error(
 					`Crosswalk ${entry.id} has inconsistent ${key}`,
 				);
-		return { artifact, bytes: Buffer.byteLength(text) };
+		const bytes = Buffer.byteLength(text);
+		sizes.set(entry.id, bytes);
+		return { artifact, bytes };
 	};
+	/** The stored size of each artifact, noted as `read` checks it. */
+	const sizes = new Map<string, number>();
 	const basisOf = (entry: CrosswalkInventory["crosswalks"][number]) => {
 		const weighting = entry.weighting as { status: string; basis?: string };
 		if (weighting.status !== "provided") return null;
@@ -242,7 +246,7 @@ export const crosswalkTables = (
 			inventoryPosition,
 			entry,
 		] of inventory.crosswalks.entries()) {
-			const { artifact, bytes } = read(entry);
+			const { artifact } = read(entry);
 			const allowed = new Set([
 				"schemaVersion",
 				"id",
@@ -271,16 +275,12 @@ export const crosswalkTables = (
 				entry.relationshipPurpose ?? null,
 				JSON.stringify(entry.weighting),
 				basisOf(entry),
-				entry.recordCount,
-				entry.artifact,
-				entry.contentHash,
 				artifact.provenance === undefined
 					? null
 					: JSON.stringify(artifact.provenance),
 				artifact.validation === undefined
 					? null
 					: JSON.stringify(artifact.validation),
-				bytes,
 			];
 		}
 	}
@@ -473,12 +473,8 @@ export const crosswalkTables = (
 				"purpose TEXT CHECK (purpose IN ('identity', 'membership'))",
 				"weighting TEXT NOT NULL",
 				"basis_id TEXT REFERENCES weight_basis(id)",
-				"record_count INTEGER NOT NULL",
-				"artifact TEXT NOT NULL",
-				"content_hash TEXT NOT NULL",
 				"provenance TEXT",
 				"validation TEXT",
-				"bytes INTEGER NOT NULL",
 			],
 			key: ["id"],
 			rows: headers,
@@ -488,6 +484,28 @@ export const crosswalkTables = (
 					columns: ["from_release_id", "to_release_id"],
 				},
 			],
+		},
+		// What each crosswalk artifact was built from, kept beside the
+		// database: its path, hash, record count and stored size.
+		crosswalk_build: {
+			build: true,
+			strict: true,
+			columns: [
+				"slug TEXT NOT NULL",
+				"record_count INTEGER NOT NULL",
+				"artifact TEXT NOT NULL",
+				"content_hash TEXT NOT NULL",
+				"bytes INTEGER NOT NULL",
+			],
+			key: ["slug"],
+			rows: () =>
+				inventory.crosswalks.map((entry) => [
+					entry.id,
+					entry.recordCount,
+					entry.artifact,
+					entry.contentHash,
+					sizes.get(entry.id) ?? read(entry).bytes,
+				]),
 		},
 		crosswalk_edge: {
 			strict: true,
