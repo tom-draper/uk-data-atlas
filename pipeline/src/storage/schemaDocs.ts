@@ -164,12 +164,12 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			inventory_position:
 				"Build order of the release. Not stable between builds.",
 			status: "'available' if the release's areas are held, otherwise 'unavailable' with a reason.",
-			recordCount: "Number of areas in the release's boundary file.",
+			record_count: "Number of areas in the release's boundary file.",
 			artifact: "Internal path of the compiled boundary file.",
-			contentHash: "Hash of the compiled boundary file.",
-			codeProperty: "Name of the code field in the publisher's file.",
-			nameProperty: "Name of the name field in the publisher's file.",
-			derivedFrom:
+			content_hash: "Hash of the compiled boundary file.",
+			code_property: "Name of the code field in the publisher's file.",
+			name_property: "Name of the name field in the publisher's file.",
+			derived_from:
 				"JSON describing how the release was derived from another source, if it was. Null otherwise.",
 			reason: "Why an unavailable release is not held. Null for available releases.",
 		},
