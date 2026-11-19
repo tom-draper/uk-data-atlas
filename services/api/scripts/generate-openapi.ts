@@ -2,11 +2,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { renderOpenapi } from "../src/contract/renderOpenapi";
 
+const base = fileURLToPath(new URL("../openapi.base.yaml", import.meta.url));
 const file = fileURLToPath(new URL("../openapi.yaml", import.meta.url));
-const source = readFileSync(file, "utf8");
-const output = await renderOpenapi(source);
+const output = await renderOpenapi(readFileSync(base, "utf8"));
 if (process.argv.includes("--check")) {
-	if (source !== output) {
+	if (readFileSync(file, "utf8") !== output) {
 		console.error(
 			"openapi.yaml is stale. Run pnpm --dir services/api generate:openapi.",
 		);
