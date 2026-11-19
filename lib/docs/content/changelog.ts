@@ -29,6 +29,13 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-19",
+		title: "Time series on one boundary release",
+		changes: [
+			"`GET /v1/data/{measure}/series` takes `on=geography/release` for one of the standard releases (`localAuthority/2026-05-uk-bgc`, `ward/2026-05-uk-bgc`, `constituency/2024-07-uk-bgc`, `lsoa/2021-12-ew-bgc-v5`) and returns every period of the measure on it. Each value gives its `method` (`native`, `exact` or `weighted`) and, when converted, its `source` release, rule, basis and crosswalks. `summary` counts the periods by method and lists warnings, and `gaps` says why a period has no value. Requests without `on` are unchanged.",
+		],
+	},
+	{
 		date: "2026-11-17",
 		title: "Crosswalk checks available as a module",
 		surface: "4e9130821397",
