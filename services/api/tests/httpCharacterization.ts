@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { request as httpRequest } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { TestContext } from "vitest";
 import { createApiServer } from "../src/apiServer";
@@ -33,6 +34,12 @@ export type CharacterizedRequest = {
 	body?: string | Uint8Array;
 	/** Tells apart requests that share a method and path; a body names one. */
 	label?: string;
+	/**
+	 * Send the path exactly as written. `fetch` resolves dot segments and
+	 * refuses malformed escapes before the request leaves, so those paths can
+	 * only reach the server this way.
+	 */
+	raw?: boolean;
 };
 
 export type CharacterizedResponse = {
@@ -58,41 +65,93 @@ export const startCharacterization = async (
 		server.close();
 	});
 	const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-	return async ({
-		path,
-		method = "GET",
-		headers,
-		body,
-	}: CharacterizedRequest): Promise<CharacterizedResponse> => {
-		const response = await fetch(`${base}${path}`, {
-			method,
-			redirect: "manual",
-			headers: { "accept-encoding": "identity", ...headers },
-			body: body as BodyInit | undefined,
-		});
-		const bytes = Buffer.from(await response.arrayBuffer());
+	const describe = (
+		status: number,
+		headers: Iterable<[string, string]>,
+		bytes: Buffer,
+	): CharacterizedResponse => {
 		const text = bytes.toString("utf8");
 		const isText = !text.includes("�");
 		const seen: string[] = [];
-		for (const [name, value] of [...response.headers].sort(([a], [b]) =>
+		const present = new Set<string>();
+		for (const [name, value] of [...headers].sort(([a], [b]) =>
 			a < b ? -1 : 1,
-		))
+		)) {
+			present.add(name);
 			if (
 				!VOLATILE.has(name) &&
 				name !== "content-length" &&
 				COMMON[name] !== value
 			)
 				seen.push(`${name}: ${value}`);
+		}
 		for (const name of Object.keys(COMMON))
-			if (!response.headers.has(name)) seen.push(`!${name}`);
+			if (!present.has(name)) seen.push(`!${name}`);
 		return {
-			status: response.status,
+			status,
 			headers: seen,
 			body: isText
 				? text
 				: `sha256:${createHash("sha256").update(bytes).digest("hex")}`,
 			bytes: bytes.length,
 		};
+	};
+	const { port } = server.address() as AddressInfo;
+	const sendRaw = ({
+		path,
+		method = "GET",
+		headers,
+		body,
+	}: CharacterizedRequest) =>
+		new Promise<CharacterizedResponse>((resolve, reject) => {
+			const outgoing = httpRequest(
+				{
+					host: "127.0.0.1",
+					port,
+					path,
+					method,
+					headers: { "accept-encoding": "identity", ...headers },
+				},
+				(response) => {
+					const chunks: Buffer[] = [];
+					response.on("data", (chunk: Buffer) => chunks.push(chunk));
+					response.on("end", () =>
+						resolve(
+							describe(
+								response.statusCode ?? 0,
+								Object.entries(response.headers).map(
+									([name, value]) => [
+										name,
+										Array.isArray(value)
+											? value.join(", ")
+											: String(value),
+									],
+								),
+								Buffer.concat(chunks),
+							),
+						),
+					);
+				},
+			);
+			outgoing.on("error", reject);
+			outgoing.end(body);
+		});
+	return async (
+		request: CharacterizedRequest,
+	): Promise<CharacterizedResponse> => {
+		if (request.raw) return sendRaw(request);
+		const { path, method = "GET", headers, body } = request;
+		const response = await fetch(`${base}${path}`, {
+			method,
+			redirect: "manual",
+			headers: { "accept-encoding": "identity", ...headers },
+			body: body as BodyInit | undefined,
+		});
+		return describe(
+			response.status,
+			response.headers,
+			Buffer.from(await response.arrayBuffer()),
+		);
 	};
 };
 
