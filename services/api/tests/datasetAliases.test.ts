@@ -6,7 +6,7 @@ import {
 	REGISTERED_DATASETS,
 } from "@uk-data-atlas/datasets/registry";
 import { resolveDatasetAliases } from "../src/datasetAliasRequests";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { dataCatalog, registry, testContext } from "./routeFixtures";
 
 test("every alias names a registered dataset and never reuses a live id", () => {

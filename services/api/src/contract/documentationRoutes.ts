@@ -1,3 +1,5 @@
+import { bound } from "./routeBinding";
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { handleOpenapiRoutes } from "../openapiRoutes";
@@ -14,7 +16,7 @@ export const documentationRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			route,
-			() => {
+			bound(() => {
 				const answer = handleOpenapiRoutes({
 					context,
 					releaseId:
@@ -28,7 +30,7 @@ export const documentationRoutes: FastifyPluginAsync<{
 				});
 				if (!answer) throw new Error(`No response for ${route.path}`);
 				return answer;
-			},
+			}, bindings.openapi),
 			dispatch,
 		);
 	}

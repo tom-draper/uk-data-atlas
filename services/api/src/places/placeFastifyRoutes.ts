@@ -3,6 +3,7 @@ import {
 	registerGetRoute,
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
+import { bindings } from "../routeHandlers";
 import { registerPostRoute } from "../contract/registerPostRoute";
 import {
 	legacyPostRoute,
@@ -19,18 +20,21 @@ export const placeFastifyRoutes: FastifyPluginAsync<{
 	context: ServiceContext;
 	dispatch?: ContractDispatch;
 }> = async (app, { context, dispatch }) => {
-	for (const contract of [placesContract, postcodeContract])
+	for (const [contract, binding] of [
+		[placesContract, bindings.places],
+		[postcodeContract, bindings.postcodes],
+	] as const)
 		registerGetRoute(
 			app,
 			context,
 			contract,
-			legacyRoute(context),
+			legacyRoute(context, binding),
 			dispatch,
 		);
 	registerPostRoute(
 		app,
 		postcodeBatchContract,
-		legacyPostRoute(context),
+		legacyPostRoute(context, bindings.postcodesBatch),
 		dispatch,
 	);
 };

@@ -8,6 +8,7 @@ import type {
 } from "../runtime/index.ts";
 import { httpResponse } from "../httpResponse";
 import { sendFastifyResponse } from "../fastifyResponse";
+import { boundTo } from "./routeBinding";
 import { validateResponse } from "./validateResponse";
 
 type GetRoute = {
@@ -61,6 +62,7 @@ export const registerGetRoute = (
 		path,
 		{
 			exposeHeadRoute: true,
+			config: boundTo(handle),
 			schema: {
 				...metadata,
 				response: {

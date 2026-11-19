@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import {
 	registerGetRoute,
@@ -20,22 +21,22 @@ export const areaDetailFastifyRoutes: FastifyPluginAsync<{
 	context: ServiceContext;
 	dispatch?: ContractDispatch;
 }> = async (app, { context, dispatch }) => {
-	for (const contract of [
-		areaContract,
-		areaRelationshipsContract,
-		areaHistoryContract,
-		areaParentsContract,
-		areaChildrenContract,
-		areaChildrenGeometryContract,
-		areaNeighboursContract,
-		areaOverlapContract,
-		areaGeometryContract,
-	])
+	for (const [contract, binding] of [
+		[areaContract, bindings.areaIdentity],
+		[areaRelationshipsContract, bindings.areaRelationships],
+		[areaHistoryContract, bindings.areaHistory],
+		[areaParentsContract, bindings.areaRelationships],
+		[areaChildrenContract, bindings.areaRelationships],
+		[areaChildrenGeometryContract, bindings.areaChildGeometry],
+		[areaNeighboursContract, bindings.areaNeighbours],
+		[areaOverlapContract, bindings.areaOverlap],
+		[areaGeometryContract, bindings.areaGeometry],
+	] as const)
 		registerGetRoute(
 			app,
 			context,
 			contract,
-			legacyRoute(context),
+			legacyRoute(context, binding),
 			dispatch,
 		);
 };

@@ -1,3 +1,5 @@
+import { bound } from "../contract/routeBinding";
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type {
 	RouteContextFor,
@@ -14,7 +16,7 @@ import {
 	boundaryReleases,
 	boundaries,
 } from "./boundaryContract";
-import { route } from "../routes";
+import { legacyRoute } from "../contract/legacyHandler";
 import { listBoundaryReleases, listBoundaries } from "./boundaryRoutes";
 
 export const boundaryFastifyRoutes: FastifyPluginAsync<{
@@ -29,7 +31,7 @@ export const boundaryFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			definition,
-			() => {
+			bound(() => {
 				if (!context.geographyResolver)
 					throw new Error("Geography resolver is unavailable");
 				return handler(
@@ -40,7 +42,7 @@ export const boundaryFastifyRoutes: FastifyPluginAsync<{
 					context.atlasRelease?.releaseId ??
 						context.boundaryRegistry.contentHash,
 				);
-			},
+			}, bindings.boundaries),
 			dispatch,
 		);
 	}
@@ -53,20 +55,7 @@ export const boundaryFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			definition,
-			(request) => {
-				if (
-					!context.geographyResolver ||
-					!context.areaValidation ||
-					!context.postcodes
-				)
-					throw new Error("Geography services are unavailable");
-				return route("GET", request.url, {
-					...context,
-					geographyResolver: context.geographyResolver,
-					areaValidation: context.areaValidation,
-					postcodes: context.postcodes,
-				});
-			},
+			legacyRoute(context, bindings.boundaries),
 			dispatch,
 		);
 };

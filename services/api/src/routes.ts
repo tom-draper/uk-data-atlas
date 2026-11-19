@@ -1,5 +1,10 @@
 import { unexpectedQueryParameter } from "./runtime/index.ts";
-import { handleRoute, handleRouteAsync } from "./routeHandlers";
+import {
+	bindings,
+	handleRoute,
+	handleRouteAsync,
+	type RouteBinding,
+} from "./routeHandlers";
 import type {
 	RequestBody,
 	RouteDispatchContext,
@@ -90,9 +95,25 @@ const buildRequest = (
 				targetSegments[1] === "data" &&
 				decodePathSegment(targetSegments[2] ?? "") === segments[2]
 			) {
-				return routeSeries("GET", nextUrl, context, undefined, series);
+				return routeSeries(
+					"GET",
+					nextUrl,
+					context,
+					undefined,
+					series,
+					undefined,
+					bindings.dataSeries,
+				);
 			}
-			return routeSeries("GET", nextUrl, context);
+			return routeSeries(
+				"GET",
+				nextUrl,
+				context,
+				undefined,
+				undefined,
+				undefined,
+				bindings.dataSeries,
+			);
 		},
 	};
 };
@@ -105,6 +126,7 @@ const routeSeries = (
 	body?: RequestBody,
 	series?: Series,
 	measureSeries?: RouteRequest["measureSeries"],
+	binding?: RouteBinding,
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
 	const request = buildRequest(
@@ -116,7 +138,7 @@ const routeSeries = (
 		measureSeries,
 	);
 	if ("status" in request) return request;
-	return handleRoute(request) ?? notFound();
+	return handleRoute(request, binding) ?? notFound();
 };
 
 const routeSeriesAsync = async (
@@ -126,9 +148,18 @@ const routeSeriesAsync = async (
 	body?: RequestBody,
 	series?: Series,
 	measureSeries?: RouteRequest["measureSeries"],
+	binding?: RouteBinding,
 ): Promise<ApiResponse> => {
 	if (method !== "GET" && method !== "POST")
-		return routeSeries(method, url, context, body, series, measureSeries);
+		return routeSeries(
+			method,
+			url,
+			context,
+			body,
+			series,
+			measureSeries,
+			binding,
+		);
 	const request = buildRequest(
 		method,
 		url,
@@ -138,7 +169,7 @@ const routeSeriesAsync = async (
 		measureSeries,
 	);
 	if ("status" in request) return request;
-	return (await handleRouteAsync(request)) ?? notFound();
+	return (await handleRouteAsync(request, binding)) ?? notFound();
 };
 
 /**
@@ -171,11 +202,20 @@ const routeResolved = (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	binding?: RouteBinding,
 ): ApiResponse => {
 	const resolved = resolveDimensionRequest(url ?? "/", context);
 	switch (resolved.kind) {
 		case "unchanged":
-			return routeSeries(method, url, context, body);
+			return routeSeries(
+				method,
+				url,
+				context,
+				body,
+				undefined,
+				undefined,
+				binding,
+			);
 		case "problem":
 			return resolved.response;
 		case "rewritten":
@@ -190,6 +230,7 @@ const routeResolved = (
 						measureId: measure.id,
 						series,
 					})),
+					binding,
 				),
 				resolved.location,
 			);
@@ -201,6 +242,8 @@ const routeResolved = (
 					context,
 					body,
 					resolved.series,
+					undefined,
+					binding,
 				),
 				resolved.series,
 				resolved.reading,
@@ -215,6 +258,8 @@ const routeResolved = (
 						context,
 						body,
 						series,
+						undefined,
+						binding,
 					),
 				})),
 				resolved.reading,
@@ -227,11 +272,20 @@ const routeResolvedAsync = async (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	binding?: RouteBinding,
 ): Promise<ApiResponse> => {
 	const resolved = resolveDimensionRequest(url ?? "/", context);
 	switch (resolved.kind) {
 		case "unchanged":
-			return routeSeriesAsync(method, url, context, body);
+			return routeSeriesAsync(
+				method,
+				url,
+				context,
+				body,
+				undefined,
+				undefined,
+				binding,
+			);
 		case "problem":
 			return resolved.response;
 		case "rewritten":
@@ -246,6 +300,7 @@ const routeResolvedAsync = async (
 						measureId: measure.id,
 						series,
 					})),
+					binding,
 				),
 				resolved.location,
 			);
@@ -257,6 +312,8 @@ const routeResolvedAsync = async (
 					context,
 					body,
 					resolved.series,
+					undefined,
+					binding,
 				),
 				resolved.series,
 				resolved.reading,
@@ -272,6 +329,8 @@ const routeResolvedAsync = async (
 							context,
 							body,
 							series,
+							undefined,
+							binding,
 						),
 					})),
 				),
@@ -286,19 +345,24 @@ const aliasedLocation = (response: ApiResponse, url: string): ApiResponse =>
 const releaseOf = (context: RouteDispatchContext): string =>
 	context.atlasRelease?.releaseId ?? context.boundaryRegistry.contentHash;
 
-/** Route a request, first resolving any retired dataset id it names. */
+/**
+ * Route a request, first resolving any retired dataset id it names. The
+ * binding is the handler of the route the request matched; with none, the
+ * request matched no route and is answered as not found.
+ */
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	binding?: RouteBinding,
 ): ApiResponse => {
 	const aliased = resolveDatasetAliases(url ?? "/", () => releaseOf(context));
 	if (aliased.kind === "redirect") return aliased.response;
 	if (aliased.kind === "unchanged")
-		return routeResolved(method, url, context, body);
+		return routeResolved(method, url, context, body, binding);
 	return aliasedLocation(
-		routeResolved(method, aliased.url, context, body),
+		routeResolved(method, aliased.url, context, body, binding),
 		aliased.url,
 	);
 };
@@ -308,13 +372,14 @@ export const routeAsync = async (
 	url: string | undefined,
 	context: RouteDispatchContext,
 	body?: RequestBody,
+	binding?: RouteBinding,
 ): Promise<ApiResponse> => {
 	const aliased = resolveDatasetAliases(url ?? "/", () => releaseOf(context));
 	if (aliased.kind === "redirect") return aliased.response;
 	if (aliased.kind === "unchanged")
-		return routeResolvedAsync(method, url, context, body);
+		return routeResolvedAsync(method, url, context, body, binding);
 	return aliasedLocation(
-		await routeResolvedAsync(method, aliased.url, context, body),
+		await routeResolvedAsync(method, aliased.url, context, body, binding),
 		aliased.url,
 	);
 };

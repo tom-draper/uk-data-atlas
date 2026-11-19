@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { httpResponse } from "../../src/httpResponse";
 import { isStoredFile } from "../../src/runtime/index.ts";
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";
 import { readParquet } from "../parquetFixtures";
 import { decodeTile } from "../vectorTileFixtures";

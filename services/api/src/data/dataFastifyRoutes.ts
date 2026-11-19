@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import {
 	registerGetRoute,
@@ -18,20 +19,20 @@ export const dataFastifyRoutes: FastifyPluginAsync<{
 	context: ServiceContext;
 	dispatch?: ContractDispatch;
 }> = async (app, { context, dispatch }) => {
-	for (const contract of [
-		dataObservationsContract,
-		dataConvertContract,
-		dataSeriesContract,
-		dataRankingsContract,
-		dataValueContract,
-		dataChangeContract,
-		dataCompareContract,
-	])
+	for (const [contract, binding] of [
+		[dataObservationsContract, bindings.data],
+		[dataConvertContract, bindings.dataConversion],
+		[dataSeriesContract, bindings.dataSeries],
+		[dataRankingsContract, bindings.dataRankings],
+		[dataValueContract, bindings.dataValue],
+		[dataChangeContract, bindings.dataChange],
+		[dataCompareContract, bindings.dataTransforms],
+	] as const)
 		registerGetRoute(
 			app,
 			context,
 			contract,
-			legacyRoute(context),
+			legacyRoute(context, binding),
 			dispatch,
 		);
 };

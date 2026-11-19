@@ -14,7 +14,7 @@ import {
 	readAtlasPayload,
 } from "@uk-data-atlas/catalogue/node";
 import { PROBLEM_CODES } from "../../src/runtime/index.ts";
-import { route as domainRoute } from "../../src/routes";
+import { route as domainRoute } from "../boundRoute";
 import { indexResponse } from "../../src/indexRoutes";
 import { GEOMETRY_TIERS } from "@uk-data-atlas/map-tiles";
 import { readApiCatalogues } from "../../src/server";

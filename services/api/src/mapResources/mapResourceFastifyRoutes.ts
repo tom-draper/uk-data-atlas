@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import {
 	registerGetRoute,
@@ -34,7 +35,7 @@ export const mapResourceFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			contract,
-			legacyRoute(context),
+			legacyRoute(context, bindings.mapResources),
 			dispatch,
 		);
 	// A full-detail download may wait for the file to be built.
@@ -42,7 +43,7 @@ export const mapResourceFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		mapResourceFeaturesContract,
-		legacyRouteAsync(context),
+		legacyRouteAsync(context, bindings.mapResources),
 		dispatch,
 	);
 };

@@ -11,7 +11,7 @@ import {
 	preflightResponse,
 } from "../../src/httpResponse";
 import type { ApiResponse } from "../../src/runtime/index.ts";
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";
 
 const ok: ApiResponse = {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "vitest";
 import { parse } from "yaml";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { indexResponse } from "../src/indexRoutes";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 

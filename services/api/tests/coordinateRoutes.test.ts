@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { LookupPoint } from "../src/pointLookup";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 
 const get = (url: string) =>

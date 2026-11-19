@@ -1,9 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
-import {
-	handleAtlasLookupRoutes,
-	handleAtlasPageRoutes,
-} from "./atlasAssetRoutes";
+import { bindings } from "../routeHandlers";
 import {
 	registerGetRoute,
 	type ContractDispatch,
@@ -20,14 +17,14 @@ export const atlasAssetFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		atlasLookupContract,
-		legacyHandler(context, handleAtlasLookupRoutes),
+		legacyHandler(context, bindings.atlasLookups),
 		dispatch,
 	);
 	registerGetRoute(
 		app,
 		context,
 		atlasPageContract,
-		legacyHandler(context, handleAtlasPageRoutes),
+		legacyHandler(context, bindings.atlasPages),
 		dispatch,
 	);
 };

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import {

@@ -1,3 +1,5 @@
+import { collectOwners } from "./contract/fallbackRoutes";
+import { legacyPostRoute } from "./contract/legacyHandler";
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
 import { atlasAssetFastifyRoutes } from "./atlas/atlasAssetFastifyRoutes";
@@ -723,7 +725,13 @@ export const createApiServer = (
 			entry.reject(error);
 		}
 	};
-	fastify.setNotFoundHandler((request, reply) => dispatch(request, reply));
+	const ownerOf = collectOwners(fastify);
+	fastify.setNotFoundHandler((request, reply) => {
+		const owner = ownerOf(request.url.split("?")[0]!);
+		if (!owner) return dispatch(request, reply);
+		const answer = legacyPostRoute(catalogues, owner);
+		return dispatch(request, reply, (body) => answer(request, body));
+	});
 	void fastify.register(documentationRoutes, {
 		prefix: "/v1",
 		context: catalogues,

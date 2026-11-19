@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "vitest";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";
 
 /**

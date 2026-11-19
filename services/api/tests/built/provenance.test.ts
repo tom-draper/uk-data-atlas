@@ -12,7 +12,7 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";
 import {
 	measureSeriesKey,

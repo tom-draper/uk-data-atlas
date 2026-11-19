@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { handleOpenapiRoutes } from "../src/openapiRoutes";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { testContext } from "./routeFixtures";

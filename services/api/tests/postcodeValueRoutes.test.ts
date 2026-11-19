@@ -21,7 +21,7 @@ import {
 	registerSeriesObservations,
 	postcodeAreaReleases,
 } from "@uk-data-atlas/measures";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	postcodeAreaIndexFor,

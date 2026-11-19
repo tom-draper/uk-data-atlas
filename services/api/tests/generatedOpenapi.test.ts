@@ -5,7 +5,7 @@ import { test } from "vitest";
 import { parse } from "yaml";
 import { schemaViolations } from "./openapiSchema";
 import { generatedPaths } from "../src/contract/generatedRoutes";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 import { renderOpenapi } from "../src/contract/renderOpenapi";
 

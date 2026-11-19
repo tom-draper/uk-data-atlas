@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { identityDimensions } from "@uk-data-atlas/measures";
 import { createAreaLookup } from "@uk-data-atlas/areas";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import {
 	dataCatalog,
 	combineObservations,

@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import {
 	registerGetRoute,
@@ -14,7 +15,7 @@ export const translationFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		translationContract,
-		legacyRoute(context),
+		legacyRoute(context, bindings.translations),
 		dispatch,
 	);
 };

@@ -9,7 +9,7 @@ import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type { ApiResponse } from "../src/runtime/index.ts";
 import { areaLookup, containmentCrosswalk, testContext } from "./routeFixtures";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";

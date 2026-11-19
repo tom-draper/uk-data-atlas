@@ -8,7 +8,7 @@ import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 
 // A country of two squares a hundredth of a degree across, England below

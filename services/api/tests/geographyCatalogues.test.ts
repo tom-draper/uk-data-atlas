@@ -26,7 +26,7 @@ import {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
 } from "@uk-data-atlas/atlas-loader";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 

@@ -10,7 +10,7 @@ import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { NORTHERN_IRELAND_EXCLUSION } from "@uk-data-atlas/geography";
 import { toWgs84Point } from "@uk-data-atlas/geography";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	postcodeAreaIndexFor,

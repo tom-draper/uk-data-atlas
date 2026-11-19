@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { gzipSync } from "node:zlib";
 import { readAtlasPages } from "@uk-data-atlas/atlas-db";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 

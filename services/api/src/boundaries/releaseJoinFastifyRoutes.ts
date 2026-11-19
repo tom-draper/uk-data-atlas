@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { ContractDispatch } from "../contract/registerGetRoute";
 import { registerPostRoute } from "../contract/registerPostRoute";
@@ -14,7 +15,7 @@ export const releaseJoinFastifyRoutes: FastifyPluginAsync<{
 	registerPostRoute(
 		app,
 		releaseJoinContract,
-		legacyPostRoute(context),
+		legacyPostRoute(context, bindings.releaseJoin),
 		dispatch,
 	);
 };

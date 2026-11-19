@@ -1,6 +1,6 @@
 import { handleGovernanceRoutes } from "../src/runtime/index.ts";
 import { handleAnalysisGeographyRoutes } from "../src/analysis/analysisGeographyRoutes";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type {
 	RouteDispatchContext,
 	RouteRequest,

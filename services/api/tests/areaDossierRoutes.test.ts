@@ -8,7 +8,7 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import {
 	compatibleWardAreaLookup,
 	registry,

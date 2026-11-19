@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import { z } from "zod";
 import type { ApiResponse, RequestBody } from "../runtime/index.ts";
 import type { ContractDispatch } from "./registerGetRoute";
+import { boundTo } from "./routeBinding";
 import { validateResponse } from "./validateResponse";
 
 type PostRoute = {
@@ -42,6 +43,7 @@ export const registerPostRoute = (
 	app.post(
 		path,
 		{
+			config: boundTo(handle),
 			schema: {
 				...metadata,
 				response: {

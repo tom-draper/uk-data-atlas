@@ -7,7 +7,7 @@ import {
 	measureSeriesKeySourceKey,
 	registerSeriesObservations,
 } from "@uk-data-atlas/measures";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import {
 	createNamedLocationLookup,

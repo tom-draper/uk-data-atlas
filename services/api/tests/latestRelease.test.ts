@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { areaLookup, registry, testContext } from "./routeFixtures";
 
 // An older release beside the fixture's, so `latest` has a choice to make.

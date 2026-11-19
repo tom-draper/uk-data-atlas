@@ -26,7 +26,7 @@ import {
 	storedPostcodePoints,
 } from "@uk-data-atlas/postcodes";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { parsePostcode } from "@uk-data-atlas/geography";
 import type { PostcodeSourceRow } from "./pipelineFixtures";
 import {

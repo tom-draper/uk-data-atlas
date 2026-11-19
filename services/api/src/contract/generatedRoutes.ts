@@ -162,7 +162,7 @@ import {
 import { mapResourceFastifyRoutes } from "../mapResources/mapResourceFastifyRoutes";
 import { measureExportRoutes } from "../data/measureExportRoutes";
 import { measureExportMetadata } from "../data/measureExportContract";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
 import { z } from "zod";
 import {
 	datasets,
@@ -189,8 +189,12 @@ import { openapiDescription } from "./openapiDescription";
 import { rootRoutes } from "./rootRoutes";
 import { rootMetadata } from "./rootMetadata";
 
-export const createContractApp = async (context: RouteContextFor<never>) => {
+export const createContractApp = async (
+	context: RouteContextFor<never>,
+	setup?: (app: FastifyInstance) => void,
+) => {
 	const app = Fastify({ exposeHeadRoutes: false });
+	setup?.(app);
 	await app.register(swagger, {
 		openapi: {
 			openapi: "3.1.0",

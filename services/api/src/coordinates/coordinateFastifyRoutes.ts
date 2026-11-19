@@ -5,7 +5,7 @@ import {
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
 import { legacyHandler } from "../contract/legacyHandler";
-import { handleCoordinateRoutes } from "./coordinateRoutes";
+import { bindings } from "../routeHandlers";
 import { coordinateContract } from "./coordinateContract";
 
 export const coordinateFastifyRoutes: FastifyPluginAsync<{
@@ -16,7 +16,7 @@ export const coordinateFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		coordinateContract,
-		legacyHandler(context, handleCoordinateRoutes),
+		legacyHandler(context, bindings.coordinates),
 		dispatch,
 	);
 };
