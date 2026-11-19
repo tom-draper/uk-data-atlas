@@ -222,8 +222,28 @@ test("a mean is rebuilt over the weight it names", () => {
 	);
 });
 
-test("a source the target already publishes is skipped", () => {
+test("a period the target already publishes stays native, the others convert", () => {
+	// The source holds 2023 and 2024. The target publishes 2024 alone.
+	database.exec("INSERT INTO period VALUES (2, '2023', '2023-01-01')");
+	database.exec(
+		"INSERT INTO observation SELECT series_id, area_version_id, 2, value * 2, status_id FROM observation WHERE series_id = 1 AND period_id = 1",
+	);
 	publish(1, "people", 11, [[20, 1]]);
+	skips.length = 0;
+	const [series] = converted("people");
+	assert.deepEqual(skips, []);
+	assert.equal(series!.periods, 1);
+	assert.deepEqual(
+		series!.observations.map((o) => [o.area, o.period, o.value]),
+		[
+			[20, 2, 800],
+			[21, 2, 100],
+		],
+	);
+	database.exec("DELETE FROM observation WHERE period_id = 2");
+});
+
+test("a source the target already publishes for every period is skipped", () => {
 	skips.length = 0;
 	assert.deepEqual(converted("people"), []);
 	assert.deepEqual(skips, [

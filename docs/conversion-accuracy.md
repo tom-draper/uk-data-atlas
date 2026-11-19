@@ -438,7 +438,7 @@ the number of published series it would have been:
 | `no-route`            | 3,375  | No chain of at most seven crosswalks reaches the target.               |
 | `refused-measure`     | 1,242  | The measure's rule is `refuse`. `measure_conversion` gives the reason. |
 | `no-values`           | 79     | The route splits every value, and a split of this measure is refused.  |
-| `published-on-target` | 53     | The target release already holds the series.                           |
+| `published-on-target` | 53     | The target release already holds the series for every period it has.   |
 | `missing-component`   | 22     | A ratio lacks its numerator, denominator or a weighted mean's weight.  |
 | `better-route`        | 90     | Another source holds every value for the same area and period.         |
 

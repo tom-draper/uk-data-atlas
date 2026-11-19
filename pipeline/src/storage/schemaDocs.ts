@@ -709,7 +709,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The release it is published on (area_releases.id).",
 			target_release_id:
 				"The standard release it was not moved to (area_releases.id).",
-			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be split and splitting is refused), published-on-target (already published there), missing-component (a ratio lacks its numerator, denominator or weight), better-route (every value it would give for a target area and period came from a better source, kept in its place).",
+			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be split and splitting is refused), published-on-target (already published there for every period it holds; a source with other periods is converted for those alone), missing-component (a ratio lacks its numerator, denominator or weight), better-route (every value it would give for a target area and period came from a better source, kept in its place).",
 			series: "Number of published series affected.",
 		},
 	},
