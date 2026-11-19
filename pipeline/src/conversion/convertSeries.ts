@@ -17,6 +17,7 @@ import type { ConversionRule } from "./rules.ts";
 import {
 	periodsOfSeries,
 	publishedSeries,
+	type PeriodRow,
 	type SeriesRow,
 } from "./seriesValues.ts";
 
@@ -166,7 +167,11 @@ export const readErrorFactors = (backtest: DatabaseSync): ErrorFactors => {
 
 /** Why a published series was not converted onto the plan entry's target. */
 export type SkipReason =
-	/** The target release already holds a published series for the same measure and members. */
+	/**
+	 * The target release already publishes the same measure and members for
+	 * every period the source holds. A source that holds other periods too is
+	 * converted for those alone.
+	 */
 	| "published-on-target"
 	/** A rebuilt ratio or mean lacks a published numerator, denominator or weight to be rebuilt from. */
 	| "missing-component"
@@ -186,19 +191,28 @@ export type ConversionContext = {
 export const convertedKey = (sourceKey: string, target: string) =>
 	`${sourceKey}~converted:${target}`;
 
-/** The members of the published series a release holds for a dataset's measure. */
-const membersPublished = (
+/**
+ * The periods a release publishes for a dataset's measure, by the members of
+ * each series.
+ */
+const periodsPublished = (
 	database: DatabaseSync,
 	entry: PlanEntry,
 	release: number,
-) =>
-	new Set(
-		publishedSeries(database, {
-			dataset: entry.source.dataset,
-			measure: entry.source.measure,
-			release,
-		}).map((series) => series.members),
-	);
+) => {
+	const published = new Map<string, Set<number>>();
+	for (const series of publishedSeries(database, {
+		dataset: entry.source.dataset,
+		measure: entry.source.measure,
+		release,
+	})) {
+		const held = published.get(series.members) ?? new Set<number>();
+		for (const period of periodsOfSeries(database, series.id))
+			held.add(period.id);
+		published.set(series.members, held);
+	}
+	return published;
+};
 
 /** Only observed values are converted. A flagged or empty one is a missing input. */
 const observedValues = (
@@ -300,12 +314,22 @@ function* convertSources(
 			measure,
 			release: from,
 		});
-	const onTarget = membersPublished(database, entry, to);
+	const onTarget = periodsPublished(database, entry, to);
 	const skip = (source: SeriesRow, reason: SkipReason) =>
 		context.skipped?.(entry, source, reason);
+	// A period the target publishes stays native there. Only the others are
+	// converted, so a series is skipped only when the target holds them all.
+	const periodsToConvert = new Map<SeriesRow, PeriodRow[]>();
 	const sources = seriesOf(entry.source.measure).filter((series) => {
 		if (entry.members && !entry.members.test(series.members)) return false;
-		if (!onTarget.has(series.members)) return true;
+		const native = onTarget.get(series.members);
+		const periods = periodsOfSeries(database, series.id).filter(
+			(period) => !native?.has(period.id),
+		);
+		if (periods.length > 0) {
+			periodsToConvert.set(series, periods);
+			return true;
+		}
 		skip(series, "published-on-target");
 		return false;
 	});
@@ -334,7 +358,7 @@ function* convertSources(
 	for (const source of sources) {
 		const observations: ConvertedObservation[] = [];
 		const gaps: SeriesGap[] = [];
-		const periods = periodsOfSeries(database, source.id);
+		const periods = periodsToConvert.get(source)!;
 		const base = {
 			planId: entry.id,
 			key: convertedKey(source.key, entry.target),
