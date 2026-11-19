@@ -237,8 +237,16 @@ export function assembleAtlas(
 				copyNotionalMetrics(database, ids);
 				copyLocalNotionalSeries(database, ids);
 			}
-			// After every series is in: the default view ranks them.
-			writeDefaultObservation(database);
+			// After every series is in: the default view ranks them. An atlas
+			// built without statistics has no series to rank.
+			if (
+				database
+					.prepare(
+						"SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'measure'",
+					)
+					.get()
+			)
+				writeDefaultObservation(database);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
 			if (placeProducts) {
