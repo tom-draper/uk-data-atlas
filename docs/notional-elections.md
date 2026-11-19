@@ -246,11 +246,11 @@ Liberal Democrat, Green and Reform. The same fit the local backtest uses
 regresses squared error on the square of the at-risk share within each region
 and party (2,512 estimates):
 
-| Prior                 | RMSE, changed seats | Implied factor | 95% interval |
-| --------------------- | ------------------- | -------------- | ------------ |
-| Main                  | 6.72                | 0.33           | 0.23 to 0.39 |
-| Open                  | 6.65                | 0.32           | 0.22 to 0.38 |
-| Baseline              | 6.60                | 0.29           | 0.21 to 0.35 |
+| Prior                 | RMSE, changed seats | Implied factor | 95% interval  |
+| --------------------- | ------------------- | -------------- | ------------- |
+| Main                  | 6.72                | 0.33           | 0.23 to 0.39  |
+| Open                  | 6.65                | 0.32           | 0.22 to 0.38  |
+| Baseline              | 6.60                | 0.29           | 0.21 to 0.35  |
 | 2017 to 2019, placebo | 3.71                | 0.06           | -0.07 to 0.12 |
 
 The intervals come from resampling seats. Derived seats have an RMSE of 6.15.
