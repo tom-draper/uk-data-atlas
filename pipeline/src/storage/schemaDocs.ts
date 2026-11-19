@@ -62,7 +62,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "published-and-converted",
-		body: "series.method is 'published' for figures as the publisher released them, or 'converted' for figures the atlas moved onto a newer boundary release through a crosswalk. A converted series names its inputs in series_input, its route in series_crosswalk, and its rule, weight basis and quality in series_conversion: exact_share is the share of its values that came from regrouping whole areas (1 = no estimation), and coverage is the share of target areas that received a value. Converted values have status 'derived' (exact regrouping) or 'estimated' (split by a weight, with lower and upper bounds). series_gap says why a converted area or period has no value. A question about one area on one boundary release should usually use one method; when both exist, prefer published, and say when a figure is converted.",
+		body: "series.method is 'published' for figures as the publisher released them, or 'converted' for figures the atlas moved onto a newer boundary release through a crosswalk. A converted series names its inputs in series_input, its route in series_crosswalk, and its rule, weight basis and quality in series_conversion: exact_share is the share of its values that came from regrouping whole areas (1 = no estimation), and coverage is the share of target areas that received a value. Converted values have status 'derived' (exact regrouping) or 'estimated' (split by a weight, with lower and upper bounds). series_gap says why a converted area or period has no value. A question about one area on one boundary release should usually use one method; when both exist, prefer published, and say when a figure is converted. A 'modelled' series is an estimate the atlas made from several sources, named by its model in series_model: model says what it is, the share-alike licence it carries (licence_id), and model_input what it read. The notional 2019 general election on the 2024 constituencies is modelled, with key suffix ~notional-open or ~notional-sharealike; a seat made of whole 2019 seats has 'derived' values, any other 'estimated' values with bounds. Say when a figure is modelled, and do not mix the two notional models.",
 	},
 	{
 		topic: "periods-and-status",
@@ -478,17 +478,17 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	series: {
 		audience: "core",
 		description:
-			"One dataset's values for one measure and one set of dimension members, on one boundary release. Either published as released or converted onto another release.",
+			"One dataset's values for one measure and one set of dimension members, on one boundary release. Published as released, converted onto another release, or modelled from several sources.",
 		columns: {
 			id: "Stable integer id.",
 			dataset_id: "The dataset (dataset.id).",
 			measure_id: "The measure (measure.id).",
 			release_id:
 				"The boundary release its areas are on (area_releases.id).",
-			method: "published (as the publisher released it) or converted (moved onto release_id through crosswalks by the atlas).",
+			method: "published (as the publisher released it), converted (moved onto release_id through crosswalks by the atlas) or modelled (estimated by the atlas from several sources, see series_model).",
 			derived_from_id:
-				"For a converted series, the published series it came from (series.id). series_input lists every input.",
-			key: "Readable unique key: dataset/measure/geography:release/dimension=member..., with ~converted:geography:release appended for converted series.",
+				"For a converted or modelled series, the published series it came from (series.id). series_input lists every input of a converted series, model_input those of a modelled one.",
+			key: "Readable unique key: dataset/measure/geography:release/dimension=member..., with ~converted:geography:release appended for converted series and ~model:geography:release for modelled ones.",
 		},
 	},
 	series_member: {
@@ -539,7 +539,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			upper: "Upper bound, or null.",
 			category: "Category member code for category measures, or null.",
 			status: "Status slug.",
-			method: "published or converted.",
+			method: "published, converted or modelled.",
 			licence: "The source's licence as written.",
 		},
 	},
@@ -684,6 +684,38 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			area_version_id: "The area with no value (area_version.id).",
 			period_id: "The period (period.id).",
 			reason: "missing-input (a source area had no observed value), no-weight (the crosswalk has no weight on the basis), unmeasured-split (the value would be split in a way the backtest has not measured for this measure), not-carried (no crosswalk on the route reaches this area), no-denominator (a rebuilt ratio's denominator is not above zero), better-route (a better source holds this area and period for the same measure and members, so this series' own value was dropped).",
+		},
+	},
+	model: {
+		audience: "reference",
+		description:
+			"Each model the atlas estimates modelled series with, such as a notional election on new boundaries.",
+		columns: {
+			id: "Model slug, also the suffix of its series' keys.",
+			label: "What the model estimates.",
+			licence_id:
+				"The share-alike licence an input is under, which the model's values carry too, or null when none is.",
+			bound_factor:
+				"The factor the bounds of its estimated values are drawn with: a value's lower and upper are the value less and plus this times the votes it moved between areas by estimate.",
+			about: "How the model works, in brief.",
+		},
+	},
+	model_input: {
+		audience: "reference",
+		description:
+			"What each model read: series keys and source files, by role.",
+		columns: {
+			model_id: "The model (model.id).",
+			role: "What the input is for, such as 'general election' or 'local election 2019-05-02'.",
+			key: "A series key or a source file path with what was read from it.",
+		},
+	},
+	series_model: {
+		audience: "reference",
+		description: "The model each modelled series is from.",
+		columns: {
+			series_id: "The modelled series (series.id).",
+			model_id: "The model (model.id).",
 		},
 	},
 	measure_conversion: {
