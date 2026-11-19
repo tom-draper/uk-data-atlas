@@ -2,10 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 import {
-	BACKFILL_MARGIN,
 	blockersOf,
 	conflicts,
-	expectedDurationMs,
 	priorityOrder,
 	runSchedule,
 	stageMemoryMb,
@@ -36,8 +34,6 @@ type Run = {
 	memoryMb?: number;
 	/** How long each stage really takes. */
 	took: Record<string, number>;
-	/** What the scheduler is told to expect; a stage left out is unknown. */
-	expected?: Record<string, number | null | undefined>;
 	/** Stages whose command fails. */
 	failing?: string[];
 	order?: Stage[];
@@ -52,7 +48,6 @@ async function replay({
 	jobs = 8,
 	memoryMb = Infinity,
 	took,
-	expected = took,
 	failing = [],
 	order = stages,
 }: Run) {
@@ -78,7 +73,6 @@ async function replay({
 		jobs,
 		memoryMb,
 		clock: () => now,
-		expectedMs: (entry: Stage) => expected[entry.name] ?? null,
 		settle: () => true,
 		run: (
 			entry: Stage,
@@ -144,125 +138,21 @@ async function replay({
 	return { started, ended, waits, peakMb, finished };
 }
 
-test("a small stage starts while a large one waits, and the large one is not delayed", async () => {
+test("a stage that waits for memory is not passed by smaller stages that would fit", async () => {
 	const stages = [
 		stage("running", 2000),
 		stage("large", 3000),
-		stage("small", 1000),
+		stage("small", 500),
 	];
-	const took = { running: 100, large: 100, small: 50 };
 	const result = await replay({
 		stages,
 		memoryMb: 4000,
-		order: [stages[0]!, stages[1]!, stages[2]!],
-		took,
+		took: { running: 100, large: 100, small: 10 },
 	});
-	// The small stage fits beside the running one and is done before the large
-	// stage can start, so the large stage starts the moment it could anyway.
-	assert.equal(result.started.get("small"), 0);
+	assert.equal(result.started.get("running"), 0);
 	assert.equal(result.started.get("large"), 100);
-	// Without backfilling the small stage would only start after the large one.
-	const strict = await replay({
-		stages,
-		memoryMb: 4000,
-		order: stages,
-		took,
-		expected: {},
-	});
-	assert.equal(strict.started.get("large"), 100);
-	assert.ok(strict.started.get("small")! >= 100);
-});
-
-test("a stage that would still run when the waiting one could start stays back, unless there is room for both", async () => {
-	const stages = [
-		stage("running", 2000),
-		stage("large", 3000),
-		stage("long-small", 1500),
-		stage("long-tiny", 1000),
-	];
-	const took = {
-		running: 100,
-		large: 100,
-		"long-small": 500,
-		"long-tiny": 500,
-	};
-	const result = await replay({ stages, memoryMb: 4000, took });
-	// 1500 MB beside the large stage would not fit in 4000 MB, so it waits.
-	assert.ok(result.started.get("long-small")! >= result.ended.get("large")!);
-	assert.equal(result.started.get("large"), 100);
-	// 1000 MB leaves room for the large stage even while it still runs.
-	assert.equal(result.started.get("long-tiny"), 0);
-});
-
-test("a stage is backfilled only when its recorded time, with a margin, fits before the waiting one starts", async () => {
-	const stages = [
-		stage("running", 2000),
-		stage("large", 3000),
-		stage("tight", 1500),
-	];
-	const took = { running: 100, large: 100, tight: 90 };
-	// 90 ms fits in the 100 ms gap, but not with the margin.
-	assert.ok(90 * BACKFILL_MARGIN > 100);
-	const margin = await replay({ stages, memoryMb: 4000, took });
-	assert.ok(margin.started.get("tight")! >= 100);
-	const fits = await replay({
-		stages,
-		memoryMb: 4000,
-		took: { ...took, tight: 75 },
-	});
-	assert.equal(fits.started.get("tight"), 0);
-	assert.equal(fits.started.get("large"), 100);
-});
-
-test("without recorded times nothing starts ahead of the waiting stage", async () => {
-	const stages = [
-		stage("running", 2000),
-		stage("large", 3000),
-		stage("small", 1500),
-	];
-	const took = { running: 100, large: 100, small: 10 };
-	for (const expected of [
-		{},
-		// A running stage with no record means the wait cannot be predicted.
-		{ large: 100, small: 10 },
-		{ running: null, small: 10 },
-		{ running: Number.NaN, small: 10 },
-		{ running: -5, small: 10 },
-	]) {
-		const result = await replay({ stages, memoryMb: 4000, took, expected });
-		assert.ok(
-			result.started.get("small")! >= 100,
-			JSON.stringify(expected),
-		);
-		assert.equal(result.started.get("large"), 100);
-	}
-});
-
-test("corrupt or unusable timing records give no expected duration", () => {
-	assert.equal(expectedDurationMs({ commandMs: 1200, totalMs: 1500 }), 1200);
-	assert.equal(
-		expectedDurationMs({ commandMs: 1200, totalMs: 9000, queueMs: 7000 }),
-		2000,
-	);
-	// A queue longer than the total cannot be taken off it.
-	assert.equal(
-		expectedDurationMs({ commandMs: 1200, totalMs: 900, queueMs: 7000 }),
-		1200,
-	);
-	for (const bad of [
-		undefined,
-		null,
-		"fast",
-		7,
-		[],
-		{},
-		{ commandMs: "12" },
-		{ commandMs: -1 },
-		{ commandMs: Number.NaN },
-		{ commandMs: Number.POSITIVE_INFINITY },
-		{ commandMs: 1200, failed: true },
-	])
-		assert.equal(expectedDurationMs(bad), null, JSON.stringify(bad));
+	// `small` fits beside `running`, but it queues behind `large`.
+	assert.equal(result.started.get("small"), 100);
 });
 
 test("a stage larger than the whole budget still runs, alone, and cannot stall the rest", async () => {
@@ -283,8 +173,11 @@ test("a stage larger than the whole budget still runs, alone, and cannot stall t
 			huge < result.ended.get(other)!;
 		assert.ok(!overlaps, `${other} overlapped the oversized stage`);
 	}
-	// Stages that finish before it can start are free to go ahead of it.
-	assert.equal(result.started.get("small-a"), 0);
+	// Nothing starts behind it while it waits for the running stage to finish.
+	assert.ok(
+		result.started.get("small-a")! >= result.ended.get("huge")!,
+		"small-a started while huge waited",
+	);
 	const alone = await replay({
 		stages: [stage("huge", 9000), stage("tiny", 100)],
 		memoryMb: 50,
@@ -293,17 +186,12 @@ test("a stage larger than the whole budget still runs, alone, and cannot stall t
 	assert.equal(alone.finished.size, 2);
 });
 
-test("stages that wait for memory report it apart from the job limit", async () => {
-	const stages = [
-		stage("running", 2000),
-		stage("large", 3000),
-		stage("job-bound", 100),
-	];
+test("a stage that waits for memory reports how long", async () => {
+	const stages = [stage("running", 2000), stage("large", 3000)];
 	const memory = await replay({
 		stages,
 		memoryMb: 4000,
-		took: { running: 100, large: 100, "job-bound": 10 },
-		expected: {},
+		took: { running: 100, large: 100 },
 	});
 	// `large` waited 100 ms for memory with a job slot free.
 	assert.deepEqual(memory.waits.get("large"), {
@@ -313,22 +201,6 @@ test("stages that wait for memory report it apart from the job limit", async () 
 	assert.deepEqual(memory.waits.get("running"), {
 		queuedMs: 0,
 		memoryWaitMs: 0,
-	});
-	// A stage held back by a full job limit is not waiting for memory. Here
-	// `large` waits 50 ms with the limit full, then 50 ms for memory.
-	const limited = await replay({
-		stages: [
-			stage("running", 2000),
-			stage("large", 3000),
-			stage("small", 1000),
-		],
-		jobs: 2,
-		memoryMb: 4000,
-		took: { running: 100, large: 100, small: 50 },
-	});
-	assert.deepEqual(limited.waits.get("large"), {
-		queuedMs: 100,
-		memoryWaitMs: 50,
 	});
 });
 
@@ -345,7 +217,6 @@ const randomRun = (seed: number): Run & { stages: Stage[] } => {
 	const count = 4 + Math.floor(random() * 22);
 	const stages: Stage[] = [];
 	const took: Record<string, number> = {};
-	const expected: Record<string, number | null> = {};
 	for (let index = 0; index < count; index++) {
 		const name = `s${index}`;
 		const dependencies = stages
@@ -366,21 +237,10 @@ const randomRun = (seed: number): Run & { stages: Stage[] } => {
 			),
 		);
 		took[name] = 1 + Math.floor(random() * 200);
-		const mood = random();
-		// Exact, wrong either way, or unknown.
-		expected[name] =
-			mood < 0.5
-				? took[name]
-				: mood < 0.7
-					? Math.floor(took[name] * (0.2 + random() * 3))
-					: mood < 0.85
-						? null
-						: Number.NaN;
 	}
 	return {
 		stages,
 		took,
-		expected,
 		jobs: pick([1, 2, 3, 5, 12]),
 		memoryMb: pick([1500, 3000, 4096, 5836, 9000, Infinity]),
 		order:
@@ -419,58 +279,22 @@ test("the same stages and recorded timings give the same schedule", async () => 
 	}
 });
 
-test("when the recorded times are right, the stage that waits first never starts later because of backfilling", async () => {
-	for (let seed = 1; seed <= 300; seed++) {
-		const random = generator(seed * 7919);
-		const count = 3 + Math.floor(random() * 9);
-		const stages: Stage[] = [];
-		const took: Record<string, number> = {};
-		for (let index = 0; index < count; index++) {
-			const name = `s${index}`;
-			stages.push(
-				stage(
-					name,
-					[500, 1000, 1500, 2048, 3072, 4096][
-						Math.floor(random() * 6)
-					]!,
-				),
-			);
-			took[name] = 5 + Math.floor(random() * 200);
-		}
-		const memoryMb = 4000 + Math.floor(random() * 5000);
-		const strict = await replay({ stages, memoryMb, took, expected: {} });
-		const waiting = stages.find(
-			(entry) => strict.waits.get(entry.name)!.memoryWaitMs > 0,
-		);
-		if (!waiting) continue;
-		const backfilled = await replay({ stages, memoryMb, took });
-		assert.ok(
-			backfilled.started.get(waiting.name)! <=
-				strict.started.get(waiting.name)!,
-			`seed ${seed}: ${waiting.name}`,
-		);
-	}
-});
-
-test("a failure stops backfilled stages from starting too", async () => {
+test("a failure stops the stage that waits for memory from starting", async () => {
 	const stages = [
-		stage("running", 2000),
+		stage("failing", 2000),
+		stage("steady", 1000),
 		stage("large", 3000),
-		stage("small", 1000),
-		stage("later", 500, ["small"]),
 	];
 	const result = await replay({
 		stages,
 		memoryMb: 4000,
-		took: { running: 100, large: 100, small: 50, later: 10 },
-		failing: ["small"],
+		took: { failing: 50, steady: 100, large: 100 },
+		failing: ["failing"],
 	});
-	// `small` fails at 50 ms. `running` finishes, but neither `large`, which
-	// was waiting, nor `later` starts afterwards.
-	assert.ok(result.started.has("small"));
+	// `failing` fails at 50 ms, which would leave room for `large`. It does not
+	// start, and `steady` finishes.
 	assert.ok(!result.started.has("large"));
-	assert.ok(!result.started.has("later"));
-	assert.ok(result.ended.has("running"));
+	assert.ok(result.ended.has("steady"));
 });
 
 test("a stage that throws stops the build once the running stages finish", async () => {
@@ -500,7 +324,7 @@ test("a stage that throws stops the build once the running stages finish", async
 	assert.deepEqual(events, ["start broken", "start steady", "end steady"]);
 });
 
-test("the real stage graph runs to the end at several budgets, with and without recorded times", async () => {
+test("the real stage graph runs to the end at several budgets", async () => {
 	const stages = buildDataStages.filter(
 		(entry: Stage & { check?: boolean }) =>
 			!entry.check && !entry.name.startsWith("verify-"),
@@ -512,15 +336,7 @@ test("the real stage graph runs to the end at several budgets, with and without 
 		]),
 	);
 	for (const memoryMb of [2800, 5836, 12288]) {
-		const none = await replay({
-			stages,
-			jobs: 12,
-			memoryMb,
-			took,
-			expected: {},
-		});
-		assert.equal(none.finished.size, stages.length);
-		const known = await replay({ stages, jobs: 12, memoryMb, took });
-		assert.equal(known.finished.size, stages.length);
+		const result = await replay({ stages, jobs: 12, memoryMb, took });
+		assert.equal(result.finished.size, stages.length);
 	}
 });

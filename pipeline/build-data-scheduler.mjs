@@ -5,12 +5,6 @@ import { stageScope } from "./build-data-cache.mjs";
 export const DEFAULT_STAGE_MEMORY_MB = 1024;
 /** Plan weight of a stage that has no recorded timing. */
 export const DEFAULT_STAGE_WEIGHT_MS = 1000;
-/**
- * A stage started ahead of a waiting one is assumed to take this many times
- * its recorded duration, so that a slower run does not delay the waiting stage.
- */
-export const BACKFILL_MARGIN = 1.25;
-
 const MEBIBYTE = 1024 * 1024;
 
 const positiveInteger = (value, label) => {
@@ -61,26 +55,6 @@ export function stageMemoryMb(stage) {
 		if (match) return Number(match[1]);
 	}
 	return DEFAULT_STAGE_MEMORY_MB;
-}
-
-const isDuration = (value) =>
-	typeof value === "number" && Number.isFinite(value) && value >= 0;
-
-/**
- * How long a stage is expected to hold its slot, from its last recorded
- * timing, or null when there is no usable record. A failed run, a missing
- * record and a record with a bad number all give null, and the scheduler then
- * assumes nothing about the stage. When the record says how long the stage
- * queued, that is taken off the total, since the total includes it.
- */
-export function expectedDurationMs(timing) {
-	if (!timing || typeof timing !== "object" || timing.failed === true)
-		return null;
-	const { commandMs, totalMs, queueMs } = timing;
-	if (!isDuration(commandMs)) return null;
-	if (isDuration(totalMs) && isDuration(queueMs) && totalMs >= queueMs)
-		return Math.max(commandMs, totalMs - queueMs);
-	return commandMs;
 }
 
 /**
@@ -197,14 +171,8 @@ export function planWaves(stages, { runs, weightOf }) {
  * with a free job slot, held back by memory.
  *
  * The first stage in `order` that is ready but does not fit in the memory left
- * is the one waiting. Nothing may start ahead of it unless it cannot delay
- * it: a smaller stage starts early only when it is expected to finish before
- * the waiting stage can start, or when it leaves room for the waiting stage
- * even if it is still running by then. `expectedMs(stage)` gives a stage's
- * expected duration, or null when it is not known. When the running stages'
- * durations are not all known, nothing starts ahead of the waiting stage.
- * Estimates can be wrong, but a stage that overruns only delays the waiting
- * stage until it finishes, so the waiting stage still starts.
+ * waits for it, and nothing starts behind it meanwhile, so a large stage is
+ * never held back by smaller ones that keep taking the memory it needs.
  *
  * On a failure no new stage starts, but stages already running finish and are
  * recorded. Killing them could leave half-written files, and their results
@@ -221,7 +189,6 @@ export function planWaves(stages, { runs, weightOf }) {
  *   memoryMb?: number,
  *   order?: Array<{ name: string }>,
  *   clock?: () => number,
- *   expectedMs?: (stage: any) => number | null | undefined,
  * }} options
  */
 export async function runSchedule({
@@ -232,7 +199,6 @@ export async function runSchedule({
 	memoryMb = Infinity,
 	order = stages,
 	clock = () => performance.now(),
-	expectedMs = () => null,
 }) {
 	const blockers = blockersOf(stages);
 	const finished = new Set();
@@ -257,59 +223,8 @@ export async function runSchedule({
 	};
 	const fits = (stage) =>
 		running.size === 0 || usedMb + stageMemoryMb(stage) <= memoryMb;
-	// When the waiting stage could start, going by when the running stages are
-	// expected to finish, and the room that is left beside it by then. Null
-	// when a running stage has no expected duration.
-	const reserve = (waiting, now) => {
-		const releases = [];
-		for (const [name, entry] of running) {
-			if (entry.end === null) return null;
-			releases.push({ name, ...entry, end: Math.max(entry.end, now) });
-		}
-		releases.sort((a, b) => a.end - b.end || (a.name < b.name ? -1 : 1));
-		// A stage larger than the budget waits for the others to finish.
-		const need = Math.min(stageMemoryMb(waiting), memoryMb);
-		let used = usedMb;
-		for (const release of releases) {
-			used -= release.cost;
-			if (used + need <= memoryMb) {
-				const still = releases.filter(
-					(other) => other.end > release.end,
-				);
-				return {
-					startsAt: release.end,
-					spareMb:
-						memoryMb -
-						need -
-						still.reduce((sum, other) => sum + other.cost, 0),
-					stillRunning: still.length,
-				};
-			}
-		}
-		return null;
-	};
-	const cannotDelay = (stage, reservation, now) => {
-		if (!reservation) return false;
-		const cost = stageMemoryMb(stage);
-		if (usedMb + cost > memoryMb) return false;
-		const duration = expectedMs(stage);
-		if (
-			typeof duration === "number" &&
-			Number.isFinite(duration) &&
-			duration >= 0 &&
-			now + duration * BACKFILL_MARGIN <= reservation.startsAt
-		)
-			return true;
-		// Still running when the waiting stage starts: it needs the room, and a
-		// job slot beside the waiting stage's.
-		return (
-			cost <= reservation.spareMb && reservation.stillRunning + 2 <= jobs
-		);
-	};
 	const next = () => {
-		const now = tick();
-		let waiting = null;
-		let reservation = null;
+		tick();
 		for (const stage of order) {
 			const { name } = stage;
 			if (finished.has(name) || running.has(name)) continue;
@@ -325,31 +240,22 @@ export async function runSchedule({
 				}
 				queued.set(name, { queuedMs: 0, memoryWaitMs: 0 });
 			}
-			if (waiting === null) {
-				if (fits(stage)) return stage;
-				waiting = stage;
-				reservation = reserve(stage, now);
-			} else if (cannotDelay(stage, reservation, now)) return stage;
+			// Wait for memory rather than start smaller stages ahead of it.
+			if (!fits(stage)) return null;
+			return stage;
 		}
 		return null;
 	};
 	const start = (stage) => {
 		const cost = stageMemoryMb(stage);
-		const now = tick();
+		tick();
 		const waited = queued.get(stage.name) ?? {
 			queuedMs: 0,
 			memoryWaitMs: 0,
 		};
 		queued.delete(stage.name);
-		const duration = expectedMs(stage);
-		const end =
-			typeof duration === "number" &&
-			Number.isFinite(duration) &&
-			duration >= 0
-				? now + duration
-				: null;
 		usedMb += cost;
-		running.set(stage.name, { cost, end });
+		running.set(stage.name, { cost });
 		running.get(stage.name).promise = (async () => {
 			try {
 				return await run(stage, { ...waited });

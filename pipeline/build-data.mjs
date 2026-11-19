@@ -119,7 +119,7 @@ export async function runBuild({
 			jobs,
 			memoryMb: limits.memoryMb,
 		});
-		const { settle, run, weightOf, expectedMs } = createStageRunner({
+		const { settle, run, weightOf } = createStageRunner({
 			state,
 			log,
 			logError,
@@ -147,7 +147,6 @@ export async function runBuild({
 				jobs,
 				memoryMb: limits.memoryMb,
 				order: jobs > 1 ? priorityOrder(selected, weightOf) : selected,
-				expectedMs,
 			});
 		}
 		logRunProblems({ log, ...state });
