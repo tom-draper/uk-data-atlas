@@ -69,9 +69,9 @@ test("the writer records geometry gaps and produces deterministic rows", async (
 	const build = () => {
 		const db = new DatabaseSync(":memory:");
 		db.exec(`CREATE TABLE area(id INTEGER PRIMARY KEY, code TEXT);
-			CREATE TABLE area_releases(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+			CREATE TABLE area_release(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 			CREATE TABLE area_version(id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
-			INSERT INTO area VALUES (1,'a'),(2,'b'); INSERT INTO area_releases VALUES (1,'ward','2024');
+			INSERT INTO area VALUES (1,'a'),(2,'b'); INSERT INTO area_release VALUES (1,'ward','2024');
 			INSERT INTO area_version VALUES (1,1,1),(2,2,1);`);
 		writeAreaLocations(
 			db,
@@ -97,10 +97,10 @@ test("published centroids apply only to their release and within its bounds", as
 		await import("../../src/storage/areaLocations.ts");
 	const db = new DatabaseSync(":memory:");
 	db.exec(`CREATE TABLE area(id INTEGER PRIMARY KEY, code TEXT);
-		CREATE TABLE area_releases(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+		CREATE TABLE area_release(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		CREATE TABLE area_version(id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
 		INSERT INTO area VALUES (1,'a'),(2,'b');
-		INSERT INTO area_releases VALUES (1,'outputArea','2021-12-ew-bgc-v2'),(2,'outputArea','2011');
+		INSERT INTO area_release VALUES (1,'outputArea','2021-12-ew-bgc-v2'),(2,'outputArea','2011');
 		INSERT INTO area_version VALUES (1,1,1),(2,2,1),(3,1,2);`);
 	const geometry = {
 		type: "Polygon",
@@ -181,9 +181,9 @@ test("worker jobs stay within a release and are written in the order a single th
 	const build = (pool?: Parameters<typeof writeAreaLocations>[6]) => {
 		const db = new DatabaseSync(":memory:");
 		db.exec(`CREATE TABLE area(id INTEGER PRIMARY KEY, code TEXT);
-			CREATE TABLE area_releases(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+			CREATE TABLE area_release(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 			CREATE TABLE area_version(id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
-			INSERT INTO area_releases VALUES (1,'ward','2024'),(2,'ward','2023'),(3,'ward','2022');`);
+			INSERT INTO area_release VALUES (1,'ward','2024'),(2,'ward','2023'),(3,'ward','2022');`);
 		const area = db.prepare("INSERT INTO area VALUES (?, ?)");
 		const version = db.prepare("INSERT INTO area_version VALUES (?, ?, ?)");
 		for (let at = 1; at <= 5000; at++) {
@@ -295,10 +295,10 @@ test("the real workers start, and what they cannot read stops the write", async 
 	const db = new DatabaseSync(":memory:");
 	context.onTestFinished(() => db.close());
 	db.exec(`CREATE TABLE area(id INTEGER PRIMARY KEY, code TEXT);
-		CREATE TABLE area_releases(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+		CREATE TABLE area_release(id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		CREATE TABLE area_version(id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER);
 		INSERT INTO area VALUES (1,'a');
-		INSERT INTO area_releases VALUES (1,'ward','2024');
+		INSERT INTO area_release VALUES (1,'ward','2024');
 		INSERT INTO area_version VALUES (1,1,1);`);
 	assert.throws(
 		() =>

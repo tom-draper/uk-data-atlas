@@ -86,7 +86,7 @@ test("an exact conversion keeps the source total", () => {
 				 FROM series s
 				 JOIN dataset d ON d.id = s.dataset_id
 				 JOIN measure m ON m.id = s.measure_id
-				 JOIN area_releases r ON r.id = s.release_id
+				 JOIN area_release r ON r.id = s.release_id
 				 JOIN observation o ON o.series_id = s.id
 				 JOIN period p ON p.id = o.period_id
 				 WHERE d.slug = 'local-election' AND m.slug = 'party-votes'
@@ -111,8 +111,8 @@ test("ward population rebuilt on the 2026 wards adds up to the local authority t
 	try {
 		rows = database
 			.prepare(
-				`WITH wr AS (SELECT id FROM area_releases WHERE geography = 'ward' AND release = '2026-05-uk-bgc'),
-				lr AS (SELECT id FROM area_releases WHERE geography = 'localAuthority' AND release = '2026-05-uk-bgc'),
+				`WITH wr AS (SELECT id FROM area_release WHERE geography = 'ward' AND release = '2026-05-uk-bgc'),
+				lr AS (SELECT id FROM area_release WHERE geography = 'localAuthority' AND release = '2026-05-uk-bgc'),
 				p AS (SELECT id FROM period WHERE label = '2022'),
 				everyone AS (
 					SELECT s.id, d.slug FROM series s
@@ -172,10 +172,10 @@ test("ward population rebuilt on the 2026 wards adds up to the local authority t
 				.prepare(
 					`SELECT DISTINCT a.code FROM area_hierarchy h
 					 JOIN area_version c ON c.id = h.child_version_id
-					 JOIN area_releases cr ON cr.id = c.release_id
+					 JOIN area_release cr ON cr.id = c.release_id
 					 JOIN area_version pv ON pv.id = h.parent_version_id
 					 JOIN area pa ON pa.id = pv.area_id
-					 JOIN area_releases pr ON pr.id = pv.release_id
+					 JOIN area_release pr ON pr.id = pv.release_id
 					 JOIN area a ON a.id = c.area_id
 					 WHERE cr.geography = 'ward' AND cr.release = '2026-05-uk-bgc'
 					   AND pr.geography = 'localAuthority' AND pr.release = '2026-05-uk-bgc'

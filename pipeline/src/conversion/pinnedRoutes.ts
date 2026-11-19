@@ -16,7 +16,7 @@ export type Resolver = {
 
 export const createResolver = (database: DatabaseSync): Resolver => {
 	const release = database.prepare(
-		"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
+		"SELECT id FROM area_release WHERE geography = ? AND release = ?",
 	);
 	const crosswalk = database.prepare(
 		"SELECT id FROM crosswalk WHERE slug = ?",

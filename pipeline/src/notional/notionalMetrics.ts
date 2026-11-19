@@ -154,7 +154,7 @@ export const copyNotionalMetrics = (
 	const idOf = (sql: string, what: string, value: string) =>
 		required(what, one<{ id: number }>(sql, value)).id;
 	const release = idOf(
-		"SELECT id FROM area_releases WHERE geography = 'constituency' AND release = ?",
+		"SELECT id FROM area_release WHERE geography = 'constituency' AND release = ?",
 		"the 2024 seats",
 		NEW_SEATS,
 	);

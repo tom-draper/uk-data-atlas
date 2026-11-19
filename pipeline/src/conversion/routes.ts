@@ -58,7 +58,7 @@ export const createRouter = (database: DatabaseSync): Router => {
 	const releases = new Map(
 		(
 			database
-				.prepare("SELECT id, geography, release FROM area_releases")
+				.prepare("SELECT id, geography, release FROM area_release")
 				.all() as Release[]
 		).map((row) => [row.id, row]),
 	);

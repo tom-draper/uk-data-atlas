@@ -91,7 +91,7 @@ export function bindCompiledFields(
 	const lookup =
 		database.prepare(`SELECT DISTINCT r.geography, r.release AS release, p.label AS period
 		FROM dataset d JOIN series s ON s.method = 'published' AND s.dataset_id = d.id JOIN measure m ON m.id = s.measure_id
-		JOIN area_releases r ON r.id = s.release_id
+		JOIN area_release r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
 		WHERE d.slug = ? AND m.slug = ? AND p.label = ?
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?

@@ -190,7 +190,7 @@ export function assembleAtlas(
 							`INSERT INTO crosswalk_weight_boundary_source
 						SELECT DISTINCT w.crosswalk_id, w.basis_id, ?, b.source_id
 						FROM weights_component.crosswalk_weight w JOIN crosswalk c ON c.id = w.crosswalk_id
-						JOIN area_releases r ON r.id = c.${column}
+						JOIN area_release r ON r.id = c.${column}
 						JOIN boundary_release_source b ON b.geography = r.geography AND b.release = r.release`,
 						)
 						.run(side);

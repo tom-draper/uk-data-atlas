@@ -157,7 +157,7 @@ export const LOW_SERIES_COVERAGE = 0.9;
 export const convertedReleases = (database: SqlReader) =>
 	database
 		.prepare(
-			`SELECT r.geography, r.release FROM area_releases r
+			`SELECT r.geography, r.release FROM area_release r
 			WHERE r.id IN (SELECT DISTINCT release_id FROM series WHERE method = 'converted')
 			ORDER BY r.geography, r.release`,
 		)
@@ -182,7 +182,7 @@ const publishedOf = (database: SqlReader, part: ReleaseSeriesPart) => {
 		.prepare(
 			`SELECT s.id, s.key, s.release_id AS releaseId, r.geography || ':' || r.release AS release
 			FROM series s JOIN dataset d ON d.id = s.dataset_id JOIN measure m ON m.id = s.measure_id
-			JOIN area_releases r ON r.id = s.release_id
+			JOIN area_release r ON r.id = s.release_id
 			WHERE d.slug = ? AND m.slug = ? AND r.geography = ? AND s.method = 'published' ORDER BY s.id`,
 		)
 		.all(part.datasetId, part.measure, part.geography);
@@ -510,7 +510,7 @@ const conversionOf = (database: SqlReader, series: number): ConversionRow => {
 			FROM series_conversion c
 			JOIN series_input si ON si.series_id = c.series_id AND si.role IN ('value', 'numerator')
 			JOIN series i ON i.id = si.input_series_id AND i.method = 'published'
-			JOIN area_releases r ON r.id = i.release_id
+			JOIN area_release r ON r.id = i.release_id
 			WHERE c.series_id = ?`,
 		)
 		.get(series);
@@ -547,7 +547,7 @@ export const readReleaseSeries = (
 ): ReleaseSeries | undefined => {
 	const release = database
 		.prepare(
-			"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
+			"SELECT id FROM area_release WHERE geography = ? AND release = ?",
 		)
 		.get(target.geography, target.release);
 	if (!release) return undefined;

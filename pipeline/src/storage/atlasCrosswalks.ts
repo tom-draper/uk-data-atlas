@@ -97,10 +97,10 @@ type KnownVersion = {
  */
 const areaEndpoints = (database: DatabaseSync, ids: IdRegistries) => {
 	const find = database.prepare(
-		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.id = ?) AND v.release_id = ?",
+		"SELECT v.id, v.name, v.aliases, v.area_m2 AS areaM2, v.population FROM area a JOIN area_version v ON v.area_id = a.id WHERE a.code = ? AND a.geography_id = (SELECT g.id FROM area_release r JOIN geography g ON g.slug = r.geography WHERE r.id = ?) AND v.release_id = ?",
 	);
 	const readRelease = database.prepare(
-		"SELECT a.code AS code, v.id AS id, v.area_m2 AS areaM2, v.population AS population FROM area_version v CROSS JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND a.geography_id = (SELECT g.id FROM area_releases r JOIN geography g ON g.slug = r.geography WHERE r.id = ?)",
+		"SELECT a.code AS code, v.id AS id, v.area_m2 AS areaM2, v.population AS population FROM area_version v CROSS JOIN area a ON a.id = v.area_id WHERE v.release_id = ? AND a.geography_id = (SELECT g.id FROM area_release r JOIN geography g ON g.slug = r.geography WHERE r.id = ?)",
 	);
 	const add = addAreaVersion(database, ids);
 	const updateFacts = database.prepare(
@@ -225,7 +225,7 @@ export const crosswalkTables = (
 	};
 	function* headers(database: DatabaseSync) {
 		const release = database.prepare(
-			"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
+			"SELECT id FROM area_release WHERE geography = ? AND release = ?",
 		);
 		const position = (side: {
 			geography: string;
@@ -464,8 +464,8 @@ export const crosswalkTables = (
 				"slug TEXT NOT NULL UNIQUE",
 				// The crosswalk's place in the inventory, which its id does not follow.
 				"inventory_position INTEGER NOT NULL UNIQUE",
-				"from_release_id INTEGER NOT NULL REFERENCES area_releases(id)",
-				"to_release_id INTEGER NOT NULL REFERENCES area_releases(id)",
+				"from_release_id INTEGER NOT NULL REFERENCES area_release(id)",
+				"to_release_id INTEGER NOT NULL REFERENCES area_release(id)",
 				"method TEXT NOT NULL",
 				"quality TEXT NOT NULL",
 				"purpose TEXT CHECK (purpose IN ('identity', 'membership'))",

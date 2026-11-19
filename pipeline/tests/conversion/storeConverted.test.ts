@@ -39,7 +39,7 @@ CREATE TABLE area_version (id INTEGER PRIMARY KEY);
 CREATE TABLE period (id INTEGER PRIMARY KEY);
 CREATE TABLE measure (id INTEGER PRIMARY KEY);
 CREATE TABLE dataset (id INTEGER PRIMARY KEY);
-CREATE TABLE area_releases (id INTEGER PRIMARY KEY);
+CREATE TABLE area_release (id INTEGER PRIMARY KEY);
 INSERT INTO series VALUES (1, 3, 4, 5, 'published', NULL, 'population/ward');
 INSERT INTO series_member VALUES (1, 8, 9);
 INSERT INTO observation VALUES (1, 100, 2, 40, 1, NULL, NULL, NULL);

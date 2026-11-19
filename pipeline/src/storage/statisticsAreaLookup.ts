@@ -21,7 +21,7 @@ export function createStatisticsAreaLookup() {
 		if (position === undefined) {
 			const row = database
 				.prepare(
-					"SELECT id, status FROM area_releases WHERE geography = ? AND release = ?",
+					"SELECT id, status FROM area_release WHERE geography = ? AND release = ?",
 				)
 				.get(release.geography, release.id);
 			if (!row || row.status !== "available")
@@ -82,7 +82,7 @@ export function createStatisticsAreaLookup() {
 		if (!releases) {
 			releases = database
 				.prepare(
-					"SELECT id, release FROM area_releases WHERE geography = ? AND status = 'available'",
+					"SELECT id, release FROM area_release WHERE geography = ? AND status = 'available'",
 				)
 				.all(geography)
 				.map((row) => ({
@@ -119,7 +119,7 @@ export function createStatisticsAreaLookup() {
 	const areaIndex = (database: DatabaseSync): AreaIndex => {
 		const available = database
 			.prepare(
-				"SELECT geography, release FROM area_releases WHERE status = 'available'",
+				"SELECT geography, release FROM area_release WHERE status = 'available'",
 			)
 			.all()
 			.map((row) => ({

@@ -16,7 +16,7 @@ export const readSqliteAreaInventory = (
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite area inventory");
 		const releases = database
-			.prepare("SELECT * FROM area_releases ORDER BY inventory_position")
+			.prepare("SELECT * FROM area_release ORDER BY inventory_position")
 			.all()
 			.map((row) => {
 				const identity = {
@@ -69,7 +69,7 @@ export const readSqliteAreas = (
 	try {
 		const header = database
 			.prepare(
-				"SELECT id, contentHash FROM area_releases WHERE geography = ? AND release = ?",
+				"SELECT id, contentHash FROM area_release WHERE geography = ? AND release = ?",
 			)
 			.get(release.geography, release.id);
 		if (header?.contentHash !== release.contentHash)

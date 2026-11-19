@@ -14,9 +14,9 @@ import { readJsonSync } from "../lib/json.ts";
  * Each area at its latest version: the one in the highest-sorting release,
  * which is the newest because release slugs start with their year and month.
  */
-export const AREA_CURRENT_VIEW = `SELECT v.id AS area_version_id, v.area_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.id = v.release_id WHERE NOT EXISTS (SELECT 1 FROM area_version w JOIN area_releases s ON s.id = w.release_id WHERE w.area_id = v.area_id AND s.release > r.release)`;
+export const AREA_CURRENT_VIEW = `SELECT v.id AS area_version_id, v.area_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_release r ON r.id = v.release_id WHERE NOT EXISTS (SELECT 1 FROM area_version w JOIN area_release s ON s.id = w.release_id WHERE w.area_id = v.area_id AND s.release > r.release)`;
 
-export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_releases r ON r.id = v.release_id`;
+export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geography, r.release AS release, a.code, v.name, v.aliases, v.area_m2, v.population, v.in_inventory, v.inventory_position FROM area_version v JOIN area a ON a.id = v.area_id JOIN geography g ON g.id = a.geography_id JOIN area_release r ON r.id = v.release_id`;
 
 /**
  * Add an area version that is not in its release's inventory, such as a code
@@ -26,7 +26,7 @@ export const AREA_VERSION_VIEW = `SELECT v.id AS area_version_id, g.slug AS geog
  */
 export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 	const findRelease = database.prepare(
-		"SELECT geography, release FROM area_releases WHERE id = ?",
+		"SELECT geography, release FROM area_release WHERE id = ?",
 	);
 	const findGeography = database.prepare(
 		"SELECT id FROM geography WHERE slug = ?",
@@ -82,7 +82,7 @@ export const addAreaVersion = (database: DatabaseSync, ids: IdRegistries) => {
 };
 
 /** Area versions whose release is for another geography than their area. */
-export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id JOIN geography g ON g.id = a.geography_id WHERE g.slug <> r.geography`;
+export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id JOIN geography g ON g.id = a.geography_id WHERE g.slug <> r.geography`;
 
 /**
  * `ids` gives each key the id it was first given. The default numbers keys in
@@ -187,7 +187,7 @@ export const areaTables = (
 				],
 			],
 		},
-		area_releases: {
+		area_release: {
 			strict: true,
 			columns: [
 				// The release's stable id, assigned once and never reused. It is
@@ -267,7 +267,7 @@ export const areaTables = (
 			columns: [
 				"id INTEGER",
 				"area_id INTEGER NOT NULL REFERENCES area(id)",
-				"release_id INTEGER NOT NULL REFERENCES area_releases(id)",
+				"release_id INTEGER NOT NULL REFERENCES area_release(id)",
 				"name TEXT NOT NULL",
 				"area_m2 REAL",
 				"population REAL",

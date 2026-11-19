@@ -73,7 +73,7 @@ export const copyNotionalSeries = (
 	const one = <T>(sql: string, ...params: (string | number)[]) =>
 		database.prepare(sql).get(...params) as T | undefined;
 	const release = one<{ id: number }>(
-		"SELECT id FROM area_releases WHERE geography = 'constituency' AND release = ?",
+		"SELECT id FROM area_release WHERE geography = 'constituency' AND release = ?",
 		NEW_SEATS,
 	);
 	const period = one<{ id: number }>(

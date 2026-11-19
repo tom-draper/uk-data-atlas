@@ -122,7 +122,7 @@ test("the LSOA 2011 to 2021 events agree with the lookup's change flag", () => {
 	const rows = all(
 		`SELECT e.id, e.kind, x.change
 		FROM crosswalk c
-		JOIN area_releases r ON r.id = c.from_release_id
+		JOIN area_release r ON r.id = c.from_release_id
 		JOIN area_change_event e ON e.crosswalk_id = c.id
 		JOIN area_change_member f ON f.event_id = e.id AND f.side = 'from'
 		JOIN crosswalk_edge x ON x.crosswalk_id = c.id AND x.from_version_id = f.area_version_id

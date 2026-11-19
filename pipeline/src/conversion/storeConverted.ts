@@ -126,7 +126,7 @@ CREATE TABLE series_gap (
 	reason TEXT NOT NULL,
 	PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID, STRICT;
 ${measureConversion(" REFERENCES measure(id)", " REFERENCES weight_basis(id)")}
-${conversionSkip(" REFERENCES area_releases(id)", " REFERENCES dataset(id)", " REFERENCES measure(id)")}
+${conversionSkip(" REFERENCES area_release(id)", " REFERENCES dataset(id)", " REFERENCES measure(id)")}
 ${BACKTEST_SCHEMA}
 `;
 

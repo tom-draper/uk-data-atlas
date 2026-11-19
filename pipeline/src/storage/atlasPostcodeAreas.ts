@@ -103,7 +103,7 @@ export function writePostcodeAreas(
 		"INSERT INTO postcode_area_releases VALUES (?, ?, ?, ?, ?, ?)",
 	);
 	const findRelease = database.prepare(
-		"SELECT id FROM area_releases WHERE geography = ? AND release = ?",
+		"SELECT id FROM area_release WHERE geography = ? AND release = ?",
 	);
 	const findArea = database.prepare(FIND_RELEASE_AREA_VERSION);
 	const addArea = addAreaVersion(database, registries);

@@ -87,7 +87,7 @@ describe("declared dataset rows", () => {
 		({ id }) => id === "claimant-count",
 	)!;
 	const areas = {
-		area_releases: {
+		area_release: {
 			columns: [
 				"id INTEGER UNIQUE",
 				"geography TEXT",
@@ -124,7 +124,7 @@ describe("declared dataset rows", () => {
 			columns: [
 				"id INTEGER",
 				"area_id INTEGER REFERENCES area(id)",
-				"release_id INTEGER REFERENCES area_releases(id)",
+				"release_id INTEGER REFERENCES area_release(id)",
 				"name TEXT",
 			],
 			key: ["id"],
@@ -261,10 +261,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						...tiers.map(([tier], index) => [
 							2 + index,
 							tier,
@@ -357,10 +357,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2023-12-uk-bgc", "available"],
 					],
 				},
@@ -435,10 +435,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "lsoa", "2021-12-ew-bgc-v5", "available"],
 					],
 				},
@@ -513,10 +513,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "constituency", "2019-12-uk-bgc", "available"],
 					],
 				},
@@ -636,10 +636,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "constituency", "2024-07-uk-bgc", "available"],
 					],
 				},
@@ -710,10 +710,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 					],
 				},
@@ -773,10 +773,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2026-05-uk-bgc", "available"],
 					],
 				},
@@ -836,10 +836,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 					],
 				},
@@ -899,10 +899,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 					],
 				},
@@ -962,10 +962,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 					],
 				},
@@ -1049,10 +1049,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2026-05-uk-bgc", "available"],
 						[3, "localAuthority", "2023-12-uk-bgc", "available"],
 					],
@@ -1175,10 +1175,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 						[3, "localAuthority", "2023-12-uk-bgc", "available"],
 					],
@@ -1277,10 +1277,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2026-05-uk-bgc", "available"],
 					],
 				},
@@ -1344,10 +1344,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "constituency", "2024-07-uk-bgc", "available"],
 					],
 				},
@@ -1424,10 +1424,10 @@ describe("declared dataset rows", () => {
 		try {
 			writeSqliteTables(database, {
 				...areas,
-				area_releases: {
-					...areas.area_releases,
+				area_release: {
+					...areas.area_release,
 					rows: [
-						...areas.area_releases.rows,
+						...areas.area_release.rows,
 						[2, "localAuthority", "2025-05-uk-bgc-v2", "available"],
 					],
 				},

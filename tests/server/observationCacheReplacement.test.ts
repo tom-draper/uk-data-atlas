@@ -23,7 +23,7 @@ const writeDatabase = (target: string, votes: number) => {
 	database.exec(`
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
-		CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+		CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 		CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
 		CREATE TABLE dimension (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, code TEXT);
@@ -35,7 +35,7 @@ const writeDatabase = (target: string, votes: number) => {
 		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, status_id INTEGER);
 		INSERT INTO dataset VALUES (1, 'local-election');
 		INSERT INTO measure VALUES (1, 'party-votes');
-		INSERT INTO area_releases VALUES (0, 'ward', '2019-12-uk-bgc');
+		INSERT INTO area_release VALUES (0, 'ward', '2019-12-uk-bgc');
 		INSERT INTO dimension VALUES (1, 'party');
 		INSERT INTO dimension_member VALUES (1, 'lab');
 		INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 0);

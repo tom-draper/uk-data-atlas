@@ -23,10 +23,10 @@ CREATE TABLE observation (
 	value REAL, status_id INTEGER NOT NULL, lower REAL, upper REAL, category_id INTEGER);
 CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT NOT NULL);
 CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL, release_id INTEGER NOT NULL);
-CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT NOT NULL, release TEXT NOT NULL);
+CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT NOT NULL, release TEXT NOT NULL);
 CREATE TABLE period (id INTEGER PRIMARY KEY, label TEXT NOT NULL);
 ${ATLAS_MODEL_SCHEMA}
-INSERT INTO area_releases VALUES (1, 'ward', '2018-12-uk-bgc'), (2, 'ward', '2022-05-uk-bgc');
+INSERT INTO area_release VALUES (1, 'ward', '2018-12-uk-bgc'), (2, 'ward', '2022-05-uk-bgc');
 INSERT INTO area VALUES (1, 'E05000001'), (2, 'E05000002');
 INSERT INTO area_version VALUES (10, 1, 2), (11, 2, 2);
 INSERT INTO period VALUES (5, '2019-05-02'), (6, '2021-05-06');

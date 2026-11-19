@@ -63,7 +63,7 @@ test("a postcode area is found by its code, not by scanning its release", (conte
 
 	const releaseId = database
 		.prepare(
-			"SELECT id FROM area_releases WHERE geography = 'ward' AND release = '2024'",
+			"SELECT id FROM area_release WHERE geography = 'ward' AND release = '2024'",
 		)
 		.get()!.id;
 	const find = database.prepare(FIND_RELEASE_AREA_VERSION);

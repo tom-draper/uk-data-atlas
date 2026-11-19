@@ -15,7 +15,7 @@ export type DatabaseKey = {
 };
 
 /**
- * `area_releases` has had two layouts: `position` and `id` (the release's
+ * `area_release` has had two layouts: `position` and `id` (the release's
  * name), and now `id` and `release`. A database built before the rename is
  * still read, which is how the file in use is compared with the registry.
  */
@@ -26,7 +26,7 @@ const CURRENT: ReleaseColumns = { id: "id", release: "release" };
 const releaseColumns = (database: DatabaseSync): ReleaseColumns =>
 	database
 		.prepare(
-			"SELECT 1 AS found FROM pragma_table_info('area_releases') WHERE name = 'position'",
+			"SELECT 1 AS found FROM pragma_table_info('area_release') WHERE name = 'position'",
 		)
 		.get()
 		? { id: "position", release: "id" }
@@ -43,7 +43,7 @@ export const databaseKeys = (
 	const { id: rid, release: rname } = columns;
 	return {
 		release: {
-			sql: `SELECT ${rid} AS id, geography, ${rname} AS release FROM area_releases ORDER BY ${rid}`,
+			sql: `SELECT ${rid} AS id, geography, ${rname} AS release FROM area_release ORDER BY ${rid}`,
 			key: (row) => [String(row.geography), String(row.release)],
 		},
 		geography: {
@@ -52,13 +52,13 @@ export const databaseKeys = (
 		},
 		area: {
 			// An area is written with the release that first had it.
-			sql: `SELECT a.id AS id, g.slug AS geography, a.code AS code, fr.geography AS introduced_geography, fr.${rname} AS introduced_release FROM area a JOIN geography g ON g.id = a.geography_id JOIN (SELECT area_id, min(id) AS version_id FROM area_version GROUP BY area_id) f ON f.area_id = a.id JOIN area_version fv ON fv.id = f.version_id JOIN area_releases fr ON fr.${rid} = fv.release_id ORDER BY g.id, a.id`,
+			sql: `SELECT a.id AS id, g.slug AS geography, a.code AS code, fr.geography AS introduced_geography, fr.${rname} AS introduced_release FROM area a JOIN geography g ON g.id = a.geography_id JOIN (SELECT area_id, min(id) AS version_id FROM area_version GROUP BY area_id) f ON f.area_id = a.id JOIN area_version fv ON fv.id = f.version_id JOIN area_release fr ON fr.${rid} = fv.release_id ORDER BY g.id, a.id`,
 			key: (row) => [String(row.geography), String(row.code)],
 			group: (row) =>
 				`${String(row.introduced_geography)}/${String(row.introduced_release)}`,
 		},
 		area_version: {
-			sql: `SELECT v.id AS id, r.geography AS geography, r.${rname} AS release, a.code AS code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.${rid} = v.release_id ORDER BY v.release_id, v.id`,
+			sql: `SELECT v.id AS id, r.geography AS geography, r.${rname} AS release, a.code AS code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.${rid} = v.release_id ORDER BY v.release_id, v.id`,
 			key: (row) => [
 				String(row.geography),
 				String(row.release),
@@ -112,7 +112,7 @@ export const databaseKeys = (
 			key: (row) => [String(row.slug)],
 		},
 		contest: {
-			sql: `SELECT c.id AS id, d.slug AS dataset, e.label AS election, r.geography AS geography, r.${rname} AS release, a.code AS code FROM contest c JOIN election e ON e.id = c.election_id JOIN dataset d ON d.id = e.dataset_id JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.${rid} = v.release_id ORDER BY e.id, c.id`,
+			sql: `SELECT c.id AS id, d.slug AS dataset, e.label AS election, r.geography AS geography, r.${rname} AS release, a.code AS code FROM contest c JOIN election e ON e.id = c.election_id JOIN dataset d ON d.id = e.dataset_id JOIN area_version v ON v.id = c.area_version_id JOIN area a ON a.id = v.area_id JOIN area_release r ON r.${rid} = v.release_id ORDER BY e.id, c.id`,
 			key: (row) => [
 				String(row.dataset),
 				String(row.election),
@@ -124,12 +124,12 @@ export const databaseKeys = (
 	};
 };
 
-/** The keys of a database, whichever layout of `area_releases` it has. */
+/** The keys of a database, whichever layout of `area_release` it has. */
 export const keysOf = (database: DatabaseSync) =>
 	databaseKeys(
 		database
 			.prepare(
-				"SELECT 1 AS found FROM sqlite_schema WHERE name = 'area_releases' AND type = 'table'",
+				"SELECT 1 AS found FROM sqlite_schema WHERE name = 'area_release' AND type = 'table'",
 			)
 			.get()
 			? releaseColumns(database)

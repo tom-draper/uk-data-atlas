@@ -6,10 +6,10 @@ import { createStatisticsAreaLookup } from "../../src/storage/statisticsAreaLook
 const database = () => {
 	const db = new DatabaseSync(":memory:");
 	db.exec(`
-		CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT, status TEXT);
+		CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT, status TEXT);
 		CREATE TABLE area (id INTEGER, code TEXT);
 		CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER, name TEXT);
-		INSERT INTO area_releases VALUES (0, 'country', '2020-12-uk-bgc', 'available'),
+		INSERT INTO area_release VALUES (0, 'country', '2020-12-uk-bgc', 'available'),
 			(1, 'country', '2024-12-uk-bgc', 'available'),
 			(2, 'region', '2025-12-en-bgc', 'available'),
 			(3, 'region', '2010-12-en-bgc', 'unavailable');

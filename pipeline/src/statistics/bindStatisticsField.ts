@@ -32,7 +32,7 @@ export function bindStatisticsField(
 	const rows = database.prepare(`SELECT DISTINCT r.release AS release
 		FROM series s JOIN dataset d ON d.id = s.dataset_id
 		JOIN measure m ON m.id = s.measure_id
-		JOIN area_releases r ON r.id = s.release_id
+		JOIN area_release r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id
 		JOIN period p ON p.id = o.period_id
 		WHERE d.slug = ? AND m.slug = ? AND m.unit IN (SELECT value FROM json_each(?)) AND r.geography = ?
