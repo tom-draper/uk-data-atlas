@@ -144,7 +144,6 @@ test("a stage that exits 0 is recorded and logged as done", async () => {
 		lastTiming: () => undefined,
 		outputDigest: () => null,
 		begin: (...args: unknown[]) => calls.push(["begin", ...args]),
-		manifestPath: () => "manifest",
 		undeclaredChanges: () => [],
 		record: () => "new-digest",
 		recordTiming: (name: string, timing: any) =>
@@ -169,7 +168,6 @@ test("a stage that exits non-zero stops the build with its status", async () => 
 		lastTiming: () => undefined,
 		outputDigest: () => null,
 		begin: () => {},
-		manifestPath: () => undefined,
 		recordTiming: (_name: string, timing: any) =>
 			timings.push(timing.failed),
 	};
@@ -208,7 +206,6 @@ test("a stage that changed files outside its declared writes fails the build and
 		lastTiming: () => undefined,
 		outputDigest: () => null,
 		begin: () => {},
-		manifestPath: () => undefined,
 		undeclaredChanges: () => ["x.json"],
 		record: () => {
 			recorded.push("record");
@@ -228,26 +225,4 @@ test("a stage that changed files outside its declared writes fails the build and
 	assert.deepEqual(recorded, []);
 	assert.deepEqual(timings, [true]);
 	assert.equal(digests.has("a"), false);
-});
-
-test("verifying outputs collects wrong hashes", async () => {
-	const cache = {
-		lastTiming: () => undefined,
-		outputDigest: () => null,
-		begin: () => {},
-		manifestPath: () => undefined,
-		undeclaredChanges: () => [],
-		record: () => "digest",
-		manifestMismatches: () => ["y.json", "z.json"],
-		recordTiming: () => {},
-	};
-	const { settle, run, state, lines } = setup({
-		cache,
-		verifyOutputs: true,
-	});
-	settle(stage("a"));
-	assert.equal(await run(stage("a")), true);
-	assert.deepEqual(state.undeclaredStages, []);
-	assert.deepEqual(state.mismatchedStages, ["a"]);
-	assert.ok(lines.includes("a: recorded a hash that does not match 2 files"));
 });

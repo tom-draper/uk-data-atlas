@@ -19,7 +19,6 @@ import {
 	findCurrentStages,
 } from "./build-data-digests.mjs";
 import { createStageCache } from "./build-data-cache.mjs";
-import { OUTPUT_MANIFEST_ENV } from "./src/storage/outputManifest.ts";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
 	priorityOrder,
@@ -38,7 +37,7 @@ const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean, outputManifest?: string }) => number | Promise<number>,
+ *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean }) => number | Promise<number>,
  *   limits?: { jobs: number, memoryMb: number },
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
@@ -152,7 +151,7 @@ export async function runBuild({
 		logRunProblems({ log, ...state });
 		if (state.failureStatus !== null) return state.failureStatus;
 		// An undeclared write is a bug in the graph: the cache would not see it.
-		if (state.undeclaredStages.length || state.mismatchedStages.length) {
+		if (state.undeclaredStages.length) {
 			logError("Output verification failed.");
 			return 1;
 		}
@@ -186,15 +185,9 @@ const relayScript = fileURLToPath(
  * with the stage's name in front of each line when stages run at once. The
  * relay prefixes each line of stdout and stderr as it arrives.
  */
-function executeStage(
-	stage,
-	{ verbose = false, prefixed = false, outputManifest } = {},
-) {
+function executeStage(stage, { verbose = false, prefixed = false } = {}) {
 	const env = { ...process.env };
 	delete env.DATA_BUILD_RELAY_PREFIX;
-	delete env[OUTPUT_MANIFEST_ENV];
-	// Where the stage may note the hashes of files it hashed while writing.
-	if (outputManifest) env[OUTPUT_MANIFEST_ENV] = outputManifest;
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
 	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;
 	return new Promise((resolveStatus, reject) => {

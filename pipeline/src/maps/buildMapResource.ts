@@ -14,7 +14,6 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { recordOutputHash } from "../storage/outputManifest.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { roundKeepingValidity } from "./compileGeometryValidity.ts";
@@ -256,13 +255,6 @@ export const buildMapResources = async (
 						if (backup) copyFileSync(target, backup);
 						backups.push({ path: target, backup });
 						renameSync(jobs[item.job]!.path, target);
-						recordOutputHash(
-							join(assets, descriptor.tiles.artifact),
-							descriptor.tiles.contentHash.replace(
-								/^sha256:/,
-								"",
-							),
-						);
 						state[item.id] = { key: item.key, descriptor };
 						saveState();
 						log(
