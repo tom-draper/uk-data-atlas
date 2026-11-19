@@ -1,129 +1,73 @@
 # Database roadmap
 
 Improvements to the precompiled database (`data/build/atlas.sqlite` and its
-companions), collected from a review on 2026-11-05. Figures were measured on
-the build of that date (`atlas.sqlite` 742 MB). The aim is a database that can
-be sold as modules and queried by people and agents, with the boundary
-intelligence and crosswalks as its core value.
+companions). Collected from a review on 2026-11-05 and refreshed on
+2026-11-19. The aim is a database that can be sold as modules and queried by
+people and agents, with the boundary intelligence and crosswalks as its core
+value.
 
 Priorities: **P0** before selling or exposing SQL to agents, **P1** structure
-and product readiness, **P2** cleanup and size, **P3** nice to have.
+and product readiness, **P2** cleanup and size, **P3** nice to have. A task
+marked **Done** or **Partly done** keeps its number so links stay valid; the
+detail is under [Progress notes](#progress-notes).
 
 ## Measured state
 
-- 12 of 181 crosswalks carry weights: 7,376 of 1.93M edges (0.4%).
-- Ward to constituency (26 crosswalks, 225k edges) is best-fit only. LSOA
-  2011 to 2021, output area to anything, and ward to ward across years have
-  no weights.
-- Task 1 progress (2026-11-08): 98.7% of edges regroup exactly and weigh 1 by
-  rule (`v_crosswalk_weight`); the other edges carry weights on up to four
-  bases (postcodes, residents, households, dwellings) summed from postcodes and
-  output areas. 26 new `postcode-overlap` crosswalks give each ward its every
-  constituency, where `best-fit` stays the one-to-one lookup: of 2.16M edges in
-  207 crosswalks, 99.96% have a residents weight. Measured on the 2026-11-04
-  build; the stages take about 2 and 5 minutes and 1 GB. Left: Northern Ireland,
-  Scottish dwellings, the area basis on the new crosswalks, and other families
-  as they show a need. See `data/build/README.md`, "Weights from small-area
-  counts".
-- Task 3 progress: the database build stores boundary registry metadata and country coverage in `boundary_release` and `boundary_release_country`. Catalogue measure mappings and their additional vocabulary are stored in tables, and runtime readers derive the vocabulary from statistics tables. The source supplies coverage years, not authoritative validity intervals, so each release also stores the reference year and month of its edition, and the `boundary_release_edition` view answers "which snapshot was current on date X?" from them; this orders the held snapshots and is not a legal effective-date interval. Statistics selectors are stored in tables. Four evidence-backed election polling dates are recorded in `boundary_release_validity`; full effective-date intervals and other purposes remain to be verified. Missing evidence is not a claim of invalidity.
-- Measure semantics: `measure` now links structured `unit` and `universe` references and records `statistic`, with a dimension link for the pay statistics. The legacy unit and value kind remain for compatibility. Unknown universes are explicit. Build validation checks aggregation components, unit consistency and additive conversion; five weighted means without linked weights are documented exceptions and conversion refuses them.
-- Task 4 progress: `measure` already carries `numerator_id`, `denominator_id` and `weight_id`, and `measure_conversion` holds a rule and reason for every measure. Turnout is now weighted by the electorate and background air quality by its grid cells, so both are rebuilt rather than refused. Every other rate, share, mean and index that stays refused names the part that is not held (for example the 16 to 64 population behind the claimant rate). Lifting a refusal means holding that part as a measure.
-- Task 2 progress (2026-11-08): ids are assigned once from append-only
-  registries in `pipeline/ids/` (15 namespaces, 1.37M keys, 14 MB, 3 MB
-  compressed, 214 files, one per release for areas), seeded from the
-  2026-11-04 build so no existing id changed. Order is stored apart as
-  `inventory_position`, and `area_releases` is now `id` and `release`. CI checks
-  the registries against the base branch. Left: confirm the seed against the
-  deployed file (`pnpm ids verify`), and the postcode lookup's own numbering,
-  which is internal. See `docs/stable-ids.md`.
-- Task 14 progress (2026-11-11): the atlas build runs `ANALYZE` and
-  `PRAGMA optimize` on the vacuumed copy before it is renamed into place, so
-  `atlas.sqlite` ships `sqlite_stat1`. The final atlas and assembled modules
-  also pass foreign-key and SQLite integrity checks before publication.
-  Added `area_version_area (area_id)`,
-  `crosswalk_edge_from (from_version_id)` and `area_relationship_parent
-(parent_version_id)`. Measured on a copy of the 2026-11-11 build (665.6 MB):
-  the three indexes and statistics add 46 MB (711.9 MB). A lookup by code
-  falls from 19.0 to 0.013 ms, versions by `area_id` from 15.8 to 0.008 ms,
-  edges by `from_version_id` from 35.6 to 0.008 ms, and relationships by
-  parent from 1.06 to 0.012 ms (warm cache).
-- Task 15 progress (2026-11-11): `observation_area` is gone from the writer and
-  the built file (done earlier, with the tests asserting no secondary index on
-  `observation`). Every reader filters on the primary key
-  `(series_id, area_version_id, period_id)`: place reads pass the series of the
-  area's release, release reads filter on one series. Measured on copies of the
-  build: restoring the index costs 122.8 MB (788.3 vs 665.6 MB) and does not
-  help a place read: 0.13 ms per area through the primary key against 0.14 ms
-  with the index (30 areas, 2,420 rows, warm cache, four runs each). Not
-  measured with a cold page cache.
-- Task 10 progress (2026-11-15): the in-database docs are done. `atlas.sqlite`
-  ships `schema_table`, `schema_column`, `schema_guide` and `schema_example`,
-  written from `pipeline/src/storage/schemaDocs.ts`, and a full-text `search`
-  table over measures, datasets, dimension members and areas. The build fails
-  when a table, view or column has no description or a description names
-  something that does not exist. `search` adds 25 MB (774.2 vs 748.8 MB, the
-  same inputs). Left: one schema definition in code shared by writer and reader
-  (`SOURCE_FIELDS` is still duplicated) and generating the README tables.
-- Task 6 progress (2026-11-15): `area_change_event`, `area_change_member` and the
-  view `v_area_change` are written at assembly, after the crosswalks and weights
-  and before `ANALYZE`. Components of identity crosswalk edges are classified
-  as renamed, recoded, split, merged, redistributed, ended or created
-  (`pipeline/src/storage/areaChangeClassifier.ts`). 62,294 events and 71,858
-  members add 7.5 MB (`dbstat`, on a copy of the previous build). The dates are
-  edition dates (`date_basis = 'edition'`), not legal dates. LSOA 2011 to 2021
-  agrees with `crosswalk_edge.change` with no differences. Limits: extent
-  continuity crosswalks only link unchanged extents, so splits and merges of
-  wards, output areas and parishes show as ended plus created. Only the official
-  lookups (local authorities 2022-12 to 2023-05 and 2024-12 to 2025-05, LSOA
-  2011 to 2021) hold true splits and merges. Follow-ups:
-    1. Switch `area-lineage.json` readers to the table.
-    2. Legal effective dates from the ONS Code History Database.
-    3. Read the official lookups that have no crosswalk purpose (ward 2024-12 to
-       2025-05 `official-history`, constituency 2010 to 2024), or derive ward
-       successors from postcodes, so ward splits and merges appear.
-- Task 8 progress: the `areas` and `datasets` compatibility views have been removed; postcode and other readers query canonical area tables. Postcode area dictionaries and column-order tables are replaced by row-derived JSON and per-shard integrity hashes. Crosswalk endpoint fields and common metadata are derived by readers, labels come from area versions, and compiled output metadata is held on `dataset`.
-- Task 9 progress: selectors are derived from explicit rules and census declarations, and the build no longer writes or compares compiled observation artifacts. The catalogue, place profiles, map values and website regional chunks now read database-derived payloads; direct-to-rows ingestion and the remaining declaration migrations are still outstanding.
-- 1,643 series are `published` and 1,093 are `converted` (task 25: every convertible
-  measure on the latest authorities, wards, constituencies and 2021 LSOAs, each
-  scored for exact share and coverage; 42 refused measures and unrouted pairs
-  are in `conversion_skip`).
-  See `docs/conversion-accuracy.md`. No `aggregated` series exist.
-- 636k of 638k extent-continuity edges are same code, same area.
-- Largest objects: `postcodes` 248 MB, `observation` 176 MB plus
-  `observation_area` 115 MB, crosswalk edges and diagnostics about 105 MB.
-- Observations by module: population 5.8M (63%), housing 1.1M, deprivation
-  505k, economy 504k, health 490k, politics 387k, transport 225k,
+Measured on the local build of 2026-11-19 unless stated.
+
+- `atlas.sqlite` is 942 MB, up from 742 MB on 2026-11-05.
+- Largest objects: `postcodes` 284 MB, `observation` 214 MB, `area_location`
+  89 MB, `crosswalk_edge_check` 49 MB, `crosswalk_edge` 38 MB plus its two
+  indexes 61 MB, `area_version` 35 MB, `area_hierarchy` 29 MB plus its parent
+  index 18 MB, `crosswalk_weight` 19 MB, `search` 14 MB.
+- 1,643 series are `published` and 1,003 `converted` (on the four standard
+  releases, task 25). No `aggregated` series exist.
+- Crosswalks: 207 with 2.16M edges. 98.7% of edges regroup exactly and weigh
+  1 by rule; 99.96% have a residents weight (2026-11-08).
+- 42 of 96 measures are refused for conversion, each with its reason in
+  `measure_conversion`.
+- Modules build to `data/build/modules/` (1.1 GB in all): per-module SQLite
+  and Parquet, a DuckDB views file and the `crosswalk-checks` add-on.
+- Observations by module (2026-11-05): population 5.8M (63%), housing 1.1M,
+  deprivation 505k, economy 504k, health 490k, politics 387k, transport 225k,
   environment 111k, education 28k, crime 14k, infrastructure 4k.
-- 94% of observation values are whole numbers; 89% sit in near-complete
-  (series, period) groups.
-- No `sqlite_stat1` on the 2026-11-05 build (fixed: see task 14 progress).
 - SQLite's attach limit is 10 in both the `sqlite3` CLI and `node:sqlite`.
+
+## Status at a glance
+
+| Status      | Tasks                                                           |
+| ----------- | --------------------------------------------------------------- |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 30, 46                              |
+| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                            |
+| Partly done | 7, 8, 9, 17, 35, 39                                             |
+| Kept as is  | 12 (measured, keep the wide table)                              |
+| Not started | 13, 18, 24, 26–29, 31–34, 36–38, 40–45, 48–51, and new 52 to 61 |
 
 ## Core data quality
 
-| #   | Priority | Task                                                                                                                                                                                                                                                                                              | Evidence                                                                           |
-| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| 1   | P0       | Weight every common crosswalk from the smallest held units (2021 output areas with census population and households, postcode counts), not polygon overlap of large areas. Store several bases per edge: people, households, dwellings, area (`weight_basis` already allows this).                | 0.4% of edges weighted. This is the hardest thing for others to copy.              |
-| 2   | P0       | Make IDs stable across builds. `release_id` is the release's position in the inventory list and `area_version.id` follows release order, so adding a release shifts every later ID. Assign IDs once, append-only, or make `(geography, release, code)` the public key.                            | Breaks customer joins on every update and prevents release diffs.                  |
-| 3   | P0       | Make the database self-contained. Move `statistics-read-path.json`, `statistics-vocabulary.json` and the boundary-release JSON payload (dates, coverage, licence) into tables, e.g. `release(valid_from, valid_to, countries, resolution, source_id)`.                                            | "Which release was current on date X?" can't be answered in SQL today.             |
-| 4   | P0       | Complete each measure's aggregation rule. 26 rate, share and index measures have `aggregation = none` and no numerator or denominator. `weighted_mean` has no column naming its weight measure; add `weight_measure_id`. Mark measures that can't be converted, with a reason.                    | Rates can't be converted or rebuilt over time correctly without this.              |
-| 5   | P0       | Store licences in the database: a normalised licence table with commercial-use and ShareAlike flags. Link boundary releases and crosswalks to `source` (today their provenance is JSON in `crosswalk.header`). Isolate the CC BY-SA 2016–19 local elections.                                      | `DATA-LICENCES.md` promises a `licence` table per delivered file; none exists yet. |
-| 6   | P1       | **Done** (see Task 6 progress). Store code changes as dated events in an `area_change_event` table (split, merge, recode, effective date) instead of the JSON `area-lineage` lookup.                                                                                                              | "What replaced Allerdale?" should be one SQL query.                                |
-| 7   | P1       | **Partly done**: area versions have a polygon interior point and bounding box, or an explicit gap. Named places have points where stored geometry exists. ONS 2021 England and Wales output-area population-weighted centroids are used where available. Offer GeoParquet boundaries as a module. | Wider population-weighted coverage and GeoParquet boundaries remain outstanding.   |
+| #   | Priority | Status      | Task                                                                                                                                                                                                                                                              |
+| --- | -------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | P0       | Done        | Weight every common crosswalk from the smallest held units (2021 output areas, postcode counts), on several bases per edge. Left: Northern Ireland, Scottish dwellings and the area basis on the postcode-overlap crosswalks, now task 56.                        |
+| 2   | P0       | Mostly done | Stable IDs from append-only registries in `pipeline/ids/`. Left: confirm the seed against the deployed file with `pnpm ids verify` before the next deploy. The postcode lookup's own numbering stays internal.                                                    |
+| 3   | P0       | Mostly done | Make the database self-contained (boundary release metadata, coverage, editions, selectors and vocabulary in tables). Left: legal effective-date intervals beyond the four recorded polling dates (see #426).                                                     |
+| 4   | P0       | Done        | Every measure has a conversion rule and reason in `measure_conversion`, with `numerator_id`, `denominator_id` and `weight_id`. Lifting a refusal means holding the missing part as a measure.                                                                     |
+| 5   | P0       | Done        | Licences in the database: `v_source_terms`, `v_election_terms`, `delivery_licence`. The CC BY-SA 2016–19 local elections are isolated in the `politics-sharealike` add-on.                                                                                        |
+| 6   | P1       | Done        | Code changes as dated events in `area_change_event`. Follow-ups: switch `area-lineage.json` readers to the table, legal dates from the ONS Code History Database, and the official lookups that would show ward splits and merges.                                |
+| 7   | P1       | Partly done | Area versions have an interior point and bounding box, or an explicit gap; published 2021 output-area centroids are used where available. Left: wider population-weighted coverage and GeoParquet boundaries as a module. `area_location` is 89 MB (see task 55). |
 
 ## Structure and maintainability
 
-| #   | Priority | Task                                                                                                                                                                                                                                                                                                                                                                                                     | Evidence                                                                         |
-| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 8   | P1       | Stop shaping the schema to rebuild old JSON byte for byte. Make the tables canonical, treat JSON as derived output, then drop `crosswalk.header` (935 KB), `source_fields`/`target_fields`, `crosswalk_label`, `postcode_area_codes`/`postcode_area_columns` (7.8 MB), the old `datasets` table (57 rows beside `dataset`'s 64) and the `areas` view.                                                    | Two kept-in-step representations double the cost of schema changes.              |
-| 9   | P1       | Collapse each dataset to one compiled form. Today: compiled JSON (`datasets/`, 76 MB), then rows, then a regenerated payload compared with the JSON, plus `compiled-observations/` (75 MB, 322 files) compared again. Finish the declaration migration (all datasets declared, see `docs/dataset-declarations.md`), make rows the only output, and use fixture tests instead of whole-build comparisons. | About 6k lines of second compilers, and build time.                              |
-| 10  | P1       | **Partly done** (the in-database docs, see Measured state). One schema definition in code, shared by writer and reader. `SOURCE_FIELDS` is duplicated in `pipeline/src/storage/atlasCrosswalks.ts` and `packages/atlas-db/src/atlasCrosswalks.ts`. Generate the README tables and an in-database `schema_doc` table (description per table and column) from it.                                          | Lets agents learn the database by querying it.                                   |
-| 11  | Done     | Ordinary published tables use `STRICT`. Naming and quoted postcode release columns remain separate concerns.                                                                                                                                                                                                                                                                                             | SQLite FTS virtual and shadow tables are managed by SQLite and cannot be STRICT. |
-| 12  | P2       | **Measured, keep the wide table** (see below). Postcode table design: one column per release (29 area + 29 distance columns), so each new release changes the schema. Use a long table, or map postcodes to output areas only and derive the rest through output-area crosswalks (as the ONS NSPL does). Measure size first.                                                                             | Largest table, 248 MB.                                                           |
-| 13  | P2       | Store unchanged areas once: "unchanged from release A to B" as a span, not an edge per release. 1M area versions for 307k areas. Do after task 2.                                                                                                                                                                                                                                                        | Roughly 100 MB.                                                                  |
+| #   | Priority | Status      | Task                                                                                                                                                                                                                                                |
+| --- | -------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 8   | P1       | Partly done | Make the tables canonical and JSON derived. Done: `areas` and `datasets` views removed, postcode dictionaries replaced, crosswalk endpoint fields derived by readers. Left: drop `crosswalk.header` and the remaining kept-in-step representations. |
+| 9   | P1       | Partly done | One compiled form per dataset. Compiled observation artifacts are gone and readers use database payloads. Left: direct-to-rows ingestion (#528) and the remaining declaration migrations (#708).                                                    |
+| 10  | P1       | Mostly done | Docs inside the database (`schema_table`, `schema_column`, `schema_guide`, `schema_example`, `search`). Left: one schema definition shared by writer and reader (`SOURCE_FIELDS` is still duplicated) and generating the README tables.             |
+| 11  | Done     | Done        | Ordinary published tables use `STRICT`. FTS tables are managed by SQLite and cannot be STRICT.                                                                                                                                                      |
+| 12  | P2       | Kept as is  | Postcode table design. Measured: keep the wide table (see below).                                                                                                                                                                                   |
+| 13  | P2       |             | Store unchanged areas once, as a span rather than an edge per release. 1M area versions for 307k areas. Roughly 100 MB.                                                                                                                             |
 
 Task 12 measured (2026-11-15), on the 363,363 postcodes starting with S
-(13.6% of 2,665,797), scaled up and accurate to about 10%. The current file is
+(13.6% of 2,665,797), scaled up and accurate to about 10%. The file then was
 268 MB: `postcodes` holds one distance per release that has its own value and
 shares one `postcode_area_set` row between the 63,452 distinct combinations of
 areas.
@@ -139,128 +83,177 @@ areas.
 The one-row-per-postcode-per-release shapes cost 5 times the size because the
 wide table already shares areas between postcodes and leaves 25 of 29
 distances null. Output-area only is smaller but loses the containment and
-several-area matches the API returns, so it would change responses. The
-schema drift is real but small: a new release adds two columns to a generated
-table, and the layout marker (`postcodeAreaLayout`) already rejects stale
-files. Keep the wide table. If drift becomes a problem, the third shape is the
-cheapest way to remove it.
+several-area matches the API returns. A new release adds two columns to a
+generated table, and the layout marker (`postcodeAreaLayout`) rejects stale
+files. If drift becomes a problem, the third shape is the cheapest way to
+remove it.
 
 ## Size and query performance
 
-| #   | Priority | Task                                                                                                                                                                                                         | Evidence                                                                                                                                                                                               |
-| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 14  | P1       | **Done.** Run `ANALYZE` (and `PRAGMA optimize`) at the end of the build. Add indexes for ad-hoc queries: `area_version(area_id)`, `crosswalk_edge(from_version_id)`, `area_relationship(parent_version_id)`. | Lookup by code scans 1M area versions; an edge lookup by area alone is a full scan (220 ms).                                                                                                           |
-| 15  | P1       | **Done.** Drop the `observation_area` index. Readers look up an area through the primary key, passing the series list of the area's release.                                                                 | Saves 115 MB. On a copy: 1.0 ms per area without the index vs 1.6 ms with it (colder cache), so about a tie.                                                                                           |
-| 16  | P1       | Ship Parquet (zstd) alongside SQLite for data products. Keep SQLite for apps and the API, which need fast single-row lookups.                                                                                | Observations 291 → 19 MB; edges 59 → 3.5 MB; diagnostics 46 → 7.9 MB; postcodes 248 → 109 MB. Full aggregate over 9.2M rows in 17 ms with DuckDB.                                                      |
-| 17  | P2       | Exclude `crosswalk_edge_check` from sold core; an optional `crosswalk-checks` module restores it for API responses. `website_assets` is separate; moving `payloads` remains open.                            | The serving atlas retains API diagnostics; module assemblies need `crosswalk-checks` to serve complete crosswalk responses. A 2026-11-17 scratch copy saved 48,586,752 bytes after VACUUM (46.34 MiB). |
-| 18  | P3       | Store postcode distances in metres, not centimetres.                                                                                                                                                         | Probably tens of MB (not measured). Centimetres are false precision against generalised boundaries.                                                                                                    |
+| #   | Priority | Status      | Task                                                                                                                                                                                 |
+| --- | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 14  | P1       | Done        | `ANALYZE` and `PRAGMA optimize` at the end of the build, and indexes for ad-hoc queries.                                                                                             |
+| 15  | P1       | Done        | `observation_area` index dropped; readers use the primary key.                                                                                                                       |
+| 16  | P1       | Mostly done | Parquet (zstd) alongside SQLite. The module build writes Parquet per module with a DuckDB views file. Left: publish it as a download with the versioned bundles (task 53).           |
+| 17  | P2       | Partly done | `crosswalk_edge_check` sits in the optional `crosswalk-checks` module for sold builds (saves 46 MiB), but still ships in the serving `atlas.sqlite`. Moving `payloads` remains open. |
+| 18  | P3       |             | Store postcode distances in metres, not centimetres. Probably tens of MB, not measured.                                                                                              |
 
 Rejected: storing each series as a packed array per period. It was about
-20 MB and made whole-map reads 60× faster (0.09 vs 5.3 ms), but single-area
-reads 50× slower (3.9 vs 0.08 ms), and it can't be queried with plain SQL.
-Parquet gets the same size and stays queryable.
+20 MB and made whole-map reads 60× faster, but single-area reads 50× slower,
+and it can't be queried with plain SQL. Parquet gets the same size and stays
+queryable.
 
 ## Modules
 
-| #   | Priority | Task                                                                                                                                                                                                                                                     |
-| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 19  | P1       | Build modules separately but deliver one assembled SQLite file per purchase, reusing the `assemble-atlas` step. This avoids the 10-database attach limit and keeps foreign keys working. Ship Parquet as one folder per module with a DuckDB views file. |
-| 20  | P1       | Core assigns every ID (measure, dimension, period, source), so modules built at different times never clash. Depends on task 2.                                                                                                                          |
-| 21  | P1       | Modules point only at core, never at each other. Comparisons that need two optional modules are computed at query time, not stored.                                                                                                                      |
-| 22  | P1       | Core lists what every module contains, including unpurchased ones, so an agent can say "this needs the health module".                                                                                                                                   |
-| 23  | P1       | Each module has a manifest: version, compatible core versions, sources, licences, row counts and hashes. The assembler refuses incompatible combinations.                                                                                                |
-| 24  | P1       | Release manifest and changelog with diffs between releases. Depends on task 2.                                                                                                                                                                           |
+| #   | Priority | Status      | Task                                                                                                                                                                             |
+| --- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 19  | P1       | Mostly done | Build modules separately, deliver one assembled SQLite file per purchase (`pipeline/src/modules/`, `pnpm delivery:create`). Left: bundles for sale and their sizes.              |
+| 20  | P1       | Mostly done | Core assigns every ID, through the `pipeline/ids/` registries.                                                                                                                   |
+| 21  | P1       | Mostly done | Modules point only at core. `core_denominator` copies the denominators modules need.                                                                                             |
+| 22  | P1       | Mostly done | Core lists every module and its datasets (`module`, `module_dataset`, `module_view`).                                                                                            |
+| 23  | P1       | Mostly done | Module compatibility key, checked by the assembler. Left: a full manifest per module (version, sources, licences, row counts, hashes), with `docs/data-organisation.md` task 12. |
+| 24  | P0       |             | Release manifest and changelog with diffs between releases (areas, series, values). Raised from P1: versioned bundles (task 53) need it, and stable IDs (task 2) now allow it.   |
 
-Suggested modules:
-
-| Module                                           | Contents                                                                                                                                                         |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| core                                             | Releases, areas, crosswalks with weights, change events, named places, the full catalogue, and denominators (total population, households, dwellings, land area) |
-| postcodes                                        | Postcode lookups. Large and useful on their own                                                                                                                  |
-| demographics                                     | Full census and single-year-of-age population (63% of observations, so not in core)                                                                              |
-| politics                                         | Elections. The CC BY-SA 2016–19 local elections in a separate add-on so ShareAlike doesn't spread                                                                |
-| economy, housing, health, education, deprivation | One module each                                                                                                                                                  |
-| environment                                      | Environment, transport, infrastructure and crime, merged because each is small                                                                                   |
+Suggested modules are listed in `docs/data-organisation.md`, "Modules".
 
 ## Precomputations
 
-| #   | Priority              | Task                                                                                                                                                                                                                                                         |
-| --- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 25  | P0 once weights exist | Rebuild every measure on a few standard releases (latest local authority, ward and constituency; 2021 LSOA). Each series is `converted`, names its crosswalk and weight basis, and carries a quality score (share from exact regrouping vs estimated split). |
-| 26  | P1                    | Roll up every area to its parents (LSOA → MSOA → local authority → region → country), only for measures that can be summed or rebuilt as a ratio.                                                                                                            |
-| 27  | P1                    | Rebuild rates from numerator and denominator (per 1,000 residents or households, using core denominators), never by averaging rates.                                                                                                                         |
-| 28  | P1                    | A coverage table: measure × geography × release × period, published or converted, so agents can check what's answerable before querying.                                                                                                                     |
-| 29  | P3                    | Ranks and deciles within each nation, as views rather than stored values.                                                                                                                                                                                    |
-
-Depends on tasks 1, 2 and 4.
+| #   | Priority | Status | Task                                                                                                                                                                                |
+| --- | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 25  | P0       | Done   | Every convertible measure rebuilt on the latest local authorities, wards and constituencies and 2021 LSOAs, each scored. See `docs/conversion-accuracy.md`.                         |
+| 26  | P1       |        | Roll up every area to its parents (LSOA → MSOA → local authority → region → country), only for measures that can be summed or rebuilt as a ratio.                                   |
+| 27  | P1       |        | Rebuild rates from numerator and denominator (per 1,000 residents or households, using core denominators), never by averaging rates.                                                |
+| 28  | P0       |        | A coverage table: measure × geography × release × period, published or converted, so agents can check what's answerable before querying (#641). Raised from P1: agent SQL needs it. |
+| 29  | P3       |        | Ranks and deciles within each nation, as views rather than stored values.                                                                                                           |
 
 ## Attribution of derived data
 
-| #   | Priority | Task                                                                                                                                                                                  |
-| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 30  | P1       | A `series_input` table: for each derived series, its input series, the crosswalk and the weight source. `series.derived_from_id` holds only one input; a converted value has several. |
-| 31  | P1       | A `v_series_attribution` view that walks `series_input` back to the original sources and returns every source, publisher, licence and attribution text.                               |
-| 32  | P2       | One precomputed, ready-to-print attribution string per series.                                                                                                                        |
+| #   | Priority | Status | Task                                                                                                                                                                                  |
+| --- | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 30  | P1       | Done   | `series_input` lists every input of a converted series, with `series_crosswalk` and `series_conversion` for its route, rule, weight basis and quality.                                |
+| 31  | P0       |        | A `v_series_attribution` view that walks `series_input` back to every source, publisher, licence and attribution text (#640). Raised from P1: needed before selling converted series. |
+| 32  | P2       |        | One precomputed, ready-to-print attribution string per series.                                                                                                                        |
 
 ## New derived products
 
-Precomputations beyond the tasks above, chosen for what people can't easily
-get elsewhere. "Held" means the data is already in the build. Anything
-estimated (notionals, the UK-wide index, small-area estimates) is stored as
+Precomputations chosen for what people can't easily get elsewhere. "Held"
+means the data is already in the build. Anything estimated is stored as
 `modelled`, with its method and inputs recorded, so an estimate never passes
 as published data.
 
-Neighbours are currently computed from geometry at request time
-(`packages/atlas-loader/src/resolver/spatial.ts`) and are not stored.
-
 ### Relationships between areas
 
-| #   | Priority | Task                                                                                                                                                                                                                                                                                                                                                | Why                                                                                                        | Data                                |
-| --- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| 33  | P0       | Old code → current code in one step: chain crosswalks across years into direct lookups (e.g. any ward code since 2011 → 2026 wards), combining weights along the chain and recording the accumulated error.                                                                                                                                         | People's data is usually on an old release; this puts it on today's boundaries with one join.              | Held                                |
-| 34  | P0       | How much each area changed between releases: share of land and share of residents that moved, and a "materially changed" flag.                                                                                                                                                                                                                      | Tells someone whether old data is still usable on new boundaries, without converting it.                   | Held, once weights exist (task 1)   |
-| 35  | P1       | Direct parent/child links now in `area_hierarchy` with accuracy and source; a flattened hierarchy remains outstanding. One flat hierarchy table: one row per small area with its parent at every level (OA → LSOA → MSOA → ward → local authority → county → region → country, plus constituency, ICB, police area), each marked exact or best-fit. | The most-downloaded kind of file on the ONS geoportal, and tedious to keep current.                        | Held                                |
-| 36  | P1       | Postcode district and sector → official areas, weighted by residential postcodes or population.                                                                                                                                                                                                                                                     | Insurance, property, retail and marketing data is often only by postcode district or sector.               | Held (ONSPD, postcode counts)       |
-| 37  | P1       | GP practice → LSOA, weighted by registered patients (NHS Digital publishes patients per practice by LSOA).                                                                                                                                                                                                                                          | Puts all GP-level data (prescribing, QOF, patient survey) onto any geography, using a published weighting. | New source (OGL)                    |
-| 38  | P1       | Neighbours stored per release: shared border length, touch-at-a-point flag, coastline length.                                                                                                                                                                                                                                                       | Spatial statistics, smoothing, neighbouring-council comparisons; removes the runtime calculation.          | Held (geometry store)               |
-| 39  | P1       | **Partly done**: published 2021 England and Wales output-area centroids are stored where compatible with the bounds. Derive population-weighted centroids for other area versions from output area or postcode populations.                                                                                                                         | A better "where people live" point for distances and labels; ONS publishes these for few geographies.      | Held                                |
-| 40  | P2       | Census commuting flows (origin to destination) on any geography.                                                                                                                                                                                                                                                                                    | Commuter zones, and workplace weights for jobs measures.                                                   | New source (Census 2021 flows, OGL) |
+| #   | Priority | Status      | Task                                                                                                                                                                                                                                   | Data                          |
+| --- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| 33  | P0       |             | Old code → current code in one step: store chained crosswalks as direct lookups (any ward code since 2011 → 2026 wards), combining weights and recording the accumulated error (#639). The conversion routes already chain internally. | Held                          |
+| 34  | P0       |             | How much each area changed between releases: share of land and of residents that moved, and a "materially changed" flag (#414).                                                                                                        | Held                          |
+| 35  | P1       | Partly done | Direct parent and child links are in `area_hierarchy`. Left: one flat hierarchy table, one row per small area with its parent at every level, each marked exact or best-fit (#427).                                                    | Held                          |
+| 36  | P1       |             | Postcode district and sector → official areas, weighted by residential postcodes or population.                                                                                                                                        | Held (ONSPD, postcode counts) |
+| 37  | P1       |             | GP practice → LSOA, weighted by registered patients. NHS ODS codes are now stored as area identifiers.                                                                                                                                 | New source (OGL)              |
+| 38  | P1       |             | Neighbours stored per release: shared border length, touch-at-a-point flag, coastline length. Today computed at request time (`packages/areas/src/spatialResolver.ts`).                                                                | Held (geometry store)         |
+| 39  | P1       | Partly done | Published 2021 England and Wales output-area centroids are stored. Left: derive population-weighted centroids for other area versions.                                                                                                 | Held                          |
+| 40  | P2       |             | Census commuting flows (origin to destination) on any geography.                                                                                                                                                                       | New source (Census 2021, OGL) |
 
 ### Denominators and summaries
 
-| #   | Priority | Task                                                                                                                                                                                                 | Why                                                                   | Data                                                   |
-| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------ |
-| 41  | P0       | Population for every area, every year, every release. Today: local authorities 2011–2024, wards 2022 only, LSOAs at the census. Rebuild mid-year estimates onto each release through the crosswalks. | Every per-person rate and every weight depends on it.                 | Mostly held; ONS LSOA mid-year estimates fill the gaps |
-| 42  | P1       | A per-person version of every count measure, naming its denominator.                                                                                                                                 | Raw counts are rarely what people compare.                            | Held                                                   |
-| 43  | P1       | Summaries of small-area measures for larger areas: for any LSOA measure, each local authority's population-weighted mean, share of residents in each national decile, and spread.                    | ONS publishes these for deprivation only.                             | Held                                                   |
-| 44  | P1       | Change between periods on fixed boundaries: absolute change, percentage change and annual growth, with changes caused by boundary moves flagged.                                                     | Answers "is this change real?" (`services/api/DIRECTION.md`, item 5). | Held, after converted series (task 25)                 |
+| #   | Priority | Status | Task                                                                                                                                                                                                                                      | Data                                                   |
+| --- | -------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 41  | P1       |        | Population for every area, every year, every release, by rebuilding mid-year estimates onto each release. Also widens what conversions can split, since only total population is backtested on a split. Not re-measured since 2026-11-05. | Mostly held; ONS LSOA mid-year estimates fill the gaps |
+| 42  | P1       |        | A per-person version of every count measure, naming its denominator.                                                                                                                                                                      | Held                                                   |
+| 43  | P1       |        | Summaries of small-area measures for larger areas: population-weighted mean, share of residents in each national decile, spread.                                                                                                          | Held                                                   |
+| 44  | P1       |        | Change between periods on fixed boundaries, with changes caused by boundary moves flagged (#414). Now unblocked by task 25.                                                                                                               | Held                                                   |
 
 ### Analytical products
 
-| #   | Priority | Task                                                                                                                                                 | Why                                                                                                  | Data                                                                                                                                                                                                                                        |
-| --- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 45  | P1       | Statistical neighbours: for each council (and ward), the 15 most similar areas across standardised measures, with the measures that drove the match. | Councils benchmark against CIPFA nearest neighbours, which are paid. An open, explained alternative. | Held                                                                                                                                                                                                                                        |
-| 46  | P1       | Notional election results: past general and local results re-estimated on new boundaries from ward results and census weights. Stored as `modelled`. | Rallings & Thrasher notionals are proprietary; needed at every boundary review.                      | 2019 general election on 2024 seats, and local elections on wards new at each review since 2018, shipped as `modelled` series, open in `politics` and share-alike in `politics-sharealike` ([notional-elections.md](notional-elections.md)) |
-| 47  | P2       | Election metrics on fixed boundaries: swing, majority, marginality, turnout change.                                                                  | Cheap once notionals exist.                                                                          | Notional `valid-votes`, `majority` and `party-vote-share-change` per model on the 2024 seats, see `docs/notional-elections.md`. Swing and marginality follow from them; turnout change needs notional electorates                           |
-| 48  | P2       | A UK-wide deprivation index adjusting the four national indices to one scale (as mySociety and academics do). Stored as `modelled`.                  | "Most deprived areas in the UK" has no official answer.                                              | Held (IMD, WIMD, SIMD, NIMDM)                                                                                                                                                                                                               |
-| 49  | P2       | Distance from every LSOA or postcode to the nearest GP, school, hospital, station and EV charger, by road where possible.                            | Government journey-time statistics stopped in 2019.                                                  | OS Open Roads and EV chargers held; facilities from NHS ODS, GIAS and NaPTAN (all OGL)                                                                                                                                                      |
-| 50  | P3       | Age-standardised rates for health measures, using single-year-of-age population.                                                                     | Fair comparison between old and young areas.                                                         | Partly held: needs counts by age, which few datasets have                                                                                                                                                                                   |
-| 51  | P3       | Small-area estimates, e.g. council figures spread to LSOAs with covariates. Stored as `modelled`.                                                    | `services/api/DIRECTION.md`, item 7.                                                                 | Held                                                                                                                                                                                                                                        |
+| #   | Priority | Status      | Task                                                                                                                                                                                                                                                                                                             | Data                                                                                   |
+| --- | -------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 45  | P1       |             | Statistical neighbours: for each council (and ward), the 15 most similar areas across standardised measures, with the measures that drove the match.                                                                                                                                                             | Held                                                                                   |
+| 46  | P1       | Done        | Notional election results re-estimated on new boundaries: the 2019 general election on 2024 seats, and local elections on wards new at each review since 2018. Shipped as `modelled` series, open in `politics` and share-alike in `politics-sharealike` (#415, [notional-elections.md](notional-elections.md)). | Held                                                                                   |
+| 47  | P2       | Mostly done | Election metrics on fixed boundaries: notional `valid-votes`, `majority` and `party-vote-share-change` per model on the 2024 seats. Swing and marginality follow from them. Left: turnout change, which needs notional electorates.                                                                              | Held                                                                                   |
+| 48  | P2       |             | A UK-wide deprivation index on one scale. Stored as `modelled`.                                                                                                                                                                                                                                                  | Held (IMD, WIMD, SIMD, NIMDM)                                                          |
+| 49  | P2       |             | Distance from every LSOA or postcode to the nearest GP, school, hospital, station and EV charger, by road where possible.                                                                                                                                                                                        | OS Open Roads and EV chargers held; facilities from NHS ODS, GIAS and NaPTAN (all OGL) |
+| 50  | P3       |             | Age-standardised rates for health measures.                                                                                                                                                                                                                                                                      | Partly held                                                                            |
+| 51  | P3       |             | Small-area estimates, stored as `modelled` (#433).                                                                                                                                                                                                                                                               | Held                                                                                   |
 
-Top five: tasks 33, 41, 34, 36 with 37, and 45.
+## Added 2026-11-19
+
+| #   | Priority | Task                                                                                                                                                                                                                                   | Why                                                                                                     |
+| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 52  | P0       | Run the full pipeline in CI on a small fixture release (#409). Check the two `buildData.test.ts` tests that failed on main on 2026-11-08 and fix or remove them.                                                                       | About 1,000 commits landed in two weeks with no end-to-end build in CI.                                 |
+| 53  | P0       | Build data off the production server and deploy versioned bundles (#711): atlas, modules, Parquet and the task 24 manifest, published together under one version.                                                                      | Modules exist, but there is no versioned way to ship or roll them back.                                 |
+| 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                        | Early access is the last cheap time to remove routes.                                                   |
+| 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module. | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
+| 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                  | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
+| 57  | P1       | Ship uncertainty on converted series (#411). The backtest computes bounds, but no shipped series carries them, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                                    | Customers need to know which converted values to trust.                                                 |
+| 58  | P2       | Find published truths on two overlapping sets of areas for other additive measures (jobs, emissions, energy use, pupils) and backtest splitting them.                                                                                  | Only total population is ever split today; each passing backtest unlocks a measure.                     |
+| 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                           | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
+| 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                               | The way agents reach the database.                                                                      |
+| 61  | P2       | Keep this roadmap current: update a task's status in the same PR that changes it.                                                                                                                                                      | This file had fallen two weeks behind main.                                                             |
 
 ## Suggested order
 
-1. Quick wins: tasks 14 and 15.
-2. The public shape, while early access allows change: tasks 2, 3, 5 and 20.
-3. Make the crosswalks the product: task 4, then 1, then 25.
-4. Modules and distribution: tasks 19–24 and 16.
-5. Remaining precomputations and attribution: tasks 26–31.
-6. New derived products, top five first: tasks 33, 41, 34, 36, 37 and 45,
-   then the rest of 35–51.
-7. Refactoring alongside: tasks 8–10, easier once rows are the only compiled form.
+1. Before the next deploy: confirm IDs against the deployed file (task 2).
+2. Make releases safe: tasks 52, 53, 24 and 59.
+3. Make the database answerable by agents: tasks 33, 28 and 31, then 60.
+4. Settle the public shape while early access allows change: task 54.
+5. Trust in converted values: tasks 34, 57 and 56, then 41 (which feeds 27 and 42).
+6. Size: task 55.
+7. Remaining precomputations: tasks 26, 27, 35, 43 and 44.
+8. New derived products: 36 with 37, 45, 38, then the rest of 39–51.
+9. Refactoring alongside: tasks 8–10 and 13.
 
-### Licence table coverage
+## Progress notes
+
+- **Task 1** (2026-11-08): the non-exact edges carry weights on up to four
+  bases (postcodes, residents, households, dwellings) summed from postcodes
+  and output areas. 26 `postcode-overlap` crosswalks give each ward its every
+  constituency, where `best-fit` stays the one-to-one lookup. The stages take
+  about 2 and 5 minutes and 1 GB. See `data/build/README.md`, "Weights from
+  small-area counts".
+- **Task 2** (2026-11-08): 15 namespaces, 1.37M keys, 14 MB (3 MB
+  compressed), 214 files, one per release for areas, seeded from the
+  2026-11-04 build so no existing id changed. Order is stored apart as
+  `inventory_position`, and `area_releases` is now `id` and `release`. CI
+  checks the registries against the base branch. See `docs/stable-ids.md`.
+- **Task 3**: `boundary_release` and `boundary_release_country` store registry
+  metadata and country coverage. Each release stores the reference year and
+  month of its edition, and `boundary_release_edition` answers "which
+  snapshot was current on date X?". This orders the held snapshots and is not
+  a legal effective-date interval. Four polling dates are recorded in
+  `boundary_release_validity`. Missing evidence is not a claim of invalidity.
+- **Measure semantics**: `measure` links structured `unit` and `universe`
+  references and records `statistic`. Build validation checks aggregation
+  components, unit consistency and additive conversion.
+- **Task 4**: turnout is weighted by the electorate and background air quality
+  by its grid cells, so both are rebuilt. Every other refused rate, share,
+  mean and index names the part that is not held (for example the 16 to 64
+  population behind the claimant rate).
+- **Task 6** (2026-11-15): components of identity crosswalk edges are
+  classified as renamed, recoded, split, merged, redistributed, ended or
+  created (`pipeline/src/storage/areaChangeClassifier.ts`). 62,294 events and
+  71,858 members add 7.5 MB. Dates are edition dates (`date_basis =
+'edition'`). Extent continuity crosswalks only link unchanged extents, so
+  splits and merges of wards, output areas and parishes show as ended plus
+  created. Only the official lookups (local authorities 2022-12 to 2023-05 and
+  2024-12 to 2025-05, LSOA 2011 to 2021) hold true splits and merges.
+- **Task 10** (2026-11-15): the build fails when a table, view or column has
+  no description, or a description names something that does not exist.
+  `search` added 25 MB.
+- **Task 14** (2026-11-11): `ANALYZE` and `PRAGMA optimize` run on the
+  vacuumed copy before it is renamed into place; the atlas and modules pass
+  foreign-key and integrity checks. The three indexes and statistics added
+  46 MB. A lookup by code fell from 19.0 to 0.013 ms, versions by `area_id`
+  from 15.8 to 0.008 ms, edges by `from_version_id` from 35.6 to 0.008 ms.
+- **Task 15** (2026-11-11): restoring the index would cost 122.8 MB and does
+  not help a place read (0.13 ms per area through the primary key against
+  0.14 ms with it, warm cache).
+- **Task 25**: 1,438,388 regrouped values and 572 estimated ones, each series
+  scored for exact share and coverage. Refused measures and unrouted pairs are
+  in `conversion_skip`. The API serves one area's series on a standard release
+  with `on=` (`docs/time-series-on-one-release.md`). 963 wards are not carried
+  onto the 2026 wards because a ward series by age cannot be split.
+
+## Licence table coverage
 
 `v_source_terms` and `v_election_terms` give the licence flags per source and
 per election, which isolates the CC BY-SA 2016–2019 local elections.
