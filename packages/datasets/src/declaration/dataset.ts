@@ -354,10 +354,16 @@ function directOnlyOf(
 	return {
 		directOnly: {
 			read: direct.read,
-			header: (key) =>
-				statisticsOf(declaration)
-					.payload!.parts([key])
-					.find((part) => part.key === key)?.header,
+			// A direct part is named by a period label, which a payload may key
+			// differently (`2001-2003` is part `2003`). Asked for one label, the
+			// payload gives that label's one part.
+			header: (key) => {
+				const parts = statisticsOf(declaration).payload!.parts([key]);
+				return (
+					parts.find((part) => part.key === key) ??
+					(parts.length === 1 ? parts[0] : undefined)
+				)?.header;
+			},
 		},
 	};
 }
