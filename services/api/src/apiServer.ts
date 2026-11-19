@@ -21,7 +21,11 @@ import { mapResourceFastifyRoutes } from "./mapResources/mapResourceFastifyRoute
 import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
 import { routingUrl } from "./routingPath";
-import Fastify, { type FastifyReply, type FastifyRequest } from "fastify";
+import Fastify, {
+	type FastifyReply,
+	type FastifyRequest,
+	type FastifyServerFactory,
+} from "fastify";
 import { catalogueFastifyRoutes } from "./catalogue/catalogueFastifyRoutes";
 import { atlasReleaseRoutes } from "./contract/atlasReleaseRoutes";
 import { documentationRoutes } from "./contract/documentationRoutes";
@@ -347,36 +351,94 @@ export const createApiServer = (
 		};
 	};
 
-	const handle = async (
+	/** What one request carries from its first byte to its last. */
+	type Pipeline = {
+		request: IncomingMessage;
+		response: ServerResponse;
+		/** The target as the client sent it, before the router rewrote it. */
+		target: string;
+		pathname: string;
+		method: string;
+		startedAt: number;
+		requestId: string;
+		overloaded: boolean;
+		matched: MatchedOperation;
+		/** Health checks and scrapes are the operator's, not callers asking questions. */
+		operational: boolean;
+		answered?: ApiResponse;
+		failure?: unknown;
+		limitHeaders: Record<string, string>;
+		/** Set when this request's answer should be kept once it is finished. */
+		storeAs?: string;
+		/** The body of a POST, read once its request passed the limits. */
+		posted?: RequestBody;
+	};
+	const pipelines = new WeakMap<IncomingMessage, Pipeline>();
+
+	const begin = (
 		request: IncomingMessage,
 		response: ServerResponse,
-		overloaded = false,
-		contractHandler?: (
-			body?: RequestBody,
-		) => ApiResponse | Promise<ApiResponse>,
+		overloaded: boolean,
 	) => {
-		const startedAt = performance.now();
 		const incomingId = request.headers["x-request-id"];
-		const requestId =
-			typeof incomingId === "string" && REQUEST_ID.test(incomingId)
-				? incomingId
-				: randomUUID();
 		const target = request.url ?? "/";
 		const pathname = target.split("?", 1)[0]!;
-		const method = request.method ?? "GET";
-		let matched: MatchedOperation = { route: pathname };
-		let answered: ApiResponse | undefined;
-		let failure: unknown;
-		let limitHeaders: Record<string, string> = {};
-		// Set when this request's answer should be kept once it is finished.
-		let storeAs: string | undefined;
+		const pipeline: Pipeline = {
+			request,
+			response,
+			target,
+			pathname,
+			method: request.method ?? "GET",
+			startedAt: performance.now(),
+			requestId:
+				typeof incomingId === "string" && REQUEST_ID.test(incomingId)
+					? incomingId
+					: randomUUID(),
+			overloaded,
+			matched: { route: pathname },
+			operational: false,
+			limitHeaders: {},
+		};
+		pipelines.set(request, pipeline);
+		return pipeline;
+	};
 
-		let result = await operations(request, pathname);
-		// Health checks and scrapes are the operator's, not callers asking questions.
-		const operational = result !== undefined;
-		if (!result && overloaded) {
-			matched = matchOperation(pathname);
-			result = httpResponse(request, () =>
+	const answer = (
+		pipeline: Pipeline,
+		produce: (routedMethod?: string) => ApiResponse,
+	) =>
+		httpResponse(pipeline.request, (routedMethod) => {
+			pipeline.answered = produce(routedMethod);
+			return pipeline.answered;
+		});
+
+	const answerAsync = async (
+		pipeline: Pipeline,
+		produce: () => Promise<ApiResponse>,
+	) => {
+		pipeline.answered = await produce();
+		return httpResponse(pipeline.request, () => pipeline.answered!);
+	};
+
+	/**
+	 * Everything that can refuse a request before its handler runs: the
+	 * operator's paths, a worker at its limit, a query the operation does not
+	 * accept, a URL that is too long, an exhausted allowance, a preflight, a
+	 * POST whose body is too large, and an answer already kept. Returns the
+	 * answer when there is one, and leaves the handler to give it otherwise.
+	 */
+	const intake = async (
+		pipeline: Pipeline,
+	): Promise<HttpResponse | undefined> => {
+		const { request, target, pathname, method } = pipeline;
+		const operational = await operations(request, pathname);
+		if (operational) {
+			pipeline.operational = true;
+			return operational;
+		}
+		pipeline.matched = matchOperation(pathname);
+		if (pipeline.overloaded) {
+			const result = httpResponse(request, () =>
 				problem(
 					503,
 					"Server Busy",
@@ -386,146 +448,151 @@ export const createApiServer = (
 			result.gzip = false;
 			result.headers["retry-after"] = "1";
 			result.headers.connection = "close";
+			return result;
 		}
-		if (!result) {
-			matched = matchOperation(pathname);
-			const unexpected = unexpectedQueryParameter(
-				matched.operation,
-				method,
-				target,
-				dimensionIds,
-			);
-			const queryProblem = unexpected
-				? problem(
-						400,
-						"Unknown Query Parameter",
-						`This operation does not accept the query parameter ${unexpected.parameter}.`,
-						{ code: "unknown_query_parameter", ...unexpected },
+		const unexpected = unexpectedQueryParameter(
+			pipeline.matched.operation,
+			method,
+			target,
+			dimensionIds,
+		);
+		const queryProblem = unexpected
+			? problem(
+					400,
+					"Unknown Query Parameter",
+					`This operation does not accept the query parameter ${unexpected.parameter}.`,
+					{ code: "unknown_query_parameter", ...unexpected },
+				)
+			: undefined;
+		const decision =
+			!queryProblem && limiter && method !== "OPTIONS"
+				? limiter.take(
+						clientKey(
+							clientAddress(
+								request,
+								options.rateLimit?.trustedProxyHops,
+							),
+						),
+						pointLookupCost(pipeline.matched, target),
 					)
 				: undefined;
-			const decision =
-				!queryProblem && limiter && method !== "OPTIONS"
-					? limiter.take(
-							clientKey(
-								clientAddress(
-									request,
-									options.rateLimit?.trustedProxyHops,
-								),
-							),
-							pointLookupCost(matched, target),
-						)
-					: undefined;
-			if (decision) limitHeaders = limiter!.headers(decision);
-			const answer = (produce: (routedMethod?: string) => ApiResponse) =>
-				httpResponse(request, (routedMethod) => {
-					answered = produce(routedMethod);
-					return answered;
-				});
-			const answerAsync = async (produce: () => Promise<ApiResponse>) => {
-				answered = await produce();
-				return httpResponse(request, () => answered!);
-			};
-			try {
-				if (queryProblem) {
-					result = answer(() => queryProblem);
-				} else if (target.length > maxUrlLength) {
-					result = answer(() =>
-						problem(
-							414,
-							"URI Too Long",
-							`The request target is ${target.length} characters; at most ${maxUrlLength} are served. A long list of points or codes belongs in several smaller requests.`,
-						),
-					);
-				} else if (decision && !decision.allowed) {
-					metrics.rateLimited.inc();
-					result = answer(() =>
-						problem(
-							429,
-							"Too Many Requests",
-							`This client has exhausted its ${decision.limit}-token allowance on this worker; one token is earned back every ${(1 / options.rateLimit!.refillPerSecond).toFixed(2)} seconds. Retry after ${decision.retryAfterSeconds} seconds, and cache what you have fetched: every response carries an ETag.`,
-						),
-					);
-				} else if (method === "OPTIONS") {
-					result = preflightResponse();
-				} else if (method === "POST") {
-					const read = await readBody(request);
-					if ("aborted" in read)
-						result = answer(() =>
-							problem(
-								499,
-								"Client Closed Request",
-								"The client closed the connection before sending the whole body.",
-							),
-						);
-					else if ("tooLarge" in read)
-						result = answer(() =>
-							problem(
-								413,
-								"Content Too Large",
-								`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
-							),
-						);
-					else {
-						const posted = {
-							contentType: request.headers["content-type"] ?? "",
-							text: read.text,
-						};
-						result = await answerAsync(async () =>
-							contractHandler
-								? contractHandler(posted)
-								: routeAsync(
-										"POST",
-										target,
-										catalogues,
-										posted,
-									),
-						);
-					}
-				} else {
-					// An answer is a function of the release and the request, except
-					// a remote terrain sample, which is the provider's to change.
-					const cacheKey =
-						responseCache &&
-						method === "GET" &&
-						!pathname.startsWith("/v1/terrain/")
-							? `${acceptsGzip(request.headers["accept-encoding"]) ? "gzip" : "identity"} ${target}`
-							: undefined;
-					const kept = cacheKey
-						? responseCache!.get(cacheKey)
-						: undefined;
-					if (kept) {
-						result = cachedHttpResponse(request, kept);
-					} else {
-						storeAs = cacheKey;
-						result = await answerAsync(() =>
-							contractHandler
-								? Promise.resolve(contractHandler())
-								: routeAsync(
-										method === "HEAD" ? "GET" : method,
-										target,
-										catalogues,
-									),
-						);
-					}
-				}
-			} catch (error) {
-				failure = error;
-				result = httpResponse({ method, headers: {} }, () => {
-					answered = problem(
-						500,
-						"Internal Server Error",
-						"The server failed to answer this request. It has been logged; quote requestId when reporting it.",
-						{ requestId },
-					);
-					return answered;
-				});
-			}
+		if (decision) pipeline.limitHeaders = limiter!.headers(decision);
+		if (queryProblem) return answer(pipeline, () => queryProblem);
+		if (target.length > maxUrlLength)
+			return answer(pipeline, () =>
+				problem(
+					414,
+					"URI Too Long",
+					`The request target is ${target.length} characters; at most ${maxUrlLength} are served. A long list of points or codes belongs in several smaller requests.`,
+				),
+			);
+		if (decision && !decision.allowed) {
+			metrics.rateLimited.inc();
+			return answer(pipeline, () =>
+				problem(
+					429,
+					"Too Many Requests",
+					`This client has exhausted its ${decision.limit}-token allowance on this worker; one token is earned back every ${(1 / options.rateLimit!.refillPerSecond).toFixed(2)} seconds. Retry after ${decision.retryAfterSeconds} seconds, and cache what you have fetched: every response carries an ETag.`,
+				),
+			);
 		}
+		if (method === "OPTIONS") return preflightResponse();
+		if (method === "POST") {
+			const read = await readBody(request);
+			if ("aborted" in read)
+				return answer(pipeline, () =>
+					problem(
+						499,
+						"Client Closed Request",
+						"The client closed the connection before sending the whole body.",
+					),
+				);
+			if ("tooLarge" in read)
+				return answer(pipeline, () =>
+					problem(
+						413,
+						"Content Too Large",
+						`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
+					),
+				);
+			pipeline.posted = {
+				contentType: request.headers["content-type"] ?? "",
+				text: read.text,
+			};
+			return undefined;
+		}
+		// An answer is a function of the release and the request, except a remote
+		// terrain sample, which is the provider's to change.
+		const cacheKey =
+			responseCache &&
+			method === "GET" &&
+			!pathname.startsWith("/v1/terrain/")
+				? `${acceptsGzip(request.headers["accept-encoding"]) ? "gzip" : "identity"} ${target}`
+				: undefined;
+		const kept = cacheKey ? responseCache!.get(cacheKey) : undefined;
+		if (kept) return cachedHttpResponse(request, kept);
+		pipeline.storeAs = cacheKey;
+		return undefined;
+	};
 
+	/** The answer a handler gives, as the pipeline has read the request. */
+	const produce = (
+		pipeline: Pipeline,
+		contractHandler?: (
+			body?: RequestBody,
+		) => ApiResponse | Promise<ApiResponse>,
+	) => {
+		const { method, target } = pipeline;
+		if (method === "POST")
+			return answerAsync(pipeline, async () =>
+				contractHandler
+					? contractHandler(pipeline.posted)
+					: routeAsync("POST", target, catalogues, pipeline.posted),
+			);
+		return answerAsync(pipeline, () =>
+			contractHandler
+				? Promise.resolve(contractHandler())
+				: routeAsync(
+						method === "HEAD" ? "GET" : method,
+						target,
+						catalogues,
+					),
+		);
+	};
+
+	const failed = (pipeline: Pipeline, error: unknown) => {
+		pipeline.failure = error;
+		return httpResponse({ method: pipeline.method, headers: {} }, () => {
+			pipeline.answered = problem(
+				500,
+				"Internal Server Error",
+				"The server failed to answer this request. It has been logged; quote requestId when reporting it.",
+				{ requestId: pipeline.requestId },
+			);
+			return pipeline.answered;
+		});
+	};
+
+	/**
+	 * Write the answer: the headers every response carries, gzip, the answer
+	 * kept for the next caller, then the metrics, usage and log of the request.
+	 */
+	const respond = async (pipeline: Pipeline, answered: HttpResponse) => {
+		const {
+			request,
+			response,
+			requestId,
+			method,
+			pathname,
+			target,
+			matched,
+			startedAt,
+		} = pipeline;
+		let result = answered;
 		const entryFor = (status: number, bytes: number) => {
 			const code =
-				answered && "code" in answered.body
-					? answered.body.code
+				pipeline.answered && "code" in pipeline.answered.body
+					? pipeline.answered.body.code
 					: undefined;
 			return {
 				requestId,
@@ -571,7 +638,7 @@ export const createApiServer = (
 		try {
 			const headers: Record<string, string> = {
 				...result.headers,
-				...limitHeaders,
+				...pipeline.limitHeaders,
 				...deprecationHeaders(matched.operation),
 				"x-request-id": requestId,
 				"atlas-release": releaseId,
@@ -589,14 +656,14 @@ export const createApiServer = (
 				headers["content-length"] = String(encoded.length);
 			}
 			if (
-				storeAs &&
-				failure === undefined &&
+				pipeline.storeAs &&
+				pipeline.failure === undefined &&
 				result.status === 200 &&
 				result.body !== undefined &&
 				!isStoredFile(result.body) &&
 				result.headers.etag
 			)
-				responseCache!.set(storeAs, {
+				responseCache!.set(pipeline.storeAs, {
 					status: 200,
 					headers: {
 						...result.headers,
@@ -628,7 +695,7 @@ export const createApiServer = (
 							"EPIPE",
 						].includes(String(transfer.error.code));
 					status = cancelled ? 499 : 500;
-					if (!cancelled) failure = transfer.error;
+					if (!cancelled) pipeline.failure = transfer.error;
 				}
 			} else response.end(result.body);
 
@@ -640,7 +707,7 @@ export const createApiServer = (
 				durationSeconds,
 				bytes,
 			});
-			if (!operational && method !== "OPTIONS")
+			if (!pipeline.operational && method !== "OPTIONS")
 				try {
 					const event = classifyUsage(vocabulary, {
 						route: matched.route,
@@ -651,15 +718,17 @@ export const createApiServer = (
 						),
 						status,
 						problem:
-							answered && "type" in answered.body
-								? answered.body
+							pipeline.answered &&
+							"type" in pipeline.answered.body
+								? pipeline.answered.body
 								: undefined,
 					});
 					metrics.observeUsage(event);
 					usage?.record(event);
 				} catch {}
 			const entry = entryFor(status, bytes);
-			if (failure !== undefined) reportFailure(failure, entry);
+			if (pipeline.failure !== undefined)
+				reportFailure(pipeline.failure, entry);
 			else if (status >= 500)
 				log?.({
 					level: "warn",
@@ -679,7 +748,104 @@ export const createApiServer = (
 		}
 	};
 
+	// Admission control sits in front of the router: a request waits for a
+	// worker slot, or is refused with a 503 the pipeline then writes.
+	const serverFactory: FastifyServerFactory = (route) => {
+		const run = async (
+			request: IncomingMessage,
+			response: ServerResponse,
+			overloaded = false,
+		) => {
+			let rootPath = false;
+			try {
+				const parts = new URL(
+					request.url ?? "/",
+					"http://localhost",
+				).pathname
+					.split("/")
+					.filter(Boolean)
+					.map(decodeURIComponent);
+				rootPath = parts.length === 1 && parts[0] === "v1";
+			} catch {}
+			await ready;
+			if (response.destroyed) return;
+			begin(request, response, overloaded);
+			if (rootPath) request.url = "/v1";
+			route(request, response);
+		};
+
+		const startQueued = () => {
+			for (const start of queued) {
+				if (activeRequests >= maxConcurrentRequests) return;
+				start();
+			}
+		};
+
+		const admit = (request: IncomingMessage, response: ServerResponse) => {
+			activeRequests += 1;
+			let released = false;
+			const release = () => {
+				if (released) return;
+				released = true;
+				activeRequests -= 1;
+				startQueued();
+			};
+			response.once("finish", release);
+			response.once("close", release);
+			run(request, response).catch(() => response.destroy());
+		};
+
+		const refuse = (request: IncomingMessage, response: ServerResponse) => {
+			run(request, response, true).catch(() => response.destroy());
+		};
+
+		// A queued request's body is left unread until it is admitted, so waiting
+		// holds a connection but not its upload.
+		const enqueue = (
+			request: IncomingMessage,
+			response: ServerResponse,
+		) => {
+			if (queued.size >= maxQueuedRequests)
+				return refuse(request, response);
+			const leave = () => {
+				queued.delete(start);
+				clearTimeout(timer);
+				response.off("close", leave);
+			};
+			const start = () => {
+				leave();
+				admit(request, response);
+			};
+			const timer = setTimeout(() => {
+				leave();
+				refuse(request, response);
+			}, queueTimeoutMs);
+			response.once("close", leave);
+			queued.add(start);
+		};
+
+		return createServer(
+			{
+				headersTimeout: HEADERS_TIMEOUT_MS,
+				requestTimeout: REQUEST_TIMEOUT_MS,
+				keepAliveTimeout: KEEP_ALIVE_TIMEOUT_MS,
+			},
+			(request, response) => {
+				const pathname = (request.url ?? "/").split("?", 1)[0]!;
+				const exempt =
+					request.method === "OPTIONS" ||
+					(OPERATIONS_PATHS as readonly string[]).includes(pathname);
+				if (exempt)
+					run(request, response).catch(() => response.destroy());
+				else if (activeRequests < maxConcurrentRequests)
+					admit(request, response);
+				else enqueue(request, response);
+			},
+		);
+	};
+
 	const fastify = Fastify({
+		serverFactory,
 		exposeHeadRoutes: false,
 		rewriteUrl: (request) => routingUrl(request.url ?? "/"),
 		// The request line is bounded by Node's header limit and by the URL
@@ -691,16 +857,22 @@ export const createApiServer = (
 	// on the stream whatever its type, for a request no route matches as well.
 	fastify.removeAllContentTypeParsers();
 	fastify.addContentTypeParser("*", (_request, _payload, done) => done(null));
-	const pending = new WeakMap<
-		IncomingMessage,
-		{
-			overloaded: boolean;
-			started: boolean;
-			url: string | undefined;
-			resolve: () => void;
-			reject: (error: unknown) => void;
+	// Every request, including one no route matches, meets the pipeline's
+	// refusals here, before a handler runs.
+	fastify.addHook("onRequest", async (request, reply) => {
+		const pipeline = pipelines.get(request.raw);
+		if (!pipeline) throw new Error("Missing production request");
+		let answered: HttpResponse | undefined;
+		try {
+			answered = await intake(pipeline);
+		} catch (error) {
+			answered = failed(pipeline, error);
 		}
-	>();
+		if (!answered) return;
+		reply.hijack();
+		await respond(pipeline, answered);
+	});
+	// A route's handler gives the answer; the pipeline writes it.
 	const dispatch = async (
 		request: FastifyRequest,
 		reply: FastifyReply,
@@ -708,23 +880,18 @@ export const createApiServer = (
 			body?: RequestBody,
 		) => ApiResponse | Promise<ApiResponse>,
 	) => {
-		const entry = pending.get(request.raw);
-		if (!entry) throw new Error("Missing production request");
-		entry.started = true;
-		request.raw.url = entry.url;
+		const pipeline = pipelines.get(request.raw);
+		if (!pipeline) throw new Error("Missing production request");
 		reply.hijack();
+		let answered: HttpResponse;
 		try {
-			await handle(
-				request.raw,
-				reply.raw,
-				entry.overloaded,
-				contractHandler,
-			);
-			entry.resolve();
+			answered = await produce(pipeline, contractHandler);
 		} catch (error) {
-			entry.reject(error);
+			answered = failed(pipeline, error);
 		}
+		await respond(pipeline, answered);
 	};
+
 	const ownerOf = collectOwners(fastify);
 	fastify.setNotFoundHandler((request, reply) => {
 		const owner = ownerOf(request.url.split("?")[0]!);
@@ -852,123 +1019,8 @@ export const createApiServer = (
 		context: catalogues,
 		dispatch,
 	});
-
 	const ready = fastify.ready();
-	const dispatchRequest = async (
-		request: IncomingMessage,
-		response: ServerResponse,
-		overloaded = false,
-	) => {
-		let rootPath = false;
-		try {
-			const parts = new URL(
-				request.url ?? "/",
-				"http://localhost",
-			).pathname
-				.split("/")
-				.filter(Boolean)
-				.map(decodeURIComponent);
-			rootPath = parts.length === 1 && parts[0] === "v1";
-		} catch {}
-		await ready;
-		if (response.destroyed) return;
-		return new Promise<void>((resolve, reject) => {
-			const entry = {
-				overloaded,
-				started: false,
-				url: request.url,
-				resolve,
-				reject,
-			};
-			pending.set(request, entry);
-			response.once("finish", () => {
-				if (!entry.started) resolve();
-			});
-			response.once("close", () => {
-				if (!entry.started) resolve();
-			});
-			if (rootPath) request.url = "/v1";
-			fastify.routing(request, response);
-		});
-	};
-
-	const startQueued = () => {
-		for (const start of queued) {
-			if (activeRequests >= maxConcurrentRequests) return;
-			start();
-		}
-	};
-
-	const admit = (request: IncomingMessage, response: ServerResponse) => {
-		activeRequests += 1;
-		let settled = false;
-		let finished = false;
-		let released = false;
-		const release = () => {
-			if (!settled || !finished || released) return;
-			released = true;
-			activeRequests -= 1;
-			startQueued();
-		};
-		const finish = () => {
-			finished = true;
-			release();
-		};
-		response.once("finish", finish);
-		response.once("close", finish);
-		void dispatchRequest(request, response)
-			.catch(() => response.destroy())
-			.finally(() => {
-				settled = true;
-				release();
-			});
-	};
-
-	const refuse = (request: IncomingMessage, response: ServerResponse) => {
-		void dispatchRequest(request, response, true).catch(() =>
-			response.destroy(),
-		);
-	};
-
-	// A queued request's body is left unread until it is admitted, so waiting
-	// holds a connection but not its upload.
-	const enqueue = (request: IncomingMessage, response: ServerResponse) => {
-		if (queued.size >= maxQueuedRequests) return refuse(request, response);
-		const leave = () => {
-			queued.delete(start);
-			clearTimeout(timer);
-			response.off("close", leave);
-		};
-		const start = () => {
-			leave();
-			admit(request, response);
-		};
-		const timer = setTimeout(() => {
-			leave();
-			refuse(request, response);
-		}, queueTimeoutMs);
-		response.once("close", leave);
-		queued.add(start);
-	};
-
-	const server = createServer(
-		{
-			headersTimeout: HEADERS_TIMEOUT_MS,
-			requestTimeout: REQUEST_TIMEOUT_MS,
-			keepAliveTimeout: KEEP_ALIVE_TIMEOUT_MS,
-		},
-		(request, response) => {
-			const pathname = (request.url ?? "/").split("?", 1)[0]!;
-			const exempt =
-				request.method === "OPTIONS" ||
-				(OPERATIONS_PATHS as readonly string[]).includes(pathname);
-			if (exempt)
-				void handle(request, response).catch(() => response.destroy());
-			else if (activeRequests < maxConcurrentRequests)
-				admit(request, response);
-			else enqueue(request, response);
-		},
-	);
+	const server = fastify.server as ApiServer;
 	server.on("close", () => {
 		void fastify.close();
 		metrics.close();
