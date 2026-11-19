@@ -82,8 +82,16 @@ describe("road collisions by local authority", () => {
 		// What has no authority or no LSOA is kept as the part's gaps.
 		expect(part.gaps).toEqual([
 			{ kind: "collision-area", code: "EHEATHROW", collisions: 2 },
-			{ kind: "collision-without-lsoa", country: "GB-SCT", collisions: 1 },
-			{ kind: "collision-without-lsoa", country: "GB-ENG", collisions: 1 },
+			{
+				kind: "collision-without-lsoa",
+				country: "GB-SCT",
+				collisions: 1,
+			},
+			{
+				kind: "collision-without-lsoa",
+				country: "GB-ENG",
+				collisions: 1,
+			},
 		]);
 	});
 
