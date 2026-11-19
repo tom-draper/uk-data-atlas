@@ -174,7 +174,7 @@ const SPLIT_MODULE_DEFINITIONS = [
 		theme: "politics",
 		label: "Local elections 2016 to 2019 (ShareAlike)",
 		description:
-			"Ward-level local election results for 2016 to 2019 from the Local Elections Archive Project, under CC BY-SA 3.0, and the notional 2019 general election on the 2024 seats estimated with them. An add-on to politics: anything built from it must be shared under the same licence.",
+			"Ward-level local election results for 2016 to 2019 from the Local Elections Archive Project, under CC BY-SA 3.0, and the notional 2019 general election on the 2024 seats and notional local results on new wards estimated with them. An add-on to politics: anything built from it must be shared under the same licence.",
 		holds: "licensed-rows",
 		datasets: ["local-election"],
 		requires: ["politics"],
