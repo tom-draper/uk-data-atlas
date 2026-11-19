@@ -206,12 +206,6 @@ export const areaTables = (
 				"release TEXT NOT NULL",
 				"inventory_position INTEGER NOT NULL UNIQUE",
 				"status TEXT NOT NULL",
-				"record_count INTEGER",
-				"artifact TEXT",
-				"content_hash TEXT",
-				"code_property TEXT",
-				"name_property TEXT",
-				"derived_from TEXT",
 				"reason TEXT",
 			],
 			key: ["geography", "release"],
@@ -223,14 +217,6 @@ export const areaTables = (
 							release.id,
 							inventoryPosition,
 							release.status,
-							release.recordCount,
-							release.artifact,
-							release.contentHash,
-							release.codeProperty,
-							release.nameProperty,
-							release.derivedFrom === undefined
-								? null
-								: JSON.stringify(release.derivedFrom),
 							null,
 						]
 					: [
@@ -239,14 +225,43 @@ export const areaTables = (
 							release.id,
 							inventoryPosition,
 							release.status,
-							null,
-							null,
-							null,
-							null,
-							null,
-							null,
 							release.reason,
 						],
+			),
+		},
+		// How each available release's compiled artifact was read. Only the
+		// build checks the artifact's header, so it is not in `area_release`.
+		area_release_build: {
+			build: true,
+			strict: true,
+			columns: [
+				"geography TEXT NOT NULL",
+				"release TEXT NOT NULL",
+				"record_count INTEGER NOT NULL",
+				"artifact TEXT NOT NULL",
+				"content_hash TEXT NOT NULL",
+				"code_property TEXT NOT NULL",
+				"name_property TEXT NOT NULL",
+				"derived_from TEXT",
+			],
+			key: ["geography", "release"],
+			rows: inventory.releases.flatMap((release) =>
+				release.status === "available"
+					? [
+							[
+								release.geography,
+								release.id,
+								release.recordCount,
+								release.artifact,
+								release.contentHash,
+								release.codeProperty,
+								release.nameProperty,
+								release.derivedFrom === undefined
+									? null
+									: JSON.stringify(release.derivedFrom),
+							],
+						]
+					: [],
 			),
 		},
 		area: {
