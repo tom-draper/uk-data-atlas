@@ -12,7 +12,7 @@ const open = (...statements: string[]): DatabaseSync => {
 test("a clean schema has no findings", () => {
 	const database = open(
 		"CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT NOT NULL) STRICT",
-		"CREATE TABLE area_inventory_metadata (content_hash TEXT NOT NULL) STRICT",
+		"CREATE TABLE area_release (id INTEGER PRIMARY KEY, status TEXT NOT NULL) STRICT",
 		"CREATE VIEW area_name AS SELECT id, code FROM area",
 	);
 	assert.deepEqual(checkSchemaConventions(database), []);
@@ -25,6 +25,9 @@ test("each rule reports its own violation", () => {
 		"CREATE TABLE area_set (areaId INTEGER) STRICT",
 		"CREATE TABLE crosswalk (id INTEGER, artifact TEXT, content_hash TEXT) STRICT",
 		"CREATE TABLE payloads (id TEXT, payload TEXT) STRICT",
+		"CREATE TABLE area_inventory_metadata (id INTEGER) STRICT",
+		"CREATE TABLE dataset_build (id INTEGER) STRICT",
+		"CREATE TABLE statistics_selector_value (id INTEGER) STRICT",
 	);
 	expect(checkSchemaConventions(database)).toEqual(
 		expect.arrayContaining([
@@ -34,6 +37,9 @@ test("each rule reports its own violation", () => {
 			{ rule: "build-metadata", subject: "crosswalk.artifact" },
 			{ rule: "build-metadata", subject: "crosswalk.content_hash" },
 			{ rule: "payload-table", subject: "payloads" },
+			{ rule: "build-metadata", subject: "area_inventory_metadata" },
+			{ rule: "build-metadata", subject: "dataset_build" },
+			{ rule: "build-metadata", subject: "statistics_selector_value" },
 		]),
 	);
 });
