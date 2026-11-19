@@ -27,11 +27,21 @@ export const notionalPath = (root: string) =>
 export const notionalTablesPath = (root: string) =>
 	join(notionalDirectory(root), "notional-elections.md");
 
-const SCHEMA = `
+export const NOTIONAL_COMPONENT_SCHEMA = `
 CREATE TABLE notional_input (
+	method TEXT NOT NULL,
 	role TEXT NOT NULL,
 	key TEXT NOT NULL,
-	PRIMARY KEY (role, key)
+	PRIMARY KEY (method, role, key)
+);
+-- The methods shipped in the atlas, each as a model of modelled series.
+CREATE TABLE notional_model (
+	method TEXT PRIMARY KEY,
+	model TEXT NOT NULL UNIQUE,
+	label TEXT NOT NULL,
+	-- The share-alike licence of an input, which the estimates carry. NULL when none.
+	licence_id TEXT,
+	bound_factor REAL NOT NULL
 );
 CREATE TABLE notional_estimate (
 	method TEXT NOT NULL,
@@ -98,6 +108,22 @@ export type StoredMethod = {
 	score?: Score;
 	/** Defaults to `BOUND_FACTOR`. */
 	boundFactor?: number;
+	/** What the method read, when not all of the inputs. */
+	inputs?: NotionalInputs;
+	/** Shipped in the atlas as this model. */
+	ships?: { model: string; label: string };
+};
+
+/** The one share-alike licence the inputs' local results carry, if any. */
+export const inputLicence = (inputs: NotionalInputs) => {
+	const licences = [
+		...new Set(inputs.local.flatMap((s) => s.shareAlike ?? [])),
+	];
+	if (licences.length > 1)
+		throw new Error(
+			`Local results under more than one share-alike licence: ${licences.join(", ")}`,
+		);
+	return licences[0];
 };
 
 const pp = (value: number) => value.toFixed(2);
@@ -200,22 +226,42 @@ export const writeNotional = (
 	rmSync(path, { force: true });
 	const database = new DatabaseSync(path);
 	try {
-		database.exec(SCHEMA);
+		database.exec(NOTIONAL_COMPONENT_SCHEMA);
 		database.exec("BEGIN");
 		const input = database.prepare(
-			"INSERT INTO notional_input (role, key) VALUES (?, ?)",
+			"INSERT INTO notional_input (method, role, key) VALUES (?, ?, ?)",
 		);
-		for (const key of inputs.generalKeys)
-			input.run("general election", key);
-		for (const source of inputs.local)
-			for (const key of source.keys)
-				input.run(`local election ${source.period}`, key);
-		for (const key of inputs.censusKeys) input.run("census 2021", key);
-		input.run(
-			"weights",
-			`weight-atoms population, ${OLD_SEATS} to ${NEW_SEATS}`,
+		const model = database.prepare(
+			"INSERT INTO notional_model (method, model, label, licence_id, bound_factor) VALUES (?, ?, ?, ?, ?)",
 		);
-		input.run("census datasets", CENSUS_DATASETS.join(", "));
+		for (const {
+			method,
+			inputs: read = inputs,
+			ships,
+			boundFactor = BOUND_FACTOR,
+		} of methods) {
+			for (const key of read.generalKeys)
+				input.run(method, "general election", key);
+			for (const source of read.local)
+				for (const key of source.keys)
+					input.run(method, `local election ${source.period}`, key);
+			for (const key of read.censusKeys)
+				input.run(method, "census 2021", key);
+			input.run(
+				method,
+				"weights",
+				`weight-atoms population, ${OLD_SEATS} to ${NEW_SEATS}`,
+			);
+			input.run(method, "census datasets", CENSUS_DATASETS.join(", "));
+			if (ships)
+				model.run(
+					method,
+					ships.model,
+					ships.label,
+					inputLicence(read) ?? null,
+					boundFactor,
+				);
+		}
 
 		const estimate = database.prepare(
 			`INSERT INTO notional_estimate (method, seat, name, party, period, value, lower, upper, status, at_risk, origins)
