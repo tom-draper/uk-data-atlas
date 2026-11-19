@@ -52,9 +52,19 @@ export const ETHNICITY_CODES: Readonly<Record<string, string>> =
 			.map((name, index) => [name, String(index + 1)]),
 	);
 
-/** Every ethnic group, by the census's code for it, in its own colour. */
-const ethnicityParts = Object.entries(ETHNICITY_CODES).map(([name, code]) => ({
-	code,
+/**
+ * A category's member code in the stored measure: its name as a slug. The
+ * numbers in `ETHNICITY_CODES` are the census's own and are not stored.
+ */
+const memberCodeOf = (name: string) =>
+	name
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-|-$/g, "");
+
+/** Every ethnic category, by its stored member code, in its own colour. */
+const ethnicityParts = Object.keys(ETHNICITY_CODES).map((name) => ({
+	code: memberCodeOf(name),
 	label: name,
 	color: ETHNICITY_COLORS[name] ?? "#6b7280",
 }));

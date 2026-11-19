@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { ETHNICITY_CODES } from "@uk-data-atlas/datasets";
+import {
+	ETHNICITY_CODES,
+	ethnicity,
+	statisticsOf,
+} from "@uk-data-atlas/datasets";
+import { declaredMemberCodes } from "@uk-data-atlas/measures";
 import {
 	CATEGORY_CHART_DEFINITIONS,
 	declaredCategories,
@@ -16,12 +21,24 @@ describe("ethnicity's breakdown card", () => {
 		expect(definition.chart.key).toBe("population-ethnicity");
 	});
 
-	it("splits usual residents across every ethnic group by its census code", () => {
+	it("splits usual residents across every ethnic group by its stored member code", () => {
 		expect(breakdown?.request.measure).toBe("usual-residents");
 		expect(breakdown?.dimension).toBe("ethnic-group");
-		expect(breakdown?.parts.map((part) => part.code)).toEqual(
-			Object.values(ETHNICITY_CODES),
+		expect(breakdown?.parts).toHaveLength(
+			Object.keys(ETHNICITY_CODES).length,
 		);
+	});
+
+	it("asks for codes the stored measure holds, not the census numbers", () => {
+		const stored = new Set(
+			declaredMemberCodes(statisticsOf(ethnicity))
+				.get("ethnic-group")!
+				.values(),
+		);
+		for (const part of breakdown!.parts) {
+			expect(stored).toContain(part.code);
+			expect(part.code).not.toMatch(/^\d+$/);
+		}
 	});
 
 	it("has no member for a total, so the groups sum to it", () => {
