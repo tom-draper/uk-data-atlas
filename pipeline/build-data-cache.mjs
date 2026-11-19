@@ -366,14 +366,14 @@ export function createStageCache({
 	};
 	// A file a stage owns, or what it passes through on the way to it: the
 	// temporary file a database is written to before it is renamed into place
-	// (`x.sqlite.<id>.tmp`), and SQLite's journal beside it.
+	// (`x.sqlite.tmp` or `x.sqlite.<id>.tmp`), and SQLite's journal beside it.
 	const within = (scope, path) =>
 		scope.some(
 			(own) =>
 				path === own ||
 				path.startsWith(`${own}/`) ||
 				(path.startsWith(own) &&
-					/^[.-][\w.-]*(\.tmp|-journal|-wal|-shm)$/.test(
+					/^([.-][\w.-]*)?(\.tmp|-journal|-wal|-shm)$/.test(
 						path.slice(own.length),
 					)),
 		);

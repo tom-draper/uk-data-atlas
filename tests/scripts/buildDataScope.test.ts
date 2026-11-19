@@ -265,6 +265,28 @@ test("the temporary file a concurrent stage renames into place is not blamed on 
 	]);
 });
 
+test("a stage's database temporary file and journal are its own when no id follows the name", () => {
+	const { root, write, cache } = fixture();
+	const current = cache();
+	const gamma: Stage = {
+		name: "gamma",
+		args: [],
+		writes: ["data/build/g.sqlite"],
+	};
+	// A run that stopped part way left these beside the database.
+	write("data/build/g.sqlite.tmp", "half");
+	write("data/build/g.sqlite-journal", "j");
+	write("data/build/other.tmp", "someone else's");
+	current.begin(gamma);
+	write("data/build/g.sqlite", "whole");
+	rmSync(join(root, "data/build/g.sqlite.tmp"));
+	rmSync(join(root, "data/build/g.sqlite-journal"));
+	rmSync(join(root, "data/build/other.tmp"));
+	assert.deepEqual(current.undeclaredChanges(gamma), [
+		"data/build/other.tmp",
+	]);
+});
+
 test("a stage that ended before another began shares nothing with it", () => {
 	const { write, cache } = fixture();
 	const current = cache();
