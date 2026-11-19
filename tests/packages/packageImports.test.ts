@@ -113,7 +113,7 @@ describe("shared packages", () => {
 
 	it.each([
 		["geography", ["."]],
-		["map-tiles", [".", "./node", "./featureIds", "./mapValues"]],
+		["map-tiles", [".", "./node", "./featureIds"]],
 		["datasets", [".", "./types", "./registry"]],
 		[
 			"catalogue",

@@ -1,6 +1,5 @@
 export * from "./featureIds.ts";
 export * from "./mapResources.ts";
-export * from "./mapValues.ts";
 export * from "./arcs.ts";
 export * from "./compileArchive.ts";
 export * from "./compileTileset.ts";
