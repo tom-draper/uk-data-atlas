@@ -5,6 +5,7 @@ export * from "./atlasNamedLocations.ts";
 export * from "./atlasPostcodeAreas.ts";
 export * from "./atlasPostcodeTables.ts";
 export * from "./atlasCacheWriter.ts";
+export * from "./buildMetadataWriter.ts";
 export * from "./stageStamp.ts";
 export * from "./sqliteIndexWriter.ts";
 export * from "./publishVacuumed.ts";

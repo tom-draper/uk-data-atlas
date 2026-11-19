@@ -5,6 +5,7 @@ export * from "./atlasLookups.ts";
 export * from "./atlasPages.ts";
 export * from "./atlasRelease.ts";
 export * from "./atlasSqlite.ts";
+export * from "./buildMetadata.ts";
 export * from "./buildTiming.ts";
 export * from "./dataLayout.ts";
 export * from "./lazyValue.ts";
