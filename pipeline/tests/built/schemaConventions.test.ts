@@ -68,8 +68,7 @@ const DATABASES: Array<[string, ConventionAllowlist]> = [
 	[
 		"atlas-cache.sqlite",
 		{
-			"camel-case": ["postcode_counts.*"],
-			"plural-table": ["payloads", "postcode_counts"],
+			"plural-table": ["payloads"],
 			"payload-table": ["payloads"],
 			"build-metadata": [
 				"dataset_payload.sha256",

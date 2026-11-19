@@ -21,7 +21,7 @@ export function readSqlitePostcodeCounts(
 	);
 	try {
 		const select = database.prepare(
-			"SELECT code, live, terminated, largeUser FROM postcode_counts WHERE geography = ? AND boundaryRelease = ? ORDER BY code",
+			"SELECT code, live, terminated, large_user FROM postcode_count WHERE geography = ? AND boundary_release = ? ORDER BY code",
 		);
 		return {
 			...metadata,
@@ -35,7 +35,7 @@ export function readSqlitePostcodeCounts(
 							{
 								live: Number(row.live),
 								terminated: Number(row.terminated),
-								largeUser: Number(row.largeUser),
+								largeUser: Number(row.large_user),
 							},
 						]),
 				),

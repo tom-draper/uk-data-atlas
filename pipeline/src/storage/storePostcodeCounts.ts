@@ -9,10 +9,10 @@ export function storePostcodeCounts(
 		component: "postcode-counts",
 		write: (database) => {
 			database.exec(
-				"DROP TABLE IF EXISTS postcode_counts; CREATE TABLE postcode_counts (geography TEXT NOT NULL, boundaryRelease TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, largeUser INTEGER NOT NULL, PRIMARY KEY (geography, boundaryRelease, code)) STRICT, WITHOUT ROWID",
+				"DROP TABLE IF EXISTS postcode_count; CREATE TABLE postcode_count (geography TEXT NOT NULL, boundary_release TEXT NOT NULL, code TEXT NOT NULL, live INTEGER NOT NULL, terminated INTEGER NOT NULL, large_user INTEGER NOT NULL, PRIMARY KEY (geography, boundary_release, code)) STRICT, WITHOUT ROWID",
 			);
 			const insert = database.prepare(
-				"INSERT INTO postcode_counts VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO postcode_count VALUES (?, ?, ?, ?, ?, ?)",
 			);
 			for (const release of artifact.releases)
 				for (const [code, counts] of Object.entries(release.areas))

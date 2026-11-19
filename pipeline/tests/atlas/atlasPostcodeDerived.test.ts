@@ -531,7 +531,7 @@ test("counts build entirely from SQLite, preserve zero and uncovered results, an
 		/current postcode area index/,
 	);
 	const db = new DatabaseSync(atlasCachePartPath(root, "postcode-counts"));
-	db.exec("UPDATE postcode_counts SET live = 99");
+	db.exec("UPDATE postcode_count SET live = 99");
 	db.close();
 	assert.throws(
 		() => readPostcodeCounts(root, postcodes, areas),
