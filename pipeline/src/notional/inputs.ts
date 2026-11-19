@@ -14,7 +14,8 @@ import { readScottishLocal } from "./scotland.ts";
  * What the notional estimate reads: the weight atoms and where they lie, the
  * 2019 general election by old seat, ward local election results (with the
  * 2017 Scottish council first preferences, see `scotland.ts`), and census 2021
- * counts by LSOA. All of it is read from a built checkout, read only.
+ * counts by LSOA. All of it is read from a built checkout, read only, before
+ * `assemble-atlas`: the published series are in `atlas-base.sqlite`.
  */
 
 export type Votes = Record<string, number>;
@@ -109,9 +110,12 @@ export const readNotionalInputs = (root: string): NotionalInputs => {
 		return found;
 	};
 	const atoms = readStoredAtoms(root);
-	const database = new DatabaseSync(join(root, "data/build/atlas.sqlite"), {
-		readOnly: true,
-	});
+	const database = new DatabaseSync(
+		join(root, "data/build/atlas-base.sqlite"),
+		{
+			readOnly: true,
+		},
+	);
 	try {
 		const general = new Map<string, Votes>();
 		const generalKeys = new Set<string>();
