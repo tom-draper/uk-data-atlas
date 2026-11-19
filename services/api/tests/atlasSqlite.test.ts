@@ -225,7 +225,7 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 		]) {
 			database
 				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-				.run("terrain-catalogue", payload);
+				.run("terrain-catalogue", Buffer.from(payload));
 			assert.throws(() => readTerrainCatalogue(root));
 		}
 	} finally {
@@ -237,7 +237,7 @@ test("rebuilding SQLite replaces the payload and a missing input preserves the l
 	const { root, apiRoot } = fixture(context);
 	const path = buildAtlasSqlite(root, { censusTables: [] });
 	const database = new DatabaseSync(path);
-	database.prepare("UPDATE payloads SET payload = '{}'").run();
+	database.prepare("UPDATE payloads SET payload = ?").run(Buffer.from("{}"));
 	database.close();
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(readTerrainCatalogue(root).products.length, 6);
