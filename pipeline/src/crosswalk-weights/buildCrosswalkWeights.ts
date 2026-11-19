@@ -1,4 +1,9 @@
-import { buildLog, formatCount, formatDuration } from "@uk-data-atlas/atlas-db";
+import {
+	buildLog,
+	buildMetadataPathOf,
+	formatCount,
+	formatDuration,
+} from "@uk-data-atlas/atlas-db";
 import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -40,7 +45,16 @@ export const buildCrosswalkWeights = async (
 		readOnly: true,
 	});
 	try {
-		const inventoryHash = crosswalkSetHash(base);
+		const baseBuild = new DatabaseSync(
+			buildMetadataPathOf(join(root, "data/build/atlas-base.sqlite")),
+			{ readOnly: true },
+		);
+		let inventoryHash;
+		try {
+			inventoryHash = crosswalkSetHash(base, baseBuild);
+		} finally {
+			baseBuild.close();
+		}
 		const crosswalks = base
 			.prepare(
 				`SELECT c.id AS id, c.slug AS slug, c.basis_id AS basis, f.geography AS fromGeography, f.release AS fromRelease, t.geography AS toGeography, t.release AS toRelease
