@@ -32,11 +32,7 @@ export function parseBuildArgs({ argv, stages, limits }) {
 			verifyChecks = true;
 		} else if (argument === "--checks" && !checksOnly) {
 			checksOnly = true;
-		} else if (
-			(argument === "--verify-outputs" ||
-				argument === "--check-writes") &&
-			!verifyFlag
-		) {
+		} else if (argument === "--verify-outputs" && !verifyFlag) {
 			verifyFlag = true;
 			verifyOutputs = true;
 		} else if (argument === "--jobs" && !jobsFlag) {

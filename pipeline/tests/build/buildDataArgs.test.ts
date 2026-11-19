@@ -28,7 +28,7 @@ test("flags and stage names are read", () => {
 
 test("--jobs overrides the limit and --verify-outputs forces one job", () => {
 	assert.equal(parse("--jobs", "5").jobs, 5);
-	const options = parse("--check-writes");
+	const options = parse("--verify-outputs");
 	assert.equal(options.verifyOutputs, true);
 	assert.equal(options.jobs, 1);
 });
@@ -38,6 +38,7 @@ test("invalid arguments and combinations are rejected", () => {
 	assert.throws(() => parse("--only"), /--only requires a stage name/);
 	assert.throws(() => parse("--from", "--plan"), /--from requires/);
 	assert.throws(() => parse("--plan", "--plan"), /Unknown or repeated/);
+	assert.throws(() => parse("--check-writes"), /Unknown or repeated/);
 	assert.throws(() => parse("--only", "z"), /Unknown stage: z/);
 	assert.throws(
 		() => parse("--only", "a", "--from", "b"),
