@@ -123,47 +123,43 @@ test("the generated route sections are up to date", () => {
 	assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
-test("generation repairs a stale section without changing other paths", async () => {
-	const source = readFileSync(
-		new URL("../openapi.yaml", import.meta.url),
-		"utf8",
-	);
-	const stale = source.replace(
-		"summary: The human documentation landing page",
-		"summary: stale",
-	);
-	assert.notEqual(stale, source);
-	assert.equal(await renderOpenapi(stale), source);
-	assert.equal(await renderOpenapi(source), source);
-});
-
 test("generation refuses a missing registered path", async () => {
 	const source = readFileSync(
-		new URL("../openapi.yaml", import.meta.url),
+		new URL("../openapi.base.yaml", import.meta.url),
 		"utf8",
 	);
 	await assert.rejects(
-		() => renderOpenapi(source.replace("  /docs:\n", "  /old-docs:\n")),
+		() => renderOpenapi(source.replace("  /docs:\n", "")),
 		/Missing path: \/docs/,
 	);
 });
 
-test("generation repairs stale release components", async () => {
+test("generation refuses a path no route declares", async () => {
 	const source = readFileSync(
+		new URL("../openapi.base.yaml", import.meta.url),
+		"utf8",
+	);
+	await assert.rejects(
+		() => renderOpenapi(source.replace("  /docs:\n", "  /old-docs:\n")),
+		/No route declares: \/old-docs/,
+	);
+});
+
+test("generation fills the authored base into the published document", async () => {
+	const source = readFileSync(
+		new URL("../openapi.base.yaml", import.meta.url),
+		"utf8",
+	);
+	const published = readFileSync(
 		new URL("../openapi.yaml", import.meta.url),
 		"utf8",
 	);
-	const stale = source.replace(
-		"On-disk path relative to the repository root.",
-		"stale artifact description",
-	);
-	assert.notEqual(stale, source);
-	assert.equal(await renderOpenapi(stale), source);
+	assert.equal(await renderOpenapi(source), published);
 });
 
 test("generation refuses a missing generated component", async () => {
 	const source = readFileSync(
-		new URL("../openapi.yaml", import.meta.url),
+		new URL("../openapi.base.yaml", import.meta.url),
 		"utf8",
 	);
 	await assert.rejects(
@@ -180,7 +176,7 @@ test("generation refuses a missing generated component", async () => {
 
 test("schema generation does not replace a component with the same name in responses", async () => {
 	const source = readFileSync(
-		new URL("../openapi.yaml", import.meta.url),
+		new URL("../openapi.base.yaml", import.meta.url),
 		"utf8",
 	);
 	const otherComponent =
@@ -191,20 +187,12 @@ test("schema generation does not replace a component with the same name in respo
 	);
 	assert.notEqual(modified, source);
 	const rendered = await renderOpenapi(modified);
-	assert.equal(rendered, modified);
-});
-
-test("generation repairs a stale catalogue operation", async () => {
-	const source = readFileSync(
+	assert.ok(rendered.includes(otherComponent));
+	const published = readFileSync(
 		new URL("../openapi.yaml", import.meta.url),
 		"utf8",
 	);
-	const stale = source.replace(
-		"summary: List published source datasets and their lineage",
-		"summary: stale datasets",
-	);
-	assert.notEqual(stale, source);
-	assert.equal(await renderOpenapi(stale), source);
+	assert.equal(rendered.replace(otherComponent, ""), published);
 });
 
 test("catalogue examples satisfy their generated public schemas", () => {

@@ -4,11 +4,22 @@ import { parseDocument, stringify } from "yaml";
 import { generatedPaths } from "./generatedRoutes";
 import { generatedComponents } from "./generatedComponents";
 
+/**
+ * Fill the authored base document, which holds everything the route schemas
+ * cannot say (the description, tags, shared parameters and schemas) and names
+ * each path and generated schema without a body, with what the routes declare.
+ */
 export const renderOpenapi = async (source: string) => {
 	const document = parseDocument(source);
 	if (document.errors.length) throw document.errors[0];
 	let output = source;
-	for (const [path, item] of Object.entries(await generatedPaths())) {
+	const generated = await generatedPaths();
+	const unfilled = Object.keys(
+		(document.toJS() as { paths: Record<string, unknown> }).paths,
+	).filter((path) => !(path in generated));
+	if (unfilled.length)
+		throw new Error(`No route declares: ${unfilled.join(", ")}`);
+	for (const [path, item] of Object.entries(generated)) {
 		if (!document.hasIn(["paths", path]))
 			throw new Error(`Missing path: ${path}`);
 		const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
