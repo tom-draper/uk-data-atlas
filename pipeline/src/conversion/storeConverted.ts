@@ -60,6 +60,7 @@ CREATE TABLE converted_crosswalk (
 CREATE TABLE converted_observation (
 	n INTEGER NOT NULL, area_version_id INTEGER NOT NULL, period_id INTEGER NOT NULL,
 	value REAL NOT NULL, status_id INTEGER NOT NULL, lower REAL, upper REAL,
+	estimated_share REAL CHECK (estimated_share BETWEEN 0 AND 1),
 	PRIMARY KEY (n, area_version_id, period_id)) WITHOUT ROWID, STRICT;
 CREATE TABLE converted_gap (
 	n INTEGER NOT NULL, area_version_id INTEGER NOT NULL, period_id INTEGER NOT NULL,
@@ -81,6 +82,9 @@ ${BACKTEST_SCHEMA}
  *   regrouping whole source areas, and `coverage` the share of the areas
  *   reached or dropped that hold a value. See `qualityOf` in `convertSeries.ts`.
  * - `series_crosswalk`: the crosswalks of its route, in order.
+ * - `series_estimate`: each estimated value's share that took a split or a
+ *   pruned pair, so `1 - estimated_share` of it was regrouped exactly. A
+ *   regrouped value has no row. This is where per-value uncertainty belongs.
  * - `series_gap`: the areas it has no value for, and why. The area is one of
  *   the series' own release, except where the reason is `not-carried`, when
  *   it is the source area whose value no crosswalk carried.
@@ -109,6 +113,12 @@ CREATE TABLE series_crosswalk (
 	crosswalk_id INTEGER NOT NULL REFERENCES crosswalk(id),
 	reversed INTEGER NOT NULL CHECK (reversed IN (0, 1)),
 	PRIMARY KEY (series_id, position)) WITHOUT ROWID, STRICT;
+CREATE TABLE series_estimate (
+	series_id INTEGER NOT NULL REFERENCES series(id),
+	area_version_id INTEGER NOT NULL REFERENCES area_version(id),
+	period_id INTEGER NOT NULL REFERENCES period(id),
+	estimated_share REAL NOT NULL CHECK (estimated_share BETWEEN 0 AND 1),
+	PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID, STRICT;
 CREATE TABLE series_gap (
 	series_id INTEGER NOT NULL REFERENCES series(id),
 	area_version_id INTEGER NOT NULL REFERENCES area_version(id),
@@ -166,6 +176,19 @@ export const writeSkips = (
 };
 
 /** Writes series one at a time, so no more than one is held in memory. */
+/**
+ * The share of an estimated value that took a split or a pruned pair, or
+ * null for a regrouped one. A zero that was split is wholly estimated.
+ */
+export const estimatedShareOf = (
+	o: Pick<ConvertedSeries["observations"][number], "value" | "estimated">,
+): number | null => {
+	if (o.estimated === undefined) return null;
+	const size = Math.abs(o.value);
+	if (size === 0) return o.estimated > 0 ? 1 : 0;
+	return Math.min(1, Math.max(0, o.estimated / size));
+};
+
 export const openConvertedWriter = (path: string) => {
 	mkdirSync(dirname(path), { recursive: true });
 	const temporary = `${path}.tmp`;
@@ -182,7 +205,7 @@ export const openConvertedWriter = (path: string) => {
 		"INSERT INTO converted_crosswalk VALUES (?,?,?,?,?)",
 	);
 	const observation = database.prepare(
-		"INSERT INTO converted_observation VALUES (?,?,?,?,?,?,?)",
+		"INSERT INTO converted_observation VALUES (?,?,?,?,?,?,?,?)",
 	);
 	const gap = database.prepare("INSERT INTO converted_gap VALUES (?,?,?,?)");
 	let n = 0;
@@ -225,6 +248,7 @@ export const openConvertedWriter = (path: string) => {
 					o.status,
 					o.lower,
 					o.upper,
+					estimatedShareOf(o),
 				);
 			for (const g of converted.gaps)
 				gap.run(n, g.area, g.period, g.reason);
@@ -306,6 +330,10 @@ export const copyConvertedSeries = (
 		SELECT ?, area_version_id, period_id, value, status_id, lower, upper
 		FROM converted_component.converted_observation WHERE n = ?`,
 	);
+	const insertEstimates = database.prepare(
+		`INSERT INTO series_estimate SELECT ?, area_version_id, period_id, estimated_share
+		FROM converted_component.converted_observation WHERE n = ? AND estimated_share IS NOT NULL`,
+	);
 	const insertGaps = database.prepare(
 		"INSERT INTO series_gap SELECT ?, area_version_id, period_id, reason FROM converted_component.converted_gap WHERE n = ?",
 	);
@@ -345,6 +373,7 @@ export const copyConvertedSeries = (
 		);
 		insertCrosswalks.run(id, row.n);
 		observations += Number(insertObservations.run(id, row.n).changes);
+		insertEstimates.run(id, row.n);
 		insertGaps.run(id, row.n);
 		series += 1;
 	}

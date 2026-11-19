@@ -558,6 +558,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			"election",
 			"module_info",
 			"observation",
+			"series_estimate",
 			"series_gap",
 		]);
 		for (const [table, rows] of [
@@ -580,6 +581,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["candidacy", ""],
 			["observation", " WHERE series_id IN (6, 7)"],
 			["series_gap", " WHERE series_id = 7"],
+			["series_estimate", " WHERE series_id = 7"],
 			["area_relationship", " WHERE dataset_id = 5"],
 		] as const)
 			assert.equal(

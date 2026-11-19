@@ -40,6 +40,7 @@ CREATE TABLE dataset_area_key (dataset_id INTEGER NOT NULL REFERENCES dataset(id
 CREATE TABLE area_identifier (dataset_id INTEGER NOT NULL REFERENCES dataset(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), scheme TEXT NOT NULL, identifier TEXT NOT NULL, PRIMARY KEY (dataset_id, area_version_id)) WITHOUT ROWID;
 CREATE TABLE dataset_area_name (dataset_id INTEGER NOT NULL REFERENCES dataset(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), name TEXT NOT NULL, PRIMARY KEY (dataset_id, area_version_id)) WITHOUT ROWID;
 CREATE TABLE series_input (series_id INTEGER NOT NULL REFERENCES series(id), input_series_id INTEGER NOT NULL REFERENCES series(id), role TEXT NOT NULL, PRIMARY KEY (series_id, role)) WITHOUT ROWID;
+CREATE TABLE series_estimate (series_id INTEGER NOT NULL REFERENCES series(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), period_id INTEGER NOT NULL REFERENCES period(id), estimated_share REAL NOT NULL, PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID;
 CREATE TABLE series_gap (series_id INTEGER NOT NULL REFERENCES series(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), period_id INTEGER NOT NULL REFERENCES period(id), reason TEXT NOT NULL, PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID;
 CREATE TABLE conversion_skip (dataset_id INTEGER NOT NULL REFERENCES dataset(id), measure_id INTEGER NOT NULL REFERENCES measure(id), source_release_id INTEGER NOT NULL REFERENCES area_releases(id), target_release_id INTEGER NOT NULL REFERENCES area_releases(id), reason TEXT NOT NULL, series INTEGER NOT NULL, PRIMARY KEY (dataset_id, measure_id, source_release_id, target_release_id, reason)) WITHOUT ROWID;
 CREATE TABLE weight_basis (id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL) WITHOUT ROWID;
@@ -111,6 +112,7 @@ INSERT INTO dataset_area_key VALUES (1, 1, 'k1'), (3, 2, 'k2');
 INSERT INTO area_identifier VALUES (1, 1, 'example', 'k1');
 INSERT INTO dataset_area_name VALUES (1, 1, 'One'), (4, 2, 'Two');
 INSERT INTO series_input VALUES (3, 1, 'value');
+INSERT INTO series_estimate VALUES (7, 1, 3, 0.5), (7, 1, 4, 0.25);
 INSERT INTO series_gap VALUES (1, 3, 1, 'suppressed'), (4, 2, 2, 'missing'), (7, 3, 3, 'missing'), (7, 3, 4, 'missing');
 INSERT INTO conversion_skip VALUES (1, 1, 1, 1, 'no-route', 2), (3, 2, 1, 1, 'no-values', 1);
 INSERT INTO weight_basis VALUES ('pop', 'Population');

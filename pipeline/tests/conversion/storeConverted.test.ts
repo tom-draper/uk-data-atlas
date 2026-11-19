@@ -9,6 +9,7 @@ import {
 	assertNothingPassesAsPublished,
 	assertOneConvertedValuePerTarget,
 	copyConvertedSeries,
+	estimatedShareOf,
 	openConvertedWriter,
 	writeSkips,
 } from "../../src/conversion/storeConverted.ts";
@@ -85,7 +86,15 @@ const converted = (fields: Partial<ConvertedSeries> = {}): ConvertedSeries => ({
 			lower: null,
 			upper: null,
 		},
-		{ area: 201, period: 2, value: 12, status: 2, lower: 10, upper: 14 },
+		{
+			area: 201,
+			period: 2,
+			value: 12,
+			status: 2,
+			lower: 10,
+			upper: 14,
+			estimated: 3,
+		},
 	],
 	gaps: [{ area: 202, period: 2, reason: "unmeasured-split" }],
 	...fields,
@@ -173,6 +182,13 @@ test("a copied series is marked converted, names its inputs, and holds no observ
 		position: 0,
 		crosswalk_id: 7,
 		reversed: 0,
+	});
+	// Only the estimated value says how much of it a split apportioned.
+	assert.deepEqual(one("SELECT * FROM series_estimate"), {
+		series_id: 50,
+		area_version_id: 201,
+		period_id: 2,
+		estimated_share: 0.25,
 	});
 	assert.deepEqual(one("SELECT * FROM series_gap"), {
 		series_id: 50,
@@ -328,4 +344,12 @@ test("two converted values for one target area and period fail the check", () =>
 		() => assertOneConvertedValuePerTarget(database),
 		/from-constituency and from-ward \(area_version 200, period 2\)/,
 	);
+});
+
+test("an estimated share is the part of the value a split carried, and a split zero is wholly estimated", () => {
+	assert.equal(estimatedShareOf({ value: 40 }), null);
+	assert.equal(estimatedShareOf({ value: 40, estimated: 10 }), 0.25);
+	assert.equal(estimatedShareOf({ value: 40, estimated: 50 }), 1);
+	assert.equal(estimatedShareOf({ value: 0, estimated: 2 }), 1);
+	assert.equal(estimatedShareOf({ value: 0, estimated: 0 }), 0);
 });
