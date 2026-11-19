@@ -6,6 +6,13 @@ the browser. PR #598 shipped that for eight local authority datasets and found
 no gain at about 300 areas. This records the same test at the heaviest tiled
 numeric case, England neighbourhoods (33,755 LSOAs), and the conclusion.
 
+The slice was reverted after this measurement (#408 is closed). The
+`website-map-values` stage, `@uk-data-atlas/map-tiles/mapValues`,
+`DatasetDefinition.mapValueField` and the atlas array path are gone, and every
+numeric map joins its values onto the boundaries as before. The code that
+shipped in #598 is in git history. As merged, `useMapUpdates` fetched the array
+but never passed it to `renderNumericDataset`.
+
 ## Result
 
 The array path gives no measurable gain at LSOA scale either. Nothing further
@@ -90,4 +97,4 @@ costs that remain are tile fetch, retiling, feature state and rendering.
 The #598 slice can stay or go. Keeping it costs a build stage, 11 small
 arrays, a second render path and one awaited manifest fetch before the first
 paint of every tiled numeric map, for no measured benefit. Reverting it is the
-cleaner outcome. That is a decision for the owner, so it is not done here.
+cleaner outcome. The owner chose to revert it (see the note at the top).
