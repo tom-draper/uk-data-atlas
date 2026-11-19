@@ -197,6 +197,19 @@ export function rebuildFromDeclaration(
 			geography: String(row.geography),
 		});
 	}
+	// Ids follow the registry's history, so the payload's key order must not.
+	const canonical = (one: Series) =>
+		[
+			one.measure,
+			one.geography,
+			...[...one.members]
+				.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+				.map(([dimension, { code }]) => `${dimension}=${code}`),
+		].join("\u0000");
+	series.sort((a, b) => {
+		const [left, right] = [canonical(a), canonical(b)];
+		return left < right ? -1 : left > right ? 1 : 0;
+	});
 
 	const observed = new Map<number, Observation[]>();
 	for (const row of database
