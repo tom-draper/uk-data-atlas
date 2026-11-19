@@ -796,7 +796,7 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	const { root, path } = fixture(t);
 	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	base.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID; INSERT INTO meta VALUES ('schemaVersion', '3')",
+		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID; INSERT INTO meta VALUES ('schemaVersion', '4')",
 	);
 	base.close();
 	vi.stubEnv("SOURCE_DATE_EPOCH", "1700000000");

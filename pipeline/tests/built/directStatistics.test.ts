@@ -94,7 +94,7 @@ async function write(name: string, type: string) {
 	);
 	writeSqliteIndex(
 		path,
-		{ schemaVersion: "3" },
+		{ schemaVersion: "4" },
 		{
 			...areaTables(artifactDirectory(root)),
 			payloads: {

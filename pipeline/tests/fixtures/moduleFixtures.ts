@@ -84,7 +84,7 @@ export const writeFixtureAtlas = (path: string): void => {
 	try {
 		database.exec(ATLAS_DDL);
 		database.exec(`
-INSERT INTO meta VALUES ('release', 'fixture'), ('buildId', 'fixture-build'), ('schemaVersion', '3');
+INSERT INTO meta VALUES ('release', 'fixture'), ('buildId', 'fixture-build'), ('schemaVersion', '4');
 INSERT INTO schema_table VALUES ('crosswalk_edge_check'), ('crosswalk');
 INSERT INTO schema_column VALUES ('crosswalk_edge_check', 'match'), ('crosswalk', 'id');
 INSERT INTO crosswalk_edge_check VALUES (1, 'identical');
