@@ -150,7 +150,9 @@ describe("deriveDimensionRoles", () => {
 const releases = new Map([[1, "lsoa:2021"]]);
 const series = (
 	id: number,
-	extra: Partial<SeriesFact> & { members?: Array<[number, number]> } = {},
+	extra: Partial<Omit<SeriesFact, "members">> & {
+		members?: Array<[number, number]>;
+	} = {},
 ): SeriesFact => ({
 	id,
 	key: `s${id}`,
