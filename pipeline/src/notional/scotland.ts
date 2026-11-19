@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Papa from "papaparse";
-import { isShareAlikeLocal, type LocalSource, type Votes } from "./inputs.ts";
+import { shareAlikeLocal, type LocalSource, type Votes } from "./inputs.ts";
 
 /**
  * Scottish council results, May 2017, from the Local Elections Archive
@@ -50,5 +50,5 @@ export const readScottishLocal = (root: string): LocalSource => ({
 	release: SCOTTISH_RELEASE,
 	wards: parseScottishLocal(readFileSync(join(root, SCOTTISH_FILE), "utf8")),
 	keys: [`${SCOTTISH_FILE}, Scottish first preferences`],
-	shareAlike: isShareAlikeLocal(SCOTTISH_PERIOD),
+	shareAlike: shareAlikeLocal(SCOTTISH_PERIOD),
 });
