@@ -80,7 +80,11 @@ export const shareAlikeLocal = (period: string) =>
 
 type ValueRow = { key: string; code: string; period: string; value: number };
 
-const values = (database: DatabaseSync, keyLike: string, periodLike = "%") =>
+export const values = (
+	database: DatabaseSync,
+	keyLike: string,
+	periodLike = "%",
+) =>
 	database
 		.prepare(
 			`SELECT s.key AS key, a.code AS code, p.label AS period, o.value AS value
@@ -91,9 +95,9 @@ const values = (database: DatabaseSync, keyLike: string, periodLike = "%") =>
 		)
 		.all(keyLike, periodLike) as ValueRow[];
 
-const party = (key: string) => key.slice(key.lastIndexOf("=") + 1);
+export const party = (key: string) => key.slice(key.lastIndexOf("=") + 1);
 
-const group = <T>(map: Map<string, T>, key: string, make: () => T) => {
+export const group = <T>(map: Map<string, T>, key: string, make: () => T) => {
 	let found = map.get(key);
 	if (found === undefined) map.set(key, (found = make()));
 	return found;

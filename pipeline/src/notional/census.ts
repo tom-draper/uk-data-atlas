@@ -45,7 +45,9 @@ const adults = (age: Record<string, number>) => {
 	);
 };
 
-export const readCovariates = (inputs: NotionalInputs): Covariates => {
+export const readCovariates = (
+	inputs: Pick<NotionalInputs, "lsoa" | "census">,
+): Covariates => {
 	const codes = inputs.lsoa.codes;
 	const k = COVARIATES.length;
 	const adultShare = new Float64Array(codes.length).fill(Number.NaN);
