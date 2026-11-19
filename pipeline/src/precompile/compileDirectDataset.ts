@@ -25,8 +25,16 @@ export async function compileDirectDataset(
 	const parts = await direct.read(reader);
 	// The same checks and summary a compiled dataset gets, run over the shape
 	// its payload would have: one entry per part, one record per area.
+	// The stub records below hold no fields, so `requiredDataFields` cannot be
+	// checked here; every other part of the contract still is.
 	const summary = validatePrecompiledDataset(
-		definition,
+		{
+			...definition,
+			ingestion: definition.ingestion && {
+				...definition.ingestion,
+				requiredDataFields: undefined,
+			},
+		},
 		Object.fromEntries(
 			parts.map(({ key, records }) => {
 				const header = direct.header(key);
