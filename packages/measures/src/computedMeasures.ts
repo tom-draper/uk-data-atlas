@@ -1,10 +1,11 @@
 import type { MeasureDimensionsConfig } from "./measureDimensions.ts";
+import { MEASURE_DEFAULT_MEMBERS } from "./measurePreferences.ts";
 
 /**
  * What the API serves that the statistics tables do not hold: three measures
- * computed at request time, and the members chosen when a request names none
- * and a measure's series have no one total in common, such as households
- * counted by tenure and by car availability.
+ * computed at request time. The members chosen when a request names none and
+ * a measure's series have no one total in common, such as households counted
+ * by tenure and by car availability, are declared in `measurePreferences.ts`.
  */
 export const MEASURE_DIMENSIONS_CONFIG: MeasureDimensionsConfig = {
 	measures: {
@@ -29,9 +30,5 @@ export const MEASURE_DIMENSIONS_CONFIG: MeasureDimensionsConfig = {
 	},
 	dimensions: {},
 	members: {},
-	defaults: {
-		households: { tenure: "total" },
-		"usual-residents": { "residence-type": "total" },
-		"usual-residents-16-plus": { "highest-qualification": "total" },
-	},
+	defaults: MEASURE_DEFAULT_MEMBERS,
 };
