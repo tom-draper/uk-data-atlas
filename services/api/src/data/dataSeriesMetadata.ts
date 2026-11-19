@@ -26,6 +26,20 @@ export const dataSeriesMetadata = {
 				"One `geography/release` pair for a reviewed analysis frame. The source geography and boundary year select a particular partition; omit them to use the current one for `place`.\n",
 		},
 		{
+			name: "on",
+			in: "query",
+			required: false,
+			schema: {
+				type: "string",
+				examples: [
+					"localAuthority/2026-05-uk-bgc",
+					"ward/2026-05-uk-bgc",
+				],
+			},
+			description:
+				"One `geography/release` pair of a standard boundary release: `localAuthority/2026-05-uk-bgc`, `ward/2026-05-uk-bgc`, `constituency/2024-07-uk-bgc` or `lsoa/2021-12-ew-bgc-v5`. Returns every period of the measure on that release for the area `place` names there: the release's own published values (`method: native`) where it has them, otherwise the values converted onto it at build time (`exact` where whole source areas were regrouped, `weighted` where some were split by a weight). Each converted value names its source release, rule, basis and crosswalks, and `summary` gives the periods covered, the share converted and warnings. Periods that cannot be converted, such as a median or a release with no crosswalk, are listed in `gaps` with a reason. Not with `to`.\n",
+		},
+		{
 			name: "datasetId",
 			in: "query",
 			required: false,
@@ -39,7 +53,8 @@ export const dataSeriesMetadata = {
 	operationId: "getSourceExactMeasureSeries",
 	"x-refused-query-parameters": ["release", "conversion", "aggregate"],
 	tags: ["Trend"],
-	summary: "Retrieve a source-exact or reviewed derived time series",
+	summary:
+		"Retrieve a source-exact, reviewed derived or one-release time series",
 	"x-likely-refusal": {
 		status: 409,
 		code: "ambiguous_place",
@@ -47,7 +62,7 @@ export const dataSeriesMetadata = {
 		"x-example-request": "/v1/data/population/series?place=Newport",
 	},
 	description:
-		"A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a dimension left out takes its total where one is published, and several members or `*` answer one `breakdown` entry per series, as `/value` does.\n\nReturns all published observations for one area code within one source geography and code vintage. `place` accepts an area name, code or reference. With no source partition, the current published partition for that place is selected and returned as `defaults`. Without `to`, the result is source-exact: it does not select a boundary release, convert values or aggregate them. With `to`, the result is available only where the exact source partition has a reviewed conversion; every returned value is then labelled `derived` on that named frame. Supply `datasetId` when a measure has more than one source for the requested geography and boundary year.\n",
+		"A measure with dimensions answers for the members its filters name, such as `?offence=burglary`; a dimension left out takes its total where one is published, and several members or `*` answer one `breakdown` entry per series, as `/value` does.\n\nReturns all published observations for one area code within one source geography and code vintage. `place` accepts an area name, code or reference. With no source partition, the current published partition for that place is selected and returned as `defaults`. Without `to`, the result is source-exact: it does not select a boundary release, convert values or aggregate them. With `to`, the result is available only where the exact source partition has a reviewed conversion; every returned value is then labelled `derived` on that named frame. Supply `datasetId` when a measure has more than one source for the requested geography and boundary year.\n\nWith `on`, the series is rebuilt on one standard boundary release instead, so a measure published on several boundary vintages reads as one consistent series; see the `on` parameter. Where several datasets publish the measure, the one with the most values is served unless `datasetId` names one, and the choice is returned as `defaults`.\n",
 	responses: {
 		"200": {
 			description:
@@ -182,7 +197,7 @@ export const dataSeriesMetadata = {
 		},
 		"422": {
 			description:
-				"The requested conversion, aggregation or geometry release is not supported.",
+				"The requested conversion, aggregation or geometry release is not supported, `on` names a release that is not a standard one, or the measure cannot be rebuilt on another release.",
 			content: {
 				"application/problem+json": {
 					schema: {
