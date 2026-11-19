@@ -17,7 +17,6 @@ export const netAdditionalDwellings = defineDataset<
 	topic: "housing-stock",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
-	publishMapValues: true,
 	guide: {
 		title: "Housing supply: net additional dwellings",
 		about: "How much the number of homes in each English local authority grew over the year, counting new builds and conversions, minus demolitions. It's the government's main measure of housing supply.",

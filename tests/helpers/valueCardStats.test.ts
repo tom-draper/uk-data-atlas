@@ -333,7 +333,6 @@ describe("resolveValueCardStats", () => {
 			({ type }) => type === "net-additional-dwellings",
 		)!;
 		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("formats declared education budgets as thousands of pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
@@ -343,28 +342,24 @@ describe("resolveValueCardStats", () => {
 		expect(chart.map?.legend?.format?.(12345, {} as never)).toBe(
 			"£12,345k",
 		);
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("formats declared long-term support client counts", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "adult-social-care-activity",
 		)!;
 		expect(chart.map?.legend?.format?.(1234, {} as never)).toBe("1,234");
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("formats declared social care outcomes as a score", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "adult-social-care-outcomes",
 		)!;
 		expect(chart.map?.legend?.format?.(18.3, {} as never)).toBe("18.3");
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("formats declared housing affordability as an earnings ratio", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
 			({ type }) => type === "housing-affordability",
 		)!;
 		expect(chart.map?.legend?.format?.(9, {} as never)).toBe("9×");
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("formats declared council tax values as pounds", () => {
 		const chart = CHART_DATASET_DEFINITIONS.find(
@@ -372,7 +367,6 @@ describe("resolveValueCardStats", () => {
 		)!;
 		expect(chart.chart.card?.prefix).toBe("£");
 		expect(chart.map?.legend?.format?.(2208, {} as never)).toBe("£2208");
-		expect(chart.mapValueField).toBe("value");
 	});
 	it("falls back to the map's hover record only for the active indicator", () => {
 		const councilTax = {

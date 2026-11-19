@@ -20,7 +20,6 @@ export const crime = defineDataset<CrimeDataset>({
 	topic: "crime-and-justice",
 	boundary: { type: "localAuthority", year: 2026 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
-	publishMapValues: true,
 	guide: {
 		title: "Crime",
 		about: "Crimes recorded by the police in England and Wales, by type of offence. It's published for community safety partnerships, which mostly match councils, and the Atlas shows each partnership's figures on its local authorities. Recorded crime depends partly on how often crimes are reported, so it isn't a perfect measure of how much crime happens.",

@@ -500,30 +500,21 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			year: display.year,
 		},
 		map: {
-			...(declaration.publishMapValues
-				? { valueKey: first.field as string }
-				: {
-						valueFor: (dataset, code, options) => {
-							const key = recordKey(
-								dataset as unknown as Record<string, unknown>,
-								recordsVia,
-								code,
-							);
-							return key === undefined
-								? null
-								: valueOf(
-										(
-											dataset.data as Record<
-												string,
-												unknown
-											>
-										)[key],
-										optionsOf(options).field,
-									);
-						},
-						sourceMode: (_dataset, options) =>
-							`${declaration.id}:${optionsOf(options).id}`,
-					}),
+			valueFor: (dataset, code, options) => {
+				const key = recordKey(
+					dataset as unknown as Record<string, unknown>,
+					recordsVia,
+					code,
+				);
+				return key === undefined
+					? null
+					: valueOf(
+							(dataset.data as Record<string, unknown>)[key],
+							optionsOf(options).field,
+						);
+			},
+			sourceMode: (_dataset, options) =>
+				`${declaration.id}:${optionsOf(options).id}`,
 			...(display.measures.some((measure) => measure.rangeFromData)
 				? {
 						getColorRange: (dataset, options) => {

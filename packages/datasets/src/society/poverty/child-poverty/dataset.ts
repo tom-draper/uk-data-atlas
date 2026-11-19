@@ -13,7 +13,6 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 	id: "child-poverty",
 	topic: "poverty",
 	boundary: { type: "localAuthority", year: 2024 },
-	publishMapValues: true,
 	guide: {
 		title: "Child Poverty",
 		about: "The share of children under 16 in each local authority living in families on relatively low incomes, below 60% of the UK median, before housing costs. It's the government's main local measure of child poverty.",
