@@ -17,10 +17,11 @@ import {
  * - postcode: the wide postcode tables still use camelCase and plural names
  *   (`postcodes`, `postcode_area_matches`, `postcode_area_releases`), and
  *   `postcode_area_set` has one hyphenated column per boundary release.
- * - build metadata: artifact paths, content hashes and byte counts still sit
- *   in the domain tables listed, rather than in a build metadata table.
- * - payloads: `payloads` still holds dataset payload blobs in the canonical
- *   database instead of a separate file.
+ * - build metadata and payloads (#713, separation part, owned by the
+ *   `refactor/build-metadata-separation` branch): artifact paths, content
+ *   hashes and byte counts still sit in the domain tables listed, and
+ *   `payloads` still holds dataset payload blobs in the canonical database.
+ *   That branch removes these entries; do not fix them here.
  */
 const SELECTOR_TABLES = [
 	"statistics_selector",
