@@ -424,6 +424,9 @@ test("production builders resolve without UI code and include declared workers a
 		);
 	}
 	assert.ok(
+		inputs.get("website-datasets")!.includes("pipeline/src/lib/args.ts"),
+	);
+	assert.ok(
 		!inputs
 			.get("website-datasets")!
 			.includes("scripts/profile-atlas-memory.mjs"),
