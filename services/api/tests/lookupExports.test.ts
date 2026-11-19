@@ -14,7 +14,7 @@ import {
 	renderLookup,
 } from "@uk-data-atlas/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 import type { RouteContext } from "../src/runtime/index.ts";
 

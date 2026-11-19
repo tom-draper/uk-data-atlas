@@ -1,3 +1,5 @@
+import { bound } from "./routeBinding";
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import { atlasReleaseResponse } from "../runtime/index.ts";
 import type { RouteContextFor } from "../runtime/index.ts";
@@ -12,12 +14,15 @@ export const atlasReleaseRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		atlasRelease,
-		() =>
-			atlasReleaseResponse(
-				context.atlasRelease,
-				context.atlasRelease?.releaseId ??
-					context.boundaryRegistry.contentHash,
-			),
+		bound(
+			() =>
+				atlasReleaseResponse(
+					context.atlasRelease,
+					context.atlasRelease?.releaseId ??
+						context.boundaryRegistry.contentHash,
+				),
+			bindings.sync,
+		),
 		dispatch,
 	);
 };

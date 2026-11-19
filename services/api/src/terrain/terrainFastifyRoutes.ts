@@ -3,6 +3,7 @@ import {
 	registerGetRoute,
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
+import { bindings } from "../routeHandlers";
 import {
 	legacyRouteAsync,
 	type ServiceContext,
@@ -26,7 +27,7 @@ export const terrainFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			contract,
-			legacyRouteAsync(context),
+			legacyRouteAsync(context, bindings.terrain),
 			dispatch,
 		);
 };

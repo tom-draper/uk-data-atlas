@@ -8,7 +8,7 @@ import {
 	DATASET_THEMES,
 	topicsOfTheme,
 } from "@uk-data-atlas/datasets/registry";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import {
 	dataCatalog,
 	measureObservations,

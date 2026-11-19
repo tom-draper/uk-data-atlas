@@ -16,7 +16,7 @@ import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
 import { decodeTile } from "../vectorTileFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { readApiCatalogues } from "../../src/catalogueLoader";
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 
 /**
  * The published artifact, held to the descriptor that describes it.

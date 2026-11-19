@@ -4,6 +4,7 @@ import {
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
 import { legacyRoute, type ServiceContext } from "../contract/legacyHandler";
+import { bindings } from "../routeHandlers";
 import {
 	analysisGeographiesContract,
 	analysisPlanContract,
@@ -13,7 +14,7 @@ export const analysisFastifyRoutes: FastifyPluginAsync<{
 	context: ServiceContext;
 	dispatch?: ContractDispatch;
 }> = async (app, { context, dispatch }) => {
-	const answer = legacyRoute(context);
+	const answer = legacyRoute(context, bindings.analysisGeographies);
 	registerGetRoute(
 		app,
 		context,

@@ -4,7 +4,7 @@ import { test } from "vitest";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { createRelationshipPathIndex } from "@uk-data-atlas/relationships";
 import { compileRelationshipPaths } from "./pipelineFixtures";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	areaLookup,

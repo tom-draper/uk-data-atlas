@@ -1,3 +1,5 @@
+import { bound } from "../contract/routeBinding";
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -31,7 +33,7 @@ export const catalogueFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			definition,
-			(request) => {
+			bound((request) => {
 				const routeRequest = {
 					context,
 					releaseId:
@@ -60,7 +62,7 @@ export const catalogueFastifyRoutes: FastifyPluginAsync<{
 							canonical.parsedUrl.search,
 					},
 				};
-			},
+			}, bindings.catalogue),
 			dispatch,
 		);
 	}

@@ -3,6 +3,7 @@ import {
 	registerGetRoute,
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
+import { bindings } from "../routeHandlers";
 import { registerPostRoute } from "../contract/registerPostRoute";
 import {
 	legacyPostRoute,
@@ -29,13 +30,13 @@ export const crosswalkFastifyRoutes: FastifyPluginAsync<{
 			app,
 			context,
 			contract,
-			legacyRoute(context),
+			legacyRoute(context, bindings.crosswalks),
 			dispatch,
 		);
 	registerPostRoute(
 		app,
 		crosswalkConvertContract,
-		legacyPostRoute(context),
+		legacyPostRoute(context, bindings.crosswalkConversion),
 		dispatch,
 	);
 };

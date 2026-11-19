@@ -5,7 +5,7 @@ import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
 } from "@uk-data-atlas/relationships";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import {
 	areaLookup,
 	crosswalkArtifact,

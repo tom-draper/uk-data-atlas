@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
-import { handleDocumentRoutes } from "./documentRoutes";
+import { bindings } from "../routeHandlers";
 import {
 	registerGetRoute,
 	type ContractDispatch,
@@ -16,7 +16,7 @@ export const documentFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		documentContract,
-		legacyHandler(context, handleDocumentRoutes),
+		legacyHandler(context, bindings.documents),
 		dispatch,
 	);
 };

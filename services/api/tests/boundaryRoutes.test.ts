@@ -4,7 +4,7 @@ import { test } from "vitest";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { route as routeRequest, routeAsync } from "../src/routes";
+import { route as routeRequest, routeAsync } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	route,

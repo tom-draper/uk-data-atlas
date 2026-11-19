@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { compileRelationshipPaths } from "./pipelineFixtures";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/catalogue/node";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import {
 	areaLookup,
 	containmentCrosswalk,

@@ -73,305 +73,127 @@ import {
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
-type RouteFamily = {
-	name: string;
-	owns: (segments: string[]) => boolean;
+/**
+ * What a route is answered with: the handler for its path, and whether a POST
+ * to it carries a body the handler reads. Each Fastify route is bound to one
+ * of these, so nothing matches a request to a handler by its segments.
+ */
+export type RouteBinding = {
 	handle: RouteHandler;
-	/** Set on the few families with an operation that reads a POST body. */
+	/** Set on the few routes with an operation that reads a POST body. */
 	acceptsPost?: true;
+	/**
+	 * Answers a request that has to wait, such as one that samples a remote
+	 * provider. Returns nothing for a request the synchronous handler answers.
+	 */
+	handleAsync?: (
+		request: RouteRequest,
+	) => Promise<ApiResponse | undefined> | undefined;
+	/**
+	 * Names the binding that answers a path when the router cannot tell this
+	 * route from a neighbour, such as a release and its `:join`. Returns
+	 * nothing when this binding is the one.
+	 */
+	select?: (segments: string[]) => RouteBinding | undefined;
 };
 
-type Shape = {
-	/** The exact number of segments the path has. */
-	length?: number;
-	/** The most segments the path may have. */
-	maxLength?: number;
-	/** The segments that must sit at given positions, by index. */
-	at?: Record<number, string | readonly string[]>;
+const boundaries: RouteBinding = {
+	handle: handleBoundaryRoutes,
+	select: (segments) => (joinRelease(segments) ? releaseJoin : undefined),
 };
 
-/**
- * Matches a path under `/v1/{resource}`, narrowed by how long it is and by
- * what sits at later positions. A list of resources matches any of them.
- */
-const v1 = (
-	resource: string | readonly string[],
-	{ length, maxLength, at = {} }: Shape = {},
-) => {
-	const resources = typeof resource === "string" ? [resource] : resource;
-	const positions = Object.entries(at).map(([index, expected]) => ({
-		index: Number(index),
-		expected: typeof expected === "string" ? [expected] : expected,
-	}));
-	return (segments: string[]) =>
-		segments[0] === "v1" &&
-		resources.includes(segments[1] ?? "") &&
-		(length === undefined || segments.length === length) &&
-		(maxLength === undefined || segments.length <= maxLength) &&
-		positions.every(({ index, expected }) =>
-			expected.includes(segments[index] ?? ""),
-		);
+const releaseJoin: RouteBinding = {
+	handle: handleReleaseJoinRoutes,
+	acceptsPost: true,
+	handleAsync: async (request) => {
+		const geography = canonicalGeographyRequest(request);
+		const release = canonicalReleaseRequest(geography ?? request);
+		if (release && "status" in release) return release;
+		const routed = release ?? geography ?? request;
+		const joined = await handleReleaseJoinRoutesAsync(routed);
+		return joined && withPathReleaseHeaders(routed, joined);
+	},
+	select: (segments) => (joinRelease(segments) ? undefined : boundaries),
 };
 
-const documentPath = v1("documents", { length: 3 });
-const datasetPath = v1("datasets");
-const measureBasePath = v1("measures", { maxLength: 3 });
-const taxonomyPath = v1(["themes", "modules"], { length: 2 });
-const analysisPath = v1(["analysis-geographies", "analysis:plan"]);
-const boundaryPath = v1([
-	"geographies",
-	"boundaries",
-	"boundary-releases",
-	"boundary-releases:resolve",
-	"boundary-releases:compare",
-]);
+const crosswalks: RouteBinding = {
+	handle: handleCrosswalkRoutes,
+	select: (segments) =>
+		crosswalkConversionId(segments) === undefined
+			? undefined
+			: crosswalkConversion,
+};
 
-/**
- * Each family declares the resources it owns before it handles a request.
- * No path may be owned by two families, which keeps dispatch independent of
- * the order below and makes a new route's home explicit.
- */
-const routeFamilies: RouteFamily[] = [
-	{
-		name: "openapi",
-		owns: isOpenapiRoute,
-		handle: handleOpenapiRoutes,
-	},
-	{
-		name: "documents",
-		owns: (segments) =>
-			documentPath(segments) && segments[2]?.endsWith(".json") === true,
-		handle: handleDocumentRoutes,
-	},
-	{
-		name: "map-resources",
-		owns: v1("map-resources"),
-		handle: handleMapResourceRoutes,
-	},
-	{
-		name: "boundaries",
-		owns: (segments) => boundaryPath(segments) && !joinRelease(segments),
-		handle: handleBoundaryRoutes,
-	},
-	{
-		name: "release-join",
-		owns: (segments) => joinRelease(segments) !== undefined,
-		handle: handleReleaseJoinRoutes,
-		acceptsPost: true,
-	},
-	{
-		name: "catalogue",
-		owns: (segments) =>
-			datasetPath(segments) ||
-			measureBasePath(segments) ||
-			taxonomyPath(segments),
-		handle: handleCatalogueRoutes,
-	},
-	{
-		name: "terrain",
-		owns: v1("terrain"),
+const crosswalkConversion: RouteBinding = {
+	handle: handleCrosswalkConversionRoutes,
+	acceptsPost: true,
+	select: (segments) =>
+		crosswalkConversionId(segments) === undefined ? crosswalks : undefined,
+};
+
+const mapResources: RouteBinding = {
+	handle: handleMapResourceRoutes,
+	handleAsync: (request) =>
+		request.segments[4] === "features"
+			? handleFeatureDownloadAsync(request)
+			: undefined,
+};
+
+export const bindings = {
+	openapi: { handle: handleOpenapiRoutes },
+	documents: { handle: handleDocumentRoutes },
+	mapResources,
+	boundaries,
+	releaseJoin,
+	catalogue: { handle: handleCatalogueRoutes },
+	terrain: {
 		handle: handleTerrainRoutes,
+		handleAsync: (request) =>
+			request.segments[2] === "elevation" &&
+			request.segments[3] === "point"
+				? handleTerrainRoutesAsync(request)
+				: undefined,
 	},
-	{
-		name: "coordinates",
-		owns: v1("coordinates:convert", { length: 2 }),
-		handle: handleCoordinateRoutes,
-	},
-	{
-		name: "analysis-geographies",
-		owns: (segments) => analysisPath(segments),
-		handle: handleAnalysisGeographyRoutes,
-	},
-	{
-		name: "data",
-		owns: v1("data", { length: 3 }),
-		handle: handleDataRoutes,
-	},
-	{
-		name: "data-series",
-		owns: v1("data", { length: 4, at: { 3: "series" } }),
-		handle: handleDataSeriesRoutes,
-	},
-	{
-		name: "data-rankings",
-		owns: v1("data", { length: 4, at: { 3: "rankings" } }),
-		handle: handleDataRankingRoutes,
-	},
-	{
-		name: "data-change",
-		owns: v1("data", { length: 4, at: { 3: "change" } }),
-		handle: handleDataChangeRoutes,
-	},
-	{
-		name: "data-value",
-		owns: v1("data", { length: 4, at: { 3: "value" } }),
-		handle: handleDataValueRoutes,
-	},
-	{
-		name: "places",
-		owns: v1("places"),
-		handle: handlePlaceRoutes,
-	},
-	{
-		name: "postcodes",
-		owns: v1("postcodes"),
-		handle: handlePostcodeRoutes,
-	},
-	{
-		name: "postcodes-batch",
-		owns: v1("postcodes:batch", { length: 2 }),
-		handle: handlePostcodeBatchRoutes,
-		acceptsPost: true,
-	},
-	{
-		name: "data-transforms",
-		owns: v1("data", { length: 4, at: { 3: "compare" } }),
-		handle: handleDataTransformRoutes,
-	},
-	{
-		name: "data-conversion",
-		owns: v1("data", { length: 4, at: { 3: "convert" } }),
-		handle: handleDataConversionRoutes,
-	},
-	{
-		name: "area-search",
-		owns: v1("areas", { length: 2 }),
-		handle: handleAreaSearchRoutes,
-	},
-	{
-		name: "area-contains",
-		owns: v1("areas:contains"),
-		handle: handleAreaContainsRoutes,
-	},
-	{
-		name: "area-contains-batch",
-		owns: v1("areas:containsBatch"),
+	coordinates: { handle: handleCoordinateRoutes },
+	analysisGeographies: { handle: handleAnalysisGeographyRoutes },
+	data: { handle: handleDataRoutes },
+	dataSeries: { handle: handleDataSeriesRoutes },
+	dataRankings: { handle: handleDataRankingRoutes },
+	dataChange: { handle: handleDataChangeRoutes },
+	dataValue: { handle: handleDataValueRoutes },
+	places: { handle: handlePlaceRoutes },
+	postcodes: { handle: handlePostcodeRoutes },
+	postcodesBatch: { handle: handlePostcodeBatchRoutes, acceptsPost: true },
+	dataTransforms: { handle: handleDataTransformRoutes },
+	dataConversion: { handle: handleDataConversionRoutes },
+	areaSearch: { handle: handleAreaSearchRoutes },
+	areaContains: { handle: handleAreaContainsRoutes },
+	areaContainsBatch: {
 		handle: handleAreaContainsBatchRoutes,
 		acceptsPost: true,
 	},
-	{
-		name: "area-near",
-		owns: v1("areas:near"),
-		handle: handleAreaNearRoutes,
-	},
-	{
-		name: "area-intersects",
-		owns: v1("areas:intersects", { length: 2 }),
-		handle: handleAreaIntersectsRoutes,
-	},
-	{
-		name: "area-validation",
-		owns: v1("areas:validate"),
-		handle: handleAreaValidationRoutes,
-		acceptsPost: true,
-	},
-	{
-		name: "similar-areas",
-		owns: v1("areas", { length: 5, at: { 4: "similar" } }),
-		handle: handleSimilarAreaRoutes,
-	},
-	{
-		name: "area-identity",
-		owns: (segments) =>
-			v1("areas", { length: 5 })(segments) && segments[4] !== "similar",
-		handle: handleAreaIdentityRoutes,
-	},
-	{
-		name: "area-history",
-		owns: v1("areas", { length: 6, at: { 5: "history" } }),
-		handle: handleAreaHistoryRoutes,
-	},
-	{
-		name: "area-relationships",
-		owns: v1("areas", {
-			length: 6,
-			at: { 5: ["parents", "children", "relationships"] },
-		}),
-		handle: handleAreaRelationshipRoutes,
-	},
-	{
-		name: "area-child-geometry",
-		owns: v1("areas", {
-			length: 7,
-			at: { 5: "children", 6: "geometry" },
-		}),
-		handle: handleAreaChildGeometryRoutes,
-	},
-	{
-		name: "area-neighbours",
-		owns: v1("areas", { length: 6, at: { 5: "neighbours" } }),
-		handle: handleAreaNeighbourRoutes,
-	},
-	{
-		name: "area-overlap",
-		owns: v1("areas", { length: 6, at: { 5: "overlap" } }),
-		handle: handleAreaOverlapRoutes,
-	},
-	{
-		name: "area-geometry",
-		owns: v1("areas", { length: 6, at: { 5: "geometry" } }),
-		handle: handleAreaGeometryRoutes,
-	},
-	{
-		name: "translations",
-		owns: v1("translations", { length: 2 }),
-		handle: handleTranslationRoutes,
-	},
-	{
-		name: "relationships",
-		owns: v1("relationships", { length: 2 }),
-		handle: handleRelationshipRoutes,
-	},
-	{
-		name: "governance",
-		owns: v1("attribution"),
-		handle: handleGovernanceRoutes,
-	},
-	{
-		name: "locations",
-		owns: v1("locations"),
-		handle: handleLocationRoutes,
-	},
-	{
-		name: "crosswalk-conversion",
-		owns: (segments) => crosswalkConversionId(segments) !== undefined,
-		handle: handleCrosswalkConversionRoutes,
-		acceptsPost: true,
-	},
-	{
-		name: "crosswalks",
-		owns: (segments) =>
-			v1("crosswalks")(segments) &&
-			crosswalkConversionId(segments) === undefined,
-		handle: handleCrosswalkRoutes,
-	},
-	{
-		name: "bulk",
-		owns: (segments) =>
-			v1(["exports", "lookups"])(segments) ||
-			v1("data", { length: 4, at: { 3: "export" } })(segments),
-		handle: handleBulkRoutes,
-	},
-	{
-		name: "atlas-pages",
-		owns: v1("atlas-pages", { length: 3 }),
-		handle: handleAtlasPageRoutes,
-	},
-	{
-		name: "atlas-lookups",
-		owns: v1("atlas-lookups", { length: 3 }),
-		handle: handleAtlasLookupRoutes,
-	},
-	{
-		name: "sync",
-		owns: v1("atlas-release"),
-		handle: handleSyncRoutes,
-	},
-];
-
-/** The names of the families that claim a path; routing expects exactly one. */
-export const routeFamiliesOwning = (segments: string[]) =>
-	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
+	areaNear: { handle: handleAreaNearRoutes },
+	areaIntersects: { handle: handleAreaIntersectsRoutes },
+	areaValidation: { handle: handleAreaValidationRoutes, acceptsPost: true },
+	similarAreas: { handle: handleSimilarAreaRoutes },
+	areaIdentity: { handle: handleAreaIdentityRoutes },
+	areaHistory: { handle: handleAreaHistoryRoutes },
+	areaRelationships: { handle: handleAreaRelationshipRoutes },
+	areaChildGeometry: { handle: handleAreaChildGeometryRoutes },
+	areaNeighbours: { handle: handleAreaNeighbourRoutes },
+	areaOverlap: { handle: handleAreaOverlapRoutes },
+	areaGeometry: { handle: handleAreaGeometryRoutes },
+	translations: { handle: handleTranslationRoutes },
+	relationships: { handle: handleRelationshipRoutes },
+	governance: { handle: handleGovernanceRoutes },
+	locations: { handle: handleLocationRoutes },
+	crosswalkConversion,
+	crosswalks,
+	bulk: { handle: handleBulkRoutes },
+	atlasPages: { handle: handleAtlasPageRoutes },
+	atlasLookups: { handle: handleAtlasLookupRoutes },
+	sync: { handle: handleSyncRoutes },
+} satisfies Record<string, RouteBinding>;
 
 export const getOnlyMethodNotAllowed = () =>
 	problem(
@@ -397,17 +219,20 @@ const withPathReleaseHeaders = (
 		: response;
 };
 
-export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
+export const handleRoute = (
+	request: RouteRequest,
+	declared?: RouteBinding,
+): ApiResponse | undefined => {
 	const geography = canonicalGeographyRequest(request);
 	const release = canonicalReleaseRequest(geography ?? request);
 	if (release && "status" in release) return release;
 	const measure = canonicalMeasureRequest(release ?? geography ?? request);
 	const canonical = measure ?? release ?? geography;
 	const routed = canonical ?? request;
-	const family = routeFamilies.find(({ owns }) => owns(routed.segments));
-	if (family && routed.method === "POST" && !family.acceptsPost)
+	const binding = declared?.select?.(routed.segments) ?? declared;
+	if (binding && routed.method === "POST" && !binding.acceptsPost)
 		return getOnlyMethodNotAllowed();
-	const handled = family?.handle(routed);
+	const handled = binding?.handle(routed);
 	if (!handled) return handled;
 	const response = withPathReleaseHeaders(
 		routed,
@@ -423,29 +248,11 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 
 export const handleRouteAsync = async (
 	request: RouteRequest,
+	declared?: RouteBinding,
 ): Promise<ApiResponse | undefined> => {
-	if (joinRelease(request.segments)) {
-		const geography = canonicalGeographyRequest(request);
-		const release = canonicalReleaseRequest(geography ?? request);
-		if (release && "status" in release) return release;
-		const routed = release ?? geography ?? request;
-		const joined = await handleReleaseJoinRoutesAsync(routed);
-		return joined && withPathReleaseHeaders(routed, joined);
-	}
-	if (
-		request.segments[0] === "v1" &&
-		request.segments[1] === "terrain" &&
-		request.segments[2] === "elevation" &&
-		request.segments[3] === "point"
-	) {
-		return handleTerrainRoutesAsync(request);
-	}
-	if (
-		request.segments[1] === "map-resources" &&
-		request.segments[4] === "features"
-	)
-		return handleFeatureDownloadAsync(request);
-	return handleRoute(request);
+	const binding = declared?.select?.(request.segments) ?? declared;
+	const waiting = binding?.handleAsync?.(request);
+	return waiting ? waiting : handleRoute(request, binding);
 };
 
 /**
@@ -458,7 +265,7 @@ const handleFeatureDownloadAsync = async (
 	request: RouteRequest,
 ): Promise<ApiResponse | undefined> => {
 	const downloads = request.context.fullDetailDownloads;
-	if (!downloads?.build) return handleRoute(request);
+	if (!downloads?.build) return handleRoute(request, mapResources);
 	const using = (source: FullDetailSource): RouteRequest => ({
 		...request,
 		context: { ...request.context, fullDetailDownloads: source },
@@ -471,8 +278,9 @@ const handleFeatureDownloadAsync = async (
 				return { status: "unavailable" };
 			},
 		}),
+		mapResources,
 	);
 	if (!pending) return first;
 	const result = await pending;
-	return handleRoute(using({ get: () => result }));
+	return handleRoute(using({ get: () => result }), mapResources);
 };

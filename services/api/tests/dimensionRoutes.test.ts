@@ -12,7 +12,7 @@ import type {
 	MeasureDimensions,
 	MeasureSeriesIdentity,
 } from "@uk-data-atlas/measures";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { handleMeasureExport } from "../src/bulk/bulkRoutes";
 import { handleDataRoutes } from "../src/data/dataRoutes";
 import { handleDataSeriesRoutes } from "../src/data/dataSeriesRoutes";

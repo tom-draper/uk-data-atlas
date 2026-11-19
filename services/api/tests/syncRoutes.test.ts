@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { RouteContext, RouteRequest } from "../src/runtime/index.ts";
-import { handleRoute } from "../src/routeHandlers";
+import { bindings, handleRoute } from "../src/routeHandlers";
 import { handleSyncRoutes } from "../src/runtime/index.ts";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
 import { testContext } from "./routeFixtures";
@@ -40,13 +40,17 @@ test("serves the current Atlas release manifest", () => {
 	};
 	const response = handleRoute(
 		request("/v1/atlas-release", { atlasRelease }),
+		bindings.sync,
 	);
 	assert.equal(response?.status, 200);
 	assert.deepEqual((response?.body as { data: unknown }).data, atlasRelease);
 });
 
 test("does not claim an archived release route", () => {
-	assert.equal(handleRoute(request("/v1/unowned-resource")), undefined);
+	assert.equal(
+		handleRoute(request("/v1/unowned-resource"), bindings.sync),
+		undefined,
+	);
 });
 
 test("filters the data validation audit", () => {

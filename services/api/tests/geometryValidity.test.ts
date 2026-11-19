@@ -34,7 +34,7 @@ import {
 	uncompiledGeometryValidity,
 } from "@uk-data-atlas/geography";
 import { packGeometry, unpackGeometry } from "@uk-data-atlas/geography";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import fixtures from "./fixtures/geometry-validity.json";
 import { schemaViolations, type SchemaDocument } from "./openapiSchema";
 import { registry, testContext } from "./routeFixtures";

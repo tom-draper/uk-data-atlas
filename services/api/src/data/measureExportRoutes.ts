@@ -1,3 +1,5 @@
+import { bound } from "../contract/routeBinding";
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { handleMeasureExport } from "../bulk/bulkRoutes";
@@ -18,7 +20,7 @@ export const measureExportRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		measureExport,
-		(request) => {
+		bound((request) => {
 			const resolution = resolveDimensionRequest(request.url, context);
 			if (resolution.kind === "problem") return resolution.response;
 			const url =
@@ -66,7 +68,7 @@ export const measureExportRoutes: FastifyPluginAsync<{
 						resolution.reading,
 					)
 				: response;
-		},
+		}, bindings.bulk),
 		dispatch,
 	);
 };

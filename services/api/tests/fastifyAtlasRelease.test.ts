@@ -5,7 +5,7 @@ import Fastify from "fastify";
 import { atlasReleaseEnvelope } from "../src/contract/atlasRelease";
 import { atlasReleaseRoutes } from "../src/contract/atlasReleaseRoutes";
 import { httpResponse } from "../src/httpResponse";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 
 const boundaryRegistry = {

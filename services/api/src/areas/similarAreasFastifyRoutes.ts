@@ -1,3 +1,4 @@
+import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type {
 	RouteContextFor,
@@ -7,7 +8,7 @@ import {
 	registerGetRoute,
 	type ContractDispatch,
 } from "../contract/registerGetRoute";
-import { route } from "../routes";
+import { legacyRoute } from "../contract/legacyHandler";
 import { similarAreasContract } from "./similarAreasContract";
 
 export const similarAreasFastifyRoutes: FastifyPluginAsync<{
@@ -18,20 +19,7 @@ export const similarAreasFastifyRoutes: FastifyPluginAsync<{
 		app,
 		context,
 		similarAreasContract,
-		(request) => {
-			if (
-				!context.geographyResolver ||
-				!context.areaValidation ||
-				!context.postcodes
-			)
-				throw new Error("Geography services are unavailable");
-			return route("GET", request.url, {
-				...context,
-				geographyResolver: context.geographyResolver,
-				areaValidation: context.areaValidation,
-				postcodes: context.postcodes,
-			});
-		},
+		legacyRoute(context, bindings.similarAreas),
 		dispatch,
 	);
 };

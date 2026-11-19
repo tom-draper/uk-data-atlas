@@ -2,7 +2,7 @@ import { compileOperationTemplates } from "../../../pipeline/src/atlas/operation
 import { reportRequest } from "./evidenceFixtures";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { AtlasRelease } from "@uk-data-atlas/atlas-db";

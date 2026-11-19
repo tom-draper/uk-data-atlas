@@ -9,7 +9,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";
 import { readFileSync } from "node:fs";
 import { statisticsReadPathPath } from "@uk-data-atlas/atlas-db";

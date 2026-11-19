@@ -12,7 +12,7 @@ import {
 	MAX_MAP_JOIN_ROWS,
 	MAX_MAP_JOIN_COLUMN_BYTES,
 } from "../src/mapResources/mapResourceRoutes";
-import { route } from "../src/routes";
+import { route } from "./boundRoute";
 import { resolveDimensionRequest } from "../src/dimensions/dimensionRequests";
 import { readParquet } from "./parquetFixtures";
 import {

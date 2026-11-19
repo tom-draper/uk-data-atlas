@@ -4,7 +4,7 @@ import type { BoundaryReleaseDeprecation } from "@uk-data-atlas/catalogue";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { releaseInPath, withReleaseHeaders } from "../src/releaseDeprecation";
-import { route as routeRequest } from "../src/routes";
+import { route as routeRequest } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import { testContext } from "./routeFixtures";
 

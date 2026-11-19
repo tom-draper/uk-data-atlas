@@ -9,7 +9,7 @@ import { resolve, join } from "node:path";
 import { test } from "vitest";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import { readMapAssets, readMapResources } from "@uk-data-atlas/map-tiles/node";
-import { route } from "../../src/routes";
+import { route } from "../boundRoute";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 
 const apiRoot = resolve(import.meta.dirname, "../..");
