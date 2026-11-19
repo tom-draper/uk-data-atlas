@@ -560,6 +560,21 @@ export const writeDefaultObservation = (
 	database.exec(
 		`CREATE VIEW v_observation_default AS${DEFAULT_OBSERVATION_VIEW}`,
 	);
+	// The tie rule makes this impossible by construction. Reading the whole
+	// view (about 3 s) proves it on the data that ships.
+	const repeated = database
+		.prepare(
+			"SELECT quantity, area_code, period, count(*) AS n FROM v_observation_default GROUP BY quantity, area_code, period HAVING n > 1 LIMIT 5",
+		)
+		.all() as Array<{
+		quantity: string;
+		area_code: string;
+		period: string;
+	}>;
+	if (repeated.length > 0)
+		throw new Error(
+			`v_observation_default has more than one row for: ${repeated.map((row) => `${row.quantity} ${row.area_code} ${row.period}`).join("; ")}`,
+		);
 	return {
 		roles: derived.roles.length,
 		quantities: ranked.quantities.length,
