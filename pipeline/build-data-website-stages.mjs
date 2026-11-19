@@ -86,6 +86,7 @@ export const websiteStages = [
 				"packages/geography/src/reverseGridOffset.ts",
 				"packages/atlas-db/src/buildTiming.ts",
 				"pipeline/src/stages/compile-boundary-tiles.ts",
+				"pipeline/src/lib/args.ts",
 				"scripts/generate-dataset-registry.ts",
 			],
 		},
