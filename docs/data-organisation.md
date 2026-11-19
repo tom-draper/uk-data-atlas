@@ -267,8 +267,9 @@ splits it into `data/build/modules/`:
   and area, totals only) and the views over core tables.
 - `sqlite/atlas-<module>.sqlite`: one per module. A theme module holds its
   datasets, series, observations and the metadata bound to them
-  (`series_input`, `series_gap`, `series_conversion`, `series_crosswalk`,
-  `conversion_skip`, `area_relationship`, area keys and names, elections).
+  (`series_input`, `series_gap`, `series_estimate`, `series_conversion`,
+  `series_crosswalk`, `conversion_skip`, `area_relationship`, area keys and
+  names, elections).
   `postcodes` holds the `postcode*` tables and the postcode payloads. Rows point
   at core by the stable ids from `pipeline/ids`, which core assigns. A module
   that points at another module's series fails the build.

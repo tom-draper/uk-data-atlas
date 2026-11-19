@@ -110,6 +110,7 @@ way is refused.
 | `series_input`                                                                                                              | Every input series and its role (value, numerator, denominator, weight).        |
 | `series_conversion`                                                                                                         | The rule, the weight basis, the exact share and coverage of the series, a note. |
 | `series_crosswalk`                                                                                                          | The crosswalks of the route, in order, and their direction.                     |
+| `series_estimate`                                                                                                           | Each estimated value and the share of it a split apportioned.                   |
 | `series_gap`                                                                                                                | Each area and period with no value, and why.                                    |
 | `measure_conversion`                                                                                                        | The rule of every measure, and the reason for a refusal.                        |
 | `conversion_skip`                                                                                                           | The published series left out of a standard release, by reason.                 |

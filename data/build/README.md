@@ -717,6 +717,7 @@ households, dwellings and postcodes. The definitions are in
 | `series_input`                                                                                                              | Each input series and its role (value, numerator, denominator, weight) |
 | `series_conversion`                                                                                                         | Rule, weight basis, exact share, coverage, a note                      |
 | `series_crosswalk`                                                                                                          | The crosswalks of the route, in order, and their direction             |
+| `series_estimate`                                                                                                           | Each estimated value and the share of it a split apportioned           |
 | `series_gap`                                                                                                                | Each area and period with no value, and the reason                     |
 | `measure_conversion`                                                                                                        | The rule of every measure (`sum`, `rebuild`, `refuse`) and its reason  |
 | `conversion_skip`                                                                                                           | The published series left out of a standard release, by reason.        |
