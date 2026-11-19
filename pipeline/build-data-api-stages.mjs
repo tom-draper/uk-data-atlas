@@ -328,6 +328,25 @@ export const apiStages = [
 			],
 		},
 	),
+	// Notional 2019 general election results on the 2024 constituencies,
+	// shipped as modelled series. The Scottish council first preferences are
+	// read from their source file, see pipeline/src/notional/scotland.ts.
+	stage(
+		"notional-elections",
+		["atlas-sqlite", "crosswalk-weights", "weight-atoms"],
+		["pipeline/src/stages/build-notional-elections.ts"],
+		{
+			rawInputs: [
+				"data/source/politics/local-elections/local-election/2017/leap-2017-05-04.csv",
+			],
+			writes: ["data/build/notional-elections"],
+			outputs: ["data/build/notional-elections"],
+			requiredOutputs: [
+				"data/build/notional-elections/notional-elections.sqlite",
+			],
+			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
+		},
+	),
 	stage(
 		"assemble-atlas",
 		[
@@ -340,6 +359,7 @@ export const apiStages = [
 			"postcode-areas",
 			"crosswalk-weights",
 			"converted-series",
+			"notional-elections",
 		],
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{

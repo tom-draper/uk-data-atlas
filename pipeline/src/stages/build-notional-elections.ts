@@ -27,13 +27,14 @@ import {
 
 /**
  * Notional 2019 general election results on the 2024 constituencies, scored
- * against a published set when one is given. Run by hand, not part of the
- * build graph:
+ * against a published set when one is given. The build runs it with no
+ * arguments; to score it, run it by hand:
  *
  *   tsx src/stages/build-notional-elections.ts [--source <checkout>] [--benchmark <csv>]
  *
  * `--source` is a built checkout to read (default: this one). The output is
- * written under this checkout's `data/build/notional-elections`.
+ * written under this checkout's `data/build/notional-elections`, and the
+ * shipped methods are copied into the atlas by `assemble-atlas`.
  */
 
 const LABELS: Record<string, string> = {

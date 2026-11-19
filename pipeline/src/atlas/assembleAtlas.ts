@@ -27,6 +27,8 @@ import { crosswalkSetHash } from "../crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "../crosswalk-weights/paths.ts";
 import { convertedSeriesPath } from "../conversion/paths.ts";
 import { copyConvertedSeries } from "../conversion/storeConverted.ts";
+import { copyNotionalSeries } from "../notional/copyNotional.ts";
+import { notionalPath } from "../notional/store.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
 import {
 	postcodeAreasDirectory,
@@ -39,7 +41,8 @@ import { readJsonSync } from "../lib/json.ts";
 /**
  * `crosswalkWeights: false` leaves crosswalks with only their own weights, for
  * fixtures whose roots hold no census counts and place no real releases. The
- * converted series are built through those weights, so they go with them.
+ * converted series and the notional estimates are built through those
+ * weights, so they go with them.
  * `documentSchema: false` skips the search table and the schema docs, which
  * describe the full build's tables and fail on a fixture's partial ones.
  * `areaLocations: false` skips geometry for fixtures with no geometry store.
@@ -50,12 +53,14 @@ export function assembleAtlas(
 	{
 		crosswalkWeights = true,
 		convertedSeries = crosswalkWeights,
+		notionalElections = crosswalkWeights,
 		documentSchema = crosswalkWeights,
 		areaLocations = crosswalkWeights,
 		placeProducts = crosswalkWeights,
 	}: {
 		crosswalkWeights?: boolean;
 		convertedSeries?: boolean;
+		notionalElections?: boolean;
 		documentSchema?: boolean;
 		areaLocations?: boolean;
 		placeProducts?: boolean;
@@ -95,6 +100,14 @@ export function assembleAtlas(
 				database
 					.prepare("ATTACH DATABASE ? AS converted_component")
 					.run(convertedSeriesPath(root));
+			if (notionalElections && !existsSync(notionalPath(root)))
+				throw new Error(
+					`Missing atlas component ${notionalPath(root)}`,
+				);
+			if (notionalElections)
+				database
+					.prepare("ATTACH DATABASE ? AS notional_component")
+					.run(notionalPath(root));
 			database.exec(
 				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
@@ -216,6 +229,7 @@ export function assembleAtlas(
 			// Every converted series is marked as one, and none of its values
 			// as observed, or the copy fails.
 			if (convertedSeries) copyConvertedSeries(database, ids);
+			if (notionalElections) copyNotionalSeries(database, ids);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
 			if (placeProducts) {
