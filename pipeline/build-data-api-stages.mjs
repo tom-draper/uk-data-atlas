@@ -101,7 +101,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/terrain-catalogue.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -128,7 +127,6 @@ export const apiStages = [
 				cachePart("datasets"),
 			],
 			rawInputs: censusSmallAreaInputs,
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			requiredOutputs: [
 				"data/build/atlas-base.sqlite",
 				cachePart("projections"),
@@ -142,7 +140,6 @@ export const apiStages = [
 		"verify-dataset-payloads",
 		["datasets", "atlas-sqlite", "assemble-cache"],
 		["pipeline/src/stages/verify-dataset-payloads.ts"],
-		{ codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"] },
 	),
 	stage(
 		"api-datasets",
@@ -154,7 +151,6 @@ export const apiStages = [
 		{
 			rawInputs: apiDatasetInputs,
 			writes: [`${artifacts}/source-data`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -164,7 +160,6 @@ export const apiStages = [
 		{
 			rawInputs: boundaryRegistryInputs,
 			writes: [`${geography}/boundary-releases.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -174,7 +169,6 @@ export const apiStages = [
 		{
 			rawInputs: derivedBoundaryInputs,
 			writes: [`${artifacts}/boundaries`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -184,7 +178,6 @@ export const apiStages = [
 		{
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/areas`, `${artifacts}/area-inventory.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -194,7 +187,6 @@ export const apiStages = [
 		{
 			rawInputs: geometrySourceRegistryInputs,
 			writes: [`${artifacts}/geometry-sources.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -207,7 +199,6 @@ export const apiStages = [
 		{
 			rawInputs: geometryStoreInputs,
 			writes: [`${artifacts}/geometry-store`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -221,7 +212,6 @@ export const apiStages = [
 				`${artifacts}/named-locations.json`,
 				`${artifacts}/named-locations-metadata.json`,
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -239,7 +229,6 @@ export const apiStages = [
 			rawInputs: [],
 			writes: [cachePart("place-index")],
 			requiredOutputs: [cachePart("place-index")],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -250,7 +239,6 @@ export const apiStages = [
 			rawInputs: [],
 			writes: [cachePart("area-search")],
 			requiredOutputs: [cachePart("area-search")],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -260,7 +248,6 @@ export const apiStages = [
 		{
 			writes: ["data/build/postcode-index.sqlite"],
 			requiredOutputs: ["data/build/postcode-index.sqlite"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			rawInputs: postcodeInputs,
 		},
 	),
@@ -272,7 +259,6 @@ export const apiStages = [
 			writes: ["data/build/statistics-vocabulary.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-vocabulary.json"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -289,7 +275,6 @@ export const apiStages = [
 				`${artifacts}/data-catalog.json`,
 				"data/build/measure-statistics-fields.json",
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Places the postcodes, and the output areas without one, in each release a
@@ -309,7 +294,6 @@ export const apiStages = [
 			requiredOutputs: [
 				"data/build/crosswalk-weights/crosswalk-weights.sqlite",
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Converts figures whose answer is published elsewhere and measures the
@@ -326,7 +310,6 @@ export const apiStages = [
 				"data/build/conversion-backtest/conversion-backtest.sqlite",
 				"data/build/conversion-backtest/backtest-tables.md",
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Moves published series onto the latest releases under the rules the
@@ -343,7 +326,6 @@ export const apiStages = [
 				"data/build/converted-series/converted-series.sqlite",
 				"data/build/converted-series/converted-series.md",
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -383,7 +365,6 @@ export const apiStages = [
 			writes: ["data/build/modules"],
 			outputs: ["data/build/modules"],
 			requiredOutputs: ["data/build/modules/build.json"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -398,7 +379,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/measure-compatibility.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -409,7 +389,6 @@ export const apiStages = [
 			writes: ["data/build/statistics-read-path.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-read-path.json"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -422,7 +401,6 @@ export const apiStages = [
 				`${artifacts}/export-manifest.json`,
 			],
 			rawInputs: [],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -442,7 +420,6 @@ export const apiStages = [
 		{
 			writes: ["data/build/postcode-areas-component"],
 			rawInputs: [],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/postcode-areas-component"],
 			requiredOutputs: [
 				"data/build/postcode-areas-component/manifest.json",
@@ -459,7 +436,6 @@ export const apiStages = [
 			rawInputs: [],
 			writes: [cachePart("postcode-counts")],
 			requiredOutputs: [cachePart("postcode-counts")],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Reads the stored placements back and asks the geometry again for a sample.
@@ -472,9 +448,7 @@ export const apiStages = [
 			"geometry-store",
 		],
 		["pipeline/src/stages/verify-postcode-areas.ts"],
-		{
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
-		},
+		{},
 	),
 	// The atoms crosswalk weights are summed over, placed in the releases the
 	// postcode-overlap crosswalks join, which are compiled from them.
@@ -490,7 +464,6 @@ export const apiStages = [
 			writes: ["data/build/weight-atoms"],
 			outputs: ["data/build/weight-atoms"],
 			requiredOutputs: ["data/build/weight-atoms/atoms.json"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -521,7 +494,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${geography}/relationship-paths.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -531,7 +503,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${geography}/analysis-geographies.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -546,7 +517,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${geography}/analysis-geography-validation.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -563,7 +533,6 @@ export const apiStages = [
 			writes: ["data/build/geography-payloads.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/geography-payloads.json"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -573,7 +542,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: ["data/build/location-projections"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -583,7 +551,6 @@ export const apiStages = [
 		{
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/relationship-candidates.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -598,7 +565,6 @@ export const apiStages = [
 		{
 			rawInputs: sourceMetadataInputs,
 			writes: [`${geography}/geography-inventory.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -608,7 +574,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/lookup-manifest.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -649,7 +614,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Reads every catalogue the build has written so far, and so waits for them.
@@ -699,7 +663,6 @@ export const apiStages = [
 				`${artifacts}/documents`,
 				`${artifacts}/evidence-documents.json`,
 			],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			rawInputs: boundaryOffsetInputs,
 		},
 	),
@@ -722,7 +685,6 @@ export const apiStages = [
 				`${atlasAssets}/atlas-lookups.json`,
 			],
 			rawInputs: [],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-lookups"],
 			requiredOutputs: ["data/build/atlas-assets/atlas-lookups.json"],
 		},
@@ -744,7 +706,6 @@ export const apiStages = [
 			writes: [atlasCache],
 			rawInputs: [],
 			requiredOutputs: [atlasCache],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -754,7 +715,6 @@ export const apiStages = [
 		{
 			rawInputs: [],
 			writes: [`${artifacts}/atlas-release.json`],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Place pages read areas, crosswalks, geometry and named locations; the
@@ -785,7 +745,6 @@ export const apiStages = [
 				`${atlasAssets}/atlas-pages.json`,
 			],
 			rawInputs: boundaryOffsetInputs,
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 			outputs: ["data/build/atlas-assets/atlas-pages"],
 			requiredOutputs: ["data/build/atlas-assets/atlas-pages.json"],
 		},

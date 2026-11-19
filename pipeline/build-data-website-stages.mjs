@@ -18,7 +18,6 @@ export const websiteStages = [
 			rawInputs: websiteBoundaryInputs,
 			writes: ["data/build/website-boundaries"],
 			outputs: ["data/build/website-boundaries"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
@@ -32,7 +31,6 @@ export const websiteStages = [
 			writes: ["data/build/boundaries"],
 			outputs: ["data/build/boundaries"],
 			rawInputs: websiteBoundaryInputs,
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	// Publishes the map resources and properties for the website to serve.
@@ -58,7 +56,6 @@ export const websiteStages = [
 			writes: ["data/build/website-assets.sqlite"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/website-assets.sqlite"],
-			codeInputs: ["pipeline/package.json", "pipeline/tsconfig.json"],
 		},
 	),
 	stage(
