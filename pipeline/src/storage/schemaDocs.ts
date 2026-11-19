@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation for statistics, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -58,7 +58,11 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "statistics",
-		body: "A measure is what is counted, in one unit (population, recorded-crimes, unemployment-rate). A dimension is a breakdown of a measure (sex, age, offence, tenure, party) and a dimension_member is one value of it (offence=burglary). Members can have a parent, and the total is usually the root member with code 'total' or 'all'. A series is one dataset's figures for one measure, one set of members and one boundary release. An observation is one value of a series for one area_version and one period. In v_observation the members column lists the fixed members as 'dimension=code; dimension=code'. A measure with dimensions has one series per combination of members, so filter members (or join series_member) to avoid adding a total to its own parts.",
+		body: "A measure is what is counted, in one unit (population, recorded-crimes, unemployment-rate). A dimension is a breakdown of a measure (sex, age, offence, tenure, party) and a dimension_member is one value of it (offence=burglary). Members can have a parent, and the total is usually the root member with code 'total' or 'all'. A series is one dataset's figures for one measure, one set of members and one boundary release. An observation is one value of a series for one area_version and one period. In v_observation the members column lists the fixed members as 'dimension=code; dimension=code'. A measure with dimensions has one series per combination of members, so filter members (or join series_member) to avoid adding a total to its own parts, or read v_observation_default, which does it for you (see which-view-to-use).",
+	},
+	{
+		topic: "which-view-to-use",
+		body: "Start with v_observation_default. It has the columns of v_observation and returns one row for each quantity, area and period, so a sum or a count over it does not count a figure twice. A quantity is a measure on one boundary release with one member of each qualifier dimension: life expectancy for females and for males are two quantities, and so is the same measure on two releases (filter on release to choose one). measure_dimension says how each dimension of a measure is read. A breakdown dimension (tenure, age band, residence type) splits a total, so the view keeps only the series at the total (default_member_id, or the series with no member of that dimension when it is NULL) and leaves out the parts. A qualifier dimension (sex for life expectancy, party for votes, pay statistic) has no total, so each member is its own quantity and all of them are in the view. Where several series hold one quantity, the best one is returned for each area and period: published, then aggregated, then modelled (an open model before a ShareAlike one), then converted, then the dataset order declared for the measure. series_preference holds the order (rank 1 is best) and quantity names the group. The column alternatives counts the other series that also have a row for that quantity, area and period, so a value of 0 means there was no choice. A series is passed over only where it has no observation row: a row whose value is NULL (a suppressed figure) is the answer for that area and period and the next series is not tried. Use v_observation instead when you want every series, a breakdown (members = age-band=...), or a comparison between datasets or methods, and v_series to see what exists. In a database assembled from some modules only the series that are present are ranked, so the view returns the best of what is there.",
 	},
 	{
 		topic: "published-and-converted",
@@ -86,7 +90,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "performance",
-		body: "observation is keyed by (series_id, area_version_id, period_id) with no other index. Filtering v_observation on measure and area_code is fast (milliseconds). A query that filters only on area_version_id, or only on period, scans the whole table (about 10.7 million rows). To read everything for one area, first find its series through its release: WHERE series_id IN (SELECT id FROM series WHERE release_id = ?) AND area_version_id = ?.",
+		body: "observation is keyed by (series_id, area_version_id, period_id) with no other index. Filtering v_observation or v_observation_default on measure and area_code is fast (milliseconds), and on measure, geography and release it reads one release's series. A query that filters only on area_version_id, or only on period, scans the whole table (about 10.7 million rows). To read everything for one area, first find its series through its release: WHERE series_id IN (SELECT id FROM series WHERE release_id = ?) AND area_version_id = ?.",
 	},
 ];
 
@@ -501,10 +505,44 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			member_id: "The member (dimension_member.id).",
 		},
 	},
+	measure_dimension: {
+		audience: "reference",
+		description:
+			"How each dimension is read for each measure that has series using it: a breakdown that splits a total, or a qualifier whose members are each their own quantity. The same dimension can have different roles for different measures (age is a breakdown of population and of claimants, sex a qualifier of life expectancy). Decided by a rule (a root member coded total or all that one of the measure's series holds) and by declarations in packages/measures/src/measurePreferences.ts, each with a reason. The build fails for a dimension that has neither.",
+		columns: {
+			measure_id: "The measure (measure.id).",
+			dimension_id: "The dimension (dimension.id).",
+			role: "breakdown: the members split a total and only the default is a quantity of its own. qualifier: every member is a different quantity.",
+			default_member_id:
+				"For a breakdown, the member that is the total (dimension_member.id). NULL for a qualifier, and for a breakdown whose total is the series that has no member of this dimension, as a population by age has no all-ages member but the whole population is the series with no age.",
+		},
+	},
+	quantity: {
+		audience: "reference",
+		description:
+			"A thing that has one value for each area and period: a measure on one boundary release with one member of each qualifier dimension. Each is held by one or more series, ranked in series_preference. A series is in a quantity only when it is at the default of every breakdown dimension, so quantities hold no parts of a total.",
+		columns: {
+			id: "Integer id, assigned in key order at each build, so it can change between builds. Use key to refer to a quantity.",
+			measure_id: "The measure (measure.id).",
+			release_id:
+				"The boundary release (area_release.id) of the series it holds.",
+			key: "Readable unique key: measure/geography:release, then /dimension=member for each qualifier member in name order, such as life-expectancy/localAuthority:2026-05-uk-bgc/sex=female.",
+		},
+	},
+	series_preference: {
+		audience: "reference",
+		description:
+			"The series that can answer a quantity, best first. Only series at the default of every breakdown dimension have a row. Order: published, aggregated, modelled (an open model before a ShareAlike one), converted, then the dataset order declared for the measure in packages/measures/src/measurePreferences.ts. Series that tie on all of these hold no area and period in common (the build fails otherwise) and are ranked by series id. v_observation_default reads it.",
+		columns: {
+			series_id: "The series (series.id).",
+			quantity_id: "The quantity it can answer (quantity.id).",
+			rank: "1 is preferred. Unique within a quantity. v_observation_default returns, for each area and period, the row of the lowest rank that has one.",
+		},
+	},
 	observation: {
 		audience: "core",
 		description:
-			"One value: a series, an area version and a period. About 10.7 million rows. Primary key (series_id, area_version_id, period_id) with no other index, so always filter by series_id. v_observation is the readable form.",
+			"One value: a series, an area version and a period. About 10.7 million rows. Primary key (series_id, area_version_id, period_id) with no other index, so always filter by series_id. v_observation is the readable form, and v_observation_default the one that gives a single value per quantity, area and period.",
 		columns: {
 			series_id: "The series (series.id).",
 			area_version_id:
@@ -521,7 +559,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	v_observation: {
 		audience: "core",
 		description:
-			"View: every observation as a readable row with dataset, measure, members, area, release, period, value, status, method and licence. Filter on measure and area_code (and geography or release) for fast reads.",
+			"View: every observation as a readable row with dataset, measure, members, area, release, period, value, status, method and licence. It holds every series, so a quantity held by several datasets, methods or breakdowns appears once for each: read v_observation_default for one value, and use this view to compare series or read a breakdown. Filter on measure and area_code (and geography or release) for fast reads.",
 		columns: {
 			dataset: "Dataset slug.",
 			measure: "Measure slug.",
@@ -541,6 +579,35 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			status: "Status slug.",
 			method: "published, converted or modelled.",
 			licence: "The source's licence as written.",
+		},
+	},
+	v_observation_default: {
+		audience: "core",
+		description:
+			"View: the safe way to read statistics. The columns of v_observation, for one row per quantity, area and period: the best series that has a row for it, where series_preference gives the order. A figure is never counted twice across datasets, methods or breakdowns, and the parts of a total (age bands, tenure types) are left out. A series is passed over only where it has no observation row, so a row with a NULL value (suppressed) is the answer. Read v_observation for every series and every breakdown. Filter on measure and area_code (and geography or release) for fast reads.",
+		columns: {
+			dataset: "Dataset slug.",
+			measure: "Measure slug.",
+			unit: "Unit of value.",
+			members:
+				"Fixed dimension members of the series as 'dimension=code; dimension=code', or null for no breakdown. A breakdown member here is the total, as tenure=total.",
+			area_code: "Area code.",
+			area_name:
+				"Area name, as the dataset publishes it where that differs from the boundary file.",
+			geography: "Geography slug.",
+			release: "Boundary release slug.",
+			period: "Period label.",
+			value: "The value.",
+			lower: "Lower bound, or null.",
+			upper: "Upper bound, or null.",
+			category: "Category member code for category measures, or null.",
+			status: "Status slug.",
+			method: "published, converted, aggregated or modelled.",
+			licence: "The source's licence as written.",
+			series_id: "The series the row came from (series.id).",
+			quantity: "The quantity's key (quantity.key).",
+			alternatives:
+				"How many other series have a row for this quantity, area and period. 0 means no other series could have answered.",
 		},
 	},
 	v_series: {
@@ -1505,8 +1572,29 @@ export const schemaExamples: readonly SchemaExample[] = [
 	{
 		id: "unemployment-over-time",
 		question: "What was the unemployment rate in Manchester each year?",
-		sql: "SELECT period, value, lower, upper, status FROM v_observation WHERE measure = 'unemployment-rate' AND area_code = 'E08000003' ORDER BY period",
+		sql: "SELECT period, value, lower, upper, status FROM v_observation_default WHERE measure = 'unemployment-rate' AND area_code = 'E08000003' ORDER BY period",
 		expect: "26 rows from 1996-97, on localAuthority 2024-05-uk-bgc, all published.",
+	},
+	{
+		id: "default-population-of-authority",
+		question:
+			"What is the population of Manchester on the 2026 council boundaries, one figure for each period?",
+		sql: "SELECT period, round(value) AS population, dataset, method, alternatives FROM v_observation_default WHERE measure = 'population' AND area_code = 'E08000003' AND geography = 'localAuthority' AND release = '2026-05-uk-bgc' ORDER BY period",
+		expect: "One row each for 2021, 2022 and 2025, all converted, and none for the single-year-of-age series, whose parts are not totals. The same query on v_observation returns 1,550 rows.",
+	},
+	{
+		id: "default-households-in-lsoa",
+		question:
+			"How many households were in LSOA E01005189 at the 2021 census, as one figure?",
+		sql: "SELECT period, value, dataset, alternatives FROM v_observation_default WHERE measure = 'households' AND area_code = 'E01005189' AND geography = 'lsoa' AND release = '2021-12-ew-bgc-v5' AND period = '2021-census'",
+		expect: "One row, 800 from census-2021-ts054, with alternatives 2: housing-tenure repeats it and census-2021-ts003 counts 802 under its own disclosure control. v_observation returns 32 rows, the parts of each census table included.",
+	},
+	{
+		id: "default-party-vote-share",
+		question:
+			"What share of the vote did each party group win in Manchester Central at the 2019 general election?",
+		sql: "SELECT members, round(value, 1) AS share, dataset FROM v_observation_default WHERE measure = 'party-vote-share' AND area_code = 'E14000807' AND geography = 'constituency' AND release = '2019-12-uk-bgc' AND period = '2019-12-12' ORDER BY value DESC",
+		expect: "Four rows from historical-general-election: lab 70.4, con 14.8, other 8.2 and lib 6.5. party-group is a qualifier, so each group is its own quantity and none is left out.",
 	},
 	{
 		id: "area-by-code",

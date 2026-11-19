@@ -19,6 +19,7 @@ import {
 import {
 	publishVacuumed,
 	writeAreaChangeEvents,
+	writeDefaultObservation,
 	writePostcodeAreas,
 	writeSchemaDocs,
 	writeSearchTable,
@@ -236,6 +237,8 @@ export function assembleAtlas(
 				copyNotionalMetrics(database, ids);
 				copyLocalNotionalSeries(database, ids);
 			}
+			// After every series is in: the default view ranks them.
+			writeDefaultObservation(database);
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
 			if (placeProducts) {
