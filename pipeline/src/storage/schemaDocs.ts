@@ -54,7 +54,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "areas-and-releases",
-		body: "An area is one code in one geography, for all time (area). Boundaries are published in dated releases, such as localAuthority 2025-05-uk-bgc-v2, listed in area_releases and described in boundary_release. An area_version is an area as it is in one release, with that release's name, size and population. The same code in two releases is two area_version rows sharing one area_id. Every statistic is attached to an area_version, so it is always clear which boundaries a figure is on. Some codes appear in more than one geography, for example a metropolitan borough is both a localAuthority and a countyAndUnitaryAuthority, so filter on geography when looking up a code. Release slugs read as YYYY-MM, then the countries covered (uk, gb, ew, en, sc, w, ni), then the boundary detail (bgc generalised and clipped, bfc full and clipped), then a version suffix if the publisher revised it.",
+		body: "An area is one code in one geography, for all time (area). Boundaries are published in dated releases, such as localAuthority 2025-05-uk-bgc-v2, listed in area_release and described in boundary_release. An area_version is an area as it is in one release, with that release's name, size and population. The same code in two releases is two area_version rows sharing one area_id. Every statistic is attached to an area_version, so it is always clear which boundaries a figure is on. Some codes appear in more than one geography, for example a metropolitan borough is both a localAuthority and a countyAndUnitaryAuthority, so filter on geography when looking up a code. Release slugs read as YYYY-MM, then the countries covered (uk, gb, ew, en, sc, w, ni), then the boundary detail (bgc generalised and clipped, bfc full and clipped), then a version suffix if the publisher revised it.",
 	},
 	{
 		topic: "statistics",
@@ -138,7 +138,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			id: "Stable integer id, assigned once and never reused.",
 			area_id:
 				"The area (area.id). Versions of the same code in different releases share it.",
-			release_id: "The boundary release (area_releases.id).",
+			release_id: "The boundary release (area_release.id).",
 			name: "The area's name in this release. Empty for areas only known from a code list, where in_inventory is 0.",
 			area_m2:
 				"Land area in square metres, from the release's boundaries. Null if not measured.",
@@ -152,7 +152,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The area's order in the release's boundary file. Null when in_inventory is 0.",
 		},
 	},
-	area_releases: {
+	area_release: {
 		audience: "core",
 		description:
 			"Every boundary release of every geography. series, crosswalk, election and area_version refer to it through release_id. boundary_release holds the publisher's description of the same release.",
@@ -177,7 +177,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	boundary_release: {
 		audience: "core",
 		description:
-			"The publisher's description of a boundary release: title, period covered, publisher, licence and deprecation. Keyed by geography and release slug, matching area_releases.",
+			"The publisher's description of a boundary release: title, period covered, publisher, licence and deprecation. Keyed by geography and release slug, matching area_release.",
 		columns: {
 			geography: "The geography slug.",
 			release: "The release slug.",
@@ -484,7 +484,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			dataset_id: "The dataset (dataset.id).",
 			measure_id: "The measure (measure.id).",
 			release_id:
-				"The boundary release its areas are on (area_releases.id).",
+				"The boundary release its areas are on (area_release.id).",
 			method: "published (as the publisher released it), converted (moved onto release_id through crosswalks by the atlas) or modelled (estimated by the atlas from several sources, see series_model).",
 			derived_from_id:
 				"For a converted or modelled series, the published series it came from (series.id). series_input lists every input of a converted series, model_input those of a modelled one.",
@@ -612,7 +612,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	area_hierarchy: {
 		audience: "core",
 		description:
-			"Direct child to parent assignments from membership and best-fit crosswalks. Join area_version and area_releases for geography and release, and crosswalk for provenance. Several sources or vintages can give different parents.",
+			"Direct child to parent assignments from membership and best-fit crosswalks. Join area_version and area_release for geography and release, and crosswalk for provenance. Several sources or vintages can give different parents.",
 		columns: {
 			child_version_id: "The child area version (area_version.id).",
 			parent_version_id:
@@ -750,9 +750,9 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			dataset_id: "The dataset (dataset.id).",
 			measure_id: "The measure (measure.id).",
 			source_release_id:
-				"The release it is published on (area_releases.id).",
+				"The release it is published on (area_release.id).",
 			target_release_id:
-				"The standard release it was not moved to (area_releases.id).",
+				"The standard release it was not moved to (area_release.id).",
 			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be split and splitting is refused), published-on-target (already published there for every period it holds; a source with other periods is converted for those alone), missing-component (a ratio lacks its numerator, denominator or weight), better-route (every value it would give for a target area and period came from a better source, kept in its place).",
 			series: "Number of published series affected.",
 		},
@@ -817,8 +817,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			id: "Stable integer id.",
 			slug: "Readable name: from-geography-release-to-geography-release-method.",
 			inventory_position: "Build order. Not stable between builds.",
-			from_release_id: "Release of the source areas (area_releases.id).",
-			to_release_id: "Release of the target areas (area_releases.id).",
+			from_release_id: "Release of the source areas (area_release.id).",
+			to_release_id: "Release of the target areas (area_release.id).",
 			method: "official-lookup or clean-containment (from the publisher), best-fit (each source to one target), extent-continuity (same area across releases), geometric-containment, area-overlap, population-overlap or postcode-overlap (split by measured overlap).",
 			quality: "publisher-supplied or derived.",
 			purpose:
@@ -952,8 +952,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		columns: {
 			id: "Event number. Events are numbered in order of geography, earlier release, later release, then the smallest code on each side, so a rebuild from the same data gives the same ids.",
 			geography_id: "The geography (geography.id).",
-			from_release_id: "The earlier boundary release (area_releases.id).",
-			to_release_id: "The later boundary release (area_releases.id).",
+			from_release_id: "The earlier boundary release (area_release.id).",
+			to_release_id: "The later boundary release (area_release.id).",
 			kind: "renamed (same code, new name), recoded (one area, new code), split (one area became several), merged (several became one), redistributed (several became several, in one tangle of overlaps), ended (no area continues it) or created (no earlier area).",
 			effective_date:
 				"The later release's edition date (ISO date, boundary_release_edition.edition_from). The change had happened by this edition.",
@@ -1053,7 +1053,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			label: "The publisher's label, such as 2024 or 1974O (October 1974).",
 			kind: "general or local.",
 			date: "Polling day (ISO date).",
-			release_id: "The boundary release of its areas (area_releases.id).",
+			release_id: "The boundary release of its areas (area_release.id).",
 		},
 	},
 	party: {
@@ -1582,7 +1582,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 		id: "converted-quality",
 		question:
 			"Is there population data on the 2026 council boundaries, and how was it made?",
-		sql: "SELECT s.key, c.rule, b.label AS basis, c.exact_share, c.coverage FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_releases r ON r.id = s.release_id JOIN series_conversion c ON c.series_id = s.id LEFT JOIN weight_basis b ON b.id = c.basis_id WHERE m.slug = 'population' AND r.geography = 'localAuthority' AND r.release = '2026-05-uk-bgc' LIMIT 10",
+		sql: "SELECT s.key, c.rule, b.label AS basis, c.exact_share, c.coverage FROM series s JOIN measure m ON m.id = s.measure_id JOIN area_release r ON r.id = s.release_id JOIN series_conversion c ON c.series_id = s.id LEFT JOIN weight_basis b ON b.id = c.basis_id WHERE m.slug = 'population' AND r.geography = 'localAuthority' AND r.release = '2026-05-uk-bgc' LIMIT 10",
 		expect: "Converted series from 2023-12-uk-bgc, rule sum, residents basis, exact_share 1.",
 	},
 	{

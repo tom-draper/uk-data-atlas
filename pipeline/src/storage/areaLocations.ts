@@ -138,7 +138,7 @@ export function writeAreaLocations(
 		"INSERT INTO area_location VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 	);
 	const versions = database.prepare(
-		`SELECT v.id, a.code, r.geography, r.release FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id ORDER BY r.geography, r.release, a.code`,
+		`SELECT v.id, a.code, r.geography, r.release FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id ORDER BY r.geography, r.release, a.code`,
 	);
 	type Version = {
 		id: number;

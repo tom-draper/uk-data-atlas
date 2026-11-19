@@ -99,7 +99,7 @@ export const readLocalInputs = (root: string): LocalInputs => {
 			(
 				database
 					.prepare(
-						"SELECT release FROM area_releases WHERE geography = ? ORDER BY release",
+						"SELECT release FROM area_release WHERE geography = ? ORDER BY release",
 					)
 					.all(geography) as { release: string }[]
 			).map((row) => row.release);
@@ -156,7 +156,7 @@ export const readLocalInputs = (root: string): LocalInputs => {
 		const names = new Map<string, Map<string, string>>();
 		const nameRows = database.prepare(
 			`SELECT a.code AS code, v.name AS name FROM area_version v
-			JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id
+			JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id
 			WHERE r.geography = 'ward' AND r.release = ?`,
 		);
 		for (const release of targets)

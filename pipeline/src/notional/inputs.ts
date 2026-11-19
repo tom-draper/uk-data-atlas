@@ -173,7 +173,7 @@ export const readNotionalInputs = (root: string): NotionalInputs => {
 				database
 					.prepare(
 						`SELECT a.code AS code, v.name AS name FROM area_version v
-						JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id
+						JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id
 						WHERE r.geography = 'constituency' AND r.release IN (?, ?)`,
 					)
 					.all(OLD_SEATS, NEW_SEATS) as {

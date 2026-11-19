@@ -16,23 +16,23 @@ takes the next id. A key the build no longer produces keeps its id, unused.
 Use the natural key to identify a row outside the database, and the integer
 inside it.
 
-| Id                                            | Natural key                                                |
-| --------------------------------------------- | ---------------------------------------------------------- |
-| `area_releases.id` (the `release_id` columns) | `(geography, release)`                                     |
-| `geography.id`                                | `slug`                                                     |
-| `area.id`                                     | `(geography, code)`                                        |
-| `area_version.id`                             | `(geography, release, code)`                               |
-| `crosswalk.id`                                | `slug`                                                     |
-| `source.id`                                   | `(publisher, url, licence)`                                |
-| `dataset.id`, `measure.id`, `dimension.id`    | `slug`                                                     |
-| `dimension_member.id`                         | `(dimension slug, code)`                                   |
-| `period.id`                                   | `label`                                                    |
-| `series.id`                                   | `key`                                                      |
-| `election.id`                                 | `(dataset slug, label)`                                    |
-| `contest.id`                                  | `(dataset slug, election label, geography, release, code)` |
-| `party.id`                                    | `code`                                                     |
-| `place.id`                                    | `slug`                                                     |
-| `status.id`                                   | `slug`; a fixed list in `STATUSES`, only ever appended to  |
+| Id                                           | Natural key                                                |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| `area_release.id` (the `release_id` columns) | `(geography, release)`                                     |
+| `geography.id`                               | `slug`                                                     |
+| `area.id`                                    | `(geography, code)`                                        |
+| `area_version.id`                            | `(geography, release, code)`                               |
+| `crosswalk.id`                               | `slug`                                                     |
+| `source.id`                                  | `(publisher, url, licence)`                                |
+| `dataset.id`, `measure.id`, `dimension.id`   | `slug`                                                     |
+| `dimension_member.id`                        | `(dimension slug, code)`                                   |
+| `period.id`                                  | `label`                                                    |
+| `series.id`                                  | `key`                                                      |
+| `election.id`                                | `(dataset slug, label)`                                    |
+| `contest.id`                                 | `(dataset slug, election label, geography, release, code)` |
+| `party.id`                                   | `code`                                                     |
+| `place.id`                                   | `slug`                                                     |
+| `status.id`                                  | `slug`; a fixed list in `STATUSES`, only ever appended to  |
 
 Each natural key is unique and indexed. For an area, `v_area_version` gives it
 in one place:
@@ -49,7 +49,7 @@ to_version_id)`, stable because its three parts are.
 
 An id no longer follows the order of the inventory, so order is stored:
 
-- `area_releases.inventory_position`: the release's place in the area inventory.
+- `area_release.inventory_position`: the release's place in the area inventory.
 - `area_version.inventory_position`: the area's place in its release's
   artifact. Null where `in_inventory` is 0.
 - `crosswalk.inventory_position`: the crosswalk's place in the crosswalk
@@ -124,7 +124,7 @@ customers hold. Check the deployed `atlas.sqlite` (on the VPS) against them:
 pnpm ids verify /path/to/deployed/atlas.sqlite
 ```
 
-It reads either layout of `area_releases`. If it reports a mismatch, the
+It reads either layout of `area_release`. If it reports a mismatch, the
 registry is not that file's: empty `pipeline/ids` and run `pnpm ids seed` on
 the deployed file, then `pnpm ids verify` again. No API route returns these ids,
 so a reseed from the deployed file is safe.

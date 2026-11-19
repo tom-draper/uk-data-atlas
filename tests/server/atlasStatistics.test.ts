@@ -40,7 +40,7 @@ const entry = {
 
 /** Two releases of areas, in the shape `areaTables` writes. */
 const areaFixture = (): Record<string, SqliteTable> => ({
-	area_releases: {
+	area_release: {
 		columns: [
 			"id INTEGER UNIQUE",
 			"geography TEXT",
@@ -82,7 +82,7 @@ const areaFixture = (): Record<string, SqliteTable> => ({
 		columns: [
 			"id INTEGER",
 			"area_id INTEGER REFERENCES area(id)",
-			"release_id INTEGER REFERENCES area_releases(id)",
+			"release_id INTEGER REFERENCES area_release(id)",
 			"name TEXT",
 		],
 		key: ["id"],

@@ -33,7 +33,7 @@ test("binds a census measure only when every source partition is complete", () =
 			CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
-			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+			CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
@@ -42,7 +42,7 @@ test("binds a census measure only when every source partition is complete", () =
 			INSERT INTO dataset VALUES (1, 'census-2021-ts007a');
 			INSERT INTO measure VALUES (1, 'usual-residents');
 			INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 1), (2, 1, 1, 2), (3, 1, 1, 1);
-			INSERT INTO area_releases VALUES (1, 'lsoa', 'lsoa-2021'), (2, 'msoa', 'msoa-2021');
+			INSERT INTO area_release VALUES (1, 'lsoa', 'lsoa-2021'), (2, 'msoa', 'msoa-2021');
 			INSERT INTO dimension VALUES (1, 'age-band');
 			INSERT INTO dimension_member VALUES (1, '0-to-4');
 			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 1);
@@ -98,7 +98,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
-			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+			CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE dimension (id INTEGER, slug TEXT);
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
@@ -107,7 +107,7 @@ test("uses reviewed source mappings only when each requested period exists", () 
 			INSERT INTO dataset VALUES (1, 'population');
 			INSERT INTO measure VALUES (1, 'population');
 			INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 1);
-			INSERT INTO area_releases VALUES (1, 'ward', 'ward-2021');
+			INSERT INTO area_release VALUES (1, 'ward', 'ward-2021');
 			INSERT INTO dimension VALUES (1, 'sex'), (2, 'age');
 			INSERT INTO dimension_member VALUES (1, 'all'), (2, '0');
 			INSERT INTO series_member VALUES (1, 1, 1), (1, 2, 2);
@@ -182,7 +182,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 		db.exec(`CREATE TABLE dataset (id INTEGER, slug TEXT);
 			CREATE TABLE measure (id INTEGER, slug TEXT, unit TEXT);
 			CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, key TEXT, method TEXT NOT NULL DEFAULT 'published');
-			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+			CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE area (id INTEGER, code TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER, release_id INTEGER);
 			CREATE TABLE period (id INTEGER, label TEXT);
@@ -194,7 +194,7 @@ test("exports house prices under the publisher's ward code and release", () => {
 			CREATE TABLE area_relationship (dataset_id INTEGER, relation TEXT, period_id INTEGER, child_version_id INTEGER, parent_version_id INTEGER);
 			INSERT INTO dataset VALUES (1, 'house-price');
 			INSERT INTO measure VALUES (1, 'house-price-median', 'gbp');
-			INSERT INTO area_releases VALUES (1, 'ward', '2021-12-uk-bgc'), (2, 'ward', '2020-12-uk-bgc');
+			INSERT INTO area_release VALUES (1, 'ward', '2021-12-uk-bgc'), (2, 'ward', '2020-12-uk-bgc');
 			INSERT INTO area VALUES (1, 'E-new'), (2, 'E-old');
 			INSERT INTO area_version VALUES (1, 1, 1), (2, 2, 2);
 			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (1, 1, 1, 1, 'prices');
@@ -244,7 +244,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			CREATE TABLE dimension_member (id INTEGER, code TEXT);
 			CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
 			CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, category_id INTEGER, status_id INTEGER);
-			CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+			CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 			CREATE TABLE area_version (id INTEGER, area_id INTEGER);
 			CREATE TABLE area (id INTEGER, code TEXT);
 			CREATE TABLE period (id INTEGER, label TEXT);
@@ -255,7 +255,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO dimension_member VALUES (1, 'rented'), (2, 'owned'), (100, 'LAB');
 			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (1, 1, 1, 1, 'rented'), (2, 1, 1, 1, 'owned');
 			INSERT INTO series_member VALUES (1, 1, 1), (2, 1, 2);
-			INSERT INTO area_releases VALUES (1, 'ward', '2021');
+			INSERT INTO area_release VALUES (1, 'ward', '2021');
 			INSERT INTO area VALUES (1, 'E01'), (2, 'E02');
 			INSERT INTO area_version VALUES (1, 1), (2, 2);
 			INSERT INTO period VALUES (1, '2021');
@@ -804,7 +804,7 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			firstGzip,
 		);
 		db.exec(`
-			INSERT INTO area_releases VALUES (2, 'ward', '2022');
+			INSERT INTO area_release VALUES (2, 'ward', '2022');
 			INSERT INTO period VALUES (2, '2022');
 			INSERT INTO series (id, dataset_id, measure_id, release_id, key) VALUES (3, 1, 1, 2, 'rented-2022');
 			INSERT INTO series_member VALUES (3, 1, 1), (3, 2, 3);

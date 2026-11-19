@@ -213,7 +213,7 @@ as published data.
 - **Task 2** (2026-11-08): 15 namespaces, 1.37M keys, 14 MB (3 MB
   compressed), 214 files, one per release for areas, seeded from the
   2026-11-04 build so no existing id changed. Order is stored apart as
-  `inventory_position`, and `area_releases` is now `id` and `release`. CI
+  `inventory_position`, and `area_release` is now `id` and `release`. CI
   checks the registries against the base branch. See `docs/stable-ids.md`.
 - **Task 3**: `boundary_release` and `boundary_release_country` store registry
   metadata and country coverage. Each release stores the reference year and

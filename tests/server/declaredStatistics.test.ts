@@ -18,7 +18,7 @@ import {
 } from "../../pipeline/src/storage/index";
 
 const areas = (): Record<string, SqliteTable> => ({
-	area_releases: {
+	area_release: {
 		columns: [
 			"id INTEGER UNIQUE",
 			"geography TEXT",
@@ -61,7 +61,7 @@ const areas = (): Record<string, SqliteTable> => ({
 		columns: [
 			"id INTEGER",
 			"area_id INTEGER REFERENCES area(id)",
-			"release_id INTEGER REFERENCES area_releases(id)",
+			"release_id INTEGER REFERENCES area_release(id)",
 			"name TEXT",
 		],
 		key: ["id"],

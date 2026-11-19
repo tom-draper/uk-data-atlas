@@ -327,7 +327,7 @@ so neither is build-only output. The sold core excludes `crosswalk_edge_check`; 
 
 The deprecated read-only views for legacy table names and camelCase columns
 are no longer written (see `data/build/README.md`). No reader used them. The
-`area_releases` and `payloads` tables remain unchanged pending the related
+`area_release` and `payloads` tables remain unchanged pending the related
 branch work.
 
 ## STRICT tables
@@ -351,7 +351,7 @@ why a row has no coordinates. See [the coverage audit](area-geometry-coverage.md
 for the observed gaps and example queries.
 
 `area_hierarchy` stores direct child and parent area-version assignments from
-crosswalks, indexed in both directions. Join each version to `area_releases`
+crosswalks, indexed in both directions. Join each version to `area_release`
 for geography and vintage, and `crosswalk` for its source. Published clean
 containment is labelled `exact`; best fit, geometry-derived containment (which
 allows boundary slivers), and official membership lookups without independent
@@ -366,7 +366,7 @@ SELECT r.geography, r.release, a.code, v.name, h.accuracy, c.slug
 FROM area_hierarchy h
 JOIN area_version v ON v.id = h.parent_version_id
 JOIN area a ON a.id = v.area_id
-JOIN area_releases r ON r.id = v.release_id
+JOIN area_release r ON r.id = v.release_id
 JOIN crosswalk c ON c.id = h.crosswalk_id
 WHERE h.child_version_id = ?;
 ```

@@ -85,7 +85,7 @@ export const readSqliteCrosswalkInventory = (
 			throw new Error("Invalid SQLite crosswalk inventory");
 		const crosswalks = database
 			.prepare(
-				"SELECT c.*, f.geography AS fromGeography, f.release AS fromRelease, t.geography AS toGeography, t.release AS toRelease FROM crosswalk c JOIN area_releases f ON f.id = c.from_release_id JOIN area_releases t ON t.id = c.to_release_id ORDER BY c.inventory_position",
+				"SELECT c.*, f.geography AS fromGeography, f.release AS fromRelease, t.geography AS toGeography, t.release AS toRelease FROM crosswalk c JOIN area_release f ON f.id = c.from_release_id JOIN area_release t ON t.id = c.to_release_id ORDER BY c.inventory_position",
 			)
 			.all()
 			.map((row) => ({
@@ -158,7 +158,7 @@ export const readSqliteCrosswalk = (
 	try {
 		const row = database
 			.prepare(
-				"SELECT c.*, f.geography AS from_geography, f.release AS from_release, t.geography AS to_geography, t.release AS to_release FROM crosswalk c JOIN area_releases f ON f.id = c.from_release_id JOIN area_releases t ON t.id = c.to_release_id WHERE c.slug = ?",
+				"SELECT c.*, f.geography AS from_geography, f.release AS from_release, t.geography AS to_geography, t.release AS to_release FROM crosswalk c JOIN area_release f ON f.id = c.from_release_id JOIN area_release t ON t.id = c.to_release_id WHERE c.slug = ?",
 			)
 			.get(expected.id);
 		if (!row || row.content_hash !== expected.contentHash)

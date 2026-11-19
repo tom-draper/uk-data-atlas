@@ -23,7 +23,7 @@ const database = new DatabaseSync(databasePath);
 database.exec(`
 	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
-	CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+	CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 	CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT, key TEXT);
 	CREATE TABLE dimension (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, code TEXT);
@@ -43,7 +43,7 @@ database.exec(`
 	CREATE TABLE conversion_skip (dataset_id INTEGER, measure_id INTEGER, source_release_id INTEGER, target_release_id INTEGER, reason TEXT, series INTEGER);
 	INSERT INTO dataset VALUES (1, 'population-uk');
 	INSERT INTO measure VALUES (1, 'population');
-	INSERT INTO area_releases VALUES (1, 'localAuthority', '2023-12-uk-bgc'), (2, 'localAuthority', '2026-05-uk-bgc');
+	INSERT INTO area_release VALUES (1, 'localAuthority', '2023-12-uk-bgc'), (2, 'localAuthority', '2026-05-uk-bgc');
 	INSERT INTO status VALUES (1, 'observed'), (2, 'estimated'), (6, 'derived');
 	INSERT INTO period VALUES (1, '2022', '2022-01-01'), (2, '2023', '2023-01-01'), (3, '2024', '2024-01-01');
 	INSERT INTO area VALUES (1, 'E06000001'), (2, 'E06000099');

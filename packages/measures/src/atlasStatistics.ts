@@ -23,7 +23,7 @@ export * from "@uk-data-atlas/datasets";
  *
  * Observations key on `area_version`, a code as it appears in one release.
  * Until boundary releases get their own table, a release is a row of
- * `area_releases`.
+ * `area_release`.
  */
 
 export type AreaRelease = { geography: string; id: string };

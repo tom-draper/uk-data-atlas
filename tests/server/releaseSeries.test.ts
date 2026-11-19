@@ -18,7 +18,7 @@ const atlas = () => {
 	database.exec(`
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
-		CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT, key TEXT);
 		CREATE TABLE dimension (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, code TEXT);
@@ -42,7 +42,7 @@ const atlas = () => {
 		INSERT INTO dimension VALUES (1, 'party');
 		INSERT INTO dimension_member VALUES (1, 'lab'), (2, 'con');
 		INSERT INTO series_member VALUES (7, 1, 1), (8, 1, 2), (12, 1, 1), (13, 1, 2);
-		INSERT INTO area_releases VALUES (1, 'ward', '2019-12-uk-bgc'), (2, 'ward', '2026-05-uk-bgc'), (3, 'ward', '2015-12-uk-bgc');
+		INSERT INTO area_release VALUES (1, 'ward', '2019-12-uk-bgc'), (2, 'ward', '2026-05-uk-bgc'), (3, 'ward', '2015-12-uk-bgc');
 		INSERT INTO status VALUES (1, 'observed'), (2, 'estimated'), (6, 'derived');
 		INSERT INTO period VALUES (1, '2015', '2015-01-01'), (2, '2019', '2019-01-01'), (3, '2026', '2026-01-01');
 		INSERT INTO area VALUES (1, 'W1'), (2, 'W2'), (3, 'W0');

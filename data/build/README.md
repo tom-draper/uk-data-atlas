@@ -274,7 +274,7 @@ The database contains these tables:
 | `payloads` | `id`      | `TEXT NOT NULL` | Primary key. `terrain-catalogue`, `dataset-manifest`, or `dataset:<output>` for datasets not served from rows. |
 | `payloads` | `payload` | `BLOB NOT NULL` | Brotli-compressed UTF-8 JSON text from its compiled input. It decompresses to the exact bytes and array order. |
 
-`meta`, `payloads`, `dataset`, `area_releases`, `crosswalk_coverage_entry`, `place`, `place_member`,
+`meta`, `payloads`, `dataset`, `area_release`, `crosswalk_coverage_entry`, `place`, `place_member`,
 `place_assertion`, `place_partial_member`, and `place_geometry` use `WITHOUT ROWID`. Each dataset has one payload. The complete
 manifest is also retained as a payload to preserve its version, input provenance
 and ordering. Reusing `payloads` keeps ready-to-send JSON in one table alongside
@@ -364,7 +364,7 @@ All tables are `STRICT` with integer keys. Writer: `packages/measures/src/atlasS
 | `dimension_member`     | `id`, unique `(dimension_id, code)`                                      | Member label, optional parent, publisher `position`.                                                                                                                                                                                                                                                                                           |
 | `period`               | `id`, `label` unique                                                     | `kind`, `start_date`, `end_date`.                                                                                                                                                                                                                                                                                                              |
 | `status`               | `id`, `slug` unique                                                      | `observed` (1), `estimated`, `provisional`, `suppressed`, `not_applicable`.                                                                                                                                                                                                                                                                    |
-| `series`               | `id`, `key` unique                                                       | One dataset, measure, release (`area_releases.id`) and set of members, plus `method`.                                                                                                                                                                                                                                                          |
+| `series`               | `id`, `key` unique                                                       | One dataset, measure, release (`area_release.id`) and set of members, plus `method`.                                                                                                                                                                                                                                                           |
 | `series_member`        | `(series_id, dimension_id)`                                              | The members fixing a series. Indexed by `(member_id, series_id)`.                                                                                                                                                                                                                                                                              |
 | `observation`          | `(series_id, area_version_id, period_id)`                                | `value`, `status_id`, optional `lower`, `upper`, `category_id`. `WITHOUT ROWID`.                                                                                                                                                                                                                                                               |
 | `dataset_area_name`    | `(dataset_id, area_version_id)`                                          | A publisher's area name, stored only where it differs from `area_version.name`.                                                                                                                                                                                                                                                                |
@@ -439,7 +439,7 @@ index, and bytes per table and index where SQLite has `dbstat`. This measures th
 
 `area_inventory_metadata` has one row keyed by integer `position = 0`, with
 `schema_version INTEGER`, `content_hash TEXT`, and `boundary_registry_hash TEXT`, all
-non-null. `area_releases` has the composite primary key `(geography, release)`,
+non-null. `area_release` has the composite primary key `(geography, release)`,
 unique integer `id`, the release's stable id (the `release_id` columns hold it;
 it is not an order), and unique integer `inventory_position`, its place in the
 inventory. Its non-null text columns
@@ -453,7 +453,7 @@ releases have `reason TEXT` instead. Inapplicable columns are null.
 `boundary_release` holds each registry release’s title, description, temporal
 coverage, source, licence and deprecation metadata, keyed by `(geography,
 release)`. `boundary_release_country` holds its country codes. Join these to
-`area_releases` on geography and release; the registry may also contain releases
+`area_release` on geography and release; the registry may also contain releases
 without an area inventory. Temporal coverage is the source’s description, not
 an effective-date interval. `reference_year` and `reference_month` give the edition
 a release is named for, read from its id (`2023-12-uk-bgc` is December 2023) and
@@ -494,16 +494,16 @@ and the computed measures and defaults are in code.
 
 Area identity is three `STRICT` tables:
 
-| Table          | Key                                  | Holds                                                                                                                                                                                                                |
-| -------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `geography`    | `id`, `slug` unique                  | One row per geography named by `area_releases`.                                                                                                                                                                      |
-| `area`         | `id`, `(code, geography_id)` unique  | One row per code in a geography, for all releases.                                                                                                                                                                   |
-| `area_version` | `id`, `(release_id, area_id)` unique | The area in one release (`area_releases.id`): `name`, `area_m2`, `population`, JSON `aliases`, `in_inventory` (0 or 1), and `inventory_position`, its place in the release's artifact (null if `in_inventory` is 0). |
+| Table          | Key                                  | Holds                                                                                                                                                                                                               |
+| -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `geography`    | `id`, `slug` unique                  | One row per geography named by `area_release`.                                                                                                                                                                      |
+| `area`         | `id`, `(code, geography_id)` unique  | One row per code in a geography, for all releases.                                                                                                                                                                  |
+| `area_version` | `id`, `(release_id, area_id)` unique | The area in one release (`area_release.id`): `name`, `area_m2`, `population`, JSON `aliases`, `in_inventory` (0 or 1), and `inventory_position`, its place in the release's artifact (null if `in_inventory` is 0). |
 
 `area_version.id` is assigned once from the registry and does not follow any order,
 so a release read orders by `inventory_position`. Every other table references
 `area_version(id)`. `(geography, release, code)` is the stable natural key: unique,
-and indexed through `area_releases`, `area` and `(release_id, area_id)`.
+and indexed through `area_release`, `area` and `(release_id, area_id)`.
 `v_area_version` joins it to the id. Nullable
 `aliases` keeps absent versus empty aliases. The same area in two releases
 shares `area_id`. The `(code, geography_id)` index serves lookups by code and
@@ -552,7 +552,7 @@ Crosswalks are integer edges between area versions. Every table is `STRICT`.
 
 | Table                  | Key                                                        | Holds                                                                                                                                                                                                                                                                                                                                                             |
 | ---------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `crosswalk`            | `id` (stable), `slug` unique, `inventory_position` unique  | `from_release_id` and `to_release_id` (`area_releases.id`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, JSON `provenance`, JSON `validation`, and `bytes`.                                                                                                                                          |
+| `crosswalk`            | `id` (stable), `slug` unique, `inventory_position` unique  | `from_release_id` and `to_release_id` (`area_release.id`), `method`, `quality`, `purpose`, JSON `weighting`, `basis_id`, `record_count`, `artifact`, `content_hash`, JSON `provenance`, JSON `validation`, and `bytes`.                                                                                                                                           |
 | `crosswalk_edge`       | `(crosswalk_id, from_version_id, to_version_id)`           | One source and target pair. `relation` (best fit: `within`, `straddles`, `indeterminate`) and `change` (official lookups: `unchanged`, `split`, `merged`, `complex`) are null where the crosswalk does not give them. Indexed by `(crosswalk_id, to_version_id)` and `crosswalk_edge_from (from_version_id)`, which finds an area's edges across every crosswalk. |
 | `weight_basis`         | `id`                                                       | `area`, `population`, `postcodes` or `households`, with a label. A new basis is a row.                                                                                                                                                                                                                                                                            |
 | `crosswalk_weight`     | `(crosswalk_id, from_version_id, to_version_id, basis_id)` | One row per edge and basis: `weight` (share of the covered source, summing to 1 per source), `overlap` (square metres, residents, households or postcodes), `source_share` and `target_share`. See "Weights from postcodes".                                                                                                                                      |

@@ -53,7 +53,7 @@ export const copyLocalNotionalSeries = (
 	const missing = one<{ ward: string; release: string }>(
 		`SELECT e.ward, e.release FROM notional_component.local_notional_estimate e
 		WHERE NOT EXISTS (SELECT 1 FROM area_version v JOIN area a ON a.id = v.area_id
-			JOIN area_releases r ON r.id = v.release_id
+			JOIN area_release r ON r.id = v.release_id
 			WHERE r.geography = 'ward' AND r.release = e.release AND a.code = e.ward)
 		LIMIT 1`,
 	);
@@ -127,7 +127,7 @@ export const copyLocalNotionalSeries = (
 					`set of local series (no ${sourceKey(group.from_release, group.party)})`,
 				);
 			const release = one<{ id: number }>(
-				"SELECT id FROM area_releases WHERE geography = 'ward' AND release = ?",
+				"SELECT id FROM area_release WHERE geography = 'ward' AND release = ?",
 				group.release,
 			)!;
 			const key = localNotionalKey(

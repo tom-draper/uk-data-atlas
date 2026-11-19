@@ -105,7 +105,7 @@ test("v_area_current is each area once, at its latest release", () => {
 	assert.deepEqual(
 		all(
 			`SELECT a.code FROM area a JOIN v_area_current c ON c.area_id = a.id
-			 WHERE c.name IS NOT (SELECT v.name FROM area_version v JOIN area_releases r ON r.id = v.release_id
+			 WHERE c.name IS NOT (SELECT v.name FROM area_version v JOIN area_release r ON r.id = v.release_id
 			                      WHERE v.area_id = a.id ORDER BY r.release DESC LIMIT 1)`,
 		),
 		[],

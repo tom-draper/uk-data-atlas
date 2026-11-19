@@ -76,7 +76,7 @@ export function* readAreas<F extends AreaField = AreaField>(
 	try {
 		const release = database
 			.prepare(
-				"SELECT id, recordCount FROM area_releases WHERE geography = ? AND release = ? AND status = 'available'",
+				"SELECT id, recordCount FROM area_release WHERE geography = ? AND release = ? AND status = 'available'",
 			)
 			.get(options.geography, options.release);
 		if (!release)

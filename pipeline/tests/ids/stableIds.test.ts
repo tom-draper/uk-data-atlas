@@ -258,7 +258,7 @@ test("the inventory keeps its own order whatever ids the releases have", (contex
 		assert.deepEqual(
 			database
 				.prepare(
-					"SELECT release FROM area_releases ORDER BY inventory_position",
+					"SELECT release FROM area_release ORDER BY inventory_position",
 				)
 				.all()
 				.map((row) => row.release),
@@ -277,7 +277,7 @@ test("the inventory keeps its own order whatever ids the releases have", (contex
 		assert.deepEqual(
 			database
 				.prepare(
-					"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_releases r ON r.id = v.release_id WHERE r.release = '2025' AND v.in_inventory = 1 ORDER BY v.inventory_position",
+					"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id WHERE r.release = '2025' AND v.in_inventory = 1 ORDER BY v.inventory_position",
 				)
 				.all()
 				.map((row) => row.code),
@@ -321,7 +321,7 @@ test("an area version is found by its geography, release and code", (context) =>
 			.join("\n");
 		assert.doesNotMatch(
 			plan,
-			/SCAN (v|a|g|r|area|area_version|geography|area_releases)\b(?! USING)/,
+			/SCAN (v|a|g|r|area|area_version|geography|area_release)\b(?! USING)/,
 		);
 		assert.equal(
 			database
@@ -376,7 +376,7 @@ test("a registry that no longer matches a database is found", (context) => {
 	}
 });
 
-test("a database from before area_releases.id was renamed is still checked", (context) => {
+test("a database from before area_release.id was renamed is still checked", (context) => {
 	const { ids, build, root } = fixture(context);
 	const path = join(root, "legacy.sqlite");
 	copyFileSync(build(after, "after"), path);
@@ -384,7 +384,7 @@ test("a database from before area_releases.id was renamed is still checked", (co
 	try {
 		// The earlier layout: `position` was the id and `id` the release's name.
 		database.exec(
-			"ALTER TABLE area_releases RENAME COLUMN id TO position; ALTER TABLE area_releases RENAME COLUMN release TO id",
+			"ALTER TABLE area_release RENAME COLUMN id TO position; ALTER TABLE area_release RENAME COLUMN release TO id",
 		);
 		const { mismatches, checked } = findIdMismatches(
 			database,

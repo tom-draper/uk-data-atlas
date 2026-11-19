@@ -22,9 +22,9 @@ CREATE TABLE observation (
 	value REAL, status_id INTEGER NOT NULL, lower REAL, upper REAL, category_id INTEGER);
 CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT NOT NULL);
 CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL, release_id INTEGER NOT NULL);
-CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT NOT NULL, release TEXT NOT NULL);
+CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT NOT NULL, release TEXT NOT NULL);
 CREATE TABLE period (id INTEGER PRIMARY KEY, label TEXT NOT NULL);
-INSERT INTO area_releases VALUES (6, 'constituency', '2019-12-uk-bgc'), (2, 'constituency', '2024-07-uk-bgc');
+INSERT INTO area_release VALUES (6, 'constituency', '2019-12-uk-bgc'), (2, 'constituency', '2024-07-uk-bgc');
 INSERT INTO area VALUES (1, 'E14001000'), (2, 'E14001001');
 INSERT INTO area_version VALUES (10, 1, 2), (11, 2, 2), (12, 1, 6);
 INSERT INTO period VALUES (26, '2019-12-12');

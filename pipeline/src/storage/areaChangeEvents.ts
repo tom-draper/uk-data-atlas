@@ -24,8 +24,8 @@ const TABLES = `
 CREATE TABLE area_change_event (
 	id INTEGER,
 	geography_id INTEGER NOT NULL REFERENCES geography(id),
-	from_release_id INTEGER NOT NULL REFERENCES area_releases(id),
-	to_release_id INTEGER NOT NULL REFERENCES area_releases(id),
+	from_release_id INTEGER NOT NULL REFERENCES area_release(id),
+	to_release_id INTEGER NOT NULL REFERENCES area_release(id),
 	kind TEXT NOT NULL CHECK (kind IN ('renamed', 'recoded', 'split', 'merged', 'redistributed', 'ended', 'created')),
 	effective_date TEXT NOT NULL,
 	date_basis TEXT NOT NULL CHECK (date_basis IN ('edition')),
@@ -49,8 +49,8 @@ SELECT e.id AS event_id, g.slug AS geography, e.kind, e.effective_date, e.date_b
 	m.side, a.code, v.name, m.share, m.area_version_id
 FROM area_change_event e
 JOIN geography g ON g.id = e.geography_id
-JOIN area_releases fr ON fr.id = e.from_release_id
-JOIN area_releases tr ON tr.id = e.to_release_id
+JOIN area_release fr ON fr.id = e.from_release_id
+JOIN area_release tr ON tr.id = e.to_release_id
 JOIN area_change_member m ON m.event_id = e.id
 JOIN area_version v ON v.id = m.area_version_id
 JOIN area a ON a.id = v.area_id`;
@@ -99,8 +99,8 @@ export function selectIdentityCrosswalks(
 				c.from_release_id, c.to_release_id, fr.release AS from_release, tr.release AS to_release,
 				fe.edition_from AS from_edition, te.edition_from AS to_edition
 			FROM crosswalk c
-			JOIN area_releases fr ON fr.id = c.from_release_id
-			JOIN area_releases tr ON tr.id = c.to_release_id
+			JOIN area_release fr ON fr.id = c.from_release_id
+			JOIN area_release tr ON tr.id = c.to_release_id
 			JOIN geography g ON g.slug = fr.geography
 			JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
 			JOIN boundary_release_edition te ON te.geography = tr.geography AND te.release = tr.release
@@ -259,8 +259,8 @@ function publisherChanges(
 			JOIN area_version cv ON cv.id = r.child_version_id
 			JOIN area ca ON ca.id = cv.area_id
 			JOIN geography g ON g.id = pa.geography_id
-			JOIN area_releases fr ON fr.id = pv.release_id
-			JOIN area_releases tr ON tr.id = cv.release_id
+			JOIN area_release fr ON fr.id = pv.release_id
+			JOIN area_release tr ON tr.id = cv.release_id
 			JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
 			JOIN boundary_release_edition te ON te.geography = tr.geography AND te.release = tr.release
 			WHERE r.relation = 'predecessor' AND ca.geography_id = pa.geography_id

@@ -40,7 +40,7 @@ const selectedRows = `WITH selections AS (SELECT value FROM json_each(?))
 	SELECT DISTINCT selected_series.id AS series_id, selected_label.id AS period_id FROM series selected_series
 	JOIN dataset selected_dataset ON selected_dataset.id = selected_series.dataset_id
 	JOIN measure selected_measure ON selected_measure.id = selected_series.measure_id
-	JOIN area_releases selected_release ON selected_release.id = selected_series.release_id
+	JOIN area_release selected_release ON selected_release.id = selected_series.release_id
 	JOIN selections selection
 	JOIN json_each(selection.value, '$.periods') selected_period
 	JOIN period selected_label ON selected_label.label = selected_period.value
@@ -81,7 +81,7 @@ export function expandStatisticsSelection(
 		WHERE sm.series_id = ? ORDER BY dim.slug`);
 	const related =
 		database.prepare(`SELECT r.geography, r.release AS release, p.label AS period
-		FROM series s JOIN area_releases r ON r.id = s.release_id
+		FROM series s JOIN area_release r ON r.id = s.release_id
 		JOIN observation o ON o.series_id = s.id JOIN period p ON p.id = o.period_id
 		WHERE s.dataset_id = ? AND s.measure_id = ? AND s.method = 'published'
 		AND (SELECT count(*) FROM series_member sm WHERE sm.series_id = s.id) = ?
@@ -188,7 +188,7 @@ export function exportStatisticsMeasure(
 					.prepare(
 						`SELECT DISTINCT d.id, d.slug FROM series s
 			JOIN measure m ON m.id = s.measure_id
-			JOIN area_releases r ON r.id = s.release_id
+			JOIN area_release r ON r.id = s.release_id
 			JOIN series_member sm ON sm.series_id = s.id
 			JOIN dimension d ON d.id = sm.dimension_id
 			WHERE s.method = 'published' AND ${dimensionFilter} ORDER BY d.slug`,
@@ -253,7 +253,7 @@ export function exportStatisticsMeasure(
 		? "CASE WHEN a.code='E05013831' THEN 'E05011412' ELSE coalesce(house_parent.code,a.code) END"
 		: "a.code";
 	const release = housePrice
-		? `coalesce((SELECT r2.release FROM area a2 JOIN area_version av2 ON av2.area_id=a2.id JOIN area_releases r2 ON r2.id=av2.release_id WHERE a2.code=${areaCode} AND r2.geography='ward' AND r2.release LIKE '2020-%' LIMIT 1), r.release)`
+		? `coalesce((SELECT r2.release FROM area a2 JOIN area_version av2 ON av2.area_id=a2.id JOIN area_release r2 ON r2.id=av2.release_id WHERE a2.code=${areaCode} AND r2.geography='ward' AND r2.release LIKE '2020-%' LIMIT 1), r.release)`
 		: "r.release";
 	const statement = database.prepare(
 		election?.sql ??
@@ -262,7 +262,7 @@ export function exportStatisticsMeasure(
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
 		JOIN dataset d ON d.id = s.dataset_id
-		JOIN area_releases r ON r.id = s.release_id
+		JOIN area_release r ON r.id = s.release_id
 		JOIN area_version av ON av.id = o.area_version_id
 		JOIN area a ON a.id = av.area_id
 		JOIN period p ON p.id = o.period_id

@@ -91,7 +91,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		CREATE TABLE dataset (id INTEGER, slug TEXT);
 		CREATE TABLE measure (id INTEGER, slug TEXT);
 		CREATE TABLE series (id INTEGER, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT NOT NULL DEFAULT 'published');
-		CREATE TABLE area_releases (id INTEGER, geography TEXT, release TEXT);
+		CREATE TABLE area_release (id INTEGER, geography TEXT, release TEXT);
 		CREATE TABLE dimension (id INTEGER, slug TEXT);
 		CREATE TABLE dimension_member (id INTEGER, code TEXT);
 		CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);
@@ -102,7 +102,7 @@ test("reads catalogue observations from statistics without legacy tables", (cont
 		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, lower REAL, upper REAL, status_id INTEGER);
 		INSERT INTO dataset VALUES (1, 'fixture');
 		INSERT INTO measure VALUES (1, 'count');
-		INSERT INTO area_releases VALUES (1, 'ward', '2024');
+		INSERT INTO area_release VALUES (1, 'ward', '2024');
 		INSERT INTO series (id, dataset_id, measure_id, release_id) VALUES (1, 1, 1, 1);
 		INSERT INTO area VALUES (1, 'E1');
 		INSERT INTO area_version VALUES (1, 1);

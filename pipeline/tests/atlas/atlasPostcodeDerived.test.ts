@@ -90,13 +90,13 @@ function fixture(t: TestContext) {
 	db.exec(
 		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID;
 		INSERT INTO payloads VALUES ('existing', 'retained');
-		CREATE TABLE area_releases (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
-		INSERT INTO area_releases VALUES (0, 'ward', '2026');
+		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+		INSERT INTO area_release VALUES (0, 'ward', '2026');
 		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		INSERT INTO geography VALUES (1, 'ward');
 		CREATE TABLE area (id INTEGER PRIMARY KEY, geography_id INTEGER NOT NULL REFERENCES geography(id), code TEXT NOT NULL, UNIQUE(code, geography_id));
 		INSERT INTO area VALUES (1, 1, 'A');
-		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_releases(id), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
+		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER NOT NULL REFERENCES area(id), release_id INTEGER NOT NULL REFERENCES area_release(id), name TEXT NOT NULL, area_m2 REAL, population REAL, aliases TEXT, in_inventory INTEGER NOT NULL, UNIQUE(release_id, area_id));
 		INSERT INTO area_version VALUES (1, 1, 0, 'Area A', NULL, NULL, NULL, 1);`,
 	);
 	db.close();
@@ -643,7 +643,7 @@ test("repeated geographies use exact releases and canonical release order", (t) 
 	const { root, apiRoot, path, compiled } = fixture(t);
 	const db = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	db.exec(
-		"INSERT INTO area_releases VALUES (1, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old area A', NULL, NULL, NULL, 1)",
+		"INSERT INTO area_release VALUES (1, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old area A', NULL, NULL, NULL, 1)",
 	);
 	db.close();
 	const files = new Map(
@@ -695,7 +695,7 @@ test("a release stores null where an earlier release has the same distance", (t)
 	const { root, path, compiled } = fixture(t);
 	const db = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	db.exec(
-		"INSERT INTO area_releases VALUES (1, 'ward', '2024'), (2, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old A', NULL, NULL, NULL, 1), (4, 1, 2, 'Older A', NULL, NULL, NULL, 1)",
+		"INSERT INTO area_release VALUES (1, 'ward', '2024'), (2, 'ward', '2025'); INSERT INTO area_version VALUES (3, 1, 1, 'Old A', NULL, NULL, NULL, 1), (4, 1, 2, 'Older A', NULL, NULL, NULL, 1)",
 	);
 	db.close();
 	const files = new Map(
