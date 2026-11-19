@@ -1,4 +1,3 @@
-import type { MapValues } from "@uk-data-atlas/map-tiles/mapValues";
 import type { BoundaryGeojson } from "@uk-data-atlas/datasets";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { PointTooltip } from "@/lib/types/custom";
@@ -13,12 +12,6 @@ export type BoundaryFillLayer = {
 	data: BoundaryGeojson;
 	colorExpression: MapExpression;
 	visibility: LayerVisibility;
-	/**
-	 * One value per area in the tiles' code list. When given, `data` is the
-	 * plain boundary collection and the `value` the expression reads is set from
-	 * this array as feature state, with no join onto the features.
-	 */
-	values?: MapValues;
 };
 
 /** A collection of independently positioned markers. */
