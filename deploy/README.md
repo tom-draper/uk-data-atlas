@@ -16,10 +16,12 @@ and install Node and pnpm before installing the units. Build as an operator
 with write access, not as the service user. The checkout and data release must
 be readable by the service user and must not be writable by it.
 
-````sh
+```sh
 useradd --system --user-group --home-dir /nonexistent --shell /usr/sbin/nologin uk-data-atlas
-``` The host needs enough disk and
-memory for the data download and geometry builds; these can take hours.
+```
+
+The host needs enough disk and memory for the data download and geometry
+builds; these can take hours.
 
 ```sh
 export PATH=/opt/node24/bin:/usr/local/bin:/usr/bin:/bin
@@ -31,7 +33,7 @@ pnpm --dir services/api build
 pnpm build
 install -d -m 0755 /var/www/uk-data-atlas
 node scripts/link-boundary-tiles.mts /var/www/uk-data-atlas
-````
+```
 
 The data build downloads raw inputs and builds all API and website data.
 Then build the API runtime and Next.js app from the same checkout.
@@ -80,15 +82,16 @@ Stage names appear in the plan alongside their commands and dependencies.
 downloads when required. It reuses valid cached results.
 If upstream inputs changed, select their stage instead, or run
 `pnpm data:build` for the complete build.
-The runner executes serially and stops at the first failure. Individual builders
-retain their existing artifact reuse checks. Use `--from` when downstream
-outputs also need to be refreshed.
+Independent stages run in parallel, within the job count and memory budget
+described in "One data build" in `ARCHITECTURE.md`, and a failed stage stops
+the build. Individual builders retain their existing artifact reuse checks.
+Use `--from` when downstream outputs also need to be refreshed.
 
-`atlas-release-initial` writes the manifest consumed by evidence documents.
-`documents` rebuilds those documents and then the downstream `atlas-release`
-stage pins them in the final manifest. Both manifest stages use the existing
-`services/api/scripts/build-atlas-release.ts` script. `atlas-pages` compiles the website place profiles, facts and docs catalogue.
-The `datasets` stage runs after `download` and compiles every catalogue dataset
+`documents` rebuilds the evidence documents, and the downstream `atlas-release`
+stage pins them in the release manifest, using
+`pipeline/src/stages/build-atlas-release.ts`. `atlas-pages` compiles the website
+place profiles, facts and docs catalogue.
+The `datasets` stage runs after `sources` and compiles every catalogue dataset
 once into `data/build/datasets/`, for both products (see `data/build/README.md`).
 `atlas-sqlite` stores catalogue payloads in `data/build/atlas.sqlite` for the
 API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
