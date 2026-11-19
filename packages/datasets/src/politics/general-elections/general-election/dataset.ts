@@ -34,6 +34,19 @@ const MAJORITY = measure(
 	"Votes by which the winning candidate led the runner-up.",
 );
 
+/**
+ * Held only for the 2024 seats, against the notional 2019 result, see
+ * docs/notional-elections.md.
+ */
+const PARTY_VOTE_SHARE_CHANGE = measure(
+	"party-vote-share-change",
+	"Change in party vote share",
+	"percentage points",
+	"rate",
+	"none",
+	"A party's share of the valid votes less its share at the previous general election, in percentage points. On redrawn seats the previous share is a notional estimate.",
+);
+
 export const generalElection = defineDataset<GeneralElectionDataset>({
 	id: "general-election",
 	topic: "general-elections",
@@ -129,6 +142,7 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 			REJECTED_BALLOTS,
 			MAJORITY,
 			TURNOUT,
+			PARTY_VOTE_SHARE_CHANGE,
 		],
 		dimensions: [PARTY],
 		fields: [
