@@ -452,6 +452,10 @@ describe("pipeline boundaries", () => {
 		const apiTests = join(ROOT, "services/api/tests");
 		const allowed = new Map([
 			[
+				"atlasCrosswalks.test.ts",
+				"Builds the crosswalk checks module alongside API reads.",
+			],
+			[
 				"coveragePlan.test.ts",
 				"Tests pipeline evidence alongside API contexts.",
 			],
