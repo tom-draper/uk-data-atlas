@@ -377,8 +377,6 @@ describe("LayerManager boundary values", () => {
 			minZoom: 0,
 			maxZoom: 12,
 			codeKey: "WD26CD",
-			release: "ward/test",
-			codeList: ["E001", "E002"],
 			ids: new Map([
 				["E001", 1],
 				["E002", 2],
