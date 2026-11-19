@@ -285,15 +285,16 @@ exports[`a parameter at and past 100 characters is routed the same way 1`] = `
     "status": 404,
   },
   "GET /v1/areas/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/2025-01-en-ward/similar": {
-    "body": "{"error":"Bad Request","code":"FST_ERR_MAX_PARAM_LENGTH","message":"'/v1/areas/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/2025-01-en-ward/similar' is exceeding the max param length","statusCode":414}",
-    "bytes": 258,
+    "body": "{"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"measures must name one to ten comma-separated measure ids."}
+",
+    "bytes": 169,
     "headers": [
-      "content-type: application/json",
-      "!access-control-allow-origin",
-      "!access-control-expose-headers",
-      "!x-content-type-options",
+      "atlas-release: sha256:atlas-release",
+      "cache-control: no-store",
+      "content-type: application/problem+json",
+      "vary: accept-encoding",
     ],
-    "status": 414,
+    "status": 400,
   },
   "GET /v1/atlas-lookups/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/catalogue-unavailable","title":"Catalogue Unavailable","status":503,"detail":"Build the atlas lookups before downloading them."}

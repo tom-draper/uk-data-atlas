@@ -6,7 +6,7 @@ import type {
 	RouteDispatchContext,
 	RouteRequestFor,
 } from "../runtime/index.ts";
-import { route, routeAsync } from "../routes";
+import { notFound, route, routeAsync } from "../routes";
 
 /**
  * Run a handler written for the request shape the old dispatcher builds from
@@ -33,8 +33,7 @@ export const legacyHandler =
 				throw new Error("Unexpected dispatch");
 			},
 		});
-		if (!answer) throw new Error(`No response for ${request.url}`);
-		return answer;
+		return answer ?? notFound();
 	};
 
 /** What a route that reads the geography services is registered with. */

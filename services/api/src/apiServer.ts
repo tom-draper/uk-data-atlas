@@ -1,68 +1,29 @@
 import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
 import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
-import { similarAreasContract } from "./areas/similarAreasContract";
 import { atlasAssetFastifyRoutes } from "./atlas/atlasAssetFastifyRoutes";
-import { coordinateContract } from "./coordinates/coordinateContract";
 import { coordinateFastifyRoutes } from "./coordinates/coordinateFastifyRoutes";
-import { translationContract } from "./crosswalks/translationContract";
 import { translationFastifyRoutes } from "./crosswalks/translationFastifyRoutes";
-import { attributionContract } from "./attribution/attributionContract";
 import { attributionFastifyRoutes } from "./attribution/attributionFastifyRoutes";
-import {
-	analysisGeographiesContract,
-	analysisPlanContract,
-} from "./analysis/analysisContract";
 import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
-import {
-	terrainCatalogueContract,
-	terrainPointContract,
-} from "./terrain/terrainContract";
 import { terrainFastifyRoutes } from "./terrain/terrainFastifyRoutes";
-import { bulkExports, bulkLookups } from "./bulk/bulkContract";
 import { bulkFastifyRoutes } from "./bulk/bulkFastifyRoutes";
-import { relationshipsContract } from "./relationships/relationshipsContract";
 import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
 import { releaseJoinFastifyRoutes } from "./boundaries/releaseJoinFastifyRoutes";
 import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
-import { crosswalksContract } from "./crosswalks/crosswalkContract";
 import { crosswalkFastifyRoutes } from "./crosswalks/crosswalkFastifyRoutes";
-import { placesContract } from "./places/placeContract";
 import { placeFastifyRoutes } from "./places/placeFastifyRoutes";
-import {
-	locationAlternativesContract,
-	locationsContract,
-} from "./places/locationContract";
 import { locationFastifyRoutes } from "./places/locationFastifyRoutes";
-import { isFastifyDetailPath, isFastifyPostPath } from "./fastifyDetailPaths";
-import {
-	areaContainsContract,
-	areaIntersectsContract,
-	areaNearContract,
-	areaValidateContract,
-	areasContract,
-} from "./areas/areaCollectionContract";
 import { areaCollectionFastifyRoutes } from "./areas/areaCollectionFastifyRoutes";
 import { areaDetailFastifyRoutes } from "./areas/areaDetailFastifyRoutes";
 import { mapResourceFastifyRoutes } from "./mapResources/mapResourceFastifyRoutes";
-import { mapResourcesContract } from "./mapResources/mapResourceContract";
 import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
-import {
-	boundaries,
-	boundaryReleases,
-	resolveBoundary,
-	compareBoundary,
-} from "./boundaries/boundaryContract";
-import Fastify from "fastify";
+import { routingUrl } from "./routingPath";
+import Fastify, { type FastifyReply, type FastifyRequest } from "fastify";
 import { catalogueFastifyRoutes } from "./catalogue/catalogueFastifyRoutes";
-import { datasets, measures } from "./catalogue/catalogueContract";
 import { atlasReleaseRoutes } from "./contract/atlasReleaseRoutes";
 import { documentationRoutes } from "./contract/documentationRoutes";
-import { atlasRelease } from "./contract/atlasRelease";
-import { documentation } from "./contract/documentation";
-import { openapiDescription } from "./contract/openapiDescription";
 import { rootRoutes } from "./contract/rootRoutes";
-import type { ContractDispatch } from "./contract/registerGetRoute";
 import { sendFile } from "./sendFile";
 export { sendFile } from "./sendFile";
 import { randomUUID, timingSafeEqual } from "node:crypto";
@@ -87,7 +48,6 @@ import {
 	type HttpResponse,
 } from "./httpResponse";
 import {
-	createOperationMatcher,
 	deprecationHeaders,
 	type MatchedOperation,
 	unexpectedQueryParameter,
@@ -126,46 +86,7 @@ const HEADERS_TIMEOUT_MS = 15_000;
 const REQUEST_TIMEOUT_MS = 30_000;
 const KEEP_ALIVE_TIMEOUT_MS = 5_000;
 
-const fastifyPaths = new Set(
-	[
-		documentation,
-		openapiDescription,
-		atlasRelease,
-		datasets,
-		measures,
-		boundaries,
-		boundaryReleases,
-		resolveBoundary,
-		compareBoundary,
-		similarAreasContract,
-		coordinateContract,
-		translationContract,
-		attributionContract,
-		analysisGeographiesContract,
-		analysisPlanContract,
-		relationshipsContract,
-		bulkExports,
-		bulkLookups,
-		terrainCatalogueContract,
-		terrainPointContract,
-		crosswalksContract,
-		placesContract,
-		areasContract,
-		areaIntersectsContract,
-		areaContainsContract,
-		areaNearContract,
-		areaValidateContract,
-		locationsContract,
-		locationAlternativesContract,
-		mapResourcesContract,
-	].map(({ path }) => `/v1${path.replace("::", ":")}`),
-);
-
-export const isFastifyStaticPath = (pathname: string) =>
-	pathname === "/v1" ||
-	pathname === "/v1/" ||
-	fastifyPaths.has(pathname) ||
-	/^\/v1\/areas\/[^/]+\/[^/]+\/similar$/.test(pathname);
+const MAX_PARAM_LENGTH = 16_384;
 
 /**
  * The largest POST body read. A column of every output area's code with a
@@ -756,7 +677,18 @@ export const createApiServer = (
 		}
 	};
 
-	const fastify = Fastify({ exposeHeadRoutes: false });
+	const fastify = Fastify({
+		exposeHeadRoutes: false,
+		rewriteUrl: (request) => routingUrl(request.url ?? "/"),
+		// The request line is bounded by Node's header limit and by the URL
+		// length the pipeline refuses, so a long parameter is the route's to
+		// answer, not the router's.
+		routerOptions: { maxParamLength: MAX_PARAM_LENGTH },
+	});
+	// A body is read by the pipeline under its own limits, so Fastify leaves it
+	// on the stream whatever its type, for a request no route matches as well.
+	fastify.removeAllContentTypeParsers();
+	fastify.addContentTypeParser("*", (_request, _payload, done) => done(null));
 	const pending = new WeakMap<
 		IncomingMessage,
 		{
@@ -767,10 +699,12 @@ export const createApiServer = (
 			reject: (error: unknown) => void;
 		}
 	>();
-	const dispatch: ContractDispatch = async (
-		request,
-		reply,
-		contractHandler,
+	const dispatch = async (
+		request: FastifyRequest,
+		reply: FastifyReply,
+		contractHandler?: (
+			body?: RequestBody,
+		) => ApiResponse | Promise<ApiResponse>,
 	) => {
 		const entry = pending.get(request.raw);
 		if (!entry) throw new Error("Missing production request");
@@ -789,6 +723,7 @@ export const createApiServer = (
 			entry.reject(error);
 		}
 	};
+	fastify.setNotFoundHandler((request, reply) => dispatch(request, reply));
 	void fastify.register(documentationRoutes, {
 		prefix: "/v1",
 		context: catalogues,
@@ -916,7 +851,6 @@ export const createApiServer = (
 		response: ServerResponse,
 		overloaded = false,
 	) => {
-		const pathname = (request.url ?? "/").split("?", 1)[0]!;
 		let rootPath = false;
 		try {
 			const parts = new URL(
@@ -928,20 +862,6 @@ export const createApiServer = (
 				.map(decodeURIComponent);
 			rootPath = parts.length === 1 && parts[0] === "v1";
 		} catch {}
-		const fastifyDetail = isFastifyDetailPath(pathname);
-		const fastifyPost =
-			request.method === "POST" && isFastifyPostPath(pathname);
-		if (
-			fastifyPost
-				? false
-				: (request.method !== "GET" &&
-						request.method !== "HEAD" &&
-						!(request.method === "POST" && rootPath)) ||
-					(!rootPath &&
-						!isFastifyStaticPath(pathname) &&
-						!fastifyDetail)
-		)
-			return handle(request, response, overloaded);
 		await ready;
 		if (response.destroyed) return;
 		return new Promise<void>((resolve, reject) => {

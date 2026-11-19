@@ -32,7 +32,7 @@ const methodNotAllowed = () =>
 		"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join.",
 	);
 
-const notFound = () =>
+export const notFound = () =>
 	problem(404, "Not Found", "No API resource matches that path.");
 
 /** The request a route family sees, or the problem that says why there is none. */

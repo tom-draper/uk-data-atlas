@@ -15,12 +15,7 @@ import { compileExportManifest } from "./pipelineFixtures";
 import { observationArtifactName } from "@uk-data-atlas/catalogue/node";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import {
-	createApiServer,
-	isFastifyStaticPath,
-	MAX_BODY_BYTES,
-	sendFile,
-} from "../src/apiServer";
+import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import { httpResponse } from "../src/httpResponse";
 import { route } from "../src/routes";
 import { indexResponse } from "../src/indexRoutes";
@@ -1252,13 +1247,6 @@ test("rejects an Atlas release response that violates its contract", async (t) =
 	assert.equal(response.status, 500);
 	assert.equal((await response.json()).title, "Internal Server Error");
 	assert.equal(logged.at(-1)?.event, "request.failed");
-});
-
-test("production routes geography listings through Fastify", () => {
-	assert.equal(isFastifyStaticPath("/v1/boundaries"), true);
-	assert.equal(isFastifyStaticPath("/v1/boundary-releases"), true);
-	assert.equal(isFastifyStaticPath("/v1/boundary-releases:resolve"), true);
-	assert.equal(isFastifyStaticPath("/v1/boundary-releases:compare"), true);
 });
 
 test("production contract routes preserve dispatcher responses and HTTP controls", async (t) => {
