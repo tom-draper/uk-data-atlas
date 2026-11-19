@@ -1,4 +1,7 @@
-import { atlasAssetsDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	atlasAssetsDirectory,
+	atlasBuildMetadataPath,
+} from "@uk-data-atlas/atlas-db";
 import { existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -42,6 +45,12 @@ export const createAtlasRelease = (repositoryRoot: string): AtlasRelease => {
 	};
 	const artifacts = [
 		artifactReference("atlas-sqlite", atlasDatabasePath(repositoryRoot)),
+		// The payload documents the API serves live here, so a change to one
+		// changes the release even when no atlas.sqlite table changed.
+		artifactReference(
+			"atlas-build-sqlite",
+			atlasBuildMetadataPath(repositoryRoot),
+		),
 		...JSON_ARTIFACTS.map((id) =>
 			artifactReference(id, join(publicDirectory, `${id}.json`)),
 		),
