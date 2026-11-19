@@ -102,7 +102,6 @@ export function boundaryReleaseTables(
 				"retrieved_at TEXT",
 				"licence TEXT NOT NULL",
 				"licence_url TEXT",
-				"metadata_hash TEXT NOT NULL",
 				"deprecated TEXT",
 				"sunset TEXT",
 				"replaced_by TEXT",
@@ -125,13 +124,27 @@ export function boundaryReleaseTables(
 					release.source.retrievedAt ?? null,
 					release.source.licence.name,
 					release.source.licence.url ?? null,
-					release.metadataHash,
 					release.deprecation?.deprecated ?? null,
 					release.deprecation?.sunset ?? null,
 					release.deprecation?.replacedBy ?? null,
 					release.deprecation?.reason ?? null,
 				];
 			}),
+		},
+		boundary_release_build: {
+			build: true,
+			strict: true,
+			columns: [
+				"geography TEXT NOT NULL",
+				"release TEXT NOT NULL",
+				"metadata_hash TEXT NOT NULL",
+			],
+			key: ["geography", "release"],
+			rows: registry.releases.map((release) => [
+				release.geography,
+				release.id,
+				release.metadataHash,
+			]),
 		},
 		boundary_release_validity: {
 			strict: true,
