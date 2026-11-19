@@ -291,8 +291,8 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 		);
 		try {
 			assert.deepEqual(
-				postcodeModule.prepare("SELECT * FROM postcodes").all(),
-				atlas.prepare("SELECT * FROM postcodes").all(),
+				postcodeModule.prepare("SELECT * FROM postcode").all(),
+				atlas.prepare("SELECT * FROM postcode").all(),
 			);
 		} finally {
 			postcodeModule.close();

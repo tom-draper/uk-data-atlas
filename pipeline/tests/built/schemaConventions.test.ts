@@ -14,8 +14,6 @@ import {
  * outstanding work, not a decision: the test fails when one stops matching,
  * so fixing a table means deleting its line.
  *
- * - postcode: the wide `postcodes` table and its `postcodes_decoded` view
- *   still use camelCase and a plural name.
  * - build metadata and payloads (#713, separation part, owned by the
  *   `refactor/build-metadata-separation` branch): artifact paths, content
  *   hashes and byte counts still sit in the domain tables listed, and
@@ -33,8 +31,7 @@ const SELECTOR_TABLES = [
 ];
 
 const CANONICAL: ConventionAllowlist = {
-	"camel-case": ["postcodes.*", "postcodes_decoded.*"],
-	"plural-table": ["payloads", "postcodes"],
+	"plural-table": ["payloads"],
 	"payload-table": ["payloads"],
 	"build-metadata": [
 		"area_release.artifact",
@@ -85,8 +82,7 @@ const DATABASES: Array<[string, ConventionAllowlist]> = [
 	[
 		"postcode-index.sqlite",
 		{
-			"camel-case": ["postcodes.*"],
-			"plural-table": ["payloads", "postcodes"],
+			"plural-table": ["payloads"],
 			"payload-table": ["payloads"],
 		},
 	],

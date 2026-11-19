@@ -81,7 +81,7 @@ try {
 	for (const entry of index.shards) {
 		const rows = before
 			.prepare(
-				"SELECT * FROM postcodes WHERE district = ? ORDER BY position",
+				"SELECT * FROM postcode WHERE district = ? ORDER BY position",
 			)
 			.all(entry.district);
 		const shard: PostcodeShard = {
@@ -96,7 +96,7 @@ try {
 			country: rows.map((r) => r.country).join(""),
 			introduced: rows.map((r) => Number(r.introduced)),
 			terminated: rows.map((r) => Number(r.terminated)),
-			largeUser: rows.map((r) => r.largeUser).join(""),
+			largeUser: rows.map((r) => r.large_user).join(""),
 		};
 		const old = `${JSON.stringify(shard)}\n`;
 		assert.equal(sha256(old), entry.contentHash);
@@ -128,7 +128,7 @@ try {
 		const db = new DatabaseSync(path, { readOnly: true });
 		try {
 			return db
-				.prepare("SELECT * FROM postcodes WHERE postcode = ?")
+				.prepare("SELECT * FROM postcode WHERE postcode = ?")
 				.get("SW1A1AA");
 		} finally {
 			db.close();

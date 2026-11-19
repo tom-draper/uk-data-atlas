@@ -131,7 +131,7 @@ const memory = (): Memory => {
 // The queries match the readers: postcode districts, areas, one series of
 // observations (atlasStatisticsObservations), the cache's payload table.
 const postcodeSql =
-	"SELECT postcode, easting, northing, quality, country, introduced, terminated, largeUser FROM postcodes WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? ORDER BY postcode";
+	"SELECT postcode, easting, northing, quality, country, introduced, terminated, large_user AS largeUser FROM postcode WHERE postcode >= ? AND postcode < ? AND length(postcode) = ? ORDER BY postcode";
 const areaSql = "SELECT id, geography_id FROM area WHERE code = ?";
 const areaNameSql =
 	"SELECT name, area_m2, population FROM area_version WHERE release_id = ? AND area_id = ?";
@@ -150,14 +150,14 @@ function buildPlan(atlas: string, cache: string): Plan {
 	for (;;) {
 		const first = database
 			.prepare(
-				"SELECT postcode FROM postcodes WHERE postcode > ? ORDER BY postcode LIMIT 1",
+				"SELECT postcode FROM postcode WHERE postcode > ? ORDER BY postcode LIMIT 1",
 			)
 			.get(from) as { postcode: string } | undefined;
 		if (!first) break;
 		const district = first.postcode.slice(0, -3);
 		const last = database
 			.prepare(
-				"SELECT max(postcode) AS last, count(*) AS n FROM postcodes WHERE postcode >= ? AND postcode < ? AND length(postcode) = ?",
+				"SELECT max(postcode) AS last, count(*) AS n FROM postcode WHERE postcode >= ? AND postcode < ? AND length(postcode) = ?",
 			)
 			.get(district, `${district}\x7f`, district.length + 3) as {
 			last: string;

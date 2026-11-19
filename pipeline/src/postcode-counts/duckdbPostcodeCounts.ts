@@ -34,7 +34,7 @@ export async function aggregateCounts(path: string, threads?: number) {
 		);
 		// Count each area set once, then add the sets up per release.
 		await connection.run(
-			"CREATE TEMP TABLE set_counts AS SELECT area_set_id AS id, count(*) FILTER (WHERE terminated = 0) AS live, count(*) FILTER (WHERE terminated <> 0) AS terminated, count(*) FILTER (WHERE terminated = 0 AND largeUser = '1') AS large_user FROM atlas.postcodes GROUP BY area_set_id",
+			"CREATE TEMP TABLE set_counts AS SELECT area_set_id AS id, count(*) FILTER (WHERE terminated = 0) AS live, count(*) FILTER (WHERE terminated <> 0) AS terminated, count(*) FILTER (WHERE terminated = 0 AND large_user = '1') AS large_user FROM atlas.postcode GROUP BY area_set_id",
 		);
 		for (const [position, , , column] of releases) {
 			const quoted = `"${column.replaceAll('"', '""')}"`;
@@ -43,7 +43,7 @@ export async function aggregateCounts(path: string, threads?: number) {
 			);
 		}
 		await connection.run(
-			`INSERT INTO counts WITH districts AS (SELECT DISTINCT district FROM atlas.postcode_area_match), numbered AS (SELECT p.postcode, p.terminated, p.largeUser, left(p.postcode, length(p.postcode) - 3) AS district, row_number() OVER (PARTITION BY left(p.postcode, length(p.postcode) - 3) ORDER BY p.postcode) - 1 AS idx FROM atlas.postcodes p JOIN districts d ON left(p.postcode, length(p.postcode) - 3) = d.district) SELECT m.release_position, a.code, count(*) FILTER (WHERE n.terminated = 0), count(*) FILTER (WHERE n.terminated <> 0), count(*) FILTER (WHERE n.terminated = 0 AND n.largeUser = '1') FROM atlas.postcode_area_match m JOIN numbered n ON m.district = n.district AND m.postcode_position = n.idx JOIN atlas.area_version v ON m.area_id = v.id JOIN atlas.area a ON a.id = v.area_id GROUP BY m.release_position, a.code`,
+			`INSERT INTO counts WITH districts AS (SELECT DISTINCT district FROM atlas.postcode_area_match), numbered AS (SELECT p.postcode, p.terminated, p.large_user, left(p.postcode, length(p.postcode) - 3) AS district, row_number() OVER (PARTITION BY left(p.postcode, length(p.postcode) - 3) ORDER BY p.postcode) - 1 AS idx FROM atlas.postcode p JOIN districts d ON left(p.postcode, length(p.postcode) - 3) = d.district) SELECT m.release_position, a.code, count(*) FILTER (WHERE n.terminated = 0), count(*) FILTER (WHERE n.terminated <> 0), count(*) FILTER (WHERE n.terminated = 0 AND n.large_user = '1') FROM atlas.postcode_area_match m JOIN numbered n ON m.district = n.district AND m.postcode_position = n.idx JOIN atlas.area_version v ON m.area_id = v.id JOIN atlas.area a ON a.id = v.area_id GROUP BY m.release_position, a.code`,
 		);
 		const counts = (
 			await connection.runAndReadAll(

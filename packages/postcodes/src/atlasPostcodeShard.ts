@@ -14,7 +14,7 @@ export const postcodeFields = [
 	"country",
 	"introduced",
 	"terminated",
-	"largeUser",
+	"large_user",
 ];
 export const postcodeDistrictWhere =
 	"postcode >= ? AND postcode < ? AND length(postcode) = ?";
@@ -30,7 +30,7 @@ export const readSqlitePostcodeShard = (
 	try {
 		const rows = database
 			.prepare(
-				`SELECT ${postcodeFields.join(", ")}${collectPoints ? ", latitudeMicrodegrees, longitudeMicrodegrees" : ""} FROM postcodes WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
+				`SELECT ${postcodeFields.join(", ")}${collectPoints ? ", latitude_microdegrees, longitude_microdegrees" : ""} FROM postcode WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
 			)
 			.all(
 				entry.district,
@@ -39,8 +39,8 @@ export const readSqlitePostcodeShard = (
 			);
 		if (collectPoints) {
 			const coordinates = rows.flatMap((row) => [
-				row.latitudeMicrodegrees,
-				row.longitudeMicrodegrees,
+				row.latitude_microdegrees,
+				row.longitude_microdegrees,
 			]);
 			const expected = database
 				.prepare(
@@ -53,12 +53,12 @@ export const readSqlitePostcodeShard = (
 				);
 			collectPoints(
 				rows.map((row) =>
-					row.latitudeMicrodegrees == null ||
-					row.longitudeMicrodegrees == null
+					row.latitude_microdegrees == null ||
+					row.longitude_microdegrees == null
 						? null
 						: [
-								Number(row.longitudeMicrodegrees) / 1e6,
-								Number(row.latitudeMicrodegrees) / 1e6,
+								Number(row.longitude_microdegrees) / 1e6,
+								Number(row.latitude_microdegrees) / 1e6,
 							],
 				),
 			);
@@ -75,7 +75,7 @@ export const readSqlitePostcodeShard = (
 			country: rows.map((row) => String(row.country)).join(""),
 			introduced: rows.map((row) => Number(row.introduced)),
 			terminated: rows.map((row) => Number(row.terminated)),
-			largeUser: rows.map((row) => String(row.largeUser)).join(""),
+			largeUser: rows.map((row) => String(row.large_user)).join(""),
 		};
 		const text = `${JSON.stringify(shard)}\n`;
 		if (

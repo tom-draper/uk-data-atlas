@@ -135,13 +135,13 @@ export function assembleAtlas(
 			if (!postcode) throw new Error("Missing postcode index payload");
 			const schema = database
 				.prepare(
-					"SELECT sql FROM postcode_component.sqlite_schema WHERE type = 'table' AND name = 'postcodes'",
+					"SELECT sql FROM postcode_component.sqlite_schema WHERE type = 'table' AND name = 'postcode'",
 				)
 				.get();
 			if (!schema?.sql) throw new Error("Missing postcode index table");
 			database.exec(String(schema.sql));
 			database.exec(
-				"INSERT INTO main.postcodes SELECT * FROM postcode_component.postcodes",
+				"INSERT INTO main.postcode SELECT * FROM postcode_component.postcode",
 			);
 			insertPayload("postcode-index", unpackText(postcode.payload)!);
 			database.exec("COMMIT; PRAGMA foreign_keys = ON; BEGIN");

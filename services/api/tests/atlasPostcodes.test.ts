@@ -205,7 +205,7 @@ test("postcode lookups reject altered stored coordinates", (t) => {
 	);
 	const database = new DatabaseSync(path);
 	database.exec(
-		"UPDATE postcodes SET latitudeMicrodegrees = latitudeMicrodegrees + 1 WHERE postcode = 'M11AE'",
+		"UPDATE postcode SET latitude_microdegrees = latitude_microdegrees + 1 WHERE postcode = 'M11AE'",
 	);
 	database.close();
 	const index = readPostcodeIndex(root);
@@ -265,7 +265,7 @@ test("corrupt stored records are refused and missing SQLite never falls back to 
 		before.texts.get(path)!,
 	);
 	const database = new DatabaseSync(path);
-	database.exec("UPDATE postcodes SET introduced = 199901");
+	database.exec("UPDATE postcode SET introduced = 199901");
 	database.close();
 	assert.throws(
 		() => readSqlitePostcodeShard(root, before.artifact.shards[0]!),
@@ -289,7 +289,7 @@ test("reassembling an unchanged component repairs corrupt postcode fields", (t) 
 		before.texts.get(name)!,
 	);
 	const database = new DatabaseSync(path);
-	database.exec("UPDATE postcodes SET introduced = 199901");
+	database.exec("UPDATE postcode SET introduced = 199901");
 	database.close();
 	assembleAtlas(root, { crosswalkWeights: false });
 	assert.equal(

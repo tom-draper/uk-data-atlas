@@ -1240,24 +1240,24 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			geometry: "Brotli-compressed GeoJSON geometry.",
 		},
 	},
-	postcodes: {
+	postcode: {
 		audience: "core",
 		description:
-			"Every UK postcode, live and terminated, with its location and the areas it falls in. Columns ending _area_id point at area_version.id through postcode_area_set; postcodes_decoded gives codes.",
+			"Every UK postcode, live and terminated, with its location and the areas it falls in. Columns ending _area_id point at area_version.id through postcode_area_set; postcode_decoded gives codes.",
 		columns: {
 			postcode:
 				"The postcode in upper case with no space, such as M11AE. Strip spaces from user input before matching.",
 			easting: "British National Grid easting in metres.",
 			northing: "British National Grid northing in metres.",
-			latitudeMicrodegrees:
+			latitude_microdegrees:
 				"WGS 84 latitude in microdegrees, rounded to six decimal degrees (about 0.1 metre resolution); null without a centroid.",
-			longitudeMicrodegrees:
+			longitude_microdegrees:
 				"WGS 84 longitude in microdegrees, rounded to six decimal degrees (about 0.1 metre resolution); null without a centroid.",
 			quality: "Positional quality code from the ONS Postcode Directory.",
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",
 			terminated: "When it was terminated (YYYYMM), or null if live.",
-			largeUser: "1 for a large-user postcode (one organisation).",
+			large_user: "1 for a large-user postcode (one organisation).",
 			area_set_id:
 				"The set of areas the postcode falls in (postcode_area_set.id).",
 		},
@@ -1284,10 +1284,10 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			},
 		],
 	},
-	postcodes_decoded: {
+	postcode_decoded: {
 		audience: "core",
 		description:
-			"View: postcodes with every area id and area code spelled out. Use this to look up a postcode.",
+			"View: postcode with every area id and area code spelled out. Use this to look up a postcode.",
 		columns: {
 			postcode:
 				"The postcode in upper case with no space, such as M11AE. Strip spaces from user input before matching.",
@@ -1301,7 +1301,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			country: "Country code.",
 			introduced: "When the postcode was introduced (YYYYMM).",
 			terminated: "When it was terminated (YYYYMM), or null if live.",
-			largeUser: "1 for a large-user postcode (one organisation).",
+			large_user: "1 for a large-user postcode (one organisation).",
 		},
 		columnPatterns: [
 			{
@@ -1312,7 +1312,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			{
 				pattern: "<geography>_<release>_distance_cm",
 				suffix: "_distance_cm",
-				description: "As postcodes.",
+				description: "As postcode.",
 			},
 			{
 				pattern: "<geography>_<release>_code",
@@ -1640,7 +1640,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 	{
 		id: "postcode-lookup",
 		question: "Which council and ward is postcode M1 1AE in?",
-		sql: "SELECT postcode, latitude, longitude, local_authority_2026_05_uk_bgc_code AS council, ward_2026_05_uk_bgc_code AS ward, terminated FROM postcodes_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
+		sql: "SELECT postcode, latitude, longitude, local_authority_2026_05_uk_bgc_code AS council, ward_2026_05_uk_bgc_code AS ward, terminated FROM postcode_decoded WHERE postcode = replace(upper('M1 1AE'), ' ', '')",
 		expect: "E08000003 (Manchester) and its 2026 ward. Postcodes are stored without a space, and column names carry the release.",
 	},
 ];
