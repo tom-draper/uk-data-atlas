@@ -15,6 +15,7 @@ import {
 	statedDefaults,
 } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
+import { releaseSeriesResponse } from "./releaseSeries.ts";
 import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
@@ -98,6 +99,39 @@ export const handleDataSeriesRoutes = ({
 	if (namedRefusal) return namedRefusal;
 	const area = named?.kind === "area" ? named : undefined;
 	const areaCode = area?.code ?? place?.code;
+	const onParameter = parsedUrl.searchParams.get("on");
+	if (onParameter !== null) {
+		if (toParameter !== null)
+			return invalidQuery(
+				"Give on= for a series rebuilt on one boundary release, or to= for a reviewed analysis geography, not both.",
+			);
+		const on = parseExactReleaseReference(onParameter);
+		if (!on)
+			return invalidQuery(
+				"on must be one geography/release pair, such as localAuthority/2026-05-uk-bgc.",
+			);
+		if (!areaCode)
+			return invalidQuery(
+				"place is required: an area code on that release, or a place reference such as localAuthority/E08000035.",
+			);
+		return releaseSeriesResponse({
+			context,
+			releaseId,
+			measure,
+			selectedSeries,
+			publicId: segments[2]!,
+			publicMeasure: publicSeriesMeasure(
+				measure,
+				selectedSeries,
+				segments[2]!,
+				dataCatalog,
+				context.measureDimensions,
+			),
+			areaCode,
+			on,
+			datasetId: parsedUrl.searchParams.get("datasetId"),
+		});
+	}
 	const requested = {
 		geography:
 			requestedGeography(parsedUrl.searchParams, place) ??

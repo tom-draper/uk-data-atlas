@@ -5266,7 +5266,7 @@ paths:
   /data/{measure-id}/series:
     get:
       operationId: getSourceExactMeasureSeries
-      summary: Retrieve a source-exact or reviewed derived time series
+      summary: Retrieve a source-exact, reviewed derived or one-release time series
       tags:
         - Trend
       description: >
@@ -5283,6 +5283,12 @@ paths:
         reviewed conversion; every returned value is then labelled `derived` on that named frame.
         Supply `datasetId` when a measure has more than one source for the requested geography and
         boundary year.
+
+
+        With `on`, the series is rebuilt on one standard boundary release instead, so a measure
+        published on several boundary vintages reads as one consistent series; see the `on` parameter.
+        Where several datasets publish the measure, the one with the most values is served unless
+        `datasetId` names one, and the choice is returned as `defaults`.
       x-likely-refusal:
         status: 409
         code: ambiguous_place
@@ -5304,6 +5310,24 @@ paths:
           description: >
             One `geography/release` pair for a reviewed analysis frame. The source geography and
             boundary year select a particular partition; omit them to use the current one for `place`.
+        - name: on
+          in: query
+          required: false
+          schema:
+            type: string
+            examples:
+              - localAuthority/2026-05-uk-bgc
+              - ward/2026-05-uk-bgc
+          description: >
+            One `geography/release` pair of a standard boundary release:
+            `localAuthority/2026-05-uk-bgc`, `ward/2026-05-uk-bgc`, `constituency/2024-07-uk-bgc` or
+            `lsoa/2021-12-ew-bgc-v5`. Returns every period of the measure on that release for the area
+            `place` names there: the release's own published values (`method: native`) where it has
+            them, otherwise the values converted onto it at build time (`exact` where whole source
+            areas were regrouped, `weighted` where some were split by a weight). Each converted value
+            names its source release, rule, basis and crosswalks, and `summary` gives the periods
+            covered, the share converted and warnings. Periods that cannot be converted, such as a
+            median or a release with no crosswalk, are listed in `gaps` with a reason. Not with `to`.
         - name: datasetId
           in: query
           required: false
@@ -5415,7 +5439,9 @@ paths:
         "409":
           $ref: "#/components/responses/AmbiguousArea"
         "422":
-          description: The requested conversion, aggregation or geometry release is not supported.
+          description:
+            The requested conversion, aggregation or geometry release is not supported, `on` names
+            a release that is not a standard one, or the measure cannot be rebuilt on another release.
           content:
             application/problem+json:
               schema:

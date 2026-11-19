@@ -3207,7 +3207,7 @@ second inventory to maintain:
 - `GET /v1/analysis-geographies`, List reviewed analysis geography conversions
 - `GET /v1/analysis:plan`, Preflight a reviewed source-to-analysis conversion
 - `GET /v1/data/{measure-id}/convert`, Regroup an extensive measure through a published crosswalk or relationship path
-- `GET /v1/data/{measure-id}/series`, Retrieve a source-exact or reviewed derived time series
+- `GET /v1/data/{measure-id}/series`, Retrieve a source-exact, reviewed derived or one-release time series
 - `GET /v1/data/{measure-id}/rankings`, Rank areas within one source-exact measure partition
 - `GET /v1/data/{measure-id}/change`, Rank areas by change between two periods of one measure partition
 - `GET /v1/data/{measure-id}/compare`, Compare two areas within one source-exact measure partition
