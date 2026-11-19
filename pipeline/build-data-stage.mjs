@@ -1,5 +1,10 @@
 import { STAMP_DIRECTORY } from "./src/storage/stageStamp.ts";
 
+// What a stage's code includes beyond the files its entry point imports. A
+// stage that declares `codeInputs` replaces this list, so one that does not
+// depend on the pipeline package says so by listing its own.
+const DEFAULT_CODE_INPUTS = ["pipeline/package.json", "pipeline/tsconfig.json"];
+
 const stage = (
 	name,
 	dependencies = [],
@@ -11,7 +16,7 @@ const stage = (
 		isCurrent,
 		outputs = [],
 		requiredOutputs = [],
-		codeInputs = [],
+		codeInputs = DEFAULT_CODE_INPUTS,
 		rawInputs,
 		writes = [],
 	} = {},
