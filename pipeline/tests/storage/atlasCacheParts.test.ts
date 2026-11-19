@@ -56,7 +56,7 @@ function fixture() {
 		});
 	const counts = () =>
 		writeCacheTables(root, "postcode-counts", {
-			postcode_counts: { columns: ["code TEXT"], rows: [["A"]] },
+			postcode_count: { columns: ["code TEXT"], rows: [["A"]] },
 		});
 	const tablesIn = (path: string) => {
 		const database = new DatabaseSync(path, { readOnly: true });
@@ -177,7 +177,7 @@ test("the cache is assembled from every part, with the content hash of the canon
 	assert.deepEqual(tablesIn(published), [
 		"area_search_codes",
 		"place_names",
-		"postcode_counts",
+		"postcode_count",
 	]);
 	const cache = new DatabaseSync(published, { readOnly: true });
 	try {
@@ -211,7 +211,7 @@ test("the cache is assembled from every part, with the content hash of the canon
 				"cache_generation",
 				"place_names",
 				"area_search_codes",
-				"postcode_counts",
+				"postcode_count",
 			],
 		);
 	} finally {

@@ -8,7 +8,7 @@ import { unpackText } from "@uk-data-atlas/atlas-db";
 const quote = (name: string) => `"${name.replaceAll('"', '""')}"`;
 const cacheTable = (name: string) =>
 	/^(area_search_|place_index_|location_projection_)/.test(name) ||
-	name === "postcode_counts";
+	name === "postcode_count";
 const cachePayloads = new Set([
 	"location-projection-inventory",
 	"postcode-counts",
