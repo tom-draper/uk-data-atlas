@@ -34,6 +34,8 @@ CREATE TABLE measure (id INTEGER NOT NULL PRIMARY KEY, slug TEXT NOT NULL UNIQUE
 CREATE TABLE dataset (id INTEGER NOT NULL PRIMARY KEY, slug TEXT NOT NULL UNIQUE, module TEXT NOT NULL, title TEXT NOT NULL, source_id INTEGER NOT NULL REFERENCES source(id));
 CREATE TABLE series (id INTEGER NOT NULL PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), measure_id INTEGER NOT NULL REFERENCES measure(id), release_id INTEGER NOT NULL REFERENCES area_release(id), derived_from_id INTEGER REFERENCES series(id), key TEXT NOT NULL UNIQUE);
 CREATE TABLE series_member (series_id INTEGER NOT NULL REFERENCES series(id), dimension_id INTEGER NOT NULL REFERENCES dimension(id), member_id INTEGER NOT NULL REFERENCES dimension_member(id), PRIMARY KEY (series_id, dimension_id)) WITHOUT ROWID;
+CREATE TABLE quantity (id INTEGER NOT NULL PRIMARY KEY, measure_id INTEGER NOT NULL REFERENCES measure(id), release_id INTEGER NOT NULL REFERENCES area_release(id), key TEXT NOT NULL UNIQUE);
+CREATE TABLE series_preference (series_id INTEGER NOT NULL PRIMARY KEY REFERENCES series(id), quantity_id INTEGER NOT NULL REFERENCES quantity(id), rank INTEGER NOT NULL, UNIQUE (quantity_id, rank)) WITHOUT ROWID;
 CREATE TABLE observation (series_id INTEGER NOT NULL REFERENCES series(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), period_id INTEGER NOT NULL REFERENCES period(id), value REAL, status_id INTEGER NOT NULL DEFAULT 1 REFERENCES status(id), lower REAL, upper REAL, PRIMARY KEY (series_id, area_version_id, period_id)) WITHOUT ROWID;
 CREATE INDEX observation_area ON observation (area_version_id, period_id);
 CREATE TABLE dataset_area_key (dataset_id INTEGER NOT NULL REFERENCES dataset(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), key TEXT NOT NULL, PRIMARY KEY (dataset_id, area_version_id)) WITHOUT ROWID;
@@ -103,6 +105,8 @@ INSERT INTO measure VALUES (1, 'population', 'Population'), (2, 'households', 'H
 INSERT INTO dataset VALUES (1, 'income-estimates', 'economy', 'Income', 1), (2, 'jobs', 'economy', 'Jobs', 1), (3, 'census-health', 'health', 'Health', 1), (4, 'general-elections', 'politics', 'Elections', 1), (5, 'local-election', 'politics', 'Local elections', 1);
 INSERT INTO series VALUES (1, 1, 1, 1, NULL, 's1'), (2, 1, 3, 1, NULL, 's2'), (3, 2, 4, 1, 1, 's3'), (4, 3, 1, 1, NULL, 's4'), (5, 3, 2, 1, NULL, 's5'), (6, 4, 5, 1, NULL, 's6'), (7, 5, 5, 1, NULL, 's7'), (8, 4, 5, 1, 6, 's8'), (9, 4, 5, 1, 6, 's9');
 INSERT INTO series_member VALUES (4, 1, 1), (2, 1, 2);
+INSERT INTO quantity VALUES (1, 1, 1, 'population/r1'), (2, 3, 1, 'income/r1/sex=male'), (3, 4, 1, 'vacancies/r1'), (4, 2, 1, 'households/r1'), (5, 5, 1, 'vote-share/r1');
+INSERT INTO series_preference VALUES (1, 1, 1), (4, 1, 2), (2, 2, 1), (3, 3, 1), (5, 4, 1), (6, 5, 1), (7, 5, 2), (8, 5, 3), (9, 5, 4);
 INSERT INTO observation VALUES
   (1, 1, 1, 100, 1, NULL, NULL), (1, 2, 1, 200, 1, NULL, NULL), (1, 3, 1, NULL, 2, NULL, NULL),
   (2, 1, 1, 30.5, 1, 29, 32), (2, 2, 1, 41, 1, NULL, NULL),
