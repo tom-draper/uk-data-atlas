@@ -20,6 +20,14 @@ import {
 } from "../notional/estimate.ts";
 import { readNotionalInputs } from "../notional/inputs.ts";
 import {
+	calibrate,
+	LOCAL_BOUND_FACTOR,
+	residuals,
+} from "../notional/local/backtest.ts";
+import { notionals } from "../notional/local/estimate.ts";
+import { readLocalInputs } from "../notional/local/inputs.ts";
+import { writeLocalNotional } from "../notional/local/store.ts";
+import {
 	accuracyMarkdown,
 	writeNotional,
 	type StoredMethod,
@@ -27,7 +35,8 @@ import {
 
 /**
  * Notional 2019 general election results on the 2024 constituencies, scored
- * against a published set when one is given. The build runs it with no
+ * against a published set when one is given, and notional local election
+ * results on wards new at each boundary review (`../notional/local`). The build runs it with no
  * arguments; to score it, run it by hand:
  *
  *   tsx src/stages/build-notional-elections.ts [--source <checkout>] [--benchmark <csv>]
@@ -117,6 +126,13 @@ if (isMainModule(import.meta.url)) {
 		"modelled",
 	);
 	const output = writeNotional(root, inputs, parts, methods, main, markdown);
+	const local = readLocalInputs(source);
+	const wards = notionals(local);
+	const backtest = residuals(local, wards);
+	writeLocalNotional(root, local, wards, backtest, LOCAL_BOUND_FACTOR);
+	buildLog.info(
+		`${formatCount(wards.length)} local notional wards; bound factor ${calibrate(backtest).factor.toFixed(2)} measured, ${LOCAL_BOUND_FACTOR} shipped`,
+	);
 	buildLog.info(
 		`Notional estimates in ${formatDuration(performance.now() - started)}, to ${repoPath(output)}`,
 	);
