@@ -52,6 +52,10 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "series_estimate",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
 		table: "series_gap",
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
@@ -103,6 +107,10 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	},
 	{
 		table: "observation",
+		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+	},
+	{
+		table: "series_estimate",
 		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
 	},
 	{

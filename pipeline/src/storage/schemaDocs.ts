@@ -675,6 +675,18 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			note: "Anything else a reader should know.",
 		},
 	},
+	series_estimate: {
+		audience: "reference",
+		description:
+			"Each estimated value of a converted series, with how much of it was apportioned by a weight. A value with no row was regrouped exactly.",
+		columns: {
+			series_id: "The converted series (series.id).",
+			area_version_id: "The area (area_version.id).",
+			period_id: "The period (period.id).",
+			estimated_share:
+				"Share of the value (0 to 1) that took a split or a pruned pair. 1 minus it is the share regrouped from whole source areas.",
+		},
+	},
 	series_gap: {
 		audience: "reference",
 		description:
