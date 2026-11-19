@@ -92,7 +92,10 @@ missing place.
 The API builds from raw `data/` without `public/data/`. The shared `datasets`
 stage compiles every catalogue dataset once into `data/build/datasets/` (see
 [data/build/README.md](data/build/README.md)). The `atlas-sqlite` stage stores their
-metadata and statistics rows in `data/build/atlas.sqlite`. The payload the
+metadata and statistics rows in `data/build/atlas.sqlite`, and the build
+bookkeeping (artifact paths, content hashes, payload documents) in the file
+beside it, `data/build/atlas-build.sqlite`, so the canonical database holds only
+domain tables. The payload the
 website reads for each dataset is generated from those rows, checked against
 the compiled dataset by value, and cached in `data/build/atlas-cache.sqlite`.
 The API catalogue

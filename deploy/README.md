@@ -40,12 +40,14 @@ Then build the API runtime and Next.js app from the same checkout.
 Run these steps serially. Neither server needs to be running during the build.
 The API data build checks the source release pinned by `data-release.json` and
 writes generated catalogues to `data/build/artifacts/` and the terrain catalogue
-payload to `data/build/atlas.sqlite`. API observation payloads, including shared
+payload to `data/build/atlas-build.sqlite`. API observation payloads, including shared
 census tables, also live in this database. After updating the code, run
 `pnpm data:build` before restarting the API to populate the observation tables
 and regenerate compatibility, validation, and exports.
-Keep `data/build/atlas.sqlite` under the repository root when deploying either
-server. Both read it in read-only mode.
+Keep `data/build/atlas.sqlite` and `data/build/atlas-build.sqlite` under the
+repository root when deploying either server. Both read them in read-only mode.
+The second file holds the build metadata and payload documents that used to be
+tables in the first (see `data/build/README.md`), so deploy the two together.
 `pnpm data:build` builds missing or stale dependencies, writes atlas lookups
 and pages into the shared release, then writes browser data and SEO files to
 `public/data/`.
@@ -93,7 +95,7 @@ stage pins them in the release manifest, using
 place profiles, facts and docs catalogue.
 The `datasets` stage runs after `sources` and compiles every catalogue dataset
 once into `data/build/datasets/`, for both products (see `data/build/README.md`).
-`atlas-sqlite` stores catalogue payloads in `data/build/atlas.sqlite` for the
+`atlas-sqlite` stores catalogue payloads in `data/build/atlas-base-build.sqlite`, which `assemble-atlas` carries into `data/build/atlas-build.sqlite`, for the
 API catalogue compiler, atlas pages and Next.js dataset route. `api-datasets` builds gazetteer core
 and boundary assets under `data/build/artifacts/source-data/` for named
 locations and atlas pages. The data build does not need website output in
@@ -286,8 +288,8 @@ Next.js. Re-run that command after replacing archives independently of an app bu
 
 ### Local SQLite cache
 
-Deploy `data/build/atlas.sqlite` and `data/build/atlas-cache.sqlite` from the
-same build. The pipeline builds and stamps the cache. The API only reads both
+Deploy `data/build/atlas.sqlite`, `data/build/atlas-build.sqlite` and
+`data/build/atlas-cache.sqlite` from the same build. The pipeline builds and stamps the cache. The API only reads both
 files. It checks the stamp and required dataset payloads at startup and
 fails readiness if they are missing or
 mismatched. It does not rebuild the cache. Neither file holds the website's

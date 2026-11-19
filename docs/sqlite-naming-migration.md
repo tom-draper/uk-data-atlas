@@ -2,7 +2,7 @@
 
 Inventory from scratch copies of `atlas.sqlite` and `atlas-cache.sqlite`, using `sqlite_schema` and `pragma_table_info` through Node `DatabaseSync`. The copies can predate current source: in particular the current `dataset_payloads` writer stores `bytes` and `gzip`, while the copied cache has `payload`. References below identify source locations, not an exhaustive list of tests. Column rows inherit their table writer and readers.
 
-This historical inventory predates the removal of `dataset_catalogue`: compiled output metadata now lives on `dataset`. `area_inventory_entry` is a projection of `area` and `area_version`, not a second area table. Metadata tables use singular collective nouns, such as `area_search_meta`, and need no rename. Compatibility views retain old names and columns when a migration is implemented.
+The build metadata tables and columns named below (`*_inventory_metadata`, artifact paths and content hashes, `payloads`) have since moved out of `atlas.sqlite` into `atlas-build.sqlite` (see `docs/sqlite-schema-design.md`). This historical inventory predates the removal of `dataset_catalogue`: compiled output metadata now lives on `dataset`. `area_inventory_entry` is a projection of `area` and `area_version`, not a second area table. Metadata tables use singular collective nouns, such as `area_search_meta`, and need no rename. Compatibility views retain old names and columns when a migration is implemented.
 
 The `named_location*` tables listed below were later renamed again to `place`, `place_member`, `place_assertion`, `place_partial_member` and `place_geometry`, with integer `place_id` and `area_id` columns (`pipeline/src/storage/atlasNamedLocations.ts`).
 

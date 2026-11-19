@@ -135,11 +135,25 @@ have no reason to share either rule. Deploy the file with the Next.js server.
 `readAtlasAsset` fails with the build command if it is missing, and the API
 never opens it.
 
-## What `atlas.sqlite` keeps
+## What `atlas.sqlite` keeps, and `atlas-build.sqlite`
 
-`atlas.sqlite` holds the data the API serves, so a table is kept there if any
-API route reads it. Two tables that look like build output are read at request
-time and stay:
+`atlas.sqlite` holds domain tables and views, plus the tables that identify and
+describe the file (`meta`, `schema_*`, `search`). Build bookkeeping lives in a
+sibling file, `<name>-build.sqlite`: `atlas-base-build.sqlite` beside
+`atlas-base.sqlite` (written by `atlas-sqlite`), and `atlas-build.sqlite` beside
+`atlas.sqlite` (written by `assemble-atlas`, which copies the base one and adds
+the postcode and geography payloads). It holds the artifact paths, content
+hashes, byte and record counts and header copies of the JSON inventories, the
+statistics routing config, and the `payload` table of documents (Brotli text).
+Tables are keyed by natural keys (slug, or geography and release), never by
+atlas ids, so the two files share no foreign keys. The API opens both files
+read-only, so deploy them together. The cache generation hashes
+(`cacheGeneration`) read the build file, and `pipeline/tests/built/schemaConventions.test.ts`
+fails if a build metadata column or table, or a payload table, reappears in a
+domain database.
+
+One table that looks like build output is read at request time and stays in
+`atlas.sqlite`:
 
 - `crosswalk_edge_check` holds the per-edge measures of a crosswalk (`match`,
   `widest_difference_m`, `contained_share`, `overlap_area_m2` and others).
@@ -147,12 +161,12 @@ time and stay:
   `/v1/crosswalks/{id}/records`, `:convert`, the area overlap routes and the
   boundary release comparison (which reads `match === "recoded"`) all return
   its values.
-- `payloads` holds `relationship-paths`, `geography-inventory`,
-  `boundary-releases`, `analysis-geographies`, `analysis-geography-validation`,
-  `terrain-catalogue`, `postcode-index` and `postcode-areas`, which the API
-  loads, with `dataset-manifest` and any dataset payload stored whole, which
-  only the website and checks read. `dataset.payload_id` refers to the
-  table, so those few kilobytes stay with it.
+
+The `payload` table of `atlas-build.sqlite` holds `relationship-paths`, `geography-inventory`,
+`boundary-releases`, `analysis-geographies`, `analysis-geography-validation`,
+`terrain-catalogue`, `postcode-index` and `postcode-areas`, which the API
+loads, with `dataset-manifest` and any dataset payload stored whole, which
+only the website and checks read.
 
 Readers of a file that is optional, such as `website-assets.sqlite`, check that
 it exists and fail with the command that builds it.
