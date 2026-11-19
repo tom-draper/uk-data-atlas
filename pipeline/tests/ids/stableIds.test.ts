@@ -36,7 +36,10 @@ import {
 } from "../../src/storage/index";
 import { registerStatistics } from "../../src/storage/statisticsRegistry";
 import { collectParties } from "../../src/storage/statisticsParties";
-import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
+import {
+	buildMetadataPathOf,
+	closeAllReadOnlyDatabases,
+} from "@uk-data-atlas/atlas-db";
 
 type Release = { id: string; codes: string[] };
 type Crosswalk = { from: string; to: string };
@@ -287,6 +290,10 @@ test("the inventory keeps its own order whatever ids the releases have", (contex
 		database.close();
 	}
 	copyFileSync(path, join(root, "data/build/atlas-base.sqlite"));
+	copyFileSync(
+		buildMetadataPathOf(path),
+		buildMetadataPathOf(join(root, "data/build/atlas-base.sqlite")),
+	);
 	rmSync(join(root, "data/build/artifacts"), { recursive: true });
 	write(join(root, "data/build/artifacts"), after);
 	assert.deepEqual(

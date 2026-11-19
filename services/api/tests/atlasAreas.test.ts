@@ -117,9 +117,11 @@ test("relational areas preserve inventory order, aliases and record order withou
 					.run(),
 			/FOREIGN KEY/,
 		);
-		database
-			.prepare("UPDATE area_release SET content_hash = 'stale'")
+		const stale = new DatabaseSync(buildMetadataPathOf(path));
+		stale
+			.prepare("UPDATE area_release_build SET content_hash = 'stale'")
 			.run();
+		stale.close();
 		assert.throws(
 			() => readAreaLookup(root, inventory).get("ward/2024"),
 			/Invalid area release/,

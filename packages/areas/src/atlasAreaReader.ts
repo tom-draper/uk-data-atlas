@@ -13,12 +13,21 @@ export const readSqliteAreaInventory = (
 	try {
 		const build = openBuildMetadata(databasePath);
 		let header;
+		let built: Map<string, Record<string, unknown>>;
 		try {
 			header = build
 				.prepare(
 					"SELECT schema_version AS schemaVersion, content_hash AS contentHash, boundary_registry_hash AS boundaryRegistryHash FROM area_inventory_metadata",
 				)
 				.get();
+			built = new Map(
+				build
+					.prepare(
+						"SELECT geography, release, record_count AS recordCount, artifact, content_hash AS contentHash, code_property AS codeProperty, name_property AS nameProperty, derived_from AS derivedFrom FROM area_release_build",
+					)
+					.all()
+					.map((row) => [`${row.geography}/${row.release}`, row]),
+			);
 		} finally {
 			build.release();
 		}
@@ -26,7 +35,7 @@ export const readSqliteAreaInventory = (
 			throw new Error("Invalid SQLite area inventory");
 		const releases = database
 			.prepare(
-				"SELECT release, geography, status, record_count AS recordCount, artifact, content_hash AS contentHash, code_property AS codeProperty, name_property AS nameProperty, derived_from AS derivedFrom, reason FROM area_release ORDER BY inventory_position",
+				"SELECT release, geography, status, reason FROM area_release ORDER BY inventory_position",
 			)
 			.all()
 			.map((row) => {
@@ -34,28 +43,35 @@ export const readSqliteAreaInventory = (
 					id: row.release as string,
 					geography: row.geography as string,
 				};
-				return row.status === "available"
-					? {
-							...identity,
-							status: "available" as const,
-							recordCount: row.recordCount as number,
-							artifact: row.artifact as string,
-							contentHash: row.contentHash as string,
-							codeProperty: row.codeProperty as string,
-							nameProperty: row.nameProperty as string,
-							...(row.derivedFrom === null
-								? {}
-								: {
-										derivedFrom: JSON.parse(
-											row.derivedFrom as string,
-										),
-									}),
-						}
-					: {
-							...identity,
-							status: "not-compiled" as const,
-							reason: row.reason as string,
-						};
+				if (row.status !== "available")
+					return {
+						...identity,
+						status: "not-compiled" as const,
+						reason: row.reason as string,
+					};
+				const artifact = built.get(
+					`${identity.geography}/${identity.id}`,
+				);
+				if (!artifact)
+					throw new Error(
+						`Missing area release build row ${identity.geography}/${identity.id}`,
+					);
+				return {
+					...identity,
+					status: "available" as const,
+					recordCount: artifact.recordCount as number,
+					artifact: artifact.artifact as string,
+					contentHash: artifact.contentHash as string,
+					codeProperty: artifact.codeProperty as string,
+					nameProperty: artifact.nameProperty as string,
+					...(artifact.derivedFrom === null
+						? {}
+						: {
+								derivedFrom: JSON.parse(
+									artifact.derivedFrom as string,
+								),
+							}),
+				};
 			});
 		return {
 			schemaVersion: 1,
@@ -80,10 +96,21 @@ export const readSqliteAreas = (
 	try {
 		const header = database
 			.prepare(
-				"SELECT id, content_hash AS contentHash FROM area_release WHERE geography = ? AND release = ?",
+				"SELECT id FROM area_release WHERE geography = ? AND release = ?",
 			)
 			.get(release.geography, release.id);
-		if (header?.contentHash !== release.contentHash)
+		const build = openBuildMetadata(databasePath);
+		let hash;
+		try {
+			hash = build
+				.prepare(
+					"SELECT content_hash FROM area_release_build WHERE geography = ? AND release = ?",
+				)
+				.get(release.geography, release.id)?.content_hash;
+		} finally {
+			build.release();
+		}
+		if (!header || hash !== release.contentHash)
 			throw new Error(
 				`Invalid area release ${release.geography}/${release.id}`,
 			);

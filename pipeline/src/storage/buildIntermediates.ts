@@ -10,6 +10,7 @@ import type {
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import {
 	atlasBaseDatabasePath,
+	openBuildMetadata,
 	openReadOnlyDatabase,
 } from "@uk-data-atlas/atlas-db";
 import {
@@ -74,15 +75,27 @@ export function* readAreas<F extends AreaField = AreaField>(
 	const fields = (options.fields ?? ["code", "name", "aliases"]) as F[];
 	const database = openReadOnlyDatabase(databasePath);
 	try {
-		const release = database
+		const row = database
 			.prepare(
-				"SELECT id, record_count AS recordCount FROM area_release WHERE geography = ? AND release = ? AND status = 'available'",
+				"SELECT id FROM area_release WHERE geography = ? AND release = ? AND status = 'available'",
 			)
 			.get(options.geography, options.release);
-		if (!release)
+		const build = openBuildMetadata(databasePath);
+		let recorded;
+		try {
+			recorded = build
+				.prepare(
+					"SELECT record_count FROM area_release_build WHERE geography = ? AND release = ?",
+				)
+				.get(options.geography, options.release);
+		} finally {
+			build.release();
+		}
+		if (!row || !recorded)
 			throw new Error(
 				`Unknown area release ${options.geography}/${options.release}`,
 			);
+		const release = { id: row.id, recordCount: recorded.record_count };
 		const columns = fields
 			.map((field) => `${AREA_COLUMNS[field]} AS ${field}`)
 			.join(", ");
