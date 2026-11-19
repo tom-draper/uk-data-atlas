@@ -79,7 +79,7 @@ Status (#713): the `area_releases` rows below are done: the table is `area_relea
 
 ## Out of scope
 
-The postcode layout branch handles `postcodes`, `postcode_area_codes`, `postcode_area_columns`, `postcode_area_matches`, `postcode_area_matches_decoded`, `postcode_area_releases`, `postcodes_decoded`, `postcode_counts`, and the current source’s `postcode_area_set`. This includes every camelCase and release-qualified column in those objects.
+The postcode layout work is done: the tables were renamed to snake_case singular names under layout marker `9`: `postcode`, its per-release columns (`<geography>_area_id`, `<geography>_distance_cm`), `postcode_area_match`, `postcode_area_match_decoded`, `postcode_area_release`, `postcode_decoded`, `postcode_count` and `postcode_area_set`. The shard JSON and API field names such as `largeUser` are a separate contract and did not change.
 
 The election branch handles `election`, `contest` and `candidacy`. The compression branch owns the contents and format of `dataset_payloads` and `payloads`, table renames only are in scope here.
 

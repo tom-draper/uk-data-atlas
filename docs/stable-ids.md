@@ -154,7 +154,7 @@ they were named for.
 
 These are internal layout. Do not store or join on them.
 
-- `postcode_area_releases.position` and `postcode_area_set.id` number the
+- `postcode_area_release.position` and `postcode_area_set.id` number the
   postcode lookup's own layout (manifest order and first-seen postcode), not
   entities. Join through `area_version` instead.
 - `position` columns that order the rows of one parent (`candidacy.position`,

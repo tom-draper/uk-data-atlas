@@ -1015,7 +1015,7 @@ pages and exact matches. No source release changes are needed.
 
 ### Postcode search
 
-`postcodes` holds one relational row per unit postcode. Its primary key is
+`postcode` holds one relational row per unit postcode. Its primary key is
 `postcode`, with no separate postcode autoindex or stored district position. Columns
 hold the grid coordinates, quality indicator, country, introduction and termination
 months, and large-user flag. Missing coordinates stay null, and a zero termination
@@ -1042,18 +1042,18 @@ even when the postcode content hash is unchanged. No new source release is neede
 ### Postcode areas
 
 The `postcode-areas` stage stores area references once per distinct combination of
-areas. `postcode_area_set` has an `id` and one `AreaId` column per compiled release,
-each referencing `area_version(id)`, and is `STRICT`. `postcodes` keeps one
-`area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)` and a `DistanceCm`
-column per release. A geography with one release uses names such as `countryAreaId`.
+areas. `postcode_area_set` has an `id` and one `*_area_id` column per compiled release,
+each referencing `area_version(id)`, and is `STRICT`. `postcode` keeps one
+`area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)` and a `*_distance_cm`
+column per release. A geography with one release uses names such as `country_area_id`.
 Multiple releases use release-qualified names such as
-`"localAuthority_2026-05-uk-bgcAreaId"`. `postcode_area_releases` lists each
-geography, boundary release and column name. `areaColumn` names a column of
-`postcode_area_set` and `distanceColumn` a column of `postcodes`.
-`distanceFallback` is null, or the position of an earlier release; see below.
-`postcode_area_releases.position` and `postcode_area_set.id` are this layout's own
+`local_authority_2026_05_uk_bgc_area_id`. `postcode_area_release` lists each
+geography, boundary release and column name. `area_column` names a column of
+`postcode_area_set` and `distance_column` a column of `postcode`.
+`distance_fallback` is null, or the position of an earlier release; see below.
+`postcode_area_release.position` and `postcode_area_set.id` are this layout's own
 numbering (manifest order, first-seen postcode), not stable across builds: never store or
-join on them. The `AreaId` columns hold stable `area_version` ids (see `docs/stable-ids.md`).
+join on them. The `*_area_id` columns hold stable `area_version` ids (see `docs/stable-ids.md`).
 All IDs refer to that exact boundary release. Missing inventory areas are added
 as `area_version` rows with `in_inventory = 0` and an empty name, since shard inputs contain codes
 but no labels.
@@ -1061,41 +1061,41 @@ but no labels.
 Set IDs count up from 1 in first-seen postcode order, so builds are reproducible.
 The writer deduplicates with an in-memory map rather than a unique index, which
 would cost another copy of the table and would not treat null areas as equal.
-Distances differ for almost every postcode, so they stay on `postcodes`.
+Distances differ for almost every postcode, so they stay on `postcode`.
 
-A `DistanceCm` column is stored as null where the release named by its
-`distanceFallback` holds the same nonzero distance, as when both releases share
+A `*_distance_cm` column is stored as null where the release named by its
+`distance_fallback` holds the same nonzero distance, as when both releases share
 an area's boundary. Read the value as the first non-null along the chain of
 fallbacks, which always point to earlier positions. Columns with no fallback are
 never null, and zero is always stored as zero. The writer picks each fallback
 as the earlier release that matches most often, the earliest on a tie. This is
 lossless: the reader rebuilds the same centimetres, and
-`postcodes_decoded` returns the resolved values. On the 2.67 million postcode build it
-cut `postcodes` by about 105 MB.
+`postcode_decoded` returns the resolved values. On the 2.67 million postcode build it
+cut `postcode` by about 105 MB.
 
 ```sql
 SELECT p.postcode, a.code, v.name
-FROM postcodes p
+FROM postcode p
 JOIN postcode_area_set s ON s.id = p.area_set_id
-JOIN area_version v ON v.id = s.countryAreaId
+JOIN area_version v ON v.id = s.country_area_id
 JOIN area a ON a.id = v.area_id
 WHERE p.postcode = 'SW1A1AA';
 
-SELECT postcode, countryCode FROM postcodes_decoded
+SELECT postcode, country_code FROM postcode_decoded
 WHERE postcode = 'SW1A1AA';
 
-SELECT geography, boundaryRelease, areaColumn, distanceColumn
-FROM postcode_area_releases;
+SELECT geography, boundary_release, area_column, distance_column
+FROM postcode_area_release;
 ```
 
-`postcodes_decoded` joins through the set table and returns the same columns as
-before: the postcode fields, each `AreaId` and `DistanceCm` pair, then each `Code`.
+`postcode_decoded` joins through the set table and returns the postcode
+fields, each `*_area_id` and `*_distance_cm` pair, then each `*_code`.
 
-A null area ID means no single interior match. `postcode_area_matches` holds
+A null area ID means no single interior match. `postcode_area_match` holds
 multiple or boundary matches, with their containment, distance and original order.
-Its decoded view, `postcode_area_matches_decoded`, adds geography, boundary
+Its decoded view, `postcode_area_match_decoded`, adds geography, boundary
 release, code and name. The reader derives each district's code dictionary and
-release order from these rows and `postcode_area_releases`. It verifies the
+release order from these rows and `postcode_area_release`. It verifies the
 derived shard against `postcode_area_shard_hash`; the original input shard hashes
 in the inventory remain provenance and need not match the derived JSON bytes.
 
@@ -1114,7 +1114,7 @@ before returning it. Source inventory hashes identify the inputs used by the bui
 Build this schema through the normal atlas and postcode build stages. The writer
 checks input shard hashes before publishing its temporary database atomically.
 Rebuild older databases with the current builders; the runtime supports only the
-current schema. The writer records `postcodeAreaLayout` (currently `"4"`) in
+current schema. The writer records `postcodeAreaLayout` (currently `"9"`) in
 `meta`, and readers refuse older layouts.
 
 The deprecated read-only compatibility views are no longer written, and nothing
