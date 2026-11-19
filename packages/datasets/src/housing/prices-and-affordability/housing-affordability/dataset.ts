@@ -20,7 +20,6 @@ export const housingAffordability = defineDataset<
 	topic: "prices-and-affordability",
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
-	publishMapValues: true,
 	related: ["earnings-and-income"],
 	guide: {
 		title: "House price to residence-based earnings ratio",

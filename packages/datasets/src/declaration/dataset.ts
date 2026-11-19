@@ -244,12 +244,8 @@ export type DatasetDeclaration<
 	ingestion?: DatasetIngestionContract;
 	/** How the compiled payload is sliced and delivered. */
 	layout?: DatasetPayloadLayout;
-	/** The record field the map-values sidecars are built from, if it has any. */
-	mapValueField?: string;
 	/** True for a dataset that is compiled but has no chart yet. */
 	chartPending?: boolean;
-	/** Publish the first display measure as a map-values dataset. */
-	publishMapValues?: boolean;
 	/** Reads the sources and writes the compiled payload, by edition. */
 	load: (reader: DatasetReader) => Promise<Record<string, T>>;
 	statistics: DeclaredStatistics;
@@ -309,18 +305,6 @@ export function defineDataset<T extends { type: string; data: unknown }>(
 	if (invalid.length > 0)
 		throw new Error(
 			`Dataset ${declaration.id} is not a valid declaration: ${invalid.join("; ")}`,
-		);
-	if (declaration.publishMapValues && !declaration.display)
-		throw new Error(
-			`Dataset ${declaration.id} needs a display measure for map values`,
-		);
-	if (
-		declaration.publishMapValues &&
-		(declaration.display!.measures.length !== 1 ||
-			typeof declaration.display!.measures[0].field !== "string")
-	)
-		throw new Error(
-			`Dataset ${declaration.id} must have one map-values measure`,
 		);
 	const fixedMeasure = declaration.display?.card?.fixedMeasure;
 	if (
@@ -398,13 +382,7 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		},
 		...(declaration.ingestion ? { ingestion: declaration.ingestion } : {}),
 		...(declaration.layout ? { payload: declaration.layout } : {}),
-		...(declaration.mapValueField
-			? { mapValueField: declaration.mapValueField }
-			: {}),
 		...(declaration.chartPending ? { chartPending: true } : {}),
-		...(declaration.publishMapValues && declaration.display
-			? { mapValueField: declaration.display.measures[0].field as string }
-			: {}),
 		...directOnlyOf(declaration),
 		precompile: declaration.load,
 	};
