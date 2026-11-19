@@ -38,7 +38,10 @@ const atlas = () => {
 		CREATE TABLE conversion_skip (dataset_id INTEGER, measure_id INTEGER, source_release_id INTEGER, target_release_id INTEGER, reason TEXT, series INTEGER);
 
 		INSERT INTO dataset VALUES (1, 'census');
-		INSERT INTO measure VALUES (1, 'people'), (2, 'households'), (3, 'median-age');
+		INSERT INTO measure VALUES (1, 'people'), (2, 'households'), (3, 'median-age'), (4, 'votes');
+		INSERT INTO dimension VALUES (1, 'party');
+		INSERT INTO dimension_member VALUES (1, 'lab'), (2, 'con');
+		INSERT INTO series_member VALUES (7, 1, 1), (8, 1, 2), (12, 1, 1), (13, 1, 2);
 		INSERT INTO area_releases VALUES (1, 'ward', '2019-12-uk-bgc'), (2, 'ward', '2026-05-uk-bgc'), (3, 'ward', '2015-12-uk-bgc');
 		INSERT INTO status VALUES (1, 'observed'), (2, 'estimated'), (6, 'derived');
 		INSERT INTO period VALUES (1, '2015', '2015-01-01'), (2, '2019', '2019-01-01'), (3, '2026', '2026-01-01');
@@ -54,6 +57,10 @@ const atlas = () => {
 			(4, 1, 2, 2, 'published', 'households@2026'),
 			(5, 1, 2, 1, 'published', 'households@2019'),
 			(6, 1, 3, 1, 'published', 'median@2019'),
+			(7, 1, 4, 1, 'published', 'votes@2019/party=lab'),
+			(8, 1, 4, 1, 'published', 'votes@2019/party=con'),
+			(12, 1, 4, 2, 'converted', 'votes@2019/party=lab~converted:ward:2026-05-uk-bgc'),
+			(13, 1, 4, 2, 'converted', 'votes@2019/party=con~converted:ward:2026-05-uk-bgc'),
 			(10, 1, 1, 2, 'converted', 'people@2019~converted:ward:2026-05-uk-bgc'),
 			(11, 1, 2, 2, 'converted', 'households@2019~converted:ward:2026-05-uk-bgc');
 		INSERT INTO observation VALUES
@@ -65,12 +72,15 @@ const atlas = () => {
 			(5, 11, 2, 45, 1, NULL, NULL), (5, 31, 2, 20, 1, NULL, NULL),
 			(6, 11, 2, 41, 1, NULL, NULL),
 			(10, 12, 2, 90, 6, NULL, NULL), (10, 22, 2, 40, 2, 30, 50),
-			(11, 12, 2, 45, 6, NULL, NULL), (11, 22, 2, 20, 2, NULL, NULL);
+			(11, 12, 2, 45, 6, NULL, NULL), (11, 22, 2, 20, 2, NULL, NULL),
+			(7, 11, 2, 30, 1, NULL, NULL), (8, 11, 2, 20, 1, NULL, NULL), (7, 31, 2, 10, 1, NULL, NULL),
+			(12, 12, 2, 30, 6, NULL, NULL), (13, 12, 2, 20, 6, NULL, NULL), (12, 22, 2, 10, 6, NULL, NULL);
 		INSERT INTO series_estimate VALUES (10, 22, 2, 0.5), (11, 22, 2, 1);
-		INSERT INTO series_input VALUES (10, 2, 'value'), (11, 5, 'value');
+		INSERT INTO series_input VALUES (10, 2, 'value'), (11, 5, 'value'), (12, 7, 'value'), (13, 8, 'value');
 		INSERT INTO series_conversion VALUES
 			(10, 'sum', 'population', 0, 0.7, 1, NULL),
-			(11, 'sum', 'population', 0, 0.7, 0.5, NULL);
+			(11, 'sum', 'population', 0, 0.7, 0.5, NULL),
+			(12, 'sum', NULL, 1, 1, 1, NULL), (13, 'sum', NULL, 1, 1, 1, NULL);
 		INSERT INTO series_crosswalk VALUES (10, 0, 1, 0), (11, 0, 1, 0);
 		INSERT INTO measure_conversion VALUES (1, 'sum', 'population', 'A count.'), (3, 'refuse', NULL, 'A median cannot be added.');
 		INSERT INTO conversion_skip VALUES
@@ -113,11 +123,15 @@ describe("a measure's series rebuilt on one boundary release", () => {
 			flags: [],
 		});
 		// The 2019 release's own 2026 value (99) is not used.
-		expect(series.values.filter((v) => v.period === "2026")).toHaveLength(1);
+		expect(series.values.filter((v) => v.period === "2026")).toHaveLength(
+			1,
+		);
 	});
 
 	it("names the source of a value regrouped exactly", () => {
-		const exact = read(people, "W1").values.find((v) => v.period === "2019")!;
+		const exact = read(people, "W1").values.find(
+			(v) => v.period === "2019",
+		)!;
 		expect(exact).toMatchObject({
 			value: 90,
 			status: "derived",
@@ -135,7 +149,9 @@ describe("a measure's series rebuilt on one boundary release", () => {
 	});
 
 	it("flags a weighted count's split share and a ward made since", () => {
-		const weighted = read(people, "W2").values.find((v) => v.period === "2019")!;
+		const weighted = read(people, "W2").values.find(
+			(v) => v.period === "2019",
+		)!;
 		expect(weighted).toMatchObject({
 			value: 40,
 			status: "estimated",
@@ -147,18 +163,37 @@ describe("a measure's series rebuilt on one boundary release", () => {
 		});
 	});
 
+	it("sums the members of a dimension an area holds, as on the source", () => {
+		const votes: ReleaseSeriesSpec = {
+			parts: [{ ...part("votes"), sum: ["party"] }],
+		};
+		const both = read(votes, "W1").values.find((v) => v.period === "2019")!;
+		expect(both).toMatchObject({ value: 50, method: "exact" });
+		// No con candidate stood in W2's predecessor, so its votes are lab's.
+		const one = read(votes, "W2");
+		expect(one.values.find((v) => v.period === "2019")).toMatchObject({
+			value: 10,
+			method: "exact",
+		});
+		expect(one.gaps).toEqual([]);
+	});
+
 	it("says a period with no crosswalk has no route", () => {
 		expect(read(people, "W1").gaps).toEqual([
 			{
 				periodId: 1,
 				period: "2015",
-				sources: [{ release: "ward:2015-12-uk-bgc", reason: "no-route" }],
+				sources: [
+					{ release: "ward:2015-12-uk-bgc", reason: "no-route" },
+				],
 			},
 		]);
 	});
 
 	it("rebuilds a rate from its converted numerator and denominator", () => {
-		const rate = read(perHousehold, "W1").values.find((v) => v.period === "2019")!;
+		const rate = read(perHousehold, "W1").values.find(
+			(v) => v.period === "2019",
+		)!;
 		expect(rate).toMatchObject({
 			value: 2,
 			method: "exact",
@@ -171,8 +206,14 @@ describe("a measure's series rebuilt on one boundary release", () => {
 	});
 
 	it("keeps a rate of native parts native", () => {
-		const rate = read(perHousehold, "W1").values.find((v) => v.period === "2026")!;
-		expect(rate).toMatchObject({ value: 2, method: "native", status: "observed" });
+		const rate = read(perHousehold, "W1").values.find(
+			(v) => v.period === "2026",
+		)!;
+		expect(rate).toMatchObject({
+			value: 2,
+			method: "native",
+			status: "observed",
+		});
 		expect(rate.rebuiltRatio).toBeUndefined();
 	});
 
@@ -182,7 +223,9 @@ describe("a measure's series rebuilt on one boundary release", () => {
 		expect(series.gaps.find((gap) => gap.period === "2019")).toEqual({
 			periodId: 2,
 			period: "2019",
-			sources: [{ release: "ward:2026-05-uk-bgc", reason: "split-ratio" }],
+			sources: [
+				{ release: "ward:2026-05-uk-bgc", reason: "split-ratio" },
+			],
 		});
 	});
 
@@ -203,9 +246,16 @@ describe("a measure's series rebuilt on one boundary release", () => {
 	});
 
 	it("is undefined for an area or release that does not exist", () => {
-		expect(readReleaseSeries(atlas(), people, target, "W0")).toBeUndefined();
 		expect(
-			readReleaseSeries(atlas(), people, { geography: "ward", release: "1999" }, "W1"),
+			readReleaseSeries(atlas(), people, target, "W0"),
+		).toBeUndefined();
+		expect(
+			readReleaseSeries(
+				atlas(),
+				people,
+				{ geography: "ward", release: "1999" },
+				"W1",
+			),
 		).toBeUndefined();
 	});
 });
