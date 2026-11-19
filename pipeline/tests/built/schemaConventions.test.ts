@@ -42,6 +42,7 @@ const CANONICAL: ConventionAllowlist = {
 		"crosswalk.bytes",
 		"dataset.compiled_bytes",
 		"dataset.compiled_sha256",
+		"postcode_area_shard_hash.coordinates_sha256",
 		"postcode_area_shard_hash.sha256",
 		"statistics_observation_fallback.artifact",
 		...SELECTOR_TABLES.map((table) => `${table}.artifact`),
