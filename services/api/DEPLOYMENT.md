@@ -19,7 +19,8 @@ curl --fail http://127.0.0.1:3001/readyz
 ```
 
 The service reads `data/build/artifacts/`, `data/build/atlas.sqlite`,
-`data/build/atlas-cache.sqlite`, `data/build/atlas-assets/`, and
+`data/build/atlas-build.sqlite` (the build metadata and payload documents that
+belong with it), `data/build/atlas-cache.sqlite`, `data/build/atlas-assets/`, and
 `data/build/map-resources/` from the checkout. Deploy these matching release
 outputs with the code, then restart the service. The data build is separate from
 the code build. API public files contain the geometry store and manifests; SQLite contains observation
@@ -236,7 +237,7 @@ analysis support, rebuild `analysis-geography-validation.json` too. Rebuild
 
 The `atlas-pages` and `atlas-lookups` stages write manifests and gzipped files
 under `data/build/atlas-assets/`. Include this directory alongside
-`data/build/atlas.sqlite` in the deployed API volume, preserving paths relative
+`data/build/atlas.sqlite` and `data/build/atlas-build.sqlite` in the deployed API volume, preserving paths relative
 to the repository root. Page and lookup routes read these release files.
 Other API outputs stay under `data/build/artifacts/` during the compiler migration.
 

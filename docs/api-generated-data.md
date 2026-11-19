@@ -1,10 +1,12 @@
 # Generated API data
 
 `data/build/atlas.sqlite` contains the catalogue, geography and statistics
-rows used by the API. `data/build/atlas-cache.sqlite` holds derived search,
+rows used by the API. `data/build/atlas-build.sqlite` beside it holds the build
+metadata and payload documents (content hashes, artifact headers, the
+geography and relationship payloads). `data/build/atlas-cache.sqlite` holds derived search,
 postcode, projection and dataset payload caches. Dataset payloads are stored
-gzipped and the API decompresses them when it needs the JSON. Deploy both
-databases from the same build; the API checks the cache stamp and the payload
+gzipped and the API decompresses them when it needs the JSON. Deploy all
+three databases from the same build; the API checks the cache stamp and the payload
 columns at startup.
 
 The `data-catalog` stage reads dataset inputs from the base database and writes the catalogue. The

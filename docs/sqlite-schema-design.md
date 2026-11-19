@@ -255,13 +255,13 @@ and set `direct.only`.
 Two columns hold whole documents rather than relational values, so they are
 stored as Brotli blobs and decompressed on read.
 
-- `payloads.payload` is `BLOB NOT NULL`: the exact UTF-8 JSON text, Brotli
+- `payload.payload` in `atlas-build.sqlite` is `BLOB NOT NULL`: the exact UTF-8 JSON text, Brotli
   quality 9. Write it with `packText` and read it with `unpackText`
   (`packages/atlas-db/src/storedPayload.ts`). Never read the
   column with `String(value)`, which turns a blob into a list of byte values.
   `unpackText` returns text unchanged, so older databases and fixtures that
   store plain text still read. Hashes and ETags are taken over the
-  decompressed text. Only `atlas.sqlite` stores payloads this way. The
+  decompressed text. Only the build metadata file stores payloads this way. The
   `payloads` tables of `atlas-cache.sqlite` and the postcode component remain
   plain text.
 - `place_geometry.geometry` is `BLOB NOT NULL`: a GeoJSON geometry
@@ -321,9 +321,10 @@ adds no data and is not the API's read path: API readers query stored tables.
 `website-assets.sqlite`, not in `atlas.sqlite`. Only the Next.js website reads
 them, so the API's release stays to what the API serves.
 
-`crosswalk_edge_check` and `payloads` stay in `atlas.sqlite`. The API reads
-both at request time (see "What `atlas.sqlite` keeps" in `data/build/README.md`),
-so neither is build-only output. The sold core excludes `crosswalk_edge_check`; assemble the optional `crosswalk-checks` module with core to restore it for API responses.
+`crosswalk_edge_check` stays in `atlas.sqlite`. The API reads it at request
+time (see "What `atlas.sqlite` keeps" in `data/build/README.md`), so it is not
+build-only output. The payload documents the API also reads are in
+`atlas-build.sqlite`. The sold core excludes `crosswalk_edge_check`; assemble the optional `crosswalk-checks` module with core to restore it for API responses.
 
 The deprecated read-only views for legacy table names and camelCase columns
 are no longer written (see `data/build/README.md`). No reader used them.
@@ -347,26 +348,48 @@ Every database in `data/build` follows these rules (#713):
 - Table, view and column names are snake_case, and table names are singular
   (`area_release`, not `area_releases`).
 - A reference to another table is a declared foreign key. `boundary_release.geography`
-  and `statistics_selector.geography` reference `geography(slug)`; `area` and
-  the release tables use integer ids.
+  references `geography(slug)`; `area` and the release tables use integer ids.
+  A build metadata file never declares a foreign key into the database it
+  describes, because the two are separate files.
 - Domain tables hold data, not build metadata (artifact paths, content hashes,
-  byte counts), and the canonical file holds no payload blobs.
+  byte counts, header copies of inventories, routing config), and the canonical
+  file holds no payload documents. These live in the build metadata file
+  beside each database (`atlas-build.sqlite`, `atlas-base-build.sqlite`,
+  `postcode-index-build.sqlite`; `packages/atlas-db/src/buildMetadata.ts`,
+  `pipeline/src/storage/buildMetadataWriter.ts`). A table is build metadata
+  when it is named `*_metadata` or `*_build`, is a payload table, or is one of
+  the routing tables, and the checker flags one in a domain database.
 
 `pipeline/src/storage/schemaConventions.ts` checks the rules and
 `pipeline/tests/built/schemaConventions.test.ts` runs it on each built file.
 The test carries one allowlist of what still breaks the rules, so the list
-shrinks as work lands and an entry that stops matching fails the test. Today it
-holds:
+shrinks as work lands and an entry that stops matching fails the test. Today
+nothing is allowlisted for `atlas.sqlite`, `atlas-base.sqlite` or the postcode
+index. The cache and `website-assets.sqlite` carry payloads and hashes as their
+data, so they keep their own entries.
 
-- Build metadata (separation part of #713, handled separately) in `area_release`, `crosswalk`, `dataset`,
-  `boundary_registry`, `postcode_area_shard_hash` and the `statistics_selector*`
-  tables.
-- The `payloads` table, which the API reads at request time, so moving it is a
-  change to the runtime readers and the cache generation hash, not only to the
-  writer.
+The separation moved, out of `atlas.sqlite` and into the build metadata file:
+
+| Was in `atlas.sqlite`                                                                                                                           | Now in `atlas-build.sqlite` |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `payloads`                                                                                                                                      | `payload`                   |
+| `area_inventory_metadata`, `crosswalk_inventory_metadata`, `crosswalk_coverage_entry`, `named_location_inventory_metadata`, `boundary_registry` | the same names              |
+| `area_release.artifact`, `content_hash`, `record_count` and the parse properties                                                                | `area_release_build`        |
+| `boundary_release.metadata_hash`                                                                                                                | `boundary_release_build`    |
+| `crosswalk.artifact`, `content_hash`, `record_count`, `bytes`                                                                                   | `crosswalk_build`           |
+| `dataset.fingerprint`, `compiled_*`, `payload_id`                                                                                               | `dataset_build`             |
+| `statistics_read_path`, `statistics_selector*`, `statistics_observation_fallback`                                                               | the same names              |
+| `postcode_area_shard_hash`                                                                                                                      | the same name               |
+
+`meta` still holds `buildId`, `gitCommit`, `gitDirty` and `dataRelease`:
+the file describes itself (#678, #724), so those stamps stay. The schema
+version is 4 because the table layout changed.
 
 Some references stay undeclared on purpose:
 
+- `statistics_selector.geography` and the other build metadata tables name a
+  domain row by its natural key (`geography.slug`, `dataset.id`). They live in
+  `atlas-build.sqlite`, so a foreign key would cross files.
 - `crosswalk_coverage_entry.geography`: declaring it needs a `geography` parent
   row in every fixture that builds a crosswalk, which touches about fourteen
   tests for no change in behaviour.
