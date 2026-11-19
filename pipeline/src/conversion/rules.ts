@@ -132,6 +132,8 @@ const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
 		"Computed from each area's mortality and health by age. Those are not held, so areas cannot be combined.",
 	majority:
 		"The lead of the winning candidate over the runner-up in one contest. It has no meaning for other areas.",
+	"party-vote-share-change":
+		"A difference between two elections' vote shares. The valid votes behind each are not held beside it.",
 };
 
 const summable = (measure: Pick<MeasureRow, "statistic" | "aggregation">) =>
