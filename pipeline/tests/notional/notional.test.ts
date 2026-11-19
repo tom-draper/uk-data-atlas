@@ -9,7 +9,7 @@ import {
 	type Piece,
 } from "../../src/notional/estimate.ts";
 import {
-	isShareAlikeLocal,
+	shareAlikeLocal,
 	type NotionalInputs,
 } from "../../src/notional/inputs.ts";
 import { parseScottishLocal } from "../../src/notional/scotland.ts";
@@ -149,9 +149,9 @@ test("sums Scottish first preferences by party and skips other nations", () => {
 	});
 });
 
-test("local results from 2016 to 2019 are share-alike", () => {
-	assert.equal(isShareAlikeLocal("2015-05-07"), false);
-	assert.equal(isShareAlikeLocal("2016-05-05"), true);
-	assert.equal(isShareAlikeLocal("2019-05-02"), true);
-	assert.equal(isShareAlikeLocal("2021-05-06"), false);
+test("local results from 2016 to 2019 carry a share-alike licence", () => {
+	assert.equal(shareAlikeLocal("2015-05-07"), undefined);
+	assert.equal(shareAlikeLocal("2016-05-05"), "cc-by-sa-3.0");
+	assert.equal(shareAlikeLocal("2019-05-02"), "cc-by-sa-3.0");
+	assert.equal(shareAlikeLocal("2021-05-06"), undefined);
 });

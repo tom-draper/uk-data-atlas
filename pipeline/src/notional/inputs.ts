@@ -27,8 +27,11 @@ export type LocalSource = {
 	release: string;
 	wards: Map<string, Votes>;
 	keys: string[];
-	/** Under CC BY-SA, so anything built from it must be too. */
-	shareAlike: boolean;
+	/**
+	 * The share-alike licence (`MODULE_LICENCES` id) the results are under, so
+	 * that anything built from them must be under too. Absent when none is.
+	 */
+	shareAlike?: string;
 };
 
 export type NotionalInputs = {
@@ -62,18 +65,18 @@ export const CENSUS_DATASETS = [
 ] as const;
 
 /**
- * Whether local results polled on this day are under a share-alike licence,
+ * The share-alike licence local results polled on this day are under, if any,
  * by the date ranges of the licensed-rows modules that take local elections.
  */
-export const isShareAlikeLocal = (period: string) =>
-	DATASET_SPLIT_MODULES.some(
+export const shareAlikeLocal = (period: string) =>
+	DATASET_SPLIT_MODULES.find(
 		(split) =>
 			split.holds === "licensed-rows" &&
 			(split.datasets as readonly string[]).includes("local-election") &&
 			split.electionDates !== undefined &&
 			period >= split.electionDates.from &&
 			period <= split.electionDates.to,
-	);
+	)?.licence;
 
 type ValueRow = { key: string; code: string; period: string; value: number };
 
@@ -140,7 +143,7 @@ export const readNotionalInputs = (root: string): NotionalInputs => {
 				release,
 				wards: new Map(),
 				keys: [],
-				shareAlike: isShareAlikeLocal(row.period),
+				shareAlike: shareAlikeLocal(row.period),
 			}));
 			group<Votes>(source.wards, row.code, () => ({}))[party(row.key)] =
 				row.value;
