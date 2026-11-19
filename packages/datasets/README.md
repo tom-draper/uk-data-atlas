@@ -11,13 +11,14 @@ its `sideEffects: false` declaration allows bundlers to remove unused modules. T
 `@uk-data-atlas/datasets/types` entry preserves the narrower types barrel used
 by the website, including its geometry helpers.
 
-`compileDatasetContents(definition, reader)` compiles a definition using a
-caller-supplied `DatasetReader`. The caller reads files and passes their
-contents through that reader. The package does not import Node APIs or read
-files. Callers own caches, worker pools, validation and output writing.
+Each declaration's `statistics.direct.read(reader)` reads its sources into
+statistics rows through a caller-supplied `DatasetReader`. The caller reads
+files and passes their contents through that reader. The package does not
+import Node APIs or read files. Callers own caches, worker pools, validation
+and output writing.
 
-`pnpm data:build --only datasets` (`pipeline/src/stages/compile-datasets.ts`) compiles every
-definition once into `data/build/datasets/`, with the cache and worker pool in
+`pnpm data:build --only datasets` (`pipeline/src/stages/compile-datasets.ts`) reads every
+definition once into the dataset manifest in `data/build/datasets/`, with the cache and worker pool in
 `pipeline/src/precompile/`. The website precompile reads these intermediates to cut
 regional chunks. The `atlas-sqlite` stage stores the catalogue payloads in
 `data/build/atlas.sqlite` for both servers to read. See `data/build/README.md`.
