@@ -7,6 +7,7 @@ import { Agent, createServer, request } from "node:http";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { buildMetadataPathOf } from "@uk-data-atlas/atlas-db";
 import { test, beforeAll, afterAll, type TestContext } from "vitest";
 import { setTimeout as delay } from "node:timers/promises";
 import { build } from "esbuild";
@@ -19,10 +20,13 @@ beforeAll(async () => {
 	mkdirSync(data, { recursive: true });
 	const canonicalPath = join(data, "atlas.sqlite");
 	const canonical = new DatabaseSync(canonicalPath);
-	canonical.exec(
-		"CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT)",
-	);
+	canonical.exec("CREATE TABLE dataset (slug TEXT)");
 	canonical.close();
+	const buildDatabase = new DatabaseSync(buildMetadataPathOf(canonicalPath));
+	buildDatabase.exec(
+		"CREATE TABLE dataset_build (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT)",
+	);
+	buildDatabase.close();
 	const hash = `sha256:${createHash("sha256").update(readFileSync(canonicalPath)).digest("hex")}`;
 	const cache = new DatabaseSync(join(data, "atlas-cache.sqlite"));
 	cache.exec(

@@ -306,11 +306,15 @@ test("dataset metadata references exact payloads and corrupt inputs preserve the
 				.get(),
 			undefined,
 		);
-		const row = database
+		const build = new DatabaseSync(buildMetadataPathOf(path), {
+			readOnly: true,
+		});
+		const row = build
 			.prepare(
-				"SELECT compiled_type, slug, fingerprint, compiled_sha256, compiled_bytes, payload_id FROM dataset",
+				"SELECT compiled_type, slug, fingerprint, compiled_sha256, compiled_bytes, payload_id FROM dataset_build",
 			)
 			.get()!;
+		build.close();
 		assert.deepEqual(
 			{ ...row },
 			{

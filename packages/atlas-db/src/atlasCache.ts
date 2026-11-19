@@ -19,8 +19,8 @@ export type CacheComponent =
  */
 export const CACHE_VERSION = 4;
 /**
- * What each component is built from. `query:` runs on the database, `build:`
- * on its build metadata file, and `payload:` reads a payload document there.
+ * What each component is built from. `build:` runs on the database's build
+ * metadata file, and `payload:` reads a payload document there.
  */
 const dependencies: Record<CacheComponent, string[]> = {
 	"area-search": ["build:SELECT content_hash FROM area_inventory_metadata"],
@@ -36,7 +36,7 @@ const dependencies: Record<CacheComponent, string[]> = {
 	],
 	"postcode-counts": ["payload:postcode-index", "payload:postcode-areas"],
 	datasets: [
-		"query:SELECT slug, compiled_sha256 FROM dataset WHERE compiled_type IS NOT NULL ORDER BY slug",
+		"build:SELECT slug, compiled_sha256 FROM dataset_build WHERE compiled_type IS NOT NULL ORDER BY slug",
 	],
 };
 
@@ -63,15 +63,9 @@ export function cacheGeneration(
 	component: CacheComponent,
 	canonicalPath = join(root, "data/build/atlas.sqlite"),
 ): string {
-	const database = openReadOnlyDatabase(canonicalPath, { fresh: true });
 	const build = openBuildMetadata(canonicalPath, { fresh: true });
 	try {
 		const inputs = dependencies[component].map((dependency) => {
-			if (dependency.startsWith("query:"))
-				return database
-					.prepare(dependency.slice(6))
-					.all()
-					.map((row) => Object.values(row));
 			if (dependency.startsWith("build:"))
 				return build
 					.prepare(dependency.slice(6))
@@ -97,7 +91,6 @@ export function cacheGeneration(
 			.digest("hex");
 	} finally {
 		build.release();
-		database.release();
 	}
 }
 

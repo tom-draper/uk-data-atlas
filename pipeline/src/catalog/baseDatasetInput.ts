@@ -4,15 +4,20 @@ import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import {
 	atlasCacheFile,
+	openBuildMetadata,
 	openReadOnlyDatabase,
 	readBuildPayload,
 } from "@uk-data-atlas/atlas-db";
-import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
+import {
+	compiledDatasetTypes,
+	rebuildDatasetPayload,
+} from "@uk-data-atlas/catalogue/node";
 
 /** Rebuild a catalogue input from the base database and its matching cache. */
 export function readBaseDatasetInput(root: string, output: string): string {
 	const basePath = join(root, "data/build/atlas-base.sqlite");
 	const db = openReadOnlyDatabase(basePath);
+	const build = openBuildMetadata(basePath);
 	try {
 		if (output === "dataset-manifest") {
 			const text = readBuildPayload(basePath, output);
@@ -22,9 +27,9 @@ export function readBaseDatasetInput(root: string, output: string): string {
 				);
 			return text;
 		}
-		const row = db
+		const row = build
 			.prepare(
-				"SELECT compiled_type, compiled_sha256, payload_id FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
+				"SELECT compiled_type, compiled_sha256, payload_id FROM dataset_build WHERE slug = ? AND compiled_type IS NOT NULL",
 			)
 			.get(output);
 		if (!row || typeof row.compiled_type !== "string")
@@ -62,7 +67,12 @@ export function readBaseDatasetInput(root: string, output: string): string {
 				cache.release();
 			}
 		}
-		text ??= rebuildDatasetPayload(db, row.compiled_type, output);
+		text ??= rebuildDatasetPayload(
+			db,
+			row.compiled_type,
+			output,
+			compiledDatasetTypes(build),
+		);
 		if (output !== "local-election" && output !== "road-collisions")
 			return text;
 		const parts = JSON.parse(text) as Record<
@@ -107,6 +117,7 @@ export function readBaseDatasetInput(root: string, output: string): string {
 		}
 		return JSON.stringify(parts);
 	} finally {
+		build.release();
 		db.release();
 	}
 }

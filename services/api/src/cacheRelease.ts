@@ -1,7 +1,10 @@
 import { createHash } from "node:crypto";
 import { closeSync, openSync, readSync } from "node:fs";
 import { join } from "node:path";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 
 export function validateCacheRelease(root: string): void {
 	const canonical = join(root, "data/build/atlas.sqlite");
@@ -33,17 +36,15 @@ export function validateCacheRelease(root: string): void {
 			throw new Error(
 				`release mismatch: cache references ${String(stamped)}, atlas.sqlite is ${actual}`,
 			);
-		const canonicalDatabase = openReadOnlyDatabase(canonical, {
-			fresh: true,
-		});
+		const build = openBuildMetadata(canonical, { fresh: true });
 		const cacheDatabase = openReadOnlyDatabase(cachePath, { fresh: true });
 		try {
 			const payload = cacheDatabase.prepare(
 				"SELECT 1 FROM dataset_payload WHERE output = ? AND source_sha256 = ? AND gzip IS NOT NULL",
 			);
-			for (const dataset of canonicalDatabase
+			for (const dataset of build
 				.prepare(
-					"SELECT slug AS output, compiled_sha256 AS sha256 FROM dataset WHERE compiled_type IS NOT NULL AND payload_id IS NULL",
+					"SELECT slug AS output, compiled_sha256 AS sha256 FROM dataset_build WHERE compiled_type IS NOT NULL AND payload_id IS NULL",
 				)
 				.all()) {
 				if (!payload.get(dataset.output, dataset.sha256))
@@ -53,7 +54,7 @@ export function validateCacheRelease(root: string): void {
 			}
 		} finally {
 			cacheDatabase.release();
-			canonicalDatabase.release();
+			build.release();
 		}
 	} catch (cause) {
 		throw new Error(
