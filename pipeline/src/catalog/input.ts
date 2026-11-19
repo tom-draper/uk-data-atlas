@@ -1,16 +1,15 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { readBaseDatasetInput } from "./baseDatasetInput.ts";
 
 export class AtlasDatasetInput {
 	readonly repositoryRoot: string;
 	readonly output: string;
-	readonly source: "datasets" | "atlas" | "rows";
+	readonly source: "atlas" | "rows";
 	constructor(
 		repositoryRoot: string,
 		output: string,
-		source: "datasets" | "atlas" | "rows" = "datasets",
+		source: "atlas" | "rows",
 	) {
 		this.repositoryRoot = repositoryRoot;
 		this.output = output;
@@ -19,28 +18,17 @@ export class AtlasDatasetInput {
 	read() {
 		if (this.source === "rows")
 			return readBaseDatasetInput(this.repositoryRoot, this.output);
-		if (this.source === "atlas")
-			return readAtlasPayload(
-				this.repositoryRoot,
-				this.output === "dataset-manifest"
-					? this.output
-					: `dataset:${this.output}`,
-			);
-		return readFileSync(
-			join(
-				this.repositoryRoot,
-				"data/build/datasets",
-				`${this.output}.json`,
-			),
-			"utf8",
+		return readAtlasPayload(
+			this.repositoryRoot,
+			this.output === "dataset-manifest"
+				? this.output
+				: `dataset:${this.output}`,
 		);
 	}
 	toString() {
 		if (this.source === "rows")
 			return `data/build/atlas-base.sqlite:${this.output}`;
-		return this.source === "atlas"
-			? `data/build/atlas.sqlite:${this.output}`
-			: `data/build/datasets/${this.output}.json`;
+		return `data/build/atlas.sqlite:${this.output}`;
 	}
 }
 
