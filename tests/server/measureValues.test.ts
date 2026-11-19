@@ -15,6 +15,7 @@ import { createMeasureFixture } from "../helpers/measureFixture";
 import {
 	dimensionCatalogue,
 	identityDimensions,
+	measureSeriesKey,
 	measureSeriesSourceKey,
 	registerSeriesObservations,
 } from "@uk-data-atlas/measures";
@@ -87,6 +88,7 @@ describe("measure values", () => {
 		for (const period of result.periods) {
 			const records = observationsFor("population", source, period, {
 				measureObservations: fixture.context.measureObservations,
+				seriesKey: measureSeriesKey({ measure: "population" }),
 			})!.records.filter(isNumericObservation);
 			const expected = new Map(
 				records.map((record) => [record.areaCode, record.value]),

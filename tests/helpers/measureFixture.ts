@@ -12,6 +12,7 @@ import {
 	lazySourceObservations,
 	measureSeriesSourceKey,
 	measureSeriesKey,
+	registerSeriesObservations,
 	type MeasureDimensions,
 	type MeasureSeriesIdentity,
 	type MeasureValuesContext,
@@ -467,25 +468,32 @@ export const createMeasureFixture = (): {
 	};
 	const cache = new ObservationCache();
 	cache.bindCatalogue(path, catalog, readPath);
+	const bySeriesSource = new Map<
+		string,
+		ReturnType<typeof lazySourceObservations>
+	>();
+	const measureObservations = catalog.measures.map((entry) => {
+		const identity = seriesIds[entry.id]!;
+		const source = entry.sources[0]!;
+		const view = lazySourceObservations(
+			path,
+			measureSeriesSourceKey(identity, source),
+			entry.id,
+			source.sourceGeography,
+			cache,
+			measureSeriesKey(identity),
+		);
+		bySeriesSource.set(measureSeriesSourceKey(identity, source), view);
+		return view;
+	});
+	registerSeriesObservations(measureObservations, bySeriesSource);
 	return {
 		path,
 		catalog,
 		context: {
 			dataCatalog: catalog,
 			measureDimensions,
-			measureObservations: catalog.measures.map((entry) =>
-				lazySourceObservations(
-					path,
-					measureSeriesSourceKey(
-						seriesIds[entry.id]!,
-						entry.sources[0]!,
-					),
-					entry.id,
-					entry.sources[0]!.sourceGeography,
-					cache,
-					measureSeriesKey(seriesIds[entry.id]!),
-				),
-			),
+			measureObservations,
 		},
 	};
 };
