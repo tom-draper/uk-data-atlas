@@ -326,9 +326,7 @@ both at request time (see "What `atlas.sqlite` keeps" in `data/build/README.md`)
 so neither is build-only output. The sold core excludes `crosswalk_edge_check`; assemble the optional `crosswalk-checks` module with core to restore it for API responses.
 
 The deprecated read-only views for legacy table names and camelCase columns
-are no longer written (see `data/build/README.md`). No reader used them. The
-`area_release` and `payloads` tables remain unchanged pending the related
-branch work.
+are no longer written (see `data/build/README.md`). No reader used them.
 
 ## STRICT tables
 
@@ -337,8 +335,38 @@ virtual tables and their shadow tables are managed by SQLite and cannot be
 declared STRICT. The internal place index uses `ANY` for packed labels because
 the writer stores either a binary posting list or JSON text. The postcode area
 layout marker is unchanged: STRICT adds type enforcement without changing the
-columns or how readers interpret existing files. Existing internal cache
-bookkeeping tables are not migrated; rebuilding a cache is a separate operation.
+columns or how readers interpret existing files. The cache's `meta`,
+`payloads` and `cache_generation` tables are STRICT too: the cache is always
+written whole, so nothing is copied forward from an older file.
+
+## Naming and separation conventions
+
+Every database in `data/build` follows these rules (#713):
+
+- Tables are STRICT, except FTS5 virtual and shadow tables.
+- Table, view and column names are snake_case, and table names are singular
+  (`area_release`, not `area_releases`).
+- A reference to another table is a declared foreign key. `area_release.geography`
+  references `geography(slug)`; `area` and the release tables use integer ids.
+- Domain tables hold data, not build metadata (artifact paths, content hashes,
+  byte counts), and the canonical file holds no payload blobs.
+
+`pipeline/src/storage/schemaConventions.ts` checks the rules and
+`pipeline/tests/built/schemaConventions.test.ts` runs it on each built file.
+The test carries one allowlist of what still breaks the rules, so the list
+shrinks as work lands and an entry that stops matching fails the test. Today it
+holds:
+
+- The postcode tables (`postcodes`, `postcode_area_matches`,
+  `postcode_area_releases`, `postcode_area_set`, `postcode_area_shard_hash`,
+  `postcode_counts`) still use camelCase and plural names. The wide tables name
+  a column per boundary release, so renaming them changes the layout marker.
+- Build metadata in `area_release`, `crosswalk`, `dataset`,
+  `boundary_registry`, `postcode_area_shard_hash` and the `statistics_selector*`
+  tables.
+- The `payloads` table, which the API reads at request time, so moving it is a
+  change to the runtime readers and the cache generation hash, not only to the
+  writer.
 
 ### Area locations
 
