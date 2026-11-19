@@ -28,6 +28,7 @@ import { crosswalkWeightsPath } from "../crosswalk-weights/paths.ts";
 import { convertedSeriesPath } from "../conversion/paths.ts";
 import { copyConvertedSeries } from "../conversion/storeConverted.ts";
 import { copyNotionalSeries } from "../notional/copyNotional.ts";
+import { copyLocalNotionalSeries } from "../notional/local/copyLocalNotional.ts";
 import { copyNotionalMetrics } from "../notional/notionalMetrics.ts";
 import { notionalPath } from "../notional/store.ts";
 import type { PostcodeAreasArtifact } from "@uk-data-atlas/geography";
@@ -233,6 +234,7 @@ export function assembleAtlas(
 			if (notionalElections) {
 				copyNotionalSeries(database, ids);
 				copyNotionalMetrics(database, ids);
+				copyLocalNotionalSeries(database, ids);
 			}
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
