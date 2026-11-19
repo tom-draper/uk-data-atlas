@@ -21,4 +21,5 @@ export * from "./crosswalkArtifacts.ts";
 export * from "./searchTable.ts";
 export * from "./schemaTables.ts";
 export * from "./areaChangeEvents.ts";
+export * from "./defaultObservation.ts";
 export * from "./areaChangeClassifier.ts";
