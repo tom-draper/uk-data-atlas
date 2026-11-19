@@ -14,6 +14,7 @@ import {
 	baseline,
 	DEFAULT_OPTIONS,
 	mainMethod,
+	OPEN_BOUND_FACTOR,
 	partition,
 	type MainOptions,
 } from "../notional/estimate.ts";
@@ -40,6 +41,7 @@ const LABELS: Record<string, string> = {
 	"local-only": "Local results, seat average where missing",
 	"local-ukip": "Plus UKIP for the Brexit Party",
 	modelled: "Plus census model and adult raking (main)",
+	open: "Main, without CC BY-SA local results",
 };
 
 const VARIANTS: [string, MainOptions][] = [
@@ -59,7 +61,8 @@ if (isMainModule(import.meta.url)) {
 	const source =
 		typeof values.source === "string" ? resolve(values.source) : root;
 	const inputs = readNotionalInputs(source);
-	const parts = partition(inputs, readCovariates(inputs));
+	const covariates = readCovariates(inputs);
+	const parts = partition(inputs, covariates);
 	buildLog.info(
 		`${formatCount(parts.pieces.length)} pieces from ${formatCount(parts.units.length)} local contests; ${formatCount(parts.changed.size)} seats changed`,
 	);
@@ -67,12 +70,21 @@ if (isMainModule(import.meta.url)) {
 		typeof values.benchmark === "string"
 			? readBenchmark(resolve(values.benchmark))
 			: undefined;
+	const open = {
+		...inputs,
+		local: inputs.local.filter((source) => !source.shareAlike),
+	};
 	const methods: StoredMethod[] = [
 		{ method: "baseline", estimate: baseline(inputs, parts) },
 		...VARIANTS.map(([method, options]) => ({
 			method,
 			estimate: mainMethod(inputs, parts, options),
 		})),
+		{
+			method: "open",
+			estimate: mainMethod(open, partition(open, covariates)),
+			boundFactor: OPEN_BOUND_FACTOR,
+		},
 	];
 	for (const method of methods) {
 		if (!benchmark) continue;

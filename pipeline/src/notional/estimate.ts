@@ -22,6 +22,12 @@ import {
  * changed seats fell within it (in sample).
  */
 export const BOUND_FACTOR = 0.32;
+/**
+ * The same for the estimate without share-alike local results, which has
+ * fewer local contests to go on. Chosen to give it the coverage the main
+ * method has at `BOUND_FACTOR`, in sample.
+ */
+export const OPEN_BOUND_FACTOR = 0.38;
 
 export const GENERAL_PARTIES = [
 	"con",

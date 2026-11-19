@@ -96,6 +96,8 @@ export type StoredMethod = {
 	method: string;
 	estimate: Estimate;
 	score?: Score;
+	/** Defaults to `BOUND_FACTOR`. */
+	boundFactor?: number;
 };
 
 const pp = (value: number) => value.toFixed(2);
@@ -229,7 +231,12 @@ export const writeNotional = (
 			`INSERT INTO notional_seat_score (method, seat, error, worst_party, worst_error, winner, benchmark_winner, changed)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		);
-		for (const { method, estimate: result, score } of methods) {
+		for (const {
+			method,
+			estimate: result,
+			score,
+			boundFactor = BOUND_FACTOR,
+		} of methods) {
 			for (const seat of result.seats.values()) {
 				const status = parts.changed.has(seat.code)
 					? "estimated"
@@ -243,8 +250,8 @@ export const writeNotional = (
 						party,
 						GENERAL_DAY,
 						value,
-						Math.max(0, value - BOUND_FACTOR * risk),
-						value + BOUND_FACTOR * risk,
+						Math.max(0, value - boundFactor * risk),
+						value + boundFactor * risk,
 						status,
 						risk,
 						seat.origins.join(","),
