@@ -33,7 +33,7 @@ export TypeScript source and are imported by their `@uk-data-atlas/` names.
 | `datasets`      | Declares datasets and compiles their contents.                         | `.`, `./types`                                                        |
 | `geography`     | Area codes, kinds, coordinates and geometry primitives.                | `.`                                                                   |
 | `geometry`      | Stores, loads and queries area geometry.                               | `.`                                                                   |
-| `map-tiles`     | Builds and reads boundary vector tiles and map value arrays.           | `.`, `./node`, `./featureIds`, `./mapValues`                          |
+| `map-tiles`     | Builds and reads boundary vector tiles.                                | `.`, `./node`, `./featureIds`                                         |
 | `measures`      | Measure definitions, quality, reconciliation and unit conversion.      | `.`                                                                   |
 | `places`        | Named places, the gazetteer and place membership.                      | `.`, `./gazetteer`                                                    |
 | `postcodes`     | Postcode indexes, areas and counts.                                    | `.`                                                                   |

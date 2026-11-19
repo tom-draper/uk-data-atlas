@@ -1,6 +1,6 @@
 {
 	"name": "@uk-data-atlas/map-tiles",
-	"description": "Builds and reads boundary vector tiles and map value arrays.",
+	"description": "Builds and reads boundary vector tiles.",
 	"private": true,
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
@@ -9,8 +9,7 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./node": "./src/node/index.ts",
-		"./featureIds": "./src/featureIds.ts",
-		"./mapValues": "./src/mapValues.ts"
+		"./featureIds": "./src/featureIds.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
