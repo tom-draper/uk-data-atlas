@@ -9,7 +9,9 @@ import {
 test("stores boundary source metadata and country coverage as queryable rows", () => {
 	const db = new DatabaseSync(":memory:");
 	try {
-		db.exec("PRAGMA foreign_keys = ON");
+		db.exec(
+			"PRAGMA foreign_keys = ON; CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE); INSERT INTO geography VALUES (1, 'ward')",
+		);
 		writeSqliteTables(
 			db,
 			boundaryReleaseTables({
@@ -96,6 +98,9 @@ const release = (geography: string, id: string, title = geography) => ({
 test("answers which snapshot was current on a date from release reference periods", () => {
 	const db = new DatabaseSync(":memory:");
 	try {
+		db.exec(
+			"CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE); INSERT INTO geography VALUES (1, 'la'), (2, 'zone')",
+		);
 		writeSqliteTables(
 			db,
 			boundaryReleaseTables({
