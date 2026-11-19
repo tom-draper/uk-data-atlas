@@ -81,9 +81,11 @@ test("a module file holds only the rows of its datasets", async (t) => {
 			"politics",
 			{
 				dataset: 2,
-				series: 2,
-				// The 2016 local rows are the add-on's.
-				observation: 2,
+				// Two published and two modelled, one model under each licence.
+				series: 4,
+				series_model: 2,
+				// The 2016 local rows and the share-alike model's are the add-on's.
+				observation: 3,
 				series_gap: 1,
 				area_relationship: 1,
 				election: 2,
@@ -564,7 +566,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["election", 1],
 			["contest", 1],
 			["candidacy", 1],
-			["observation", 2],
+			["observation", 4],
 			["series_gap", 1],
 			["area_relationship", 1],
 		] as const)
@@ -578,7 +580,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["election", ""],
 			["contest", ""],
 			["candidacy", ""],
-			["observation", " WHERE series_id IN (6, 7)"],
+			["observation", " WHERE series_id IN (6, 7, 8, 9)"],
 			["series_gap", " WHERE series_id = 7"],
 			["area_relationship", " WHERE dataset_id = 5"],
 		] as const)
@@ -588,18 +590,26 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 				count(atlas, `SELECT count(*) AS n FROM ${table}${where}`),
 				table,
 			);
-		// No licensed period is left in the parent, and the add-on holds only those.
+		// No licensed period is left in the parent, and the add-on holds only
+		// those, besides the share-alike model's series, in every period.
 		assert.equal(
 			count(
 				parent,
-				"SELECT count(*) AS n FROM observation WHERE series_id = 7 AND period_id = 3",
+				"SELECT count(*) AS n FROM observation WHERE (series_id = 7 AND period_id = 3) OR series_id = 8",
 			),
 			0,
 		);
 		assert.equal(
 			count(
 				addOn,
-				"SELECT count(*) AS n FROM observation WHERE period_id <> 3",
+				"SELECT count(*) AS n FROM observation WHERE period_id <> 3 AND series_id <> 8",
+			),
+			0,
+		);
+		assert.equal(
+			count(
+				addOn,
+				"SELECT count(*) AS n FROM observation WHERE series_id = 9",
 			),
 			0,
 		);
@@ -644,6 +654,28 @@ test("an add-on is not assembled without the module it adds to", async (t) => {
 	} finally {
 		assembled.close();
 	}
+});
+
+test("a module that would ship a share-alike model no add-on takes is not built", async (t) => {
+	const root = scratch(t);
+	const atlas = join(root, "atlas.sqlite");
+	writeFixtureAtlas(atlas);
+	const database = new DatabaseSync(atlas);
+	database.exec(
+		"UPDATE model SET licence_id = 'cc-by-sa-4.0' WHERE id = 'notional-sharealike'",
+	);
+	database.close();
+	mkdirSync(join(root, "release"), { recursive: true });
+	const { buildModules } = await import("../../src/modules/buildModules");
+	const { fixtureManifests } = await import("../fixtures/moduleFixtures");
+	await assert.rejects(
+		buildModules({
+			atlasPath: atlas,
+			outDir: join(root, "release"),
+			manifests: fixtureManifests(),
+		}),
+		/Module politics: modelled series are under cc-by-sa-4.0, which no add-on takes out of it/,
+	);
 });
 
 test("a module that points at another module's series is not built", async (t) => {

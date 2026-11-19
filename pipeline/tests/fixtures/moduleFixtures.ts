@@ -54,6 +54,9 @@ CREATE TABLE area_relationship (dataset_id INTEGER NOT NULL REFERENCES dataset(i
 CREATE TABLE election (id INTEGER NOT NULL PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, date TEXT NOT NULL, release_id INTEGER NOT NULL REFERENCES area_releases(id));
 CREATE TABLE contest (id INTEGER NOT NULL PRIMARY KEY, election_id INTEGER NOT NULL REFERENCES election(id), area_version_id INTEGER NOT NULL REFERENCES area_version(id), winner_party_id INTEGER REFERENCES party(id));
 CREATE TABLE candidacy (contest_id INTEGER NOT NULL REFERENCES contest(id), position INTEGER NOT NULL, family_name TEXT, PRIMARY KEY (contest_id, position)) WITHOUT ROWID;
+CREATE TABLE model (id TEXT PRIMARY KEY, label TEXT NOT NULL, licence_id TEXT, bound_factor REAL NOT NULL, about TEXT NOT NULL) STRICT;
+CREATE TABLE model_input (model_id TEXT NOT NULL REFERENCES model(id), role TEXT NOT NULL, key TEXT NOT NULL, PRIMARY KEY (model_id, role, key)) WITHOUT ROWID, STRICT;
+CREATE TABLE series_model (series_id INTEGER PRIMARY KEY REFERENCES series(id), model_id TEXT NOT NULL REFERENCES model(id)) STRICT;
 CREATE TABLE postcode_unit (id INTEGER NOT NULL PRIMARY KEY, postcode TEXT NOT NULL, area_version_id INTEGER NOT NULL REFERENCES area_version(id));
 CREATE TABLE postcodes (postcode TEXT PRIMARY KEY, latitudeMicrodegrees INTEGER, longitudeMicrodegrees INTEGER) WITHOUT ROWID;
 CREATE INDEX postcode_unit_code ON postcode_unit (postcode);
@@ -97,7 +100,7 @@ INSERT INTO dimension VALUES (1, 'sex');
 INSERT INTO dimension_member VALUES (1, 1, 'female'), (2, 1, 'male');
 INSERT INTO measure VALUES (1, 'population', 'Population'), (2, 'households', 'Households'), (3, 'income', 'Income'), (4, 'vacancies', 'Vacancies'), (5, 'vote-share', 'Vote share');
 INSERT INTO dataset VALUES (1, 'income-estimates', 'economy', 'Income', 1), (2, 'jobs', 'economy', 'Jobs', 1), (3, 'census-health', 'health', 'Health', 1), (4, 'general-elections', 'politics', 'Elections', 1), (5, 'local-election', 'politics', 'Local elections', 1);
-INSERT INTO series VALUES (1, 1, 1, 1, NULL, 's1'), (2, 1, 3, 1, NULL, 's2'), (3, 2, 4, 1, 1, 's3'), (4, 3, 1, 1, NULL, 's4'), (5, 3, 2, 1, NULL, 's5'), (6, 4, 5, 1, NULL, 's6'), (7, 5, 5, 1, NULL, 's7');
+INSERT INTO series VALUES (1, 1, 1, 1, NULL, 's1'), (2, 1, 3, 1, NULL, 's2'), (3, 2, 4, 1, 1, 's3'), (4, 3, 1, 1, NULL, 's4'), (5, 3, 2, 1, NULL, 's5'), (6, 4, 5, 1, NULL, 's6'), (7, 5, 5, 1, NULL, 's7'), (8, 4, 5, 1, 6, 's8'), (9, 4, 5, 1, 6, 's9');
 INSERT INTO series_member VALUES (4, 1, 1), (2, 1, 2);
 INSERT INTO observation VALUES
   (1, 1, 1, 100, 1, NULL, NULL), (1, 2, 1, 200, 1, NULL, NULL), (1, 3, 1, NULL, 2, NULL, NULL),
@@ -106,7 +109,12 @@ INSERT INTO observation VALUES
   (4, 1, 1, 60, 1, NULL, NULL), (4, 2, 2, 80, 1, NULL, NULL),
   (5, 1, 1, 40, 1, NULL, NULL),
   (6, 1, 1, 55, 1, NULL, NULL),
-  (7, 1, 3, 10, 1, NULL, NULL), (7, 2, 3, 12, 1, NULL, NULL), (7, 1, 4, 20, 1, NULL, NULL);
+  (7, 1, 3, 10, 1, NULL, NULL), (7, 2, 3, 12, 1, NULL, NULL), (7, 1, 4, 20, 1, NULL, NULL),
+  (8, 1, 1, 50, 1, 45, 55), (8, 2, 1, 5, 1, NULL, NULL),
+  (9, 1, 1, 52, 1, 46, 58);
+INSERT INTO model VALUES ('notional-sharealike', 'Share-alike', 'cc-by-sa-3.0', 0.32, 'About'), ('notional-open', 'Open', NULL, 0.38, 'About');
+INSERT INTO model_input VALUES ('notional-sharealike', 'local', 's7'), ('notional-open', 'general', 's6');
+INSERT INTO series_model VALUES (8, 'notional-sharealike'), (9, 'notional-open');
 INSERT INTO dataset_area_key VALUES (1, 1, 'k1'), (3, 2, 'k2');
 INSERT INTO area_identifier VALUES (1, 1, 'example', 'k1');
 INSERT INTO dataset_area_name VALUES (1, 1, 'One'), (4, 2, 'Two');
