@@ -26,6 +26,10 @@ import {
 	writeCacheTables,
 	writeStageStamp,
 } from "../../src/storage";
+import {
+	payloadTable,
+	writeBuildMetadata,
+} from "../../src/storage/buildMetadataWriter";
 
 function fixture() {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-work-"));
@@ -38,13 +42,16 @@ function fixture() {
 			"INSERT INTO area_inventory_metadata VALUES ('areas-1')",
 			"CREATE TABLE named_location_inventory_metadata (content_hash TEXT)",
 			"INSERT INTO named_location_inventory_metadata VALUES ('locations-1')",
-			"CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
-			"INSERT INTO payloads VALUES ('boundary-releases', 'releases-1')",
-			"INSERT INTO payloads VALUES ('postcode-index', 'index-1')",
-			"INSERT INTO payloads VALUES ('postcode-areas', 'areas-1')",
 		].join(";"),
 	);
 	canonical.close();
+	writeBuildMetadata(join(root, "data/build/atlas.sqlite"), {
+		payload: payloadTable([
+			["boundary-releases", "releases-1"],
+			["postcode-index", "index-1"],
+			["postcode-areas", "areas-1"],
+		]),
+	});
 	const published = join(root, "data/build/atlas-cache.sqlite");
 	const place = (name = "Leeds") =>
 		writeCacheTables(root, "place-index", {
@@ -353,11 +360,13 @@ test("a cache is refused for a part that is missing or was built for other input
 		/no current area-search/,
 	);
 	search();
-	const canonical = new DatabaseSync(join(root, "data/build/atlas.sqlite"));
-	canonical.exec(
-		"UPDATE payloads SET payload = 'releases-2' WHERE id = 'boundary-releases'",
-	);
-	canonical.close();
+	writeBuildMetadata(join(root, "data/build/atlas.sqlite"), {
+		payload: payloadTable([
+			["boundary-releases", "releases-2"],
+			["postcode-index", "index-1"],
+			["postcode-areas", "areas-1"],
+		]),
+	});
 	assert.throws(
 		() => assembleAtlasCache(root, COMPONENTS),
 		/no current place-index/,

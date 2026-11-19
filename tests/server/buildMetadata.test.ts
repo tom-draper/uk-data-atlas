@@ -1,5 +1,6 @@
 import { mkdtempSync, renameSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { DatabaseSync } from "node:sqlite";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
@@ -48,6 +49,8 @@ describe("build metadata beside a database", () => {
 
 	it("round-trips payload documents compressed and replaces atomically", () => {
 		const database = join(directory, "atlas.sqlite");
+		new DatabaseSync(database).close();
+		new DatabaseSync(join(directory, "other.sqlite")).close();
 		writeBuildMetadata(database, {
 			payload: payloadTable([["one", '{"a":1}']]),
 		});
@@ -65,8 +68,23 @@ describe("build metadata beside a database", () => {
 	});
 
 	it("names the command that builds a missing file", () => {
-		expect(() =>
-			openBuildMetadata(join(directory, "atlas.sqlite")),
-		).toThrow(/Run pnpm data:build/);
+		const database = join(directory, "atlas.sqlite");
+		expect(() => openBuildMetadata(database)).toThrow(
+			/unable to open database file .*Run pnpm data:build/,
+		);
+		new DatabaseSync(database).close();
+		expect(() => openBuildMetadata(database)).toThrow(
+			/Missing build metadata .*Run pnpm data:build/,
+		);
+	});
+
+	it("is no use without its database", () => {
+		const database = join(directory, "atlas.sqlite");
+		writeBuildMetadata(database, {
+			payload: payloadTable([["one", "{}"]]),
+		});
+		expect(() => readBuildPayload(database, "one")).toThrow(
+			/unable to open database file/,
+		);
 	});
 });

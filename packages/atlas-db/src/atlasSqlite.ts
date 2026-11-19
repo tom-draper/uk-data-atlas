@@ -3,24 +3,15 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { websiteAssetsPath } from "./dataLayout.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
-import { unpackText } from "./storedPayload.ts";
+import { readBuildPayload } from "./buildMetadata.ts";
 
-/** A payload stored in the shared compiled release, or undefined when it holds none. Connections are shared and reopen when the file is replaced. */
+/** A payload document of the shared compiled release, kept in its build metadata file, or undefined when it holds none. Connections are shared and reopen when the file is replaced. */
 export function readStoredAtlasPayload(
 	repositoryRoot: string,
 	id: string,
 	path = join(repositoryRoot, "data/build/atlas.sqlite"),
 ): string | undefined {
-	const database = openReadOnlyDatabase(path);
-	try {
-		return unpackText(
-			database
-				.prepare("SELECT payload FROM payloads WHERE id = ?")
-				.get(id)?.payload,
-		);
-	} finally {
-		database.release();
-	}
+	return readBuildPayload(path, id);
 }
 
 /** A payload stored in the shared compiled release. */

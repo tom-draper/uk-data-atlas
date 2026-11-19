@@ -27,7 +27,7 @@ const built = (
 });
 
 const builds: Record<string, ModuleBuild> = {
-	population: built(1000, 100, { observation: 5, payloads: 9 }),
+	population: built(1000, 100, { observation: 5, module_info: 9 }),
 	"population-detail": built(9000, 900, { observation: 50, series: 2 }),
 	politics: built(4000, 400, { observation: 30 }),
 	"politics-sharealike": built(1000, 100, { observation: 10 }),
@@ -38,7 +38,7 @@ const manifests = buildModuleManifests({ datasets: () => [] });
 describe("module sizes", () => {
 	const sizes = moduleSizes(builds, manifests);
 
-	it("skips modules that are not built and ignores payload rows", () => {
+	it("skips modules that are not built and ignores module info rows", () => {
 		expect(sizes.map(({ id }) => id)).not.toContain("transport");
 		const population = sizes.find(({ id }) => id === "population")!;
 		expect(population.rows).toBe(5);

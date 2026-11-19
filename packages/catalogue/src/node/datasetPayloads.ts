@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { atlasCacheFile } from "@uk-data-atlas/atlas-db";
-import { unpackText } from "@uk-data-atlas/atlas-db";
+import { readBuildPayload } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
 import type { Json } from "@uk-data-atlas/measures";
@@ -174,11 +174,7 @@ export function readDatasetPayloadWithHash(
 			.get(output);
 		if (!row) return undefined;
 		if (typeof row.payloadId === "string") {
-			const stored = unpackText(
-				database
-					.prepare("SELECT payload FROM payloads WHERE id = ?")
-					.get(row.payloadId)?.payload,
-			);
+			const stored = readBuildPayload(path, String(row.payloadId));
 			if (stored === undefined)
 				throw new Error(`Missing payload ${row.payloadId} at ${path}`);
 			return { payload: stored, sha256: String(row.sha256) };

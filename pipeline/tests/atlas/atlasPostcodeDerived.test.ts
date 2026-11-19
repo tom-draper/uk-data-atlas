@@ -16,7 +16,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test, vi, type TestContext } from "vitest";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
+import {
+	payloadTable,
+	writeBuildMetadata,
+} from "../../src/storage/buildMetadataWriter";
 import { IdRegistries, idDirectory } from "../../src/ids/idRegistries";
 import { seedIdRegistries } from "../../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
@@ -88,9 +95,7 @@ function fixture(t: TestContext) {
 	const path = join(root, "data/build/atlas.sqlite");
 	const db = new DatabaseSync(path);
 	db.exec(
-		`CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) WITHOUT ROWID;
-		INSERT INTO payloads VALUES ('existing', 'retained');
-		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
+		`CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 		INSERT INTO area_release VALUES (0, 'ward', '2026');
 		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		INSERT INTO geography VALUES (1, 'ward');
@@ -104,6 +109,9 @@ function fixture(t: TestContext) {
 		join(root, "data/build/atlas.sqlite"),
 		join(root, "data/build/atlas-base.sqlite"),
 	);
+	writeBuildMetadata(join(root, "data/build/atlas-base.sqlite"), {
+		payload: payloadTable([["existing", "retained"]]),
+	});
 	writeFileSync(join(root, "data/build/geography-payloads.json"), "[]");
 	writeFileSync(
 		join(root, "data/build/statistics-read-path.json"),
@@ -268,11 +276,13 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 	assembleAtlas(root, { crosswalkWeights: false });
 	assert.equal(readAtlasPayload(root, "existing"), "retained");
 	// Assembled payloads are stored compressed and read back as the text.
-	const assembled = new DatabaseSync(path, { readOnly: true });
+	const assembled = new DatabaseSync(buildMetadataPathOf(path), {
+		readOnly: true,
+	});
 	assert.deepEqual(
 		assembled
 			.prepare(
-				"SELECT id, typeof(payload) AS type FROM payloads WHERE id LIKE 'postcode-%' ORDER BY id",
+				"SELECT id, typeof(payload) AS type FROM payload WHERE id LIKE 'postcode-%' ORDER BY id",
 			)
 			.all()
 			.map((row) => ({ ...row })),
@@ -818,13 +828,9 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	assemble();
 	assert.deepEqual(metadata(), noGit);
 	assert.deepEqual(readFileSync(path), first);
-	const changedBase = new DatabaseSync(
-		join(root, "data/build/atlas-base.sqlite"),
-	);
-	changedBase.exec(
-		"UPDATE payloads SET payload = 'changed' WHERE id = 'existing'",
-	);
-	changedBase.close();
+	writeBuildMetadata(join(root, "data/build/atlas-base.sqlite"), {
+		payload: payloadTable([["existing", "changed"]]),
+	});
 	assemble();
 	assert.notEqual(metadata().buildId, noGit.buildId);
 

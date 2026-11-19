@@ -50,6 +50,7 @@ export const FIND_RELEASE_AREA_VERSION =
 
 export function writePostcodeAreas(
 	database: DatabaseSync,
+	build: DatabaseSync,
 	artifact: PostcodeAreasArtifact,
 	readShard: (path: string) => string,
 	registries: IdRegistries,
@@ -57,9 +58,9 @@ export function writePostcodeAreas(
 	const columns = postcodeAreaColumns(artifact);
 	const index: PostcodeIndexArtifact = JSON.parse(
 		unpackText(
-			database
+			build
 				.prepare(
-					"SELECT payload FROM payloads WHERE id = 'postcode-index'",
+					"SELECT payload FROM payload WHERE id = 'postcode-index'",
 				)
 				.get()!.payload,
 		)!,
@@ -282,6 +283,7 @@ export function writePostcodeAreas(
 		}
 		const derived = readPostcodeAreaShard(
 			database,
+			build,
 			artifact,
 			entry.path,
 			"postcode_next",

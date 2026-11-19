@@ -1,5 +1,5 @@
 import { resolve as resolveRepositoryRoot } from "node:path";
-import { atlasCachePath } from "@uk-data-atlas/atlas-db";
+import { atlasCachePath, buildMetadataPathOf } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { AreaSearch } from "@uk-data-atlas/areas";
 import { readAreaLookup } from "@uk-data-atlas/areas";
@@ -24,7 +24,7 @@ import {
 	namedLocationInventory,
 } from "./geographyFixtures";
 import { createHash } from "node:crypto";
-import { unpackText } from "@uk-data-atlas/atlas-db";
+import { packText, unpackText } from "@uk-data-atlas/atlas-db";
 import assert from "node:assert/strict";
 import {
 	existsSync,
@@ -101,6 +101,10 @@ const fixture = (context: TestContext) => {
 	);
 	mkdirSync(join(root, "data/build/datasets"), { recursive: true });
 	symlinkSync("atlas-base.sqlite", join(root, "data/build/atlas.sqlite"));
+	symlinkSync(
+		"atlas-base-build.sqlite",
+		join(root, "data/build/atlas-build.sqlite"),
+	);
 	writeFileSync(
 		join(root, "data/build/datasets/dataset-manifest.json"),
 		JSON.stringify({ version: 1, datasets: [] }),
@@ -136,18 +140,20 @@ test("SQLite terrain loader and every discovery response match the JSON loader b
 	assert.equal(before.products.length, 6);
 	const path = buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(path, join(root, "data/build/atlas-base.sqlite"));
-	const database = new DatabaseSync(path, { readOnly: true });
+	const database = new DatabaseSync(buildMetadataPathOf(path), {
+		readOnly: true,
+	});
 	try {
 		assert.deepEqual(
 			database
-				.prepare("SELECT id FROM payloads")
+				.prepare("SELECT id FROM payload")
 				.all()
 				.map((row) => row.id),
 			["dataset-manifest", "terrain-catalogue"],
 		);
 		const stored = database
 			.prepare(
-				"SELECT typeof(payload) AS type, payload FROM payloads WHERE id = 'terrain-catalogue'",
+				"SELECT typeof(payload) AS type, payload FROM payload WHERE id = 'terrain-catalogue'",
 			)
 			.get();
 		// Payloads are stored compressed and read back as the original text.
@@ -211,9 +217,9 @@ test("the base builder does not publish atlas.sqlite", (context) => {
 test("terrain loader refuses missing and invalid SQLite payloads", (context) => {
 	const { root, apiRoot } = fixture(context);
 	const path = buildAtlasSqlite(root, { censusTables: [] });
-	const database = new DatabaseSync(path);
+	const database = new DatabaseSync(buildMetadataPathOf(path));
 	try {
-		database.prepare("DELETE FROM payloads").run();
+		database.prepare("DELETE FROM payload").run();
 		assert.throws(
 			() => readTerrainCatalogue(root),
 			/Missing terrain catalogue/,
@@ -224,8 +230,8 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 			"invalid json",
 		]) {
 			database
-				.prepare("INSERT OR REPLACE INTO payloads VALUES (?, ?)")
-				.run("terrain-catalogue", Buffer.from(payload));
+				.prepare("INSERT OR REPLACE INTO payload VALUES (?, ?)")
+				.run("terrain-catalogue", packText(payload));
 			assert.throws(() => readTerrainCatalogue(root));
 		}
 	} finally {
@@ -236,8 +242,8 @@ test("terrain loader refuses missing and invalid SQLite payloads", (context) => 
 test("rebuilding SQLite replaces the payload and a missing input preserves the last build", (context) => {
 	const { root, apiRoot } = fixture(context);
 	const path = buildAtlasSqlite(root, { censusTables: [] });
-	const database = new DatabaseSync(path);
-	database.prepare("UPDATE payloads SET payload = ?").run(Buffer.from("{}"));
+	const database = new DatabaseSync(buildMetadataPathOf(path));
+	database.prepare("UPDATE payload SET payload = x'00'").run();
 	database.close();
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.equal(readTerrainCatalogue(root).products.length, 6);

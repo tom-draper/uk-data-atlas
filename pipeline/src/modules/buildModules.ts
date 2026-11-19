@@ -17,7 +17,6 @@ import {
 	DENOMINATOR_MEASURES,
 	LICENSED_ROW_TABLES,
 	MODULE_INFO_TABLE,
-	POSTCODE_PAYLOADS,
 	classifyViews,
 	readSchema,
 	tableOwner,
@@ -393,14 +392,6 @@ export const buildModuleDatabase = (
 				for (const row of schema)
 					if (row.type === "table" && keep(row.name))
 						copyTable(database, row.name);
-				database.exec(
-					`CREATE TABLE payloads (id TEXT NOT NULL, payload BLOB NOT NULL, PRIMARY KEY (id)) STRICT, WITHOUT ROWID`,
-				);
-				copyTable(
-					database,
-					"payloads",
-					`id IN (${POSTCODE_PAYLOADS.map(literal).join(", ")})`,
-				);
 			} else {
 				markOwned(database, manifest.id);
 				const addOn = addOnOf(manifest.id);
@@ -434,8 +425,6 @@ export const buildModuleDatabase = (
 		manifest.id === "crosswalk-checks",
 	);
 
-const isPostcodePayload = `id IN (${POSTCODE_PAYLOADS.map(literal).join(", ")})`;
-
 /** Builds the core file: foundation tables, the module catalogue and denominators. */
 export const buildCoreDatabase = (
 	atlasPath: string,
@@ -452,13 +441,11 @@ export const buildCoreDatabase = (
 				copyTable(
 					database,
 					row.name,
-					row.name === "payloads"
-						? `NOT (${isPostcodePayload})`
-						: row.name === "schema_table"
-							? "name != 'crosswalk_edge_check'"
-							: row.name === "schema_column"
-								? "table_name != 'crosswalk_edge_check'"
-								: undefined,
+					row.name === "schema_table"
+						? "name != 'crosswalk_edge_check'"
+						: row.name === "schema_column"
+							? "table_name != 'crosswalk_edge_check'"
+							: undefined,
 				);
 		const views = classifyViews(schema);
 		for (const view of views.core) database.exec(view.sql);
@@ -566,7 +553,6 @@ export const buildModules = async ({
 			rmSync(join(outDir, folder), { recursive: true, force: true });
 			const tables = Object.keys(rows).filter(
 				(table) =>
-					table !== "payloads" &&
 					table !== MODULE_INFO_TABLE &&
 					(manifest.id !== "core" || tableOwner(table) === "core"),
 			);

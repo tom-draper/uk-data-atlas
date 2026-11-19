@@ -184,11 +184,6 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 		])
 			assert.ok(!tables.includes(name), `${name} should not be in core`);
 		assert.equal(
-			count(core, "SELECT count(*) AS n FROM payloads"),
-			1,
-			"postcode payloads belong to the postcodes module",
-		);
-		assert.equal(
 			count(
 				core,
 				"SELECT count(*) AS n FROM schema_table WHERE name = 'crosswalk_edge_check'",
@@ -315,7 +310,6 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 			"SELECT count(*) AS n FROM contest",
 			"SELECT count(*) AS n FROM election",
 			"SELECT count(*) AS n FROM postcode_unit",
-			"SELECT count(*) AS n FROM payloads",
 			"SELECT total AS n FROM observation_totals WHERE measure = 'population'",
 		])
 			assert.equal(count(assembled, sql), count(atlas, sql), sql);

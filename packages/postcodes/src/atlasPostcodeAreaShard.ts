@@ -79,6 +79,7 @@ export function distanceFallbacks(database: SqlReader) {
 
 export function readPostcodeAreaShard(
 	database: SqlReader,
+	build: SqlReader,
 	artifact: PostcodeAreasArtifact,
 	path: string,
 	table = "postcode",
@@ -88,9 +89,9 @@ export function readPostcodeAreaShard(
 	if (!entry) throw new Error(`Missing postcode area shard ${path}`);
 	const index: PostcodeIndexArtifact = JSON.parse(
 		unpackText(
-			database
+			build
 				.prepare(
-					"SELECT payload FROM payloads WHERE id = 'postcode-index'",
+					"SELECT payload FROM payload WHERE id = 'postcode-index'",
 				)
 				.get()!.payload,
 		)!,

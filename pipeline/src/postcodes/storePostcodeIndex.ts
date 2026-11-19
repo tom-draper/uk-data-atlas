@@ -1,7 +1,11 @@
 import { renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { postcodeTables } from "../storage/index.ts";
+import {
+	payloadTable,
+	postcodeTables,
+	writeBuildMetadata,
+} from "../storage/index.ts";
 import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
@@ -19,23 +23,18 @@ export const storePostcodeIndex = (
 		rmSync(temporary, { force: true });
 		const database = new DatabaseSync(temporary);
 		try {
-			database.exec(
-				"BEGIN; CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT NOT NULL) STRICT, WITHOUT ROWID;",
-			);
+			database.exec("BEGIN");
 			writeSqliteTables(database, postcodeTables(artifact, readShard));
-			database
-				.prepare(
-					"INSERT OR REPLACE INTO payloads (id, payload) VALUES (?, ?)",
-				)
-				.run(
-					"postcode-index",
-					`${JSON.stringify(artifact, null, "\t")}\n`,
-				);
 			database.exec("COMMIT");
 		} finally {
 			database.close();
 		}
 		renameSync(temporary, path);
+		writeBuildMetadata(path, {
+			payload: payloadTable([
+				["postcode-index", `${JSON.stringify(artifact, null, "\t")}\n`],
+			]),
+		});
 	} finally {
 		rmSync(temporary, { force: true });
 	}

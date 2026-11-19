@@ -162,10 +162,9 @@ export const assembleModules = async ({
 				for (const row of readSchema(database, "part")) {
 					if (row.type === "table") {
 						if (
-							row.name === "payloads" ||
-							(id === "crosswalk-checks" &&
-								(row.name === "schema_table" ||
-									row.name === "schema_column"))
+							id === "crosswalk-checks" &&
+							(row.name === "schema_table" ||
+								row.name === "schema_column")
 						) {
 							database.exec(
 								`INSERT INTO main.${quote(row.name)} SELECT * FROM part.${quote(row.name)}`,

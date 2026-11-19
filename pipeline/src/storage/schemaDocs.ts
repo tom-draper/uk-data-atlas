@@ -380,7 +380,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			compiled_sha256: "Internal: hash of the compiled payload.",
 			compiled_bytes: "Internal: size of the compiled payload in bytes.",
 			payload_id:
-				"Internal: payloads.id if the payload is stored whole, else null.",
+				"Internal: the id of the payload document in atlas-build.sqlite if it is stored whole, else null.",
 		},
 	},
 	unit: {
@@ -1415,12 +1415,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"File settings and provenance: schemaVersion matches PRAGMA user_version. buildId hashes the assembled work file and provenance; buildTimestamp is present only when SOURCE_DATE_EPOCH is supplied. gitCommit and gitDirty are present when Git is available; gitDirty includes non-ignored untracked files. dataRelease is present when data-release.json exists. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
 		columns: { key: "Setting name.", value: "Setting value." },
-	},
-	payloads: {
-		audience: "internal",
-		description:
-			"Brotli-compressed JSON documents the API and website load whole, such as the boundary release list. Not readable in plain SQL.",
-		columns: {},
 	},
 	statistics_read_path: {
 		audience: "internal",

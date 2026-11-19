@@ -136,9 +136,6 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 /** Postcode tables share this prefix. */
 export const POSTCODE_TABLE = /^postcode/;
 
-/** Payload rows that belong to the `postcodes` module, not to core. */
-export const POSTCODE_PAYLOADS = ["postcode-index", "postcode-areas"] as const;
-
 /**
  * Measures whose totals are copied into core, so a rate can be rebuilt from a
  * module and a denominator without a second module (docs/data-organisation.md,
