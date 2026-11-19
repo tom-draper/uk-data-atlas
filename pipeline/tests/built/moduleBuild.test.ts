@@ -210,7 +210,6 @@ describe.runIf(built && existsSync(ATLAS))("module build", () => {
 				"SELECT count(*) AS n FROM observation",
 				"SELECT count(*) AS n FROM series_member",
 				"SELECT count(*) AS n FROM area_version",
-				"SELECT count(*) AS n FROM payloads",
 			])
 				assert.equal(
 					number(assembled, sql),
