@@ -311,6 +311,45 @@ The module build moves the observations of a model under a split's licence
 into that split's add-on, in every period. It refuses to build a module that
 would ship a share-alike model no add-on takes.
 
+## Metrics
+
+`assemble-atlas` also derives, per model, election metrics on the 2024 seats
+(`notionalMetrics.ts`):
+
+| Measure                   | Period       | Key                                                                                                                        |
+| ------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `valid-votes`             | `2019-12-12` | `general-election/valid-votes/constituency:2019-12-uk-bgc~notional-open:constituency:2024-07-uk-bgc`                       |
+| `majority`                | `2019-12-12` | `general-election/majority/constituency:2019-12-uk-bgc~notional-open:constituency:2024-07-uk-bgc`                          |
+| `party-vote-share-change` | `2024-07-04` | `general-election/party-vote-share-change/constituency:2024-07-uk-bgc/party=con~notional-open:constituency:2024-07-uk-bgc` |
+
+The share change is the 2024 share of the valid votes less the notional 2019
+share, in percentage points. The Brexit Party's 2019 votes count as Reform's,
+since it renamed itself Reform UK in 2021. A party that did not stand in 2019
+had no previous share. Each series derives from the series it is made from: the
+published 2019 series, the party's notional series, or for a party with none,
+its 2024 series.
+
+Swing between two parties is half the difference of their share changes, and
+marginality is the majority over the valid votes, so neither is stored.
+Turnout change needs a notional electorate, and the stage splits votes, not
+electors, so it is not made.
+
+Seats of whole 2019 seats are exact. Elsewhere each bound is a factor times
+the seat's at-risk votes (or, for a share change, those votes as a share of
+the notional valid votes), the 95th percentile of the metric's error over that
+against the benchmark in the changed seats. Summing the party bounds instead
+would be two to three times as wide, since party errors partly cancel.
+
+| Metric       | Main  | Open  |
+| ------------ | ----- | ----- |
+| Valid votes  | 0.19  | 0.19  |
+| Majority     | 0.10  | 0.10  |
+| Share change | 0.031 | 0.036 |
+
+Valid votes depend only on the residents split, so both share one factor. A
+party that did not stand in 2019 has an exact previous share, so its change
+carries no width.
+
 ## Known weak areas
 
 - Places where local and national voting differ: strong local Liberal
