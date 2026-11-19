@@ -235,8 +235,33 @@ uncertainty (65 seats, all matching the benchmark exactly). The others are
 `estimated`. The factor is the 95th percentile of error over at-risk votes for
 the main parties in the changed seats: 95% of those estimates fall within their
 bounds, 91% within 0.2, and 99% within 1.1. It is fitted on the same benchmark
-it is checked against, so its coverage on another boundary change is not
-proven.
+it is checked against.
+
+No second boundary change can test it. The 2010 seats have 2005 results on
+the old seats, but no local results from those years and no benchmark. The
+factor was checked instead against the actual 2024 results, which the benchmark
+never saw. Each changed seat's 2019 notional share, plus its region's swing
+leaving the seat out, was compared with the 2024 share for Conservative, Labour,
+Liberal Democrat, Green and Reform. The same fit the local backtest uses
+regresses squared error on the square of the at-risk share within each region
+and party (2,512 estimates):
+
+| Prior                 | RMSE, changed seats | Implied factor | 95% interval |
+| --------------------- | ------------------- | -------------- | ------------ |
+| Main                  | 6.72                | 0.33           | 0.23 to 0.39 |
+| Open                  | 6.65                | 0.32           | 0.22 to 0.38 |
+| Baseline              | 6.60                | 0.29           | 0.21 to 0.35 |
+| 2017 to 2019, placebo | 3.71                | 0.06           | -0.07 to 0.12 |
+
+The intervals come from resampling seats. Derived seats have an RMSE of 6.15.
+The implied factor agrees with 0.32. The placebo uses the same fit on the
+2017 to 2019 change in the old seats, when no boundary moved, with each seat's
+later split share in place of at-risk votes. It finds almost no slope, so
+seats that were later redrawn did not just swing more erratically. The check
+is weak, though. Swing noise (about 6 points) is far larger than the notional
+error (about 0.4), and the baseline implies a similar factor even though it is
+almost twice as far from the benchmark. So it supports the scale of the
+bounds, not their exact width, and it cannot rank the methods.
 
 The open variant has wider bounds, a factor of 0.38, fitted the same way on its
 own errors.
