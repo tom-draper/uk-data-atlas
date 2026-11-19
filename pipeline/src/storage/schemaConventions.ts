@@ -3,7 +3,9 @@ import type { DatabaseSync } from "node:sqlite";
 /**
  * The naming and separation rules every SQLite database in `data/build`
  * follows (#713): STRICT tables, snake_case identifiers, singular table
- * names, and no build metadata or payload blobs in domain tables.
+ * names, and no build metadata or payload documents in domain tables. Build
+ * metadata is its own tables (named `*_metadata` or `*_build`), kept in the
+ * file beside the database, so a table like that here is a finding too.
  *
  * `checkSchemaConventions` returns one finding per violation. A finding the
  * schema still carries on purpose is listed in an allowlist with the
@@ -32,8 +34,16 @@ export type ConventionFinding = { rule: ConventionRule; subject: string };
 const BUILD_METADATA_COLUMN =
 	/(^|_)(artifact|artifact_path|content_hash|compiled_sha256|sha256|bytes|byte_count)$/;
 
-/** Tables that exist to hold build metadata, so they may carry it. */
-const BUILD_METADATA_TABLE = /_metadata$/;
+/**
+ * Tables that exist to hold build metadata. They belong in the build
+ * metadata file beside a database (`x-build.sqlite`), where the rule does not
+ * apply, so one in a domain database is a finding.
+ */
+const BUILD_METADATA_TABLE =
+	/(_metadata|_build|_shard_hash)$|^(boundary_registry|crosswalk_coverage_entry|statistics_read_path|statistics_observation_fallback)$|^statistics_selector/;
+
+/** Tables that hold documents as blobs or text, which are build payloads. */
+const PAYLOAD_TABLE = /^payloads?$/;
 
 const isCamelCase = (name: string): boolean => /[a-z0-9][A-Z]/.test(name);
 
@@ -69,19 +79,17 @@ export const checkSchemaConventions = (
 		if (type === "table" && !strict) report("strict", name);
 		if (isCamelCase(name)) report("camel-case", name);
 		if (type === "table" && isPlural(name)) report("plural-table", name);
-		if (type === "table" && name === "payloads")
+		if (type === "table" && PAYLOAD_TABLE.test(name))
 			report("payload-table", name);
+		if (type === "table" && BUILD_METADATA_TABLE.test(name))
+			report("build-metadata", name);
 		const columns = database
 			.prepare("SELECT name FROM pragma_table_info(?)")
 			.all(name) as Array<{ name: string }>;
 		for (const column of columns) {
 			const subject = `${name}.${column.name}`;
 			if (isCamelCase(column.name)) report("camel-case", subject);
-			if (
-				type === "table" &&
-				!BUILD_METADATA_TABLE.test(name) &&
-				BUILD_METADATA_COLUMN.test(column.name)
-			)
+			if (type === "table" && BUILD_METADATA_COLUMN.test(column.name))
 				report("build-metadata", subject);
 		}
 	}

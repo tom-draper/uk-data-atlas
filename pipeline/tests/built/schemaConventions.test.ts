@@ -10,59 +10,20 @@ import {
 
 /**
  * Every SQLite database in `data/build` follows the conventions in
- * `schemaConventions.ts` (#713), except for the entries below. Each entry is
- * outstanding work, not a decision: the test fails when one stops matching,
- * so fixing a table means deleting its line.
- *
- * - build metadata and payloads (#713, separation part, owned by the
- *   `refactor/build-metadata-separation` branch): artifact paths, content
- *   hashes and byte counts still sit in the domain tables listed, and
- *   `payloads` still holds dataset payload blobs in the canonical database.
- *   That branch removes these entries; do not fix them here.
+ * `schemaConventions.ts` (#713). The canonical databases carry no entries:
+ * artifact paths, content hashes, byte counts and payload blobs live in the
+ * build metadata files beside them (`atlas-build.sqlite` and its siblings),
+ * so a build column or a payload table reappearing in `atlas.sqlite` or
+ * `atlas-base.sqlite` fails here.
  */
-const SELECTOR_TABLES = [
-	"statistics_selector",
-	"statistics_selector_code",
-	"statistics_selector_column",
-	"statistics_selector_column_member",
-	"statistics_selector_list",
-	"statistics_selector_member",
-	"statistics_selector_option",
-];
-
-const CANONICAL: ConventionAllowlist = {
-	"plural-table": ["payloads"],
-	"payload-table": ["payloads"],
-	"build-metadata": [
-		"area_release.artifact",
-		"area_release.content_hash",
-		"boundary_registry.content_hash",
-		"crosswalk.artifact",
-		"crosswalk.content_hash",
-		"crosswalk.bytes",
-		"dataset.compiled_bytes",
-		"dataset.compiled_sha256",
-		"postcode_area_shard_hash.coordinates_sha256",
-		"postcode_area_shard_hash.sha256",
-		"statistics_observation_fallback.artifact",
-		...SELECTOR_TABLES.map((table) => `${table}.artifact`),
-	],
-};
+const CANONICAL: ConventionAllowlist = {};
 
 // atlas-base is the stage output atlas.sqlite is assembled from, so it
 // carries the same tables without the postcode ones.
-const BASE: ConventionAllowlist = {
-	...CANONICAL,
-	"camel-case": [],
-	"plural-table": ["payloads"],
-	"build-metadata": CANONICAL["build-metadata"]!.filter(
-		(subject) =>
-			!subject.startsWith("postcode_") &&
-			!subject.startsWith("statistics_"),
-	),
-};
+const BASE: ConventionAllowlist = {};
 
-// Files whose job is to carry payloads, so hashes and byte counts are data.
+// The cache, the website assets and the postcode index are not domain
+// databases: they carry payloads and hashes as their data. Their entries stay.
 const DATABASES: Array<[string, ConventionAllowlist]> = [
 	["atlas.sqlite", CANONICAL],
 	["atlas-base.sqlite", BASE],
@@ -79,13 +40,7 @@ const DATABASES: Array<[string, ConventionAllowlist]> = [
 		},
 	],
 	["website-assets.sqlite", { "build-metadata": ["website_asset.sha256"] }],
-	[
-		"postcode-index.sqlite",
-		{
-			"plural-table": ["payloads"],
-			"payload-table": ["payloads"],
-		},
-	],
+	["postcode-index.sqlite", {}],
 ];
 
 const BUILD = join(
