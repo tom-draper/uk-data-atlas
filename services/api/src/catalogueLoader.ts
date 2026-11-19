@@ -23,10 +23,10 @@ export const readApiCatalogues = (
 		config: MEASURE_DIMENSIONS_CONFIG,
 		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
 	};
+	const databasePath = atlasDatabasePath(repositoryRoot);
+	const readPath = readAtlasStatisticsReadPath(databasePath);
 	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
-		statisticsReadPath: readAtlasStatisticsReadPath(
-			atlasDatabasePath(repositoryRoot),
-		),
+		statisticsReadPath: readPath,
 		...options,
 	});
 	assertMeasureDimensions(
@@ -34,7 +34,14 @@ export const readApiCatalogues = (
 		dimensions.config,
 		dimensions.vocabulary,
 	);
-	return { ...catalogues, measureDimensions: dimensions };
+	return {
+		...catalogues,
+		measureDimensions: dimensions,
+		atlasStatistics: {
+			databasePath,
+			readPath: options.statisticsReadPath ?? readPath,
+		},
+	};
 };
 
 export type ApiCatalogues = ReturnType<typeof readApiCatalogues>;

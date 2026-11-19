@@ -23,7 +23,11 @@ import type {
 import type { MapResources } from "@uk-data-atlas/map-tiles";
 import type { MapArchive } from "@uk-data-atlas/map-tiles/node";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
-import type { MeasureDimensions, Series } from "@uk-data-atlas/measures";
+import type {
+	MeasureDimensions,
+	Series,
+	StatisticsReadPath,
+} from "@uk-data-atlas/measures";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import type { RelationshipPathInventory } from "@uk-data-atlas/relationships";
@@ -68,6 +72,12 @@ export type RouteContext = {
 	 * filters are not accepted.
 	 */
 	measureDimensions?: MeasureDimensions;
+	/**
+	 * The atlas database and the selector of each measure source in it, for
+	 * reading a series rebuilt on one boundary release. Absent, `on=` is
+	 * refused.
+	 */
+	atlasStatistics?: { databasePath: string; readPath: StatisticsReadPath };
 	/** Versioned terrain product definitions and their honest availability. */
 	terrainCatalogue?: TerrainCatalogue;
 	/** Optional versioned terrain source; absent means no elevation values are published. */
