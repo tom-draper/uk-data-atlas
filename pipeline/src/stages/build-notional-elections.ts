@@ -44,6 +44,18 @@ const LABELS: Record<string, string> = {
 	open: "Main, without CC BY-SA local results",
 };
 
+/** The methods shipped in the atlas, see `copyNotional.ts`. */
+const SHIPS = {
+	modelled: {
+		model: "notional-sharealike",
+		label: "Notional 2019 general election on the 2024 seats, with CC BY-SA local results",
+	},
+	open: {
+		model: "notional-open",
+		label: "Notional 2019 general election on the 2024 seats, without CC BY-SA local results",
+	},
+};
+
 const VARIANTS: [string, MainOptions][] = [
 	["local-only", { model: "none", ukipForBrexit: false, rake: false }],
 	["local-ukip", { model: "none", ukipForBrexit: true, rake: false }],
@@ -79,11 +91,14 @@ if (isMainModule(import.meta.url)) {
 		...VARIANTS.map(([method, options]) => ({
 			method,
 			estimate: mainMethod(inputs, parts, options),
+			...(method === "modelled" && { ships: SHIPS.modelled }),
 		})),
 		{
 			method: "open",
 			estimate: mainMethod(open, partition(open, covariates)),
 			boundFactor: OPEN_BOUND_FACTOR,
+			inputs: open,
+			ships: SHIPS.open,
 		},
 	];
 	for (const method of methods) {
