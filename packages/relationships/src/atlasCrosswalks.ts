@@ -2,7 +2,10 @@ import { type SQLOutputValue } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
 import type { CrosswalkInventory } from "./crosswalkInventory.ts";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 
 /**
  * Crosswalks as integer edges between area versions (layer 3 of
@@ -76,11 +79,23 @@ export const readSqliteCrosswalkInventory = (
 ): CrosswalkInventory => {
 	const database = openReadOnlyDatabase(databasePath);
 	try {
-		const header = database
-			.prepare(
-				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, area_inventory_hash AS areaInventoryHash FROM crosswalk_inventory_metadata",
-			)
-			.get();
+		const build = openBuildMetadata(databasePath);
+		let header;
+		let coverage: unknown[] = [];
+		try {
+			header = build
+				.prepare(
+					"SELECT schema_version AS schemaVersion, content_hash AS contentHash, area_inventory_hash AS areaInventoryHash FROM crosswalk_inventory_metadata",
+				)
+				.get();
+			coverage = build
+				.prepare(
+					"SELECT geography, boundary_release AS boundaryRelease, area_count AS areaCount, related_area_count AS relatedAreaCount FROM crosswalk_coverage_entry ORDER BY position",
+				)
+				.all();
+		} finally {
+			build.release();
+		}
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite crosswalk inventory");
 		const crosswalks = database
@@ -117,11 +132,7 @@ export const readSqliteCrosswalkInventory = (
 				: {
 						releaseCoverage: {
 							areaInventoryHash: header.areaInventoryHash,
-							releases: database
-								.prepare(
-									"SELECT geography, boundary_release AS boundaryRelease, area_count AS areaCount, related_area_count AS relatedAreaCount FROM crosswalk_coverage_entry ORDER BY position",
-								)
-								.all(),
+							releases: coverage,
 						},
 					}),
 		} as CrosswalkInventory;

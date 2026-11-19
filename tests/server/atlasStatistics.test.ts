@@ -174,11 +174,6 @@ describe("fuel poverty on the statistics model", () => {
 				{ schemaVersion: "3" },
 				{
 					...areaFixture(),
-					payloads: {
-						columns: ["id TEXT", "payload TEXT"],
-						key: ["id"],
-						rows: [],
-					},
 					...statisticsTables(
 						[fuelPovertyStatistics(compiled, entry)],
 						undefined,

@@ -84,13 +84,11 @@ export function writePostcodeAreas(
 		DROP VIEW IF EXISTS postcode_area_match_decoded;
 		DROP TABLE IF EXISTS postcode_area_columns;
 		DROP TABLE IF EXISTS postcode_area_codes;
-		DROP TABLE IF EXISTS postcode_area_shard_hash;
 		DROP TABLE IF EXISTS postcode_area_match;
 		DROP TABLE IF EXISTS postcode_area_release;
 		DROP TABLE IF EXISTS postcode_next;
 		DROP TABLE IF EXISTS postcode_area_set;
 		CREATE TABLE postcode_area_release (position INTEGER PRIMARY KEY, geography TEXT NOT NULL, boundary_release TEXT NOT NULL, area_column TEXT NOT NULL UNIQUE, distance_column TEXT NOT NULL UNIQUE, distance_fallback INTEGER REFERENCES postcode_area_release(position)) STRICT;
-		CREATE TABLE postcode_area_shard_hash (district TEXT PRIMARY KEY, sha256 TEXT NOT NULL, coordinates_sha256 TEXT NOT NULL) STRICT, WITHOUT ROWID;
 		CREATE TABLE postcode_area_match (district TEXT NOT NULL, release_position INTEGER NOT NULL REFERENCES postcode_area_release(position), postcode_position INTEGER NOT NULL, position INTEGER NOT NULL, area_id INTEGER NOT NULL REFERENCES area_version(id), containment TEXT NOT NULL, distance_cm INTEGER NOT NULL, PRIMARY KEY(district, release_position, postcode_position, position)) STRICT, WITHOUT ROWID;
 		CREATE TABLE postcode_area_set (id INTEGER PRIMARY KEY${columns.map((c) => `, ${quote(c.area)} INTEGER REFERENCES area_version(id)`).join("")}) STRICT;
 		CREATE TABLE postcode_next (postcode TEXT PRIMARY KEY, easting INTEGER, northing INTEGER, latitude_microdegrees INTEGER, longitude_microdegrees INTEGER, quality TEXT NOT NULL, country TEXT NOT NULL, introduced INTEGER NOT NULL, terminated INTEGER NOT NULL, large_user TEXT NOT NULL, area_set_id INTEGER NOT NULL REFERENCES postcode_area_set(id)${columns.map((c, i) => `, ${quote(c.distance)} INTEGER${fallbacks[i] === null ? " NOT NULL" : ""}`).join("")}) STRICT, WITHOUT ROWID;`);
@@ -128,7 +126,9 @@ export function writePostcodeAreas(
 			codes: new Map<string, number>(),
 		};
 	});
-	const addShardHash = database.prepare(
+	build.exec(`DROP TABLE IF EXISTS postcode_area_shard_hash;
+		CREATE TABLE postcode_area_shard_hash (district TEXT PRIMARY KEY, sha256 TEXT NOT NULL, coordinates_sha256 TEXT NOT NULL) STRICT, WITHOUT ROWID`);
+	const addShardHash = build.prepare(
 		"INSERT INTO postcode_area_shard_hash VALUES (?, ?, ?)",
 	);
 	const addMatch = database.prepare(

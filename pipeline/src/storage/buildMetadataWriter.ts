@@ -11,6 +11,7 @@ import { writeSqliteTables, type SqliteTable } from "@uk-data-atlas/artifacts";
 export const payloadTable = (
 	rows: Iterable<readonly [id: string, text: string]>,
 ): SqliteTable => ({
+	build: true,
 	strict: true,
 	columns: ["id TEXT NOT NULL", "payload BLOB NOT NULL"],
 	key: ["id"],

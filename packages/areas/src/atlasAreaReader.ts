@@ -1,6 +1,9 @@
 import type { AreaInventory, AreaRecord } from "./index.ts";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 
 export const readSqliteAreaInventory = (
 	repositoryRoot: string,
@@ -8,11 +11,17 @@ export const readSqliteAreaInventory = (
 ): AreaInventory => {
 	const database = openReadOnlyDatabase(databasePath);
 	try {
-		const header = database
-			.prepare(
-				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, boundary_registry_hash AS boundaryRegistryHash FROM area_inventory_metadata",
-			)
-			.get();
+		const build = openBuildMetadata(databasePath);
+		let header;
+		try {
+			header = build
+				.prepare(
+					"SELECT schema_version AS schemaVersion, content_hash AS contentHash, boundary_registry_hash AS boundaryRegistryHash FROM area_inventory_metadata",
+				)
+				.get();
+		} finally {
+			build.release();
+		}
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite area inventory");
 		const releases = database

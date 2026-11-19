@@ -14,20 +14,23 @@ import { test } from "vitest";
 import {
 	atlasCachePartPath,
 	atlasCachePath,
+	buildMetadataPathOf,
 	requireAtlasCache,
 } from "@uk-data-atlas/atlas-db";
-import { publishCacheTables } from "./pipelineFixtures";
+import { publishCacheTables, writeBuildMetadata } from "./pipelineFixtures";
 
 function fixture(t: { onTestFinished: (fn: () => void) => void }) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-"));
 	t.onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	mkdirSync(join(root, "data/build"), { recursive: true });
 	const canonical = join(root, "data/build/atlas.sqlite");
-	const database = new DatabaseSync(canonical);
-	database.exec(
-		"CREATE TABLE area_inventory_metadata (content_hash TEXT); INSERT INTO area_inventory_metadata VALUES ('first'); CREATE TABLE payloads (id TEXT PRIMARY KEY, payload TEXT)",
-	);
-	database.close();
+	new DatabaseSync(canonical).close();
+	writeBuildMetadata(canonical, {
+		area_inventory_metadata: {
+			columns: ["content_hash TEXT"],
+			rows: [["first"]],
+		},
+	});
 	return { root, canonical, apiRoot: join(root, "services/api") };
 }
 
@@ -46,9 +49,9 @@ test("cache publication leaves canonical bytes unchanged and detects missing and
 		atlasCachePartPath(root, "area-search"),
 	);
 	assert.deepEqual(readFileSync(canonical), before);
-	const database = new DatabaseSync(canonical);
-	database.exec("UPDATE area_inventory_metadata SET content_hash = 'second'");
-	database.close();
+	const build = new DatabaseSync(buildMetadataPathOf(canonical));
+	build.exec("UPDATE area_inventory_metadata SET content_hash = 'second'");
+	build.close();
 	assert.throws(
 		() => requireAtlasCache(root, "area-search"),
 		/stale.*area-search|area-search.*matching atlas data release/,

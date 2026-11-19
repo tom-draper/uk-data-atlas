@@ -15,7 +15,10 @@ import { readAreaLookup } from "@uk-data-atlas/areas";
 import { readAreaInventory } from "@uk-data-atlas/atlas-loader";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import { writeSqliteIndex } from "./pipelineFixtures";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 
 test("relational areas preserve inventory order, aliases and record order without JSON", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-areas-"));
@@ -121,7 +124,9 @@ test("relational areas preserve inventory order, aliases and record order withou
 			() => readAreaLookup(root, inventory).get("ward/2024"),
 			/Invalid area release/,
 		);
-		database.prepare("DELETE FROM area_inventory_metadata").run();
+		const build = new DatabaseSync(buildMetadataPathOf(path));
+		build.prepare("DELETE FROM area_inventory_metadata").run();
+		build.close();
 		assert.throws(
 			() => readAreaInventory(root),
 			/Invalid SQLite area inventory/,

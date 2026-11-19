@@ -1,4 +1,4 @@
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import { openBuildMetadata } from "@uk-data-atlas/atlas-db";
 import type {
 	StatisticsReadPath,
 	StatisticsSelector,
@@ -7,7 +7,7 @@ import type {
 
 /** Read the validated artifact selectors from a compiled atlas database. */
 export function readAtlasStatisticsReadPath(path: string): StatisticsReadPath {
-	const db = openReadOnlyDatabase(path);
+	const db = openBuildMetadata(path);
 	try {
 		const metadata = db
 			.prepare(

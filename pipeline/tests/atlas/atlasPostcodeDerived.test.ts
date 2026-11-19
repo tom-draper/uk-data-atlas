@@ -373,7 +373,6 @@ test("SQLite mappings retain boundary matches, distances and empty placements wi
 		"postcode_area_release",
 		"postcode_area_match",
 		"postcode_area_set",
-		"postcode_area_shard_hash",
 	]) {
 		assert.equal(
 			db

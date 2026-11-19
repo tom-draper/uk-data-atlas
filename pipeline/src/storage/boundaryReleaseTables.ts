@@ -79,6 +79,7 @@ export function boundaryReleaseTables(
 ): Record<string, SqliteTable> {
 	return {
 		boundary_registry: {
+			build: true,
 			strict: true,
 			columns: [
 				"schema_version INTEGER NOT NULL",

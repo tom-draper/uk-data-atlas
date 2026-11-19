@@ -12,7 +12,10 @@ import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { IdRegistries, namedLocationTables } from "./pipelineFixtures";
 import type { AreaInventory } from "@uk-data-atlas/areas";
 import type { NamedLocationInventory } from "@uk-data-atlas/places";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 
 const storeAreas = (
 	apiRoot: string,
@@ -295,6 +298,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 		const cold = readNamedLocationInventory(join(root, "../.."));
 		const stale = readNamedLocationInventory(join(root, "../.."));
 		const database = new DatabaseSync(path);
+		const build = new DatabaseSync(buildMetadataPathOf(path));
 		assert.deepEqual(
 			database.prepare("PRAGMA foreign_key_check").all(),
 			[],
@@ -308,7 +312,7 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			() => database.prepare("DELETE FROM place").run(),
 			/FOREIGN KEY/,
 		);
-		database
+		build
 			.prepare(
 				"UPDATE named_location_inventory_metadata SET content_hash = 'new-release'",
 			)
@@ -317,11 +321,12 @@ test("SQLite named locations preserve membership rows and load geometry only whe
 			() => stale.locations[0]?.geometry,
 			/Missing named location geometry/,
 		);
-		database
+		build
 			.prepare(
 				"UPDATE named_location_inventory_metadata SET content_hash = 'locations'",
 			)
 			.run();
+		build.close();
 		database.prepare("DELETE FROM place_geometry").run();
 		database.close();
 		assert.equal(cold.locations[0]?.label, "Test");

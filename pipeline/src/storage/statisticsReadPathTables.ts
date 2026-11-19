@@ -5,10 +5,23 @@ import type {
 	StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
 
-/** The validated selectors, split into queryable fields and ordered child rows. */
+/**
+ * The validated selectors, split into queryable fields and ordered child
+ * rows. They are routing for the API's observation artifacts, so every table
+ * is build metadata and not part of the database.
+ */
 export function statisticsReadPathTables(
 	plan: StatisticsReadPath,
 ): Record<string, SqliteTable> {
+	return Object.fromEntries(
+		Object.entries(selectorTables(plan)).map(([name, table]) => [
+			name,
+			{ ...table, build: true },
+		]),
+	);
+}
+
+function selectorTables(plan: StatisticsReadPath): Record<string, SqliteTable> {
 	const selectors = Object.entries(plan.series ?? plan.statistics ?? {});
 	const regular = selectors.filter(
 		(entry): entry is [string, StatisticsSelector] => !("kind" in entry[1]),
@@ -32,7 +45,7 @@ export function statisticsReadPathTables(
 				"artifact TEXT NOT NULL",
 				"kind TEXT NOT NULL CHECK (kind IN ('series','measure-table'))",
 				"dataset TEXT NOT NULL",
-				"geography TEXT NOT NULL REFERENCES geography(slug)",
+				"geography TEXT NOT NULL",
 				"measure TEXT",
 				"absent_as_zero INTEGER",
 				"status TEXT",

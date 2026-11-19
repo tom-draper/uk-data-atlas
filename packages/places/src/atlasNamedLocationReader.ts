@@ -2,7 +2,10 @@ import { lazyValue } from "@uk-data-atlas/atlas-db";
 import type { NamedLocation, NamedLocationInventory } from "./index.ts";
 import type { NamedLocationGeometry } from "@uk-data-atlas/geography";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 import { unpackGeometry } from "@uk-data-atlas/atlas-db";
 
 export const readSqliteNamedLocationInventory = (
@@ -12,11 +15,17 @@ export const readSqliteNamedLocationInventory = (
 	const path = databasePath;
 	const database = openReadOnlyDatabase(path);
 	try {
-		const header = database
-			.prepare(
-				"SELECT schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata",
-			)
-			.get();
+		const build = openBuildMetadata(path);
+		let header;
+		try {
+			header = build
+				.prepare(
+					"SELECT schema_version AS schemaVersion, content_hash AS contentHash, artifact, gazetteer_version AS gazetteerVersion FROM named_location_inventory_metadata",
+				)
+				.get();
+		} finally {
+			build.release();
+		}
 		if (!header || header.schemaVersion !== 1)
 			throw new Error("Invalid SQLite named location inventory");
 		const members = database.prepare(
@@ -75,11 +84,24 @@ export const readSqliteNamedLocationInventory = (
 					const geometry = lazyValue((): NamedLocationGeometry => {
 						const connection = openReadOnlyDatabase(path);
 						try {
-							const shape = connection
-								.prepare(
-									"SELECT g.boundary_release AS boundaryRelease, g.min_x AS minX, g.min_y AS minY, g.max_x AS maxX, g.max_y AS maxY, g.geometry FROM place_geometry g JOIN named_location_inventory_metadata i ON i.content_hash = ? WHERE g.place_id = ?",
-								)
-								.get(header.contentHash, row.placeId);
+							const current = openBuildMetadata(path);
+							let published;
+							try {
+								published = current
+									.prepare(
+										"SELECT 1 FROM named_location_inventory_metadata WHERE content_hash = ?",
+									)
+									.get(header.contentHash);
+							} finally {
+								current.release();
+							}
+							const shape = published
+								? connection
+										.prepare(
+											"SELECT boundary_release AS boundaryRelease, min_x AS minX, min_y AS minY, max_x AS maxX, max_y AS maxY, geometry FROM place_geometry WHERE place_id = ?",
+										)
+										.get(row.placeId)
+								: undefined;
 							if (!shape)
 								throw new Error(
 									`Missing named location geometry ${row.id}`,
