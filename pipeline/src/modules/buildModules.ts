@@ -200,15 +200,20 @@ const markOwned = (database: DatabaseSync, moduleId: string) => {
 	);
 };
 
+const licences = (splits: ReadonlyArray<{ licence?: string }>) =>
+	splits.flatMap(({ licence }) => (licence ? [licence] : []));
+
 /**
  * The temp tables naming the rows a licensed-rows split holds: the elections
  * of its datasets polled in its date range, and what hangs off them. Filled for
  * the add-on and for the module it takes the rows from, so the two select
- * complementary rows.
+ * complementary rows. `licensed_modelled` names the modelled series whose
+ * model is under a split's licence.
  */
 const markLicensed = (
 	database: DatabaseSync,
 	splits: ReadonlyArray<{
+		licence?: string;
 		datasets: readonly string[];
 		electionDates?: { from: string; to: string };
 	}>,
@@ -228,8 +233,29 @@ const markLicensed = (
 		 CREATE TEMP TABLE licensed_dataset AS SELECT DISTINCT e.dataset_id AS id FROM src.election e WHERE e.id IN (SELECT id FROM licensed_election);
 		 CREATE TEMP TABLE licensed_series AS SELECT id FROM src.series WHERE dataset_id IN (SELECT id FROM licensed_dataset);
 		 CREATE TEMP TABLE licensed_contest AS SELECT id FROM src.contest WHERE election_id IN (SELECT id FROM licensed_election);
-		 CREATE TEMP TABLE licensed_period AS SELECT id FROM src.period WHERE label IN (SELECT date FROM licensed_election)`,
+		 CREATE TEMP TABLE licensed_period AS SELECT id FROM src.period WHERE label IN (SELECT date FROM licensed_election);
+		 CREATE TEMP TABLE licensed_modelled AS SELECT series_id AS id FROM src.series_model
+		   WHERE model_id IN (SELECT id FROM src.model WHERE licence_id IN (${licences(splits).map(literal).join(", ")}))`,
 	);
+};
+
+/**
+ * Fails when a module would ship a modelled series under a share-alike
+ * licence that no licensed-rows split takes out of it.
+ */
+const checkModelLicences = (database: DatabaseSync, moduleId: string) => {
+	const taken = licences(withheldFrom(moduleId));
+	const stray = database
+		.prepare(
+			`SELECT DISTINCT m.licence_id AS licence FROM src.series_model s JOIN src.model m ON m.id = s.model_id
+			WHERE s.series_id IN (SELECT id FROM temp.owned_series) AND m.licence_id IS NOT NULL
+				AND m.licence_id NOT IN (${taken.map(literal).join(", ")})`,
+		)
+		.all() as Array<{ licence: string }>;
+	if (stray.length > 0)
+		throw new Error(
+			`Module ${moduleId}: modelled series are under ${stray.map(({ licence }) => licence).join(", ")}, which no add-on takes out of it.`,
+		);
 };
 
 /** Fails when the periods of licensed rows are not the election dates they are read from. */
@@ -385,6 +411,7 @@ export const buildModuleDatabase = (
 				}
 				checkDatasets(database, manifest);
 				checkSelfContained(database, manifest.id);
+				if (!addOn) checkModelLicences(database, manifest.id);
 				for (const { table, where } of rowSelection(manifest.id))
 					copyTable(database, table, where);
 			}

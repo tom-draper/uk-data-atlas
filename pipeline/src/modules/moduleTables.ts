@@ -60,6 +60,10 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "series_model",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
 		table: "conversion_skip",
 		where: "dataset_id IN (SELECT id FROM temp.owned_dataset)",
 	},
@@ -88,9 +92,11 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
  * elections polled in the split's date range, their contests
  * and candidacies, and the observations, gaps and area relationships of the
  * split's datasets in those elections' periods. A period is labelled with the
- * election date, which is how the period-keyed rows are told apart. Every
- * other dataset table stays whole in the parent: series are one per measure
- * and span both licences, and hold no result.
+ * election date, which is how the period-keyed rows are told apart. The
+ * observations of a modelled series whose model is under the split's licence
+ * (`licensed_modelled`, the share-alike notional estimates) go too, in every
+ * period. Every other dataset table stays whole in the parent: series are one
+ * per measure and span both licences, and hold no result.
  */
 export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	{
@@ -107,7 +113,7 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	},
 	{
 		table: "observation",
-		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+		where: "(series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)) OR series_id IN (SELECT id FROM temp.licensed_modelled)",
 	},
 	{
 		table: "series_estimate",
@@ -115,7 +121,7 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	},
 	{
 		table: "series_gap",
-		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+		where: "(series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)) OR series_id IN (SELECT id FROM temp.licensed_modelled)",
 	},
 	{
 		table: "area_relationship",
