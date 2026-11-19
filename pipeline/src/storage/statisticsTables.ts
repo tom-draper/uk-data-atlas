@@ -162,24 +162,10 @@ export function statisticsTables(
 				"description TEXT NOT NULL",
 				"source_id INTEGER NOT NULL REFERENCES source(id)",
 				"released TEXT",
-				"fingerprint TEXT NOT NULL",
-				"compiled_type TEXT UNIQUE",
-				"compiled_sha256 TEXT",
-				"compiled_bytes INTEGER",
-				"payload_id TEXT",
 			],
 			key: ["id"],
-			constraints: [
-				"CHECK ((compiled_type IS NULL AND compiled_sha256 IS NULL AND compiled_bytes IS NULL AND payload_id IS NULL) OR (compiled_type IS NOT NULL AND compiled_sha256 IS NOT NULL AND compiled_bytes IS NOT NULL))",
-			],
-			rows: rows(({ datasets, datasetIds, sources }) => {
-				const slugs = new Set(datasets.map((dataset) => dataset.slug));
-				for (const output of outputs.keys())
-					if (!slugs.has(output))
-						throw new Error(
-							`Compiled dataset ${output} has no dataset row`,
-						);
-				return datasets.map((dataset, index) => [
+			rows: rows(({ datasets, datasetIds, sources }) =>
+				datasets.map((dataset, index) => [
 					datasetIds[index]!,
 					dataset.slug,
 					moduleOf(dataset),
@@ -187,6 +173,39 @@ export function statisticsTables(
 					dataset.description,
 					sources.id(sourceKey(dataset.source), dataset.slug),
 					dataset.released ?? null,
+				]),
+			),
+		},
+		/**
+		 * What the build holds about each dataset's compiled output: the
+		 * compiler fingerprint, and the type, hash and size of the compiled
+		 * document. Keyed by slug because the build file has no foreign keys
+		 * into the database.
+		 */
+		dataset_build: {
+			build: true,
+			strict: true,
+			columns: [
+				"slug TEXT NOT NULL",
+				"fingerprint TEXT NOT NULL",
+				"compiled_type TEXT UNIQUE",
+				"compiled_sha256 TEXT",
+				"compiled_bytes INTEGER",
+				"payload_id TEXT",
+			],
+			key: ["slug"],
+			constraints: [
+				"CHECK ((compiled_type IS NULL AND compiled_sha256 IS NULL AND compiled_bytes IS NULL AND payload_id IS NULL) OR (compiled_type IS NOT NULL AND compiled_sha256 IS NOT NULL AND compiled_bytes IS NOT NULL))",
+			],
+			rows: rows(({ datasets }) => {
+				const slugs = new Set(datasets.map((dataset) => dataset.slug));
+				for (const output of outputs.keys())
+					if (!slugs.has(output))
+						throw new Error(
+							`Compiled dataset ${output} has no dataset row`,
+						);
+				return datasets.map((dataset) => [
+					dataset.slug,
 					dataset.fingerprint,
 					outputs.get(dataset.slug)?.type ?? null,
 					outputs.get(dataset.slug)?.sha256 ?? null,

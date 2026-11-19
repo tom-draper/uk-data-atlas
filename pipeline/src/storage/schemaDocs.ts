@@ -373,14 +373,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			description: "What the dataset contains.",
 			source_id: "Its publisher (source.id).",
 			released: "When the publisher released this edition, where known.",
-			fingerprint:
-				"Hash of the dataset's inputs and compiler, for change detection.",
-			compiled_type:
-				"Internal: the compiled payload type the website reads.",
-			compiled_sha256: "Internal: hash of the compiled payload.",
-			compiled_bytes: "Internal: size of the compiled payload in bytes.",
-			payload_id:
-				"Internal: the id of the payload document in atlas-build.sqlite if it is stored whole, else null.",
 		},
 	},
 	unit: {

@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "vitest";
 import { validateCacheRelease } from "../src/cacheRelease";
+import { writeBuildMetadata } from "./pipelineFixtures";
 
 test("validates the cache against the canonical database", (context) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-cache-release-"));
@@ -16,9 +17,20 @@ test("validates the cache against the canonical database", (context) => {
 	mkdirSync(directory, { recursive: true });
 	const canonical = new DatabaseSync(join(directory, "atlas.sqlite"));
 	canonical.exec(
-		"CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT); INSERT INTO dataset VALUES ('test', 'test', 'hash', NULL)",
+		"CREATE TABLE dataset (slug TEXT); INSERT INTO dataset VALUES ('test')",
 	);
 	canonical.close();
+	writeBuildMetadata(join(directory, "atlas.sqlite"), {
+		dataset_build: {
+			columns: [
+				"slug TEXT",
+				"compiled_type TEXT",
+				"compiled_sha256 TEXT",
+				"payload_id TEXT",
+			],
+			rows: [["test", "test", "hash", null]],
+		},
+	});
 	assert.throws(
 		() => validateCacheRelease(root),
 		/Missing or mismatched atlas cache release/,
@@ -56,7 +68,7 @@ test("validates the cache against the canonical database", (context) => {
 		(error: Error) => String(error.cause).includes("no such column: gzip"),
 	);
 	const changed = new DatabaseSync(join(directory, "atlas.sqlite"));
-	changed.exec("INSERT INTO dataset VALUES ('other', 'other', 'hash', NULL)");
+	changed.exec("INSERT INTO dataset VALUES ('other')");
 	changed.close();
 	assert.throws(
 		() => validateCacheRelease(root),

@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { atlasCacheFile } from "@uk-data-atlas/atlas-db";
-import { readBuildPayload } from "@uk-data-atlas/atlas-db";
+import { openBuildMetadata, readBuildPayload } from "@uk-data-atlas/atlas-db";
 import { openReadOnlyDatabase, type SqlReader } from "@uk-data-atlas/atlas-db";
 import { rebuildFromDeclaration } from "@uk-data-atlas/measures";
 import type { Json } from "@uk-data-atlas/measures";
@@ -47,11 +47,32 @@ export function comparableCompiled(type: string, compiled: unknown): unknown {
 	);
 }
 
-/** A dataset's compiled JSON, rebuilt from the canonical rows. */
+/**
+ * The compiled type of each dataset slug, from the build metadata that holds
+ * it. Undefined for a dataset with no compiled output.
+ */
+export function compiledDatasetTypes(build: SqlReader) {
+	const statement = build.prepare(
+		"SELECT compiled_type AS type FROM dataset_build WHERE slug = ? AND compiled_type IS NOT NULL",
+	);
+	return (slug: string): string | undefined => {
+		const type = statement.get(slug)?.type;
+		return typeof type === "string" ? type : undefined;
+	};
+}
+
+/** Without build metadata, a dataset's slug is its declared type. */
+const declaredType = (slug: string) => (declared.has(slug) ? slug : undefined);
+
+/**
+ * A dataset's compiled JSON, rebuilt from the canonical rows. `typeOf` says
+ * what compiled type another dataset has, for rules that read one.
+ */
 export function rebuildDatasetPayload(
 	database: SqlReader,
 	type: string,
 	output: string,
+	typeOf: (slug: string) => string | undefined = declaredType,
 ): string {
 	const config = declared.get(type);
 	if (config?.payload)
@@ -60,17 +81,13 @@ export function rebuildDatasetPayload(
 			if (!read) others.set(database, (read = new Map()));
 			let found = read.get(other);
 			if (!found) {
-				const type = database
-					.prepare(
-						"SELECT compiled_type AS type FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
-					)
-					.get(other)?.type;
-				if (typeof type !== "string")
+				const type = typeOf(other);
+				if (type === undefined)
 					throw new Error(`Unknown dataset ${other}`);
 				read.set(
 					other,
 					(found = JSON.parse(
-						rebuildDatasetPayload(database, type, other),
+						rebuildDatasetPayload(database, type, other, typeOf),
 					)),
 				);
 			}
@@ -127,20 +144,18 @@ export function readStoredDatasetPayload(
 	output: string,
 	sha256: string,
 ): StoredDatasetPayload | undefined {
-	const database = openReadOnlyDatabase(
-		join(root, "data/build/atlas.sqlite"),
-	);
+	const build = openBuildMetadata(join(root, "data/build/atlas.sqlite"));
 	try {
-		const row = database
+		const row = build
 			.prepare(
-				"SELECT compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
+				"SELECT compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset_build WHERE slug = ? AND compiled_type IS NOT NULL",
 			)
 			.get(output);
 		if (!row || typeof row.payloadId === "string") return undefined;
 		const cached = readCached(root, output, String(row.sha256));
 		return cached?.sha256 === sha256 ? cached : undefined;
 	} finally {
-		database.release();
+		build.release();
 	}
 }
 
@@ -165,11 +180,11 @@ export function readDatasetPayloadWithHash(
 	output: string,
 ): { payload: string; sha256: string } | undefined {
 	const path = join(root, "data/build/atlas.sqlite");
-	const database = openReadOnlyDatabase(path);
+	const build = openBuildMetadata(path);
 	try {
-		const row = database
+		const row = build
 			.prepare(
-				"SELECT compiled_type AS type, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE slug = ? AND compiled_type IS NOT NULL",
+				"SELECT compiled_type AS type, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset_build WHERE slug = ? AND compiled_type IS NOT NULL",
 			)
 			.get(output);
 		if (!row) return undefined;
@@ -186,13 +201,19 @@ export function readDatasetPayloadWithHash(
 				payload: gunzipSync(cached.gzip).toString("utf8"),
 				sha256: cached.sha256,
 			};
-		const rebuilt = rebuildDatasetPayload(
-			database,
-			String(row.type),
-			output,
-		);
-		return { payload: rebuilt, sha256: digest(rebuilt) };
+		const database = openReadOnlyDatabase(path);
+		try {
+			const rebuilt = rebuildDatasetPayload(
+				database,
+				String(row.type),
+				output,
+				compiledDatasetTypes(build),
+			);
+			return { payload: rebuilt, sha256: digest(rebuilt) };
+		} finally {
+			database.release();
+		}
 	} finally {
-		database.release();
+		build.release();
 	}
 }

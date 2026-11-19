@@ -6,6 +6,7 @@ import { expect, it } from "vitest";
 import { atlasCachePath } from "@uk-data-atlas/atlas-db";
 import { directPayloadProblem } from "../../pipeline/src/checks/directPayloadGoldens";
 import {
+	compiledDatasetTypes,
 	rebuildDatasetPayload,
 	servedFromRows,
 } from "@uk-data-atlas/catalogue/node";
@@ -23,11 +24,15 @@ it("serves datasets from rows with their golden payloads", () => {
 	const database = new DatabaseSync("data/build/atlas.sqlite", {
 		readOnly: true,
 	});
+	const build = new DatabaseSync("data/build/atlas-build.sqlite", {
+		readOnly: true,
+	});
 	const cache = new DatabaseSync(atlasCachePath(root), { readOnly: true });
 	try {
-		const datasets = database
+		const typeOf = compiledDatasetTypes(build);
+		const datasets = build
 			.prepare(
-				"SELECT compiled_type AS type, slug AS output, compiled_sha256 AS sha256, compiled_bytes AS bytes, payload_id AS payloadId FROM dataset WHERE compiled_type IS NOT NULL ORDER BY slug",
+				"SELECT compiled_type AS type, slug AS output, compiled_sha256 AS sha256, compiled_bytes AS bytes, payload_id AS payloadId FROM dataset_build WHERE compiled_type IS NOT NULL ORDER BY slug",
 			)
 			.all();
 		const fromRows = datasets.filter((row) => row.payloadId === null);
@@ -46,6 +51,7 @@ it("serves datasets from rows with their golden payloads", () => {
 				database,
 				String(row.type),
 				output,
+				typeOf,
 			);
 			expect(
 				directPayloadProblem(String(row.type), rebuilt),
@@ -60,14 +66,15 @@ it("serves datasets from rows with their golden payloads", () => {
 				output,
 			).toBe(true);
 			expect(
-				database
-					.prepare("SELECT count(*) AS n FROM payloads WHERE id = ?")
+				build
+					.prepare("SELECT count(*) AS n FROM payload WHERE id = ?")
 					.get(`dataset:${output}`)?.n,
 				output,
 			).toBe(0);
 		}
 	} finally {
 		cache.close();
+		build.close();
 		database.close();
 	}
 }, 600_000);

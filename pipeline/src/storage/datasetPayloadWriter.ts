@@ -2,7 +2,11 @@ import { sha256Hex } from "../lib/hash.ts";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { gzipSync } from "node:zlib";
-import { rebuildDatasetPayload } from "@uk-data-atlas/catalogue/node";
+import {
+	compiledDatasetTypes,
+	rebuildDatasetPayload,
+} from "@uk-data-atlas/catalogue/node";
+import { buildMetadataPathOf } from "@uk-data-atlas/atlas-db";
 import { writeCachePart, type CacheStep } from "./atlasCacheWriter.ts";
 
 /**
@@ -20,10 +24,14 @@ export const datasetPayloadStep = (canonical: string): CacheStep => ({
 			"INSERT INTO dataset_payload VALUES (?, ?, ?, ?, ?)",
 		);
 		const database = new DatabaseSync(canonical, { readOnly: true });
+		const build = new DatabaseSync(buildMetadataPathOf(canonical), {
+			readOnly: true,
+		});
 		try {
-			for (const row of database
+			const typeOf = compiledDatasetTypes(build);
+			for (const row of build
 				.prepare(
-					"SELECT compiled_type AS type, slug AS output, compiled_sha256 AS sha256 FROM dataset WHERE compiled_type IS NOT NULL AND payload_id IS NULL ORDER BY slug",
+					"SELECT compiled_type AS type, slug AS output, compiled_sha256 AS sha256 FROM dataset_build WHERE compiled_type IS NOT NULL AND payload_id IS NULL ORDER BY slug",
 				)
 				.all()) {
 				const output = String(row.output);
@@ -31,6 +39,7 @@ export const datasetPayloadStep = (canonical: string): CacheStep => ({
 					database,
 					String(row.type),
 					output,
+					typeOf,
 				);
 				insert.run(
 					output,
@@ -41,6 +50,7 @@ export const datasetPayloadStep = (canonical: string): CacheStep => ({
 				);
 			}
 		} finally {
+			build.close();
 			database.close();
 		}
 	},

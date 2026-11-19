@@ -14,7 +14,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/data/catalogue/[sha256]/[output]/route";
 import { buildAtlasSqlite } from "@/pipeline/src/atlas/buildAtlasSqlite";
 import { readAtlasDatasetUrls } from "@uk-data-atlas/catalogue/node";
-import { artifactDirectory } from "@uk-data-atlas/atlas-db";
+import {
+	artifactDirectory,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 import { atlasCachePartPath } from "@uk-data-atlas/atlas-db";
 
 let root: string;
@@ -33,10 +36,10 @@ const request = (
 /** Serve the sample from the cache, as a dataset generated from rows is. */
 function cacheSample() {
 	const database = new DatabaseSync(
-		join(root, "data/build/atlas-base.sqlite"),
+		buildMetadataPathOf(join(root, "data/build/atlas-base.sqlite")),
 	);
 	database.exec(
-		"UPDATE dataset SET compiled_sha256 = 'source', payload_id = NULL WHERE slug = 'sample'",
+		"UPDATE dataset_build SET compiled_sha256 = 'source', payload_id = NULL WHERE slug = 'sample'",
 	);
 	database.close();
 	const cache = new DatabaseSync(atlasCachePartPath(root, "datasets"));

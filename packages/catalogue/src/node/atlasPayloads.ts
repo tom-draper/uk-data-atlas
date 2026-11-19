@@ -2,7 +2,10 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { atlasCacheFile } from "@uk-data-atlas/atlas-db";
 import { readStoredAtlasPayload } from "@uk-data-atlas/atlas-db";
-import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	openBuildMetadata,
+	openReadOnlyDatabase,
+} from "@uk-data-atlas/atlas-db";
 import {
 	readDatasetPayload,
 	readDatasetPayloadWithHash,
@@ -28,7 +31,7 @@ export function readAtlasPayload(
 export function readAtlasDatasetUrls(
 	repositoryRoot: string,
 ): Record<string, string> {
-	const database = openReadOnlyDatabase(
+	const build = openBuildMetadata(
 		join(repositoryRoot, "data/build/atlas.sqlite"),
 	);
 	try {
@@ -53,9 +56,9 @@ export function readAtlasDatasetUrls(
 			}
 		}
 		return Object.fromEntries(
-			database
+			build
 				.prepare(
-					"SELECT slug AS output, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset WHERE compiled_type IS NOT NULL",
+					"SELECT slug AS output, compiled_sha256 AS sha256, payload_id AS payloadId FROM dataset_build WHERE compiled_type IS NOT NULL",
 				)
 				.all()
 				.map((row) => {
@@ -75,7 +78,7 @@ export function readAtlasDatasetUrls(
 				}),
 		);
 	} finally {
-		database.release();
+		build.release();
 	}
 }
 

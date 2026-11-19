@@ -20,9 +20,7 @@ test("publishes from base-database metadata and loads regional payloads lazily",
 	mkdirSync(dir, { recursive: true });
 	const db = new DatabaseSync(join(dir, "atlas-base.sqlite"));
 	try {
-		db.exec(
-			"CREATE TABLE dataset (slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT)",
-		);
+		db.exec("CREATE TABLE dataset (slug TEXT)");
 		const manifest = {
 			datasets: [{ type: "sample", output: "sample", fingerprint: "v1" }],
 		};
@@ -32,10 +30,17 @@ test("publishes from base-database metadata and loads regional payloads lazily",
 				["dataset-manifest", JSON.stringify(manifest)],
 				["dataset:sample", JSON.stringify(payload)],
 			]),
+			dataset_build: {
+				columns: [
+					"slug TEXT",
+					"compiled_type TEXT",
+					"compiled_sha256 TEXT",
+					"payload_id TEXT",
+				],
+				rows: [["sample", "sample", "hash", "dataset:sample"]],
+			},
 		});
-		db.exec(
-			"INSERT INTO dataset VALUES ('sample', 'sample', 'hash', 'dataset:sample')",
-		);
+		db.exec("INSERT INTO dataset VALUES ('sample')");
 		const definition = {
 			type: "sample",
 			precompiledFile: "sample",

@@ -24,9 +24,22 @@ test("reads base-database inputs and restores queryable coverage gaps", () => {
 				["dataset-manifest", '{"datasets":[]}'],
 				["dataset:whole", '{"whole":true}'],
 			]),
+			dataset_build: {
+				columns: [
+					"slug TEXT",
+					"compiled_type TEXT",
+					"compiled_sha256 TEXT",
+					"payload_id TEXT",
+				],
+				rows: [
+					["local-election", "localElection", "source", null],
+					["whole", "whole", "hash", "dataset:whole"],
+					["road-collisions", "road-collisions", "source", null],
+				],
+			},
 		});
-		db.exec(`CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT, compiled_type TEXT, compiled_sha256 TEXT, payload_id TEXT);
-			INSERT INTO dataset VALUES (1, 'local-election', 'localElection', 'source', NULL), (2, 'whole', 'whole', 'hash', 'dataset:whole'), (3, 'road-collisions', 'road-collisions', 'source', NULL);
+		db.exec(`CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
+			INSERT INTO dataset VALUES (1, 'local-election'), (2, 'whole'), (3, 'road-collisions');
 			CREATE TABLE dataset_coverage_gap (dataset_id INTEGER, edition TEXT, kind TEXT, position INTEGER, area_code TEXT, area_name TEXT, parent_name TEXT, reason TEXT, count INTEGER);
 			INSERT INTO dataset_coverage_gap VALUES (1, '2022', 'election-ward', 0, 'E1', 'Ward', 'Council', 'ambiguous', NULL), (3, '2024', 'collision-area', 0, 'AIRPORT', NULL, NULL, NULL, 33), (3, '2024', 'collision-without-lsoa', 0, 'GB-SCT', NULL, NULL, NULL, 20);`);
 		cache.exec(
