@@ -1,5 +1,5 @@
 import { releaseDate } from "./releases";
-import type { AreaHistory, ReleaseRef } from "./types";
+import type { AreaHistory, BulkLookup, Crosswalk, ReleaseRef } from "./types";
 
 export interface Successor {
 	code: string;
@@ -50,4 +50,38 @@ export function successorsIn(
 		}
 	}
 	return [...found.values()];
+}
+
+/** Where one release's retired codes can be read in bulk, from a crosswalk. */
+export interface SuccessorTable {
+	/** The lookup's CSV, from the `href` its manifest gives. */
+	href: string;
+	bytes: number;
+}
+
+/**
+ * An official lookup from `from` to `to` within one geography, such as the
+ * LSOA 2011 to 2021 lookup. One download then answers every code at once,
+ * where history is one request per code. Derived crosswalks are left out:
+ * the published history is the authority on what a code became.
+ */
+export function successorTable(
+	from: ReleaseRef,
+	to: ReleaseRef,
+	crosswalks: Crosswalk[],
+	lookups: BulkLookup[],
+): SuccessorTable | null {
+	const crosswalk = crosswalks.find(
+		(each) =>
+			each.method === "official-lookup" &&
+			each.from.geography === from.geography &&
+			each.to.geography === to.geography &&
+			each.from.boundaryRelease === from.boundaryRelease &&
+			each.to.boundaryRelease === to.boundaryRelease,
+	);
+	if (!crosswalk) return null;
+	const csv = lookups.find(
+		(lookup) => lookup.source.artifact === crosswalk.artifact,
+	)?.formats.csv;
+	return csv ? { href: csv.href, bytes: csv.bytes } : null;
 }
