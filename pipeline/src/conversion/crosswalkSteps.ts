@@ -156,8 +156,14 @@ const edgeRows = (
 				`LEFT JOIN ${table} w${index} ON w${index}.crosswalk_id = e.crosswalk_id AND w${index}.from_version_id = e.from_version_id AND w${index}.to_version_id = e.to_version_id AND w${index}.basis_id = ?1`,
 		)
 		.join("\n");
-	const pick = (column: string) =>
-		`coalesce(${weights.map((_, index) => `w${index}.${column}`).join(", ")})`;
+	// SQLite refuses `coalesce` of one argument, which is all an assembled
+	// `atlas.sqlite` has, since it holds every basis in `main`.
+	const pick = (column: string) => {
+		const columns = weights.map((_, index) => `w${index}.${column}`);
+		return columns.length === 1
+			? columns[0]!
+			: `coalesce(${columns.join(", ")})`;
+	};
 	return database
 		.prepare(
 			`SELECT e.from_version_id AS f, e.to_version_id AS t, ${EXACT_EDGE_SQL} AS exact_rule,
