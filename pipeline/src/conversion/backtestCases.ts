@@ -120,6 +120,13 @@ export const TOTAL_POPULATION = "total population";
 /** Population in single years of age, by sex. Each of its series is small. */
 export const AGE_SEX_POPULATION = "population by age and sex";
 
+/**
+ * The class of a population series, by its members, or undefined where no split
+ * of it has been measured. The total has no members.
+ */
+export const populationClassOf = (members: string) =>
+	members === "" ? TOTAL_POPULATION : undefined;
+
 const ALL_BASES: ConversionBasis[] = [
 	"population",
 	"households",

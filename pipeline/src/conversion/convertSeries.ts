@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import { TOTAL_POPULATION } from "./backtestCases.ts";
+import { populationClassOf } from "./backtestCases.ts";
 import {
 	convertThroughSteps,
 	convertWeightedMeans,
@@ -141,28 +141,37 @@ export type ConvertedSeries = {
 	sourceCheck?: { compared: number; maxDifference: number };
 };
 
-/** The error factor of a splitting method on a basis, where one was measured. */
+/**
+ * The error factor of a splitting method on a basis for a class of measure,
+ * where one was measured.
+ */
 export type ErrorFactors = (
 	method: string,
 	basis: ConversionBasis,
+	measureClass: string,
 ) => number | undefined;
 
-/** The factors the backtest fitted for a total population. */
+/** The factors the backtest fitted, for every class of measure it fitted. */
 export const readErrorFactors = (backtest: DatabaseSync): ErrorFactors => {
 	const factors = new Map(
 		(
 			backtest
 				.prepare(
-					"SELECT method, basis_id AS basis, factor FROM conversion_error WHERE measure_class = ?",
+					"SELECT method, basis_id AS basis, measure_class AS measureClass, factor FROM conversion_error",
 				)
-				.all(TOTAL_POPULATION) as {
+				.all() as {
 				method: string;
 				basis: string;
+				measureClass: string;
 				factor: number;
 			}[]
-		).map((row) => [`${row.method}|${row.basis}`, row.factor]),
+		).map((row) => [
+			`${row.method}|${row.basis}|${row.measureClass}`,
+			row.factor,
+		]),
 	);
-	return (method, basis) => factors.get(`${method}|${basis}`);
+	return (method, basis, measureClass) =>
+		factors.get(`${method}|${basis}|${measureClass}`);
 };
 
 /** Why a published series was not converted onto the plan entry's target. */
@@ -338,10 +347,10 @@ function* convertSources(
 	const methodOf = (crosswalk: number) =>
 		resolver.router.crosswalk(crosswalk).method;
 	/** The factor of a split value, where its splits are of one measured method. */
-	const factorOf = (carried: CarriedValue) => {
+	const factorOf = (carried: CarriedValue, measureClass: string) => {
 		const methods = new Set([...carried.splits].map(methodOf));
 		if (methods.size !== 1) return undefined;
-		return context.factors([...methods][0]!, basis);
+		return context.factors([...methods][0]!, basis, measureClass);
 	};
 	const weights =
 		rule.rule === "rebuild" && "weight" in rule
@@ -372,10 +381,10 @@ function* convertSources(
 			gaps,
 		};
 		if (rule.rule === "sum") {
-			const estimable =
-				entry.estimates === true &&
-				rule.splitBasis === basis &&
-				source.members === "";
+			const measureClass =
+				entry.estimates === true && rule.splitBasis === basis
+					? populationClassOf(source.members)
+					: undefined;
 			for (const period of periods) {
 				const converted = convertThroughSteps(
 					steps,
@@ -394,7 +403,10 @@ function* convertSources(
 						});
 						continue;
 					}
-					const factor = estimable ? factorOf(carried) : undefined;
+					const factor =
+						measureClass === undefined
+							? undefined
+							: factorOf(carried, measureClass);
 					if (factor === undefined) {
 						if (!seen.has(area))
 							gaps.push({
