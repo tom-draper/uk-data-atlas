@@ -97,7 +97,7 @@ describe("readSpreadsheet, xlsx", () => {
 		expect(row?.[1]).toBe("  padded  ");
 	});
 
-	it("reads every sheet, and opens the first one that has something and is visible", () => {
+	it("reads every sheet, and opens the first visible one that looks like a table", () => {
 		const workbook = read("multi-sheet.xlsx", "xlsx");
 		expect(workbook.sheets.map((s) => [s.name, s.hidden])).toEqual([
 			["Read me", false],
@@ -106,8 +106,8 @@ describe("readSpreadsheet, xlsx", () => {
 			["Claimants", false],
 			["Lookup", false],
 		]);
-		// The cover sheet has a few cells, so it is the first with anything.
-		expect(defaultSheet(workbook)).toBe(0);
+		// The cover sheet has a few cells but is one column of notes.
+		expect(defaultSheet(workbook)).toBe(3);
 		expect(workbook.sheets[3].rows[0]).toEqual([
 			"Area code",
 			"Area",
@@ -115,17 +115,13 @@ describe("readSpreadsheet, xlsx", () => {
 		]);
 	});
 
-	it("skips an empty first sheet", () => {
+	it("opens the first sheet with anything when none looks like a table", () => {
 		const workbook = read("multi-sheet.xlsx", "xlsx");
-		const shifted = {
+		const notes = {
 			...workbook,
-			sheets: [
-				workbook.sheets[1],
-				workbook.sheets[2],
-				workbook.sheets[3],
-			],
+			sheets: [workbook.sheets[1], workbook.sheets[0]],
 		};
-		expect(defaultSheet(shifted)).toBe(2);
+		expect(defaultSheet(notes)).toBe(1);
 	});
 
 	it("stops at the row limit and counts what it left out", () => {
