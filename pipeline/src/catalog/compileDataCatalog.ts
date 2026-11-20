@@ -56,8 +56,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
-	electricityConsumption: Input;
-	gasConsumption: Input;
 	/**
 	 * The statistics rows the measures that no longer read a compiled file
 	 * are built from.
@@ -93,8 +91,6 @@ export const compileDataCatalog = ({
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
 	localElection: localElectionPath,
-	electricityConsumption: electricityConsumptionPath,
-	gasConsumption: gasConsumptionPath,
 	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -151,10 +147,7 @@ export const compileDataCatalog = ({
 			(record) => record.areaCode,
 		),
 	);
-	const energyConsumption = compileEnergyConsumption(catalogManifest, {
-		"electricity-consumption": electricityConsumptionPath,
-		"gas-consumption": gasConsumptionPath,
-	});
+	const energyConsumption = compileEnergyConsumption(catalogManifest, rows);
 	const regionalGdp = compileRegionalGdp(catalogManifest, rows);
 	const jobs = compileJobs(catalogManifest, rows, populationCodes);
 	const declaredFile = (id: string) => {
