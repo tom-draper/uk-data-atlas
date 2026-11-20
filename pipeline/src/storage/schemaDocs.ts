@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -86,7 +86,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "licences",
-		body: "Every dataset names a source, and every source has one or more licences (source_licence, licence). licence.commercial_use and licence.share_alike are 0 or 1. v_source_terms rolls them up per source: commercial_use is 1 only if every licence allows it, share_alike is 1 if any licence requires it. Election results can carry their own licence (v_election_terms). Most data is under the Open Government Licence v3.0, which needs attribution; source.citation gives the text. The 2016 to 2019 local elections are CC BY-SA, so anything derived from them must be shared alike.",
+		body: "Every dataset names a source, and every source has one or more licences (source_licence, licence). licence.commercial_use and licence.share_alike are 0 or 1. v_source_terms rolls them up per source: commercial_use is 1 only if every licence allows it, share_alike is 1 if any licence requires it. Election results can carry their own licence (v_election_terms). Most data is under the Open Government Licence v3.0, which needs attribution. The 2016 to 2019 local elections are CC BY-SA, so anything derived from them must be shared alike. Citing and licences of a series: a series depends on more than its dataset's source, since a converted series also rests on its input, its crosswalks, the weights those were counted from and the boundary files, and a modelled series on everything its model read. v_series_attribution lists every source of a series, one row each, with publisher, licences, terms and how it was reached: SELECT source_id, publisher, licences, commercial_use, share_alike, via FROM v_series_attribution WHERE series_id = ? ORDER BY depth. v_series_terms has one row per series with the terms rolled up over all of them (commercial_use is the lowest, share_alike the highest, null when a source has no licence on record) and attribution, the text to print: SELECT commercial_use, share_alike, attribution FROM v_series_terms WHERE series_id = ?. Take series_id from the row you read (v_observation_default and v_observation return it). A series built from ShareAlike inputs is ShareAlike. The two notional election models differ only in this: notional-open read no CC BY-SA result and notional-sharealike did. A source that is under different licences in different years (the local election archive) counts as the licence of the years a series holds, so a series of 2021 to 2025 results is not ShareAlike. Print the attribution with any figure you show; a derived figure credits everything it is made from.",
 	},
 	{
 		topic: "performance",
@@ -541,6 +541,39 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The nations with at least one value, as a sorted comma list of E, N, S and W, then ? for areas whose nation cannot be told (historical constituencies). Empty when the period has no value.",
 		},
 	},
+	series_source: {
+		audience: "reference",
+		description:
+			"Every source a series depends on, one row for each (series, source): its own dataset's source, the boundary file it is on, the sources of its crosswalks and their weights, and everything its inputs and its model read, however many steps away. Written at assembly so one lookup answers where a series comes from. Read it through v_series_attribution, which adds the publisher, licences and terms. Every series has at least one row, and every source of an input is also a row of the series built from it.",
+		columns: {
+			series_id: "The series (series.id).",
+			source_id: "The source it depends on (source.id).",
+			via: "How the closest path reaches the source, by the first step from the series: dataset (its own dataset's source), boundaries (the boundary file it is on, boundary_release_source), crosswalk (a crosswalk's provenance, crosswalk_provenance_source), crosswalk-weight (what a crosswalk's weights were counted from, crosswalk_weight_input), input:value or input:weight (an input series, series_input or derived_from_id, and everything it depends on), model (a dataset or set of weights a model names, dataset: and weights: in model_input) or model-input (a series a model's model_input names, and everything it depends on). On a tie in depth the first listed here wins.",
+			vias: "Every way the source is reached, as a comma list in the order above, so a source that is both the dataset's and an input's reads 'dataset, input:value'.",
+			depth: "Steps from the series to the source on the closest path: 0 for its own dataset's source, 1 for a boundary file, crosswalk or direct input, and more for what those depend on.",
+		},
+	},
+	series_source_licence: {
+		audience: "reference",
+		description:
+			"The licences a series holds a source under, one row for each (series, source, licence). Usually the source's own licences (source_licence). A source whose licence depends on the election, such as the local election archive (CC BY-SA 2016 to 2019, Open Parliament Licence 2021 to 2025), gives a series only the licences of the elections it holds (election_licence), or of the election a model read for the role date of its model_input row, so an open notional model does not carry CC BY-SA. A source with no row here has no licence on record and its terms are unknown.",
+		columns: {
+			series_id: "The series (series.id).",
+			source_id: "The source (source.id).",
+			licence_id: "The licence it is held under (licence.id).",
+		},
+	},
+	series_notice: {
+		audience: "reference",
+		description:
+			"The notices a series must print beyond its publishers and licence statements: the lines of a source's citation that begin 'Contains' (Royal Mail data) and 'Contains OS data © Crown copyright and database right <year>' for each Office for National Statistics boundary file the series is on or depends on, with the year of that file. A notice another one begins (the statement without its year) is left out.",
+		columns: {
+			series_id: "The series (series.id).",
+			source_id:
+				"The source the notice is about (source.id), which for an OS statement is the boundary file's source.",
+			notice: "The text to print.",
+		},
+	},
 	observation: {
 		audience: "core",
 		description:
@@ -610,6 +643,51 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			quantity: "The quantity's key (quantity.key).",
 			alternatives:
 				"How many other series have a row for this quantity, area and period. 0 means no other series could have answered.",
+		},
+	},
+	v_series_attribution: {
+		audience: "core",
+		description:
+			"View: one row for each series and source it depends on, with the publisher, licences and terms of that source, so one query lists everything a series, however it was made, must credit. Filter by series_id or series (the key). A converted, aggregated or modelled series lists the sources of its inputs, crosswalks, crosswalk weights, boundary files and model inputs as well as its dataset's. commercial_use and share_alike are the source's own terms for this series; v_series_terms rolls them up. Read series_source for how the row was reached and series_source_licence for the election-aware licences.",
+		columns: {
+			series_id: "The series (series.id).",
+			series: "The series key (series.key).",
+			measure: "Measure slug.",
+			method: "published, converted, aggregated or modelled.",
+			source_id: "The source (source.id).",
+			publisher: "Who publishes it.",
+			url: "The publisher's page, or null.",
+			citation:
+				"The citation text recorded for the source, often empty. v_series_terms builds the text to print from publisher and licence instead.",
+			licences:
+				"The licences this series holds the source under, as a comma list of licence ids. Empty when none is on record.",
+			commercial_use:
+				"1 if every licence allows commercial use, 0 if any does not, null if the source has no licence on record.",
+			share_alike:
+				"1 if any licence requires derived work to be shared alike, 0 if none does, null if unknown.",
+			via: "How the closest path reaches the source: dataset, boundaries, crosswalk, crosswalk-weight, input:value, input:weight, model or model-input. See series_source.",
+			vias: "Every way it is reached, comma separated.",
+			depth: "Steps from the series to the source on the closest path. 0 is its own dataset's source.",
+		},
+	},
+	v_series_terms: {
+		audience: "core",
+		description:
+			"View: one row for each series, with what it may be used for and the text to print. sources counts the sources behind it. commercial_use is the lowest over its sources and share_alike the highest, so a converted series built from a ShareAlike input is ShareAlike. Either is null when a source has no licence on record (unknown) and no other source settles it: a 0 for commercial_use or a 1 for share_alike is definite. attribution is ready to print: each publisher once, then each licence's statement once, then the OS and other notices the sources ask for, so a derived figure credits everything it is made from.",
+		columns: {
+			series_id: "The series (series.id).",
+			series: "The series key (series.key).",
+			measure: "Measure slug.",
+			method: "published, converted, aggregated or modelled.",
+			sources: "How many sources the series depends on.",
+			licences:
+				"Every licence the series is under, as a comma list of licence ids.",
+			commercial_use:
+				"1 if every source allows commercial use, 0 if any does not, null if unknown.",
+			share_alike:
+				"1 if any source requires derived work to be shared alike, 0 if none does, null if unknown.",
+			attribution:
+				"The statement to print with the figure, such as 'Source: Office for National Statistics. Contains public sector information licensed under the Open Government Licence v3.0. Contains OS data © Crown copyright and database right 2024.'",
 		},
 	},
 	v_coverage: {
@@ -1522,6 +1600,34 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 };
 
 export const schemaExamples: readonly SchemaExample[] = [
+	{
+		id: "converted-series-sources",
+		question:
+			"Which sources and licences are behind the converted ward series for under-1s on the 2026 boundaries, and how does each reach it?",
+		sql: "SELECT source_id, publisher, via, depth, licences, commercial_use, share_alike FROM v_series_attribution WHERE series = 'population/population/ward:2023-12-uk-bgc/age=0/sex=all~converted:ward:2026-05-uk-bgc' ORDER BY depth, source_id",
+		expect: "Two rows, both Office for National Statistics under ogl-3.0 and both commercial-safe and not ShareAlike: the population dataset itself (via dataset, depth 0) and the crosswalk provenance that moves it onto the new boundaries (via crosswalk, depth 1).",
+	},
+	{
+		id: "notional-election-terms",
+		question:
+			"Can the notional 2019 general election vote for Labour be used commercially, and must a copy be ShareAlike?",
+		sql: "SELECT series, licences, commercial_use, share_alike, attribution FROM v_series_terms WHERE series LIKE 'general-election/party-votes/constituency:2019-12-uk-bgc/party=lab~notional-%' ORDER BY series",
+		expect: "Two rows, one per model. notional-open is under ogl-3.0 and open-parliament, commercial_use 1 and share_alike 0. notional-sharealike also takes cc-by-sa-3.0 from the Local Elections Archive Project results, so share_alike is 1 and the attribution carries the ShareAlike statement.",
+	},
+	{
+		id: "population-attribution",
+		question:
+			"What attribution text goes with Manchester's most recent population figure?",
+		sql: "SELECT o.period, o.value, t.commercial_use, t.share_alike, t.attribution FROM v_observation_default o JOIN v_series_terms t ON t.series_id = o.series_id WHERE o.measure = 'population' AND o.area_code = 'E08000003' ORDER BY o.period DESC LIMIT 1",
+		expect: "One row for the latest period: the value, commercial_use 1, share_alike 0 and a ready-to-print string that names each publisher once, the Open Government Licence statement and the OS and Royal Mail notices.",
+	},
+	{
+		id: "sharealike-series-count",
+		question:
+			"How many series of each method are ShareAlike, and how many have terms that are not known?",
+		sql: "SELECT method, count(*) AS series, sum(share_alike = 1) AS sharealike, sum(share_alike IS NULL OR commercial_use IS NULL) AS unknown FROM v_series_terms GROUP BY method ORDER BY method",
+		expect: "One row each for converted, modelled and published. A converted or modelled series is ShareAlike when any input it was built from is, so converted and modelled rows have more than their own dataset's licence would give. The unknown column is 0 in a release that builds.",
+	},
 	{
 		id: "area-location",
 		question: "Where is Manchester and what bounds does its area cover?",

@@ -63,6 +63,9 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				series: 3,
 				observation: 6,
 				series_coverage: 3,
+				series_source: 3,
+				series_source_licence: 1,
+				series_notice: 1,
 				series_gap: 1,
 				series_input: 1,
 				conversion_skip: 1,
@@ -89,6 +92,8 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				// The 2016 local rows and the share-alike model's are the add-on's.
 				observation: 3,
 				series_coverage: 3,
+				series_source: 4,
+				series_source_licence: 1,
 				series_gap: 1,
 				area_relationship: 1,
 				election: 2,
@@ -179,6 +184,9 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 		for (const name of [
 			"observation",
 			"series_coverage",
+			"series_source",
+			"series_source_licence",
+			"series_notice",
 			"crosswalk_edge_check",
 			"dataset",
 			"postcode_unit",

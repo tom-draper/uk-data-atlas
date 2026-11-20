@@ -23,5 +23,6 @@ export * from "./searchTable.ts";
 export * from "./schemaTables.ts";
 export * from "./areaChangeEvents.ts";
 export * from "./defaultObservation.ts";
+export * from "./seriesAttribution.ts";
 export * from "./seriesCoverage.ts";
 export * from "./areaChangeClassifier.ts";
