@@ -62,7 +62,7 @@ describe("json dataset client", () => {
 		});
 	});
 
-	it("reuses parsed records across slices", async () => {
+	it("reports each dataset as it loads and reuses parsed records", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockImplementation(async (url: string) => ({
@@ -74,11 +74,14 @@ describe("json dataset client", () => {
 			{ key: "first", url: "/reused-first.json", enabled: true },
 			{ key: "second", url: "/reused-second.json", enabled: true },
 		];
+		const arrived: string[] = [];
 		const first = await loadJsonDatasetSlice(
 			requests,
 			new AbortController().signal,
 			parseDataset,
+			(key) => arrived.push(key),
 		);
+		expect(arrived.sort()).toEqual(["first", "second"]);
 
 		const again = await loadJsonDatasetSlice(
 			requests,

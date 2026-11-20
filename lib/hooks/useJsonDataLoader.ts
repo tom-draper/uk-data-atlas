@@ -37,15 +37,35 @@ export function useJsonDatasetLoaders<T>(
 			return;
 		}
 		setLoading(true);
-		loadJsonDatasetSlice<T>(requests, controller.signal, parseDataset).then(
-			(slice) => {
-				if (controller.signal.aborted) return;
-				setDatasets(slice.datasets);
-				setErrors(slice.errors);
-				setLoading(false);
+		// Show each dataset as it lands, so cards need not wait for the
+		// slowest one. Arrivals within a frame render together.
+		let arrived: Record<string, Record<string, T>> = {};
+		let frame: number | null = null;
+		const publish = () => {
+			frame = null;
+			const batch = arrived;
+			arrived = {};
+			setDatasets((current) => ({ ...current, ...batch }));
+		};
+		loadJsonDatasetSlice<T>(
+			requests,
+			controller.signal,
+			parseDataset,
+			(key, data) => {
+				arrived[key] = data;
+				frame ??= requestAnimationFrame(publish);
 			},
-		);
-		return () => controller.abort();
+		).then((slice) => {
+			if (frame !== null) cancelAnimationFrame(frame);
+			if (controller.signal.aborted) return;
+			setDatasets(slice.datasets);
+			setErrors(slice.errors);
+			setLoading(false);
+		});
+		return () => {
+			if (frame !== null) cancelAnimationFrame(frame);
+			controller.abort();
+		};
 	}, [requestKey, parseDataset]);
 
 	return { datasets, loading, errors };

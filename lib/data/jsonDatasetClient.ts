@@ -213,6 +213,8 @@ export async function loadJsonDatasetSlice<T>(
 	requests: readonly JsonDatasetRequest[],
 	signal: AbortSignal,
 	parseDataset: JsonDatasetParser<T>,
+	/** Called with each dataset as it loads, before the slice settles. */
+	onDataset?: (key: string, data: Record<string, T>) => void,
 ): Promise<CachedDatasetSlice<T>> {
 	const enabledRequests = requests.filter((request) => request.enabled);
 	const datasetKeys = enabledRequests.map(datasetCacheKey);
@@ -246,6 +248,7 @@ export async function loadJsonDatasetSlice<T>(
 					parseDataset,
 					request.key,
 				);
+				if (!signal.aborted) onDataset?.(request.key, data);
 				results[slot] = {
 					status: "fulfilled",
 					value: {
