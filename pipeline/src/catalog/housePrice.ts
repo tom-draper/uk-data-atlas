@@ -1,11 +1,9 @@
-import { HOUSE_PRICE_SERVED_WARD_CODES } from "@uk-data-atlas/datasets";
-import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	Measure,
-	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { type PrecompiledFile, sha256, number, object } from "./values.ts";
+import type { CatalogueRows } from "./rows.ts";
+import { sha256 } from "./values.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -19,85 +17,42 @@ import { measureSeriesKey } from "@uk-data-atlas/measures";
 const LAST_DECEMBER_PERIOD = 2022;
 
 /**
- * The house price partition, restored to the codes its publisher used.
- *
- * The website moves Salford's twenty wards onto their 2021 codes so the map
- * joins, but those wards were redrawn in 2021: a price measured on the old ward
- * is not a price for the new one. The compiled record keeps the published code
- * as `sourceWardCode`, so every value is served under the code it was published
- * against, and the list of moved wards lives only in the website loader.
+ * The house price partition, as the API serves it: every value under the code
+ * its publisher used, which the selector restores for the twenty Salford wards
+ * the website moves onto their 2021 codes. A price measured on the old ward is
+ * not a price for the new one.
  */
 const housePricePeriods = (
-	path: DatasetInput,
+	rows: CatalogueRows,
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
-	const edition = object(source["2023"], `${path}.2023`);
-	if (edition.boundaryType !== "ward") {
-		throw new Error(`${path}: expected ward-level house prices`);
-	}
-	const data = object(edition.data, `${path}.2023.data`);
-	const yearsFrom =
-		typeof edition.priceYearsFrom === "number" ? edition.priceYearsFrom : 0;
-	const byPeriod = new Map<string, PopulationObservation[]>();
-	for (const [compiledCode, record] of Object.entries(data)) {
-		const sourceWardCode = object(
-			record,
-			`${path}.${compiledCode}`,
-		).sourceWardCode;
-		const publisherAreaCode =
-			typeof sourceWardCode === "string" ? sourceWardCode : compiledCode;
-		const areaCode =
-			HOUSE_PRICE_SERVED_WARD_CODES.get(publisherAreaCode) ??
-			publisherAreaCode;
-		if (!/^[EW]\d{8}$/.test(areaCode)) {
-			throw new Error(`${path}: unsupported ward code ${areaCode}`);
-		}
-		const field = object(record, `${path}.${compiledCode}`).prices;
-		// The compiled file holds the years as an array from the edition's first.
-		const prices = Array.isArray(field)
-			? field.flatMap((price, index) =>
-					price === null
-						? []
-						: [[String(yearsFrom + index), price] as const],
-				)
-			: Object.entries(object(field, `${path}.${compiledCode}.prices`));
-		for (const [year, price] of prices) {
-			if (!/^\d{4}$/.test(year) || Number(year) > LAST_DECEMBER_PERIOD)
-				continue;
-			const records = byPeriod.get(year) ?? [];
-			records.push({
-				areaCode,
-				...(areaCode === publisherAreaCode
-					? {}
-					: { sourceAreaCode: publisherAreaCode }),
-				value: number(price, `${path}.${compiledCode}.prices.${year}`),
-				status: "observed",
-			});
-			byPeriod.set(year, records);
-		}
-	}
-	const periods = [...byPeriod.entries()]
-		.map(([period, records]) => ({
-			period,
-			records: records.sort((left, right) =>
-				left.areaCode.localeCompare(right.areaCode),
-			),
-		}))
-		.sort((left, right) => left.period.localeCompare(right.period));
-	if (periods.length === 0) throw new Error(`${path} has no house prices`);
+	const source = {
+		series: { measure: "house-price-median" },
+		datasetId: "house-price",
+		geography: "ward",
+		boundaryYear: 2020,
+	} as const;
+	const periods = rows
+		.periods(
+			source,
+			rows
+				.heldPeriods(rows.selector(source))
+				.filter((period) => Number(period) <= LAST_DECEMBER_PERIOD),
+		)
+		.filter(({ records }) => records.length > 0);
+	if (periods.length === 0) throw new Error("house-price has no prices");
 	return periods;
 };
 
 /** Ward median house prices, served under the codes they were published against. */
 export const compileHousePrice = (
 	{ manifestPath, datasets }: CatalogManifest,
-	housePricePath: DatasetInput,
+	rows: CatalogueRows,
 ): CompiledMeasure => {
 	const seriesKey = measureSeriesKey({ measure: "house-price-median" });
 	const housePrice = datasets.find((dataset) => dataset.id === "house-price");
 	if (!housePrice)
 		throw new Error(`${manifestPath} has no house-price dataset`);
-	const housePriceByPeriod = housePricePeriods(housePricePath);
+	const housePriceByPeriod = housePricePeriods(rows);
 	const housePriceContent = JSON.stringify({
 		schemaVersion: 1,
 		measureId: seriesKey,
