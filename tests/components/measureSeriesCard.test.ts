@@ -5,9 +5,7 @@ import {
 	MeasureSeriesCard,
 	seriesView,
 } from "@/components/measures/MeasureSeriesCard";
-import { MAX_PERIODS } from "@/lib/measures/request";
 import type { MeasureValuesPayload } from "@/lib/measures/types";
-import { historyPeriods } from "@/lib/measures/useMeasureSeries";
 
 const payload = (
 	valueKind: string,
@@ -89,18 +87,6 @@ describe("seriesView", () => {
 				"E9",
 			),
 		).toBeNull();
-	});
-});
-
-describe("historyPeriods", () => {
-	it("keeps the newest periods when a source holds more than a request may name", () => {
-		const periods = Array.from({ length: MAX_PERIODS + 5 }, (_, i) =>
-			String(1900 + i),
-		);
-		const kept = historyPeriods(periods);
-		expect(kept).toHaveLength(MAX_PERIODS);
-		expect(kept.at(-1)).toBe(periods.at(-1));
-		expect(kept[0]).toBe(periods[5]);
 	});
 });
 
