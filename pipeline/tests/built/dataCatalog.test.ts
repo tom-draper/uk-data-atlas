@@ -12,7 +12,11 @@ import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import {
+	DATASET_DECLARATIONS,
+	energyConsumptionSeries,
+} from "@uk-data-atlas/datasets";
+import { fixtureRows, type FixtureSeries } from "../catalog/rowFixtures.ts";
 
 const dataset = (
 	output: string,
@@ -156,49 +160,239 @@ const emissionsYear = (year: number) => ({
 	},
 });
 
-/** A year of total jobs; Northern Ireland is left out unless asked for. */
-const jobsYear = (year: number, northernIreland: boolean) => ({
-	year,
-	boundaryYear: 2023,
-	boundaryType: "localAuthority",
-	data: {
-		E06000001: { ladCode: "E06000001", totalJobs: 45000 },
-		...(northernIreland
-			? { N09000001: { ladCode: "N09000001", totalJobs: 68000 } }
-			: {}),
-		S12000001: { ladCode: "S12000001", totalJobs: 30000 },
-		W06000001: { ladCode: "W06000001", totalJobs: 20000 },
+const GB_CODES = ["E06000001", "S12000001", "W06000001"];
+
+/** The nominal Northern Ireland value, present in one jobs year only. */
+const jobsSeries = (): FixtureSeries => ({
+	dataset: "jobs",
+	measure: "total-jobs",
+	geography: "localAuthority",
+	release: "2023-uk-bfc",
+	periods: {
+		"2019": { E06000001: 45000, S12000001: 30000, W06000001: 20000 },
+		// Northern Ireland is published for 2020 only.
+		"2020": {
+			E06000001: 45000,
+			N09000001: 68000,
+			S12000001: 30000,
+			W06000001: 20000,
+		},
 	},
 });
+
+/** The population and the land area (in hectares) density divides it by. */
+const densitySeries = (): FixtureSeries[] => [
+	{
+		dataset: "population-uk",
+		measure: "population",
+		geography: "localAuthority",
+		release: "2023-uk-bfc",
+		periods: Object.fromEntries(
+			["2023", "2024"].map((year) => [
+				year,
+				{
+					E06000001: 7,
+					N09000001: 7,
+					S12000001: 7,
+					W06000001: 9,
+				},
+			]),
+		),
+	},
+	{
+		dataset: "land-area",
+		measure: "area",
+		geography: "localAuthority",
+		release: "2024-uk-bfc",
+		members: { surface: "land" },
+		periods: {
+			"2024": {
+				E06000001: 1000,
+				N09000001: 2000,
+				S12000001: 4000,
+				W06000001: 5000,
+			},
+		},
+	},
+];
+
+const houseSeries = (): FixtureSeries => ({
+	dataset: "house-price",
+	measure: "house-price-median",
+	geography: "ward",
+	release: "2020-uk-bfc",
+	periods: {
+		"2021": { E05008945: 90000 },
+		"2022": {
+			E05008945: 95000,
+			// Compiled under Salford's 2021 code; published under E05000759.
+			E05013018: 179500,
+			// Temple Newsam's published 2021 code is safe to correct to
+			// its identical December 2020 ward geometry.
+			E05013831: 200000,
+			// Garforth & Swillington changed geometry, so it must not be
+			// moved to its earlier code.
+			E05013830: 210000,
+		},
+		// The year ending March 2023 is not a comparable period.
+		"2023": { E05008945: 99000 },
+	},
+});
+
+/** Male and female life expectancy, with the interval the publisher gives. */
+const lifeSeries = (): FixtureSeries[] => {
+	const estimate = (value: number) => ({
+		value,
+		lower: value - 0.7,
+		upper: value + 0.7,
+	});
+	const period = (offset: number, male: number, female: number) =>
+		({
+			male: {
+				E06000063: estimate(male + 1.32 - offset),
+				E06000001: estimate(male - offset),
+			},
+			female: {
+				E06000063: estimate(female + 1.42 - offset),
+				E06000001: estimate(female - offset),
+			},
+		}) as const;
+	const early = period(2, 75.97, 80.08);
+	const late = period(0, 75.97, 80.08);
+	return (["male", "female"] as const).map((sex) => ({
+		dataset: "life-expectancy-series",
+		measure: "life-expectancy",
+		geography: "localAuthority",
+		release: "2025-uk-bgc",
+		members: { sex },
+		periods: { "2001-2003": early[sex], "2020-2022": late[sex] },
+	}));
+};
+
+/** Two ITL areas per tier over two years, the same areas in both. */
+const regionalSeries = (): FixtureSeries[] =>
+	(
+		[
+			["itl1", ["TLC", "TLL"]],
+			["itl2", ["TLC3", "TLL1"]],
+			["itl3", ["TLC31", "TLL11"]],
+		] as const
+	).flatMap(([geography, codes]) =>
+		(
+			[
+				["gva", 100],
+				["gdp", 110],
+			] as const
+		).map(([measure, base]) => ({
+			dataset: "regional-gdp",
+			measure,
+			geography,
+			release: "2025-uk-itl",
+			periods: Object.fromEntries(
+				["2022", "2023"].map((year, index) => [
+					year,
+					Object.fromEntries(
+						codes.map((code, area) => [code, base + index + area]),
+					),
+				]),
+			),
+		})),
+	);
+
+/** Gas leaves one authority out of the later year, as the publisher does. */
+const energySeries = (): FixtureSeries[] =>
+	energyConsumptionSeries().map((series) => ({
+		dataset: series.measure,
+		measure: series.measure,
+		geography: "localAuthority",
+		release: "2025-uk-bfc",
+		members: series.dimensions,
+		periods: {
+			"2023": { E06000001: 12, W06000001: 13 },
+			"2024": {
+				E06000001: 13,
+				...(series.measure === "gas-consumption"
+					? {}
+					: { W06000001: 14 }),
+			},
+		},
+	}));
+
+/**
+ * Modelled unemployment: the April 2019 districts over every period, and the
+ * April 2021 authorities, which the fixture holds as the same districts less
+ * those replaced in 2020 and 2021, over the two years all are estimated.
+ */
+const unemploymentSeries = (): FixtureSeries[] => {
+	const areaReleases = {
+		...Object.fromEntries(
+			[...GB_CODES, ...UNEMPLOYMENT_DISTRICTS_2023].map((code) => [
+				code,
+				["2019-uk-bfc", "2021-uk-bfc"],
+			]),
+		),
+		...Object.fromEntries(
+			UNEMPLOYMENT_DISTRICTS_2021.map((code) => [code, ["2019-uk-bfc"]]),
+		),
+	};
+	const every = Object.keys(areaReleases);
+	const cells = (value: number, only = every) =>
+		Object.fromEntries(only.map((code) => [code, value]));
+	const series = (
+		measure: string,
+		[financial, calendar, last]: [number, number, number | undefined],
+	): FixtureSeries => ({
+		dataset: "unemployment",
+		measure,
+		geography: "localAuthority",
+		release: "2019-uk-bfc",
+		areaReleases,
+		periods: {
+			// Only the three standing authorities have a financial-year
+			// estimate, and the latest year has no interval.
+			"2003-04": cells(financial, GB_CODES),
+			"2020": cells(calendar),
+			...(last === undefined ? {} : { "2021": cells(last) }),
+		},
+	});
+	return [
+		series("unemployment-rate", [6, 4, 5]),
+		series("unemployment-rate-interval", [1.5, 1, undefined]),
+		series("unemployed-people", [900, 1000, 1100]),
+		series("unemployed-people-interval", [300, 200, undefined]),
+	];
+};
+
+const migratedSeries = (): FixtureSeries[] => [
+	jobsSeries(),
+	...densitySeries(),
+	houseSeries(),
+	...lifeSeries(),
+	...regionalSeries(),
+	...energySeries(),
+	...unemploymentSeries(),
+];
 
 const writeSources = (
 	directory: string,
 	wardRecordCount = 2,
+	rowSeries: FixtureSeries[] = migratedSeries(),
 ): DataCatalogInputs<string> => {
 	const manifest = join(directory, "dataset-manifest.json");
 	const population = join(directory, "population.json");
 	const populationUk = join(directory, "population-uk.json");
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
-	const jobs = join(directory, "jobs.json");
-	const landArea = join(directory, "land-area.json");
-	const housePrice = join(directory, "house-price.json");
 	const imd = join(directory, "imd.json");
 	const nimdm = join(directory, "nimdm.json");
 	const wimd = join(directory, "wimd.json");
 	const simd = join(directory, "simd.json");
-	const lifeExpectancySeries = join(directory, "life-expectancy-series.json");
 	const populationConstituency = join(
 		directory,
 		"population-constituency.json",
 	);
 	const generalElection = join(directory, "general-election.json");
 	const localElection = join(directory, "local-election.json");
-	const energy = {
-		electricity: join(directory, "electricity-consumption.json"),
-		gas: join(directory, "gas-consumption.json"),
-	} as const;
-	const regionalGdp = join(directory, "regional-gdp.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -220,7 +414,6 @@ const writeSources = (
 	const waste = join(directory, "waste.json");
 	const planningApplications = join(directory, "planning-applications.json");
 	const crime = join(directory, "crime.json");
-	const unemployment = join(directory, "unemployment.json");
 	const airQuality = join(directory, "air-quality.json");
 	writeFileSync(
 		manifest,
@@ -694,63 +887,6 @@ const writeSources = (
 		}),
 	);
 	writeFileSync(
-		unemployment,
-		JSON.stringify({
-			"2021": {
-				periodLabels: {
-					"2003": "April 2003 to March 2004",
-					"2020": "January to December 2020",
-					"2021": "January to December 2021",
-				},
-				data: Object.fromEntries([
-					...[
-						"E06000001",
-						"S12000001",
-						"W06000001",
-						...UNEMPLOYMENT_DISTRICTS_2023,
-						...UNEMPLOYMENT_DISTRICTS_2021,
-					].map((code) => [
-						code,
-						{
-							// Only the fixture's three standing authorities have
-							// a financial-year estimate.
-							rates: {
-								"2003": code.startsWith("E07") ? null : 6,
-								"2020": 4,
-								"2021": 5,
-							},
-							rateIntervals: {
-								"2003": 1.5,
-								"2020": 1,
-								"2021": null,
-							},
-							levels: {
-								"2003": code.startsWith("E07") ? null : 900,
-								"2020": 1000,
-								"2021": 1100,
-							},
-							levelIntervals: {
-								"2003": 300,
-								"2020": 200,
-								"2021": null,
-							},
-						},
-					]),
-					...["E06000063", "E06000064", "E06000065", "E06000066"].map(
-						(code) => [
-							code,
-							{
-								rates: { "2020": 4 },
-								levels: { "2020": 3000 },
-								derivedFromPredecessors: ["E07000026"],
-							},
-						],
-					),
-				]),
-			},
-		}),
-	);
-	writeFileSync(
 		airQuality,
 		JSON.stringify({
 			"2024": {
@@ -773,59 +909,6 @@ const writeSources = (
 						],
 					),
 				),
-			},
-		}),
-	);
-	writeFileSync(
-		jobs,
-		JSON.stringify({
-			"2019": jobsYear(2019, false),
-			"2020": jobsYear(2020, true),
-		}),
-	);
-	writeFileSync(
-		landArea,
-		JSON.stringify({
-			"2024": {
-				year: 2024,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: { landSquareKm: 10 },
-					N09000001: { landSquareKm: 20 },
-					S12000001: { landSquareKm: 40 },
-					W06000001: { landSquareKm: 50 },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		housePrice,
-		JSON.stringify({
-			"2023": {
-				year: 2023,
-				boundaryYear: 2021,
-				boundaryType: "ward",
-				data: {
-					E05008945: {
-						prices: { "2021": 90000, "2022": 95000, "2023": 99000 },
-					},
-					// Compiled under Salford's 2021 code; published under E05000759.
-					E05013018: {
-						sourceWardCode: "E05000759",
-						prices: { "2022": 179500 },
-					},
-					// Temple Newsam's published 2021 code is safe to correct to
-					// its identical December 2020 ward geometry.
-					E05013831: {
-						prices: { "2022": 200000 },
-					},
-					// Garforth & Swillington changed geometry, so it must not be
-					// moved to its earlier code.
-					E05013830: {
-						prices: { "2022": 210000 },
-					},
-				},
 			},
 		}),
 	);
@@ -879,34 +962,6 @@ const writeSources = (
 				boundaryType: "dataZone",
 				data: { S01010891: { simdRank: 1, simdDecile: 1 } },
 			},
-		}),
-	);
-	const estimate = (value: number) => ({
-		value,
-		lower: value - 0.7,
-		upper: value + 0.7,
-	});
-	const lifeExpectancyPeriod = (year: number, offset: number) => ({
-		year,
-		period: `${year - 2}-${year}`,
-		boundaryType: "localAuthority",
-		boundaryYear: 2025,
-		data: {
-			E06000063: {
-				male: estimate(77.29 - offset),
-				female: estimate(81.5 - offset),
-			},
-			E06000001: {
-				male: estimate(75.97 - offset),
-				female: estimate(80.08 - offset),
-			},
-		},
-	});
-	writeFileSync(
-		lifeExpectancySeries,
-		JSON.stringify({
-			"2003": lifeExpectancyPeriod(2003, 2),
-			"2022": lifeExpectancyPeriod(2022, 0),
 		}),
 	);
 	const constituencyYear = (year: number, offset: number) => ({
@@ -1031,90 +1086,8 @@ const writeSources = (
 			},
 		}),
 	);
-	// Two ITL areas per tier over two years, the same areas in both, as the
-	// publisher restates the whole series on one code vintage.
-	writeFileSync(
-		regionalGdp,
-		JSON.stringify(
-			Object.fromEntries(
-				(
-					[
-						["itl1", ["TLC", "TLL"]],
-						["itl2", ["TLC3", "TLL1"]],
-						["itl3", ["TLC31", "TLL11"]],
-					] as const
-				).flatMap(([tier, codes]) =>
-					["2022", "2023"].map((year, index) => [
-						// ITL3 is the dataset's own boundary and keeps the bare
-						// year; the other tiers are prefixed.
-						tier === "itl3" ? year : `${tier}-${year}`,
-						{
-							year: Number(year),
-							boundaryType: tier,
-							boundaryYear: 2025,
-							data: Object.fromEntries(
-								codes.map((code, area) => [
-									code,
-									{
-										itlCode: code,
-										itlName: code,
-										gvaMillionGbp: 100 + index + area,
-										gdpMillionGbp: 110 + index + area,
-									},
-								]),
-							),
-						},
-					]),
-				),
-			),
-		),
-	);
-	// Two authorities over two years. Gas leaves one of them out of the later
-	// year, as the publisher does where it records no value at all.
-	for (const [path, drop] of [
-		[energy.electricity, false],
-		[energy.gas, true],
-	] as const) {
-		writeFileSync(
-			path,
-			JSON.stringify(
-				Object.fromEntries(
-					["2023", "2024"].map((year, index) => [
-						year,
-						{
-							year: Number(year),
-							boundaryType: "localAuthority",
-							boundaryYear: 2025,
-							data: Object.fromEntries(
-								["E06000001", "W06000001"]
-									.filter(
-										(_, area) =>
-											!(
-												drop &&
-												index === 1 &&
-												area === 1
-											),
-									)
-									.map((code, area) => [
-										code,
-										{
-											ladCode: code,
-											ladName: code,
-											domesticGwh: 10 + index + area,
-											nonDomesticGwh: 20 + index + area,
-											allMetersGwh:
-												30 + 2 * index + 2 * area,
-											metersThousands: 5 + area,
-										},
-									]),
-							),
-						},
-					]),
-				),
-			),
-		);
-	}
 	return {
+		rows: fixtureRows(rowSeries),
 		manifest,
 		population,
 		populationUk,
@@ -1147,17 +1120,9 @@ const writeSources = (
 		},
 		roadCollisions,
 		crime,
-		unemployment,
-		jobs,
-		landArea,
-		housePrice,
-		lifeExpectancySeries,
 		populationConstituency,
 		generalElection,
 		localElection,
-		regionalGdp,
-		electricityConsumption: energy.electricity,
-		gasConsumption: energy.gas,
 	};
 };
 
@@ -1470,32 +1435,33 @@ test("rejects local-authority population data whose codes change between periods
 	}
 });
 
+/** The fixture rows with the land area replaced by the given values. */
+const withLandArea = (hectares: Record<string, number>) =>
+	migratedSeries().map((series) =>
+		series.dataset === "land-area"
+			? { ...series, periods: { "2024": hectares } }
+			: series,
+	);
+
 test("refuses to derive density when the denominator misses an area", () => {
 	const directory = mkdtempSync(
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const sources = writeSources(directory);
 		// Drop one authority the population partition publishes.
-		writeFileSync(
-			sources.landArea,
-			JSON.stringify({
-				"2024": {
-					year: 2024,
-					boundaryYear: 2024,
-					boundaryType: "localAuthority",
-					data: {
-						E06000001: { landSquareKm: 10 },
-						N09000001: { landSquareKm: 20 },
-						S12000001: { landSquareKm: 40 },
-					},
-				},
+		const sources = writeSources(
+			directory,
+			2,
+			withLandArea({
+				E06000001: 1000,
+				N09000001: 2000,
+				S12000001: 4000,
 			}),
 		);
 
 		assert.throws(
 			() => compileDataCatalog(sources),
-			/no land area for W06000001/,
+			/W06000001 has no area to divide population-density by/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
@@ -1507,28 +1473,21 @@ test("refuses to derive density from an area with no land", () => {
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const sources = writeSources(directory);
-		writeFileSync(
-			sources.landArea,
-			JSON.stringify({
-				"2024": {
-					year: 2024,
-					boundaryYear: 2024,
-					boundaryType: "localAuthority",
-					data: {
-						E06000001: { landSquareKm: 0 },
-						N09000001: { landSquareKm: 20 },
-						S12000001: { landSquareKm: 40 },
-						W06000001: { landSquareKm: 50 },
-					},
-				},
+		// A zero denominator would publish Infinity as a density.
+		const sources = writeSources(
+			directory,
+			2,
+			withLandArea({
+				E06000001: 0,
+				N09000001: 2000,
+				S12000001: 4000,
+				W06000001: 5000,
 			}),
 		);
 
-		// A zero denominator would publish Infinity as a density.
 		assert.throws(
 			() => compileDataCatalog(sources),
-			/E06000001 has no land area/,
+			/E06000001 has no area to divide population-density by/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
@@ -1614,11 +1573,13 @@ test("refuses jobs where a British district is missing from a year", () => {
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const sources = writeSources(directory);
-		const source = JSON.parse(readFileSync(sources.jobs, "utf8"));
-		delete source["2019"].data.W06000001;
-		source["2020"].data.W06000002 = { totalJobs: 1000 };
-		writeFileSync(sources.jobs, JSON.stringify(source));
+		const jobs = jobsSeries();
+		delete jobs.periods["2019"]!.W06000001;
+		jobs.periods["2020"]!.W06000002 = 1000;
+		const sources = writeSources(directory, 2, [
+			jobs,
+			...migratedSeries().filter((series) => series.dataset !== "jobs"),
+		]);
 
 		// Only a whole nation may be absent; anything else is a gap the
 		// coverage note does not describe.
@@ -1840,30 +1801,6 @@ test("publishes the life expectancy series with each published interval", () => 
 				(candidate) => candidate.id === "life-expectancy-total",
 			),
 			false,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
-});
-
-test("refuses an interval that does not contain its estimate", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const sources = writeSources(directory);
-		const series = JSON.parse(
-			readFileSync(sources.lifeExpectancySeries, "utf8"),
-		);
-		series["2022"].data.E06000001.male = {
-			value: 75.97,
-			lower: 76,
-			upper: 77,
-		};
-		writeFileSync(sources.lifeExpectancySeries, JSON.stringify(series));
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/interval 76 to 77 does not contain 75.97/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
