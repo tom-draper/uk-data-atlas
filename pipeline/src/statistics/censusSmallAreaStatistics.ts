@@ -18,7 +18,7 @@ import {
 	CENSUS_SMALL_AREA_TABLES,
 	censusTableRecords,
 	type CensusTable,
-} from "../catalog/censusSmallArea.ts";
+} from "./censusSmallAreaSource.ts";
 import { readJsonSync } from "../lib/json.ts";
 
 /**

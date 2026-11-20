@@ -160,6 +160,35 @@ export class CatalogueRows {
 			.all(datasetId, period, `${period}-%`)
 			.map((row) => [String(row.published), String(row.own)]);
 	}
+	/** The title, description and publisher a dataset's rows record. */
+	datasetTerms(datasetId: string): {
+		title: string;
+		description: string;
+		publisher: string;
+		url: string;
+		licence: { name: string; url?: string };
+	} {
+		const row = this.database
+			.prepare(
+				`SELECT d.title AS title, d.description AS description,
+				s.publisher AS publisher, s.url AS url, s.licence AS licence,
+				s.licence_url AS licenceUrl
+				FROM dataset d JOIN source s ON s.id = d.source_id
+				WHERE d.slug = ?`,
+			)
+			.get(datasetId);
+		if (!row) throw new Error(`The rows hold no ${datasetId} dataset`);
+		return {
+			title: String(row.title),
+			description: String(row.description),
+			publisher: String(row.publisher),
+			url: String(row.url),
+			licence: {
+				name: String(row.licence),
+				...(row.licenceUrl ? { url: String(row.licenceUrl) } : {}),
+			},
+		};
+	}
 	/** The party codes a dataset's party votes are split by, as stored. */
 	partyCodes(datasetId: string): string[] {
 		return this.database

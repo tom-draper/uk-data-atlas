@@ -1,0 +1,104 @@
+import { readFileSync } from "node:fs";
+import { csvFields } from "@uk-data-atlas/artifacts";
+import { sourceDir, type SourceName } from "@uk-data-atlas/datasets";
+import type { SourceGeography } from "@uk-data-atlas/catalogue/node";
+import {
+	CENSUS_SMALL_AREA_TABLES,
+	type CensusTable,
+} from "./censusSmallAreaTables.ts";
+
+export { CENSUS_SMALL_AREA_TABLES, type CensusTable };
+
+const HEADER = ["date", "geography", "geography code"];
+
+export const CENSUS_SMALL_AREA_GEOGRAPHIES = [
+	{ type: "lsoa", prefixes: ["E01", "W01"], label: "2021 LSOAs" },
+	{ type: "msoa", prefixes: ["E02", "W02"], label: "2021 MSOAs" },
+] as const satisfies ReadonlyArray<{
+	type: SourceGeography["type"];
+	prefixes: readonly string[];
+	label: string;
+}>;
+
+export const CENSUS_BOUNDARY_YEAR = 2021;
+export const CENSUS_PERIOD = "2021";
+/** The source folder of a table, relative to `data/source`. */
+export const censusTableDirectory = (table: string) =>
+	sourceDir(`census-2021-${table}` as SourceName);
+
+/**
+ * A table's rows for one geography, in area code order, as an area code and
+ * a count per category in the table's category order, checked to add to the
+ * total.
+ */
+export const censusTableRecords = (
+	path: string,
+	table: CensusTable,
+	geography: (typeof CENSUS_SMALL_AREA_GEOGRAPHIES)[number],
+) => {
+	const lines = readFileSync(path, "utf8")
+		.replace(/^﻿/, "")
+		.split(/\r?\n/)
+		.filter((line) => line.length > 0);
+	const header = csvFields(lines[0] ?? "");
+	if (HEADER.some((name, index) => header[index] !== name))
+		throw new Error(`${path}: expected ${HEADER.join(", ")} first`);
+	const columnOf = (name: string) => {
+		const index = header.indexOf(name);
+		if (index === -1) throw new Error(`${path}: no column ${name}`);
+		return index;
+	};
+	const total = columnOf(table.totalColumn);
+	const columns = table.categories.map(([, column]) => columnOf(column));
+	// The leaves are the categories other than the total, which they make up.
+	const leaves = table.categories.flatMap(([, column], index) =>
+		column === table.totalColumn ? [] : [columns[index]!],
+	);
+	const seen = new Set<string>();
+	return (
+		lines
+			.slice(1)
+			.map((line, index) => {
+				const fields = csvFields(line);
+				const code = fields[2] ?? "";
+				const where = `${path} row ${index + 2}`;
+				if (fields[0] !== CENSUS_PERIOD)
+					throw new Error(
+						`${where}: date is ${fields[0]}, not ${CENSUS_PERIOD}`,
+					);
+				if (
+					!geography.prefixes.some((prefix) =>
+						code.startsWith(prefix),
+					)
+				)
+					throw new Error(
+						`${where}: ${code} is not a ${geography.label} code`,
+					);
+				if (seen.has(code))
+					throw new Error(`${where}: ${code} repeats`);
+				seen.add(code);
+				const value = (column: number) => {
+					const parsed = Number(fields[column]);
+					if (!Number.isInteger(parsed) || parsed < 0)
+						throw new Error(
+							`${where}: ${header[column]} is not a count`,
+						);
+					return parsed;
+				};
+				const sum = leaves.reduce(
+					(running, column) => running + value(column),
+					0,
+				);
+				if (sum !== value(total))
+					throw new Error(
+						`${where}: the categories sum to ${sum}, not the total ${value(total)}`,
+					);
+				return [code, ...columns.map(value)] as [string, ...number[]];
+			})
+			// In area code order, as every other observation artifact is, so a
+			// table rebuilt from statistics rows has the same bytes.
+			.sort(([left], [right]) =>
+				left < right ? -1 : left > right ? 1 : 0,
+			)
+	);
+};
