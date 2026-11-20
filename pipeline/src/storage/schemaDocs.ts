@@ -1086,13 +1086,14 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			to_name: "Current area name.",
 			weight: "Share of the old area's value that arrives on the current area.",
 			weight_lower:
-				"Lower likely bound of the weight, null where not measured.",
+				"Lower likely bound of the weight. Null only where some of the value is at risk and the error factor is not measured.",
 			weight_upper:
-				"Upper likely bound of the weight, null where not measured.",
+				"Upper likely bound of the weight. Null only where some of the value is at risk and the error factor is not measured.",
 			at_risk: "Share of the value that passed through a split.",
 			pruned: "Share carried whole from an area partly put elsewhere.",
 			estimated_share: "Share of the weight carried by a non-exact edge.",
-			complete: "1 where the current area receives all its feeders.",
+			complete:
+				"1 where every old area feeding the current area has a route to it. 0 where one has none, so the current area's value may be understated.",
 			hops: "Crosswalks in the route.",
 			exact: "1 if no step of the route splits a value.",
 			chain_id: "crosswalk_chain.id.",
@@ -1201,17 +1202,17 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			estimated_share:
 				"The share of the edge's weight carried by an edge that is not an exact regrouping, from 0 to 1. 1 minus it is the share regrouped exactly.",
 			weight_lower:
-				"The lowest the weight is likely to be: weight less the backtest's error factor times at_risk, less pruned, never below 0. Null where the factor is not measured for the splitting method and basis.",
+				"The lowest the weight is likely to be: weight less the backtest's error factor times at_risk, less pruned, never below 0. With nothing at risk the factor does not matter, so the bound is weight less pruned and is never null. Null only where at_risk is above 0 and the factor is not measured for the splitting method and basis.",
 			weight_upper:
-				"The highest the weight is likely to be: weight plus the error factor times at_risk. Null where the factor is not measured.",
+				"The highest the weight is likely to be: weight plus the error factor times at_risk. With nothing at risk it is the weight itself and is never null. Null only where at_risk is above 0 and the factor is not measured.",
 			complete:
-				"1 where every area feeding the current area, at every step, has a route to it, so a value set on every old area arrives whole. 0 where a feeder was blocked or missing, and the sum on the current area is short.",
+				"1 where every old area feeding the current area, at every step, has a route to it, so a value set on every old area arrives whole. 0 where a feeding old area has no route to it (it is in no crosswalk of a step, or its value was blocked), so the value summed on the current area may be understated. The weights themselves are not changed by it. Read it as the minimum over the rows of one current area.",
 		},
 	},
 	crosswalk_chain_gap: {
 		audience: "reference",
 		description:
-			"Old areas that lose part of their value on the way to the current release, or lose it for a named reason. An inventory area of the old release with no edge in the chain and no row here is in no crosswalk of a step it reaches (not-in-crosswalk), and nothing arrives; most areas that lose value are of this kind, so they are not stored. Read every gap through v_crosswalk_chain_gap.",
+			"Old areas that lose part of their value on the way to the current release, or lose it for a named reason. An inventory area of the old release with no edge in the chain and no row here is in no crosswalk of a step it reaches (not-in-crosswalk), and nothing arrives; most areas that lose value are of this kind, so they are not stored (about 213,000 rows that the inventory and the chain already imply). Read every gap through v_crosswalk_chain_gap, which adds them.",
 		columns: {
 			chain_id: "The chain (crosswalk_chain.id).",
 			from_version_id: "The old area (area_version.id).",

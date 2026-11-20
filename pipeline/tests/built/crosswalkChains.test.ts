@@ -263,3 +263,17 @@ test("every older release reaches the current one, bar the releases no carrying 
 		);
 	}
 });
+
+test("the bounds of an edge are null only where something is at risk and no error factor is measured", () => {
+	// Nothing at risk: the upper bound is the weight and the lower is the weight less pruned.
+	assert.deepEqual(
+		all(`SELECT chain_id, from_version_id, to_version_id
+			 FROM crosswalk_chain_edge
+			 WHERE at_risk = 0
+			   AND (weight_upper IS NULL OR weight_lower IS NULL
+			     OR abs(weight_upper - weight) > 1e-9
+			     OR abs(weight_lower - max(weight - pruned, 0)) > 1e-9)
+			 LIMIT 20`),
+		[],
+	);
+});
