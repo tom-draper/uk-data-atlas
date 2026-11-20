@@ -58,9 +58,36 @@ test("the edges of a chain start in its old release and end in the current one",
 	);
 	assert.equal(
 		one(`SELECT count(*) AS n FROM crosswalk_chain c
-			 WHERE c.edges <> (SELECT count(*) FROM crosswalk_chain_edge e WHERE e.chain_id = c.id)
-			    OR c.gaps <> (SELECT count(*) FROM crosswalk_chain_gap g WHERE g.chain_id = c.id)`),
+			 WHERE c.edges <> (SELECT count(*) FROM crosswalk_chain_edge e WHERE e.chain_id = c.id)`),
 		0,
+	);
+});
+
+test("every old area either reaches the current release or is listed as a gap", () => {
+	// The gaps of a chain are its areas that lose value, stored or implied.
+	assert.equal(
+		one(`SELECT count(*) AS n FROM crosswalk_chain c
+			 WHERE c.gaps <> (SELECT count(*) FROM v_crosswalk_chain_gap v
+			   WHERE v.chain_id = c.id AND v.basis = coalesce(c.basis_id, 'population'))`),
+		0,
+	);
+	// An old area in the inventory with no edge is a gap, and one with edges that sum to 1 is not.
+	assert.deepEqual(
+		all(`SELECT c.id, v.id AS from_version_id FROM crosswalk_chain c
+			 JOIN area_version v ON v.release_id = c.from_release_id AND v.in_inventory = 1
+			 WHERE NOT EXISTS (SELECT 1 FROM crosswalk_chain_edge e WHERE e.chain_id = c.id AND e.from_version_id = v.id)
+			   AND NOT EXISTS (SELECT 1 FROM v_crosswalk_chain_gap g WHERE g.chain_id = c.id AND g.from_version_id = v.id)
+			 LIMIT 20`),
+		[],
+	);
+	assert.deepEqual(
+		all(`SELECT g.chain_id, g.from_version_id FROM crosswalk_chain_gap g
+			 JOIN area_version v ON v.id = g.from_version_id
+			 WHERE v.in_inventory = 0 OR (g.reason = 'not-in-crosswalk' AND NOT EXISTS (
+			   SELECT 1 FROM crosswalk_chain_edge e
+			   WHERE e.chain_id = g.chain_id AND e.from_version_id = g.from_version_id))
+			 LIMIT 20`),
+		[],
 	);
 });
 
