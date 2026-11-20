@@ -50,8 +50,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	carAvailability: Input;
 	qualification: Input;
 	ethnicity: Input;
-	roadCollisions: Input;
-	crime: Input;
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
@@ -83,8 +81,6 @@ export const compileDataCatalog = ({
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
-	roadCollisions: roadCollisionsPath,
-	crime: crimePath,
 	rows,
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
@@ -187,12 +183,8 @@ export const compileDataCatalog = ({
 				{ authorities: populationCodes, england2025 },
 			),
 		),
-		...compileRoadCollisions(
-			catalogManifest,
-			roadCollisionsPath,
-			populationCodes,
-		),
-		...compileCrime(catalogManifest, crimePath),
+		...compileRoadCollisions(catalogManifest, rows, populationCodes),
+		...compileCrime(catalogManifest, rows),
 	];
 	const unemployment = compileUnemployment(
 		catalogManifest,

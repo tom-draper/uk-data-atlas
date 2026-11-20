@@ -13,10 +13,16 @@ import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 import {
+	crimeSeries,
 	DATASET_DECLARATIONS,
 	energyConsumptionSeries,
+	roadCollisionSeries,
 } from "@uk-data-atlas/datasets";
-import { fixtureRows, type FixtureSeries } from "../catalog/rowFixtures.ts";
+import {
+	fixtureRows,
+	type FixtureGap,
+	type FixtureSeries,
+} from "../catalog/rowFixtures.ts";
 
 const dataset = (
 	output: string,
@@ -371,7 +377,79 @@ const migratedSeries = (): FixtureSeries[] => [
 	...regionalSeries(),
 	...energySeries(),
 	...unemploymentSeries(),
+	...collisionRows(),
+	...crimeRows(),
 ];
+
+const collisionRows = (): FixtureSeries[] =>
+	roadCollisionSeries().flatMap(({ measure, dimensions }) => {
+		const base = {
+			dataset: "road-collisions",
+			measure,
+			members: dimensions,
+		};
+		const severity = dimensions?.["collision-severity"];
+		const lsoa = { all: 4, fatal: 0, serious: 1, slight: 3 }[
+			severity ?? "all"
+		]!;
+		const authority = { all: 6, fatal: 1, serious: 2, slight: 3 }[
+			severity ?? "all"
+		]!;
+		return [
+			{
+				...base,
+				geography: "localAuthority",
+				release: "2024-05-uk-bgc",
+				periods: {
+					"2025": { E06000001: authority, S12000001: authority },
+				},
+			},
+			{
+				...base,
+				geography: "lsoa",
+				release: "2021-12-ew-bgc-v5",
+				periods: { "2025": { E01000001: lsoa } },
+			},
+		];
+	});
+
+const collisionGaps = (): FixtureGap[] => [
+	{
+		dataset: "road-collisions",
+		edition: "2025",
+		kind: "collision-area",
+		code: "EHEATHROW",
+		count: 1,
+	},
+];
+
+// One partnership over several authorities has a count the force cancelled
+// below zero.
+const crimeRows = (): FixtureSeries[] =>
+	crimeSeries().map(({ measure, dimensions }) => {
+		const total = dimensions?.offence === "total";
+		const count = (fallback: number) =>
+			total
+				? fallback
+				: dimensions?.offence === "public-order-offences"
+					? -1
+					: 1;
+		return {
+			dataset: "crime",
+			measure,
+			members: dimensions,
+			geography: "communitySafetyPartnership",
+			release: "2023-12-ew-bgc",
+			periods: {
+				"year-ending-2026-03": {
+					E22000100: count(20000),
+					E22000362: count(10997),
+				},
+			},
+		};
+	});
+
+const migratedGaps = (): FixtureGap[] => [...collisionGaps()];
 
 const writeSources = (
 	directory: string,
@@ -409,11 +487,9 @@ const writeSources = (
 	const evChargers = join(directory, "electric-vehicle-chargers.json");
 	const business = join(directory, "business-activity.json");
 	const homelessness = join(directory, "homelessness.json");
-	const roadCollisions = join(directory, "road-collisions.json");
 	const income = join(directory, "income.json");
 	const waste = join(directory, "waste.json");
 	const planningApplications = join(directory, "planning-applications.json");
-	const crime = join(directory, "crime.json");
 	const airQuality = join(directory, "air-quality.json");
 	writeFileSync(
 		manifest,
@@ -763,41 +839,6 @@ const writeSources = (
 		}),
 	);
 	writeFileSync(
-		roadCollisions,
-		JSON.stringify({
-			"2025": {
-				year: 2025,
-				period: "January to June 2025",
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: Object.fromEntries(
-					["E06000001", "S12000001"].map((code) => [
-						code,
-						{
-							ladCode: code,
-							collisions: 6,
-							fatal: 1,
-							serious: 2,
-							slight: 3,
-						},
-					]),
-				),
-				excluded: [{ code: "EHEATHROW", collisions: 1 }],
-				lsoaBoundaryYear: 2021,
-				lsoas: {
-					E01000001: {
-						lsoaCode: "E01000001",
-						collisions: 4,
-						fatal: 0,
-						serious: 1,
-						slight: 3,
-					},
-				},
-				withoutLsoa: { "GB-SCT": 6, "GB-ENG": 2 },
-			},
-		}),
-	);
-	writeFileSync(
 		income,
 		JSON.stringify({
 			"2025": {
@@ -833,59 +874,6 @@ const writeSources = (
 				},
 			}),
 		);
-	const offences = (total: number) => ({
-		totalRecordedCrime: total,
-		violenceAgainstPerson: 10,
-		homicide: 0,
-		deathSeriesInjuryUnlawfulDriving: 0,
-		violenceWithInjury: 4,
-		violenceWithoutInjury: 4,
-		stalkingHarassment: 2,
-		sexualOffences: 1,
-		robbery: 1,
-		theftOffences: 5,
-		burglary: 2,
-		residentialBurglary: 1,
-		nonResidentialBurglary: 1,
-		vehicleOffences: 1,
-		theftFromPerson: 0,
-		bicycleTheft: 0,
-		shoplifting: 1,
-		otherTheftOffences: 1,
-		criminalDamageArson: 2,
-		drugOffences: 1,
-		possessionWeapons: 0,
-		publicOrderOffences: -1,
-		miscellaneousCrimes: 1,
-	});
-	writeFileSync(
-		crime,
-		JSON.stringify({
-			"2026": {
-				year: 2026,
-				boundaryYear: 2026,
-				boundaryType: "localAuthority",
-				dataDate: "year ending March 2026",
-				data: {
-					E06000026: { ladCode: "E06000026", ...offences(20000) },
-				},
-				partnerships: {
-					E22000100: {
-						communitySafetyPartnershipCode: "E22000100",
-						localAuthorityCode: "E06000026",
-						...offences(20000),
-					},
-					// One partnership over several authorities, with a count
-					// the force cancelled below zero.
-					E22000362: {
-						communitySafetyPartnershipCode: "E22000362",
-						localAuthorityCode: null,
-						...offences(10997),
-					},
-				},
-			},
-		}),
-	);
 	writeFileSync(
 		airQuality,
 		JSON.stringify({
@@ -1087,7 +1075,7 @@ const writeSources = (
 		}),
 	);
 	return {
-		rows: fixtureRows(rowSeries),
+		rows: fixtureRows(rowSeries, migratedGaps()),
 		manifest,
 		population,
 		populationUk,
@@ -1118,8 +1106,6 @@ const writeSources = (
 			wimd,
 			simd,
 		},
-		roadCollisions,
-		crime,
 		populationConstituency,
 		generalElection,
 		localElection,
@@ -2145,26 +2131,6 @@ test("publishes recorded crime by community safety partnership", () => {
 			measure.id.startsWith("crime-"),
 		);
 		assert.equal(crimeMeasures.length, 23);
-		assert.deepEqual(
-			result.statisticsFields.find(
-				({ measureId }) => measureId === "crime-total",
-			),
-			{
-				measureId: "crime-total",
-				field: {
-					dataset: "crime",
-					field: "totalRecordedCrime",
-					records: "partnerships",
-					sourcePeriod: "2026",
-					publishedPeriod: "year-ending-2026-03",
-					geography: "communitySafetyPartnership",
-					boundaryYear: 2023,
-					recordCount: 2,
-					recordHash:
-						"3bf0b9e0cf14a13103ca0bc2d9a308f6fd1fdf146c2f17c06fbfb596188acd38",
-				},
-			},
-		);
 		assert.deepEqual(crimeMeasures[0]?.sources[0]?.sourceGeography, {
 			type: "communitySafetyPartnership",
 			boundaryYear: 2023,

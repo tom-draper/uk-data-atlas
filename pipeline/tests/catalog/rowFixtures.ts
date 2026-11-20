@@ -20,7 +20,17 @@ export type FixtureSeries = {
 	periods: Record<string, Record<string, Cell>>;
 };
 
+/** What an edition of a dataset could not place, as the coverage gap rows hold it. */
+export type FixtureGap = {
+	dataset: string;
+	edition: string;
+	kind: "election-ward" | "collision-area" | "collision-without-lsoa";
+	code: string;
+	count: number;
+};
+
 const SCHEMA = `
+	CREATE TABLE dataset_coverage_gap (dataset_id INTEGER, edition TEXT, kind TEXT, position INTEGER, area_code TEXT, count INTEGER);
 	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
@@ -39,7 +49,10 @@ const SCHEMA = `
  * An in-memory copy of the statistics rows holding only the given series,
  * with the vocabulary they imply, for testing a catalogue reader.
  */
-export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
+export const fixtureRows = (
+	series: FixtureSeries[],
+	gaps: FixtureGap[] = [],
+): CatalogueRows => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(SCHEMA);
 	const ids = new Map<string, number>();
@@ -156,6 +169,24 @@ export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
 						upper ?? null,
 					);
 			}
+	}
+	const positions = new Map<string, number>();
+	for (const gap of gaps) {
+		const key = `${gap.dataset}:${gap.edition}:${gap.kind}`;
+		const position = positions.get(key) ?? 0;
+		positions.set(key, position + 1);
+		database
+			.prepare(
+				"INSERT INTO dataset_coverage_gap VALUES (?, ?, ?, ?, ?, ?)",
+			)
+			.run(
+				idOf("dataset", gap.dataset, "slug", [gap.dataset]),
+				gap.edition,
+				gap.kind,
+				position,
+				gap.code,
+				gap.count,
+			);
 	}
 	return new CatalogueRows(database, vocabulary);
 };

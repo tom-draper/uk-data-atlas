@@ -1,4 +1,4 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { crime } from "@uk-data-atlas/datasets";
@@ -12,7 +12,7 @@ import { crime } from "@uk-data-atlas/datasets";
  */
 export const compileCrime = (
 	manifest: CatalogManifest,
-	crimePath: DatasetInput,
+	rows: CatalogueRows,
 ): CompiledMeasure[] => {
 	const offences = crime.statistics!.dimensions!.find(
 		(dimension) => dimension.slug === "offence",
@@ -43,16 +43,6 @@ export const compileCrime = (
 			notes: note ? [note] : [],
 		};
 	};
-	const crimeEdition = Object.values(
-		JSON.parse(readDatasetInput(crimePath)) as Record<
-			string,
-			{
-				year?: unknown;
-				dataDate?: unknown;
-				metadata?: { notes?: unknown };
-			}
-		>,
-	);
 	const crimeMonths = [
 		"January",
 		"February",
@@ -67,30 +57,35 @@ export const compileCrime = (
 		"November",
 		"December",
 	];
-	// The period is read from the edition rather than written here, so a
+	const editions = rows.editions("crime", "communitySafetyPartnership");
+	// The period is read from the rows rather than written here, so a
 	// refreshed table cannot be served under the months of the one before.
-	const crimeEnding = /^year ending ([A-Z][a-z]+) (\d{4})$/.exec(
-		String(crimeEdition[0]?.dataDate),
+	const crimeEnding = /^year-ending-(\d{4})-(\d{2})$/.exec(
+		editions[0]?.period ?? "",
 	);
-	const crimeMonth = crimeMonths.indexOf(crimeEnding?.[1] ?? "") + 1;
-	if (crimeEdition.length !== 1 || !crimeEnding || crimeMonth === 0)
+	const crimeMonth = Number(crimeEnding?.[2]);
+	if (editions.length !== 1 || !crimeEnding || !crimeMonths[crimeMonth - 1])
 		throw new Error(
-			`${crimePath}: expected one edition naming the twelve months it covers`,
+			"crime: expected one period naming the twelve months it covers",
 		);
-	const crimeYear = Number(crimeEnding[2]);
-	// The partnerships the compiled table withholds, because their force
-	// recorded their crime as unassigned, as the loader notes them.
-	const sourceNotes = crimeEdition[0]?.metadata?.notes;
-	const withheld = (Array.isArray(sourceNotes) ? sourceNotes : []).filter(
+	const crimeYear = Number(crimeEnding[1]);
+	// The partnerships the table withholds, because their force recorded their
+	// crime as unassigned, as the declaration's source notes say.
+	const withheld = (
+		crime.statistics!.payload!.parts!([]).flatMap(
+			({ header }) =>
+				(header as { metadata?: { notes?: unknown } }).metadata
+					?.notes ?? [],
+		) as unknown[]
+	).filter(
 		(note): note is string =>
 			typeof note === "string" && note.startsWith("No figures for "),
 	);
-	const crimePeriod = `year-ending-${crimeYear}-${String(crimeMonth).padStart(2, "0")}`;
+	const crimePeriod = editions[0]!.period;
 	return publishIndicators(manifest, {
 		datasetId: "crime",
-		path: crimePath,
+		rows,
 		boundaryYear: crimeYear,
-		table: "partnerships",
 		geography: "communitySafetyPartnership",
 		partitionBoundaryYear: 2023,
 		period: crimePeriod,
@@ -99,7 +94,7 @@ export const compileCrime = (
 				? "Published source records cover every community safety partnership in England and Wales except those whose crime the police recorded as unassigned, which are not served."
 				: "Published source records cover every community safety partnership in England and Wales.",
 		notes: [
-			`Offences recorded by the police in the twelve months to ${crimeEnding[1]} ${crimeYear}, by the community safety partnership where they were committed.`,
+			`Offences recorded by the police in the twelve months to ${crimeMonths[crimeMonth - 1]} ${crimeYear}, by the community safety partnership where they were committed.`,
 			"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 			"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 			...withheld,
