@@ -3,7 +3,7 @@ import {
 	type StatisticsSelector,
 	type StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
-import { CENSUS_SMALL_AREA_TABLES } from "../catalog/censusSmallArea.ts";
+import { CENSUS_SMALL_AREA_TABLES } from "./censusSmallAreaSource.ts";
 
 const PARTITION_BY_CODE_YEAR = new Set([
 	"car-availability",

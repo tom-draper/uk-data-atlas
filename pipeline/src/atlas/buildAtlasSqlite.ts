@@ -38,7 +38,7 @@ import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatisti
 import {
 	CENSUS_SMALL_AREA_TABLES,
 	type CensusTable,
-} from "../catalog/censusSmallArea.ts";
+} from "../statistics/censusSmallAreaSource.ts";
 import { sha256Hex } from "../lib/hash.ts";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";

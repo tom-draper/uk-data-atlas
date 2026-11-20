@@ -97,7 +97,7 @@ export const compileDataCatalog = ({
 		throw new Error(`${manifestPath} is not a dataset manifest`);
 	}
 	const censusSmallArea = censusSmallAreaRoot
-		? compileCensusSmallArea(censusSmallAreaRoot)
+		? compileCensusSmallArea(censusSmallAreaRoot, rows)
 		: undefined;
 	const datasets = [
 		...manifest.datasets.map(compileDataset),
