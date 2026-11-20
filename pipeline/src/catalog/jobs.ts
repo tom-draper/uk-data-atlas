@@ -1,7 +1,6 @@
-import { type DatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type { Country, Measure } from "@uk-data-atlas/catalogue/node";
 import { countryForCode, countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -17,7 +16,7 @@ import { measureSeriesKey } from "@uk-data-atlas/measures";
  */
 export const compileJobs = (
 	{ manifestPath, datasets }: CatalogManifest,
-	jobsPath: DatasetInput,
+	rows: CatalogueRows,
 	populationCodes: Set<string>,
 ): CompiledMeasure => {
 	const seriesKey = measureSeriesKey({ measure: "total-jobs" });
@@ -31,19 +30,24 @@ export const compileJobs = (
 			`${manifestPath}: jobs must declare boundary year 2023`,
 		);
 	}
-	const jobsPeriods = localAuthorityFieldPeriods(jobsPath, "totalJobs", 2023);
+	const jobsPeriods = rows.periods({
+		series: { measure: "total-jobs" },
+		datasetId: "jobs",
+		geography: "localAuthority",
+		boundaryYear: 2023,
+	});
 	const jobsRecordCount = jobsPeriods.reduce(
 		(total, period) => total + period.records.length,
 		0,
 	);
 	if (jobsRecordCount !== jobs.summary.dataRecordCount) {
 		throw new Error(
-			`${jobsPath}: expected ${jobs.summary.dataRecordCount} records from the manifest, found ${jobsRecordCount}`,
+			`jobs: expected ${jobs.summary.dataRecordCount} records from the manifest, found ${jobsRecordCount}`,
 		);
 	}
 	if (jobsPeriods.length !== jobs.summary.datasetCount) {
 		throw new Error(
-			`${jobsPath}: expected ${jobs.summary.datasetCount} periods from the manifest, found ${jobsPeriods.length}`,
+			`jobs: expected ${jobs.summary.datasetCount} periods from the manifest, found ${jobsPeriods.length}`,
 		);
 	}
 	const codesIn = (period: (typeof jobsPeriods)[number], country: Country) =>
@@ -61,7 +65,7 @@ export const compileJobs = (
 			if (published === expected) continue;
 			if (country === "GB-NIR" && published === "") continue;
 			throw new Error(
-				`${jobsPath}.${period.period}: ${country} districts do not match the 2023 local-authority code set, so the gap is not a whole nation`,
+				`jobs.${period.period}: ${country} districts do not match the 2023 local-authority code set, so the gap is not a whole nation`,
 			);
 		}
 	}

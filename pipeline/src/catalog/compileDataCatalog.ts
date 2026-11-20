@@ -53,7 +53,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	roadCollisions: Input;
 	crime: Input;
 	unemployment: Input;
-	jobs: Input;
 	landArea: Input;
 	populationConstituency: Input;
 	generalElection: Input;
@@ -92,7 +91,6 @@ export const compileDataCatalog = ({
 	roadCollisions: roadCollisionsPath,
 	crime: crimePath,
 	unemployment: unemploymentPath,
-	jobs: jobsPath,
 	landArea: landAreaPath,
 	rows,
 	populationConstituency: populationConstituencyPath,
@@ -162,7 +160,7 @@ export const compileDataCatalog = ({
 		"gas-consumption": gasConsumptionPath,
 	});
 	const regionalGdp = compileRegionalGdp(catalogManifest, regionalGdpPath);
-	const jobs = compileJobs(catalogManifest, jobsPath, populationCodes);
+	const jobs = compileJobs(catalogManifest, rows, populationCodes);
 	const declaredFile = (id: string) => {
 		const path = declared[id];
 		if (!path) throw new Error(`No compiled file for ${id}`);
