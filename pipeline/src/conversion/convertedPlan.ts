@@ -169,6 +169,9 @@ export const CONVERTED_PLAN: PlanEntry[] = [
 		},
 		target: LA_LATEST,
 		route: [hop(...CASE_SLUGS.con2024ToLa2024), ...laFrom2024],
+		// The total alone. The authority figures by age are published, and a
+		// breakdown by age is not split onto authorities.
+		members: /^$/,
 		estimates: true,
 		note: "Constituency population split onto authorities by residents in the overlap, the one estimated split kept. The population-uk series is the published authority figure and is the better one wherever it exists. The bounds are the backtest's.",
 	},
