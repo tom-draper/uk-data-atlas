@@ -1,3 +1,4 @@
+import { ALL_PERIODS, MAX_PERIODS } from "@uk-data-atlas/measures";
 import type { MeasureValuesRequest } from "./types";
 
 /**
@@ -11,7 +12,7 @@ import type { MeasureValuesRequest } from "./types";
  */
 
 export const MEASURE_VALUES_PATH = "/data/measures";
-export const MAX_PERIODS = 40;
+export { ALL_PERIODS, MAX_PERIODS };
 export const MAX_AREAS = 2000;
 
 const DIMENSION_PARAMETER = /^dimensions\[([a-z0-9][a-z0-9-]*)\]$/;
@@ -99,6 +100,10 @@ export const parseMeasureValuesQuery = (
 				};
 			request.boundaryYear = Number(value);
 		} else if (name === "period") {
+			if (value === ALL_PERIODS) {
+				request.periods = [ALL_PERIODS];
+				continue;
+			}
 			const periods = split(value);
 			if (
 				periods.length === 0 ||
@@ -107,7 +112,7 @@ export const parseMeasureValuesQuery = (
 			)
 				return {
 					ok: false,
-					detail: `period must list up to ${MAX_PERIODS} periods separated by commas.`,
+					detail: `period must list up to ${MAX_PERIODS} periods separated by commas, or be ${ALL_PERIODS} for the newest ${MAX_PERIODS}.`,
 				};
 			request.periods = periods;
 		} else {

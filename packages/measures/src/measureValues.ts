@@ -44,6 +44,11 @@ export type MeasureValuesContext = {
 	measureObservations: AnyMeasureObservationArtifact[];
 };
 
+/** The period that stands for every period a source publishes. */
+export const ALL_PERIODS = "*";
+/** The most periods one request reads. */
+export const MAX_PERIODS = 40;
+
 export type MeasureValuesRequest = {
 	/** A measure id such as `population`, or a canonical series key. */
 	measure: string;
@@ -55,7 +60,10 @@ export type MeasureValuesRequest = {
 	geography?: string;
 	/** The code year of that geography. */
 	boundaryYear?: number;
-	/** Periods wanted, in the order to return them. The source's latest by default. */
+	/**
+	 * Periods wanted, in the order to return them. The source's latest by
+	 * default. `[ALL_PERIODS]` asks for its newest `MAX_PERIODS`, oldest first.
+	 */
 	periods?: readonly string[];
 	/** Keep only these area codes, in this order. Every area the source holds by default. */
 	areas?: readonly string[];
@@ -470,7 +478,10 @@ export function queryMeasureValues(
 	const picked = resolveSource(series, request);
 	if ("ok" in picked) return picked;
 	const { source } = picked;
-	const periods = [...(request.periods ?? [source.periods.at(-1)!])];
+	const periods =
+		request.periods?.length === 1 && request.periods[0] === ALL_PERIODS
+			? source.periods.slice(-MAX_PERIODS)
+			: [...(request.periods ?? [source.periods.at(-1)!])];
 	const unknown = periods.filter(
 		(period) => !source.periods.includes(period),
 	);
