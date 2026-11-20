@@ -69,6 +69,15 @@ export const databaseKeys = (
 			sql: "SELECT id, slug FROM crosswalk ORDER BY id",
 			key: (row) => [String(row.slug)],
 		},
+		crosswalk_chain: {
+			sql: `SELECT c.id AS id, f.geography AS geography, f.${rname} AS from_release, t.${rname} AS to_release, c.basis_id AS basis FROM crosswalk_chain c JOIN area_release f ON f.${rid} = c.from_release_id JOIN area_release t ON t.${rid} = c.to_release_id ORDER BY c.id`,
+			key: (row) => [
+				String(row.geography),
+				String(row.from_release),
+				String(row.to_release),
+				row.basis === null ? "any" : String(row.basis),
+			],
+		},
 		source: {
 			sql: "SELECT id, publisher, url, licence FROM source ORDER BY id",
 			key: (row) => [

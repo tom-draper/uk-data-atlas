@@ -25,6 +25,11 @@ export const ID_NAMESPACES = {
 	area_version: { first: 1, fields: 3, segmented: true },
 	/** `(slug)`: `crosswalk.id`. */
 	crosswalk: { first: 0, fields: 1, segmented: false },
+	/**
+	 * `(geography, from release, to release, basis)`: `crosswalk_chain.id`. The
+	 * basis is `any` for a chain that is the same on every basis.
+	 */
+	crosswalk_chain: { first: 1, fields: 4, segmented: false },
 	/** `(publisher, url, licence)` as JSON: `source.id`. */
 	source: { first: 1, fields: 1, segmented: false },
 	/** `(slug)`: `dataset.id`. */
@@ -159,6 +164,9 @@ export class IdRegistries {
 	}
 	get crosswalk() {
 		return this.registries.crosswalk;
+	}
+	get crosswalkChain() {
+		return this.registries.crosswalk_chain;
 	}
 	get source() {
 		return this.registries.source;

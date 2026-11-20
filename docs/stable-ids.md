@@ -23,6 +23,7 @@ inside it.
 | `area.id`                                    | `(geography, code)`                                        |
 | `area_version.id`                            | `(geography, release, code)`                               |
 | `crosswalk.id`                               | `slug`                                                     |
+| `crosswalk_chain.id`                         | `(geography, from release, to release, basis)`             |
 | `source.id`                                  | `(publisher, url, licence)`                                |
 | `dataset.id`, `measure.id`, `dimension.id`   | `slug`                                                     |
 | `dimension_member.id`                        | `(dimension slug, code)`                                   |
@@ -43,7 +44,9 @@ WHERE geography = 'ward' AND release = '2024-12-uk-bgc' AND code = 'E05000026';
 ```
 
 An edge has no id of its own. It is `(crosswalk_id, from_version_id,
-to_version_id)`, stable because its three parts are.
+to_version_id)`, stable because its three parts are. A chain edge is the same,
+`(chain_id, from_version_id, to_version_id)`. A chain's `basis` is `any` where
+it is the same on every weight basis, which is `basis_id IS NULL` in the table.
 
 ## Order is not the id
 
