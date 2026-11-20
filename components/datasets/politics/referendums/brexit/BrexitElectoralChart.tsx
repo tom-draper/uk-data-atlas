@@ -121,7 +121,7 @@ export default function BrexitElectoralChart({
 	return (
 		<ChartCard
 			coverage={formatDatasetCoverage(dataset) ?? "United Kingdom"}
-			heading={`Electoral Commission [${dataset?.year ?? year}]`}
+			heading={`Brexit [${dataset?.year ?? year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
