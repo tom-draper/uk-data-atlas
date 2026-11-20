@@ -2,6 +2,9 @@ import {
 	ApiError,
 	areaHistory,
 	boundaryReleases,
+	bulkLookups,
+	crosswalks,
+	lookupCsv,
 	mapLimit,
 	validateAgainst,
 	validateInferred,
@@ -13,13 +16,21 @@ import {
 	fromInferred,
 	retiredCodes,
 	type Diagnosis,
+	type RetiredCode,
 } from "./diagnose";
+import { readParentLookup } from "./parents";
 import { latestRelease, sameRelease } from "./releases";
-import { successorsIn, type Successor } from "./successors";
+import { successorsIn, successorTable, type Successor } from "./successors";
 import type { Table } from "./table";
-import type { BoundaryRelease, ExactValidation, ReleaseRef } from "./types";
+import type {
+	BoundaryRelease,
+	BulkLookup,
+	Crosswalk,
+	ExactValidation,
+	ReleaseRef,
+} from "./types";
 
-/** Most retired codes whose history is read in one check. */
+/** Most retired codes whose history is read one by one in one check. */
 export const HISTORY_LIMIT = 100;
 const HISTORY_CONCURRENCY = 4;
 
@@ -66,6 +77,55 @@ export function columnValues(
 	return { rowOf, emptyRows, body };
 }
 
+/**
+ * Reads what retired codes became from an official lookup to the latest
+ * release, one download per release they came from. A code the lookup does
+ * not hold, or a lookup that cannot be read, is left for the history route.
+ */
+async function readFromLookups(
+	retired: RetiredCode[],
+	latestRef: ReleaseRef,
+	successors: Map<number, Successor[]>,
+	signal?: AbortSignal,
+	onProgress?: (message: string) => void,
+) {
+	const byRelease = new Map<string, RetiredCode[]>();
+	for (const code of retired) {
+		if (sameRelease(code.from, latestRef)) continue;
+		const key = code.from.boundaryRelease;
+		byRelease.set(key, [...(byRelease.get(key) ?? []), code]);
+	}
+	if (byRelease.size === 0) return;
+	let tables: { crosswalks: Crosswalk[]; lookups: BulkLookup[] };
+	try {
+		const [all, lookups] = await Promise.all([crosswalks(), bulkLookups()]);
+		tables = { crosswalks: all, lookups };
+	} catch {
+		return;
+	}
+	for (const codes of byRelease.values()) {
+		const table = successorTable(
+			codes[0].from,
+			latestRef,
+			tables.crosswalks,
+			tables.lookups,
+		);
+		if (!table) continue;
+		onProgress?.("Reading what retired codes became from the official lookup…");
+		let lookup: Map<string, Successor[]>;
+		try {
+			lookup = readParentLookup(await lookupCsv(table.href, signal));
+		} catch (error) {
+			if ((error as Error).name === "AbortError") throw error;
+			continue;
+		}
+		for (const code of codes) {
+			const found = lookup.get(code.code);
+			if (found) successors.set(code.index, found);
+		}
+	}
+}
+
 export async function runCheck(
 	request: CheckRequest,
 	signal?: AbortSignal,
@@ -96,8 +156,11 @@ export async function runCheck(
 	}
 
 	const retired = retiredCodes(primary, latest);
-	const toCheck = retired.slice(0, HISTORY_LIMIT);
 	const successors = new Map<number, Successor[]>();
+	if (latestRef && retired.length > 0)
+		await readFromLookups(retired, latestRef, successors, signal, onProgress);
+	const unread = retired.filter((code) => !successors.has(code.index));
+	const toCheck = unread.slice(0, HISTORY_LIMIT);
 	if (latestRef && toCheck.length > 0) {
 		onProgress?.(
 			`Looking up what ${toCheck.length.toLocaleString("en-GB")} retired code${toCheck.length === 1 ? "" : "s"} became…`,
@@ -126,7 +189,7 @@ export async function runCheck(
 		latest,
 		latestRelease: latestRef,
 		successors,
-		successorsUnchecked: retired.length - toCheck.length,
+		successorsUnchecked: unread.length - toCheck.length,
 		releases,
 	});
 	return { diagnosis, releases, body, latest };
