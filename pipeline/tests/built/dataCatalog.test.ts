@@ -369,7 +369,38 @@ const unemploymentSeries = (): FixtureSeries[] => {
 	];
 };
 
+/**
+ * The ward and constituency estimates. The local-authority ones are the
+ * density fixture's, which divides them.
+ */
+const populationRows = (): FixtureSeries[] => {
+	const constituencies = (offset: number) => ({
+		E14001063: 119256 - offset,
+		W07000081: 90000 - offset,
+	});
+	return [
+		{
+			dataset: "population",
+			measure: "population",
+			geography: "ward",
+			release: "2023-12-uk-bgc",
+			periods: { "2022": { W05000001: 7, E05000001: 7 } },
+		},
+		{
+			dataset: "population-constituency",
+			measure: "population",
+			geography: "constituency",
+			release: "2024-07-uk-bgc",
+			periods: {
+				"2021": constituencies(1000),
+				"2022": constituencies(0),
+			},
+		},
+	];
+};
+
 const migratedSeries = (): FixtureSeries[] => [
+	...populationRows(),
 	jobsSeries(),
 	...densitySeries(),
 	houseSeries(),
@@ -459,18 +490,12 @@ const writeSources = (
 	rowSeries: FixtureSeries[] = migratedSeries(),
 ): DataCatalogInputs<string> => {
 	const manifest = join(directory, "dataset-manifest.json");
-	const population = join(directory, "population.json");
-	const populationUk = join(directory, "population-uk.json");
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
 	const imd = join(directory, "imd.json");
 	const nimdm = join(directory, "nimdm.json");
 	const wimd = join(directory, "wimd.json");
 	const simd = join(directory, "simd.json");
-	const populationConstituency = join(
-		directory,
-		"population-constituency.json",
-	);
 	const generalElection = join(directory, "general-election.json");
 	const localElection = join(directory, "local-election.json");
 	const censusPaths = {
@@ -539,42 +564,6 @@ const writeSources = (
 				dataset("electricity-consumption", 4, 2, 2025),
 				dataset("gas-consumption", 3, 2, 2025),
 			],
-		}),
-	);
-	writeFileSync(
-		population,
-		JSON.stringify({
-			"2022": {
-				boundaryYear: 2023,
-				boundaryType: "ward",
-				data: {
-					W05000001: { total: { "0": 5, "90": 2 } },
-					E05000001: { total: { "0": 4, "90": 3 } },
-				},
-			},
-		}),
-	);
-	const localAuthorities = {
-		E06000001: { total: { "0": 4, "90": 3 } },
-		N09000001: { total: { "0": 5, "90": 2 } },
-		S12000001: { total: { "0": 6, "90": 1 } },
-		W06000001: { total: { "0": 7, "90": 2 } },
-	};
-	writeFileSync(
-		populationUk,
-		JSON.stringify({
-			"2023": {
-				year: 2023,
-				boundaryYear: 2023,
-				boundaryType: "localAuthority",
-				data: localAuthorities,
-			},
-			"2024": {
-				year: 2024,
-				boundaryYear: 2023,
-				boundaryType: "localAuthority",
-				data: localAuthorities,
-			},
 		}),
 	);
 	writeFileSync(
@@ -954,22 +943,6 @@ const writeSources = (
 			},
 		}),
 	);
-	const constituencyYear = (year: number, offset: number) => ({
-		year,
-		boundaryType: "constituency",
-		boundaryYear: 2024,
-		data: {
-			E14001063: { allAges: 119256 - offset },
-			W07000081: { allAges: 90000 - offset },
-		},
-	});
-	writeFileSync(
-		populationConstituency,
-		JSON.stringify({
-			"2021": constituencyYear(2021, 1000),
-			"2022": constituencyYear(2022, 0),
-		}),
-	);
 	writeFileSync(
 		generalElection,
 		JSON.stringify({
@@ -1079,8 +1052,6 @@ const writeSources = (
 	return {
 		rows: fixtureRows(rowSeries, migratedGaps()),
 		manifest,
-		population,
-		populationUk,
 		travelToWork: censusPaths["travel-to-work"],
 		carAvailability: censusPaths["car-availability"],
 		qualification: censusPaths.qualification,
@@ -1108,7 +1079,6 @@ const writeSources = (
 			wimd,
 			simd,
 		},
-		populationConstituency,
 		generalElection,
 		localElection,
 	};
@@ -1410,10 +1380,22 @@ test("rejects local-authority population data whose codes change between periods
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const sources = writeSources(directory);
-		const source = JSON.parse(readFileSync(sources.populationUk, "utf8"));
-		delete source["2024"].data.N09000001;
-		writeFileSync(sources.populationUk, JSON.stringify(source));
+		const rows = migratedSeries().map((series) =>
+			series.dataset === "population-uk"
+				? {
+						...series,
+						periods: {
+							...series.periods,
+							"2024": {
+								E06000001: 7,
+								S12000001: 7,
+								W06000001: 9,
+							},
+						},
+					}
+				: series,
+		);
+		const sources = writeSources(directory, 2, rows);
 		assert.throws(
 			() => compileDataCatalog(sources),
 			/local-authority codes change between periods/,

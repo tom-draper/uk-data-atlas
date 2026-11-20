@@ -28,13 +28,10 @@ export const datasetCatalogInputs = (
 	const inputs: DataCatalogInputs = {
 		rows: CatalogueRows.open(repositoryRoot),
 		manifest: precompiled("dataset-manifest.json"),
-		population: precompiled("population.json"),
-		populationUk: precompiled("population-uk.json"),
 		travelToWork: precompiled("travel-to-work.json"),
 		carAvailability: precompiled("car-availability.json"),
 		qualification: precompiled("qualification.json"),
 		ethnicity: precompiled("ethnicity.json"),
-		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
 		localElection: precompiled("local-election.json"),
 		declared: Object.fromEntries(
