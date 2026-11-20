@@ -52,7 +52,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	ethnicity: Input;
 	roadCollisions: Input;
 	crime: Input;
-	unemployment: Input;
 	landArea: Input;
 	populationConstituency: Input;
 	generalElection: Input;
@@ -90,7 +89,6 @@ export const compileDataCatalog = ({
 	ethnicity: ethnicityPath,
 	roadCollisions: roadCollisionsPath,
 	crime: crimePath,
-	unemployment: unemploymentPath,
 	landArea: landAreaPath,
 	rows,
 	populationConstituency: populationConstituencyPath,
@@ -209,7 +207,7 @@ export const compileDataCatalog = ({
 	];
 	const unemployment = compileUnemployment(
 		catalogManifest,
-		unemploymentPath,
+		rows,
 		populationCodes,
 	);
 	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);

@@ -16,6 +16,7 @@ import {
 import { isPublishedAreaCode } from "@uk-data-atlas/catalogue/node";
 import { readJsonSync } from "../lib/json.ts";
 import { selectorFor } from "../statistics/seriesSelector.ts";
+import { partitionByCodeYear } from "../statistics/selectorPlans.ts";
 
 /** One catalogue source: a measure's series on one partition of a dataset. */
 export type RowSource = {
@@ -54,6 +55,15 @@ export class CatalogueRows {
 	close() {
 		this.database.close();
 	}
+	/** The releases of a geography whose code vintage is the given year. */
+	releasesIn(geography: string, year: number): string[] {
+		return this.database
+			.prepare(
+				"SELECT release FROM area_release WHERE geography = ? AND release LIKE ? ORDER BY release",
+			)
+			.all(geography, `${year}-%`)
+			.map((row) => String(row.release));
+	}
 	/** The selector the API reads the source's observations with. */
 	selector(source: RowSource): StatisticsSelector {
 		const selector = selectorFor(
@@ -65,7 +75,11 @@ export class CatalogueRows {
 			source.boundaryYear,
 		);
 		if (typeof selector === "string") throw new Error(selector);
-		return selector;
+		return partitionByCodeYear(
+			selector,
+			source.datasetId,
+			this.releasesIn(source.geography, source.boundaryYear),
+		);
 	}
 	/** Every period the source's rows hold, as labelled in the rows. */
 	heldPeriods(selector: StatisticsSelector): string[] {
