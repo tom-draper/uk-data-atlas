@@ -10,6 +10,7 @@ import { localAuthorityFieldWithGaps } from "./localAuthorityFields.ts";
 import { onApril2023Authorities } from "./authorityChanges.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
+import type { CatalogueRows, RowSource } from "./rows.ts";
 import { createHash } from "node:crypto";
 import {
 	measureSeriesKey,
@@ -32,6 +33,19 @@ export type Indicator = {
 	status?: PopulationObservation["status"];
 };
 
+/** One period of an indicator's series, as the rows hold it. */
+const readFromRows = (
+	rows: CatalogueRows,
+	{ period, ...source }: RowSource & { period: string },
+) => {
+	const [read] = rows.periods(source, [period]);
+	if (!read || read.records.length === 0)
+		throw new Error(
+			`${source.datasetId}: the rows hold no ${period} records of ${measureSeriesKey(source.series)} on ${source.geography}`,
+		);
+	return { period, records: read.records };
+};
+
 /**
  * Single-period local-authority indicators, each checked against the code
  * set it claims before it is published.
@@ -46,7 +60,10 @@ export const publishIndicators = (
 	{ manifestPath, datasets }: CatalogManifest,
 	spec: {
 		datasetId: string;
-		path: DatasetInput;
+		/** The compiled file the records are read from, when not read from rows. */
+		path?: DatasetInput;
+		/** The statistics rows the records are read from, in place of `path`. */
+		rows?: CatalogueRows;
 		boundaryYear: number;
 		period: string;
 		/** Raw-file period to read when it differs from the published period. */
@@ -88,15 +105,25 @@ export const publishIndicators = (
 		spec.partitionBoundaryYear ?? spec.boundaryYear;
 	const expected = new Set(spec.expectedCodes ?? []);
 	for (const indicator of spec.indicators) {
-		const read = localAuthorityFieldWithGaps(
-			spec.path,
-			indicator.field,
-			spec.boundaryYear,
-			spec.isAuthority,
-			spec.table,
-			geography === "localPlanningAuthority" ? geography : undefined,
-			spec.sourcePeriod,
-		);
+		const read = spec.rows
+			? readFromRows(spec.rows, {
+					series: indicator.series,
+					datasetId: spec.datasetId,
+					geography,
+					boundaryYear: partitionBoundaryYear,
+					period: spec.period,
+				})
+			: localAuthorityFieldWithGaps(
+					spec.path!,
+					indicator.field,
+					spec.boundaryYear,
+					spec.isAuthority,
+					spec.table,
+					geography === "localPlanningAuthority"
+						? geography
+						: undefined,
+					spec.sourcePeriod,
+				);
 		let records = indicator.status
 			? read.records.map((record) => ({
 					...record,
@@ -115,7 +142,7 @@ export const publishIndicators = (
 			: [];
 		if (unexpected.length > 0)
 			throw new Error(
-				`${spec.path}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
+				`${spec.path ?? spec.datasetId}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
 			);
 		const published = new Set(records.map((record) => record.areaCode));
 		const missing = (spec.expectedCodes ?? [])
@@ -138,7 +165,7 @@ export const publishIndicators = (
 			periods,
 		});
 		indicatorObservations.push({
-			...(!spec.mergeApril2023 && !indicator.status
+			...(!spec.rows && !spec.mergeApril2023 && !indicator.status
 				? {
 						statisticsField: {
 							dataset: spec.datasetId,
