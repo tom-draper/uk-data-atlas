@@ -20,7 +20,8 @@ const BASES = ["population", "households", "dwellings", "postcodes"] as const;
  * quarters C by residents, half and half on every other basis. D is all of C.
  * Crosswalk 2 (2018 to 2026, population-overlap): B is all of X, C is half X
  * and half Y on every basis.
- * Area E of 2011 is in no crosswalk. Area F is listed for 2011 but not in its
+ * Area E of 2011 is in no crosswalk. Area H of 2011 is half C and half G, and
+ * G of 2018 is in no crosswalk. Area F is listed for 2011 but not in its
  * inventory.
  *
  * Local authorities in two releases joined by extent-continuity, so the chain
@@ -43,13 +44,14 @@ const fixture = () => {
 		  (1, 'ward', '2011', 3), (2, 'ward', '2018', 2), (3, 'ward', '2026', 1),
 		  (4, 'localAuthority', '2023', 5), (5, 'localAuthority', '2026', 4),
 		  (6, 'constituency', '2010', 7), (7, 'constituency', '2024', 6);
-		INSERT INTO area VALUES (1, 'A'), (2, 'D'), (3, 'E'), (4, 'B'), (5, 'C'), (6, 'X'), (7, 'Y'), (8, 'LA1'), (9, 'K1'), (10, 'K2'), (11, 'F');
+		INSERT INTO area VALUES (1, 'A'), (2, 'D'), (3, 'E'), (4, 'B'), (5, 'C'), (6, 'X'), (7, 'Y'), (8, 'LA1'), (9, 'K1'), (10, 'K2'), (11, 'F'), (12, 'H'), (13, 'G');
 		INSERT INTO area_version (id, area_id, release_id, name) VALUES
 		  (1, 1, 1, 'Alpha'), (2, 2, 1, 'Delta'), (3, 3, 1, 'Echo'),
 		  (4, 4, 2, 'Bravo'), (5, 5, 2, 'Charlie'),
 		  (6, 6, 3, 'Xray'), (7, 7, 3, 'Yankee'),
 		  (8, 8, 4, 'Old LA'), (9, 8, 5, 'New LA'),
-		  (10, 9, 6, 'Old K'), (11, 10, 7, 'New K');
+		  (10, 9, 6, 'Old K'), (11, 10, 7, 'New K'),
+		  (13, 12, 1, 'Hotel'), (14, 13, 2, 'Golf');
 		INSERT INTO area_version (id, area_id, release_id, name, in_inventory) VALUES
 		  (12, 11, 1, 'Foxtrot', 0);
 		INSERT INTO crosswalk VALUES
@@ -59,6 +61,7 @@ const fixture = () => {
 		INSERT INTO crosswalk_edge VALUES
 		  (1, 1, 4, NULL, NULL), (1, 1, 5, NULL, NULL), (1, 2, 5, NULL, NULL),
 		  (2, 4, 6, NULL, NULL), (2, 5, 6, NULL, NULL), (2, 5, 7, NULL, NULL),
+		  (1, 13, 5, NULL, NULL), (1, 13, 14, NULL, NULL),
 		  (3, 8, 9, 'unchanged', NULL);
 	`);
 	const weigh = database.prepare(
@@ -69,6 +72,8 @@ const fixture = () => {
 		weigh.run(1, 1, 4, basis, first, null);
 		weigh.run(1, 1, 5, basis, 1 - first, null);
 		weigh.run(1, 2, 5, basis, 1, 1);
+		weigh.run(1, 13, 5, basis, 0.5, null);
+		weigh.run(1, 13, 14, basis, 0.5, null);
 		weigh.run(2, 4, 6, basis, 1, 1);
 		weigh.run(2, 5, 6, basis, 0.5, null);
 		weigh.run(2, 5, 7, basis, 0.5, null);
@@ -255,19 +260,22 @@ describe("writeCrosswalkChains", () => {
 		);
 	});
 
-	test("an area in no crosswalk is a gap with no edge", () => {
+	test("an area in no crosswalk is a gap with no edge, read without being stored", () => {
 		const { database } = written();
+		const gaps = all(
+			database,
+			"SELECT from_code, basis, reason, has_edge FROM v_crosswalk_chain_gap WHERE geography = 'ward' ORDER BY from_code, basis",
+		);
 		assert.deepEqual(
-			all(
-				database,
-				"SELECT a.code, g.reason FROM crosswalk_chain_gap g JOIN area_version v ON v.id = g.from_version_id JOIN area a ON a.id = v.area_id ORDER BY a.code, g.chain_id",
-			).map((row) => [row.code, row.reason]),
-			[
-				["E", "not-in-crosswalk"],
-				["E", "not-in-crosswalk"],
-				["E", "not-in-crosswalk"],
-				["E", "not-in-crosswalk"],
-			],
+			gaps.filter((row) => row.from_code === "E"),
+			["dwellings", "households", "population", "postcodes"].map(
+				(basis) => ({
+					from_code: "E",
+					basis,
+					reason: "not-in-crosswalk",
+					has_edge: 0,
+				}),
+			),
 		);
 		assert.equal(
 			all(
@@ -275,6 +283,55 @@ describe("writeCrosswalkChains", () => {
 				"SELECT 1 FROM v_crosswalk_chain_edge WHERE from_code = 'E'",
 			).length,
 			0,
+		);
+		// The area is stored nowhere, so the table holds only what edges cannot show.
+		assert.deepEqual(
+			all(
+				database,
+				"SELECT g.chain_id FROM crosswalk_chain_gap g JOIN area_version v ON v.id = g.from_version_id WHERE v.area_id = 3",
+			),
+			[],
+		);
+	});
+
+	test("an area that loses only part of its value is a gap with edges", () => {
+		const { database } = written();
+		assert.deepEqual(
+			all(
+				database,
+				"SELECT from_code, from_release, basis, reason, has_edge FROM v_crosswalk_chain_gap WHERE from_code = 'H' ORDER BY basis",
+			).map((row) => [
+				row.from_release,
+				row.basis,
+				row.reason,
+				row.has_edge,
+			]),
+			["dwellings", "households", "population", "postcodes"].map(
+				(basis) => ["2011", basis, "not-in-crosswalk", 1],
+			),
+		);
+		// Its value that is carried on still arrives: half of H reaches X and Y by C.
+		near(
+			edgeBetween(database, "population", "H", "X").weight as number,
+			0.25,
+		);
+		assert.equal(
+			all(
+				database,
+				"SELECT g.chain_id FROM crosswalk_chain_gap g JOIN area_version v ON v.id = g.from_version_id WHERE v.area_id = 12",
+			).length,
+			4,
+		);
+	});
+
+	test("a chain counts every area that loses value, stored or not", () => {
+		const { database } = written();
+		assert.deepEqual(
+			all(
+				database,
+				"SELECT c.id, c.gaps, (SELECT count(DISTINCT from_version_id) FROM v_crosswalk_chain_gap v WHERE v.chain_id = c.id) AS seen FROM crosswalk_chain c WHERE c.gaps <> seen",
+			),
+			[],
 		);
 	});
 
