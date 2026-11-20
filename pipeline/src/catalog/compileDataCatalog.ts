@@ -55,7 +55,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	unemployment: Input;
 	jobs: Input;
 	landArea: Input;
-	housePrice: Input;
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
@@ -95,7 +94,6 @@ export const compileDataCatalog = ({
 	unemployment: unemploymentPath,
 	jobs: jobsPath,
 	landArea: landAreaPath,
-	housePrice: housePricePath,
 	rows,
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
@@ -223,7 +221,7 @@ export const compileDataCatalog = ({
 		landAreaPath,
 		population.localAuthorityObservations.periods,
 	);
-	const housePrice = compileHousePrice(catalogManifest, housePricePath);
+	const housePrice = compileHousePrice(catalogManifest, rows);
 	const lifeExpectancy = compileLifeExpectancy(rows);
 	const elections = compileElections(
 		catalogManifest,
