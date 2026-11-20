@@ -25,10 +25,7 @@ export default function Navigation() {
 								{ href: "/boundaries", label: "Boundaries" },
 							]}
 						/>
-						<Link
-							href="/fix"
-							className="rounded-md bg-slate-900 px-3 py-1.5 whitespace-nowrap text-[14px] font-medium text-white transition-colors hover:bg-slate-800"
-						>
+						<Link href="/fix" className={linkClass}>
 							Fix your data
 						</Link>
 						<Link href="/docs/v1" className={linkClass}>
