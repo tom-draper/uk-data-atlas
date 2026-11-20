@@ -1,4 +1,4 @@
-import { type DatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type {
 	Measure,
 	MeasureObservationArtifact,
@@ -6,7 +6,6 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -37,13 +36,11 @@ const MEASURES = [
 	{
 		id: "gva",
 		label: "Gross value added",
-		field: "gvaMillionGbp",
 		note: "Balanced gross value added at current basic prices: the output of an area before taxes on products are added and subsidies taken off. It is not comparable with the national GDP figure; use gdp for that.",
 	},
 	{
 		id: "gdp",
 		label: "Gross domestic product",
-		field: "gdpMillionGbp",
 		note: "Gross domestic product at current market prices: balanced gross value added plus taxes on products less subsidies on them, allocated to areas by the publisher. This is the regional figure comparable with the national accounts.",
 	},
 ] as const;
@@ -57,7 +54,7 @@ const SHARED_NOTES = [
 
 export const compileRegionalGdp = (
 	{ manifestPath, datasets }: CatalogManifest,
-	path: DatasetInput,
+	rows: CatalogueRows,
 ): { measures: Measure[]; artifacts: MeasureObservationArtifact[] } => {
 	const measures: Measure[] = [];
 	const artifacts: MeasureObservationArtifact[] = [];
@@ -73,22 +70,12 @@ export const compileRegionalGdp = (
 				type: tier.geography,
 				boundaryYear: 2025,
 			};
-			const periods = localAuthorityFieldPeriods(
-				path,
-				spec.field,
-				2025,
-				tier.geography,
-				// ITL3 is the dataset's own boundary and keeps the bare
-				// year; the other tiers are prefixed, such as `itl1-2023`.
-				(key) =>
-					tier.geography === "itl3"
-						? /^\d{4}$/.test(key)
-							? key
-							: undefined
-						: key.startsWith(`${tier.geography}-`)
-							? key.slice(tier.geography.length + 1)
-							: undefined,
-			);
+			const periods = rows.periods({
+				series: { measure: spec.id },
+				datasetId: DATASET,
+				geography: tier.geography,
+				boundaryYear: 2025,
+			});
 			// The publisher restates every year on one code vintage, so each
 			// period must hold the same areas. A year short of one would
 			// otherwise sum to a smaller total that reads as a fall in output.
@@ -102,7 +89,7 @@ export const compileRegionalGdp = (
 					.join(",");
 				if (actual !== expected) {
 					throw new Error(
-						`${path}.${period.period}: holds different ${tier.geography} areas from ${first?.period}, but the series is restated on one vintage`,
+						`${DATASET}.${period.period}: holds different ${tier.geography} areas from ${first?.period}, but the series is restated on one vintage`,
 					);
 				}
 			}
@@ -141,7 +128,7 @@ export const compileRegionalGdp = (
 		}
 		if (tierRecords !== dataset.summary.dataRecordCount) {
 			throw new Error(
-				`${path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${tierRecords}`,
+				`${DATASET}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${tierRecords}`,
 			);
 		}
 		measures.push({
