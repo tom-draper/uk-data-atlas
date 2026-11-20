@@ -1,6 +1,3 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { expect, test } from "vitest";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 import { compileLifeExpectancy } from "../../src/catalog/lifeExpectancy.ts";
@@ -45,44 +42,68 @@ test("life expectancy observations use canonical series keys and carry their int
 });
 
 test("election observations preserve source partitions and canonical identities", () => {
-	const directory = mkdtempSync(join(tmpdir(), "election-series-"));
+	const polls = [
+		["general-election", "constituency", "E14000001"],
+		["local-election", "ward", "E05000001"],
+	] as const;
+	const day = (dataset: string, year: number) =>
+		`${year}-${dataset === "general-election" ? "12" : "05"}-0${year === 2019 ? 2 : 4}`;
+	const series = polls.flatMap(([dataset, geography, area]) =>
+		[2019, 2024].flatMap((year) => {
+			const base = {
+				dataset,
+				geography,
+				release: `${year}-uk-bfc`,
+			};
+			const periods = (value: number) => ({
+				[day(dataset, year)]: { [area]: value },
+			});
+			return [
+				...(dataset === "general-election"
+					? ["valid-votes", "electorate", "rejected-ballots"].map(
+							(measure) => ({
+								...base,
+								measure,
+								periods: periods(
+									measure === "electorate" ? 150 : 100,
+								),
+							}),
+						)
+					: [{ ...base, measure: "turnout", periods: periods(70) }]),
+				...[
+					["con", 60],
+					["lab", 40],
+				].map(([party, votes]) => ({
+					...base,
+					measure: "party-votes",
+					members: { party: party as string },
+					periods: periods(votes as number),
+				})),
+			];
+		}),
+	);
+	const rows = fixtureRows(
+		series,
+		[],
+		polls.flatMap(([dataset, geography, area]) =>
+			[2019, 2024].map((year) => ({
+				dataset,
+				geography,
+				pollingDay: day(dataset, year),
+				code: area,
+				winner: "CON",
+			})),
+		),
+	);
 	try {
-		const write = (name: string, geography: string, area: string) => {
-			const path = join(directory, `${name}.json`);
-			const data = Object.fromEntries(
-				[2019, 2024].map((year) => [
-					year,
-					{
-						year,
-						boundaryYear: year,
-						boundaryType: geography,
-						data: {
-							[area]: {
-								validVotes: 100,
-								totalVotes: 100,
-								turnoutPercent: 70,
-								partyVotes: { CON: 60, LAB: 40 },
-							},
-						},
-						results: { [area]: "CON" },
-					},
-				]),
-			);
-			writeFileSync(path, JSON.stringify(data));
-			return path;
-		};
 		const manifest = {
-			manifestPath: directory,
+			manifestPath: "manifest",
 			datasets: ["general-election", "local-election"].map((id) => ({
 				id,
 				summary: { datasetCount: 2, dataRecordCount: 2 },
 			})),
 		} as CatalogManifest;
-		const result = compileElections(
-			manifest,
-			write("general", "constituency", "E14000001"),
-			write("local", "ward", "E05000001"),
-		);
+		const result = compileElections(manifest, rows);
 		const expected = new Set([
 			...(["general-election", "local-election"] as const).flatMap(
 				(datasetId) => [
@@ -142,6 +163,6 @@ test("election observations preserve source partitions and canonical identities"
 			category: "CON",
 		});
 	} finally {
-		rmSync(directory, { recursive: true, force: true });
+		rows.close();
 	}
 });
