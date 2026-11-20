@@ -27,10 +27,6 @@ export const datasetCatalogInputs = (
 	const inputs: DataCatalogInputs = {
 		rows: CatalogueRows.open(repositoryRoot),
 		manifest: precompiled("dataset-manifest.json"),
-		travelToWork: precompiled("travel-to-work.json"),
-		carAvailability: precompiled("car-availability.json"),
-		qualification: precompiled("qualification.json"),
-		ethnicity: precompiled("ethnicity.json"),
 		censusSmallAreaRoot: repositoryRoot,
 	};
 	return inputs;

@@ -44,10 +44,6 @@ import { withNationalVariants } from "./nationalVariants.ts";
  */
 export type DataCatalogInputs<Input = DatasetInput> = {
 	manifest: Input;
-	travelToWork: Input;
-	carAvailability: Input;
-	qualification: Input;
-	ethnicity: Input;
 	/**
 	 * The statistics rows the measures that no longer read a compiled file
 	 * are built from.
@@ -68,10 +64,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
  */
 export const compileDataCatalog = ({
 	manifest: manifestPath,
-	travelToWork: travelToWorkPath,
-	carAvailability: carAvailabilityPath,
-	qualification: qualificationPath,
-	ethnicity: ethnicityPath,
 	rows,
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -132,14 +124,7 @@ export const compileDataCatalog = ({
 		datasetId: declaration.id,
 		...compileYearlyIndicators(catalogManifest, declaration, rows),
 	}));
-	const census = compileCensus(
-		catalogManifest,
-		travelToWorkPath,
-		carAvailabilityPath,
-		qualificationPath,
-		ethnicityPath,
-		populationCodes,
-	);
+	const census = compileCensus(catalogManifest, rows, populationCodes);
 	const england2023 = [...populationCodes].filter((code) =>
 		code.startsWith("E"),
 	);
