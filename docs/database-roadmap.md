@@ -272,10 +272,14 @@ as published data.
   `pruned`, `estimated_share`, bounds and a `complete` flag, so an old code
   reaches the current areas in one join through `v_crosswalk_chain_edge`. A
   chain that is exact on every basis is stored once. Stored as tables, since
-  composing the routes takes about 7.5 minutes: 140 chains over 891 hops,
-  1,218,739 edges and 346,138 gaps, adding 41.5 MB (+4.4%) to
-  `atlas.sqlite`. 14 older releases have no route to the current one and get
-  no chain. Ids are in `pipeline/ids/crosswalk-chain.txt`.
+  composing the routes takes 4.5 to 7.5 minutes: 140 chains over 891 hops and
+  1,218,739 edges, adding 30.7 MB (+3.3%) to `atlas.sqlite`. 214,762 old areas
+  lose some or all of their value, listed by `v_crosswalk_chain_gap`; only the
+  1,508 that edges cannot show (a named reason, or part of the value still
+  arrived) are stored, since an inventory area with no edge and no row is in no
+  crosswalk of a step. A chain starts only from the areas in the old release's
+  inventory. 19 older releases have no route to the current one and get no
+  chain. Ids are in `pipeline/ids/crosswalk-chain.txt`.
 
 ## Licence table coverage
 
