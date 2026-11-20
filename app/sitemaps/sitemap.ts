@@ -111,6 +111,11 @@ export default async function sitemap(props: {
 			priority: 0.9,
 		},
 		{
+			url: `${SITE_URL}/fix`,
+			changeFrequency: "monthly",
+			priority: 0.8,
+		},
+		{
 			url: `${SITE_URL}/datasets`,
 			changeFrequency: "monthly",
 			priority: 0.6,

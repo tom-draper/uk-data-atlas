@@ -6,13 +6,11 @@ import { TextLink } from "@/components/docs/Prose";
 import FixTool from "@/components/fix/FixTool";
 import { pageMetadata } from "@/lib/site";
 
-// Kept out of search until the tool has settled.
 export const metadata: Metadata = pageMetadata({
-	subject: "Fix your data",
+	subject: "Fix your area codes",
 	description:
-		"Drop in a spreadsheet of area codes or names. We'll tell you which boundaries they are, what's wrong with them, and what retired codes became.",
+		"Drop in an Excel, ODS or CSV file of UK area codes or names. Find out which boundaries they are, fix typos and retired GSS codes, and download the corrected file in the same format.",
 	path: "/fix",
-	robots: { index: false, follow: true },
 });
 
 export default function FixPage() {

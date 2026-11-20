@@ -24,6 +24,7 @@ describe("sitemap", () => {
 				"/atlas",
 				"/datasets",
 				"/boundaries",
+				"/fix",
 				"/maps",
 				"/maps/england",
 				"/atlas/england/adult-social-care-activity",
