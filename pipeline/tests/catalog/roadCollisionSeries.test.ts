@@ -24,37 +24,39 @@ const count = (severity: string | undefined) =>
 	({ all: 6, fatal: 1, serious: 2, slight: 3 })[severity ?? "all"]!;
 
 const collisionSeries = (): FixtureSeries[] =>
-	roadCollisionSeries().flatMap(({ measure, dimensions }) => {
-		const severity = dimensions?.["collision-severity"];
-		const base = {
-			dataset: "road-collisions",
-			measure,
-			members: dimensions,
-		};
-		return [
-			{
-				...base,
-				geography: "localAuthority",
-				release: "2024-05-uk-bgc",
-				periods: { "2024": { E08000001: count(severity) } },
-			},
-			{
-				...base,
-				geography: "localAuthority",
-				release: "2025-05-uk-bgc-v2",
-				periods: { "2025": { E08000001: count(severity) } },
-			},
-			{
-				...base,
-				geography: "lsoa",
-				release: "2021-12-ew-bgc-v5",
-				periods: {
-					"2024": { E01000001: count(severity) },
-					"2025": { E01000001: count(severity) },
+	roadCollisionSeries().flatMap(
+		({ measure, dimensions }): FixtureSeries[] => {
+			const severity = dimensions?.["collision-severity"];
+			const base = {
+				dataset: "road-collisions",
+				measure,
+				members: dimensions,
+			};
+			return [
+				{
+					...base,
+					geography: "localAuthority",
+					release: "2024-05-uk-bgc",
+					periods: { "2024": { E08000001: count(severity) } },
 				},
-			},
-		];
-	});
+				{
+					...base,
+					geography: "localAuthority",
+					release: "2025-05-uk-bgc-v2",
+					periods: { "2025": { E08000001: count(severity) } },
+				},
+				{
+					...base,
+					geography: "lsoa",
+					release: "2021-12-ew-bgc-v5",
+					periods: {
+						"2024": { E01000001: count(severity) },
+						"2025": { E01000001: count(severity) },
+					},
+				},
+			];
+		},
+	);
 
 const gaps: FixtureGap[] = [
 	{
