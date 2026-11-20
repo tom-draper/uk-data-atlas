@@ -9,9 +9,8 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { type DatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import { type Indicator, publishIndicators } from "./indicators.ts";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -45,13 +44,13 @@ const catalogueOf = (declaration: DatasetDeclaration) => {
 
 /**
  * The API catalogue measures of a declared dataset whose file holds one
- * period: its indicators, read from the compiled records, with the dataset's
+ * period: its indicators, read from the statistics rows, with the dataset's
  * own notes and boundary year.
  */
 export const compileDeclaredIndicators = (
 	manifest: CatalogManifest,
 	declaration: DatasetDeclaration,
-	path: DatasetInput,
+	rows: CatalogueRows,
 	codeSets: DeclaredCodeSets,
 ): CompiledMeasure[] => {
 	const catalogue = catalogueOf(declaration);
@@ -59,19 +58,12 @@ export const compileDeclaredIndicators = (
 		throw new Error(`${declaration.id} declares no single period`);
 	return publishIndicators(manifest, {
 		datasetId: declaration.id,
-		path,
+		rows,
 		boundaryYear: declaration.boundary.year,
 		period: catalogue.period,
 		...(catalogue.codes
 			? { expectedCodes: [...codeSets[catalogue.codes]] }
 			: {}),
-		...(catalogue.authorityCodes
-			? {
-					isAuthority: (code: string) =>
-						catalogue.authorityCodes!.test(code),
-				}
-			: {}),
-		...(catalogue.mergeApril2023 ? { mergeApril2023: true } : {}),
 		coverageNote: catalogue.coverageNote,
 		notes: [...declaration.source.notes],
 		indicators: catalogue.indicators.map((indicator): Indicator => ({
@@ -92,13 +84,13 @@ export const compileDeclaredIndicators = (
 };
 
 /**
- * The same for a file with one entry per year: each indicator is published
- * for every year the file holds.
+ * The same for a dataset with one period per year: each indicator is
+ * published for every year the rows hold.
  */
 export const compileYearlyIndicators = (
 	{ manifestPath, datasets }: CatalogManifest,
 	declaration: DatasetDeclaration,
-	path: DatasetInput,
+	rows: CatalogueRows,
 ): { measures: Measure[]; artifacts: MeasureObservationArtifact[] } => {
 	const catalogue = catalogueOf(declaration);
 	const { id } = declaration;
@@ -115,12 +107,19 @@ export const compileYearlyIndicators = (
 	const geography = declaration.boundary.type as SourceGeography["type"];
 	const areas = () => dataset.summary.dataRecordCount.toLocaleString("en-GB");
 	const published = catalogue.indicators.map((indicator) => {
-		const periods = localAuthorityFieldPeriods(
-			path,
-			indicator.field,
-			year,
+		const periods = rows.periods({
+			series: {
+				measure: indicator.measure,
+				dimensions: indicator.members,
+			},
+			datasetId: id,
 			geography,
-		);
+			boundaryYear: year,
+		});
+		if (periods.length === 0)
+			throw new Error(
+				`${id}: the rows hold no periods of ${indicator.id}`,
+			);
 		const records = periods.reduce(
 			(total, period) => total + period.records.length,
 			0,
@@ -132,14 +131,14 @@ export const compileYearlyIndicators = (
 			records !== summary.dataRecordCount
 		)
 			throw new Error(
-				`${path}: expected ${summary.dataRecordCount} records from the manifest, found ${records}`,
+				`${id}: expected ${summary.dataRecordCount} records from the manifest, found ${records}`,
 			);
 		if (
 			checks.includes("manifest-periods") &&
 			periods.length !== summary.datasetCount
 		)
 			throw new Error(
-				`${path}: expected ${summary.datasetCount} periods from the manifest, found ${periods.length}`,
+				`${id}: expected ${summary.datasetCount} periods from the manifest, found ${periods.length}`,
 			);
 		const first = periods[0]?.records.length ?? 0;
 		if (
@@ -147,7 +146,7 @@ export const compileYearlyIndicators = (
 			first !== summary.dataRecordCount
 		)
 			throw new Error(
-				`${path}: expected ${summary.dataRecordCount} areas from the manifest, found ${first}`,
+				`${id}: expected ${summary.dataRecordCount} areas from the manifest, found ${first}`,
 			);
 		const series = {
 			measure: indicator.measure,
