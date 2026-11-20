@@ -39,9 +39,9 @@ Measured on the local build of 2026-11-19 unless stated.
 | ----------- | ---------------------------------------------------------------- |
 | Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 57, 62       |
 | Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                             |
-| Partly done | 7, 8, 9, 17, 35, 39                                              |
+| Partly done | 7, 8, 9, 17, 35, 39, 58                                          |
 | Kept as is  | 12 (measured, keep the wide table)                               |
-| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 58–61 |
+| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 59–61 |
 
 ## Core data quality
 
@@ -178,18 +178,18 @@ as published data.
 
 ## Added 2026-11-19
 
-| #   | Priority | Task                                                                                                                                                                                                                                   | Why                                                                                                     |
-| --- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 52  | P0       | Run the full pipeline in CI on a small fixture release (#409). Check the two `buildData.test.ts` tests that failed on main on 2026-11-08 and fix or remove them.                                                                       | About 1,000 commits landed in two weeks with no end-to-end build in CI.                                 |
-| 53  | P0       | Build data off the production server and deploy versioned bundles (#711): atlas, modules, Parquet and the task 24 manifest, published together under one version.                                                                      | Modules exist, but there is no versioned way to ship or roll them back.                                 |
-| 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                        | Early access is the last cheap time to remove routes.                                                   |
-| 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module. | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
-| 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                  | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
-| 57  | P1       | Done: uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values wait on task 58, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                        | Customers need to know which converted values to trust.                                                 |
-| 58  | P2       | Find published truths on two overlapping sets of areas for other additive measures (jobs, emissions, energy use, pupils) and backtest splitting them.                                                                                  | Only total population is ever split today; each passing backtest unlocks a measure.                     |
-| 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                           | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
-| 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                               | The way agents reach the database.                                                                      |
-| 61  | P2       | Keep this roadmap current: update a task's status in the same PR that changes it.                                                                                                                                                      | This file had fallen two weeks behind main.                                                             |
+| #   | Priority | Task                                                                                                                                                                                                                                                                                                                                       | Why                                                                                                     |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| 52  | P0       | Run the full pipeline in CI on a small fixture release (#409). Check the two `buildData.test.ts` tests that failed on main on 2026-11-08 and fix or remove them.                                                                                                                                                                           | About 1,000 commits landed in two weeks with no end-to-end build in CI.                                 |
+| 53  | P0       | Build data off the production server and deploy versioned bundles (#711): atlas, modules, Parquet and the task 24 manifest, published together under one version.                                                                                                                                                                          | Modules exist, but there is no versioned way to ship or roll them back.                                 |
+| 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                                                                                                                            | Early access is the last cheap time to remove routes.                                                   |
+| 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module.                                                                                                     | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
+| 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                                                                                                                      | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
+| 57  | P1       | Done: uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values wait on task 58, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                                                                                                                            | Customers need to know which converted values to trust.                                                 |
+| 58  | P2       | Partly done: population by single year of age, ward to constituency, is backtested and shipped as 27,027 estimated values with bounds. Jobs, emissions, energy use and pupils need no truth, as they convert by exact regrouping. Left: 1,638 ward to authority values on a route that mixes two methods, and 58 Welsh deprivation values. | Each passing backtest unlocks a measure. Population and its age groups are split today.                 |
+| 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                                                                                                                               | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
+| 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                                                                                                                                   | The way agents reach the database.                                                                      |
+| 61  | P2       | Keep this roadmap current: update a task's status in the same PR that changes it.                                                                                                                                                                                                                                                          | This file had fallen two weeks behind main.                                                             |
 
 ## Suggested order
 
@@ -324,7 +324,8 @@ as published data.
   the 150 are age and sex breakdowns of population (27,027 values, never split),
   party votes (2,247) and turnout and electorate (962). So the wide bounds are not
   what withholds them: no split of those measures has a published truth to
-  measure it against, which is task 58. The chain columns are not
+  measure it against, which is task 58. (Task 58 has since shipped the age and
+  sex breakdowns of population: see below.) The chain columns are not
   re-derived for converted values. `boundsOf` already computes the same bounds
   from the same `at_risk` and `pruned`, and `complete` is true for every shipped
   value, since a missing input is a `missing-input` gap and not a short value.
@@ -332,6 +333,32 @@ as published data.
   a converted value is `derived` or `estimated`, a regrouped value has no
   bounds, a split value has bounds that hold it and one `series_estimate` row, and a
   withheld split holds no value.
+- **Task 58** (2026-11-20), scoped to population by single year of age, ward to
+  constituency. The row's premise was partly wrong: jobs, emissions, energy use
+  and pupils already convert, by exact regrouping of authorities, and an exact
+  regrouping has no error to measure, so they need no truth. What was withheld was
+  the 27,027 age values of the ward 2023-12 to constituency 2024-07 split
+  (`unmeasured-split`, 91 age series), because the one factor held was fitted on a
+  total population. The constituency population by age and sex is now ingested
+  (`population-constituency`, 273 series) and is the truth. The factor is now
+  fitted per method, basis and measure class (`populationClassOf` in
+  `backtestCases.ts`), and the converter looks it up the same way. Persons are the
+  fit (`split-ward-constituency-age-persons`, 22,468 values after 4,559
+  pruned-only ones, factor 6.90 against 1.03 for the total, median factor 0.242,
+  95th percentile 1.019, maximum 6.895); male and female are held out
+  (`split-ward-constituency-age-by-sex`, 54,044 values). Persons: 100% inside the
+  bounds, median error 0.293%, median half width 12.08%, 95th percentile 47.77%,
+  worst error 55.21% (Reading Central, age 19). Held out: 100% inside, median
+  error 0.352%, median half width 12.04%, worst 58.45%. In the atlas 27,027
+  values are `estimated` with bounds (median half width 12.09%, 95th percentile
+  47.75%, widest 157.47%, 88 with a lower bound of 0), 25,116 are exact, 182 are
+  `missing-input` and none is `unmeasured-split`. `unmeasured-split` falls from
+  88,827 to 61,800. The held out series share the persons fit's places and year,
+  so the check is weaker than the 2022 authority case, and only persons are
+  converted. The ingested constituency age series would also have been converted
+  onto authorities, giving 273 series with 156,156 gaps, so that plan entry is
+  restricted to the total. Still withheld: 1,638 ward to authority 2026-05 values
+  on a route that mixes methods, 58 Welsh deprivation values, and the elections.
 - **Tasks 34 and 41** reuse the chain columns, with no code yet. Task 34 (how
   much an area changed): the largest `crosswalk_chain_edge.weight` out of an old
   area is the share of it that stayed together, `1 - sum(weight)` is what did
