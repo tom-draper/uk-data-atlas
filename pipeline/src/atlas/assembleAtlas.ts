@@ -23,6 +23,7 @@ import {
 	writeDefaultObservation,
 	writePostcodeAreas,
 	writeSchemaDocs,
+	writeSeriesAttribution,
 	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
@@ -259,6 +260,7 @@ export function assembleAtlas(
 				// Reads the ranking and every observation: what the release can
 				// answer, before ANALYZE.
 				writeSeriesCoverage(database);
+				writeSeriesAttribution(database);
 			}
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);

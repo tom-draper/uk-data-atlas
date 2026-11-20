@@ -32,6 +32,18 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "series_source",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
+		table: "series_source_licence",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
+		table: "series_notice",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
 		table: "observation",
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
