@@ -317,6 +317,32 @@ that cannot be carried whole), `v_area_change`,
 `v_contest`, `v_candidacy`, `v_source_terms` and `v_election_terms`. A view
 adds no data and is not the API's read path: API readers query stored tables.
 
+### Old code to current code
+
+`v_crosswalk_chain_edge` is the stable join from any historical code to the
+current geography. Each row is one old area, one current area and the combined
+weight, so a count moves with `sum(value * weight)`:
+
+```sql
+SELECT e.to_code, round(sum(o.value * e.weight), 1) AS value, min(e.complete) AS complete
+FROM v_observation o
+JOIN v_crosswalk_chain_edge e
+  ON e.geography = o.geography AND e.from_release = o.release
+ AND e.from_code = o.area_code AND e.basis = 'population'
+WHERE o.measure = 'population' AND o.geography = 'ward' AND o.release = '2023-12-uk-bgc'
+GROUP BY e.to_code;
+```
+
+An old area that loses value, whole or in part, is in `v_crosswalk_chain_gap`
+with the reason. Add up the carried values and the gap areas to account for the
+old total. Filter on `geography`, `from_release`, `to_release` and `basis`. The
+schema docs hold both worked examples, and the built-release test runs them.
+
+No API route serves it yet. A reader of the API should query the stored tables
+`crosswalk_chain_edge` and `crosswalk_chain_gap`, not the views, which are for
+SQL users. The public shape is left to the v1 surface review (task 54) and the
+MCP server (task 60).
+
 ## Website assets
 
 `website_asset` stores the website’s compressed release assets in
