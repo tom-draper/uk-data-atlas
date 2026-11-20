@@ -46,6 +46,7 @@
 		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
 		"@uk-data-atlas/search-index": "workspace:*",
+		"fflate": "0.8.3",
 		"lucide-react": "^1.70.0",
 		"maplibre-gl": "^5.24.0",
 		"next": "^16.4.5",
