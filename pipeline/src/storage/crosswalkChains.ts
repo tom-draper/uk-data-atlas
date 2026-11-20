@@ -7,8 +7,8 @@ import type { IdRegistries } from "../ids/idRegistries.ts";
 
 /**
  * Old code to current code in one join: `crosswalk_chain`,
- * `crosswalk_chain_hop`, `crosswalk_chain_edge`, `crosswalk_chain_gap` and
- * `v_crosswalk_chain_edge`. Written at atlas assembly, after the crosswalks,
+ * `crosswalk_chain_hop`, `crosswalk_chain_edge`, `crosswalk_chain_gap`,
+ * `v_crosswalk_chain_edge` and `v_crosswalk_chain_gap`. Written at atlas assembly, after the crosswalks,
  * their weights on every basis and `conversion_error` are in `main`.
  *
  * For each geography, every release other than the current one (the lowest
@@ -90,9 +90,34 @@ JOIN area fa ON fa.id = fv.area_id
 JOIN area_version tv ON tv.id = e.to_version_id
 JOIN area ta ON ta.id = tv.area_id`;
 
+/**
+ * Every old area of a chain that loses part or all of its value, one row for
+ * each basis. Most are areas in no crosswalk of a step, which have no edge, so
+ * they are not stored: an inventory area with no edge and no stored gap is read
+ * as not-in-crosswalk.
+ */
+export const CROSSWALK_CHAIN_GAP_VIEW = `
+SELECT r.geography, r.release AS from_release, tr.release AS to_release,
+  b.id AS basis, fa.code AS from_code, fv.name AS from_name,
+  coalesce(g.reason, 'not-in-crosswalk') AS reason,
+  EXISTS (SELECT 1 FROM crosswalk_chain_edge e
+    WHERE e.chain_id = c.id AND e.from_version_id = fv.id) AS has_edge,
+  c.id AS chain_id, fv.id AS from_version_id
+FROM crosswalk_chain c
+JOIN area_release r ON r.id = c.from_release_id
+JOIN area_release tr ON tr.id = c.to_release_id
+JOIN weight_basis b ON b.id IN ${CHAIN_BASES} AND (c.basis_id IS NULL OR c.basis_id = b.id)
+JOIN area_version fv ON fv.release_id = c.from_release_id AND fv.in_inventory = 1
+JOIN area fa ON fa.id = fv.area_id
+LEFT JOIN crosswalk_chain_gap g ON g.chain_id = c.id AND g.from_version_id = fv.id
+WHERE g.chain_id IS NOT NULL OR NOT EXISTS (
+  SELECT 1 FROM crosswalk_chain_edge e
+  WHERE e.chain_id = c.id AND e.from_version_id = fv.id)`;
+
 export type CrosswalkChainSummary = {
 	chains: number;
 	edges: number;
+	/** Old areas that lose some or all of their value, stored or not. */
 	gaps: number;
 	/** Geographies with an old release that no route joins to the current one. */
 	unrouted: Array<{ geography: string; release: string }>;
@@ -151,6 +176,9 @@ export const writeCrosswalkChains = (
 	database.exec(TABLES);
 	database.exec(
 		`CREATE VIEW v_crosswalk_chain_edge AS ${CROSSWALK_CHAIN_EDGE_VIEW}`,
+	);
+	database.exec(
+		`CREATE VIEW v_crosswalk_chain_gap AS ${CROSSWALK_CHAIN_GAP_VIEW}`,
 	);
 	const router = createRouter(database);
 	const factors = readFactors(database);
@@ -241,7 +269,12 @@ export const writeCrosswalkChains = (
 				edge.complete ? 1 : 0,
 			);
 		}
-		for (const gap of chain.gaps) insertGap.run(id, gap.from, gap.reason);
+		// An area in no crosswalk that has no edge is the view's default, so only
+		// the areas that lost part of their value, or lost it to a named reason.
+		const reached = new Set(chain.edges.map((edge) => edge.from));
+		for (const gap of chain.gaps)
+			if (gap.reason !== "not-in-crosswalk" || reached.has(gap.from))
+				insertGap.run(id, gap.from, gap.reason);
 		summary.chains += 1;
 		summary.edges += chain.edges.length;
 		summary.gaps += chain.gaps.length;

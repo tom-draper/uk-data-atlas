@@ -78,7 +78,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "crosswalks",
-		body: "A crosswalk relates the areas of one release (from_release_id) to the areas of another (to_release_id). Each crosswalk_edge pairs one from area_version with one to area_version. crosswalk.method says how it was made: official-lookup and clean-containment come from the publisher, best-fit assigns each source area to one target, extent-continuity links the same area across releases, and area-overlap, population-overlap and postcode-overlap split areas by measured overlap. crosswalk_weight holds the weight of an edge on a basis (weight_basis: area, population, households, dwellings, postcodes); weight is the share of the source area on that basis that falls in the target, summing to 1 per source. v_crosswalk_weight also includes the implicit weight of 1 for edges that regroup a whole area. To move a count from one release to another, multiply each source value by its weight on a basis that suits the measure (residents for people, households for households) and sum per target. To move a count from any older release straight to the geography's current release, join v_crosswalk_chain_edge on from_code instead: it holds the weight along the whole chain of crosswalks, the bounds the backtest puts on it, and complete, which is 0 where a current area is short of a feeder. crosswalk_chain, crosswalk_chain_hop and crosswalk_chain_gap say which crosswalks a chain was made from and which old areas lose part of their value on the way.",
+		body: "A crosswalk relates the areas of one release (from_release_id) to the areas of another (to_release_id). Each crosswalk_edge pairs one from area_version with one to area_version. crosswalk.method says how it was made: official-lookup and clean-containment come from the publisher, best-fit assigns each source area to one target, extent-continuity links the same area across releases, and area-overlap, population-overlap and postcode-overlap split areas by measured overlap. crosswalk_weight holds the weight of an edge on a basis (weight_basis: area, population, households, dwellings, postcodes); weight is the share of the source area on that basis that falls in the target, summing to 1 per source. v_crosswalk_weight also includes the implicit weight of 1 for edges that regroup a whole area. To move a count from one release to another, multiply each source value by its weight on a basis that suits the measure (residents for people, households for households) and sum per target. To move a count from any older release straight to the geography's current release, join v_crosswalk_chain_edge on from_code instead: it holds the weight along the whole chain of crosswalks, the bounds the backtest puts on it, and complete, which is 0 where a current area is short of a feeder. crosswalk_chain and crosswalk_chain_hop say which crosswalks a chain was made from, and v_crosswalk_chain_gap lists the old areas that lose part or all of their value on the way (an old area missing from v_crosswalk_chain_edge is one of them).",
 	},
 	{
 		topic: "boundary-changes",
@@ -1100,6 +1100,24 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			to_version_id: "Current area_version.id.",
 		},
 	},
+	v_crosswalk_chain_gap: {
+		audience: "core",
+		description:
+			"View: the old areas that lose value on the way to the current release, one row for each area and basis. Includes the areas in no crosswalk of a step, which have no edge in v_crosswalk_chain_edge and are not stored. Filter on geography, from_release and basis. Use it to say which old codes cannot be carried to the current release, or only partly.",
+		columns: {
+			geography: "Geography slug.",
+			from_release: "The old release.",
+			to_release: "The geography's current release.",
+			basis: "Weight basis: population, households, dwellings or postcodes.",
+			from_code: "Old area code.",
+			from_name: "Old area name.",
+			reason: "Why the value stops, as crosswalk_chain_gap.reason. not-in-crosswalk where nothing is stored.",
+			has_edge:
+				"1 if some of the area's value does arrive, so its edges sum to less than 1. 0 if none does.",
+			chain_id: "crosswalk_chain.id.",
+			from_version_id: "Old area_version.id.",
+		},
+	},
 	v_crosswalk_edge: {
 		audience: "core",
 		description:
@@ -1153,7 +1171,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			hops: "Crosswalks the route joins, counting every crosswalk of a step that has several.",
 			exact: "1 if no step of the route can split a value, so every weight is 1.",
 			edges: "Rows of crosswalk_chain_edge for the chain.",
-			gaps: "Rows of crosswalk_chain_gap for the chain.",
+			gaps: "Old areas of the chain that lose part or all of their value, as v_crosswalk_chain_gap lists them.",
 		},
 	},
 	crosswalk_chain_hop: {
@@ -1193,11 +1211,11 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	crosswalk_chain_gap: {
 		audience: "reference",
 		description:
-			"Old areas that lose part or all of their value on the way to the current release, with the first reason found. The weights of the area's edges say how much arrives. Where an area has no edge at all, nothing arrives.",
+			"Old areas that lose part of their value on the way to the current release, or lose it for a named reason. An inventory area of the old release with no edge in the chain and no row here is in no crosswalk of a step it reaches (not-in-crosswalk), and nothing arrives; most areas that lose value are of this kind, so they are not stored. Read every gap through v_crosswalk_chain_gap.",
 		columns: {
 			chain_id: "The chain (crosswalk_chain.id).",
 			from_version_id: "The old area (area_version.id).",
-			reason: "Why a branch of the area's value stops: no-weight (a split with no measured weight on the basis), best-fit-straddler, ambiguous-membership, weights-do-not-sum (all as for crosswalk steps), missing-input, or not-in-crosswalk (the area is in no crosswalk of a step it reaches).",
+			reason: "Why a branch of the area's value stops: no-weight (a split with no measured weight on the basis), best-fit-straddler, ambiguous-membership, weights-do-not-sum (all as for crosswalk steps), missing-input, or not-in-crosswalk (the area is in no crosswalk of a step it reaches, and some of its value did arrive).",
 		},
 	},
 	crosswalk_edge_check: {
