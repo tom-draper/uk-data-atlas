@@ -26,3 +26,17 @@ test("assemble-atlas is keyed on the worker it starts by path, and its worker co
 	// arguments, which the key includes.
 	expect(stage.args.join(" ")).not.toMatch(/worker/i);
 });
+
+test("weight-atoms is keyed on the crosswalk adapters it reads to choose the releases to place", () => {
+	const stage = buildDataStages.find(({ name }) => name === "weight-atoms")!;
+	const files = execFileSync(
+		"git",
+		["ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+		{ cwd: root, encoding: "utf8", maxBuffer: 1 << 28 },
+	)
+		.split("\0")
+		.filter(Boolean);
+	expect(stageCodeFiles(root, stage, files)).toContain(
+		"services/api/config/crosswalk-adapters.json",
+	);
+});

@@ -21,6 +21,9 @@ const runtimeConfig = {
 	"pipeline/src/stages/build-relationship-candidates.ts": [
 		"crosswalk-adapters.json",
 	],
+	"pipeline/src/crosswalk-weights/buildWeightAtoms.ts": [
+		"crosswalk-adapters.json",
+	],
 	"pipeline/src/stages/build-relationship-paths.ts": [
 		"relationship-paths.json",
 	],
