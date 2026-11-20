@@ -175,11 +175,7 @@ export const compileUnemployment = (
 		},
 	]) {
 		const partitions = ([2019, 2021] as const).map((boundaryYear) =>
-			unemploymentPartition(
-				spec.id,
-				spec.valueField,
-				boundaryYear,
-			),
+			unemploymentPartition(spec.id, spec.valueField, boundaryYear),
 		);
 		unemploymentMeasures.push({
 			id: spec.id,

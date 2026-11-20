@@ -21,22 +21,20 @@ const series = (periods: (code: string) => FixtureSeries["periods"]) =>
 		[
 			["gva", 100],
 			["gdp", 110],
-		].map(
-			([measure, value]): FixtureSeries => ({
-				dataset: "regional-gdp",
-				measure: String(measure),
-				geography,
-				release: "2025-uk-itl",
-				periods: Object.fromEntries(
-					Object.entries(periods(code)).map(([period, cells]) => [
-						period,
-						Object.fromEntries(
-							Object.keys(cells).map((area) => [area, Number(value)]),
-						),
-					]),
-				),
-			}),
-		),
+		].map(([measure, value]): FixtureSeries => ({
+			dataset: "regional-gdp",
+			measure: String(measure),
+			geography,
+			release: "2025-uk-itl",
+			periods: Object.fromEntries(
+				Object.entries(periods(code)).map(([period, cells]) => [
+					period,
+					Object.fromEntries(
+						Object.keys(cells).map((area) => [area, Number(value)]),
+					),
+				]),
+			),
+		})),
 	);
 
 test("regional output partitions use canonical identities and matching hashes", () => {

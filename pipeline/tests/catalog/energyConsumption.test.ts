@@ -9,7 +9,10 @@ import { fixtureRows } from "./rowFixtures.ts";
 test("generates energy observations with declared series keys and matching hashes", () => {
 	const manifest = {
 		manifestPath: "manifest.json",
-		datasets: [{ id: "electricity-consumption" }, { id: "gas-consumption" }],
+		datasets: [
+			{ id: "electricity-consumption" },
+			{ id: "gas-consumption" },
+		],
 	} as CatalogManifest;
 	const rows = fixtureRows(
 		energyConsumptionSeries().map((series) => ({

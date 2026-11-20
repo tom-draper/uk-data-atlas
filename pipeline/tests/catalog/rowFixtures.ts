@@ -3,8 +3,7 @@ import type { StatisticsVocabulary } from "@uk-data-atlas/measures";
 import { CatalogueRows } from "../../src/catalog/rows.ts";
 
 type Cell =
-	| number
-	| { value: number; lower?: number; upper?: number; status?: string };
+	number | { value: number; lower?: number; upper?: number; status?: string };
 
 /** One published series of the statistics rows, as a test writes it. */
 export type FixtureSeries = {
@@ -44,7 +43,12 @@ export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(SCHEMA);
 	const ids = new Map<string, number>();
-	const idOf = (table: string, key: string, columns: string, values: unknown[]) => {
+	const idOf = (
+		table: string,
+		key: string,
+		columns: string,
+		values: unknown[],
+	) => {
 		const id = ids.get(`${table}:${key}`);
 		if (id !== undefined) return id;
 		const created = Number(
@@ -88,17 +92,20 @@ export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
 				)!.id,
 		);
 		for (const [dimension, member] of Object.entries(entry.members ?? {})) {
-			const dimensionId = idOf("dimension", dimension, "slug", [dimension]);
+			const dimensionId = idOf("dimension", dimension, "slug", [
+				dimension,
+			]);
 			const vocabularyDimension = (vocabulary.dimensions[dimension] ??= {
 				label: dimension,
 				members: [],
 			});
 			if (!vocabularyDimension.members.some((m) => m.code === member))
-				vocabularyDimension.members.push({ code: member, label: member });
+				vocabularyDimension.members.push({
+					code: member,
+					label: member,
+				});
 			database
-				.prepare(
-					"INSERT INTO series_member VALUES (?, ?, ?)",
-				)
+				.prepare("INSERT INTO series_member VALUES (?, ?, ?)")
 				.run(
 					seriesId,
 					dimensionId,
@@ -113,7 +120,9 @@ export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
 		for (const [label, cells] of Object.entries(entry.periods))
 			for (const [code, cell] of Object.entries(cells)) {
 				const { value, lower, upper, status } =
-					typeof cell === "number" ? { value: cell } as Exclude<Cell, number> : cell;
+					typeof cell === "number"
+						? ({ value: cell } as Exclude<Cell, number>)
+						: cell;
 				const area = idOf("area", code, "code", [code]);
 				const releases = entry.areaReleases?.[code] ?? [entry.release];
 				for (const name of releases)
@@ -139,7 +148,9 @@ export const fixtureRows = (series: FixtureSeries[]): CatalogueRows => {
 						seriesId,
 						ids.get(`area_version:${code}:${releases[0]}`)!,
 						idOf("period", label, "label", [label]),
-						idOf("status", status ?? "observed", "slug", [status ?? "observed"]),
+						idOf("status", status ?? "observed", "slug", [
+							status ?? "observed",
+						]),
 						value,
 						lower ?? null,
 						upper ?? null,
