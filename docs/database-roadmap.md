@@ -280,7 +280,18 @@ as published data.
   arrived) are stored, since an inventory area with no edge and no row is in no
   crosswalk of a step. A chain starts only from the areas in the old release's
   inventory. 19 older releases have no route to the current one and get no
-  chain. Ids are in `pipeline/ids/crosswalk-chain.txt`.
+  chain. 17 lack a crosswalk that carries a value to the next release of their
+  geography: the seven `historicalConstituency` releases from 1918 to 1997 and
+  the 2023-04 `integratedCareBoard` (no crosswalk at all), the 2017-05 and
+  2023-05 `countyElectoralDivision` releases, `localAuthority` 2008 and 2009
+  (the 2008 to 2009 crosswalk exists, 2009 to 2011 does not), the 2011
+  `dataZone` (only a containment to intermediate zones), the three
+  `scottishParliamentaryConstituency` releases before 2026 (2022 to 2026 is
+  missing) and the 2022 `seneddConstituency`. One, `nhsEnglandRegion` 2022-07,
+  has a crosswalk, but it is `area-overlap`, which is deliberately not a
+  carrying method (5 of its 7 regions keep the same area). One,
+  `dataZone` 2021-ni, is a Northern Ireland release in a Scottish geography
+  and has no Scottish successor. Ids are in `pipeline/ids/crosswalk-chain.txt`.
 
 ## Licence table coverage
 
