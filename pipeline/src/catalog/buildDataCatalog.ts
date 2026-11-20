@@ -32,8 +32,6 @@ export const datasetCatalogInputs = (
 		carAvailability: precompiled("car-availability.json"),
 		qualification: precompiled("qualification.json"),
 		ethnicity: precompiled("ethnicity.json"),
-		generalElection: precompiled("general-election.json"),
-		localElection: precompiled("local-election.json"),
 		declared: Object.fromEntries(
 			DATASET_DECLARATIONS.filter(
 				(declaration) => declaration.catalogue,

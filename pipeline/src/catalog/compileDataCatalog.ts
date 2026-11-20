@@ -48,8 +48,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	carAvailability: Input;
 	qualification: Input;
 	ethnicity: Input;
-	generalElection: Input;
-	localElection: Input;
 	/**
 	 * The statistics rows the measures that no longer read a compiled file
 	 * are built from.
@@ -77,8 +75,6 @@ export const compileDataCatalog = ({
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
 	rows,
-	generalElection: generalElectionPath,
-	localElection: localElectionPath,
 	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -189,11 +185,7 @@ export const compileDataCatalog = ({
 	);
 	const housePrice = compileHousePrice(catalogManifest, rows);
 	const lifeExpectancy = compileLifeExpectancy(rows);
-	const elections = compileElections(
-		catalogManifest,
-		generalElectionPath,
-		localElectionPath,
-	);
+	const elections = compileElections(catalogManifest, rows);
 	// Small-area census partitions of a census question already published by
 	// local authority join that measure, rather than standing beside it.
 	for (const measure of census.measures) {

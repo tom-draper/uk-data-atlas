@@ -110,6 +110,72 @@ export class CatalogueRows {
 				count: Number(row.count),
 			}));
 	}
+	/**
+	 * How many areas of a geography a dataset holds a measure for in a
+	 * period, named by its label or the polling day that extends it.
+	 */
+	areasHeld(
+		datasetId: string,
+		geography: string,
+		measure: string,
+		period: string,
+	): number {
+		return Number(
+			this.database
+				.prepare(
+					`SELECT COUNT(DISTINCT a.code) AS held
+					FROM series s JOIN dataset d ON d.id = s.dataset_id
+					JOIN measure m ON m.id = s.measure_id
+					JOIN area_release r ON r.id = s.release_id
+					JOIN observation o ON o.series_id = s.id
+					JOIN period p ON p.id = o.period_id
+					JOIN area_version v ON v.id = o.area_version_id
+					JOIN area a ON a.id = v.area_id
+					WHERE d.slug = ? AND r.geography = ? AND m.slug = ?
+					AND s.method = 'published' AND (p.label = ? OR p.label LIKE ?)`,
+				)
+				.get(datasetId, geography, measure, period, `${period}-%`)!
+				.held,
+		);
+	}
+	/**
+	 * The codes a dataset's publisher listed areas under that differ from the
+	 * area's own, as [published code, area code], for a period named by its
+	 * label or the polling day that extends it.
+	 */
+	publishedAs(datasetId: string, period: string): Array<[string, string]> {
+		return this.database
+			.prepare(
+				`SELECT DISTINCT pa.code AS published, ca.code AS own
+				FROM area_relationship r JOIN dataset d ON d.id = r.dataset_id
+				JOIN period p ON p.id = r.period_id
+				JOIN area_version cv ON cv.id = r.child_version_id
+				JOIN area ca ON ca.id = cv.area_id
+				JOIN area_version pv ON pv.id = r.parent_version_id
+				JOIN area pa ON pa.id = pv.area_id
+				WHERE d.slug = ? AND r.relation = 'published-as'
+				AND (p.label = ? OR p.label LIKE ?)
+				ORDER BY pa.code`,
+			)
+			.all(datasetId, period, `${period}-%`)
+			.map((row) => [String(row.published), String(row.own)]);
+	}
+	/** The party codes a dataset's party votes are split by, as stored. */
+	partyCodes(datasetId: string): string[] {
+		return this.database
+			.prepare(
+				`SELECT DISTINCT dm.code AS code
+				FROM series s JOIN dataset d ON d.id = s.dataset_id
+				JOIN measure m ON m.id = s.measure_id
+				JOIN series_member sm ON sm.series_id = s.id
+				JOIN dimension di ON di.id = sm.dimension_id
+				JOIN dimension_member dm ON dm.id = sm.member_id
+				WHERE d.slug = ? AND m.slug = 'party-votes' AND di.slug = 'party'
+				AND s.method = 'published' ORDER BY dm.code`,
+			)
+			.all(datasetId)
+			.map((row) => String(row.code));
+	}
 	/** The selector the API reads the source's observations with. */
 	selector(source: RowSource): StatisticsSelector {
 		const selector = selectorFor(

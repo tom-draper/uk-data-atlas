@@ -29,7 +29,19 @@ export type FixtureGap = {
 	count: number;
 };
 
+/** The party that won an area's contest on a polling day, as `v_contest` holds it. */
+export type FixtureContest = {
+	dataset: string;
+	geography: string;
+	/** The polling day, which the contest's period is labelled with. */
+	pollingDay: string;
+	code: string;
+	winner: string;
+};
+
 const SCHEMA = `
+	CREATE TABLE v_contest (dataset TEXT, geography TEXT, area_code TEXT, polling_day TEXT, winner TEXT);
+	CREATE TABLE area_relationship (dataset_id INTEGER, relation TEXT, period_id INTEGER, child_version_id INTEGER, parent_version_id INTEGER);
 	CREATE TABLE dataset_coverage_gap (dataset_id INTEGER, edition TEXT, kind TEXT, position INTEGER, area_code TEXT, count INTEGER);
 	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
@@ -52,6 +64,7 @@ const SCHEMA = `
 export const fixtureRows = (
 	series: FixtureSeries[],
 	gaps: FixtureGap[] = [],
+	contests: FixtureContest[] = [],
 ): CatalogueRows => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(SCHEMA);
@@ -188,5 +201,15 @@ export const fixtureRows = (
 				gap.count,
 			);
 	}
+	for (const contest of contests)
+		database
+			.prepare("INSERT INTO v_contest VALUES (?, ?, ?, ?, ?)")
+			.run(
+				contest.dataset,
+				contest.geography,
+				contest.code,
+				contest.pollingDay,
+				contest.winner,
+			);
 	return new CatalogueRows(database, vocabulary);
 };

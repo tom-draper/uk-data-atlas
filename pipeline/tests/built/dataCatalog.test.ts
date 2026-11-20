@@ -20,6 +20,7 @@ import {
 } from "@uk-data-atlas/datasets";
 import {
 	fixtureRows,
+	type FixtureContest,
 	type FixtureGap,
 	type FixtureSeries,
 } from "../catalog/rowFixtures.ts";
@@ -399,7 +400,148 @@ const populationRows = (): FixtureSeries[] => {
 	];
 };
 
+/** One election's party votes, valid votes and turnout, by polling day. */
+const electionSeries = (
+	dataset: "general-election" | "local-election",
+	geography: string,
+	release: string,
+	pollingDay: string,
+	areas: Record<
+		string,
+		{ valid: number; turnout?: number; votes: Record<string, number> }
+	>,
+): FixtureSeries[] => {
+	const parties = [
+		...new Set(
+			Object.values(areas).flatMap((area) => Object.keys(area.votes)),
+		),
+	];
+	const column = (
+		measure: string,
+		pick: (area: (typeof areas)[string]) => number | undefined,
+		members?: Record<string, string>,
+	): FixtureSeries[] => {
+		const cells = Object.fromEntries(
+			Object.entries(areas).flatMap(([code, area]) =>
+				pick(area) === undefined ? [] : [[code, pick(area)!]],
+			),
+		);
+		return Object.keys(cells).length === 0
+			? []
+			: [
+					{
+						dataset,
+						measure,
+						geography,
+						release,
+						...(members ? { members } : {}),
+						periods: { [pollingDay]: cells },
+					},
+				];
+	};
+	return [
+		...(dataset === "general-election"
+			? [
+					...column("valid-votes", (area) => area.valid),
+					...column("electorate", (area) =>
+						area.turnout === undefined
+							? undefined
+							: (area.valid * 100) / area.turnout,
+					),
+					...column("rejected-ballots", (area) =>
+						area.turnout === undefined ? undefined : 0,
+					),
+				]
+			: column("turnout", (area) => area.turnout)),
+		...parties.flatMap((party) =>
+			column("party-votes", (area) => area.votes[party], { party }),
+		),
+	];
+};
+
+/** The 2019 and 2024 polls the election tests read, with a county division beside the 2019 wards. */
+const electionRows = (): FixtureSeries[] => [
+	...electionSeries(
+		"general-election",
+		"constituency",
+		"2019-uk-bfc",
+		"2019-12-12",
+		{
+			E14000001: { valid: 100, turnout: 70, votes: { con: 60, lab: 40 } },
+			W07000001: { valid: 80, turnout: 64, votes: { lab: 50, ld: 30 } },
+		},
+	),
+	...electionSeries(
+		"general-election",
+		"constituency",
+		"2024-uk-bfc",
+		"2024-07-04",
+		{
+			E14001001: { valid: 110, turnout: 62, votes: { con: 40, lab: 70 } },
+			N06000001: { valid: 90, turnout: 58, votes: { dup: 45, sf: 45 } },
+		},
+	),
+	...electionSeries("local-election", "ward", "2019-uk-bfc", "2019-05-02", {
+		E05000001: { valid: 100, votes: { con: 60, lab: 40 } },
+		W05000001: { valid: 80, votes: { lab: 50, ld: 30 } },
+		E05013831: { valid: 70, votes: { con: 25, lab: 45 } },
+	}),
+	...electionSeries(
+		"local-election",
+		"countyElectoralDivision",
+		"2019-uk-bfc",
+		"2019-05-02",
+		{
+			E58000050: { valid: 50, votes: { con: 30, lab: 20 } },
+		},
+	),
+	...electionSeries("local-election", "ward", "2024-uk-bfc", "2024-05-02", {
+		E05001001: { valid: 120, turnout: 42, votes: { con: 50, lab: 70 } },
+		E05011348: { valid: 75, turnout: 41, votes: { con: 35, lab: 40 } },
+		W05001001: { valid: 90, turnout: 39, votes: { lab: 45, pc: 45 } },
+	}),
+];
+
+const electionContests = (): FixtureContest[] =>
+	[
+		[
+			"general-election",
+			"constituency",
+			"2019-12-12",
+			{ E14000001: "CON", W07000001: "LAB" },
+		],
+		[
+			"general-election",
+			"constituency",
+			"2024-07-04",
+			{ E14001001: "LAB", N06000001: "DUP" },
+		],
+		[
+			"local-election",
+			"ward",
+			"2019-05-02",
+			{ E05000001: "CON", W05000001: "LAB", E05013831: "LAB" },
+		],
+		[
+			"local-election",
+			"ward",
+			"2024-05-02",
+			{ E05001001: "LAB", E05011348: "LAB", W05001001: "LAB" },
+		],
+	].flatMap(([dataset, geography, pollingDay, winners]) =>
+		Object.entries(winners as Record<string, string>).map(
+			([code, winner]) => ({
+				dataset: dataset as string,
+				geography: geography as string,
+				pollingDay: pollingDay as string,
+				code,
+				winner,
+			}),
+		),
+	);
+
 const migratedSeries = (): FixtureSeries[] => [
+	...electionRows(),
 	...populationRows(),
 	jobsSeries(),
 	...densitySeries(),
@@ -496,8 +638,6 @@ const writeSources = (
 	const nimdm = join(directory, "nimdm.json");
 	const wimd = join(directory, "wimd.json");
 	const simd = join(directory, "simd.json");
-	const generalElection = join(directory, "general-election.json");
-	const localElection = join(directory, "local-election.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -943,114 +1083,8 @@ const writeSources = (
 			},
 		}),
 	);
-	writeFileSync(
-		generalElection,
-		JSON.stringify({
-			"2019": {
-				year: 2019,
-				boundaryType: "constituency",
-				boundaryYear: 2019,
-				data: {
-					E14000001: {
-						validVotes: 100,
-						turnoutPercent: 70,
-						partyVotes: { CON: 60, LAB: 40 },
-					},
-					W07000001: {
-						validVotes: 80,
-						turnoutPercent: 64,
-						partyVotes: { LAB: 50, LD: 30 },
-					},
-				},
-				results: { E14000001: "CON", W07000001: "LAB" },
-			},
-			"2024": {
-				year: 2024,
-				boundaryType: "constituency",
-				boundaryYear: 2024,
-				data: {
-					E14001001: {
-						validVotes: 110,
-						turnoutPercent: 62,
-						partyVotes: { CON: 40, LAB: 70 },
-					},
-					N06000001: {
-						validVotes: 90,
-						turnoutPercent: 58,
-						partyVotes: { DUP: 45, SF: 45 },
-					},
-				},
-				results: { E14001001: "LAB", N06000001: "DUP" },
-			},
-		}),
-	);
-	writeFileSync(
-		localElection,
-		JSON.stringify({
-			"2019": {
-				year: 2019,
-				boundaryType: "ward",
-				boundaryYear: 2019,
-				data: {
-					E05000001: {
-						totalVotes: 100,
-						turnoutPercent: 0,
-						partyVotes: { CON: 60, LAB: 40 },
-					},
-					W05000001: {
-						totalVotes: 80,
-						turnoutPercent: 0,
-						partyVotes: { LAB: 50, LD: 30 },
-					},
-					E05013831: {
-						totalVotes: 70,
-						turnoutPercent: 0,
-						partyVotes: { CON: 25, LAB: 45 },
-					},
-					E58000050: {
-						totalVotes: 50,
-						turnoutPercent: 0,
-						partyVotes: { CON: 30, LAB: 20 },
-					},
-				},
-				results: {
-					E05000001: "CON",
-					W05000001: "LAB",
-					E05013831: "LAB",
-					E58000050: "CON",
-				},
-			},
-			"2024": {
-				year: 2024,
-				boundaryType: "ward",
-				boundaryYear: 2024,
-				data: {
-					E05001001: {
-						totalVotes: 120,
-						turnoutPercent: 42,
-						partyVotes: { CON: 50, LAB: 70 },
-					},
-					E05011348: {
-						totalVotes: 75,
-						turnoutPercent: 41,
-						partyVotes: { CON: 35, LAB: 40 },
-					},
-					W05001001: {
-						totalVotes: 90,
-						turnoutPercent: 39,
-						partyVotes: { LAB: 45, PC: 45 },
-					},
-				},
-				results: {
-					E05001001: "LAB",
-					E05011348: "LAB",
-					W05001001: "LAB",
-				},
-			},
-		}),
-	);
 	return {
-		rows: fixtureRows(rowSeries, migratedGaps()),
+		rows: fixtureRows(rowSeries, migratedGaps(), electionContests()),
 		manifest,
 		travelToWork: censusPaths["travel-to-work"],
 		carAvailability: censusPaths["car-availability"],
@@ -1079,8 +1113,6 @@ const writeSources = (
 			wimd,
 			simd,
 		},
-		generalElection,
-		localElection,
 	};
 };
 
