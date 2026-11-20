@@ -1,4 +1,5 @@
 import { DatabaseSync } from "node:sqlite";
+import { weightsInput } from "../../storage/modelInputRefs.ts";
 import { notionalPath } from "../store.ts";
 import type { Residual } from "./backtest.ts";
 import { summarise } from "./backtest.ts";
@@ -116,7 +117,7 @@ export const writeLocalNotional = (
 						);
 			for (const key of inputs.censusKeys)
 				input.run(ships.model, "census 2021", key);
-			input.run(ships.model, "weights", "weight-atoms population");
+			input.run(ships.model, "weights", weightsInput("population"));
 			for (const n of own) {
 				const status = isDerived(n) ? "derived" : "estimated";
 				for (const [party, value] of Object.entries(n.votes)) {

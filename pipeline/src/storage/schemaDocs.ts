@@ -839,11 +839,11 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	model_input: {
 		audience: "reference",
 		description:
-			"What each model read: series keys and source files, by role.",
+			"What each model read, by role. Every key resolves to sources: it is a series key, or a reference to a dataset or a weight basis, which v_series_attribution follows.",
 		columns: {
 			model_id: "The model (model.id).",
 			role: "What the input is for, such as 'general election' or 'local election 2019-05-02'.",
-			key: "A series key or a source file path with what was read from it.",
+			key: "A series.key, or a reference: 'dataset:<dataset.slug>' for a dataset read directly (such as the 2017 Scottish results file, which the local election series leave out) or 'weights:<weight_basis.id>' for the weights a model placed votes with. A reference may end in ' (detail)', such as the file read. A role starting 'local election ' ends in the polling day, which decides which election licence the input is under.",
 		},
 	},
 	series_model: {
