@@ -7,41 +7,41 @@ import { compileLifeExpectancy } from "../../src/catalog/lifeExpectancy.ts";
 import { compileElections } from "../../src/catalog/elections.ts";
 import type { CatalogManifest } from "../../src/catalog/manifest.ts";
 import { sha256 } from "../../src/catalog/values.ts";
+import { fixtureRows } from "./rowFixtures.ts";
 
-test("life expectancy observations use canonical series keys", () => {
-	const directory = mkdtempSync(join(tmpdir(), "remaining-series-"));
-	try {
-		const write = (name: string, data: unknown) => {
-			const path = join(directory, `${name}.json`);
-			writeFileSync(path, JSON.stringify(data));
-			return path;
-		};
-		const estimate = { value: 80, lower: 79, upper: 81 };
-		const life = write("life", {
-			"2022": {
-				period: "2020-2022",
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: { E06000001: { male: estimate, female: estimate } },
+test("life expectancy observations use canonical series keys and carry their intervals", () => {
+	const rows = fixtureRows(
+		(["male", "female"] as const).map((sex) => ({
+			dataset: "life-expectancy-series",
+			measure: "life-expectancy",
+			geography: "localAuthority",
+			release: "2025-uk-bgc",
+			members: { sex },
+			periods: {
+				"2020-2022": {
+					E06000001: { value: 80, lower: 79, upper: 81 },
+				},
 			},
+		})),
+	);
+	const artifacts = [...compileLifeExpectancy(rows).artifacts];
+	const expected = new Set(
+		["male", "female"].map((sex) =>
+			measureSeriesKey({
+				measure: "life-expectancy",
+				dimensions: { sex },
+			}),
+		),
+	);
+	for (const { contentHash, ...artifact } of artifacts) {
+		expect(expected.delete(artifact.measureId)).toBe(true);
+		expect(contentHash).toBe(sha256(JSON.stringify(artifact)));
+		expect(artifact.periods[0]?.records[0]?.confidenceInterval).toEqual({
+			lower: 79,
+			upper: 81,
 		});
-		const artifacts = [...compileLifeExpectancy(life).artifacts];
-		const expected = new Set([
-			...["male", "female"].map((sex) =>
-				measureSeriesKey({
-					measure: "life-expectancy",
-					dimensions: { sex },
-				}),
-			),
-		]);
-		for (const { contentHash, ...artifact } of artifacts) {
-			expect(expected.delete(artifact.measureId)).toBe(true);
-			expect(contentHash).toBe(sha256(JSON.stringify(artifact)));
-		}
-		expect(expected.size).toBe(0);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
 	}
+	expect(expected.size).toBe(0);
 });
 
 test("election observations preserve source partitions and canonical identities", () => {
