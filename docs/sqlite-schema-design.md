@@ -311,7 +311,8 @@ description, so the docs cannot fall behind the schema.
 
 Views join the core tables into readable rows: `v_observation`, `v_series`
 (what a dataset holds), `v_area_version` and `v_area_current` (each area at its
-latest version), `v_crosswalk_edge`, `v_crosswalk_weight`, `v_area_change`,
+latest version), `v_crosswalk_edge`, `v_crosswalk_weight`, `v_crosswalk_chain_edge` (an old
+area to the current areas in one join), `v_area_change`,
 `v_contest`, `v_candidacy`, `v_source_terms` and `v_election_terms`. A view
 adds no data and is not the API's read path: API readers query stored tables.
 
