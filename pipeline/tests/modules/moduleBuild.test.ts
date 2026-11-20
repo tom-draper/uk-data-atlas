@@ -62,6 +62,7 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				dataset: 2,
 				series: 3,
 				observation: 6,
+				series_coverage: 3,
 				series_gap: 1,
 				series_input: 1,
 				conversion_skip: 1,
@@ -73,6 +74,7 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				dataset: 1,
 				series: 2,
 				observation: 3,
+				series_coverage: 3,
 				series_gap: 1,
 				conversion_skip: 1,
 			},
@@ -86,6 +88,7 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				series_model: 2,
 				// The 2016 local rows and the share-alike model's are the add-on's.
 				observation: 3,
+				series_coverage: 3,
 				series_gap: 1,
 				area_relationship: 1,
 				election: 2,
@@ -175,6 +178,7 @@ test("core holds the foundation tables, the catalogue and the denominators", asy
 			assert.ok(tables.includes(name), name);
 		for (const name of [
 			"observation",
+			"series_coverage",
 			"crosswalk_edge_check",
 			"dataset",
 			"postcode_unit",
@@ -299,6 +303,7 @@ test("an assembled file answers like atlas.sqlite", async (t) => {
 			"SELECT count(*) AS n FROM dataset",
 			"SELECT count(*) AS n FROM measure",
 			"SELECT count(*) AS n FROM observation",
+			"SELECT count(*) AS n FROM series_coverage",
 			"SELECT count(*) AS n FROM series_member",
 			"SELECT count(*) AS n FROM series_gap",
 			"SELECT count(*) AS n FROM series_input",
@@ -554,6 +559,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			"election",
 			"module_info",
 			"observation",
+			"series_coverage",
 			"series_estimate",
 			"series_gap",
 		]);
@@ -562,6 +568,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["contest", 1],
 			["candidacy", 1],
 			["observation", 4],
+			["series_coverage", 2],
 			["series_gap", 1],
 			["area_relationship", 1],
 		] as const)
@@ -576,6 +583,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["contest", ""],
 			["candidacy", ""],
 			["observation", " WHERE series_id IN (6, 7, 8, 9)"],
+			["series_coverage", " WHERE series_id IN (6, 7, 8, 9)"],
 			["series_gap", " WHERE series_id = 7"],
 			["series_estimate", " WHERE series_id = 7"],
 			["area_relationship", " WHERE dataset_id = 5"],
@@ -608,6 +616,21 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 				"SELECT count(*) AS n FROM observation WHERE series_id = 9",
 			),
 			0,
+		);
+		// Coverage follows the observations it counts.
+		assert.equal(
+			count(
+				parent,
+				"SELECT count(*) AS n FROM series_coverage WHERE (series_id = 7 AND period_id = 3) OR series_id = 8",
+			),
+			0,
+		);
+		assert.equal(
+			count(
+				addOn,
+				"SELECT count(*) AS n FROM series_coverage WHERE (series_id = 7 AND period_id = 3) OR series_id = 8",
+			),
+			2,
 		);
 		assert.equal(
 			count(
