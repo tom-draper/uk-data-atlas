@@ -57,6 +57,36 @@ const loadedDatasets = new Map<string, unknown>();
 // slices did, and holds a dataset they share once.
 const recentSlices: string[][] = [];
 
+// Each loaded dataset parsed once per parser and group, so a slice that reuses
+// it hands charts the same record and their memoised output stays valid.
+const parsedRecords = new WeakMap<
+	object,
+	Map<string, { parse: JsonDatasetParser<unknown>; record: unknown }>
+>();
+
+const parseLoadedDataset = <T>(
+	loaded: unknown,
+	parseDataset: JsonDatasetParser<T>,
+	datasetGroup: string,
+): Record<string, T> => {
+	if (typeof loaded !== "object" || loaded === null)
+		return parseJsonDatasetRecord(loaded, parseDataset, datasetGroup);
+	let byGroup = parsedRecords.get(loaded);
+	if (!byGroup) {
+		byGroup = new Map();
+		parsedRecords.set(loaded, byGroup);
+	}
+	const known = byGroup.get(datasetGroup);
+	if (known && known.parse === parseDataset)
+		return known.record as Record<string, T>;
+	const record = parseJsonDatasetRecord(loaded, parseDataset, datasetGroup);
+	byGroup.set(datasetGroup, {
+		parse: parseDataset as JsonDatasetParser<unknown>,
+		record,
+	});
+	return record;
+};
+
 const abortError = () => new DOMException("Request cancelled", "AbortError");
 
 const removeAbortListener = (entry: PendingRequest) => {
@@ -211,15 +241,16 @@ export async function loadJsonDatasetSlice<T>(
 					);
 					loadedDatasets.set(cacheKey, loaded);
 				}
+				const data = parseLoadedDataset(
+					loaded,
+					parseDataset,
+					request.key,
+				);
 				results[slot] = {
 					status: "fulfilled",
 					value: {
 						key: request.key,
-						data: parseJsonDatasetRecord(
-							loaded,
-							parseDataset,
-							request.key,
-						),
+						data,
 					},
 				};
 			} catch (reason) {
