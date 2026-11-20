@@ -272,7 +272,8 @@ as published data.
   `pruned`, `estimated_share`, bounds and a `complete` flag, so an old code
   reaches the current areas in one join through `v_crosswalk_chain_edge`. A
   chain that is exact on every basis is stored once. Stored as tables, since
-  composing the routes takes 4.5 to 7.5 minutes: 140 chains over 891 hops and
+  a query cannot compose the routes: assembly takes 8 s inside its transaction
+  (about 3 s reading the steps, 4 s composing, the rest writing): 140 chains over 891 hops and
   1,218,739 edges, adding 30.7 MB (+3.3%) to `atlas.sqlite`. 214,762 old areas
   lose some or all of their value, listed by `v_crosswalk_chain_gap`; only the
   1,508 that edges cannot show (a named reason, or part of the value still
