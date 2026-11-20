@@ -537,8 +537,9 @@ Beyond whole measures, a conversion is refused value by value when:
   for every value. The fit and the first check use the same values. Only the
   2019 chain and the 2022 authority case are held out.
 - **The bounds are wide.** On the held-out 2019 chain the median half width is
-  23.69% against a median error of 0.165%. No series in the atlas now carries
-  bounds, so the bounds are exercised by the backtest alone.
+  23.69% against a median error of 0.165%. One converted series carries them
+  in the atlas, the constituency population split onto authorities (572
+  values), so the bounds are otherwise exercised by the backtest alone.
 - **The bounds are not a confidence interval.** They are a largest seen error,
   scaled. One held-out value in 286 fell outside them.
 - **The weights are from one moment.** Residents and households are from the
