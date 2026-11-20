@@ -185,7 +185,7 @@ as published data.
 | 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                        | Early access is the last cheap time to remove routes.                                                   |
 | 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module. | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
 | 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                  | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
-| 57  | P1       | Ship uncertainty on converted series (#411). The backtest computes bounds, but no shipped series carries them, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                                    | Customers need to know which converted values to trust.                                                 |
+| 57  | P1       | Ship uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values are withheld, and the bounds are wide (median half width 23.69% against a median error of 0.165%). See the task 57 note.      | Customers need to know which converted values to trust.                                                 |
 | 58  | P2       | Find published truths on two overlapping sets of areas for other additive measures (jobs, emissions, energy use, pupils) and backtest splitting them.                                                                                  | Only total population is ever split today; each passing backtest unlocks a measure.                     |
 | 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                           | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
 | 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                               | The way agents reach the database.                                                                      |
@@ -305,6 +305,40 @@ as published data.
   `docs/sqlite-schema-design.md`), and an API reader would use the stored tables
   `crosswalk_chain_edge` and `crosswalk_chain_gap`. The public shape waits for the
   v1 surface review (task 54) and the MCP server (task 60).
+
+- **Task 57** (2026-11-20), scoped to what is stored, not yet shipped wider. The
+  row said no series carries bounds. One does: the constituency population split
+  onto authorities (`estimates: true` in `convertedPlan.ts`), 572 values with
+  status `estimated`, `lower` and `upper` from `boundsOf` and one
+  `series_estimate` row each, served by the release series route as
+  `confidenceInterval` and `exactShare`. The other 1,022 converted series are
+  regrouped whole areas, `derived`, with no bounds because nothing was
+  estimated. A split value is kept only where the plan asks for estimates and
+  one measured method factor covers its route, so 88,827 values in 572 series are
+  `unmeasured-split` gaps: 30,236 (150 series) are on one measured method and
+  are withheld only because the plan does not opt in, 22,825 (72) mix two
+  measured methods, 27,523 (329) cross an `extent-continuity` hop, which has no
+  factor, and 8,243 (21) cross no measured method. Opting in the 150 is a
+  product choice, not a build fix: the bounds on that method are wide, because
+  each factor is the largest error of one case. The chain columns are not
+  re-derived for converted values. `boundsOf` already computes the same bounds
+  from the same `at_risk` and `pruned`, and `complete` is true for every shipped
+  value, since a missing input is a `missing-input` gap and not a short value.
+  What changed here is a built check (`tests/built/convertedBounds.test.ts`):
+  a converted value is `derived` or `estimated`, a regrouped value has no
+  bounds, a split value has bounds that hold it and one `series_estimate` row, and a
+  withheld split holds no value.
+- **Tasks 34 and 41** reuse the chain columns, with no code yet. Task 34 (how
+  much an area changed): the largest `crosswalk_chain_edge.weight` out of an old
+  area is the share of it that stayed together, `1 - sum(weight)` is what did
+  not arrive (the old areas in `v_crosswalk_chain_gap` with `has_edge = 0`
+  lost all of it), and a "materially changed" flag also reads `at_risk` and
+  `complete`, with the threshold set in the task. Task 41 (population for every
+  release): a rebuilt estimate for an old area is the current value times
+  `weight` over the chain, with `weight_lower` and `weight_upper` as its bounds
+  where they are non-null and `complete = 0` marking an area to leave out, so
+  widening what a conversion can split starts with measuring the missing error
+  factors, not with new bounds.
 
 ## Licence table coverage
 
