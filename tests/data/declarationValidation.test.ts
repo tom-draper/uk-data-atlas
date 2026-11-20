@@ -12,7 +12,6 @@ const base = DATASET_DECLARATIONS.find(({ id }) => id === "claimant-count")!;
 const faulty = (change: (copy: any) => void): DatasetDeclaration => {
 	const copy = structuredClone({
 		...base,
-		load: undefined,
 		statistics: {
 			...base.statistics,
 			period: undefined,
@@ -22,7 +21,7 @@ const faulty = (change: (copy: any) => void): DatasetDeclaration => {
 		display: { ...base.display, aggregation: undefined },
 	});
 	change(copy);
-	return { ...copy, load: base.load } as unknown as DatasetDeclaration;
+	return copy as unknown as DatasetDeclaration;
 };
 
 describe("declaration validation", () => {

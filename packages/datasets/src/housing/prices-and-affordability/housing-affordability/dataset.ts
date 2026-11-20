@@ -4,10 +4,7 @@ import { authorityCode } from "../../../data/new-datasets/authorityCode.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -46,7 +43,6 @@ export const housingAffordability = defineDataset<
 		minimumDataRecords: 300,
 		expectedBoundaryYears: [2025],
 	},
-	load: noCompiledPayload<IndicatorDataset<"housing-affordability">>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 20,

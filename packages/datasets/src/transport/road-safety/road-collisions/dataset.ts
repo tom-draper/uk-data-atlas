@@ -1,8 +1,5 @@
 import type { RoadCollisionsDataset } from "../../../types/roadCollisions.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { roadCollisionsStatisticsParts } from "../../../data/road-safety/source.ts";
 
@@ -40,7 +37,6 @@ export const roadCollisions = defineDataset<RoadCollisionsDataset>({
 		expectedBoundaryYears: [2024, 2025],
 		requiredDataFields: ["collisions", "fatal", "serious", "slight"],
 	},
-	load: noCompiledPayload<RoadCollisionsDataset>(),
 	statistics: {
 		direct: {
 			only: true,

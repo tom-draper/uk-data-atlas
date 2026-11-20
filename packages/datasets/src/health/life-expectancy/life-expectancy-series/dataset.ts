@@ -1,8 +1,5 @@
 import type { LifeExpectancySeriesDataset } from "../../../types/lifeExpectancySeries.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { LIFE_EXPECTANCY, SEX } from "../../../declaration/measures.ts";
 import {
 	periods,
@@ -45,7 +42,6 @@ export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["male", "female"],
 	},
-	load: noCompiledPayload<LifeExpectancySeriesDataset>(),
 	statistics: {
 		payload: {
 			parts: (labels) =>

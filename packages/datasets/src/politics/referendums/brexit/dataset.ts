@@ -1,8 +1,5 @@
 import type { BrexitLADDataset } from "../../../types/referendum.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	ANSWER,
@@ -35,7 +32,6 @@ export const brexit = defineDataset<BrexitLADDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
-	load: noCompiledPayload<BrexitLADDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 120,

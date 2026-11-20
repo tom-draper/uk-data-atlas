@@ -1,8 +1,5 @@
 import type { ClaimantCountDataset } from "../../../types/claimantCount.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateClaimantCount } from "./aggregate.ts";
@@ -39,7 +36,6 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 		],
 	},
 	boundary: { type: "localAuthority", year: 2024 },
-	load: noCompiledPayload<ClaimantCountDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 60,

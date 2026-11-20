@@ -1,8 +1,5 @@
 import type { NIMDMDataset } from "../../../types/nimdm.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { summariseNIMDM } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
 	deprivationStatistics,
@@ -49,7 +46,6 @@ export const nimdm = defineDataset<NIMDMDataset>({
 			"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered.",
 		],
 	},
-	load: noCompiledPayload<NIMDMDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 43,

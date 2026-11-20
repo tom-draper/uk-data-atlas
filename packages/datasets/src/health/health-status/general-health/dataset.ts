@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { USUAL_RESIDENTS } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -40,7 +37,6 @@ export const generalHealth = defineDataset<IndicatorDataset<"general-health">>({
 		expectedBoundaryYears: [2021],
 		requiredDataFields: ["value", "metrics"],
 	},
-	load: noCompiledPayload<IndicatorDataset<"general-health">>(),
 	statistics: {
 		direct: {
 			only: true,

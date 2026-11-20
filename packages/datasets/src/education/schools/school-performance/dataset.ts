@@ -1,8 +1,5 @@
 import type { SchoolPerformanceDataset } from "../../../types/schoolPerformance.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import {
 	SCHOOL_MEASURES,
@@ -64,7 +61,6 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 	},
 	additionalBoundaryTypes: ["constituency"],
 	ingestion: { minimumDatasets: 2 },
-	load: noCompiledPayload<SchoolPerformanceDataset>(),
 	statistics: {
 		direct: {
 			only: true,

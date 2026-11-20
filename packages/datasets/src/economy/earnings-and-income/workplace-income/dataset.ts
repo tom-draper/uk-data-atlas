@@ -1,8 +1,5 @@
 import type { WorkplaceIncomeDataset } from "../../../types/income.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averagePay } from "../../../data/income/aggregate.ts";
 import { payStatistics } from "../../../data/income/statistics.ts";
@@ -44,7 +41,6 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 			"Provisional results are revised when the following year's survey is published.",
 		],
 	},
-	load: noCompiledPayload<WorkplaceIncomeDataset>(),
 	statistics: {
 		name: "ladName",
 		payload: {

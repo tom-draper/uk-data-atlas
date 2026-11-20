@@ -1,8 +1,5 @@
 import type { PublicHealthDataset } from "../../../data/public-health/measures.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import type { StatisticsPeriod } from "../../../declaration/vocabulary.ts";
@@ -40,7 +37,6 @@ export const publicHealth = defineDataset<PublicHealthDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["metrics"],
 	},
-	load: noCompiledPayload<PublicHealthDataset>(),
 	statistics: {
 		direct: {
 			only: true,

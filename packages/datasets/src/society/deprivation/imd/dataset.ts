@@ -1,8 +1,5 @@
 import type { IMDDataset } from "../../../types/imd.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import type { DisplayMeasure } from "../../../declaration/display.ts";
 import { summariseIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import { measure } from "../../../declaration/measures.ts";
@@ -134,7 +131,6 @@ export const imd = defineDataset<IMDDataset>({
 		notes: [],
 	},
 	layout: { regionChunks: { kind: "regional", lsoaToLad: true } },
-	load: noCompiledPayload<IMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 40,

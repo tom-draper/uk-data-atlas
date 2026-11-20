@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -40,7 +37,6 @@ export const pupilAbsence = defineDataset<IndicatorDataset<"pupil-absence">>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value", "metrics"],
 	},
-	load: noCompiledPayload<IndicatorDataset<"pupil-absence">>(),
 	statistics: {
 		direct: {
 			only: true,

@@ -176,5 +176,6 @@ export interface DatasetDefinition<
 		read: (reader: DatasetReader) => Promise<DirectPart[]>;
 		header: (key: string) => DeclaredHeader | undefined;
 	};
-	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
+	/** The shape of the payload, which exists only as a type. */
+	readonly payloadType?: T;
 }

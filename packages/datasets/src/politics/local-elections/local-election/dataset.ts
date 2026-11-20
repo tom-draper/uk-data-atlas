@@ -1,9 +1,5 @@
 import type { LocalElectionDataset } from "../../../types/elections.ts";
-import {
-	defineDataset,
-	yearFolders,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset, yearFolders } from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -96,7 +92,6 @@ export const localElection = defineDataset<LocalElectionDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: noCompiledPayload<LocalElectionDataset>(),
 	statistics: {
 		direct: {
 			only: true,

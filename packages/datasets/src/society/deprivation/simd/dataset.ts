@@ -1,8 +1,5 @@
 import type { SIMDDataset } from "../../../types/simd.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import { summariseSIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
@@ -40,7 +37,6 @@ export const simd = defineDataset<SIMDDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: noCompiledPayload<SIMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 42,

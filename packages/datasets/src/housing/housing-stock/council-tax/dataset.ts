@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -48,7 +45,6 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2026],
 	},
-	load: noCompiledPayload<IndicatorDataset<"council-tax">>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 70,

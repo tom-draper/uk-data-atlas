@@ -1,8 +1,5 @@
 import type { NHSWaitingDataset } from "../../../types/nhsWaiting.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	periods,
@@ -66,7 +63,6 @@ export const nhsWaiting = defineDataset<NHSWaitingDataset>({
 		cadence: "monthly",
 		notes: [],
 	},
-	load: noCompiledPayload<NHSWaitingDataset>(),
 	statistics: {
 		payload: {
 			header: { month: "March 2026", coverageCountries: ["GB-ENG"] },

@@ -246,8 +246,11 @@ export type DatasetDeclaration<
 	layout?: DatasetPayloadLayout;
 	/** True for a dataset that is compiled but has no chart yet. */
 	chartPending?: boolean;
-	/** Reads the sources and writes the compiled payload, by edition. */
-	load: (reader: DatasetReader) => Promise<Record<string, T>>;
+	/**
+	 * The shape of the dataset's payload, which exists only as a type: the
+	 * rows are read straight from the sources and nothing compiles to it.
+	 */
+	readonly payloadType?: T;
 	statistics: DeclaredStatistics;
 	/** The API catalogue measures, when the dataset publishes any. */
 	catalogue?: IndicatorCatalogue;
@@ -384,21 +387,8 @@ export function definitionOf<T extends { type: string; data: unknown }>(
 		...(declaration.layout ? { payload: declaration.layout } : {}),
 		...(declaration.chartPending ? { chartPending: true } : {}),
 		...directOnlyOf(declaration),
-		precompile: declaration.load,
 	};
 }
-
-/**
- * The `load` of a dataset read straight from its sources, which has no
- * compiled payload to load.
- */
-export const noCompiledPayload =
-	<T extends { type: string; data: unknown }>() =>
-	(): Promise<Record<string, T>> => {
-		throw new Error(
-			"This dataset is read straight from its sources and has no compiler",
-		);
-	};
 
 /** The statistics declaration the rows are written and read back from. */
 export function statisticsOf(declaration: DatasetDeclaration): DeclaredDataset {

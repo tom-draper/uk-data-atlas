@@ -1,8 +1,5 @@
 import type { GhgEmissionsDataset } from "../../../types/ghgEmissions.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateGhgEmissions } from "../../../data/ghg-emissions/aggregate.ts";
@@ -46,7 +43,6 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["totalKtCO2e", "perPersonTCO2e"],
 	},
-	load: noCompiledPayload<GhgEmissionsDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 110,

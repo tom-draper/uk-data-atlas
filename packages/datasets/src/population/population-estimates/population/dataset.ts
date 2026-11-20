@@ -1,8 +1,5 @@
 import type { PopulationDataset } from "../../../types/population.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { CENSUS_LICENCE } from "../../../data/census/districts.ts";
@@ -38,7 +35,6 @@ export const population = defineDataset<PopulationDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: noCompiledPayload<PopulationDataset>(),
 	mapViews: [
 		{
 			id: "density",

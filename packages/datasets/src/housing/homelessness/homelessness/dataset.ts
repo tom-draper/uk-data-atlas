@@ -1,8 +1,5 @@
 import type { HomelessnessDataset } from "../../../types/homelessness.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateHomelessness } from "../../../data/homelessness/aggregate.ts";
@@ -39,7 +36,6 @@ export const homelessness = defineDataset<HomelessnessDataset>({
 			"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight.",
 		],
 	},
-	load: noCompiledPayload<HomelessnessDataset>(),
 	statistics: {
 		payload: {
 			parts: () => [

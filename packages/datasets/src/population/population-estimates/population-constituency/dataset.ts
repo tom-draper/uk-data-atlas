@@ -1,8 +1,5 @@
 import type { PopulationConstituencyDataset } from "../../../types/populationConstituency.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { AGE, byAge } from "../../../data/population/statistics.ts";
 import { populationConstituencyStatisticsParts } from "../../../data/population-constituency/source.ts";
@@ -42,7 +39,6 @@ export const populationConstituency =
 			expectedBoundaryYears: [2024],
 			requiredDataFields: ["allAges", "total", "males", "females"],
 		},
-		load: noCompiledPayload<PopulationConstituencyDataset>(),
 		statistics: {
 			direct: {
 				only: true,

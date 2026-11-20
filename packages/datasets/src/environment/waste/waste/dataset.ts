@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import type {
 	DatasetDisplay,
 	DisplayMeasure,
@@ -82,7 +79,6 @@ export const waste = defineDataset<IndicatorDataset<"waste">>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	load: noCompiledPayload<IndicatorDataset<"waste">>(),
 	statistics: {
 		payload: {
 			parts: yearParts(

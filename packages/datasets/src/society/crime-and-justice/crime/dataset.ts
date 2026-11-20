@@ -1,8 +1,5 @@
 import type { CrimeDataset } from "../../../types/crime.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateCrime } from "../../../data/crime/aggregate.ts";
@@ -47,7 +44,6 @@ export const crime = defineDataset<CrimeDataset>({
 	// Table C2 is recorded crime by community safety partnership area, read
 	// straight out of the published workbook rather than from an extract,
 	// with the notes that say which areas' figures are incomplete.
-	load: noCompiledPayload<CrimeDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 80,

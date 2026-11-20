@@ -1,8 +1,5 @@
 import type { HistoricalGeneralElectionDataset } from "../../../types/historicalGeneralElection.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -152,7 +149,6 @@ export const historicalGeneralElection =
 			minimumDatasets: 28,
 			requiredDataFields: ["constituencyName", "votes"],
 		},
-		load: noCompiledPayload<HistoricalGeneralElectionDataset>(),
 		statistics: {
 			direct: {
 				only: true,

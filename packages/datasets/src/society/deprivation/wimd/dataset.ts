@@ -1,8 +1,5 @@
 import type { WIMDDataset } from "../../../types/wimd.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import { summariseWIMD } from "../../../helpers/datasetAggregation/deprivation.ts";
 import {
@@ -45,7 +42,6 @@ export const wimd = defineDataset<WIMDDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: noCompiledPayload<WIMDDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 41,

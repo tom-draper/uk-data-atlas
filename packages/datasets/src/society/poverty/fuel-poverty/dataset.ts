@@ -1,8 +1,5 @@
 import type { FuelPovertyDataset } from "../../../types/fuelPoverty.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS, measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateFuelPoverty } from "./aggregate.ts";
@@ -44,7 +41,6 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			"Households in fuel poverty under the Low Income Low Energy Efficiency measure.",
 		],
 	},
-	load: noCompiledPayload<FuelPovertyDataset>(),
 	statistics: {
 		payload: {
 			parts: yearParts(
