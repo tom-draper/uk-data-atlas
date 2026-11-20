@@ -41,13 +41,33 @@ export function readSpreadsheet(
 const isEmpty = (sheet: Sheet) =>
 	sheet.rows.every((row) => row.every((cell) => cell.trim() === ""));
 
-/** The sheet to open first: the first visible one with anything in it. */
+/** Whether a sheet has a few rows of at least two columns, as a table does. */
+function looksLikeTable(sheet: Sheet): boolean {
+	let rows = 0;
+	for (const row of sheet.rows) {
+		let filled = 0;
+		for (const cell of row) if (cell.trim() !== "") filled++;
+		if (filled >= 2 && ++rows >= 2) return true;
+	}
+	return false;
+}
+
+/**
+ * The sheet to open first: the first visible one that looks like a table, so
+ * a cover or notes sheet is passed over, else the first visible one with
+ * anything in it, else the first that has anything.
+ */
 export function defaultSheet(workbook: Workbook): number {
-	const visible = workbook.sheets.findIndex(
+	const { sheets } = workbook;
+	const table = sheets.findIndex(
+		(sheet) => !sheet.hidden && looksLikeTable(sheet),
+	);
+	if (table !== -1) return table;
+	const visible = sheets.findIndex(
 		(sheet) => !sheet.hidden && !isEmpty(sheet),
 	);
 	if (visible !== -1) return visible;
-	const any = workbook.sheets.findIndex((sheet) => !isEmpty(sheet));
+	const any = sheets.findIndex((sheet) => !isEmpty(sheet));
 	return any === -1 ? 0 : any;
 }
 
