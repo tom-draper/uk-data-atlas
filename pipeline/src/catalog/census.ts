@@ -1,9 +1,7 @@
-import { type DatasetInput } from "./input.ts";
 import { measureSeriesKey, type Measure } from "@uk-data-atlas/measures";
-import { onApril2023Authorities } from "./authorityChanges.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
+import type { CatalogueRows } from "./rows.ts";
 import { sha256 } from "./values.ts";
 
 export const CENSUS_BREAKDOWNS = [
@@ -217,22 +215,16 @@ export const CENSUS_BREAKDOWNS = [
  */
 export const compileCensus = (
 	{ manifestPath, datasets }: CatalogManifest,
-	travelToWorkPath: DatasetInput,
-	carAvailabilityPath: DatasetInput,
-	qualificationPath: DatasetInput,
-	ethnicityPath: DatasetInput,
+	rows: CatalogueRows,
 	populationCodes: Set<string>,
 ) => {
-	const censusPaths = {
-		"travel-to-work": travelToWorkPath,
-		"car-availability": carAvailabilityPath,
-		qualification: qualificationPath,
-		ethnicity: ethnicityPath,
-	};
 	const CENSUS_BOUNDARY_YEAR = 2023;
-	const englandAndWales2023 = [...populationCodes].filter(
-		(code) => code.startsWith("E") || code.startsWith("W"),
-	);
+	/** Census day, which the rows label `2021-census`. */
+	const CENSUS_PERIOD = "2021";
+	const expectedCodes = [...populationCodes]
+		.filter((code) => code.startsWith("E") || code.startsWith("W"))
+		.sort()
+		.join(",");
 	const censusObservations = CENSUS_BREAKDOWNS.flatMap((breakdown) => {
 		const dataset = datasets.find(
 			(candidate) => candidate.id === breakdown.datasetId,
@@ -249,7 +241,6 @@ export const compileCensus = (
 				`${manifestPath}: ${breakdown.datasetId} must declare boundary year ${breakdown.sourceBoundaryYear}`,
 			);
 		}
-		const path = censusPaths[breakdown.datasetId];
 		return (
 			breakdown.categories as readonly (readonly [
 				string,
@@ -264,19 +255,22 @@ export const compileCensus = (
 				dimensions: { [breakdown.dimension]: member ?? suffix },
 			};
 			const seriesKey = measureSeriesKey(series);
-			const periods = localAuthorityFieldPeriods(
-				path,
-				breakdown.field ? `${breakdown.field}.${field}` : field,
-				breakdown.sourceBoundaryYear,
-			).map((period) => {
-				try {
-					return onApril2023Authorities(period, englandAndWales2023);
-				} catch (error) {
+			const periods = rows.periods(
+				{
+					series,
+					datasetId: breakdown.datasetId,
+					geography: "localAuthority",
+					boundaryYear: CENSUS_BOUNDARY_YEAR,
+				},
+				[CENSUS_PERIOD],
+			);
+			for (const { period, records } of periods) {
+				const held = records.map((record) => record.areaCode).sort();
+				if (held.join(",") !== expectedCodes)
 					throw new Error(
-						`${path}: ${measureId} ${period.period}: ${(error as Error).message}`,
+						`${breakdown.datasetId}: ${measureId} ${period} does not hold exactly the April 2023 authorities`,
 					);
-				}
-			});
+			}
 			const content = JSON.stringify({
 				schemaVersion: 1,
 				measureId: seriesKey,
