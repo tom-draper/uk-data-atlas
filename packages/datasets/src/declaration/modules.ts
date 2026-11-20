@@ -45,6 +45,11 @@ export interface ModuleLicenceInfo {
 	readonly commercialUse: boolean;
 	/** True when anything built from the data must carry the same licence. */
 	readonly shareAlike: boolean;
+	/**
+	 * The statement the licence asks users to print with the data, ready to
+	 * show. The publisher is named beside it, so it does not repeat one.
+	 */
+	readonly attribution: string;
 }
 
 /**
@@ -59,6 +64,8 @@ export const MODULE_LICENCES = [
 		url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		commercialUse: true,
 		shareAlike: false,
+		attribution:
+			"Contains public sector information licensed under the Open Government Licence v3.0",
 	},
 	{
 		id: "open-parliament",
@@ -66,6 +73,8 @@ export const MODULE_LICENCES = [
 		url: "https://www.parliament.uk/site-information/copyright/open-parliament-licence/",
 		commercialUse: true,
 		shareAlike: false,
+		attribution:
+			"Contains Parliamentary information licensed under the Open Parliament Licence v3.0",
 	},
 	{
 		id: "cc-by-sa-3.0",
@@ -73,6 +82,8 @@ export const MODULE_LICENCES = [
 		url: "https://creativecommons.org/licenses/by-sa/3.0/",
 		commercialUse: true,
 		shareAlike: true,
+		attribution:
+			"Licensed under Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0), and any adaptation must be shared under the same licence",
 	},
 ] as const satisfies readonly ModuleLicenceInfo[];
 

@@ -306,6 +306,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"1 if commercial use is allowed, 0 if not, null if unknown.",
 			share_alike:
 				"1 if derived work must use the same licence, 0 if not, null if unknown.",
+			attribution:
+				"The statement the licence asks users to print with the data, such as 'Contains public sector information licensed under the Open Government Licence v3.0'. v_series_terms.attribution joins these with the publishers.",
 		},
 	},
 	source_licence: {

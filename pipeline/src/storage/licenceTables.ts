@@ -1,31 +1,7 @@
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
 import type { BoundaryRegistry } from "@uk-data-atlas/geography";
+import { MODULE_LICENCES } from "@uk-data-atlas/datasets/registry";
 import { IdRegistries } from "../ids/idRegistries.ts";
-
-/** Source licence terms; NULL means the terms have not been classified. */
-const LICENCES = [
-	[
-		"ogl-3.0",
-		"Open Government Licence v3.0",
-		"https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		1,
-		0,
-	],
-	[
-		"open-parliament",
-		"Open Parliament Licence",
-		"https://www.parliament.uk/site-information/copyright/open-parliament-licence/",
-		1,
-		0,
-	],
-	[
-		"cc-by-sa-3.0",
-		"Creative Commons Attribution-ShareAlike 3.0",
-		"https://creativecommons.org/licenses/by-sa/3.0/",
-		1,
-		1,
-	],
-] as const;
 
 /** Source terms in one row: licences listed, commercial use only if every licence allows it, ShareAlike if any requires it. */
 const SOURCE_TERMS_VIEW = `SELECT s.id AS source_id, s.publisher, s.url,
@@ -62,9 +38,17 @@ export function licenceTables(
 				"url TEXT NOT NULL",
 				"commercial_use INTEGER CHECK (commercial_use IN (0, 1))",
 				"share_alike INTEGER CHECK (share_alike IN (0, 1))",
+				"attribution TEXT NOT NULL",
 			],
 			key: ["id"],
-			rows: LICENCES.map((row) => [...row]),
+			rows: MODULE_LICENCES.map((licence) => [
+				licence.id,
+				licence.name,
+				licence.url,
+				licence.commercialUse ? 1 : 0,
+				licence.shareAlike ? 1 : 0,
+				licence.attribution,
+			]),
 		},
 		boundary_release_source: {
 			strict: true,

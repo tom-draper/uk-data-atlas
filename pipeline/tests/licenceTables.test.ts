@@ -101,6 +101,23 @@ test("records boundary provenance and isolates historical local election licence
 				share_alike: 1,
 			}),
 		);
+		expect(
+			db
+				.prepare(
+					"SELECT id FROM licence WHERE attribution = '' OR attribution IS NULL",
+				)
+				.all(),
+		).toEqual([]);
+		expect(
+			db
+				.prepare("SELECT attribution FROM licence WHERE id = 'ogl-3.0'")
+				.get(),
+		).toEqual(
+			expect.objectContaining({
+				attribution:
+					"Contains public sector information licensed under the Open Government Licence v3.0",
+			}),
+		);
 		expect(db.prepare("PRAGMA foreign_key_check").all()).toEqual([]);
 	} finally {
 		db.close();
