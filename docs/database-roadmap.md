@@ -313,14 +313,18 @@ as published data.
   `series_estimate` row each, served by the release series route as
   `confidenceInterval` and `exactShare`. The other 1,022 converted series are
   regrouped whole areas, `derived`, with no bounds because nothing was
-  estimated. A split value is kept only where the plan asks for estimates and
-  one measured method factor covers its route, so 88,827 values in 572 series are
-  `unmeasured-split` gaps: 30,236 (150 series) are on one measured method and
-  are withheld only because the plan does not opt in, 22,825 (72) mix two
-  measured methods, 27,523 (329) cross an `extent-continuity` hop, which has no
-  factor, and 8,243 (21) cross no measured method. Opting in the 150 is a
-  product choice, not a build fix: the bounds on that method are wide, because
-  each factor is the largest error of one case. The chain columns are not
+  estimated. A split value is kept only where the plan asks for estimates, the
+  measure's split is backtested and one measured method factor covers its route, so 88,827 values in 572 series are
+  `unmeasured-split` gaps: 30,236 (150 series) are on one measured method, 22,825
+  (72) mix two measured methods, 27,523 (329) cross an `extent-continuity` hop,
+  which has no factor, and 8,243 (21) cross no measured method. Opting the 150
+  into estimates ships nothing (a dry run of the converter with `estimates` on for
+  every standard release gave the same 572 estimated values and 88,827 gaps). Only
+  a total population is allowed to split (`BACKTESTED_SPLITS` in `rules.ts`), and
+  the 150 are age and sex breakdowns of population (27,027 values, never split),
+  party votes (2,247) and turnout and electorate (962). So the wide bounds are not
+  what withholds them: no split of those measures has a published truth to
+  measure it against, which is task 58. The chain columns are not
   re-derived for converted values. `boundsOf` already computes the same bounds
   from the same `at_risk` and `pruned`, and `complete` is true for every shipped
   value, since a missing input is a `missing-input` gap and not a short value.
