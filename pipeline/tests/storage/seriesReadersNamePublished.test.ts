@@ -25,6 +25,10 @@ const READS_EVERY_SERIES: Readonly<
 		queries: 5,
 		reason: "The default view ranks every series by method itself, and reads them all to load their facts and to check that none is without a role or a rank.",
 	},
+	"pipeline/src/storage/seriesCoverage.ts": {
+		queries: 4,
+		reason: "Coverage is written for every series whatever its method, and the view shows the method beside each row.",
+	},
 	"pipeline/src/storage/schemaDocs.ts": {
 		queries: 3,
 		reason: "Documentation text, not queries the build runs: the guide and two worked examples show a reader how to find series, and the reader chooses the method.",
