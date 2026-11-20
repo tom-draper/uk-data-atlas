@@ -35,13 +35,13 @@ Measured on the local build of 2026-11-19 unless stated.
 
 ## Status at a glance
 
-| Status      | Tasks                                                                |
-| ----------- | -------------------------------------------------------------------- |
-| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 62               |
-| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                                 |
-| Partly done | 7, 8, 9, 17, 35, 39                                                  |
-| Kept as is  | 12 (measured, keep the wide table)                                   |
-| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, and new 52 to 61 |
+| Status      | Tasks                                                            |
+| ----------- | ---------------------------------------------------------------- |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 57, 62       |
+| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                             |
+| Partly done | 7, 8, 9, 17, 35, 39                                              |
+| Kept as is  | 12 (measured, keep the wide table)                               |
+| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 58–61 |
 
 ## Core data quality
 
@@ -185,7 +185,7 @@ as published data.
 | 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                        | Early access is the last cheap time to remove routes.                                                   |
 | 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module. | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
 | 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                  | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
-| 57  | P1       | Ship uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values are withheld, and the bounds are wide (median half width 23.69% against a median error of 0.165%). See the task 57 note.      | Customers need to know which converted values to trust.                                                 |
+| 57  | P1       | Done: uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values wait on task 58, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                        | Customers need to know which converted values to trust.                                                 |
 | 58  | P2       | Find published truths on two overlapping sets of areas for other additive measures (jobs, emissions, energy use, pupils) and backtest splitting them.                                                                                  | Only total population is ever split today; each passing backtest unlocks a measure.                     |
 | 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                           | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
 | 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                               | The way agents reach the database.                                                                      |
