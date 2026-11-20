@@ -135,12 +135,15 @@ test("the error of an edge is ordered and inside what its weight allows", () => 
 	);
 });
 
-test("a chain stored without a basis is exact, and every other chain has one", () => {
+test("a chain stored without a basis is the same on every basis, and every other chain has one", () => {
+	// A basis changes a chain only where an old area is split, so a chain stored
+	// once for every basis sends each of its old areas to one current area. It
+	// may still be inexact, with weight pruned from a postcode-overlap hop.
 	assert.deepEqual(
-		all(`SELECT id FROM crosswalk_chain
-			 WHERE basis_id IS NULL AND exact = 0 AND (
-			   SELECT count(*) FROM crosswalk_chain_edge e
-			   WHERE e.chain_id = crosswalk_chain.id AND (e.at_risk > 0 OR e.pruned > 0)) > 0
+		all(`SELECT c.id FROM crosswalk_chain c
+			 WHERE c.basis_id IS NULL AND EXISTS (
+			   SELECT 1 FROM crosswalk_chain_edge e WHERE e.chain_id = c.id
+			   GROUP BY e.from_version_id HAVING count(*) > 1)
 			 LIMIT 20`),
 		[],
 	);
@@ -213,4 +216,50 @@ test("any ward of an old release reaches the current wards in one join", () => {
 		rows.some((row) => row.from_release === "2011-12-ew-bgc"),
 		"the 2011 ward is joined to the current wards",
 	);
+});
+
+test("every older release reaches the current one, bar the releases no carrying crosswalk joins", () => {
+	// Releases with no crosswalk that carries a value to the next one, plus
+	// nhsEnglandRegion 2022-07, whose only crosswalk is area-overlap, which is not
+	// a carrying method, and dataZone 2021-ni, which is not a Scottish release.
+	const unrouted = all(`SELECT r.geography, r.release FROM area_release r
+		WHERE r.inventory_position > (
+		  SELECT min(x.inventory_position) FROM area_release x WHERE x.geography = r.geography)
+		  AND NOT EXISTS (SELECT 1 FROM crosswalk_chain c WHERE c.from_release_id = r.id)
+		ORDER BY 1, 2`);
+	assert.deepEqual(
+		unrouted.map((row) => `${row.geography}|${row.release}`),
+		[
+			"countyElectoralDivision|2017-05-en-names",
+			"countyElectoralDivision|2023-05-en-bgc",
+			"dataZone|2011-12-sc-bfc",
+			"dataZone|2021-ni",
+			"historicalConstituency|1918-uk",
+			"historicalConstituency|1945-uk",
+			"historicalConstituency|1950-uk",
+			"historicalConstituency|1955-uk",
+			"historicalConstituency|1974-uk",
+			"historicalConstituency|1983-uk",
+			"historicalConstituency|1997-uk",
+			"integratedCareBoard|2023-04-en-bgc",
+			"nhsEnglandRegion|2022-07-en-bgc",
+		],
+	);
+	// The releases the postcode-overlap crosswalks added all reach the current one.
+	for (const release of [
+		"localAuthority|2008-12-gb-bgc",
+		"localAuthority|2009-12-gb-bgc",
+		"scottishParliamentaryConstituency|2016-05-sc-gcb",
+		"scottishParliamentaryConstituency|2021-05-sc-bgc",
+		"scottishParliamentaryConstituency|2022-12-sc-bgc",
+		"seneddConstituency|2022-12-w-bgc",
+	]) {
+		const [geography, name] = release.split("|");
+		assert.ok(
+			one(`SELECT count(*) AS n FROM crosswalk_chain c
+				 JOIN area_release f ON f.id = c.from_release_id
+				 WHERE f.geography = '${geography}' AND f.release = '${name}'`) > 0,
+			`${release} has a chain to the current release`,
+		);
+	}
 });
