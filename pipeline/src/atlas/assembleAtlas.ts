@@ -24,6 +24,7 @@ import {
 	writePostcodeAreas,
 	writeSchemaDocs,
 	writeSeriesAttribution,
+	writeCrosswalkChains,
 	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
@@ -242,6 +243,9 @@ export function assembleAtlas(
 			// Every converted series is marked as one, and none of its values
 			// as observed, or the copy fails.
 			if (convertedSeries) copyConvertedSeries(database, ids);
+			// Every basis is in main now, and so are the error factors: each old
+			// release gets one edge to the current one.
+			if (crosswalkWeights) writeCrosswalkChains(database, ids);
 			if (notionalElections) {
 				copyNotionalSeries(database, ids);
 				copyNotionalMetrics(database, ids);
