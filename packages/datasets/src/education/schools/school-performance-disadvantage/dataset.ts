@@ -1,8 +1,5 @@
 import type { SchoolPerformanceGapDataset } from "../../../types/schoolPerformance.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import type {
@@ -98,7 +95,6 @@ export const schoolPerformanceDisadvantage =
 			expectedBoundaryYears: [2024],
 			requiredDataFields: ["ladCode", "ladName"],
 		},
-		load: noCompiledPayload<SchoolPerformanceGapDataset>(),
 		statistics: {
 			direct: {
 				only: true,

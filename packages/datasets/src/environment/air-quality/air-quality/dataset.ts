@@ -1,8 +1,5 @@
 import type { AirQualityDataset } from "../../../types/airQuality.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateAirQuality } from "../../../data/air-quality/aggregate.ts";
@@ -40,7 +37,6 @@ export const airQuality = defineDataset<AirQualityDataset>({
 			"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none.",
 		],
 	},
-	load: noCompiledPayload<AirQualityDataset>(),
 	statistics: {
 		direct: {
 			only: true,

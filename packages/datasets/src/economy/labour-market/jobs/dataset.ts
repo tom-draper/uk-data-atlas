@@ -1,8 +1,5 @@
 import type { JobsDataset } from "../../../types/jobs.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { aggregateJobs } from "../../../data/jobs/aggregate.ts";
@@ -45,7 +42,6 @@ export const jobs = defineDataset<JobsDataset>({
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["totalJobs"],
 	},
-	load: noCompiledPayload<JobsDataset>(),
 	statistics: {
 		payload: {
 			header: {

@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateIndicator } from "../../../data/new-datasets/aggregate.ts";
@@ -46,7 +43,6 @@ export const electricVehicleChargers = defineDataset<
 		expectedBoundaryYears: [2026],
 		requiredDataFields: ["value"],
 	},
-	load: noCompiledPayload<IndicatorDataset<"electric-vehicle-chargers">>(),
 	statistics: {
 		payload: {
 			header: {

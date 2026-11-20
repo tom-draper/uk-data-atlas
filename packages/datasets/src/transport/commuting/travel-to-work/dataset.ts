@@ -1,8 +1,5 @@
 import type { TravelToWorkDataset } from "../../../types/travelToWork.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -42,7 +39,6 @@ export const travelToWork = defineDataset<TravelToWorkDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["ladCode", "breakdown"],
 	},
-	load: noCompiledPayload<TravelToWorkDataset>(),
 	statistics: {
 		direct: {
 			only: true,

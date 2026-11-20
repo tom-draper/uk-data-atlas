@@ -2,10 +2,7 @@ import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
 import type { MobileCoverageDataset } from "../../../types/mobileCoverage.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { PREMISES, measure } from "../../../declaration/measures.ts";
 import { aggregateMobileCoverage } from "./aggregate.ts";
 
@@ -52,7 +49,6 @@ export const mobileCoverage = defineDataset<MobileCoverageDataset>({
 		minimumDataRecords: 361,
 		expectedBoundaryYears: [2024],
 	},
-	load: noCompiledPayload<MobileCoverageDataset>(),
 	statistics: {
 		payload: {
 			header: {

@@ -1,8 +1,5 @@
 import type { ChildPovertyDataset } from "../../../types/childPoverty.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -36,7 +33,6 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 			"Children under 16 in families with below 60% of median income before housing costs.",
 		],
 	},
-	load: noCompiledPayload<ChildPovertyDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 50,

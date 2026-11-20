@@ -1,8 +1,5 @@
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { averageIndicator } from "../../../data/new-datasets/aggregate.ts";
@@ -45,7 +42,6 @@ export const businessActivity = defineDataset<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	load: noCompiledPayload<IndicatorDataset<"business-activity">>(),
 	statistics: {
 		payload: {
 			header: {

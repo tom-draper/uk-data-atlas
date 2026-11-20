@@ -1,8 +1,5 @@
 import type { PopulationUkDataset } from "../../../types/population.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { AGE, byAge } from "../../../data/population/statistics.ts";
 import { populationUkStatisticsParts } from "../../../data/population/ukSource.ts";
@@ -40,7 +37,6 @@ export const populationUk = defineDataset<PopulationUkDataset>({
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["total", "males", "females", "ladName"],
 	},
-	load: noCompiledPayload<PopulationUkDataset>(),
 	statistics: {
 		direct: {
 			only: true,

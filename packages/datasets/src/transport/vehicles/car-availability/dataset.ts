@@ -1,8 +1,5 @@
 import type { CarAvailabilityDataset } from "../../../types/carAvailability.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { HOUSEHOLDS } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -41,7 +38,6 @@ export const carAvailability = defineDataset<CarAvailabilityDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["ladCode", "breakdown"],
 	},
-	load: noCompiledPayload<CarAvailabilityDataset>(),
 	statistics: {
 		direct: {
 			only: true,

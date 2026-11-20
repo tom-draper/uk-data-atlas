@@ -56,140 +56,239 @@ import type { wimd } from "../../society/deprivation/wimd/dataset.ts";
 import type { workplaceIncome } from "../../economy/earnings-and-income/workplace-income/dataset.ts";
 
 export type CatalogueDataset =
-	| Awaited<ReturnType<typeof adultSocialCareActivity.load>>[string]
-	| Awaited<ReturnType<typeof adultSocialCareOutcomes.load>>[string]
-	| Awaited<ReturnType<typeof airQuality.load>>[string]
-	| Awaited<ReturnType<typeof brexit.load>>[string]
-	| Awaited<ReturnType<typeof brexitConstituency.load>>[string]
-	| Awaited<ReturnType<typeof broadband.load>>[string]
-	| Awaited<ReturnType<typeof businessActivity.load>>[string]
-	| Awaited<ReturnType<typeof carAvailability.load>>[string]
-	| Awaited<ReturnType<typeof childPoverty.load>>[string]
-	| Awaited<ReturnType<typeof claimantCount.load>>[string]
-	| Awaited<ReturnType<typeof councilTax.load>>[string]
-	| Awaited<ReturnType<typeof crime.load>>[string]
-	| Awaited<ReturnType<typeof electricVehicleChargers.load>>[string]
-	| Awaited<ReturnType<typeof electricityConsumption.load>>[string]
-	| Awaited<ReturnType<typeof ethnicity.load>>[string]
-	| Awaited<ReturnType<typeof fuelPoverty.load>>[string]
-	| Awaited<ReturnType<typeof gasConsumption.load>>[string]
-	| Awaited<ReturnType<typeof generalElection.load>>[string]
-	| Awaited<ReturnType<typeof generalHealth.load>>[string]
-	| Awaited<ReturnType<typeof ghgEmissions.load>>[string]
-	| Awaited<ReturnType<typeof historicalGeneralElection.load>>[string]
-	| Awaited<ReturnType<typeof homelessness.load>>[string]
-	| Awaited<ReturnType<typeof housePrice.load>>[string]
-	| Awaited<ReturnType<typeof housingAffordability.load>>[string]
-	| Awaited<ReturnType<typeof housingTenure.load>>[string]
-	| Awaited<ReturnType<typeof imd.load>>[string]
-	| Awaited<ReturnType<typeof income.load>>[string]
-	| Awaited<ReturnType<typeof jobs.load>>[string]
-	| Awaited<ReturnType<typeof landArea.load>>[string]
-	| Awaited<ReturnType<typeof lifeExpectancy.load>>[string]
-	| Awaited<ReturnType<typeof lifeExpectancySeries.load>>[string]
-	| Awaited<ReturnType<typeof localElection.load>>[string]
-	| Awaited<ReturnType<typeof localGovernmentFinance.load>>[string]
-	| Awaited<ReturnType<typeof mobileCoverage.load>>[string]
-	| Awaited<ReturnType<typeof netAdditionalDwellings.load>>[string]
-	| Awaited<ReturnType<typeof nhsWaiting.load>>[string]
-	| Awaited<ReturnType<typeof nimdm.load>>[string]
-	| Awaited<ReturnType<typeof planningApplications.load>>[string]
-	| Awaited<ReturnType<typeof population.load>>[string]
-	| Awaited<ReturnType<typeof populationConstituency.load>>[string]
-	| Awaited<ReturnType<typeof populationUk.load>>[string]
-	| Awaited<ReturnType<typeof publicHealth.load>>[string]
-	| Awaited<ReturnType<typeof pupilAbsence.load>>[string]
-	| Awaited<ReturnType<typeof qualification.load>>[string]
-	| Awaited<ReturnType<typeof regionalGdp.load>>[string]
-	| Awaited<ReturnType<typeof roadCollisions.load>>[string]
-	| Awaited<ReturnType<typeof schoolPerformance.load>>[string]
-	| Awaited<ReturnType<typeof schoolPerformanceDisadvantage.load>>[string]
-	| Awaited<ReturnType<typeof simd.load>>[string]
-	| Awaited<ReturnType<typeof travelToWork.load>>[string]
-	| Awaited<ReturnType<typeof unemployment.load>>[string]
-	| Awaited<ReturnType<typeof waste.load>>[string]
-	| Awaited<ReturnType<typeof wimd.load>>[string]
-	| Awaited<ReturnType<typeof workplaceIncome.load>>[string];
+	| NonNullable<(typeof adultSocialCareActivity)["payloadType"]>
+	| NonNullable<(typeof adultSocialCareOutcomes)["payloadType"]>
+	| NonNullable<(typeof airQuality)["payloadType"]>
+	| NonNullable<(typeof brexit)["payloadType"]>
+	| NonNullable<(typeof brexitConstituency)["payloadType"]>
+	| NonNullable<(typeof broadband)["payloadType"]>
+	| NonNullable<(typeof businessActivity)["payloadType"]>
+	| NonNullable<(typeof carAvailability)["payloadType"]>
+	| NonNullable<(typeof childPoverty)["payloadType"]>
+	| NonNullable<(typeof claimantCount)["payloadType"]>
+	| NonNullable<(typeof councilTax)["payloadType"]>
+	| NonNullable<(typeof crime)["payloadType"]>
+	| NonNullable<(typeof electricVehicleChargers)["payloadType"]>
+	| NonNullable<(typeof electricityConsumption)["payloadType"]>
+	| NonNullable<(typeof ethnicity)["payloadType"]>
+	| NonNullable<(typeof fuelPoverty)["payloadType"]>
+	| NonNullable<(typeof gasConsumption)["payloadType"]>
+	| NonNullable<(typeof generalElection)["payloadType"]>
+	| NonNullable<(typeof generalHealth)["payloadType"]>
+	| NonNullable<(typeof ghgEmissions)["payloadType"]>
+	| NonNullable<(typeof historicalGeneralElection)["payloadType"]>
+	| NonNullable<(typeof homelessness)["payloadType"]>
+	| NonNullable<(typeof housePrice)["payloadType"]>
+	| NonNullable<(typeof housingAffordability)["payloadType"]>
+	| NonNullable<(typeof housingTenure)["payloadType"]>
+	| NonNullable<(typeof imd)["payloadType"]>
+	| NonNullable<(typeof income)["payloadType"]>
+	| NonNullable<(typeof jobs)["payloadType"]>
+	| NonNullable<(typeof landArea)["payloadType"]>
+	| NonNullable<(typeof lifeExpectancy)["payloadType"]>
+	| NonNullable<(typeof lifeExpectancySeries)["payloadType"]>
+	| NonNullable<(typeof localElection)["payloadType"]>
+	| NonNullable<(typeof localGovernmentFinance)["payloadType"]>
+	| NonNullable<(typeof mobileCoverage)["payloadType"]>
+	| NonNullable<(typeof netAdditionalDwellings)["payloadType"]>
+	| NonNullable<(typeof nhsWaiting)["payloadType"]>
+	| NonNullable<(typeof nimdm)["payloadType"]>
+	| NonNullable<(typeof planningApplications)["payloadType"]>
+	| NonNullable<(typeof population)["payloadType"]>
+	| NonNullable<(typeof populationConstituency)["payloadType"]>
+	| NonNullable<(typeof populationUk)["payloadType"]>
+	| NonNullable<(typeof publicHealth)["payloadType"]>
+	| NonNullable<(typeof pupilAbsence)["payloadType"]>
+	| NonNullable<(typeof qualification)["payloadType"]>
+	| NonNullable<(typeof regionalGdp)["payloadType"]>
+	| NonNullable<(typeof roadCollisions)["payloadType"]>
+	| NonNullable<(typeof schoolPerformance)["payloadType"]>
+	| NonNullable<(typeof schoolPerformanceDisadvantage)["payloadType"]>
+	| NonNullable<(typeof simd)["payloadType"]>
+	| NonNullable<(typeof travelToWork)["payloadType"]>
+	| NonNullable<(typeof unemployment)["payloadType"]>
+	| NonNullable<(typeof waste)["payloadType"]>
+	| NonNullable<(typeof wimd)["payloadType"]>
+	| NonNullable<(typeof workplaceIncome)["payloadType"]>;
 export type CatalogueDatasetType = CatalogueDataset["type"];
 /** Records of the datasets declared in `<theme>/<topic>/<id>/dataset.ts`, by type. */
 export type DeclaredDatasetRecords = {
-	"adult-social-care-activity": Awaited<
-		ReturnType<typeof adultSocialCareActivity.load>
+	"adult-social-care-activity": Record<
+		string,
+		NonNullable<(typeof adultSocialCareActivity)["payloadType"]>
 	>;
-	"adult-social-care-outcomes": Awaited<
-		ReturnType<typeof adultSocialCareOutcomes.load>
+	"adult-social-care-outcomes": Record<
+		string,
+		NonNullable<(typeof adultSocialCareOutcomes)["payloadType"]>
 	>;
-	"air-quality": Awaited<ReturnType<typeof airQuality.load>>;
-	brexit: Awaited<ReturnType<typeof brexit.load>>;
-	"brexit-constituency": Awaited<ReturnType<typeof brexitConstituency.load>>;
-	broadband: Awaited<ReturnType<typeof broadband.load>>;
-	"business-activity": Awaited<ReturnType<typeof businessActivity.load>>;
-	"car-availability": Awaited<ReturnType<typeof carAvailability.load>>;
-	"child-poverty": Awaited<ReturnType<typeof childPoverty.load>>;
-	"claimant-count": Awaited<ReturnType<typeof claimantCount.load>>;
-	"council-tax": Awaited<ReturnType<typeof councilTax.load>>;
-	crime: Awaited<ReturnType<typeof crime.load>>;
-	"electric-vehicle-chargers": Awaited<
-		ReturnType<typeof electricVehicleChargers.load>
+	"air-quality": Record<
+		string,
+		NonNullable<(typeof airQuality)["payloadType"]>
 	>;
-	"electricity-consumption": Awaited<
-		ReturnType<typeof electricityConsumption.load>
+	brexit: Record<string, NonNullable<(typeof brexit)["payloadType"]>>;
+	"brexit-constituency": Record<
+		string,
+		NonNullable<(typeof brexitConstituency)["payloadType"]>
 	>;
-	ethnicity: Awaited<ReturnType<typeof ethnicity.load>>;
-	"fuel-poverty": Awaited<ReturnType<typeof fuelPoverty.load>>;
-	"gas-consumption": Awaited<ReturnType<typeof gasConsumption.load>>;
-	"general-election": Awaited<ReturnType<typeof generalElection.load>>;
-	"general-health": Awaited<ReturnType<typeof generalHealth.load>>;
-	"ghg-emissions": Awaited<ReturnType<typeof ghgEmissions.load>>;
-	"historical-general-election": Awaited<
-		ReturnType<typeof historicalGeneralElection.load>
+	broadband: Record<string, NonNullable<(typeof broadband)["payloadType"]>>;
+	"business-activity": Record<
+		string,
+		NonNullable<(typeof businessActivity)["payloadType"]>
 	>;
-	homelessness: Awaited<ReturnType<typeof homelessness.load>>;
-	"house-price": Awaited<ReturnType<typeof housePrice.load>>;
-	"housing-affordability": Awaited<
-		ReturnType<typeof housingAffordability.load>
+	"car-availability": Record<
+		string,
+		NonNullable<(typeof carAvailability)["payloadType"]>
 	>;
-	"housing-tenure": Awaited<ReturnType<typeof housingTenure.load>>;
-	imd: Awaited<ReturnType<typeof imd.load>>;
-	income: Awaited<ReturnType<typeof income.load>>;
-	jobs: Awaited<ReturnType<typeof jobs.load>>;
-	"land-area": Awaited<ReturnType<typeof landArea.load>>;
-	"life-expectancy": Awaited<ReturnType<typeof lifeExpectancy.load>>;
-	"life-expectancy-series": Awaited<
-		ReturnType<typeof lifeExpectancySeries.load>
+	"child-poverty": Record<
+		string,
+		NonNullable<(typeof childPoverty)["payloadType"]>
 	>;
-	"local-election": Awaited<ReturnType<typeof localElection.load>>;
-	"local-government-finance": Awaited<
-		ReturnType<typeof localGovernmentFinance.load>
+	"claimant-count": Record<
+		string,
+		NonNullable<(typeof claimantCount)["payloadType"]>
 	>;
-	"mobile-coverage": Awaited<ReturnType<typeof mobileCoverage.load>>;
-	"net-additional-dwellings": Awaited<
-		ReturnType<typeof netAdditionalDwellings.load>
+	"council-tax": Record<
+		string,
+		NonNullable<(typeof councilTax)["payloadType"]>
 	>;
-	"nhs-waiting": Awaited<ReturnType<typeof nhsWaiting.load>>;
-	nimdm: Awaited<ReturnType<typeof nimdm.load>>;
-	"planning-applications": Awaited<
-		ReturnType<typeof planningApplications.load>
+	crime: Record<string, NonNullable<(typeof crime)["payloadType"]>>;
+	"electric-vehicle-chargers": Record<
+		string,
+		NonNullable<(typeof electricVehicleChargers)["payloadType"]>
 	>;
-	population: Awaited<ReturnType<typeof population.load>>;
-	"population-constituency": Awaited<
-		ReturnType<typeof populationConstituency.load>
+	"electricity-consumption": Record<
+		string,
+		NonNullable<(typeof electricityConsumption)["payloadType"]>
 	>;
-	"population-uk": Awaited<ReturnType<typeof populationUk.load>>;
-	"public-health": Awaited<ReturnType<typeof publicHealth.load>>;
-	"pupil-absence": Awaited<ReturnType<typeof pupilAbsence.load>>;
-	qualification: Awaited<ReturnType<typeof qualification.load>>;
-	"regional-gdp": Awaited<ReturnType<typeof regionalGdp.load>>;
-	"road-collisions": Awaited<ReturnType<typeof roadCollisions.load>>;
-	"school-performance": Awaited<ReturnType<typeof schoolPerformance.load>>;
-	"school-performance-disadvantage": Awaited<
-		ReturnType<typeof schoolPerformanceDisadvantage.load>
+	ethnicity: Record<string, NonNullable<(typeof ethnicity)["payloadType"]>>;
+	"fuel-poverty": Record<
+		string,
+		NonNullable<(typeof fuelPoverty)["payloadType"]>
 	>;
-	simd: Awaited<ReturnType<typeof simd.load>>;
-	"travel-to-work": Awaited<ReturnType<typeof travelToWork.load>>;
-	unemployment: Awaited<ReturnType<typeof unemployment.load>>;
-	waste: Awaited<ReturnType<typeof waste.load>>;
-	wimd: Awaited<ReturnType<typeof wimd.load>>;
-	"workplace-income": Awaited<ReturnType<typeof workplaceIncome.load>>;
+	"gas-consumption": Record<
+		string,
+		NonNullable<(typeof gasConsumption)["payloadType"]>
+	>;
+	"general-election": Record<
+		string,
+		NonNullable<(typeof generalElection)["payloadType"]>
+	>;
+	"general-health": Record<
+		string,
+		NonNullable<(typeof generalHealth)["payloadType"]>
+	>;
+	"ghg-emissions": Record<
+		string,
+		NonNullable<(typeof ghgEmissions)["payloadType"]>
+	>;
+	"historical-general-election": Record<
+		string,
+		NonNullable<(typeof historicalGeneralElection)["payloadType"]>
+	>;
+	homelessness: Record<
+		string,
+		NonNullable<(typeof homelessness)["payloadType"]>
+	>;
+	"house-price": Record<
+		string,
+		NonNullable<(typeof housePrice)["payloadType"]>
+	>;
+	"housing-affordability": Record<
+		string,
+		NonNullable<(typeof housingAffordability)["payloadType"]>
+	>;
+	"housing-tenure": Record<
+		string,
+		NonNullable<(typeof housingTenure)["payloadType"]>
+	>;
+	imd: Record<string, NonNullable<(typeof imd)["payloadType"]>>;
+	income: Record<string, NonNullable<(typeof income)["payloadType"]>>;
+	jobs: Record<string, NonNullable<(typeof jobs)["payloadType"]>>;
+	"land-area": Record<string, NonNullable<(typeof landArea)["payloadType"]>>;
+	"life-expectancy": Record<
+		string,
+		NonNullable<(typeof lifeExpectancy)["payloadType"]>
+	>;
+	"life-expectancy-series": Record<
+		string,
+		NonNullable<(typeof lifeExpectancySeries)["payloadType"]>
+	>;
+	"local-election": Record<
+		string,
+		NonNullable<(typeof localElection)["payloadType"]>
+	>;
+	"local-government-finance": Record<
+		string,
+		NonNullable<(typeof localGovernmentFinance)["payloadType"]>
+	>;
+	"mobile-coverage": Record<
+		string,
+		NonNullable<(typeof mobileCoverage)["payloadType"]>
+	>;
+	"net-additional-dwellings": Record<
+		string,
+		NonNullable<(typeof netAdditionalDwellings)["payloadType"]>
+	>;
+	"nhs-waiting": Record<
+		string,
+		NonNullable<(typeof nhsWaiting)["payloadType"]>
+	>;
+	nimdm: Record<string, NonNullable<(typeof nimdm)["payloadType"]>>;
+	"planning-applications": Record<
+		string,
+		NonNullable<(typeof planningApplications)["payloadType"]>
+	>;
+	population: Record<string, NonNullable<(typeof population)["payloadType"]>>;
+	"population-constituency": Record<
+		string,
+		NonNullable<(typeof populationConstituency)["payloadType"]>
+	>;
+	"population-uk": Record<
+		string,
+		NonNullable<(typeof populationUk)["payloadType"]>
+	>;
+	"public-health": Record<
+		string,
+		NonNullable<(typeof publicHealth)["payloadType"]>
+	>;
+	"pupil-absence": Record<
+		string,
+		NonNullable<(typeof pupilAbsence)["payloadType"]>
+	>;
+	qualification: Record<
+		string,
+		NonNullable<(typeof qualification)["payloadType"]>
+	>;
+	"regional-gdp": Record<
+		string,
+		NonNullable<(typeof regionalGdp)["payloadType"]>
+	>;
+	"road-collisions": Record<
+		string,
+		NonNullable<(typeof roadCollisions)["payloadType"]>
+	>;
+	"school-performance": Record<
+		string,
+		NonNullable<(typeof schoolPerformance)["payloadType"]>
+	>;
+	"school-performance-disadvantage": Record<
+		string,
+		NonNullable<(typeof schoolPerformanceDisadvantage)["payloadType"]>
+	>;
+	simd: Record<string, NonNullable<(typeof simd)["payloadType"]>>;
+	"travel-to-work": Record<
+		string,
+		NonNullable<(typeof travelToWork)["payloadType"]>
+	>;
+	unemployment: Record<
+		string,
+		NonNullable<(typeof unemployment)["payloadType"]>
+	>;
+	waste: Record<string, NonNullable<(typeof waste)["payloadType"]>>;
+	wimd: Record<string, NonNullable<(typeof wimd)["payloadType"]>>;
+	"workplace-income": Record<
+		string,
+		NonNullable<(typeof workplaceIncome)["payloadType"]>
+	>;
 };
 export type CatalogueDatasetRecords = DeclaredDatasetRecords & {};

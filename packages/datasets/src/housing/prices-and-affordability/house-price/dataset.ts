@@ -1,8 +1,5 @@
 import type { HousePriceDataset } from "../../../types/housePrice.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -46,7 +43,6 @@ export const housePrice = defineDataset<HousePriceDataset>({
 		notes: [],
 	},
 	// Table 1a of each workbook, read from inside the published zips.
-	load: noCompiledPayload<HousePriceDataset>(),
 	statistics: {
 		direct: {
 			only: true,

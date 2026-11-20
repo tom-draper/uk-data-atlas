@@ -156,7 +156,7 @@ export type DirectSource = {
 	/**
 	 * The dataset has no compiler: no JSON is written, and the manifest entry
 	 * (inputs, summary and a hash of the parts) comes from `read` alone. Such
-	 * a dataset's `load` is `noCompiledPayload()`.
+	 * a dataset's declaration then has no compiled payload.
 	 */
 	only?: true;
 };

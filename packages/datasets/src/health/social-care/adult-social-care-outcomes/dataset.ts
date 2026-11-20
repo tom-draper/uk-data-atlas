@@ -1,10 +1,7 @@
 import { directIndicator } from "../../../data/new-datasets/directIndicator.ts";
 import { parseNullableNum } from "../../../helpers/parseNumber.ts";
 import type { IndicatorDataset } from "../../../types/indicator.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -46,7 +43,6 @@ export const adultSocialCareOutcomes = defineDataset<
 		minimumDataRecords: 100,
 		expectedBoundaryYears: [2025],
 	},
-	load: noCompiledPayload<IndicatorDataset<"adult-social-care-outcomes">>(),
 	statistics: {
 		payload: {
 			parts: yearParts(

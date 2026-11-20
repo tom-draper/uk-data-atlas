@@ -1,8 +1,5 @@
 import type { UnemploymentDataset } from "../../../types/unemployment.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { type Json, periods } from "../../../declaration/statistics.ts";
 import { APRIL_2023_LAD_MERGERS } from "../../../data/localAuthority/reorganisations.ts";
@@ -52,7 +49,6 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
-	load: noCompiledPayload<UnemploymentDataset>(),
 	statistics: {
 		payload: {
 			parts: () => [

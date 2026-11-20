@@ -1,8 +1,5 @@
 import type { RegionalGdpDataset } from "../../../types/regionalGdp.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import type { DisplayFormat } from "../../../declaration/display.ts";
 import { aggregateRegionalGdp } from "../../../data/regional-gdp/aggregate.ts";
 import {
@@ -49,7 +46,6 @@ export const regionalGdp = defineDataset<RegionalGdpDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["gvaMillionGbp", "gdpMillionGbp"],
 	},
-	load: noCompiledPayload<RegionalGdpDataset>(),
 	statistics: {
 		...regionalGdpStatistics(),
 		direct: {

@@ -1,9 +1,5 @@
 import type { GeneralElectionDataset } from "../../../types/elections.ts";
-import {
-	defineDataset,
-	yearFolders,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset, yearFolders } from "../../../declaration/dataset.ts";
 import {
 	ELECTORATE,
 	PARTY_VOTES,
@@ -73,7 +69,6 @@ export const generalElection = defineDataset<GeneralElectionDataset>({
 		cadence: "irregular",
 		notes: [],
 	},
-	load: noCompiledPayload<GeneralElectionDataset>(),
 	placeHeadline: {
 		places: ["constituency"],
 		order: 10,

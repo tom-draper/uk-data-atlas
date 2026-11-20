@@ -47,7 +47,7 @@ export function catalogueMetadata(
 		if (
 			name.endsWith("DatasetDefinition") &&
 			isRecord(value) &&
-			typeof value.precompile === "function"
+			"type" in value
 		) {
 			matches.push([name, value]);
 		}
@@ -110,7 +110,7 @@ export function declarationMetadata(
 		([, value]) =>
 			isRecord(value) &&
 			typeof value.id === "string" &&
-			typeof value.load === "function",
+			typeof value.statistics === "object",
 	);
 	if (matches.length !== 1)
 		throw new Error(`${file} must export exactly one dataset declaration.`);
@@ -408,23 +408,22 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 		.join("\n");
 	const datasetTypes = [
 		...definitions.map(
-			({ name }) =>
-				`Awaited<ReturnType<typeof ${name}.precompile>>[string]`,
+			({ name }) => `NonNullable<(typeof ${name})["payloadType"]>`,
 		),
 		...declarations.map(
-			({ name }) => `Awaited<ReturnType<typeof ${name}.load>>[string]`,
+			({ name }) => `NonNullable<(typeof ${name})["payloadType"]>`,
 		),
 	].join(" | ");
 	const records = definitions
 		.map(
 			({ type, name }) =>
-				`\t"${type}": Awaited<ReturnType<typeof ${name}.precompile>>;`,
+				`\t"${type}": Record<string, NonNullable<(typeof ${name})["payloadType"]>>;`,
 		)
 		.join("\n");
 	const declaredRecords = declarations
 		.map(
 			({ type, name }) =>
-				`\t"${type}": Awaited<ReturnType<typeof ${name}.load>>;`,
+				`\t"${type}": Record<string, NonNullable<(typeof ${name})["payloadType"]>>;`,
 		)
 		.join("\n");
 	await writeGenerated(

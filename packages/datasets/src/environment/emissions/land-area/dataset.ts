@@ -1,8 +1,5 @@
 import type { LandAreaDataset } from "../../../types/landArea.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { parseNum } from "../../../helpers/parseNumber.ts";
@@ -40,7 +37,6 @@ export const landArea = defineDataset<LandAreaDataset>({
 		minimumDataRecords: 361,
 		expectedBoundaryYears: [2024],
 	},
-	load: noCompiledPayload<LandAreaDataset>(),
 	statistics: {
 		payload: {
 			parts: yearParts(

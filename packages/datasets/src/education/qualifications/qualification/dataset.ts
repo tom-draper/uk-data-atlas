@@ -1,8 +1,5 @@
 import type { QualificationDataset } from "../../../types/qualification.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import {
 	CENSUS_LICENCE,
@@ -36,7 +33,6 @@ export const qualification = defineDataset<QualificationDataset>({
 		cadence: "decennial",
 		notes: [],
 	},
-	load: noCompiledPayload<QualificationDataset>(),
 	placeHeadline: {
 		places: ["localAuthority"],
 		order: 100,

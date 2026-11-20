@@ -1,8 +1,5 @@
 import type { EthnicityDataset } from "../../../types/ethnicity.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import { USUAL_RESIDENTS } from "../../../declaration/measures.ts";
 import { type Json } from "../../../declaration/statistics.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
@@ -93,7 +90,6 @@ export const ethnicity = defineDataset<EthnicityDataset>({
 		notes: [],
 		retrievedAt: "2026-09-05",
 	},
-	load: noCompiledPayload<EthnicityDataset>(),
 	statistics: {
 		direct: {
 			only: true,

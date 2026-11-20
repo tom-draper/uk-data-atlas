@@ -1,8 +1,5 @@
 import type { LifeExpectancyDataset } from "../../../types/lifeExpectancy.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import {
 	LIFE_EXPECTANCY,
 	SEX,
@@ -84,7 +81,6 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 		cadence: "annual",
 		notes: [],
 	},
-	load: noCompiledPayload<LifeExpectancyDataset>(),
 	statistics: {
 		payload: {
 			parts: () => [

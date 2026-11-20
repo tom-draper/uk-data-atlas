@@ -27,7 +27,6 @@ const definition: DatasetDefinition<TestDataset> = {
 		expectedBoundaryYears: [2024],
 		requiredDataFields: ["value"],
 	},
-	precompile: async () => ({}),
 };
 
 describe("validatePrecompiledDataset", () => {

@@ -1,8 +1,5 @@
 import type { GasConsumptionDataset } from "../../../types/energyConsumption.ts";
-import {
-	defineDataset,
-	noCompiledPayload,
-} from "../../../declaration/dataset.ts";
+import { defineDataset } from "../../../declaration/dataset.ts";
 import {
 	energyDisplay,
 	energyStatistics,
@@ -47,7 +44,6 @@ export const gasConsumption = defineDataset<GasConsumptionDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["allMetersGwh", "domesticGwh"],
 	},
-	load: noCompiledPayload<GasConsumptionDataset>(),
 	statistics: energyStatistics("gas", "gas-consumption"),
 	display: energyDisplay({
 		fuel: "gas",
