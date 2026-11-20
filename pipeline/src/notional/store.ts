@@ -1,10 +1,7 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import {
-	datasetInput,
-	weightsInput,
-} from "../storage/modelInputRefs.ts";
+import { datasetInput, weightsInput } from "../storage/modelInputRefs.ts";
 import type { Score } from "./benchmark.ts";
 import {
 	BOUND_FACTOR,
