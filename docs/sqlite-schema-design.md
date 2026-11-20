@@ -338,6 +338,19 @@ with the reason. Add up the carried values and the gap areas to account for the
 old total. Filter on `geography`, `from_release`, `to_release` and `basis`. The
 schema docs hold both worked examples, and the built-release test runs them.
 
+Three rules settle how to read the error and the gaps:
+
+- `complete = 0` means the current area's value may be understated: an old
+  area that feeds it has no route to it, so its share never arrives. Weights are
+  not changed by it. For one current area read `min(complete)` over its rows.
+- With nothing at risk (`at_risk = 0`) the bounds are never null: the upper
+  bound is the weight and the lower is the weight less `pruned`. They are null
+  only where `at_risk` is above 0 and the backtest has no error factor for the
+  splitting method and basis, so the width of the error is unknown.
+- A gap whose reason is `not-in-crosswalk` and that has no edge is not stored.
+  The inventory and the chain imply it, and `v_crosswalk_chain_gap` adds it, so
+  query the view for the full list and the table for the stored reasons alone.
+
 No API route serves it yet. A reader of the API should query the stored tables
 `crosswalk_chain_edge` and `crosswalk_chain_gap`, not the views, which are for
 SQL users. The public shape is left to the v1 surface review (task 54) and the
