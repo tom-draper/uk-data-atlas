@@ -115,7 +115,7 @@ export function serialisePlacePostcodes() {
 		{ readOnly: true },
 	);
 	const select = database.prepare(
-		`SELECT postcode, easting, northing, terminated, largeUser FROM postcodes WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
+		`SELECT postcode, easting, northing, terminated, large_user AS largeUser FROM postcode WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
 	);
 
 	function* sources(): Generator<SourceDistrict> {
