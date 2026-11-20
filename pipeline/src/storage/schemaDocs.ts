@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_crosswalk_chain_edge for old code to current code in one join, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -78,7 +78,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "crosswalks",
-		body: "A crosswalk relates the areas of one release (from_release_id) to the areas of another (to_release_id). Each crosswalk_edge pairs one from area_version with one to area_version. crosswalk.method says how it was made: official-lookup and clean-containment come from the publisher, best-fit assigns each source area to one target, extent-continuity links the same area across releases, and area-overlap, population-overlap and postcode-overlap split areas by measured overlap. crosswalk_weight holds the weight of an edge on a basis (weight_basis: area, population, households, dwellings, postcodes); weight is the share of the source area on that basis that falls in the target, summing to 1 per source. v_crosswalk_weight also includes the implicit weight of 1 for edges that regroup a whole area. To move a count from one release to another, multiply each source value by its weight on a basis that suits the measure (residents for people, households for households) and sum per target.",
+		body: "A crosswalk relates the areas of one release (from_release_id) to the areas of another (to_release_id). Each crosswalk_edge pairs one from area_version with one to area_version. crosswalk.method says how it was made: official-lookup and clean-containment come from the publisher, best-fit assigns each source area to one target, extent-continuity links the same area across releases, and area-overlap, population-overlap and postcode-overlap split areas by measured overlap. crosswalk_weight holds the weight of an edge on a basis (weight_basis: area, population, households, dwellings, postcodes); weight is the share of the source area on that basis that falls in the target, summing to 1 per source. v_crosswalk_weight also includes the implicit weight of 1 for edges that regroup a whole area. To move a count from one release to another, multiply each source value by its weight on a basis that suits the measure (residents for people, households for households) and sum per target. To move a count from any older release straight to the geography's current release, join v_crosswalk_chain_edge on from_code instead: it holds the weight along the whole chain of crosswalks, the bounds the backtest puts on it, and complete, which is 0 where a current area is short of a feeder. crosswalk_chain, crosswalk_chain_hop and crosswalk_chain_gap say which crosswalks a chain was made from and which old areas lose part of their value on the way.",
 	},
 	{
 		topic: "boundary-changes",
@@ -1071,6 +1071,35 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			target_share: "Share of the target area in the overlap.",
 		},
 	},
+	v_crosswalk_chain_edge: {
+		audience: "core",
+		description:
+			"View: old code to current code in one join. One row for each old area, current area and basis, with the weight along the whole chain and its error. Filter on geography, from_release, to_release (the current release) and basis, then join on code. A chain stored for every basis is returned once for each of the four. Use it to move a count from any old release to the current one: SUM(value * weight) grouped by to_code, keeping the groups where every contributing edge has complete = 1.",
+		columns: {
+			geography: "Geography slug.",
+			from_release: "The old release.",
+			to_release: "The geography's current release.",
+			basis: "Weight basis: population, households, dwellings or postcodes.",
+			from_code: "Old area code.",
+			from_name: "Old area name.",
+			to_code: "Current area code.",
+			to_name: "Current area name.",
+			weight: "Share of the old area's value that arrives on the current area.",
+			weight_lower:
+				"Lower likely bound of the weight, null where not measured.",
+			weight_upper:
+				"Upper likely bound of the weight, null where not measured.",
+			at_risk: "Share of the value that passed through a split.",
+			pruned: "Share carried whole from an area partly put elsewhere.",
+			estimated_share: "Share of the weight carried by a non-exact edge.",
+			complete: "1 where the current area receives all its feeders.",
+			hops: "Crosswalks in the route.",
+			exact: "1 if no step of the route splits a value.",
+			chain_id: "crosswalk_chain.id.",
+			from_version_id: "Old area_version.id.",
+			to_version_id: "Current area_version.id.",
+		},
+	},
 	v_crosswalk_edge: {
 		audience: "core",
 		description:
@@ -1108,6 +1137,67 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			crosswalk_id: "crosswalk.id.",
 			from_version_id: "Source area_version.id.",
 			to_version_id: "Target area_version.id.",
+		},
+	},
+	crosswalk_chain: {
+		audience: "core",
+		description:
+			"Old code to current code in one step. One row for each old release of a geography and each weight basis (or one for every basis, where the chain is the same on all four), joining it to the geography's current release (the lowest area_release.inventory_position) by the route the converter would take. The route's crosswalks are collapsed into crosswalk_chain_edge, one edge from each old area to each current area its value can reach, so a value moves across any number of boundary changes in one join. Read it through v_crosswalk_chain_edge. Weights and error are the converter's own arithmetic, so a value carried by a chain and the same value converted through the crosswalks agree. A geography release with no route to the current one has no row.",
+		columns: {
+			id: "Stable id. Its natural key is (geography, from release, to release, basis), with basis any where basis_id is null.",
+			from_release_id: "The old release (area_release.id).",
+			to_release_id:
+				"The current release of the same geography (area_release.id).",
+			basis_id:
+				"The weight basis (weight_basis.id): population, households, dwellings or postcodes. Null where the chain is identical on all four, as an exact regrouping is, and then it stands for each of them.",
+			hops: "Crosswalks the route joins, counting every crosswalk of a step that has several.",
+			exact: "1 if no step of the route can split a value, so every weight is 1.",
+			edges: "Rows of crosswalk_chain_edge for the chain.",
+			gaps: "Rows of crosswalk_chain_gap for the chain.",
+		},
+	},
+	crosswalk_chain_hop: {
+		audience: "reference",
+		description:
+			"The crosswalks a chain was composed from, in route order. A step with several crosswalks between the same two releases lists each at one position. The first crosswalk at a position that has an edge for an area carries it, best method first.",
+		columns: {
+			chain_id: "The chain (crosswalk_chain.id).",
+			position: "1 for the first step from the old release.",
+			crosswalk_id: "The crosswalk (crosswalk.id).",
+			reversed:
+				"1 where the crosswalk is walked from its targets to its sources, which only an extent-continuity crosswalk can be.",
+		},
+	},
+	crosswalk_chain_edge: {
+		audience: "core",
+		description:
+			"One edge from an area of the old release to an area of the current release, with the weight and the error accumulated along the chain. Use v_crosswalk_chain_edge, which adds codes and names and reads a chain stored for every basis once for each. To move a count, multiply it by weight and sum for each current area, using only current areas whose complete is 1 as whole.",
+		columns: {
+			chain_id: "The chain (crosswalk_chain.id).",
+			from_version_id: "The old area (area_version.id).",
+			to_version_id: "The current area (area_version.id).",
+			weight: "The share of a value on the old area that arrives on the current area, the product of the weights along the route summed over its paths.",
+			at_risk:
+				"The share of the value that passed through a split, so may be in the wrong area. 0 for an exact regrouping.",
+			pruned: "The share carried whole from an area that a crosswalk's pruned pairs put partly elsewhere. The value is too high by about this much.",
+			estimated_share:
+				"The share of the edge's weight carried by an edge that is not an exact regrouping, from 0 to 1. 1 minus it is the share regrouped exactly.",
+			weight_lower:
+				"The lowest the weight is likely to be: weight less the backtest's error factor times at_risk, less pruned, never below 0. Null where the factor is not measured for the splitting method and basis.",
+			weight_upper:
+				"The highest the weight is likely to be: weight plus the error factor times at_risk. Null where the factor is not measured.",
+			complete:
+				"1 where every area feeding the current area, at every step, has a route to it, so a value set on every old area arrives whole. 0 where a feeder was blocked or missing, and the sum on the current area is short.",
+		},
+	},
+	crosswalk_chain_gap: {
+		audience: "reference",
+		description:
+			"Old areas that lose part or all of their value on the way to the current release, with the first reason found. The weights of the area's edges say how much arrives. Where an area has no edge at all, nothing arrives.",
+		columns: {
+			chain_id: "The chain (crosswalk_chain.id).",
+			from_version_id: "The old area (area_version.id).",
+			reason: "Why a branch of the area's value stops: no-weight (a split with no measured weight on the basis), best-fit-straddler, ambiguous-membership, weights-do-not-sum (all as for crosswalk steps), missing-input, or not-in-crosswalk (the area is in no crosswalk of a step it reaches).",
 		},
 	},
 	crosswalk_edge_check: {
@@ -1757,6 +1847,13 @@ export const schemaExamples: readonly SchemaExample[] = [
 			"Which 2024 constituencies does each 2022 ward fall in, and what share of its residents goes to each?",
 		sql: "SELECT from_code, to_code, weight FROM v_crosswalk_weight WHERE crosswalk = 'ward-2022-12-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap' AND basis = 'population' ORDER BY from_code, weight DESC LIMIT 20",
 		expect: "Weights summing to 1 per ward.",
+	},
+	{
+		id: "old-ward-to-current",
+		question:
+			"Where is the ward E05000719 now, whichever release it was in, and what share of its residents is in each current ward?",
+		sql: "SELECT from_release, to_release, from_code, to_code, to_name, weight, weight_lower, weight_upper, complete FROM v_crosswalk_chain_edge WHERE geography = 'ward' AND from_code = 'E05000719' AND basis = 'population' ORDER BY from_release, to_code LIMIT 20",
+		expect: "One or more rows for each release the ward is in, all to the current ward release. Weights sum to 1 per release. complete is 1 where every ward feeding the current ward has a route to it.",
 	},
 	{
 		id: "converted-quality",
