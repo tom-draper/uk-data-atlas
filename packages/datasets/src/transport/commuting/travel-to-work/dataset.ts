@@ -15,7 +15,7 @@ import { travelToWorkStatisticsParts } from "../../../data/travel-to-work/source
 export const travelToWork = defineDataset<TravelToWorkDataset>({
 	id: "travel-to-work",
 	topic: "commuting",
-	boundary: { type: "localAuthority", year: 2025 },
+	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	related: ["labour-market"],
 	guide: {

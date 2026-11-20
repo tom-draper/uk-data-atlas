@@ -173,6 +173,11 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 			combine: "mean",
 			ramp: { low: "#dcfce7", high: "#15803d" },
 			digits: 1,
+			// The measures are published with the series' release.
+			release: {
+				datasetId: "life-expectancy-series",
+				boundaryYear: 2025,
+			},
 		},
 		measures: [
 			{

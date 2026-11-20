@@ -218,9 +218,10 @@ const seriesFor = (
 	return {
 		request: {
 			measure,
-			datasetId: declaration.id,
-			geography: declaration.boundary.type,
-			boundaryYear: declaration.boundary.year,
+			datasetId: series.release?.datasetId ?? declaration.id,
+			geography: series.release?.geography ?? declaration.boundary.type,
+			boundaryYear:
+				series.release?.boundaryYear ?? declaration.boundary.year,
 		},
 		...(countMeasure ? { countMeasure } : {}),
 		...(series.combine ? { combine: series.combine } : {}),
@@ -267,9 +268,9 @@ const barsFor = (
 	bars: NonNullable<DatasetDisplay["bars"]>,
 ): BarsCardConfig => ({
 	request: {
-		datasetId: declaration.id,
-		geography: declaration.boundary.type,
-		boundaryYear: declaration.boundary.year,
+		datasetId: bars.release?.datasetId ?? declaration.id,
+		geography: bars.release?.geography ?? declaration.boundary.type,
+		boundaryYear: bars.release?.boundaryYear ?? declaration.boundary.year,
 	},
 	measures: bars.measures,
 	...(bars.views ? { views: bars.views } : {}),

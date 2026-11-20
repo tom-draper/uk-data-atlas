@@ -179,6 +179,17 @@ export type DisplayCard = {
 };
 
 /**
+ * Where a card's measures are published when that is not the dataset's own
+ * declared dataset id or boundary year, which the measures are otherwise
+ * matched against exactly.
+ */
+export type DisplayRelease = {
+	datasetId?: string;
+	geography?: string;
+	boundaryYear?: number;
+};
+
+/**
  * A history card: one area's latest value over a line of the periods before
  * it, read from the statistics of a measure. Drawn by the shared series card
  * so a dataset with a history needs no chart component of its own.
@@ -210,6 +221,8 @@ export type DisplaySeries = {
 	combine?: "mean";
 	/** A heading for each of the dataset's measures, by id, where it differs from `heading`. */
 	headings?: Record<string, string>;
+	/** Where the measures are published, where that is not the dataset's own boundary. */
+	release?: DisplayRelease;
 };
 
 /**
@@ -272,6 +285,8 @@ export type DisplayBars = {
 	ramp: { low: string; high: string };
 	/** Decimal places of each value. */
 	digits: number;
+	/** Where the measures are published, where that is not the dataset's own boundary. */
+	release?: DisplayRelease;
 };
 
 /**

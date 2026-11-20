@@ -22,9 +22,9 @@ describe("the life expectancy card", () => {
 
 	it("reads the declared release, one bar a sex, averaging areas as it always has", () => {
 		expect(chart.bars?.request).toEqual({
-			datasetId: "life-expectancy",
+			datasetId: "life-expectancy-series",
 			geography: "localAuthority",
-			boundaryYear: 2024,
+			boundaryYear: 2025,
 		});
 		expect(chart.bars?.dimension).toBe("sex");
 		expect(chart.bars?.bars.map((bar) => bar.code)).toEqual([
