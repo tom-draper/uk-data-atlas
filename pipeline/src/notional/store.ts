@@ -1,6 +1,10 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import {
+	datasetInput,
+	weightsInput,
+} from "../storage/modelInputRefs.ts";
 import type { Score } from "./benchmark.ts";
 import {
 	BOUND_FACTOR,
@@ -250,9 +254,14 @@ export const writeNotional = (
 			input.run(
 				method,
 				"weights",
-				`weight-atoms population, ${OLD_SEATS} to ${NEW_SEATS}`,
+				weightsInput("population", `${OLD_SEATS} to ${NEW_SEATS}`),
 			);
-			input.run(method, "census datasets", CENSUS_DATASETS.join(", "));
+			for (const dataset of CENSUS_DATASETS)
+				input.run(
+					method,
+					"census datasets",
+					datasetInput(`census-2021-${dataset}`),
+				);
 			if (ships)
 				model.run(
 					method,

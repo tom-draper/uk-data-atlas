@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Papa from "papaparse";
+import { datasetInput } from "../storage/modelInputRefs.ts";
 import { shareAlikeLocal, type LocalSource, type Votes } from "./inputs.ts";
 
 /**
@@ -49,6 +50,11 @@ export const readScottishLocal = (root: string): LocalSource => ({
 	period: SCOTTISH_PERIOD,
 	release: SCOTTISH_RELEASE,
 	wards: parseScottishLocal(readFileSync(join(root, SCOTTISH_FILE), "utf8")),
-	keys: [`${SCOTTISH_FILE}, Scottish first preferences`],
+	keys: [
+		datasetInput(
+			"local-election",
+			`${SCOTTISH_FILE}, Scottish first preferences`,
+		),
+	],
 	shareAlike: shareAlikeLocal(SCOTTISH_PERIOD),
 });
