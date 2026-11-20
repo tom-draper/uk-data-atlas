@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_area_change for areas that were renamed, recoded, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -62,7 +62,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "which-view-to-use",
-		body: "Start with v_observation_default. It has the columns of v_observation and returns one row for each quantity, area and period, so a sum or a count over it does not count a figure twice. A quantity is a measure on one boundary release with one member of each qualifier dimension: life expectancy for females and for males are two quantities, and so is the same measure on two releases (filter on release to choose one). measure_dimension says how each dimension of a measure is read. A breakdown dimension (tenure, age band, residence type) splits a total, so the view keeps only the series at the total (default_member_id, or the series with no member of that dimension when it is NULL) and leaves out the parts. A qualifier dimension (sex for life expectancy, party for votes, pay statistic) has no total, so each member is its own quantity and all of them are in the view. Where several series hold one quantity, the best one is returned for each area and period: published, then aggregated, then modelled (an open model before a ShareAlike one), then converted, then the dataset order declared for the measure. series_preference holds the order (rank 1 is best) and quantity names the group. The column alternatives counts the other series that also have a row for that quantity, area and period, so a value of 0 means there was no choice. A series is passed over only where it has no observation row: a row whose value is NULL (a suppressed figure) is the answer for that area and period and the next series is not tried. Use v_observation instead when you want every series, a breakdown (members = age-band=...), or a comparison between datasets or methods, and v_series to see what exists. In a database assembled from some modules only the series that are present are ranked, so the view returns the best of what is there.",
+		body: "Check v_coverage first, before reading any observation: it says in one query whether a measure exists for a geography, release and period, by which method, and how complete it is. Filter it by measure, geography, release and period, with no joins: SELECT period, method, dataset, share, countries FROM v_coverage WHERE measure = 'population' AND geography = 'localAuthority' ORDER BY release, period. share is areas_with_value divided by release_areas, the areas the release holds, so 0.9 is nine areas in ten. A measure that is only published for the areas that polled (election results) or for one nation (countries) has a small share and is not broken. is_default is 1 for the series v_observation_default prefers, and a series that is a part of a total has no quantity. For a converted series exact_share and coverage say how far to trust it. When v_coverage has no row, read v_coverage_missing: SELECT reason, explanation, dataset, source_release FROM v_coverage_missing WHERE measure = 'claimant-rate' AND geography = 'ward'. It gives the reason a measure was not moved onto a release (refused-measure, no-route and the others in conversion_skip). It lists only the combinations the conversion planner considered: a measure with no row in either view has no series and was never a candidate for that release. Then start reading values with v_observation_default. It has the columns of v_observation and returns one row for each quantity, area and period, so a sum or a count over it does not count a figure twice. A quantity is a measure on one boundary release with one member of each qualifier dimension: life expectancy for females and for males are two quantities, and so is the same measure on two releases (filter on release to choose one). measure_dimension says how each dimension of a measure is read. A breakdown dimension (tenure, age band, residence type) splits a total, so the view keeps only the series at the total (default_member_id, or the series with no member of that dimension when it is NULL) and leaves out the parts. A qualifier dimension (sex for life expectancy, party for votes, pay statistic) has no total, so each member is its own quantity and all of them are in the view. Where several series hold one quantity, the best one is returned for each area and period: published, then aggregated, then modelled (an open model before a ShareAlike one), then converted, then the dataset order declared for the measure. series_preference holds the order (rank 1 is best) and quantity names the group. The column alternatives counts the other series that also have a row for that quantity, area and period, so a value of 0 means there was no choice. A series is passed over only where it has no observation row: a row whose value is NULL (a suppressed figure) is the answer for that area and period and the next series is not tried. Use v_observation instead when you want every series, a breakdown (members = age-band=...), or a comparison between datasets or methods, and v_series to see what exists. In a database assembled from some modules only the series that are present are ranked, so the view returns the best of what is there.",
 	},
 	{
 		topic: "published-and-converted",
@@ -523,6 +523,22 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			rank: "1 is preferred. Unique within a quantity. v_observation_default returns, for each area and period, the row of the lowest rank that has one.",
 		},
 	},
+	series_coverage: {
+		audience: "core",
+		description:
+			"How complete each series is in each period, so a reader can tell whether a measure is there before reading observations. One row for each (series, period) that has observations, about 9,000 rows in all, built at assembly from observation. Read it through v_coverage. The nation of an area is not stored for every area, so it is the ONS code prefix (E, W, S or N), else the one nation of a release that boundary_release_country says covers only one, else the ITL code letter (TLC to TLK England, TLL Wales, TLM Scotland, TLN Northern Ireland), else ?. Known missing values of a converted series are in series_gap and its quality in series_conversion.",
+		columns: {
+			series_id: "The series (series.id).",
+			period_id: "The period (period.id).",
+			areas: "Observation rows of the series in this period, one for each area.",
+			areas_with_value:
+				"Of those, the rows with a value or a category, not a suppressed or missing figure that has only a status. Never more than areas.",
+			release_areas:
+				"Area versions the series' release holds in its boundary file (area_version.in_inventory = 1). areas is never more than this, and the build fails if it is.",
+			countries:
+				"The nations with at least one value, as a sorted comma list of E, N, S and W, then ? for areas whose nation cannot be told (historical constituencies). Empty when the period has no value.",
+		},
+	},
 	observation: {
 		audience: "core",
 		description:
@@ -592,6 +608,61 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			quantity: "The quantity's key (quantity.key).",
 			alternatives:
 				"How many other series have a row for this quantity, area and period. 0 means no other series could have answered.",
+		},
+	},
+	v_coverage: {
+		audience: "core",
+		description:
+			"View: what exists and how complete it is, one row for each series and period, read before the observations. Filter on measure, geography, release and period (no joins). A row means observations exist: its share says for how many of the release's areas. share is low for a measure published only for the areas that polled (elections) or for one nation, and that is the data, not a fault. For a measure with no row on a release, v_coverage_missing says why it was not converted there. About 9,000 rows, so reading all of it takes milliseconds.",
+		columns: {
+			measure: "Measure slug.",
+			quantity:
+				"The quantity's key (quantity.key), or null for a series that is a part of a total (an age band, a tenure type), which is in no quantity.",
+			members:
+				"Fixed dimension members of the series as 'dimension=code; dimension=code', or null for no breakdown. Filter it to choose a statistic or a part: members LIKE '%pay-statistic=median%'.",
+			dataset: "Dataset slug.",
+			geography: "Geography slug.",
+			release: "Boundary release slug of the series.",
+			period: "Period label.",
+			period_kind:
+				"year, financial_year, academic_year, quarter, month, date or range.",
+			period_start: "First day of the period, as YYYY-MM-DD.",
+			period_end: "Last day of the period, as YYYY-MM-DD.",
+			method: "published, converted, aggregated or modelled.",
+			is_default:
+				"1 if this series is rank 1 of its quantity in series_preference, so v_observation_default prefers it. It can still lose to another series for an area it has no row for. 0 for the others and for a part of a total.",
+			preference_rank:
+				"Its rank in series_preference (1 is best), or null for a part of a total.",
+			areas: "Areas with an observation row.",
+			areas_with_value: "Of those, areas with a value or a category.",
+			release_areas: "Areas the release holds.",
+			share: "areas_with_value divided by release_areas, 0 to 1, rounded to four places. Null if the release holds no areas.",
+			countries:
+				"Nations with at least one value: a sorted list of E, N, S and W, then ? where the nation cannot be told. See series_coverage.",
+			exact_share:
+				"Converted series only: the share of values not apportioned by a weight (series_conversion.exact_share). Null for any other method.",
+			coverage:
+				"Converted series only: the share of target areas and periods reached that hold a value (series_conversion.coverage). Null for any other method.",
+			series_id: "The series (series.id).",
+		},
+	},
+	v_coverage_missing: {
+		audience: "core",
+		description:
+			"View: why a measure is not on a release. It lists the measure, geography and release combinations the conversion planner considered and left with no series, with the reason from conversion_skip, so a question about availability gets a coverage row or a reason, never silence. It is not every measure on every release: a combination the planner never considered, such as a measure with no published series to convert, is in neither this view nor v_coverage. A combination appears once for each dataset, source release and reason. A skip where the measure does have a series on the release (from another dataset, or by a better route) is left out.",
+		columns: {
+			measure: "Measure slug.",
+			geography:
+				"Geography slug of the release the measure is missing from.",
+			release: "Boundary release slug it is missing from.",
+			reason: "refused-measure (measure_conversion says refuse), no-route (no crosswalk path), no-values (every value would be a split and splitting is refused), missing-component (a ratio lacks its numerator, denominator or weight), better-route (a better source kept its place) or published-on-target (already published there for every period it holds).",
+			explanation:
+				"The reason in words. For refused-measure it is measure_conversion.reason, which says why the measure cannot be converted.",
+			dataset: "The dataset whose series was not converted.",
+			source_geography:
+				"Geography slug of the release it is published on.",
+			source_release: "Boundary release slug it is published on.",
+			source_series: "Number of published series affected.",
 		},
 	},
 	v_series: {
@@ -1488,6 +1559,26 @@ export const schemaExamples: readonly SchemaExample[] = [
 			"What share of the vote did each party group win in Manchester Central at the 2019 general election?",
 		sql: "SELECT members, round(value, 1) AS share, dataset FROM v_observation_default WHERE measure = 'party-vote-share' AND area_code = 'E14000807' AND geography = 'constituency' AND release = '2019-12-uk-bgc' AND period = '2019-12-12' ORDER BY value DESC",
 		expect: "Four rows from historical-general-election: lab 70.4, con 14.8, other 8.2 and lib 6.5. party-group is a qualifier, so each group is its own quantity and none is left out.",
+	},
+	{
+		id: "coverage-population-periods",
+		question:
+			"Which periods of population exist for local authorities on the latest release, and by which method?",
+		sql: "SELECT period, method, dataset, areas_with_value, release_areas, share, countries, is_default FROM v_coverage WHERE measure = 'population' AND geography = 'localAuthority' AND release = '2026-05-uk-bgc' AND members IS NULL ORDER BY period, preference_rank",
+		expect: "Three rows, all converted onto the 2026-05 boundaries: 2021 and 2022 from population-constituency (318 of 361 areas, England and Wales, share 0.88) and 2025 from imd (296 areas, England only, share 0.82, the default). No period is published directly on this release.",
+	},
+	{
+		id: "coverage-median-pay-geographies",
+		question: "Which geographies can I get median gross annual pay on?",
+		sql: "SELECT geography, release, members, method, period, areas_with_value, release_areas, share, countries FROM v_coverage WHERE measure = 'gross-annual-pay' AND members LIKE '%pay-statistic=median%' ORDER BY geography, release, members",
+		expect: "Eight rows, all published for 2025, England only: region (9 of 9), localAuthority (about 294 of 361), countyAndUnitaryAuthority (21 of 218) and country (1 of 4), each for residence and for workplace earnings.",
+	},
+	{
+		id: "coverage-missing-ward-claimant-rate",
+		question:
+			"Why is the claimant rate not available on the 2026 ward boundaries?",
+		sql: "SELECT measure, geography, release, reason, explanation, dataset, source_release FROM v_coverage_missing WHERE measure = 'claimant-rate' AND geography = 'ward'",
+		expect: "Two rows, both refused-measure from claimant-count (published on 2024-05 and 2022-12 local authorities): the claimants are held but the 16 to 64 population is not held as a measure, so the rate cannot be rebuilt on wards.",
 	},
 	{
 		id: "area-by-code",
