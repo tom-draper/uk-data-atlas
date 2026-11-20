@@ -266,9 +266,9 @@ describe("writeSeriesAttribution", () => {
 			"Source: Office for National Statistics; Crosswalk Office; Weights Office. Contains public sector information licensed under the Open Government Licence v3.0. Contains OS data © Crown copyright and database right 2021 and 2024. Contains Royal Mail data © Royal Mail copyright and database right.",
 		);
 		assert.equal(
-			terms(database, "notional-sharealike")!
-				.attribution.toString()
-				.match(/Open Government Licence/g)!.length,
+			String(terms(database, "notional-sharealike")!.attribution).match(
+				/Open Government Licence/g,
+			)!.length,
 			1,
 		);
 	});
