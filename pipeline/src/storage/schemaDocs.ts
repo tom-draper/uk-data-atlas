@@ -1874,6 +1874,20 @@ export const schemaExamples: readonly SchemaExample[] = [
 		expect: "One or more rows for each release the ward is in, all to the current ward release. Weights sum to 1 per release. complete is 1 where every ward feeding the current ward has a route to it.",
 	},
 	{
+		id: "old-count-on-current-wards",
+		question:
+			"What was the population of age 0 in the 2023-12 wards, carried to the current wards?",
+		sql: "SELECT e.to_code, e.to_name, round(sum(o.value * e.weight), 1) AS value, min(e.complete) AS complete, count(*) AS parts FROM v_observation o JOIN v_crosswalk_chain_edge e ON e.geography = o.geography AND e.from_release = o.release AND e.from_code = o.area_code AND e.basis = 'population' WHERE o.measure = 'population' AND o.members = 'sex=all; age=0' AND o.geography = 'ward' AND o.release = '2023-12-uk-bgc' GROUP BY e.to_code, e.to_name ORDER BY e.to_code LIMIT 5",
+		expect: "One row per current ward, from E05000954 Bebington (124.0) on. A count is the sum of each old ward's value times its weight. The sum is lower than the old total, because the wards in v_crosswalk_chain_gap carry nothing.",
+	},
+	{
+		id: "old-areas-that-lose-value",
+		question:
+			"Which 2023-12 wards have no current ward to carry their value to?",
+		sql: "SELECT g.from_code, g.from_name, g.reason, g.has_edge FROM v_crosswalk_chain_gap g WHERE g.geography = 'ward' AND g.from_release = '2023-12-uk-bgc' AND g.basis = 'population' ORDER BY g.from_code LIMIT 5",
+		expect: "Birkdale E05000933 and its neighbours in Sefton, reason not-in-crosswalk and has_edge 0: no route reaches a current ward from them. A gap with has_edge 1 reaches some current wards but loses part of its value.",
+	},
+	{
 		id: "converted-quality",
 		question:
 			"Is there population data on the 2026 council boundaries, and how was it made?",
