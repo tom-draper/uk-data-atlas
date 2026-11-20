@@ -25,6 +25,12 @@ are copied from those files. Run `pnpm data:build` to make them again.
   by residents: median error 0.083%, largest 1.34%. Constituencies to local
   authorities by residents: median 0.171%, 95th percentile 1.05%, largest 10.0%
   (Isles of Scilly).
+- **An estimated split of population by single year of age is kept, with wide
+  bounds.** Wards to constituencies by the postcodes they share, for persons:
+  median error 0.293%, 95th percentile 2.02%, largest 55.21% (Reading Central,
+  age 19, where students are). Its factor is 6.90, so the median half width of
+  a bound is 12.08% and the 95th percentile 47.77%. The bounds held all 27,027
+  persons values, and all 54,044 male and female values held out from the fit.
 - **An estimated split of anything else is refused.** Splitting an age and sex
   group by total residents gave errors up to 207.64%. Bases other than residents
   were worse than residents on every case. Best-fit lookups used as a conversion
@@ -32,8 +38,8 @@ are copied from those files. Run `pnpm data:build` to make them again.
 - **The bounds are honest and wide.** They held the published figure on all but
   one of 3,134 checked values, 802 of them held out from the fit. They are
   much wider than the typical error.
-- The atlas now holds 1,093 converted series: 1,438,388 regrouped values and 572
-  estimated ones, each scored for the share that is exact and how many target
+- The atlas now holds 1,023 converted series: 1,414,818 regrouped values and
+  27,599 estimated ones, each scored for the share that is exact and how many target
   areas it fills. 42 of 96 measures are refused outright, each with its reason.
 
 ## Method
@@ -84,7 +90,8 @@ nothing else, and the result is stored in `measure_conversion`.
   stored.
 
 A `sum` measure also names the one weight basis a split of it has been
-backtested on, or none. Only `population` on the `population` basis has one.
+backtested on, or none. Only `population` on the `population` basis has one,
+for its total and for its single years of age.
 
 ### The backtest
 
@@ -102,6 +109,10 @@ value's bounds are its value plus and minus the factor times its own amount at
 risk. A method and basis with no factor has no bounds, and a value split that
 way is refused.
 
+A factor is also fitted for each measure class. A total population and
+population by single year of age are separate classes, because the same method
+misses the age groups by far more. A class with no factor is not split.
+
 ### What is stored
 
 | Table                                                                                                                       | Holds                                                                           |
@@ -118,10 +129,10 @@ way is refused.
 
 A regrouped value has status `derived` and no bounds. A split value has status
 `estimated` and both bounds. No converted value has status `observed`: the copy
-into the atlas fails if one does. In the built atlas, the 1,093 converted series
-hold 1,438,388 derived values with no bounds, 572 estimated values with bounds
-(one series, below), and no observed value. The 1,643 published series are unchanged, with 9,236,105
-observed values.
+into the atlas fails if one does. In the built atlas, the 1,023 converted series
+hold 1,414,818 derived values with no bounds, 27,599 estimated values with
+bounds (92 series, below), and no observed value. The 1,643 published series
+are unchanged.
 
 Every query in the codebase that reads `series` names the method it wants, and a
 test fails on one that does not
@@ -176,31 +187,35 @@ administrative cases are exact on every value.
 
 ### Estimated splits and chains
 
-| Case                              | Basis      | Values    | Series | Periods | Compared | Exact  | Median error | p95 error | Max error | Max absolute |
-| --------------------------------- | ---------- | --------- | ------ | ------- | -------- | ------ | ------------ | --------- | --------- | ------------ |
-| split-ward-constituency-overlap   | population | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-ward-constituency-overlap   | population | split     | 1      | 1       | 297      | 17.2%  | 0.083%       | 0.539%    | 1.34%     | 1,475        |
-| split-ward-constituency-overlap   | households | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-ward-constituency-overlap   | households | split     | 1      | 1       | 297      | 16.8%  | 0.101%       | 0.636%    | 2.43%     | 2,733        |
-| split-ward-constituency-overlap   | dwellings  | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-ward-constituency-overlap   | dwellings  | split     | 1      | 1       | 297      | 17.5%  | 0.123%       | 0.803%    | 2.75%     | 2,877        |
-| split-ward-constituency-overlap   | postcodes  | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-ward-constituency-overlap   | postcodes  | split     | 1      | 1       | 297      | 16.8%  | 0.281%       | 1.719%    | 6.15%     | 6,443        |
-| split-ward-constituency-best-fit  | population | regrouped | 1      | 1       | 403      | 84.1%  | 0.000%       | 5.896%    | 13.82%    | 13,808       |
-| split-constituency-la             | population | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-constituency-la             | population | split     | 1      | 1       | 286      | 0.0%   | 0.171%       | 1.051%    | 10.03%    | 4,401        |
-| split-constituency-la             | households | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-constituency-la             | households | split     | 1      | 1       | 286      | 0.0%   | 0.494%       | 2.521%    | 15.94%    | 8,918        |
-| split-constituency-la             | dwellings  | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-constituency-la             | dwellings  | split     | 1      | 1       | 286      | 0.0%   | 0.631%       | 2.746%    | 22.23%    | 7,010        |
-| split-constituency-la             | postcodes  | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| split-constituency-la             | postcodes  | split     | 1      | 1       | 286      | 0.0%   | 2.242%       | 10.107%   | 55.17%    | 21,012       |
-| split-constituency-la-2022        | population | regrouped | 1      | 1       | 32       | 0.0%   | 0.084%       | 0.488%    | 1.19%     | 4,166        |
-| split-constituency-la-2022        | population | split     | 1      | 1       | 286      | 0.0%   | 0.298%       | 1.209%    | 20.79%    | 4,975        |
-| chain-ward-constituency-la        | population | regrouped | 273    | 1       | 6,552    | 14.5%  | 0.302%       | 1.584%    | 10.00%    | 424          |
-| chain-ward-constituency-la        | population | split     | 273    | 1       | 79,170   | 1.7%   | 1.850%       | 9.850%    | 207.64%   | 1,718        |
-| chain-ward-constituency-2019-2024 | population | regrouped | 1      | 1       | 37       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
-| chain-ward-constituency-2019-2024 | population | split     | 1      | 1       | 516      | 1.0%   | 0.165%       | 0.910%    | 2.39%     | 3,198        |
+| Case                                | Basis      | Values    | Series | Periods | Compared | Exact  | Median error | p95 error | Max error | Max absolute |
+| ----------------------------------- | ---------- | --------- | ------ | ------- | -------- | ------ | ------------ | --------- | --------- | ------------ |
+| split-ward-constituency-overlap     | population | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-overlap     | population | split     | 1      | 1       | 297      | 17.2%  | 0.083%       | 0.539%    | 1.34%     | 1,475        |
+| split-ward-constituency-overlap     | households | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-overlap     | households | split     | 1      | 1       | 297      | 16.8%  | 0.101%       | 0.636%    | 2.43%     | 2,733        |
+| split-ward-constituency-overlap     | dwellings  | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-overlap     | dwellings  | split     | 1      | 1       | 297      | 17.5%  | 0.123%       | 0.803%    | 2.75%     | 2,877        |
+| split-ward-constituency-overlap     | postcodes  | regrouped | 1      | 1       | 276      | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-overlap     | postcodes  | split     | 1      | 1       | 297      | 16.8%  | 0.281%       | 1.719%    | 6.15%     | 6,443        |
+| split-ward-constituency-best-fit    | population | regrouped | 1      | 1       | 403      | 84.1%  | 0.000%       | 5.896%    | 13.82%    | 13,808       |
+| split-constituency-la               | population | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-constituency-la               | population | split     | 1      | 1       | 286      | 0.0%   | 0.171%       | 1.051%    | 10.03%    | 4,401        |
+| split-constituency-la               | households | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-constituency-la               | households | split     | 1      | 1       | 286      | 0.0%   | 0.494%       | 2.521%    | 15.94%    | 8,918        |
+| split-constituency-la               | dwellings  | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-constituency-la               | dwellings  | split     | 1      | 1       | 286      | 0.0%   | 0.631%       | 2.746%    | 22.23%    | 7,010        |
+| split-constituency-la               | postcodes  | regrouped | 1      | 1       | 32       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-constituency-la               | postcodes  | split     | 1      | 1       | 286      | 0.0%   | 2.242%       | 10.107%   | 55.17%    | 21,012       |
+| split-constituency-la-2022          | population | regrouped | 1      | 1       | 32       | 0.0%   | 0.084%       | 0.488%    | 1.19%     | 4,166        |
+| split-constituency-la-2022          | population | split     | 1      | 1       | 286      | 0.0%   | 0.298%       | 1.209%    | 20.79%    | 4,975        |
+| chain-ward-constituency-la          | population | regrouped | 273    | 1       | 6,552    | 14.5%  | 0.302%       | 1.584%    | 10.00%    | 424          |
+| chain-ward-constituency-la          | population | split     | 273    | 1       | 79,170   | 1.7%   | 1.850%       | 9.850%    | 207.64%   | 1,718        |
+| chain-ward-constituency-2019-2024   | population | regrouped | 1      | 1       | 37       | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| chain-ward-constituency-2019-2024   | population | split     | 1      | 1       | 516      | 1.0%   | 0.165%       | 0.910%    | 2.39%     | 3,198        |
+| split-ward-constituency-age-persons | population | regrouped | 91     | 1       | 25,116   | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-age-persons | population | split     | 91     | 1       | 27,027   | 24.8%  | 0.293%       | 2.025%    | 55.21%    | 790          |
+| split-ward-constituency-age-by-sex  | population | regrouped | 182    | 1       | 50,242   | 100.0% | 0.000%       | 0.000%    | 0.00%     | 0            |
+| split-ward-constituency-age-by-sex  | population | split     | 182    | 1       | 54,044   | 29.8%  | 0.352%       | 2.319%    | 58.45%    | 408          |
 
 Reading the table:
 
@@ -220,29 +235,39 @@ Reading the table:
   breakdown is never split.
 - **Chain through 2019 constituencies.** Held out from the fit: median 0.165%,
   largest 2.39% (Brent East).
+- **Wards to constituencies by single year of age.** The 91 persons series
+  (ages 0 to 89 and 90 and over) are the fit. Median error 0.293%, 95th
+  percentile 2.03%, largest 55.21% (Reading Central, age 19: 2,221.0 against
+  1,431). The two next worst are also age 19, Earley and Woodley and Brighton
+  Kemptown and Peacehaven, both near 35%. The 182 male and female series are
+  held out and behave the same: median 0.352%, largest 58.45% (Reading
+  Central, men aged 19). The large errors are students, whom a share of the
+  postcodes two areas have in common does not place.
 
 ### Published truths with no converted value
 
-| Case                              | Basis      | Areas by reason                              |
-| --------------------------------- | ---------- | -------------------------------------------- |
-| regroup-census-lsoa-la-2026       | population | best-fit-straddler 19                        |
-| regroup-ward-la-2023              | population | missing-input 12,285                         |
-| regroup-ward-la-2026              | population | best-fit-straddler 546, missing-input 12,285 |
-| regroup-la-2022-2024-claimants    | population | missing-input 714                            |
-| regroup-la-2019-2024-unemployment | population | missing-input 8,764                          |
-| regroup-lsoa-la-2024-collisions   | population | missing-input 1,396                          |
-| split-ward-constituency-overlap   | population | missing-input 2                              |
-| split-ward-constituency-overlap   | households | missing-input 2                              |
-| split-ward-constituency-overlap   | dwellings  | missing-input 2                              |
-| split-ward-constituency-overlap   | postcodes  | missing-input 2                              |
-| split-ward-constituency-best-fit  | population | best-fit-straddler 170, missing-input 2      |
-| split-constituency-la             | population | missing-input 43                             |
-| split-constituency-la             | households | missing-input 43                             |
-| split-constituency-la             | dwellings  | missing-input 43                             |
-| split-constituency-la             | postcodes  | missing-input 43                             |
-| split-constituency-la-2022        | population | missing-input 43                             |
-| chain-ward-constituency-la        | population | missing-input 12,831                         |
-| chain-ward-constituency-2019-2024 | population | no-weight 14, missing-input 8                |
+| Case                                | Basis      | Areas by reason                              |
+| ----------------------------------- | ---------- | -------------------------------------------- |
+| regroup-census-lsoa-la-2026         | population | best-fit-straddler 19                        |
+| regroup-ward-la-2023                | population | missing-input 12,285                         |
+| regroup-ward-la-2026                | population | best-fit-straddler 546, missing-input 12,285 |
+| regroup-la-2022-2024-claimants      | population | missing-input 714                            |
+| regroup-la-2019-2024-unemployment   | population | missing-input 8,764                          |
+| regroup-lsoa-la-2024-collisions     | population | missing-input 1,396                          |
+| split-ward-constituency-overlap     | population | missing-input 2                              |
+| split-ward-constituency-overlap     | households | missing-input 2                              |
+| split-ward-constituency-overlap     | dwellings  | missing-input 2                              |
+| split-ward-constituency-overlap     | postcodes  | missing-input 2                              |
+| split-ward-constituency-best-fit    | population | best-fit-straddler 170, missing-input 2      |
+| split-constituency-la               | population | missing-input 43                             |
+| split-constituency-la               | households | missing-input 43                             |
+| split-constituency-la               | dwellings  | missing-input 43                             |
+| split-constituency-la               | postcodes  | missing-input 43                             |
+| split-constituency-la-2022          | population | missing-input 43                             |
+| chain-ward-constituency-la          | population | missing-input 12,831                         |
+| chain-ward-constituency-2019-2024   | population | no-weight 14, missing-input 8                |
+| split-ward-constituency-age-persons | population | missing-input 182                            |
+| split-ward-constituency-age-by-sex  | population | missing-input 364                            |
 
 Most `missing-input` gaps are areas outside the source's coverage. Ward
 population is England and Wales only, so the 43 authorities missing from the
@@ -250,35 +275,39 @@ constituency cases are those of Scotland and Northern Ireland.
 
 ### Error factors
 
-| Method             | Basis      | Measured on      | Fitted on                       | Split values | Median factor | p95 factor | Max factor | Factor used | Pruned only | Pruned only exact |
-| ------------------ | ---------- | ---------------- | ------------------------------- | ------------ | ------------- | ---------- | ---------- | ----------- | ----------- | ----------------- |
-| postcode-overlap   | population | total population | split-ward-constituency-overlap | 247          | 0.054         | 1.009      | 1.030      | 1.03        | 50          | 50                |
-| postcode-overlap   | households | total population | split-ward-constituency-overlap | 247          | 0.085         | 1.009      | 5.999      | 6.00        | 50          | 50                |
-| postcode-overlap   | dwellings  | total population | split-ward-constituency-overlap | 247          | 0.091         | 1.009      | 4.284      | 4.29        | 50          | 50                |
-| postcode-overlap   | postcodes  | total population | split-ward-constituency-overlap | 247          | 0.217         | 1.012      | 1.166      | 1.17        | 50          | 50                |
-| population-overlap | population | total population | split-constituency-la           | 286          | 0.010         | 0.058      | 0.364      | 0.37        | 0           | 0                 |
-| population-overlap | households | total population | split-constituency-la           | 286          | 0.032         | 0.130      | 0.353      | 0.36        | 0           | 0                 |
-| population-overlap | dwellings  | total population | split-constituency-la           | 286          | 0.039         | 0.161      | 0.373      | 0.38        | 0           | 0                 |
-| population-overlap | postcodes  | total population | split-constituency-la           | 286          | 0.141         | 0.433      | 1.081      | 1.09        | 0           | 0                 |
+| Method             | Basis      | Measured on               | Fitted on                           | Split values | Median factor | p95 factor | Max factor | Factor used | Pruned only | Pruned only exact |
+| ------------------ | ---------- | ------------------------- | ----------------------------------- | ------------ | ------------- | ---------- | ---------- | ----------- | ----------- | ----------------- |
+| postcode-overlap   | population | total population          | split-ward-constituency-overlap     | 247          | 0.054         | 1.009      | 1.030      | 1.03        | 50          | 50                |
+| postcode-overlap   | households | total population          | split-ward-constituency-overlap     | 247          | 0.085         | 1.009      | 5.999      | 6.00        | 50          | 50                |
+| postcode-overlap   | dwellings  | total population          | split-ward-constituency-overlap     | 247          | 0.091         | 1.009      | 4.284      | 4.29        | 50          | 50                |
+| postcode-overlap   | postcodes  | total population          | split-ward-constituency-overlap     | 247          | 0.217         | 1.012      | 1.166      | 1.17        | 50          | 50                |
+| postcode-overlap   | population | population by age and sex | split-ward-constituency-age-persons | 22,468       | 0.242         | 1.019      | 6.895      | 6.90        | 4,559       | 4,559             |
+| population-overlap | population | total population          | split-constituency-la               | 286          | 0.010         | 0.058      | 0.364      | 0.37        | 0           | 0                 |
+| population-overlap | households | total population          | split-constituency-la               | 286          | 0.032         | 0.130      | 0.353      | 0.36        | 0           | 0                 |
+| population-overlap | dwellings  | total population          | split-constituency-la               | 286          | 0.039         | 0.161      | 0.373      | 0.38        | 0           | 0                 |
+| population-overlap | postcodes  | total population          | split-constituency-la               | 286          | 0.141         | 0.433      | 1.081      | 1.09        | 0           | 0                 |
 
 "Pruned only" counts values carried whole from a ward whose dropped pairs put a
-little of it elsewhere. All 50 matched the published figure, so pruning under
-1% is not treated as a split.
+little of it elsewhere. All 50 matched the published figure, and so did all
+4,559 in the age fit, so pruning under 1% is not treated as a split. The age
+fit's 22,468 are the 27,027 persons values less those 4,559.
 
 ### Do the bounds hold the truth
 
-| Case                              | Basis      | Factor of          | Factor | Held out | Values | Truth within bounds | Median error | Median half width | p95 half width |
-| --------------------------------- | ---------- | ------------------ | ------ | -------- | ------ | ------------------- | ------------ | ----------------- | -------------- |
-| split-ward-constituency-overlap   | population | postcode-overlap   | 1.03   | no       | 297    | 297 (100.0%)        | 0.083%       | 1.82%             | 6.97%          |
-| chain-ward-constituency-2019-2024 | population | postcode-overlap   | 1.03   | yes      | 516    | 516 (100.0%)        | 0.165%       | 23.69%            | 66.13%         |
-| split-ward-constituency-overlap   | households | postcode-overlap   | 6.00   | no       | 297    | 297 (100.0%)        | 0.101%       | 10.41%            | 40.59%         |
-| split-ward-constituency-overlap   | dwellings  | postcode-overlap   | 4.29   | no       | 297    | 297 (100.0%)        | 0.123%       | 7.43%             | 29.27%         |
-| split-ward-constituency-overlap   | postcodes  | postcode-overlap   | 1.17   | no       | 297    | 297 (100.0%)        | 0.281%       | 2.23%             | 7.84%          |
-| split-constituency-la             | population | population-overlap | 0.37   | no       | 286    | 286 (100.0%)        | 0.171%       | 5.94%             | 18.25%         |
-| split-constituency-la-2022        | population | population-overlap | 0.37   | yes      | 286    | 285 (99.7%)         | 0.298%       | 5.92%             | 18.23%         |
-| split-constituency-la             | households | population-overlap | 0.36   | no       | 286    | 286 (100.0%)        | 0.494%       | 5.73%             | 17.78%         |
-| split-constituency-la             | dwellings  | population-overlap | 0.38   | no       | 286    | 286 (100.0%)        | 0.631%       | 6.08%             | 18.91%         |
-| split-constituency-la             | postcodes  | population-overlap | 1.09   | no       | 286    | 286 (100.0%)        | 2.242%       | 17.57%            | 55.88%         |
+| Case                                | Basis      | Factor of          | Factor | Held out | Values | Truth within bounds | Median error | Median half width | p95 half width |
+| ----------------------------------- | ---------- | ------------------ | ------ | -------- | ------ | ------------------- | ------------ | ----------------- | -------------- |
+| split-ward-constituency-overlap     | population | postcode-overlap   | 1.03   | no       | 297    | 297 (100.0%)        | 0.083%       | 1.82%             | 6.97%          |
+| chain-ward-constituency-2019-2024   | population | postcode-overlap   | 1.03   | yes      | 516    | 516 (100.0%)        | 0.165%       | 23.69%            | 66.13%         |
+| split-ward-constituency-age-persons | population | postcode-overlap   | 6.90   | no       | 27,027 | 27,027 (100.0%)     | 0.293%       | 12.08%            | 47.77%         |
+| split-ward-constituency-age-by-sex  | population | postcode-overlap   | 6.90   | yes      | 54,044 | 54,044 (100.0%)     | 0.352%       | 12.04%            | 48.11%         |
+| split-ward-constituency-overlap     | households | postcode-overlap   | 6.00   | no       | 297    | 297 (100.0%)        | 0.101%       | 10.41%            | 40.59%         |
+| split-ward-constituency-overlap     | dwellings  | postcode-overlap   | 4.29   | no       | 297    | 297 (100.0%)        | 0.123%       | 7.43%             | 29.27%         |
+| split-ward-constituency-overlap     | postcodes  | postcode-overlap   | 1.17   | no       | 297    | 297 (100.0%)        | 0.281%       | 2.23%             | 7.84%          |
+| split-constituency-la               | population | population-overlap | 0.37   | no       | 286    | 286 (100.0%)        | 0.171%       | 5.94%             | 18.25%         |
+| split-constituency-la-2022          | population | population-overlap | 0.37   | yes      | 286    | 285 (99.7%)         | 0.298%       | 5.92%             | 18.23%         |
+| split-constituency-la               | households | population-overlap | 0.36   | no       | 286    | 286 (100.0%)        | 0.494%       | 5.73%             | 17.78%         |
+| split-constituency-la               | dwellings  | population-overlap | 0.38   | no       | 286    | 286 (100.0%)        | 0.631%       | 6.08%             | 18.91%         |
+| split-constituency-la               | postcodes  | population-overlap | 1.09   | no       | 286    | 286 (100.0%)        | 2.242%       | 17.57%            | 55.88%         |
 
 The one miss is in the held-out 2022 case. The stored tables do not name it. The
 worst value of that case is City of London (9,200.4 against 11,615, 20.79%),
@@ -288,70 +317,77 @@ which is the likely one. This is not verified.
 
 The three worst values of each case and basis.
 
-| Case                              | Basis      | Values    | Area                                         | Series and period       | Converted | Published | Error   |
-| --------------------------------- | ---------- | --------- | -------------------------------------------- | ----------------------- | --------- | --------- | ------- |
-| regroup-ward-la-2023              | population | regrouped | Runnymede (E07000212)                        | age=24/sex=female, 2022 | 416.0     | 498       | 16.47%  |
-| regroup-ward-la-2023              | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
-| regroup-ward-la-2023              | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
-| regroup-ward-la-2026              | population | regrouped | Runnymede (E07000212)                        | age=24/sex=female, 2022 | 416.0     | 498       | 16.47%  |
-| regroup-ward-la-2026              | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
-| regroup-ward-la-2026              | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
-| split-ward-constituency-overlap   | population | split     | Birmingham Selly Oak (E14001099)             | all ages, 2022          | 111,349.1 | 109,874   | 1.34%   |
-| split-ward-constituency-overlap   | population | split     | Liverpool Wavertree (E14001340)              | all ages, 2022          | 106,438.1 | 105,388   | 1.00%   |
-| split-ward-constituency-overlap   | population | split     | Reading Central (E14001438)                  | all ages, 2022          | 117,980.3 | 116,859   | 0.96%   |
-| split-ward-constituency-overlap   | households | split     | Earley and Woodley (E14001210)               | all ages, 2022          | 104,826.9 | 107,434   | 2.43%   |
-| split-ward-constituency-overlap   | households | split     | Reading Central (E14001438)                  | all ages, 2022          | 119,591.8 | 116,859   | 2.34%   |
-| split-ward-constituency-overlap   | households | split     | Brighton Kemptown and Peacehaven (E14001129) | all ages, 2022          | 97,221.7  | 96,034    | 1.24%   |
-| split-ward-constituency-overlap   | dwellings  | split     | Rochester and Strood (E14001447)             | all ages, 2022          | 107,688.5 | 104,811   | 2.75%   |
-| split-ward-constituency-overlap   | dwellings  | split     | Chatham and Aylesford (E14001157)            | all ages, 2022          | 104,012.8 | 106,459   | 2.30%   |
-| split-ward-constituency-overlap   | dwellings  | split     | Earley and Woodley (E14001210)               | all ages, 2022          | 104,976.4 | 107,434   | 2.29%   |
-| split-ward-constituency-overlap   | postcodes  | split     | Rochester and Strood (E14001447)             | all ages, 2022          | 111,254.5 | 104,811   | 6.15%   |
-| split-ward-constituency-overlap   | postcodes  | split     | Chatham and Aylesford (E14001157)            | all ages, 2022          | 101,286.5 | 106,459   | 4.86%   |
-| split-ward-constituency-overlap   | postcodes  | split     | Bracknell (E14001117)                        | all ages, 2022          | 99,725.7  | 102,980   | 3.16%   |
-| split-ward-constituency-best-fit  | population | regrouped | Chesham and Amersham (E14001162)             | all ages, 2022          | 86,096.0  | 99,904    | 13.82%  |
-| split-ward-constituency-best-fit  | population | regrouped | Wetherby and Easingwold (E14001582)          | all ages, 2022          | 80,506.0  | 92,325    | 12.80%  |
-| split-ward-constituency-best-fit  | population | regrouped | Wellingborough and Rushden (E14001571)       | all ages, 2022          | 100,434.0 | 113,555   | 11.55%  |
-| split-constituency-la             | population | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 2,043.2   | 2,271     | 10.03%  |
-| split-constituency-la             | population | split     | Halton (E06000006)                           | all ages, 2021          | 124,169.2 | 128,570   | 3.42%   |
-| split-constituency-la             | population | split     | Hertsmere (E07000098)                        | all ages, 2021          | 106,005.4 | 108,129   | 1.96%   |
-| split-constituency-la             | households | split     | City of London (E09000001)                   | all ages, 2021          | 10,074.3  | 8,689     | 15.94%  |
-| split-constituency-la             | households | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 2,075.6   | 2,271     | 8.61%   |
-| split-constituency-la             | households | split     | Vale of White Horse (E07000180)              | all ages, 2021          | 148,317.9 | 139,400   | 6.40%   |
-| split-constituency-la             | dwellings  | split     | City of London (E09000001)                   | all ages, 2021          | 10,620.9  | 8,689     | 22.23%  |
-| split-constituency-la             | dwellings  | split     | South Hams (E07000044)                       | all ages, 2021          | 94,536.0  | 89,161    | 6.03%   |
-| split-constituency-la             | dwellings  | split     | Oadby and Wigston (E07000135)                | all ages, 2021          | 54,745.5  | 57,788    | 5.26%   |
-| split-constituency-la             | postcodes  | split     | City of London (E09000001)                   | all ages, 2021          | 13,483.1  | 8,689     | 55.17%  |
-| split-constituency-la             | postcodes  | split     | South Hams (E07000044)                       | all ages, 2021          | 110,172.9 | 89,161    | 23.57%  |
-| split-constituency-la             | postcodes  | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 1,823.8   | 2,271     | 19.69%  |
-| split-constituency-la-2022        | population | regrouped | Coventry (E08000026)                         | all ages, 2022          | 355,600.0 | 351,434   | 1.19%   |
-| split-constituency-la-2022        | population | regrouped | Portsmouth (E06000044)                       | all ages, 2022          | 208,420.0 | 209,599   | 0.56%   |
-| split-constituency-la-2022        | population | regrouped | Wandsworth (E09000032)                       | all ages, 2022          | 329,035.0 | 330,447   | 0.43%   |
-| split-constituency-la-2022        | population | split     | City of London (E09000001)                   | all ages, 2022          | 9,200.4   | 11,615    | 20.79%  |
-| split-constituency-la-2022        | population | split     | Isles of Scilly (E06000053)                  | all ages, 2022          | 2,047.6   | 2,340     | 12.50%  |
-| split-constituency-la-2022        | population | split     | Halton (E06000006)                           | all ages, 2022          | 124,605.3 | 129,449   | 3.74%   |
-| chain-ward-constituency-la        | population | regrouped | Coventry (E08000026)                         | age=24/sex=male, 2022   | 3,233.0   | 2,939     | 10.00%  |
-| chain-ward-constituency-la        | population | regrouped | Coventry (E08000026)                         | age=23/sex=male, 2022   | 3,462.0   | 3,172     | 9.14%   |
-| chain-ward-constituency-la        | population | regrouped | Coventry (E08000026)                         | age=25/sex=male, 2022   | 3,085.0   | 2,827     | 9.13%   |
-| chain-ward-constituency-la        | population | split     | Vale of Glamorgan (W06000014)                | age=20/sex=female, 2022 | 1,276.7   | 415       | 207.64% |
-| chain-ward-constituency-la        | population | split     | Vale of White Horse (E07000180)              | age=20/sex=female, 2022 | 1,286.9   | 423       | 204.23% |
-| chain-ward-constituency-la        | population | split     | Vale of White Horse (E07000180)              | age=19/sex=female, 2022 | 1,361.1   | 463       | 193.98% |
-| chain-ward-constituency-2019-2024 | population | split     | Brent East (E14001122)                       | all ages, 2022          | 136,906.1 | 133,708   | 2.39%   |
-| chain-ward-constituency-2019-2024 | population | split     | Worsley and Eccles (E14001598)               | all ages, 2022          | 110,171.7 | 107,900   | 2.11%   |
-| chain-ward-constituency-2019-2024 | population | split     | Brent West (E14001123)                       | all ages, 2022          | 134,012.4 | 136,768   | 2.01%   |
+| Case                                | Basis      | Values    | Area                                         | Series and period       | Converted | Published | Error   |
+| ----------------------------------- | ---------- | --------- | -------------------------------------------- | ----------------------- | --------- | --------- | ------- |
+| regroup-ward-la-2023                | population | regrouped | Runnymede (E07000212)                        | age=24/sex=female, 2022 | 416.0     | 498       | 16.47%  |
+| regroup-ward-la-2023                | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
+| regroup-ward-la-2023                | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
+| regroup-ward-la-2026                | population | regrouped | Runnymede (E07000212)                        | age=24/sex=female, 2022 | 416.0     | 498       | 16.47%  |
+| regroup-ward-la-2026                | population | regrouped | Lancaster (E07000121)                        | age=24/sex=male, 2022   | 717.0     | 827       | 13.30%  |
+| regroup-ward-la-2026                | population | regrouped | Oxford (E07000178)                           | age=16/sex=female, 2022 | 868.0     | 989       | 12.23%  |
+| split-ward-constituency-overlap     | population | split     | Birmingham Selly Oak (E14001099)             | all ages, 2022          | 111,349.1 | 109,874   | 1.34%   |
+| split-ward-constituency-overlap     | population | split     | Liverpool Wavertree (E14001340)              | all ages, 2022          | 106,438.1 | 105,388   | 1.00%   |
+| split-ward-constituency-overlap     | population | split     | Reading Central (E14001438)                  | all ages, 2022          | 117,980.3 | 116,859   | 0.96%   |
+| split-ward-constituency-overlap     | households | split     | Earley and Woodley (E14001210)               | all ages, 2022          | 104,826.9 | 107,434   | 2.43%   |
+| split-ward-constituency-overlap     | households | split     | Reading Central (E14001438)                  | all ages, 2022          | 119,591.8 | 116,859   | 2.34%   |
+| split-ward-constituency-overlap     | households | split     | Brighton Kemptown and Peacehaven (E14001129) | all ages, 2022          | 97,221.7  | 96,034    | 1.24%   |
+| split-ward-constituency-overlap     | dwellings  | split     | Rochester and Strood (E14001447)             | all ages, 2022          | 107,688.5 | 104,811   | 2.75%   |
+| split-ward-constituency-overlap     | dwellings  | split     | Chatham and Aylesford (E14001157)            | all ages, 2022          | 104,012.8 | 106,459   | 2.30%   |
+| split-ward-constituency-overlap     | dwellings  | split     | Earley and Woodley (E14001210)               | all ages, 2022          | 104,976.4 | 107,434   | 2.29%   |
+| split-ward-constituency-overlap     | postcodes  | split     | Rochester and Strood (E14001447)             | all ages, 2022          | 111,254.5 | 104,811   | 6.15%   |
+| split-ward-constituency-overlap     | postcodes  | split     | Chatham and Aylesford (E14001157)            | all ages, 2022          | 101,286.5 | 106,459   | 4.86%   |
+| split-ward-constituency-overlap     | postcodes  | split     | Bracknell (E14001117)                        | all ages, 2022          | 99,725.7  | 102,980   | 3.16%   |
+| split-ward-constituency-best-fit    | population | regrouped | Chesham and Amersham (E14001162)             | all ages, 2022          | 86,096.0  | 99,904    | 13.82%  |
+| split-ward-constituency-best-fit    | population | regrouped | Wetherby and Easingwold (E14001582)          | all ages, 2022          | 80,506.0  | 92,325    | 12.80%  |
+| split-ward-constituency-best-fit    | population | regrouped | Wellingborough and Rushden (E14001571)       | all ages, 2022          | 100,434.0 | 113,555   | 11.55%  |
+| split-constituency-la               | population | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 2,043.2   | 2,271     | 10.03%  |
+| split-constituency-la               | population | split     | Halton (E06000006)                           | all ages, 2021          | 124,169.2 | 128,570   | 3.42%   |
+| split-constituency-la               | population | split     | Hertsmere (E07000098)                        | all ages, 2021          | 106,005.4 | 108,129   | 1.96%   |
+| split-constituency-la               | households | split     | City of London (E09000001)                   | all ages, 2021          | 10,074.3  | 8,689     | 15.94%  |
+| split-constituency-la               | households | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 2,075.6   | 2,271     | 8.61%   |
+| split-constituency-la               | households | split     | Vale of White Horse (E07000180)              | all ages, 2021          | 148,317.9 | 139,400   | 6.40%   |
+| split-constituency-la               | dwellings  | split     | City of London (E09000001)                   | all ages, 2021          | 10,620.9  | 8,689     | 22.23%  |
+| split-constituency-la               | dwellings  | split     | South Hams (E07000044)                       | all ages, 2021          | 94,536.0  | 89,161    | 6.03%   |
+| split-constituency-la               | dwellings  | split     | Oadby and Wigston (E07000135)                | all ages, 2021          | 54,745.5  | 57,788    | 5.26%   |
+| split-constituency-la               | postcodes  | split     | City of London (E09000001)                   | all ages, 2021          | 13,483.1  | 8,689     | 55.17%  |
+| split-constituency-la               | postcodes  | split     | South Hams (E07000044)                       | all ages, 2021          | 110,172.9 | 89,161    | 23.57%  |
+| split-constituency-la               | postcodes  | split     | Isles of Scilly (E06000053)                  | all ages, 2021          | 1,823.8   | 2,271     | 19.69%  |
+| split-constituency-la-2022          | population | regrouped | Coventry (E08000026)                         | all ages, 2022          | 355,600.0 | 351,434   | 1.19%   |
+| split-constituency-la-2022          | population | regrouped | Portsmouth (E06000044)                       | all ages, 2022          | 208,420.0 | 209,599   | 0.56%   |
+| split-constituency-la-2022          | population | regrouped | Wandsworth (E09000032)                       | all ages, 2022          | 329,035.0 | 330,447   | 0.43%   |
+| split-constituency-la-2022          | population | split     | City of London (E09000001)                   | all ages, 2022          | 9,200.4   | 11,615    | 20.79%  |
+| split-constituency-la-2022          | population | split     | Isles of Scilly (E06000053)                  | all ages, 2022          | 2,047.6   | 2,340     | 12.50%  |
+| split-constituency-la-2022          | population | split     | Halton (E06000006)                           | all ages, 2022          | 124,605.3 | 129,449   | 3.74%   |
+| chain-ward-constituency-la          | population | regrouped | Coventry (E08000026)                         | age=24/sex=male, 2022   | 3,233.0   | 2,939     | 10.00%  |
+| chain-ward-constituency-la          | population | regrouped | Coventry (E08000026)                         | age=23/sex=male, 2022   | 3,462.0   | 3,172     | 9.14%   |
+| chain-ward-constituency-la          | population | regrouped | Coventry (E08000026)                         | age=25/sex=male, 2022   | 3,085.0   | 2,827     | 9.13%   |
+| chain-ward-constituency-la          | population | split     | Vale of Glamorgan (W06000014)                | age=20/sex=female, 2022 | 1,276.7   | 415       | 207.64% |
+| chain-ward-constituency-la          | population | split     | Vale of White Horse (E07000180)              | age=20/sex=female, 2022 | 1,286.9   | 423       | 204.23% |
+| chain-ward-constituency-la          | population | split     | Vale of White Horse (E07000180)              | age=19/sex=female, 2022 | 1,361.1   | 463       | 193.98% |
+| chain-ward-constituency-2019-2024   | population | split     | Brent East (E14001122)                       | all ages, 2022          | 136,906.1 | 133,708   | 2.39%   |
+| chain-ward-constituency-2019-2024   | population | split     | Worsley and Eccles (E14001598)               | all ages, 2022          | 110,171.7 | 107,900   | 2.11%   |
+| chain-ward-constituency-2019-2024   | population | split     | Brent West (E14001123)                       | all ages, 2022          | 134,012.4 | 136,768   | 2.01%   |
+| split-ward-constituency-age-persons | population | split     | Reading Central (E14001438)                  | age=19/sex=all, 2022    | 2,221.0   | 1,431     | 55.21%  |
+| split-ward-constituency-age-persons | population | split     | Earley and Woodley (E14001210)               | age=19/sex=all, 2022    | 1,434.3   | 2,217     | 35.31%  |
+| split-ward-constituency-age-persons | population | split     | Brighton Kemptown and Peacehaven (E14001129) | age=19/sex=all, 2022    | 2,386.1   | 1,764     | 35.26%  |
+| split-ward-constituency-age-by-sex  | population | split     | Reading Central (E14001438)                  | age=19/sex=male, 2022   | 1,106.0   | 698       | 58.45%  |
+| split-ward-constituency-age-by-sex  | population | split     | Reading Central (E14001438)                  | age=19/sex=female, 2022 | 1,115.0   | 733       | 52.11%  |
+| split-ward-constituency-age-by-sex  | population | split     | Brighton Kemptown and Peacehaven (E14001129) | age=19/sex=male, 2022   | 1,031.4   | 742       | 39.01%  |
 
 ## What the atlas converts
 
 Every published series of a measure whose rule is not `refuse` is offered each
 of four standard releases it is not already on:
 
-| Standard release                | Converted series | Derived values |
-| ------------------------------- | ---------------- | -------------- |
-| `localAuthority:2026-05-uk-bgc` | 782              | 748,834        |
-| `ward:2026-05-uk-bgc`           | 132              | 656,914        |
-| `constituency:2024-07-uk-bgc`   | 178              | 30,781         |
-| `lsoa:2021-12-ew-bgc-v5`        | 1                | 1,859          |
+| Standard release                | Converted series | Values  |
+| ------------------------------- | ---------------- | ------- |
+| `localAuthority:2026-05-uk-bgc` | 692              | 723,722 |
+| `ward:2026-05-uk-bgc`           | 132              | 656,914 |
+| `constituency:2024-07-uk-bgc`   | 198              | 59,922  |
+| `lsoa:2021-12-ew-bgc-v5`        | 1                | 1,859   |
 
-That is 1,093 converted series and 1,438,388 derived values, beside the 1,643
+That is 1,023 converted series and 1,442,417 values, 1,414,818 derived and
+27,599 estimated, beside the 1,643
 published series. The full table of what was converted from each source is in
 `data/build/converted-series/converted-series.md`, written by the
 `converted-series` stage.
@@ -365,7 +401,9 @@ keeps the one with the fewest hops that can split a value, then the fewest
 hops, then the first by key, so the choice does not move between builds. The
 planner only writes routes that regroup whole areas, so no generated series
 holds an estimated value. An estimated split is converted only where
-`convertedPlan.ts` pins it, and no pinned entry asks for one now. A pinned entry
+`convertedPlan.ts` pins it with `estimates: true`, and two entries do: the
+constituency population total split onto authorities, and the ward population by
+single year of age, for persons, split onto constituencies. A pinned entry
 replaces the generated one for the same source and target and may carry a note
 or a filter on the breakdowns kept.
 
@@ -385,7 +423,7 @@ does, the one that leaves the fewest sources without a weight. Land area is the
 subject of a few measures but is never a conversion basis, because a measure is
 not spread by area, so those fall to population. A whole-area regrouping is the
 same on every basis, so for an exact series the basis is a record of what a
-split would have used. Of the 1,093 series, 1,014 name population, 66 households
+split would have used. Of the 1,023 series, 968 name population, 42 households
 and 13 dwellings.
 
 ### Quality score
@@ -500,9 +538,10 @@ for one key.
 
 Beyond whole measures, a conversion is refused value by value when:
 
-- the value would be split and the measure is not a total population on the
-  residents basis (`unmeasured-split`);
-- the series is a breakdown, such as an age or sex group, and would be split;
+- the value would be split and the measure is neither a total population nor
+  population by single year of age, on the population basis (`unmeasured-split`);
+- the series is a breakdown other than population by single year of age, such
+  as a sex or an age and sex group, and would be split;
 - a rebuilt ratio would need a split numerator or denominator;
 - any source area feeding the target has no observed value;
 - the route would need a best-fit edge that straddles.
@@ -532,25 +571,40 @@ Beyond whole measures, a conversion is refused value by value when:
   itself rounded.
 - **963 wards are not carried onto the 2026 wards**, because their boundary
   changed and a ward series by age cannot be split.
-- **One fit per method.** Each error factor comes from one case, and is the
-  largest error seen in it, not a percentile. One extreme value sets the width
-  for every value. The fit and the first check use the same values. Only the
-  2019 chain and the 2022 authority case are held out.
+- **One fit per method and measure class.** Each error factor comes from one
+  case, and is the largest error seen in it, not a percentile. One extreme
+  value sets the width for every value. The age factor is 6.90 because of
+  students at age 19, so the 12.08% median half width is mostly spent on ages
+  that did not need it, and the widest bound is 157.47% of its value (88
+  values have a lower bound of 0). The fit and the first check use the same
+  values. Only the 2019 chain, the 2022 authority case and the male and female
+  age series are held out.
+- **The age hold-out is the same places and the same year.** The male and
+  female series are different values but share the constituencies and the 2022
+  date of the persons fit, so they test the bounds less than the 2022 authority
+  case does. Ward population is held for 2022 only, so no year is held out.
+  Only persons are converted, and a male or female series is not.
 - **The bounds are wide.** On the held-out 2019 chain the median half width is
-  23.69% against a median error of 0.165%. One converted series carries them
-  in the atlas, the constituency population split onto authorities (572
-  values), so the bounds are otherwise exercised by the backtest alone.
+  23.69% against a median error of 0.165%, and by single year of age 12.08%
+  against 0.293%. 92 converted series carry them in the atlas: the 91 ages of
+  persons on constituencies (27,027 values), and the constituency population
+  split onto authorities (572 values).
 - **The bounds are not a confidence interval.** They are a largest seen error,
   scaled. One held-out value in 286 fell outside them.
 - **The weights are from one moment.** Residents and households are from the
   2021 and 2022 censuses and postcodes from August 2026. The held-out 2022 case
   is one year away. Nothing measures a split of a figure far from 2021.
-- **Only a total population has been backtested on a split.** No other
-  additive measure (jobs, emissions, energy use, pupils) has a published truth
-  on two overlapping sets of areas here, so none is ever split.
+- **Only population has been backtested on a split.** The total, and single
+  years of age for persons on wards to constituencies. No other additive
+  measure (jobs, emissions, energy use, pupils) has a published truth on two
+  overlapping sets of areas here, so none is ever split. They do not need one:
+  the plan converts them by exact regrouping of authorities. Splits still
+  withheld for want of a measured factor are 61,800 values, among them the
+  1,638 ward to authority 2026 values of a route that mixes two methods and the
+  Welsh index of multiple deprivation.
 - **Units are carried as published.** Some sources are in thousands
   (`ghg-population`, the meter counts). A sum keeps the unit.
 - **Fuel poverty is itself modelled** by its publisher, and covers England
   only. The converted series is an exact regrouping of a modelled figure.
 - **Size.** The converted series add about 1.4 million observations. The built
-  atlas is 714 MB.
+  atlas is 978 MB.
