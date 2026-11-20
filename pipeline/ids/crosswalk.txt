@@ -208,3 +208,6 @@ ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc-postcode-overlap
 ward-2026-05-uk-bgc-to-constituency-2022-12-uk-bgc-postcode-overlap
 ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc-postcode-overlap
 local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-postcode-overlap
+local-authority-2009-12-gb-bgc-to-2011-12-gb-bgc-postcode-overlap
+scottish-parliamentary-constituency-2022-12-sc-bgc-to-2026-05-sc-bgc-postcode-overlap
+senedd-constituency-2022-12-w-bgc-to-2026-05-w-bgc-postcode-overlap

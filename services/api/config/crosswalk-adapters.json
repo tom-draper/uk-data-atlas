@@ -1695,6 +1695,69 @@
 			}
 		},
 		{
+			"id": "local-authority-2009-12-gb-bgc-to-2011-12-gb-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.01
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2009-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2011-12-gb-bgc"
+			}
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2022-12-sc-bgc-to-2026-05-sc-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.01
+			},
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			}
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-2026-05-w-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.01
+			},
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2026-05-w-bgc"
+			}
+		},
+		{
 			"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-extent-continuity",
 			"method": "extent-continuity",
 			"quality": "derived",
