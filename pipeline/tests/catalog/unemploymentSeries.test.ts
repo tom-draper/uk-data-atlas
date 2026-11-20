@@ -77,7 +77,10 @@ test("unemployment serves each code vintage only its own authorities", () => {
 			)
 			?.periods[0]?.records.map((record) => record.areaCode)
 			.sort();
-	const shared = ["E06000001", ...Object.values(APRIL_2023_LAD_MERGERS).flat()];
+	const shared = [
+		"E06000001",
+		...Object.values(APRIL_2023_LAD_MERGERS).flat(),
+	];
 	expect(codes(2021)).toEqual([...shared, ...replacements].sort());
 	expect(codes(2019)).toEqual([...shared, ...replaced].sort());
 });
