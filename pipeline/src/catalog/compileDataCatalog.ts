@@ -52,7 +52,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	ethnicity: Input;
 	roadCollisions: Input;
 	crime: Input;
-	landArea: Input;
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
@@ -86,7 +85,6 @@ export const compileDataCatalog = ({
 	ethnicity: ethnicityPath,
 	roadCollisions: roadCollisionsPath,
 	crime: crimePath,
-	landArea: landAreaPath,
 	rows,
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
@@ -205,7 +203,7 @@ export const compileDataCatalog = ({
 
 	const density = compilePopulationDensity(
 		catalogManifest,
-		landAreaPath,
+		rows,
 		population.localAuthorityObservations.periods,
 	);
 	const housePrice = compileHousePrice(catalogManifest, rows);

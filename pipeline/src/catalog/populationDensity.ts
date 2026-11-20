@@ -1,10 +1,9 @@
-import { type DatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type {
 	Measure,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -19,52 +18,39 @@ import { measureSeriesKey } from "@uk-data-atlas/measures";
  */
 export const compilePopulationDensity = (
 	{ manifestPath, datasets }: CatalogManifest,
-	landAreaPath: DatasetInput,
+	rows: CatalogueRows,
 	localAuthorityPeriods: MeasureObservationArtifact["periods"],
 ): CompiledMeasure => {
 	const seriesKey = measureSeriesKey({ measure: "population-density" });
 	const landArea = datasets.find((dataset) => dataset.id === "land-area");
 	if (!landArea) throw new Error(`${manifestPath} has no land-area dataset`);
-	const landAreaByCode = new Map(
-		localAuthorityFieldPeriods(
-			landAreaPath,
-			"landSquareKm",
-			2024,
-		)[0]?.records.map((record) => [record.areaCode, record.value]) ?? [],
+	const densityPeriods = rows.periods(
+		{
+			series: { measure: "population-density" },
+			datasetId: "population-uk",
+			geography: "localAuthority",
+			boundaryYear: 2023,
+		},
+		localAuthorityPeriods.map(({ period }) => period),
 	);
-	if (landAreaByCode.size === 0)
-		throw new Error(`${landAreaPath} has no land area records`);
-	const densityPeriods = localAuthorityPeriods.map((period) => ({
-		period: period.period,
-		records: period.records.map((record) => {
-			const squareKm = landAreaByCode.get(record.areaCode);
-			if (squareKm === undefined) {
-				throw new Error(
-					`${landAreaPath}: no land area for ${record.areaCode}, which the population partition publishes`,
-				);
-			}
-			if (squareKm <= 0) {
-				throw new Error(
-					`${landAreaPath}: ${record.areaCode} has no land area, so its density is undefined`,
-				);
-			}
-			return {
-				areaCode: record.areaCode,
-				value: record.value / squareKm,
-				status: "derived" as const,
-			};
-		}),
-	}));
-	const unusedLandArea = [...landAreaByCode.keys()].filter(
-		(code) =>
-			!localAuthorityPeriods[0]?.records.some(
-				(record) => record.areaCode === code,
-			),
-	);
-	if (unusedLandArea.length > 0) {
-		throw new Error(
-			`${landAreaPath}: ${unusedLandArea.length} areas have a land area but no population, so the two partitions are not the same code set`,
+	// The quotient leaves out an area its land area does not cover, so every
+	// area and period the population publishes must come back.
+	for (const { period, records } of localAuthorityPeriods) {
+		const density = densityPeriods.find((entry) => entry.period === period);
+		const missing = records.find(
+			(record) =>
+				!density?.records.some(
+					(entry) => entry.areaCode === record.areaCode,
+				),
 		);
+		if (missing)
+			throw new Error(
+				`land-area: no density for ${missing.areaCode} in ${period}, which the population partition publishes`,
+			);
+		if (density && density.records.length !== records.length)
+			throw new Error(
+				`land-area: ${density.records.length - records.length} areas have a density but no population in ${period}, so the two partitions are not the same code set`,
+			);
 	}
 	const densityContent = JSON.stringify({
 		schemaVersion: 1,
