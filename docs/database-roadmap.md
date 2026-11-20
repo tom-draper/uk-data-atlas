@@ -35,13 +35,13 @@ Measured on the local build of 2026-11-19 unless stated.
 
 ## Status at a glance
 
-| Status      | Tasks                                                            |
-| ----------- | ---------------------------------------------------------------- |
-| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 57, 62       |
-| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                             |
-| Partly done | 7, 8, 9, 17, 35, 39, 58                                          |
-| Kept as is  | 12 (measured, keep the wide table)                               |
-| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 59–61 |
+| Status      | Tasks                                                             |
+| ----------- | ----------------------------------------------------------------- |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 57, 62        |
+| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                              |
+| Partly done | 7, 8, 9, 17, 35, 39, 58                                           |
+| Kept as is  | 12 (measured, keep the wide table), 13 (measured, keep the edges) |
+| Not started | 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 59–61      |
 
 ## Core data quality
 
@@ -65,7 +65,7 @@ Measured on the local build of 2026-11-19 unless stated.
 | 10  | P1       | Mostly done | Docs inside the database (`schema_table`, `schema_column`, `schema_guide`, `schema_example`, `search`). Left: one schema definition shared by writer and reader (`SOURCE_FIELDS` is still duplicated) and generating the README tables.                                                                                                                                                                                                                                                                                           |
 | 11  | Done     | Done        | Ordinary published tables use `STRICT`. FTS tables are managed by SQLite and cannot be STRICT.                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | 12  | P2       | Kept as is  | Postcode table design. Measured: keep the wide table (see below).                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| 13  | P2       |             | Store unchanged areas once, as a span rather than an edge per release. 1M area versions for 307k areas. Roughly 100 MB.                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 13  | P2       | Kept as is  | Store unchanged areas once, as a span rather than an edge per release. Measured: keep the current shape (see below).                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 Task 12 measured (2026-11-15), on the 363,363 postcodes starting with S
 (13.6% of 2,665,797), scaled up and accurate to about 10%. The file then was
@@ -88,6 +88,59 @@ several-area matches the API returns. A new release adds two columns to a
 generated table, and the layout marker (`postcodeAreaLayout`) rejects stale
 files. If drift becomes a problem, the third shape is the cheapest way to
 remove it.
+
+Task 13 measured (2026-11-20) on a 275 MB copy of the 942 MB build holding only
+the tables involved (`area`, `area_version`, `area_hierarchy`, `crosswalk`,
+`crosswalk_edge`, `crosswalk_edge_check`, `crosswalk_weight`), so each saving is
+an absolute figure from `dbstat` after `VACUUM`. The premise holds: 1,013,570
+`area_version` rows for 306,762 areas, and 636,189 of the 674,461 identity edges
+are same-code extent-continuity edges that join two versions of one area. They
+chain into 284,349 spans, an average of 2.2 release pairs each.
+
+| Shape                                                                 | File size | Saved   | Common reads against today                                  |
+| --------------------------------------------------------------------- | --------- | ------- | ----------------------------------------------------------- |
+| Today                                                                 | 274.6 MB  |         | Crosswalk of 175k edges 326 ms, edge lookup by code 0.02 ms |
+| (a) Edges as `area_span`, expansion view, `crosswalk_edge_check` kept | 251.1 MB  | 23.5 MB | 438 ms (1.3×), edge lookup by code 1,869 ms (90,000×)       |
+| (a) as above, and the 636k check rows dropped                         | 220.5 MB  | 54.1 MB | Not equivalent, the API returns the checks                  |
+| (b) Shared `area_attr` row for name, area_m2, population, aliases     | 270.0 MB  | 4.6 MB  | Same (181k versions with names 144 and 150 ms)              |
+| (c) Hierarchy rows as spans                                           | not built | 3.4 MB  | Not built, see below                                        |
+
+- **(a) Identity edges as spans.** The spans expand to exactly the 636,189
+  edges they replace (same rows, no extras, checked against the old build with a
+  throwaway script). The saving is the edge rows (36.5 to 26.8 MB) and their two
+  indexes (29.1 to 20.6 MB each), less 3.3 MB for the span table: 23.5 MB, under
+  the 30 MB bar. Every same-code edge also has a `crosswalk_edge_check` row
+  (`widest_difference_m`, `check_source_share`, `check_target_share`), and the
+  crosswalk API returns those, so the check rows stay per release pair and a span
+  cannot replace them. Dropping them would save 54.1 MB but change the API
+  responses. The expansion view is slow because it joins `crosswalk` and
+  `area_version` twice per span and cannot use `crosswalk_edge_from`: the
+  crosswalk read by id goes from 25 to 151 ms, one area's history from 173 to
+  430 ms, and an edge lookup by code from 0.02 ms to 1.9 s. The API read of a
+  whole crosswalk with its checks goes from 326 to 438 ms (1.3×), over
+  the 20% limit, and every reader of `crosswalk_edge` (`areaHierarchy`,
+  `areaChangeEvents`, `buildCrosswalkWeights`, `crosswalkSteps`, the relationships
+  package) would read the view.
+- **(b) Repeated version attributes.** Only 361,883 of the 1,013,570 versions
+  carry distinct attributes, but the attributes are small: `area_version`
+  falls from 33.3 to 21.5 MB, and the shared `area_attr` table costs 7.1 MB. Names
+  and areas are a few bytes per row, so the 64% repetition saves 4.6 MB. Reads
+  that join the shared row cost the same (a release of 181,408 versions: 144 and
+  150 ms).
+- **(c) Hierarchy rows.** `area_hierarchy` plus its parent index is 44.3 MB and
+  is derived from `crosswalk_edge`. The rows differ per release pair because the
+  child and the parent move on separate release calendars: of 1,245,704 rows,
+  only 95,992 have a next row where both child and parent advance one release,
+  which would save about 3.4 MB. Even counting rows where only the child
+  advances (251,828 more) the saving is about 14 MB, and the best case of one
+  row per distinct area pair (509,348) is 26 MB.
+
+None clears both bars (about 30 MB saved, no common read more than 20% slower),
+so the current shape stays: one `area_version` row per release, one edge per
+release pair, and the hierarchy derived from the edges. The check rows are
+measurements, not repetition, so the 100 MB in the task row was an overestimate
+of what repetition costs: the repeated parts total 23.5 MB for edges, 4.6 MB for
+attributes and a few MB for hierarchy rows.
 
 ## Size and query performance
 
@@ -201,7 +254,7 @@ as published data.
 6. Size: task 55.
 7. Remaining precomputations: tasks 26, 27, 35, 43 and 44.
 8. New derived products: 36 with 37, 45, 38, then the rest of 39–51.
-9. Refactoring alongside: tasks 8–10 and 13.
+9. Refactoring alongside: tasks 8–10.
 
 ## Progress notes
 
