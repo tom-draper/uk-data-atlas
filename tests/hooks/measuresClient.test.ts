@@ -8,6 +8,11 @@ import {
 	MeasureQueryError,
 	valuesByCode,
 } from "@/lib/measures/client";
+import {
+	clearMeasureValues,
+	loadMeasureValues,
+	restrictToAreas,
+} from "@/lib/measures/cache";
 import { createMeasureValuesHandler } from "@/lib/measures/handler";
 import { createMeasureValuesService } from "@/lib/measures/server";
 import { createMeasureFixture } from "../helpers/measureFixture";
@@ -125,5 +130,46 @@ describe("measure client", () => {
 			code: "request_failed",
 			message: "HTTP 502",
 		});
+	});
+});
+
+describe("measure cache", () => {
+	const realFetch = globalThis.fetch;
+	beforeEach(() => {
+		clearMeasureValues();
+		globalThis.fetch = fetchFromRoute as typeof fetch;
+	});
+	afterAll(() => {
+		globalThis.fetch = realFetch;
+	});
+
+	it("cuts a whole answer down to what the route sends for those areas", async () => {
+		const request = { measure: "population", periods: ["2022", "2023"] };
+		const areas = ["E06000004", "E99", "E06000001", "E06000004"];
+		const whole = await loadMeasureValues(request);
+		const sent = await fetchMeasureValues(
+			{ ...request, areas },
+			{ fetch: fetchFromRoute },
+		);
+		expect(restrictToAreas(whole, areas)).toEqual(sent);
+	});
+
+	it("reads an answer once and keeps a refusal", async () => {
+		const request = { measure: "population" };
+		const [first, second] = await Promise.all([
+			loadMeasureValues(request),
+			loadMeasureValues(request),
+		]);
+		expect(second).toBe(first);
+		await expect(loadMeasureValues({ measure: "no-such" })).rejects.toThrow(
+			MeasureQueryError,
+		);
+		await expect(
+			loadMeasureValues({ measure: "no-such" }),
+		).rejects.toThrow();
+		expect(calls).toEqual([
+			"/data/measures/population",
+			"/data/measures/no-such",
+		]);
 	});
 });
