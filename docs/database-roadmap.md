@@ -292,6 +292,11 @@ as published data.
   carrying method (5 of its 7 regions are the same area in 2024-01). One,
   `dataZone` 2021-ni, is a Northern Ireland release in a Scottish geography
   and has no Scottish successor. Ids are in `pipeline/ids/crosswalk-chain.txt`.
+  No API route serves the chains: the documented join is `v_crosswalk_chain_edge`
+  with `v_crosswalk_chain_gap` (worked examples in the schema docs and in
+  `docs/sqlite-schema-design.md`), and an API reader would use the stored tables
+  `crosswalk_chain_edge` and `crosswalk_chain_gap`. The public shape waits for the
+  v1 surface review (task 54) and the MCP server (task 60).
 
 ## Licence table coverage
 
