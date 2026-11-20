@@ -59,7 +59,9 @@ export const backtestRun = (
 				(entry) =>
 					entry.bases.includes(errorClass.basis) &&
 					(entry.id === errorClass.caseId ||
-						entry.checks?.method === errorClass.method),
+						(entry.checks?.method === errorClass.method &&
+							entry.checks.measureClass ===
+								errorClass.measureClass)),
 			)
 			.map((entry) => checkBounds(entry, errorClass, rows)),
 	);

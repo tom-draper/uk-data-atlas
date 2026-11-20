@@ -59,7 +59,7 @@ export type BacktestCase = {
 	 */
 	fits?: { method: string; measureClass: string };
 	/** Set where the case checks the bounds fitted for a method on another case. */
-	checks?: { method: string };
+	checks?: { method: string; measureClass: string };
 	note?: string;
 };
 
@@ -114,8 +114,11 @@ export type CaseSlugs = {
 	con2019To2024: string;
 };
 
-/** The one class of measure a split has been measured for. */
+/** The classes of measure a split has been measured for. */
 export const TOTAL_POPULATION = "total population";
+
+/** Population in single years of age, by sex. Each of its series is small. */
+export const AGE_SEX_POPULATION = "population by age and sex";
 
 const ALL_BASES: ConversionBasis[] = [
 	"population",
@@ -355,6 +358,45 @@ export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
 			},
 		},
 		{
+			id: "split-ward-constituency-age-persons",
+			title: "Ward population by single year of age to constituency 2024, postcode overlap, persons",
+			kind: "split",
+			source: { ...population, release: WARD_2023 },
+			truth: {
+				dataset: "population-constituency",
+				measure: "population",
+				release: CON_2024,
+			},
+			route: [hop(x.ward2023ToCon2024Overlap)],
+			bases: ["population"],
+			members: /\/sex=all$/,
+			family: "population",
+			fits: {
+				method: "postcode-overlap",
+				measureClass: AGE_SEX_POPULATION,
+			},
+			note: "Every single year of age, each split on the postcodes the ward and the constituency share. The wards hold mid-2022 alone, so the factor is fitted on the persons series and checked on the series by sex.",
+		},
+		{
+			id: "split-ward-constituency-age-by-sex",
+			title: "Ward population by single year of age to constituency 2024, postcode overlap, males and females, series the factor was not fitted on",
+			kind: "split",
+			source: { ...population, release: WARD_2023 },
+			truth: {
+				dataset: "population-constituency",
+				measure: "population",
+				release: CON_2024,
+			},
+			route: [hop(x.ward2023ToCon2024Overlap)],
+			bases: ["population"],
+			members: /\/sex=(male|female)$/,
+			family: "population",
+			checks: {
+				method: "postcode-overlap",
+				measureClass: AGE_SEX_POPULATION,
+			},
+		},
+		{
 			id: "split-ward-constituency-best-fit",
 			title: "Ward population to constituency 2024, best fit",
 			kind: "split",
@@ -409,7 +451,10 @@ export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
 			total: { label: "all ages", source: /^$/, truth: allAges },
 			periods: ["2022"],
 			family: "population",
-			checks: { method: "population-overlap" },
+			checks: {
+				method: "population-overlap",
+				measureClass: TOTAL_POPULATION,
+			},
 			note: "The local authority truth is a later vintage of the mid-2022 estimates, so no value is exact, split or not.",
 		},
 		{
@@ -444,7 +489,10 @@ export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
 			bases: ["population"],
 			total: { label: "all ages", source: allAges, truth: /^$/ },
 			family: "population",
-			checks: { method: "postcode-overlap" },
+			checks: {
+				method: "postcode-overlap",
+				measureClass: TOTAL_POPULATION,
+			},
 			note: "Two estimated hops: the postcode overlap, then the publisher's 2010 to 2024 lookup, whose splits have no single-hop truth to be measured against.",
 		},
 	];
