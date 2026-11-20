@@ -11,7 +11,7 @@ import {
 	hashStatisticsSelection,
 } from "../../src/statistics/statisticsExport";
 import { readParquet } from "../fixtures/parquetFixtures";
-import { bindStatisticsField } from "../../src/statistics/bindStatisticsField";
+import { bindCatalogueSeries } from "../../src/statistics/bindCatalogueSeries";
 import { bindCensusStatistics } from "../../src/statistics/bindCensusStatistics";
 import { bindReviewedStatistics } from "../../src/statistics/bindReviewedStatistics";
 import {
@@ -19,12 +19,10 @@ import {
 	observationArtifactName,
 } from "@uk-data-atlas/measures";
 import { type StatisticsReadPath } from "@uk-data-atlas/measures";
-import { bindCompiledFields } from "../../src/statistics/bindCompiledFields";
 import { compileMeasureDownloads } from "../../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../../src/statistics/measureStatisticsSelections";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
-import type { DeclaredDataset } from "@uk-data-atlas/measures";
 
 test("binds a census measure only when every source partition is complete", () => {
 	const db = new DatabaseSync(":memory:");
@@ -502,51 +500,10 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 					"7f04a3fba5d12c0f87f083ad56ec21c97ee75877ef5e83d9a8e4eb2888ea7e2b",
 			},
 		);
-		const field = {
-			dataset: "census",
-			field: "rented",
-			records: "data",
-			sourcePeriod: "2021",
-			publishedPeriod: "2021",
-			geography: "ward",
-			boundaryYear: 2021,
-			recordCount: 1,
-			recordHash:
-				"7f04a3fba5d12c0f87f083ad56ec21c97ee75877ef5e83d9a8e4eb2888ea7e2b",
+		const rentedIdentity = {
+			measure: "households",
+			dimensions: { tenure: "rented" },
 		};
-		const censusConfig: DeclaredDataset = {
-			type: "census",
-			topic: "population-estimates",
-			measures: [],
-			fields: [
-				{
-					path: "rented",
-					measure: "households",
-					members: { tenure: "rented" },
-				},
-			],
-			dimensions: [
-				{
-					slug: "tenure",
-					label: "Tenure",
-					members: [{ key: "rented", code: "rented" }],
-				},
-			],
-			payload: { parts: () => [{ key: "2021", header: {} }] },
-		};
-		const lookup = (slug: string) =>
-			slug === "census" ? censusConfig : undefined;
-		assert.deepEqual(bindStatisticsField(db, field, "households", lookup), [
-			{
-				dataset: "census",
-				measure: "households",
-				members: { tenure: "rented" },
-				exact: true as const,
-				geography: "ward",
-				release: "2021",
-				periods: ["2021"],
-			},
-		]);
 		const catalogueMeasure = {
 			id: "rented-homes",
 			unit: "households",
@@ -558,112 +515,61 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				},
 			],
 		} as unknown as Measure;
-		const bindings = [{ measureId: "rented-homes", field }];
-		assert.equal(
-			measureStatisticsSelections(
-				db,
-				catalogueMeasure,
-				bindings,
-				undefined,
-				lookup,
-			)?.length,
-			1,
-		);
-		catalogueMeasure.sources[0]!.periods.push("2022");
-		assert.equal(
-			measureStatisticsSelections(
-				db,
-				catalogueMeasure,
-				bindings,
-				undefined,
-				lookup,
-			),
-			undefined,
-		);
-		assert.equal(
-			bindStatisticsField(
-				db,
-				{ ...field, recordCount: 2 },
-				"households",
-				lookup,
-			),
-			undefined,
-		);
-		assert.equal(
-			bindStatisticsField(db, field, "people", lookup),
-			undefined,
-		);
-		db.exec("UPDATE measure SET unit = 'percent of premises'");
-		assert.ok(bindStatisticsField(db, field, "% of premises", lookup));
-		db.exec("UPDATE measure SET unit = 'households'");
 		assert.deepEqual(
-			bindStatisticsField(
-				db,
-				{ ...field, records: "partnerships" },
-				"households",
-				() => ({
-					type: "census",
-					topic: "population-estimates",
-					measures: [],
-					fields: [{ path: "{tenure}", measure: "households" }],
-					dimensions: [
-						{
-							slug: "tenure",
-							label: "Tenure",
-							members: [{ key: "rented", code: "rented" }],
-						},
-					],
-				}),
-			),
+			bindCatalogueSeries(db, catalogueMeasure, rentedIdentity),
 			[
 				{
 					dataset: "census",
 					measure: "households",
 					members: { tenure: "rented" },
-					exact: true,
+					exact: true as const,
 					geography: "ward",
 					release: "2021",
 					periods: ["2021"],
 				},
 			],
 		);
+		assert.equal(
+			measureStatisticsSelections(db, catalogueMeasure, undefined, {
+				"rented-homes": rentedIdentity,
+			})?.length,
+			1,
+		);
+		// A series the catalogue names but no row holds is not bound.
+		assert.equal(
+			bindCatalogueSeries(db, catalogueMeasure, {
+				measure: "households",
+				dimensions: { tenure: "social" },
+			}),
+			undefined,
+		);
+		assert.equal(
+			bindCatalogueSeries(db, catalogueMeasure, {
+				measure: "people",
+				dimensions: { tenure: "rented" },
+			}),
+			undefined,
+		);
+		// A source period no release holds leaves the measure unbound.
+		catalogueMeasure.sources[0]!.periods.push("2022");
+		assert.equal(
+			bindCatalogueSeries(db, catalogueMeasure, rentedIdentity),
+			undefined,
+		);
+		catalogueMeasure.sources[0]!.periods.pop();
+		// A series carrying a member the identity omits is another series.
 		db.exec(`INSERT INTO dimension VALUES (2, 'place');
 			INSERT INTO dimension_member VALUES (3, 'residence');
 			INSERT INTO series_member VALUES (1, 2, 3)`);
-		const config = {
-			type: "census",
-			topic: "population-estimates" as const,
-			measures: [],
-			fields: [
-				{
-					path: "{tenure}",
-					measure: "households",
-					members: { place: "residence" },
-				},
-			],
-			dimensions: [
-				{
-					slug: "tenure",
-					label: "Tenure",
-					members: [{ key: "rented", code: "rented" }],
-				},
-				{
-					slug: "place",
-					label: "Place",
-					members: [
-						{ key: "residence", code: "residence" },
-						{ key: "workplace", code: "workplace" },
-					],
-				},
-			],
-		};
+		assert.equal(
+			bindCatalogueSeries(db, catalogueMeasure, rentedIdentity),
+			undefined,
+		);
 		assert.deepEqual(
-			bindStatisticsField(
-				db,
-				{ ...field, records: "partnerships" },
-				"households",
-				() => config,
-			),
+			bindCatalogueSeries(db, catalogueMeasure, {
+				measure: "households",
+				dimensions: { tenure: "rented", place: "residence" },
+			}),
 			[
 				{
 					dataset: "census",
@@ -676,14 +582,11 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				},
 			],
 		);
-		config.fields[0]!.members.place = "workplace";
 		assert.equal(
-			bindStatisticsField(
-				db,
-				{ ...field, records: "partnerships" },
-				"households",
-				() => config,
-			),
+			bindCatalogueSeries(db, catalogueMeasure, {
+				measure: "households",
+				dimensions: { tenure: "rented", place: "workplace" },
+			}),
 			undefined,
 		);
 		assert.equal(
@@ -831,16 +734,30 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			DELETE FROM series_member`);
 		const jobs = {
 			id: "total-jobs",
-			sources: [{ datasetId: "jobs" }],
+			sources: [
+				{
+					datasetId: "jobs",
+					sourceGeography: { type: "ward", boundaryYear: 2021 },
+					periods: ["2021"],
+				},
+			],
 		} as unknown as Measure;
-		const jobsSelection = bindCompiledFields(db, jobs);
+		const jobsSelection = bindCatalogueSeries(db, jobs, {
+			measure: "total-jobs",
+		});
 		assert.ok(jobsSelection);
 		assert.equal(
 			exportStatisticsMeasure(db, "total-jobs", paths, jobsSelection),
 			2052,
 		);
-		jobs.sources.push({ datasetId: "other" } as Measure["sources"][number]);
-		assert.equal(bindCompiledFields(db, jobs), undefined);
+		jobs.sources.push({
+			...jobs.sources[0]!,
+			datasetId: "other",
+		});
+		assert.equal(
+			bindCatalogueSeries(db, jobs, { measure: "total-jobs" }),
+			undefined,
+		);
 	} finally {
 		db.close();
 		rmSync(directory, { recursive: true, force: true });

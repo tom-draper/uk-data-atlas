@@ -274,15 +274,9 @@ export const apiStages = [
 		["datasets", "statistics-vocabulary"],
 		["pipeline/src/stages/build-data-catalog.ts"],
 		{
-			writes: [
-				`${artifacts}/data-catalog.json`,
-				"data/build/measure-statistics-fields.json",
-			],
+			writes: [`${artifacts}/data-catalog.json`],
 			rawInputs: censusSmallAreaInputs,
-			requiredOutputs: [
-				`${artifacts}/data-catalog.json`,
-				"data/build/measure-statistics-fields.json",
-			],
+			requiredOutputs: [`${artifacts}/data-catalog.json`],
 		},
 	),
 	// Places the postcodes, and the output areas without one, in each release a

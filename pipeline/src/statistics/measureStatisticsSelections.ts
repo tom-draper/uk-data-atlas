@@ -1,12 +1,9 @@
 import type { DatabaseSync } from "node:sqlite";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
 import type { MeasureSeriesIdentity } from "@uk-data-atlas/measures";
-import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { type StatisticsReadPath } from "@uk-data-atlas/measures";
 import { bindCensusStatistics } from "./bindCensusStatistics.ts";
-import { bindStatisticsField } from "./bindStatisticsField.ts";
-import type { DatasetLookup } from "./declaredFieldSeries.ts";
-import { bindCompiledFields } from "./bindCompiledFields.ts";
+import { bindCatalogueSeries } from "./bindCatalogueSeries.ts";
 import { bindReviewedStatistics } from "./bindReviewedStatistics.ts";
 import { electionStatisticsExport } from "./electionStatisticsExport.ts";
 import {
@@ -14,18 +11,26 @@ import {
 	type StatisticsSelection,
 } from "./statisticsExport.ts";
 
-type Field = NonNullable<CompiledMeasure["statisticsField"]>;
-type Binding = { measureId: string; field: Field };
+/**
+ * The series an election measure is anchored to: one every edition holds,
+ * which the election export then expands to the measure's own rows.
+ */
+const ELECTION_ANCHORS: Record<string, MeasureSeriesIdentity> = {
+	"general-election-valid-votes": { measure: "valid-votes" },
+	"local-election-effective-votes": {
+		measure: "party-votes",
+		dimensions: { party: "lab" },
+	},
+};
 
 /** Resolve every catalogue partition, or return nothing rather than a partial measure. */
 export function measureStatisticsSelections(
 	database: DatabaseSync,
 	measure: Measure,
-	bindings: readonly Binding[],
 	readPath?: StatisticsReadPath,
-	lookup?: DatasetLookup,
 	identities?: Readonly<Record<string, MeasureSeriesIdentity>>,
 ): StatisticsSelection[] | undefined {
+	const identity = identities?.[measure.id] ?? { measure: measure.id };
 	if (
 		measure.id === "general-election-winning-party" ||
 		measure.id === "local-election-winning-party"
@@ -108,10 +113,10 @@ export function measureStatisticsSelections(
 		const anchor = measure.id.startsWith("general-")
 			? "general-election-valid-votes"
 			: "local-election-effective-votes";
-		const selection = bindCompiledFields(
+		const selection = bindCatalogueSeries(
 			database,
-			{ ...measure, id: anchor },
-			lookup,
+			measure,
+			ELECTION_ANCHORS[anchor],
 		);
 		if (
 			!selection ||
@@ -142,16 +147,16 @@ export function measureStatisticsSelections(
 		);
 		if (!remainingSources.length)
 			return expandStatisticsSelection(database, census);
-		const remaining = bindCompiledFields(
+		const remaining = bindCatalogueSeries(
 			database,
-			{ ...measure, sources: remainingSources },
-			lookup,
+			{ sources: remainingSources },
+			identity,
 		);
 		return remaining
 			? [...expandStatisticsSelection(database, census), ...remaining]
 			: undefined;
 	}
-	const compiled = bindCompiledFields(database, measure, lookup);
+	const compiled = bindCatalogueSeries(database, measure, identity);
 	if (compiled) return compiled;
 	const reviewed =
 		readPath &&
@@ -162,32 +167,5 @@ export function measureStatisticsSelections(
 			identities?.[measure.id],
 		);
 	if (reviewed) return reviewed;
-	if (!measure.sources.length) return undefined;
-	const result: StatisticsSelection[] = [];
-	for (const source of measure.sources) {
-		for (const period of source.periods) {
-			const matches = bindings.filter(
-				({ measureId, field }) =>
-					measureId === measure.id &&
-					field.dataset === source.datasetId &&
-					field.geography === source.sourceGeography.type &&
-					field.boundaryYear ===
-						source.sourceGeography.boundaryYear &&
-					field.publishedPeriod === period,
-			);
-			if (matches.length !== 1) return undefined;
-			const field = matches[0]!.field;
-			const selection = bindStatisticsField(
-				database,
-				field,
-				measure.unit,
-				lookup,
-			);
-			if (!selection) return undefined;
-			result.push(...selection);
-		}
-	}
-	return result.length
-		? expandStatisticsSelection(database, result)
-		: undefined;
+	return undefined;
 }
