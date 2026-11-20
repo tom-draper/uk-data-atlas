@@ -1,4 +1,4 @@
-import type { DatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type {
 	Measure,
 	MeasureObservationArtifact,
@@ -6,7 +6,6 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldPeriods } from "./localAuthorityFields.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
@@ -47,21 +46,18 @@ const SEGMENTS = [
 	{
 		id: "",
 		label: "",
-		field: "allMetersGwh",
 		member: "all",
 		segment: "every meter",
 	},
 	{
 		id: "-domestic",
 		label: " (domestic)",
-		field: "domesticGwh",
 		member: "domestic",
 		segment: "domestic meters",
 	},
 	{
 		id: "-non-domestic",
 		label: " (non-domestic)",
-		field: "nonDomesticGwh",
 		member: "non-domestic",
 		segment: "non-domestic meters",
 	},
@@ -75,7 +71,7 @@ const SHARED_NOTES = [
 
 export const compileEnergyConsumption = (
 	{ manifestPath, datasets }: CatalogManifest,
-	paths: Record<(typeof FUELS)[number]["dataset"], DatasetInput>,
+	rows: CatalogueRows,
 ): {
 	measures: Measure[];
 	artifacts: MeasureObservationArtifact[];
@@ -91,7 +87,6 @@ export const compileEnergyConsumption = (
 		);
 		if (!dataset)
 			throw new Error(`${manifestPath} has no ${fuel.dataset} dataset`);
-		const path = paths[fuel.dataset];
 		for (const segment of SEGMENTS) {
 			const measureId = `${fuel.fuel}-consumption${segment.id}`;
 			const series = {
@@ -99,11 +94,12 @@ export const compileEnergyConsumption = (
 				dimensions: { "meter-type": segment.member },
 			};
 			const seriesKey = measureSeriesKey(series);
-			const periods = localAuthorityFieldPeriods(
-				path,
-				segment.field,
-				SOURCE_GEOGRAPHY.boundaryYear,
-			);
+			const periods = rows.periods({
+				series,
+				datasetId: fuel.dataset,
+				geography: SOURCE_GEOGRAPHY.type,
+				boundaryYear: SOURCE_GEOGRAPHY.boundaryYear,
+			});
 			// Every authority with no mains supply at all is published as a
 			// zero in all but one year, where the publisher left the cells
 			// blank. A blank is not a measurement, so it is absent here and
