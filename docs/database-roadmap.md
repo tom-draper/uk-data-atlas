@@ -289,7 +289,7 @@ as published data.
   `scottishParliamentaryConstituency` releases before 2026 (2022 to 2026 is
   missing) and the 2022 `seneddConstituency`. One, `nhsEnglandRegion` 2022-07,
   has a crosswalk, but it is `area-overlap`, which is deliberately not a
-  carrying method (5 of its 7 regions keep the same area). One,
+  carrying method (5 of its 7 regions are the same area in 2024-01). One,
   `dataZone` 2021-ni, is a Northern Ireland release in a Scottish geography
   and has no Scottish successor. Ids are in `pipeline/ids/crosswalk-chain.txt`.
 
