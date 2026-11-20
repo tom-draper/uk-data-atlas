@@ -28,6 +28,10 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "series_coverage",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
 		table: "observation",
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
@@ -94,8 +98,8 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
  * dataset stays in (`politics-sharealike`). `where` selects the rows under
  * the split's licence, from the temp tables `markLicensed` fills: the
  * elections polled in the split's date range, their contests
- * and candidacies, and the observations, gaps and area relationships of the
- * split's datasets in those elections' periods. A period is labelled with the
+ * and candidacies, and the observations, coverage rows, gaps and area
+ * relationships of the split's datasets in those elections' periods. A period is labelled with the
  * election date, which is how the period-keyed rows are told apart. The
  * observations of a modelled series whose model is under the split's licence
  * (`licensed_modelled`, the share-alike notional estimates) go too, in every
@@ -117,6 +121,10 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	},
 	{
 		table: "observation",
+		where: "(series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)) OR series_id IN (SELECT id FROM temp.licensed_modelled)",
+	},
+	{
+		table: "series_coverage",
 		where: "(series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)) OR series_id IN (SELECT id FROM temp.licensed_modelled)",
 	},
 	{

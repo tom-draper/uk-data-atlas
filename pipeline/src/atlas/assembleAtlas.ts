@@ -23,6 +23,7 @@ import {
 	writeDefaultObservation,
 	writePostcodeAreas,
 	writeSchemaDocs,
+	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
 import { crosswalkSetHash } from "../crosswalk-weights/crosswalkSetHash.ts";
@@ -253,8 +254,12 @@ export function assembleAtlas(
 						"SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'measure'",
 					)
 					.get()
-			)
+			) {
 				writeDefaultObservation(database);
+				// Reads the ranking and every observation: what the release can
+				// answer, before ANALYZE.
+				writeSeriesCoverage(database);
+			}
 			// After the crosswalks and their weights, which the events read.
 			writeAreaChangeEvents(database);
 			if (placeProducts) {
