@@ -1,4 +1,3 @@
-import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { AtlasDatasetInput } from "./input.ts";
 import { CatalogueRows } from "./rows.ts";
 import { rmSync, writeFileSync } from "node:fs";
@@ -32,14 +31,6 @@ export const datasetCatalogInputs = (
 		carAvailability: precompiled("car-availability.json"),
 		qualification: precompiled("qualification.json"),
 		ethnicity: precompiled("ethnicity.json"),
-		declared: Object.fromEntries(
-			DATASET_DECLARATIONS.filter(
-				(declaration) => declaration.catalogue,
-			).map((declaration) => [
-				declaration.id,
-				precompiled(`${declaration.id}.json`),
-			]),
-		),
 		censusSmallAreaRoot: repositoryRoot,
 	};
 	return inputs;

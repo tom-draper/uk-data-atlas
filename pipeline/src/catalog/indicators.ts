@@ -1,4 +1,3 @@
-import { type DatasetInput } from "./input.ts";
 import type {
 	Measure,
 	MeasureAggregation,
@@ -6,12 +5,9 @@ import type {
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
-import { localAuthorityFieldWithGaps } from "./localAuthorityFields.ts";
-import { onApril2023Authorities } from "./authorityChanges.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
 import { sha256 } from "./values.ts";
 import type { CatalogueRows, RowSource } from "./rows.ts";
-import { createHash } from "node:crypto";
 import {
 	measureSeriesKey,
 	type MeasureSeriesIdentity,
@@ -47,44 +43,35 @@ const readFromRows = (
 };
 
 /**
- * Single-period local-authority indicators, each checked against the code
- * set it claims before it is published.
+ * Single-period indicators read from the statistics rows, each checked
+ * against the code set it claims before it is published.
  *
  * Every value must name an authority of the expected set, and any authority
  * of that set without a value is listed in the coverage note by code rather
- * than left for a caller to discover as a short total. A dataset compiled
- * with the April 2023 authorities beside the districts they replaced is
- * reduced to the authorities first, as the census partitions are.
+ * than left for a caller to discover as a short total.
  */
 export const publishIndicators = (
 	{ manifestPath, datasets }: CatalogManifest,
 	spec: {
 		datasetId: string;
-		/** The compiled file the records are read from, when not read from rows. */
-		path?: DatasetInput;
-		/** The statistics rows the records are read from, in place of `path`. */
-		rows?: CatalogueRows;
+		/** The statistics rows the records are read from. */
+		rows: CatalogueRows;
 		boundaryYear: number;
 		period: string;
-		/** Raw-file period to read when it differs from the published period. */
-		sourcePeriod?: string;
 		/**
 		 * The codes a complete partition holds. Without it the partition is
 		 * not checked here, and the compatibility report is what compares it
 		 * with the boundary releases.
 		 */
 		expectedCodes?: string[];
-		isAuthority?: (code: string) => boolean;
 		geography?: SourceGeography["type"];
 		/** The code vintage the partition is labelled with, when not the dataset's. */
 		partitionBoundaryYear?: number;
-		table?: "data" | "partnerships" | "lsoas";
 		/**
 		 * The observation artifact's name after the measure id, for a further
 		 * partition of measures another call has already published.
 		 */
 		artifactStem?: string;
-		mergeApril2023?: boolean;
 		coverageNote: string;
 		notes: string[];
 		indicators: Indicator[];
@@ -105,44 +92,25 @@ export const publishIndicators = (
 		spec.partitionBoundaryYear ?? spec.boundaryYear;
 	const expected = new Set(spec.expectedCodes ?? []);
 	for (const indicator of spec.indicators) {
-		const read = spec.rows
-			? readFromRows(spec.rows, {
-					series: indicator.series,
-					datasetId: spec.datasetId,
-					geography,
-					boundaryYear: partitionBoundaryYear,
-					period: spec.period,
-				})
-			: localAuthorityFieldWithGaps(
-					spec.path!,
-					indicator.field,
-					spec.boundaryYear,
-					spec.isAuthority,
-					spec.table,
-					geography === "localPlanningAuthority"
-						? geography
-						: undefined,
-					spec.sourcePeriod,
-				);
+		const read = readFromRows(spec.rows, {
+			series: indicator.series,
+			datasetId: spec.datasetId,
+			geography,
+			boundaryYear: partitionBoundaryYear,
+			period: spec.period,
+		});
 		let records = indicator.status
 			? read.records.map((record) => ({
 					...record,
 					status: indicator.status!,
 				}))
 			: read.records;
-		if (spec.mergeApril2023) {
-			const present = new Set(records.map((record) => record.areaCode));
-			records = onApril2023Authorities(
-				{ period: spec.period, records },
-				[...expected].filter((code) => present.has(code)),
-			).records;
-		}
 		const unexpected = spec.expectedCodes
 			? records.filter((record) => !expected.has(record.areaCode))
 			: [];
 		if (unexpected.length > 0)
 			throw new Error(
-				`${spec.path ?? spec.datasetId}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
+				`${spec.datasetId}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
 			);
 		const published = new Set(records.map((record) => record.areaCode));
 		const missing = (spec.expectedCodes ?? [])
@@ -150,11 +118,6 @@ export const publishIndicators = (
 			.sort();
 		const periods = [{ period: spec.period, records }];
 		const seriesKey = measureSeriesKey(indicator.series);
-		const recordHash = createHash("sha256");
-		for (const record of records)
-			recordHash.update(
-				`${JSON.stringify([record.areaCode, record.value, record.status])}\n`,
-			);
 		const content = JSON.stringify({
 			schemaVersion: 1,
 			measureId: seriesKey,
@@ -165,21 +128,6 @@ export const publishIndicators = (
 			periods,
 		});
 		indicatorObservations.push({
-			...(!spec.rows && !spec.mergeApril2023 && !indicator.status
-				? {
-						statisticsField: {
-							dataset: spec.datasetId,
-							field: indicator.field,
-							records: spec.table ?? "data",
-							sourcePeriod: read.period,
-							publishedPeriod: spec.period,
-							geography,
-							boundaryYear: partitionBoundaryYear,
-							recordCount: records.length,
-							recordHash: recordHash.digest("hex"),
-						},
-					}
-				: {}),
 			measure: {
 				id: indicator.id,
 				series: indicator.series,

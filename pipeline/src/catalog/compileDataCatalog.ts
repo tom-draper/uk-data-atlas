@@ -53,8 +53,6 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	 * are built from.
 	 */
 	rows: CatalogueRows;
-	/** The compiled file of each declared dataset that publishes measures, by id. */
-	declared?: Record<string, Input>;
 	/**
 	 * The repository root, whose data/ directory holds the Census 2021
 	 * small-area tables compiled straight from their Nomis files.
@@ -75,7 +73,6 @@ export const compileDataCatalog = ({
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
 	rows,
-	declared = {},
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
@@ -129,20 +126,11 @@ export const compileDataCatalog = ({
 	const energyConsumption = compileEnergyConsumption(catalogManifest, rows);
 	const regionalGdp = compileRegionalGdp(catalogManifest, rows);
 	const jobs = compileJobs(catalogManifest, rows, populationCodes);
-	const declaredFile = (id: string) => {
-		const path = declared[id];
-		if (!path) throw new Error(`No compiled file for ${id}`);
-		return path;
-	};
 	const yearly = DATASET_DECLARATIONS.filter(
 		(declaration) => declaration.catalogue?.yearly,
 	).map((declaration) => ({
 		datasetId: declaration.id,
-		...compileYearlyIndicators(
-			catalogManifest,
-			declaration,
-			declaredFile(declaration.id),
-		),
+		...compileYearlyIndicators(catalogManifest, declaration, rows),
 	}));
 	const census = compileCensus(
 		catalogManifest,
@@ -161,12 +149,10 @@ export const compileDataCatalog = ({
 			(declaration) =>
 				declaration.catalogue && !declaration.catalogue.yearly,
 		).flatMap((declaration) =>
-			compileDeclaredIndicators(
-				catalogManifest,
-				declaration,
-				declaredFile(declaration.id),
-				{ authorities: populationCodes, england2025 },
-			),
+			compileDeclaredIndicators(catalogManifest, declaration, rows, {
+				authorities: populationCodes,
+				england2025,
+			}),
 		),
 		...compileRoadCollisions(catalogManifest, rows, populationCodes),
 		...compileCrime(catalogManifest, rows),
