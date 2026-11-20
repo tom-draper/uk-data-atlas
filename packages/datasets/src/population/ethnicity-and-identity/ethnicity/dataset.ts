@@ -72,7 +72,7 @@ const ethnicityParts = Object.keys(ETHNICITY_CODES).map((name) => ({
 export const ethnicity = defineDataset<EthnicityDataset>({
 	id: "ethnicity",
 	topic: "ethnicity-and-identity",
-	boundary: { type: "localAuthority", year: 2024 },
+	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	guide: {
 		title: "Ethnicity",

@@ -15,7 +15,7 @@ import { qualificationStatisticsParts } from "../../../data/qualification/source
 export const qualification = defineDataset<QualificationDataset>({
 	id: "qualification",
 	topic: "qualifications",
-	boundary: { type: "localAuthority", year: 2025 },
+	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	guide: {
 		title: "Qualifications",

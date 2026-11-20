@@ -15,7 +15,7 @@ import { carAvailabilityStatisticsParts } from "../../../data/car-availability/s
 export const carAvailability = defineDataset<CarAvailabilityDataset>({
 	id: "car-availability",
 	topic: "vehicles",
-	boundary: { type: "localAuthority", year: 2025 },
+	boundary: { type: "localAuthority", year: 2023 },
 	coverageCountries: ["GB-ENG", "GB-WLS"],
 	guide: {
 		title: "Car Availability",

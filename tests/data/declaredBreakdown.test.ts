@@ -18,7 +18,7 @@ describe("a declared breakdown card", () => {
 			measure: "people-in-employment",
 			datasetId: "travel-to-work",
 			geography: "localAuthority",
-			boundaryYear: 2025,
+			boundaryYear: 2023,
 		});
 		expect(breakdown?.dimension).toBe("travel-method");
 		expect(breakdown?.total).toBe("total");

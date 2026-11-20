@@ -150,6 +150,8 @@ export const housePrice = defineDataset<HousePriceDataset>({
 				mean: "house-price-mean",
 			},
 			combine: "mean",
+			// The publisher's wards are published as December 2020 codes.
+			release: { boundaryYear: 2020 },
 		},
 		measures: [
 			{
