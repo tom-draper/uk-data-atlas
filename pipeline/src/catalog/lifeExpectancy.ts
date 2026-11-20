@@ -1,11 +1,8 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type { Measure } from "@uk-data-atlas/measures";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
-import {
-	isPublishedAreaCode,
-	countriesFor,
-} from "@uk-data-atlas/catalogue/node";
-import { type PrecompiledFile, sha256, number, object } from "./values.ts";
+import { countriesFor } from "@uk-data-atlas/catalogue/node";
+import { sha256 } from "./values.ts";
 
 /**
  * Life expectancy at birth, as ONS publishes it for local areas: every
@@ -16,34 +13,7 @@ import { type PrecompiledFile, sha256, number, object } from "./values.ts";
  * the website's, which holds only the latest period and adds averaged values
  * for the four authorities created in April 2023.
  */
-export const compileLifeExpectancy = (
-	lifeExpectancySeriesPath: DatasetInput,
-) => {
-	const lifeExpectancySource = JSON.parse(
-		readDatasetInput(lifeExpectancySeriesPath),
-	) as PrecompiledFile;
-	const lifeExpectancyPeriods = Object.entries(lifeExpectancySource)
-		.map(([key, value]) => {
-			const entry = object(value, `${lifeExpectancySeriesPath}.${key}`);
-			if (
-				entry.boundaryType !== "localAuthority" ||
-				entry.boundaryYear !== 2025 ||
-				typeof entry.period !== "string" ||
-				!/^\d{4}-\d{4}$/.test(entry.period)
-			) {
-				throw new Error(
-					`${lifeExpectancySeriesPath}.${key}: expected a local-authority period on the 2025 code vintage`,
-				);
-			}
-			return {
-				period: entry.period,
-				data: object(
-					entry.data,
-					`${lifeExpectancySeriesPath}.${key}.data`,
-				),
-			};
-		})
-		.sort((left, right) => left.period.localeCompare(right.period));
+export const compileLifeExpectancy = (rows: CatalogueRows) => {
 	const lifeExpectancyMeasures = (["male", "female"] as const).map((sex) => {
 		const measureId = `life-expectancy-${sex}`;
 		const series = {
@@ -51,35 +21,12 @@ export const compileLifeExpectancy = (
 			dimensions: { sex },
 		};
 		const seriesKey = measureSeriesKey(series);
-		const periods = lifeExpectancyPeriods.map(({ period, data }) => ({
-			period,
-			records: Object.entries(data)
-				.map(([areaCode, record]) => {
-					const context = `${lifeExpectancySeriesPath}.${period}.${areaCode}.${sex}`;
-					if (!isPublishedAreaCode(areaCode))
-						throw new Error(`${context}: unsupported area code`);
-					const estimate = object(
-						object(record, context)[sex],
-						context,
-					);
-					const value = number(estimate.value, `${context}.value`);
-					const lower = number(estimate.lower, `${context}.lower`);
-					const upper = number(estimate.upper, `${context}.upper`);
-					if (!(lower <= value && value <= upper))
-						throw new Error(
-							`${context}: the interval ${lower} to ${upper} does not contain ${value}`,
-						);
-					return {
-						areaCode,
-						value,
-						status: "observed" as const,
-						confidenceInterval: { lower, upper },
-					};
-				})
-				.sort((left, right) =>
-					left.areaCode.localeCompare(right.areaCode),
-				),
-		}));
+		const periods = rows.periods({
+			series,
+			datasetId: "life-expectancy-series",
+			geography: "localAuthority",
+			boundaryYear: 2025,
+		});
 		const sourceGeography = {
 			type: "localAuthority" as const,
 			boundaryYear: 2025,

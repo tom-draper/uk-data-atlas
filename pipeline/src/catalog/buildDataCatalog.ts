@@ -1,5 +1,6 @@
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
 import { AtlasDatasetInput } from "./input.ts";
+import { CatalogueRows } from "./rows.ts";
 import { rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -25,6 +26,7 @@ export const datasetCatalogInputs = (
 			"rows",
 		);
 	const inputs: DataCatalogInputs = {
+		rows: CatalogueRows.open(repositoryRoot),
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),
 		populationUk: precompiled("population-uk.json"),
@@ -38,7 +40,6 @@ export const datasetCatalogInputs = (
 		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		housePrice: precompiled("house-price.json"),
-		lifeExpectancySeries: precompiled("life-expectancy-series.json"),
 		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
 		localElection: precompiled("local-election.json"),
@@ -78,6 +79,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		electionObservations,
 		censusTables,
 	} = compileDataCatalog(inputs);
+	inputs.rows.close();
 	// Every measure id must say which measure and dimension members it is,
 	// so an id that encodes a breakdown is never published unmapped.
 	const { config, vocabulary } = readMeasureDimensionsConfig(repositoryRoot);
