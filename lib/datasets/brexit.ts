@@ -9,7 +9,7 @@ export const brexitDefinition: ChartDatasetDefinition<BrexitLADDataset> = {
 	chart: {
 		topic: "referendums",
 		key: "brexit-electoral",
-		label: "Electoral Commission [2016]",
+		label: "Brexit [2016]",
 		componentPath:
 			"@/components/datasets/politics/referendums/brexit/BrexitElectoralChart",
 		calculateStats: (mm, g, d, l, id) =>
