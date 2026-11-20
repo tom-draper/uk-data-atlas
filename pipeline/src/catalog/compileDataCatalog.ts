@@ -15,6 +15,7 @@ import { RECODED_2025 } from "./authorityChanges.ts";
 import { compileElections } from "./elections.ts";
 import { compileHousePrice } from "./housePrice.ts";
 import { compileLifeExpectancy } from "./lifeExpectancy.ts";
+import type { CatalogueRows } from "./rows.ts";
 import { compilePopulationDensity } from "./populationDensity.ts";
 import { mergeMeasurePartitions } from "./indicators.ts";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
@@ -55,13 +56,17 @@ export type DataCatalogInputs<Input = DatasetInput> = {
 	jobs: Input;
 	landArea: Input;
 	housePrice: Input;
-	lifeExpectancySeries: Input;
 	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
 	regionalGdp: Input;
 	electricityConsumption: Input;
 	gasConsumption: Input;
+	/**
+	 * The statistics rows the measures that no longer read a compiled file
+	 * are built from.
+	 */
+	rows: CatalogueRows;
 	/** The compiled file of each declared dataset that publishes measures, by id. */
 	declared?: Record<string, Input>;
 	/**
@@ -91,7 +96,7 @@ export const compileDataCatalog = ({
 	jobs: jobsPath,
 	landArea: landAreaPath,
 	housePrice: housePricePath,
-	lifeExpectancySeries: lifeExpectancySeriesPath,
+	rows,
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
 	localElection: localElectionPath,
@@ -219,7 +224,7 @@ export const compileDataCatalog = ({
 		population.localAuthorityObservations.periods,
 	);
 	const housePrice = compileHousePrice(catalogManifest, housePricePath);
-	const lifeExpectancy = compileLifeExpectancy(lifeExpectancySeriesPath);
+	const lifeExpectancy = compileLifeExpectancy(rows);
 	const elections = compileElections(
 		catalogManifest,
 		generalElectionPath,
