@@ -92,7 +92,9 @@ export class EventHandler {
 		const { handler, cancel } = rafThrottle(
 			this.handleMouseMove.bind(this),
 		);
-		this._mouseMoveHandler = handler;
+		// MapLibre deletes `features` from the event once the listener returns,
+		// so a call the throttle defers would see none and read as a leave.
+		this._mouseMoveHandler = (e) => handler(e.features);
 		this._cancelMouseMove = cancel;
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
 		this._clickHandler = this.handleAreaClick.bind(this);
@@ -135,14 +137,12 @@ export class EventHandler {
 		return boundaryTypeForCodeKey(codeProp) ?? "ward";
 	}
 
-	private handleMouseMove(
-		e: MapMouseEventType & { features?: MapFeature[] },
-	): void {
+	private handleMouseMove(features?: MapFeature[]): void {
 		if (this.lockedArea) {
 			this.canvas.style.cursor = "";
 			return;
 		}
-		const feature = shownFeature(e.features);
+		const feature = shownFeature(features);
 		if (!feature) {
 			if (this.lastHoveredFeatureId !== null) this.handleMouseLeave();
 			return;

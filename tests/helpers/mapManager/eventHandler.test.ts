@@ -96,9 +96,7 @@ describe("EventHandler", () => {
 		)?.[2] as (event: { features: ReturnType<typeof feature>[] }) => void;
 
 		click({ features: [feature(1, "E09000001")] });
-		(handler as any).handleMouseMove({
-			features: [feature(2, "E09000002")],
-		});
+		(handler as any).handleMouseMove([feature(2, "E09000002")]);
 		click({ features: [feature(2, "E09000002")] });
 
 		expect(onAreaClick).toHaveBeenCalledTimes(2);
@@ -119,9 +117,7 @@ describe("EventHandler", () => {
 		expect(onAreaHover).not.toHaveBeenCalled();
 
 		click({ features: [feature(2, "E09000002")] });
-		(handler as any).handleMouseMove({
-			features: [feature(1, "E09000001")],
-		});
+		(handler as any).handleMouseMove([feature(1, "E09000001")]);
 
 		expect(onAreaClick).toHaveBeenCalledTimes(3);
 		expect(onAreaHover).toHaveBeenCalledWith(
@@ -160,8 +156,8 @@ describe("EventHandler", () => {
 			state: { outsideDataset: true },
 		};
 
-		(handler as any).handleMouseMove({ features: [shown] });
-		(handler as any).handleMouseMove({ features: [hidden] });
+		(handler as any).handleMouseMove([shown]);
+		(handler as any).handleMouseMove([hidden]);
 		click({ features: [hidden] });
 
 		expect(onAreaHover).toHaveBeenNthCalledWith(
@@ -171,7 +167,7 @@ describe("EventHandler", () => {
 		// Moving onto a hidden area leaves the shown one.
 		expect(onAreaHover).toHaveBeenLastCalledWith(null);
 		expect(onAreaClick).not.toHaveBeenCalled();
-		(handler as any).handleMouseMove({ features: [hidden, shown] });
+		(handler as any).handleMouseMove([hidden, shown]);
 		click({ features: [hidden, shown] });
 		expect(onAreaHover).toHaveBeenLastCalledWith(
 			expect.objectContaining({ code: "E09000001" }),
@@ -179,5 +175,42 @@ describe("EventHandler", () => {
 		expect(onAreaClick).toHaveBeenCalledWith(
 			expect.objectContaining({ code: "E09000001" }),
 		);
+	});
+
+	it("stays on an area when a throttled move runs after MapLibre drops its features", () => {
+		const frames: FrameRequestCallback[] = [];
+		vi.stubGlobal("requestAnimationFrame", (run: FrameRequestCallback) =>
+			frames.push(run),
+		);
+		const map = createMap();
+		map.getSource.mockReturnValue({ type: "vector" });
+		const onAreaHover = vi.fn();
+		const handler = new EventHandler(map as any, {
+			onAreaHover,
+			onLocationChange: () => {},
+		});
+		handler.setupEventHandlers({ E05000001: { value: 1 } }, "WD24CD");
+		const move = map.on.mock.calls.find(
+			([event]) => event === "mousemove",
+		)?.[2] as (event: { features?: unknown[] }) => void;
+		const ward = {
+			id: 7,
+			properties: { code: "E05000001", name: "Ward" },
+			state: {},
+		};
+		// MapLibre deletes `features` from the event once the listener returns.
+		const dispatch = () => {
+			const event: { features?: unknown[] } = { features: [ward] };
+			move(event);
+			delete event.features;
+		};
+
+		dispatch();
+		dispatch();
+		for (const run of frames.splice(0)) run(0);
+
+		expect(onAreaHover).toHaveBeenCalledTimes(1);
+		expect(onAreaHover).not.toHaveBeenCalledWith(null);
+		vi.unstubAllGlobals();
 	});
 });
