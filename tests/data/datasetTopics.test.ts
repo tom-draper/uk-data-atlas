@@ -9,7 +9,7 @@ import {
 	relatedTopicProblems,
 	typeOf,
 } from "@uk-data-atlas/datasets";
-import { CENSUS_SMALL_AREA_TABLES } from "../../pipeline/src/catalog/censusSmallAreaTables";
+import { CENSUS_SMALL_AREA_TABLES } from "../../pipeline/src/statistics/censusSmallAreaTables";
 
 type Filed = {
 	id: string;

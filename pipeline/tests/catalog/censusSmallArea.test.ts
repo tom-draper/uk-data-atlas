@@ -5,11 +5,15 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 import {
+	CENSUS_SMALL_AREA_GEOGRAPHIES,
 	CENSUS_SMALL_AREA_TABLES,
-	censusTableArtifactName,
 	censusTableDirectory,
+} from "../../src/statistics/censusSmallAreaSource";
+import {
+	censusTableArtifactName,
 	compileCensusSmallArea,
 } from "../../src/catalog/censusSmallArea";
+import { fixtureRows, type FixtureSeries } from "./rowFixtures";
 
 const tenure = CENSUS_SMALL_AREA_TABLES.find(
 	(table) => table.table === "ts054",
@@ -18,13 +22,30 @@ const ethnicity = CENSUS_SMALL_AREA_TABLES.find(
 	(table) => table.table === "ts021",
 )!;
 
-type Row = { code: string; values: Record<string, number> };
+const RELEASES = { lsoa: "2021-12-ew-bgc-v5", msoa: "2021-12-ew-bgc-v3" };
 
-/** A repository whose census folder holds one table's two files. */
-const repository = (
+/** One series per category of the table, each holding a count of one per area. */
+const seriesOf = (
 	table: typeof tenure,
-	rows: { lsoa: Row[]; msoa: Row[] },
-) => {
+	areas: { lsoa: string[]; msoa: string[] },
+): FixtureSeries[] =>
+	CENSUS_SMALL_AREA_GEOGRAPHIES.flatMap((geography) =>
+		table.categories.map(([suffix, , , member]) => ({
+			dataset: `census-2021-${table.table}`,
+			measure: table.measure,
+			geography: geography.type,
+			release: RELEASES[geography.type],
+			members: { [table.dimension]: member ?? suffix },
+			periods: {
+				"2021-census": Object.fromEntries(
+					areas[geography.type].map((code) => [code, 1]),
+				),
+			},
+		})),
+	);
+
+/** A repository whose census folder holds the table's two source files. */
+const repository = (table: typeof tenure) => {
 	const root = mkdtempSync(join(tmpdir(), "census-small-area-"));
 	const directory = join(
 		root,
@@ -32,63 +53,39 @@ const repository = (
 		censusTableDirectory(table.table),
 	);
 	mkdirSync(directory, { recursive: true });
-	writeFileSync(
-		join(directory, "meta.json"),
-		JSON.stringify({
-			title: `Fixture ${table.table}`,
-			description: "Fixture.",
-			publisher: "Office for National Statistics",
-			sourceUrl: "https://www.nomisweb.co.uk/sources/census_2021_bulk",
-			licence: { name: "Open Government Licence v3.0" },
-		}),
-	);
-	const columns = [
-		...new Set([
-			table.totalColumn,
-			...table.categories.map(([, column]) => column),
-		]),
-	];
-	for (const geography of ["lsoa", "msoa"] as const) {
-		const lines = [
-			["date", "geography", "geography code", ...columns],
-			...rows[geography].map(({ code, values }) => [
-				"2021",
-				`Area ${code}`,
-				code,
-				...columns.map((column) => String(values[column] ?? 0)),
-			]),
-		].map((fields) =>
-			fields.map((field) => JSON.stringify(field)).join(","),
-		);
+	for (const { type } of CENSUS_SMALL_AREA_GEOGRAPHIES)
 		writeFileSync(
-			join(directory, `census2021-${table.table}-${geography}.csv`),
-			`${lines.join("\n")}\n`,
+			join(directory, `census2021-${table.table}-${type}.csv`),
+			`date,geography code\n2021,${type}\n`,
 		);
-	}
 	return root;
 };
 
-/** Every leaf of the table at one, and the total their sum. */
-const balanced = (table: typeof tenure, code: string): Row => {
-	const leaves = table.categories.filter(
-		([, column]) => column !== table.totalColumn,
+const rowsOf = (table: typeof tenure, areas: Parameters<typeof seriesOf>[1]) =>
+	fixtureRows(
+		seriesOf(table, areas),
+		[],
+		[],
+		[
+			{
+				dataset: `census-2021-${table.table}`,
+				title: `Fixture ${table.table}`,
+				description: "Fixture.",
+				publisher: "Office for National Statistics",
+				url: "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+				licence: "Open Government Licence v3.0",
+			},
+		],
 	);
-	return {
-		code,
-		values: {
-			...Object.fromEntries(leaves.map(([, column]) => [column, 1])),
-			[table.totalColumn]: leaves.length,
-		},
-	};
-};
 
 test("compiles a census table into one shared artifact per small-area geography", () => {
-	const root = repository(tenure, {
-		lsoa: [balanced(tenure, "E01000001"), balanced(tenure, "W01000001")],
-		msoa: [balanced(tenure, "E02000001")],
+	const root = repository(tenure);
+	const rows = rowsOf(tenure, {
+		lsoa: ["E01000001", "W01000001"],
+		msoa: ["E02000001"],
 	});
 	try {
-		const compiled = compileCensusSmallArea(root, [tenure]);
+		const compiled = compileCensusSmallArea(root, rows, [tenure]);
 		const [lsoa, msoa] = compiled.tables;
 
 		assert.equal(lsoa?.id, censusTableArtifactName("ts054", "lsoa"));
@@ -127,19 +124,22 @@ test("compiles a census table into one shared artifact per small-area geography"
 			dataRecordCount: 3,
 			boundaryYears: [2021],
 		});
+		assert.equal(compiled.datasets[0]?.label, "Fixture ts054");
 		assert.equal(compiled.partitions.size, 0);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
+		rows.close();
 	}
 });
 
 test("adds a census question already published by authority as partitions of it", () => {
-	const root = repository(ethnicity, {
-		lsoa: [balanced(ethnicity, "E01000001")],
-		msoa: [balanced(ethnicity, "E02000001")],
+	const root = repository(ethnicity);
+	const rows = rowsOf(ethnicity, {
+		lsoa: ["E01000001"],
+		msoa: ["E02000001"],
 	});
 	try {
-		const compiled = compileCensusSmallArea(root, [ethnicity]);
+		const compiled = compileCensusSmallArea(root, rows, [ethnicity]);
 
 		assert.deepEqual(compiled.measures, []);
 		assert.deepEqual(
@@ -150,43 +150,20 @@ test("adds a census question already published by authority as partitions of it"
 		);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
+		rows.close();
 	}
 });
 
-test("refuses a file whose categories do not make up its total, or whose codes are wrong", () => {
-	const unbalanced = balanced(tenure, "E01000001");
-	unbalanced.values[tenure.totalColumn] = 1;
-	for (const [rows, message] of [
-		[
-			{ lsoa: [unbalanced], msoa: [] },
-			/categories sum to 8, not the total 1/,
-		],
-		[
-			{ lsoa: [balanced(tenure, "E02000001")], msoa: [] },
-			/E02000001 is not a 2021 LSOAs code/,
-		],
-		[
-			{
-				lsoa: [
-					balanced(tenure, "E01000001"),
-					balanced(tenure, "E01000001"),
-				],
-				msoa: [],
-			},
-			/E01000001 repeats/,
-		],
-	] as const) {
-		const root = repository(tenure, {
-			lsoa: [...rows.lsoa],
-			msoa: [...rows.msoa],
-		});
-		try {
-			assert.throws(
-				() => compileCensusSmallArea(root, [tenure]),
-				message,
-			);
-		} finally {
-			rmSync(root, { recursive: true, force: true });
-		}
+test("refuses a dataset the rows do not hold", () => {
+	const root = repository(tenure);
+	const rows = fixtureRows([]);
+	try {
+		assert.throws(
+			() => compileCensusSmallArea(root, rows, [tenure]),
+			/The rows hold no census-2021-ts054 dataset/,
+		);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+		rows.close();
 	}
 });

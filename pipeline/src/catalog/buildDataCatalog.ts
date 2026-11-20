@@ -1,4 +1,4 @@
-import { AtlasDatasetInput } from "./input.ts";
+import { readBaseDatasetInput } from "./baseDatasetInput.ts";
 import { CatalogueRows } from "./rows.ts";
 import { rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -18,15 +18,9 @@ import { validateObservationSeries } from "./observationSeries.ts";
 export const datasetCatalogInputs = (
 	repositoryRoot: string,
 ): DataCatalogInputs => {
-	const precompiled = (file: string) =>
-		new AtlasDatasetInput(
-			repositoryRoot,
-			file.replace(/\.json$/, ""),
-			"rows",
-		);
 	const inputs: DataCatalogInputs = {
 		rows: CatalogueRows.open(repositoryRoot),
-		manifest: precompiled("dataset-manifest.json"),
+		manifest: readBaseDatasetInput(repositoryRoot, "dataset-manifest"),
 		censusSmallAreaRoot: repositoryRoot,
 	};
 	return inputs;
@@ -45,7 +39,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		energyConsumptionObservations,
 		indicatorObservations,
 		observationDatasets,
-		statisticsFields,
 		populationDensityObservations,
 		housePriceObservations,
 		lifeExpectancyObservations,
@@ -84,10 +77,6 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		observationDatasets,
 	);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
-	writeFileSync(
-		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
-		`${JSON.stringify(statisticsFields)}\n`,
-	);
 	return {
 		catalogPath,
 		populationRecordCount: populationObservations.reduce(

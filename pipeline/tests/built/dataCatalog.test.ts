@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { tmpdir } from "node:os";
 import { test } from "vitest";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
 } from "../../src/catalog/compileDataCatalog";
 import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
+import { CENSUS_BREAKDOWNS } from "../../src/catalog/census";
 import { fileURLToPath } from "node:url";
 import type { DataCatalog } from "@uk-data-atlas/catalogue/node";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
@@ -626,41 +626,271 @@ const crimeRows = (): FixtureSeries[] =>
 
 const migratedGaps = (): FixtureGap[] => [...collisionGaps()];
 
+/** One source file's periods, as the compiled dataset held them. */
+type SourceFile = Record<
+	string,
+	{ boundaryYear?: number; data: Record<string, unknown> }
+>;
+
+/** A number at a dotted path of a record, or nothing where it is absent or null. */
+const numberAt = (record: unknown, path: string): number | undefined => {
+	let value: unknown = record;
+	for (const key of path.split("."))
+		value = (value as Record<string, unknown> | undefined)?.[key];
+	return typeof value === "number" ? value : undefined;
+};
+
+const observations = (
+	data: Record<string, unknown>,
+	path: string,
+): Record<string, number> =>
+	Object.fromEntries(
+		Object.entries(data).flatMap(([code, record]) => {
+			const value = numberAt(record, path);
+			return value === undefined ? [] : [[code, value]];
+		}),
+	);
+
+/** The rows a declared dataset's indicators are read from, one series each. */
+const declaredSeries = (id: string, source: SourceFile): FixtureSeries[] => {
+	const declaration = DATASET_DECLARATIONS.find(
+		(candidate) => candidate.id === id,
+	)!;
+	const { period } = declaration.catalogue!;
+	return declaration.catalogue!.indicators.map((indicator) => ({
+		dataset: id,
+		measure: indicator.measure,
+		members: indicator.members,
+		geography: declaration.boundary.type,
+		release: `${declaration.boundary.year}-uk-bfc`,
+		periods: Object.fromEntries(
+			Object.values(source).map(({ data }, index) => [
+				// A single-period dataset is labelled as its catalogue says.
+				period ?? Object.keys(source)[index]!,
+				observations(data, indicator.field),
+			]),
+		),
+	}));
+};
+
+/** The rows a census breakdown is read from, on the April 2023 codes. */
+const censusSeries = (
+	datasetId: string,
+	data: Record<string, unknown>,
+): FixtureSeries[] => {
+	const breakdown = CENSUS_BREAKDOWNS.find(
+		(candidate) => candidate.datasetId === datasetId,
+	)!;
+	return (
+		breakdown.categories as readonly (readonly [
+			string,
+			string,
+			string,
+			string?,
+		])[]
+	).map(([suffix, field, , member]) => ({
+		dataset: datasetId,
+		measure: breakdown.measure,
+		members: { [breakdown.dimension]: member ?? suffix },
+		geography: "localAuthority",
+		release: "2023-12-uk-bgc",
+		periods: {
+			"2021-census": observations(
+				data,
+				breakdown.field ? `${breakdown.field}.${field}` : field,
+			),
+		},
+	}));
+};
+
 const writeSources = (
-	directory: string,
 	wardRecordCount = 2,
 	rowSeries: FixtureSeries[] = migratedSeries(),
-): DataCatalogInputs<string> => {
-	const manifest = join(directory, "dataset-manifest.json");
-	const ghgEmissions = join(directory, "ghg-emissions.json");
-	const mobileCoverage = join(directory, "mobile-coverage.json");
-	const imd = join(directory, "imd.json");
-	const nimdm = join(directory, "nimdm.json");
-	const wimd = join(directory, "wimd.json");
-	const simd = join(directory, "simd.json");
-	const censusPaths = {
-		"travel-to-work": join(directory, "travel-to-work.json"),
-		"car-availability": join(directory, "car-availability.json"),
-		qualification: join(directory, "qualification.json"),
-		ethnicity: join(directory, "ethnicity.json"),
-	};
-	const broadband = join(directory, "broadband.json");
-	const claimantCount = join(directory, "claimant-count.json");
-	const councilTax = join(directory, "council-tax.json");
-	const netDwellings = join(directory, "net-additional-dwellings.json");
-	const finance = join(directory, "local-government-finance.json");
-	const careActivity = join(directory, "adult-social-care-activity.json");
-	const careOutcomes = join(directory, "adult-social-care-outcomes.json");
-	const evChargers = join(directory, "electric-vehicle-chargers.json");
-	const business = join(directory, "business-activity.json");
-	const homelessness = join(directory, "homelessness.json");
-	const income = join(directory, "income.json");
-	const waste = join(directory, "waste.json");
-	const planningApplications = join(directory, "planning-applications.json");
-	const airQuality = join(directory, "air-quality.json");
-	writeFileSync(
-		manifest,
-		JSON.stringify({
+): DataCatalogInputs => {
+	const authorities = ["E06000001", "N09000001", "S12000001", "W06000001"];
+	const simple = (
+		boundaryYear: number,
+		year: string,
+		data: Record<string, unknown>,
+	): SourceFile => ({ [year]: { boundaryYear, data } });
+	const hartlepool = (value: number) => ({
+		E06000001: { code: "E06000001", name: "Hartlepool", value },
+	});
+	const income = simple(2025, "2025", {
+		E06000001: { annual: { median: 29000 }, hourly: { median: 15 } },
+	});
+	const declared: [string, SourceFile][] = [
+		[
+			"ghg-emissions",
+			{ "2023": emissionsYear(2023), "2024": emissionsYear(2024) },
+		],
+		[
+			"mobile-coverage",
+			simple(2024, "2025", {
+				E06000001: { pct4GIndoorAll: 96.5, pct5GOutdoorAll: 40 },
+				S12000001: { pct4GIndoorAll: 51.7, pct5GOutdoorAll: 0 },
+			}),
+		],
+		[
+			"broadband",
+			simple(
+				2024,
+				"2025",
+				Object.fromEntries(
+					authorities.map((code, index) => [
+						code,
+						{
+							ladCode: code,
+							pctSuperfast: 90 + index,
+							pctUltrafast: 70,
+							pctFullFibre: index === 2 ? null : 60,
+							pctGigabit: 65,
+						},
+					]),
+				),
+			),
+		],
+		["business-activity", simple(2025, "2025", hartlepool(123))],
+		["electric-vehicle-chargers", simple(2026, "2026", hartlepool(123))],
+		["adult-social-care-outcomes", simple(2025, "2025", hartlepool(18.3))],
+		["adult-social-care-activity", simple(2025, "2025", hartlepool(1234))],
+		["local-government-finance", simple(2026, "2026", hartlepool(12345))],
+		["net-additional-dwellings", simple(2025, "2025", hartlepool(123))],
+		["council-tax", simple(2026, "2026", hartlepool(2100))],
+		[
+			"claimant-count",
+			simple(
+				2024,
+				"2026",
+				Object.fromEntries(
+					authorities.map((code) => [
+						code,
+						{ ladCode: code, totalCount: 1000, youthCount: 200 },
+					]),
+				),
+			),
+		],
+		[
+			"homelessness",
+			simple(2025, "2026", {
+				E06000001: {
+					ladCode: "E06000001",
+					householdsInTemporaryAccommodation: 62,
+					householdsPerThousand: 0.7,
+					householdsWithChildren: 30,
+					childrenInTemporaryAccommodation: 54,
+				},
+			}),
+		],
+		["income", income],
+		["workplace-income", income],
+		[
+			"waste",
+			simple(2025, "2025", {
+				E06000001: { value: 1234.5 },
+				E06000002: { value: 8 },
+			}),
+		],
+		[
+			"planning-applications",
+			simple(2025, "2025", {
+				E06000001: { value: 321 },
+				E06000002: { value: 8 },
+			}),
+		],
+		[
+			"air-quality",
+			simple(
+				2024,
+				"2024",
+				Object.fromEntries(
+					authorities.map((code, index) => [
+						code,
+						{
+							ladCode: code,
+							gridCells: 100 * (index + 1),
+							no2Mean: 10 + index,
+							pm10Mean: 9,
+							pm25Mean: 5,
+							pm25PopulationWeighted: 5.5,
+							pm25PopulationWeightedAnthropogenic: 5,
+						},
+					]),
+				),
+			),
+		],
+		[
+			"imd",
+			simple(2021, "2025", {
+				E01000001: { imdRank: 1, imdDecile: 1 },
+				E01000002: { imdRank: 2, imdDecile: 1 },
+				E01000003: { imdRank: 3, imdDecile: 1 },
+			}),
+		],
+		[
+			"nimdm",
+			simple(2011, "2017", {
+				// NISRA codes, not GSS: a ward suffix and a split suffix.
+				"95ZZ06W1": { nimdmRank: 1, nimdmDecile: 1 },
+				"95AA01S1": { nimdmRank: 516, nimdmDecile: 6 },
+			}),
+		],
+		[
+			"wimd",
+			simple(2011, "2019", {
+				W01000001: { wimdRank: 885, wimdDecile: 5 },
+			}),
+		],
+		[
+			"simd",
+			simple(2011, "2020", {
+				S01010891: { simdRank: 1, simdDecile: 1 },
+			}),
+		],
+	];
+	const census: [string, Record<string, unknown>][] = [
+		[
+			"travel-to-work",
+			{
+				E06000001: { breakdown: travelBreakdown(240) },
+				W06000001: { breakdown: travelBreakdown(120) },
+			},
+		],
+		[
+			"car-availability",
+			{
+				E06000001: { breakdown: carBreakdown(100) },
+				W06000001: { breakdown: carBreakdown(50) },
+			},
+		],
+		[
+			"qualification",
+			{
+				E06000001: { breakdown: qualificationBreakdown(35) },
+				W06000001: { breakdown: qualificationBreakdown(25) },
+			},
+		],
+		[
+			"ethnicity",
+			{
+				E06000001: ethnicGroups(900),
+				W06000001: ethnicGroups(700),
+			},
+		],
+	];
+	return {
+		rows: fixtureRows(
+			[
+				...rowSeries,
+				...declared.flatMap(([id, source]) =>
+					declaredSeries(id, source),
+				),
+				...census.flatMap(([id, data]) => censusSeries(id, data)),
+			],
+			migratedGaps(),
+			electionContests(),
+		),
+		manifest: JSON.stringify({
 			version: 4,
 			datasets: [
 				dataset("population", wardRecordCount, 1),
@@ -705,736 +935,290 @@ const writeSources = (
 				dataset("gas-consumption", 3, 2, 2025),
 			],
 		}),
-	);
-	writeFileSync(
-		ghgEmissions,
-		JSON.stringify({
-			"2023": emissionsYear(2023),
-			"2024": emissionsYear(2024),
-		}),
-	);
-	writeFileSync(
-		mobileCoverage,
-		JSON.stringify({
-			"2025": {
-				year: 2025,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: { pct4GIndoorAll: 96.5, pct5GOutdoorAll: 40 },
-					S12000001: { pct4GIndoorAll: 51.7, pct5GOutdoorAll: 0 },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		censusPaths["travel-to-work"],
-		JSON.stringify({
-			"2021": {
-				year: 2021,
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: { breakdown: travelBreakdown(240) },
-					W06000001: { breakdown: travelBreakdown(120) },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		censusPaths["car-availability"],
-		JSON.stringify({
-			"2021": {
-				year: 2021,
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: { breakdown: carBreakdown(100) },
-					W06000001: { breakdown: carBreakdown(50) },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		censusPaths.qualification,
-		JSON.stringify({
-			"2021": {
-				year: 2021,
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: { breakdown: qualificationBreakdown(35) },
-					W06000001: { breakdown: qualificationBreakdown(25) },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		censusPaths.ethnicity,
-		JSON.stringify({
-			"2021": {
-				year: 2021,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: ethnicGroups(900),
-					W06000001: ethnicGroups(700),
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		broadband,
-		JSON.stringify({
-			"2025": {
-				year: 2025,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: Object.fromEntries(
-					["E06000001", "N09000001", "S12000001", "W06000001"].map(
-						(code, index) => [
-							code,
-							{
-								ladCode: code,
-								pctSuperfast: 90 + index,
-								pctUltrafast: 70,
-								pctFullFibre: index === 2 ? null : 60,
-								pctGigabit: 65,
-							},
-						],
-					),
-				),
-			},
-		}),
-	);
-	writeFileSync(
-		business,
-		JSON.stringify({
-			2025: {
-				year: 2025,
-				boundaryType: "localAuthority",
-				boundaryYear: 2025,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 123,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		evChargers,
-		JSON.stringify({
-			2026: {
-				year: 2026,
-				boundaryType: "localAuthority",
-				boundaryYear: 2026,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 123,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		careOutcomes,
-		JSON.stringify({
-			2025: {
-				year: 2025,
-				boundaryType: "localAuthority",
-				boundaryYear: 2025,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 18.3,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		careActivity,
-		JSON.stringify({
-			2025: {
-				year: 2025,
-				boundaryType: "localAuthority",
-				boundaryYear: 2025,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 1234,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		finance,
-		JSON.stringify({
-			2026: {
-				year: 2026,
-				boundaryType: "localAuthority",
-				boundaryYear: 2026,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 12345,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		netDwellings,
-		JSON.stringify({
-			2025: {
-				year: 2025,
-				boundaryType: "localAuthority",
-				boundaryYear: 2025,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 123,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		councilTax,
-		JSON.stringify({
-			2026: {
-				year: 2026,
-				boundaryType: "localAuthority",
-				boundaryYear: 2026,
-				data: {
-					E06000001: {
-						code: "E06000001",
-						name: "Hartlepool",
-						value: 2100,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		claimantCount,
-		JSON.stringify({
-			"2026": {
-				year: 2026,
-				month: "Apr 2026",
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: Object.fromEntries(
-					["E06000001", "N09000001", "S12000001", "W06000001"].map(
-						(code) => [
-							code,
-							{
-								ladCode: code,
-								totalCount: 1000,
-								youthCount: 200,
-							},
-						],
-					),
-				),
-			},
-		}),
-	);
-	writeFileSync(
-		homelessness,
-		JSON.stringify({
-			"2026": {
-				year: 2026,
-				quarter: "Jan-Mar 2026",
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: {
-					E06000001: {
-						ladCode: "E06000001",
-						householdsInTemporaryAccommodation: 62,
-						householdsPerThousand: 0.7,
-						householdsWithChildren: 30,
-						childrenInTemporaryAccommodation: 54,
-					},
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		income,
-		JSON.stringify({
-			"2025": {
-				year: 2025,
-				boundaryYear: 2025,
-				boundaryType: "localAuthority",
-				data: {
-					// A region total published in the same table, not an authority.
-					E12000001: {
-						annual: { median: 30000 },
-						hourly: { median: 15 },
-					},
-					E06000001: {
-						annual: { median: 29000 },
-						hourly: { median: null },
-					},
-				},
-			},
-		}),
-	);
-	for (const [path, value] of [
-		[waste, 1234.5],
-		[planningApplications, 321],
-	] as const)
-		writeFileSync(
-			path,
-			JSON.stringify({
-				"2025": {
-					year: 2025,
-					boundaryYear: 2025,
-					boundaryType: "localAuthority",
-					data: { E06000001: { value }, E06000002: { value: 8 } },
-				},
-			}),
-		);
-	writeFileSync(
-		airQuality,
-		JSON.stringify({
-			"2024": {
-				year: 2024,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: Object.fromEntries(
-					["E06000001", "N09000001", "S12000001", "W06000001"].map(
-						(code, index) => [
-							code,
-							{
-								ladCode: code,
-								gridCells: 100 * (index + 1),
-								no2Mean: 10 + index,
-								pm10Mean: 9,
-								pm25Mean: 5,
-								pm25PopulationWeighted: 5.5,
-								pm25PopulationWeightedAnthropogenic: 5,
-							},
-						],
-					),
-				),
-			},
-		}),
-	);
-	writeFileSync(
-		imd,
-		JSON.stringify({
-			"2025": {
-				year: 2025,
-				boundaryYear: 2021,
-				boundaryType: "lsoa",
-				data: {
-					E01000001: { imdRank: 1, imdDecile: 1 },
-					E01000002: { imdRank: 2, imdDecile: 1 },
-					E01000003: { imdRank: 3, imdDecile: 1 },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		nimdm,
-		JSON.stringify({
-			"2017": {
-				year: 2017,
-				boundaryYear: 2011,
-				boundaryType: "superOutputArea",
-				data: {
-					// NISRA codes, not GSS: a ward suffix and a split suffix.
-					"95ZZ06W1": { nimdmRank: 1, nimdmDecile: 1 },
-					"95AA01S1": { nimdmRank: 516, nimdmDecile: 6 },
-				},
-			},
-		}),
-	);
-	writeFileSync(
-		wimd,
-		JSON.stringify({
-			"2019": {
-				year: 2019,
-				boundaryYear: 2011,
-				boundaryType: "lsoa",
-				data: { W01000001: { wimdRank: 885, wimdDecile: 5 } },
-			},
-		}),
-	);
-	writeFileSync(
-		simd,
-		JSON.stringify({
-			"2020": {
-				year: 2020,
-				boundaryYear: 2011,
-				boundaryType: "dataZone",
-				data: { S01010891: { simdRank: 1, simdDecile: 1 } },
-			},
-		}),
-	);
-	return {
-		rows: fixtureRows(rowSeries, migratedGaps(), electionContests()),
-		manifest,
-		travelToWork: censusPaths["travel-to-work"],
-		carAvailability: censusPaths["car-availability"],
-		qualification: censusPaths.qualification,
-		ethnicity: censusPaths.ethnicity,
-		declared: {
-			"claimant-count": claimantCount,
-			"council-tax": councilTax,
-			"net-additional-dwellings": netDwellings,
-			"local-government-finance": finance,
-			"adult-social-care-activity": careActivity,
-			"adult-social-care-outcomes": careOutcomes,
-			"electric-vehicle-chargers": evChargers,
-			"business-activity": business,
-			"mobile-coverage": mobileCoverage,
-			broadband,
-			homelessness,
-			income,
-			"workplace-income": income,
-			waste,
-			"planning-applications": planningApplications,
-			"air-quality": airQuality,
-			"ghg-emissions": ghgEmissions,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-		},
 	};
 };
 
 test("publishes source-exact ward and UK local-authority population partitions", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 40);
-		assert.deepEqual(result.catalog.measures[0]?.sources, [
-			{
-				datasetId: "population",
-				periods: ["2022"],
-				sourceGeography: { type: "ward", boundaryYear: 2023 },
-				coverage: {
-					kind: "partial",
-					countries: ["GB-ENG", "GB-WLS"],
-					recordCount: 2,
-					note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
-				},
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	assert.equal(result.catalog.datasets.length, 40);
+	assert.deepEqual(result.catalog.measures[0]?.sources, [
+		{
+			datasetId: "population",
+			periods: ["2022"],
+			sourceGeography: { type: "ward", boundaryYear: 2023 },
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
 			},
-			{
-				datasetId: "population-uk",
-				periods: ["2023", "2024"],
-				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
-				observationArtifact: "population-local-authority-observations",
-				coverage: {
-					kind: "source-reported",
-					countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"],
-					recordCount: 4,
-					note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
-				},
+		},
+		{
+			datasetId: "population-uk",
+			periods: ["2023", "2024"],
+			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+			observationArtifact: "population-local-authority-observations",
+			coverage: {
+				kind: "source-reported",
+				countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"],
+				recordCount: 4,
+				note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
 			},
-			{
-				datasetId: "population-constituency",
-				periods: ["2021", "2022"],
-				sourceGeography: { type: "constituency", boundaryYear: 2024 },
-				observationArtifact: "population-constituency-observations",
-				coverage: {
-					kind: "partial",
-					countries: ["GB-ENG", "GB-WLS"],
-					recordCount: 2,
-					note: "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights.",
-				},
+		},
+		{
+			datasetId: "population-constituency",
+			periods: ["2021", "2022"],
+			sourceGeography: { type: "constituency", boundaryYear: 2024 },
+			observationArtifact: "population-constituency-observations",
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights.",
 			},
-		]);
-		const [ward, localAuthority, constituency] =
-			result.populationObservations;
-		assert.deepEqual(constituency?.periods[1]?.records, [
-			{ areaCode: "E14001063", value: 119256, status: "observed" },
-			{ areaCode: "W07000081", value: 90000, status: "observed" },
-		]);
-		assert.deepEqual(ward?.periods, [
-			{
-				period: "2022",
-				records: [
-					{ areaCode: "E05000001", value: 7, status: "observed" },
-					{ areaCode: "W05000001", value: 7, status: "observed" },
-				],
-			},
-		]);
-		assert.equal(localAuthority?.periods.length, 2);
-		assert.deepEqual(localAuthority?.periods[1]?.records[1], {
-			areaCode: "N09000001",
-			value: 7,
-			status: "observed",
-		});
-		assert.match(result.catalog.contentHash, /^sha256:[a-f0-9]{64}$/);
-		assert.match(
-			localAuthority?.contentHash ?? "",
-			/^sha256:[a-f0-9]{64}$/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+		},
+	]);
+	const [ward, localAuthority, constituency] = result.populationObservations;
+	assert.deepEqual(constituency?.periods[1]?.records, [
+		{ areaCode: "E14001063", value: 119256, status: "observed" },
+		{ areaCode: "W07000081", value: 90000, status: "observed" },
+	]);
+	assert.deepEqual(ward?.periods, [
+		{
+			period: "2022",
+			records: [
+				{ areaCode: "E05000001", value: 7, status: "observed" },
+				{ areaCode: "W05000001", value: 7, status: "observed" },
+			],
+		},
+	]);
+	assert.equal(localAuthority?.periods.length, 2);
+	assert.deepEqual(localAuthority?.periods[1]?.records[1], {
+		areaCode: "N09000001",
+		value: 7,
+		status: "observed",
+	});
+	assert.match(result.catalog.contentHash, /^sha256:[a-f0-9]{64}$/);
+	assert.match(localAuthority?.contentHash ?? "", /^sha256:[a-f0-9]{64}$/);
 });
 
 test("rejects a population source whose record count disagrees with its manifest", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const sources = writeSources(directory, 3);
-		assert.throws(() => compileDataCatalog(sources), /expected 3 records/);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const sources = writeSources(3);
+	assert.throws(() => compileDataCatalog(sources), /expected 3 records/);
 });
 
 test("publishes source-exact election turnout and party vote counts", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const result = compileDataCatalog(writeSources());
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
+
+	const generalVotes = measure("general-election-valid-votes");
+	assert.equal(generalVotes?.aggregation.kind, "extensive");
+	assert.deepEqual(
+		generalVotes?.sources.map((source) => [
+			source.sourceGeography,
+			source.periods,
+		]),
+		[
+			[{ type: "constituency", boundaryYear: 2019 }, ["2019"]],
+			[{ type: "constituency", boundaryYear: 2024 }, ["2024"]],
+		],
 	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
+	assert.equal(measure("general-election-lab-votes")?.unit, "votes");
+	assert.equal(measure("local-election-pc-votes")?.valueKind, "count");
+	assert.equal(
+		measure("local-election-effective-votes")?.sources[0]?.coverage
+			.recordCount,
+		3,
+	);
+	assert.match(
+		measure("local-election-effective-votes")?.notes?.[1] ?? "",
+		/county-electoral-division codes is excluded/,
+	);
+	const localVotes2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "party-votes",
+					dimensions: { party: "con" },
+					datasetId: "local-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(
+		localVotes2019?.periods[0]?.records.find(
+			(record) => record.areaCode === "E05011412",
+		),
+		{
+			areaCode: "E05011412",
+			sourceAreaCode: "E05013831",
+			value: 25,
+			status: "observed",
+		},
+	);
+	const localWinners2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "winning-party",
+					datasetId: "local-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(
+		localWinners2019?.periods[0]?.records.find(
+			(record) => record.areaCode === "E05011412",
+		),
+		{
+			areaCode: "E05011412",
+			sourceAreaCode: "E05013831",
+			category: "LAB",
+			status: "observed",
+		},
+	);
+	const localVotes2024 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "party-votes",
+					dimensions: { party: "con" },
+					datasetId: "local-election",
+				}) && artifact.sourceGeography.boundaryYear === 2024,
+	);
+	assert.deepEqual(
+		localVotes2024?.periods[0]?.records.find(
+			(record) => record.areaCode === "E05011348",
+		),
+		{
+			areaCode: "E05011348",
+			value: 35,
+			status: "observed",
+		},
+	);
+	const localWinners2024 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "winning-party",
+					datasetId: "local-election",
+				}) && artifact.sourceGeography.boundaryYear === 2024,
+	);
+	assert.deepEqual(
+		localWinners2024?.periods[0]?.records.find(
+			(record) => record.areaCode === "E05011348",
+		),
+		{
+			areaCode: "E05011348",
+			category: "LAB",
+			status: "observed",
+		},
+	);
 
-		const generalVotes = measure("general-election-valid-votes");
-		assert.equal(generalVotes?.aggregation.kind, "extensive");
-		assert.deepEqual(
-			generalVotes?.sources.map((source) => [
-				source.sourceGeography,
-				source.periods,
-			]),
-			[
-				[{ type: "constituency", boundaryYear: 2019 }, ["2019"]],
-				[{ type: "constituency", boundaryYear: 2024 }, ["2024"]],
-			],
-		);
-		assert.equal(measure("general-election-lab-votes")?.unit, "votes");
-		assert.equal(measure("local-election-pc-votes")?.valueKind, "count");
-		assert.equal(
-			measure("local-election-effective-votes")?.sources[0]?.coverage
-				.recordCount,
-			3,
-		);
-		assert.match(
-			measure("local-election-effective-votes")?.notes?.[1] ?? "",
-			/county-electoral-division codes is excluded/,
-		);
-		const localVotes2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "party-votes",
-						dimensions: { party: "con" },
-						datasetId: "local-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(
-			localVotes2019?.periods[0]?.records.find(
-				(record) => record.areaCode === "E05011412",
-			),
-			{
-				areaCode: "E05011412",
-				sourceAreaCode: "E05013831",
-				value: 25,
-				status: "observed",
-			},
-		);
-		const localWinners2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "winning-party",
-						datasetId: "local-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(
-			localWinners2019?.periods[0]?.records.find(
-				(record) => record.areaCode === "E05011412",
-			),
-			{
-				areaCode: "E05011412",
-				sourceAreaCode: "E05013831",
-				category: "LAB",
-				status: "observed",
-			},
-		);
-		const localVotes2024 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "party-votes",
-						dimensions: { party: "con" },
-						datasetId: "local-election",
-					}) && artifact.sourceGeography.boundaryYear === 2024,
-		);
-		assert.deepEqual(
-			localVotes2024?.periods[0]?.records.find(
-				(record) => record.areaCode === "E05011348",
-			),
-			{
-				areaCode: "E05011348",
-				value: 35,
-				status: "observed",
-			},
-		);
-		const localWinners2024 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "winning-party",
-						datasetId: "local-election",
-					}) && artifact.sourceGeography.boundaryYear === 2024,
-		);
-		assert.deepEqual(
-			localWinners2024?.periods[0]?.records.find(
-				(record) => record.areaCode === "E05011348",
-			),
-			{
-				areaCode: "E05011348",
-				category: "LAB",
-				status: "observed",
-			},
-		);
+	// The archive's older local-election files lack turnout; zero is not a
+	// result, so 2019 is absent from that measure.
+	assert.deepEqual(
+		measure("local-election-turnout")?.sources.map(
+			(source) => source.periods,
+		),
+		[["2024"]],
+	);
+	assert.equal(
+		measure("local-election-turnout")?.aggregation.kind,
+		"intensive",
+	);
 
-		// The archive's older local-election files lack turnout; zero is not a
-		// result, so 2019 is absent from that measure.
-		assert.deepEqual(
-			measure("local-election-turnout")?.sources.map(
-				(source) => source.periods,
-			),
-			[["2024"]],
-		);
-		assert.equal(
-			measure("local-election-turnout")?.aggregation.kind,
-			"intensive",
-		);
-
-		const labour2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "party-votes",
-						dimensions: { party: "lab" },
-						datasetId: "general-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(labour2019?.periods[0]?.records, [
-			{ areaCode: "E14000001", value: 40, status: "observed" },
-			{ areaCode: "W07000001", value: 50, status: "observed" },
-		]);
-		const reform2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "party-votes",
-						dimensions: { party: "sf" },
-						datasetId: "general-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(
-			reform2019?.periods[0]?.records.map((record) =>
-				"value" in record ? record.value : undefined,
-			),
-			[0, 0],
-		);
-		const winners2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "winning-party",
-						datasetId: "general-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(winners2019?.periods[0]?.records, [
-			{ areaCode: "E14000001", category: "CON", status: "observed" },
-			{ areaCode: "W07000001", category: "LAB", status: "observed" },
-		]);
-		assert.deepEqual(
-			measure("general-election-winning-party")?.aggregation,
-			{
-				kind: "categorical",
-				available: false,
-				note: "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas.",
-			},
-		);
-		const conservativeShare2019 = result.electionObservations.find(
-			(artifact) =>
-				artifact.measureId ===
-					measureSeriesKey({
-						measure: "party-vote-share",
-						dimensions: { party: "con" },
-						datasetId: "general-election",
-					}) && artifact.sourceGeography.boundaryYear === 2019,
-		);
-		assert.deepEqual(conservativeShare2019?.periods[0]?.records, [
-			{ areaCode: "E14000001", value: 60, status: "observed" },
-			{ areaCode: "W07000001", value: 0, status: "observed" },
-		]);
-		assert.deepEqual(
-			measure("general-election-con-vote-share")?.aggregation,
-			{
-				kind: "intensive",
-				operation: "weighted-mean",
-				weight: {
-					description:
-						"The area's valid ballot papers for the same election.",
-					datasetField: "validVotes",
-					measureId: "general-election-valid-votes",
-				},
-				available: true,
-			},
-		);
-		assert.equal(measure("local-election-con-vote-share"), undefined);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const labour2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "party-votes",
+					dimensions: { party: "lab" },
+					datasetId: "general-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(labour2019?.periods[0]?.records, [
+		{ areaCode: "E14000001", value: 40, status: "observed" },
+		{ areaCode: "W07000001", value: 50, status: "observed" },
+	]);
+	const reform2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "party-votes",
+					dimensions: { party: "sf" },
+					datasetId: "general-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(
+		reform2019?.periods[0]?.records.map((record) =>
+			"value" in record ? record.value : undefined,
+		),
+		[0, 0],
+	);
+	const winners2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "winning-party",
+					datasetId: "general-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(winners2019?.periods[0]?.records, [
+		{ areaCode: "E14000001", category: "CON", status: "observed" },
+		{ areaCode: "W07000001", category: "LAB", status: "observed" },
+	]);
+	assert.deepEqual(measure("general-election-winning-party")?.aggregation, {
+		kind: "categorical",
+		available: false,
+		note: "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas.",
+	});
+	const conservativeShare2019 = result.electionObservations.find(
+		(artifact) =>
+			artifact.measureId ===
+				measureSeriesKey({
+					measure: "party-vote-share",
+					dimensions: { party: "con" },
+					datasetId: "general-election",
+				}) && artifact.sourceGeography.boundaryYear === 2019,
+	);
+	assert.deepEqual(conservativeShare2019?.periods[0]?.records, [
+		{ areaCode: "E14000001", value: 60, status: "observed" },
+		{ areaCode: "W07000001", value: 0, status: "observed" },
+	]);
+	assert.deepEqual(measure("general-election-con-vote-share")?.aggregation, {
+		kind: "intensive",
+		operation: "weighted-mean",
+		weight: {
+			description:
+				"The area's valid ballot papers for the same election.",
+			datasetField: "validVotes",
+			measureId: "general-election-valid-votes",
+		},
+		available: true,
+	});
+	assert.equal(measure("local-election-con-vote-share"), undefined);
 });
 
 test("rejects local-authority population data whose codes change between periods", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const rows = migratedSeries().map((series) =>
-			series.dataset === "population-uk"
-				? {
-						...series,
-						periods: {
-							...series.periods,
-							"2024": {
-								E06000001: 7,
-								S12000001: 7,
-								W06000001: 9,
-							},
+	const rows = migratedSeries().map((series) =>
+		series.dataset === "population-uk"
+			? {
+					...series,
+					periods: {
+						...series.periods,
+						"2024": {
+							E06000001: 7,
+							S12000001: 7,
+							W06000001: 9,
 						},
-					}
-				: series,
-		);
-		const sources = writeSources(directory, 2, rows);
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/local-authority codes change between periods/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+					},
+				}
+			: series,
+	);
+	const sources = writeSources(2, rows);
+	assert.throws(
+		() => compileDataCatalog(sources),
+		/local-authority codes change between periods/,
+	);
 });
 
 /** The fixture rows with the land area replaced by the given values. */
@@ -1446,367 +1230,288 @@ const withLandArea = (hectares: Record<string, number>) =>
 	);
 
 test("refuses to derive density when the denominator misses an area", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	// Drop one authority the population partition publishes.
+	const sources = writeSources(
+		2,
+		withLandArea({
+			E06000001: 1000,
+			N09000001: 2000,
+			S12000001: 4000,
+		}),
 	);
-	try {
-		// Drop one authority the population partition publishes.
-		const sources = writeSources(
-			directory,
-			2,
-			withLandArea({
-				E06000001: 1000,
-				N09000001: 2000,
-				S12000001: 4000,
-			}),
-		);
 
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/W06000001 has no area to divide population-density by/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	assert.throws(
+		() => compileDataCatalog(sources),
+		/W06000001 has no area to divide population-density by/,
+	);
 });
 
 test("refuses to derive density from an area with no land", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	// A zero denominator would publish Infinity as a density.
+	const sources = writeSources(
+		2,
+		withLandArea({
+			E06000001: 0,
+			N09000001: 2000,
+			S12000001: 4000,
+			W06000001: 5000,
+		}),
 	);
-	try {
-		// A zero denominator would publish Infinity as a density.
-		const sources = writeSources(
-			directory,
-			2,
-			withLandArea({
-				E06000001: 0,
-				N09000001: 2000,
-				S12000001: 4000,
-				W06000001: 5000,
-			}),
-		);
 
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/E06000001 has no area to divide population-density by/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	assert.throws(
+		() => compileDataCatalog(sources),
+		/E06000001 has no area to divide population-density by/,
+	);
 });
 
 test("derives density and marks the values as derived, not observed", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+
+	const density = result.populationDensityObservations;
+	const record = density.periods[0]?.records.find(
+		(candidate) => candidate.areaCode === "E06000001",
 	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
+	// 7 people over 10 square kilometres.
+	assert.equal(record?.value, 0.7);
+	assert.equal(record?.status, "derived");
 
-		const density = result.populationDensityObservations;
-		const record = density.periods[0]?.records.find(
-			(candidate) => candidate.areaCode === "E06000001",
-		);
-		// 7 people over 10 square kilometres.
-		assert.equal(record?.value, 0.7);
-		assert.equal(record?.status, "derived");
-
-		const measure = result.catalog.measures.find(
-			(candidate) => candidate.id === "population-density",
-		);
-		assert.equal(measure?.aggregation.kind, "intensive");
-		// The denominator is attributable even though it is not a source.
-		assert.deepEqual(measure?.derivedFrom?.datasetIds, [
-			"population-uk",
-			"land-area",
-		]);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const measure = result.catalog.measures.find(
+		(candidate) => candidate.id === "population-density",
+	);
+	assert.equal(measure?.aggregation.kind, "intensive");
+	// The denominator is attributable even though it is not a source.
+	assert.deepEqual(measure?.derivedFrom?.datasetIds, [
+		"population-uk",
+		"land-area",
+	]);
 });
 
 test("publishes total jobs with Northern Ireland absent, not zero, outside its years", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const result = compileDataCatalog(writeSources());
+	const periods = result.jobsObservations.periods;
+
+	assert.deepEqual(
+		periods.map((period) =>
+			period.records.map((record) => record.areaCode),
+		),
+		[
+			["E06000001", "S12000001", "W06000001"],
+			["E06000001", "N09000001", "S12000001", "W06000001"],
+		],
 	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const periods = result.jobsObservations.periods;
+	assert.deepEqual(periods[1]?.records[1], {
+		areaCode: "N09000001",
+		value: 68000,
+		status: "observed",
+	});
 
-		assert.deepEqual(
-			periods.map((period) =>
-				period.records.map((record) => record.areaCode),
-			),
-			[
-				["E06000001", "S12000001", "W06000001"],
-				["E06000001", "N09000001", "S12000001", "W06000001"],
-			],
-		);
-		assert.deepEqual(periods[1]?.records[1], {
-			areaCode: "N09000001",
-			value: 68000,
-			status: "observed",
-		});
-
-		const measure = result.catalog.measures.find(
-			(candidate) => candidate.id === "total-jobs",
-		);
-		assert.equal(measure?.valueKind, "count");
-		assert.equal(measure?.aggregation.kind, "extensive");
-		assert.deepEqual(measure?.sources[0]?.coverage.countries, [
-			"GB-ENG",
-			"GB-NIR",
-			"GB-SCT",
-			"GB-WLS",
-		]);
-		assert.equal(measure?.sources[0]?.coverage.recordCount, 4);
-		assert.match(
-			measure?.sources[0]?.coverage.note ?? "",
-			/Northern Ireland is published for 2020 only/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const measure = result.catalog.measures.find(
+		(candidate) => candidate.id === "total-jobs",
+	);
+	assert.equal(measure?.valueKind, "count");
+	assert.equal(measure?.aggregation.kind, "extensive");
+	assert.deepEqual(measure?.sources[0]?.coverage.countries, [
+		"GB-ENG",
+		"GB-NIR",
+		"GB-SCT",
+		"GB-WLS",
+	]);
+	assert.equal(measure?.sources[0]?.coverage.recordCount, 4);
+	assert.match(
+		measure?.sources[0]?.coverage.note ?? "",
+		/Northern Ireland is published for 2020 only/,
+	);
 });
 
 test("refuses jobs where a British district is missing from a year", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const jobs = jobsSeries();
-		delete jobs.periods["2019"]!.W06000001;
-		jobs.periods["2020"]!.W06000002 = 1000;
-		const sources = writeSources(directory, 2, [
-			jobs,
-			...migratedSeries().filter((series) => series.dataset !== "jobs"),
-		]);
+	const jobs = jobsSeries();
+	delete jobs.periods["2019"]!.W06000001;
+	jobs.periods["2020"]!.W06000002 = 1000;
+	const sources = writeSources(2, [
+		jobs,
+		...migratedSeries().filter((series) => series.dataset !== "jobs"),
+	]);
 
-		// Only a whole nation may be absent; anything else is a gap the
-		// coverage note does not describe.
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/2019: GB-WLS districts do not match/,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	// Only a whole nation may be absent; anything else is a gap the
+	// coverage note does not describe.
+	assert.throws(
+		() => compileDataCatalog(sources),
+		/2019: GB-WLS districts do not match/,
+	);
 });
 
 test("publishes house prices under the publisher's own codes and years", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	const periods = result.housePriceObservations.periods;
+
+	// The year ending March 2023 is not a comparable period.
+	assert.deepEqual(
+		periods.map((period) => period.period),
+		["2021", "2022"],
 	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		const periods = result.housePriceObservations.periods;
+	// Salford's value is restored to the code it was published against,
+	// because its wards were redrawn in 2021. Temple Newsam is the one
+	// safe code-only correction; Garforth stays on the later source code.
+	assert.deepEqual(periods[1]?.records, [
+		{ areaCode: "E05000759", value: 179500, status: "observed" },
+		{ areaCode: "E05008945", value: 95000, status: "observed" },
+		{
+			areaCode: "E05011412",
+			sourceAreaCode: "E05013831",
+			value: 200000,
+			status: "observed",
+		},
+		{ areaCode: "E05013830", value: 210000, status: "observed" },
+	]);
 
-		// The year ending March 2023 is not a comparable period.
-		assert.deepEqual(
-			periods.map((period) => period.period),
-			["2021", "2022"],
-		);
-		// Salford's value is restored to the code it was published against,
-		// because its wards were redrawn in 2021. Temple Newsam is the one
-		// safe code-only correction; Garforth stays on the later source code.
-		assert.deepEqual(periods[1]?.records, [
-			{ areaCode: "E05000759", value: 179500, status: "observed" },
-			{ areaCode: "E05008945", value: 95000, status: "observed" },
-			{
-				areaCode: "E05011412",
-				sourceAreaCode: "E05013831",
-				value: 200000,
-				status: "observed",
-			},
-			{ areaCode: "E05013830", value: 210000, status: "observed" },
-		]);
-
-		const measure = result.catalog.measures.find(
-			(candidate) => candidate.id === "house-price-median",
-		);
-		assert.equal(measure?.aggregation.kind, "non-aggregatable");
-		assert.equal(
-			measure?.aggregation.kind === "non-aggregatable"
-				? measure.aggregation.statistic
-				: undefined,
-			"median",
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const measure = result.catalog.measures.find(
+		(candidate) => candidate.id === "house-price-median",
+	);
+	assert.equal(measure?.aggregation.kind, "non-aggregatable");
+	assert.equal(
+		measure?.aggregation.kind === "non-aggregatable"
+			? measure.aggregation.statistic
+			: undefined,
+		"median",
+	);
 });
 
 test("publishes deprivation rank and decile as they were published", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	const [rank, decile] = ["imd-rank", "imd-decile"].map((measure) =>
+		result.yearlyIndicatorObservations.find(
+			(artifact) => artifact.measureId === measureSeriesKey({ measure }),
+		),
 	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		const [rank, decile] = ["imd-rank", "imd-decile"].map((measure) =>
-			result.yearlyIndicatorObservations.find(
-				(artifact) =>
-					artifact.measureId === measureSeriesKey({ measure }),
-			),
-		);
 
-		assert.equal(
-			rank?.measureId,
-			measureSeriesKey({ measure: "imd-rank" }),
-		);
-		assert.deepEqual(rank?.sourceGeography, {
-			type: "lsoa",
-			boundaryYear: 2021,
-		});
-		// Published ranks are served directly rather than derived from scores.
-		assert.deepEqual(
-			rank?.periods[0]?.records.map((record) => record.value),
-			[1, 2, 3],
-		);
-		assert.equal(
-			decile?.measureId,
-			measureSeriesKey({ measure: "imd-decile" }),
-		);
+	assert.equal(rank?.measureId, measureSeriesKey({ measure: "imd-rank" }));
+	assert.deepEqual(rank?.sourceGeography, {
+		type: "lsoa",
+		boundaryYear: 2021,
+	});
+	// Published ranks are served directly rather than derived from scores.
+	assert.deepEqual(
+		rank?.periods[0]?.records.map((record) => record.value),
+		[1, 2, 3],
+	);
+	assert.equal(
+		decile?.measureId,
+		measureSeriesKey({ measure: "imd-decile" }),
+	);
 
-		for (const id of ["imd-rank", "imd-decile"]) {
-			const measure = result.catalog.measures.find(
-				(candidate) => candidate.id === id,
-			);
-			assert.equal(measure?.valueKind, "ordinal");
-			assert.equal(measure?.aggregation.kind, "non-aggregatable");
-			// The comparability limit is stated, not left to the caller.
-			assert.match(measure?.notes?.[0] ?? "", /within England alone/);
-		}
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
+	for (const id of ["imd-rank", "imd-decile"]) {
+		const measure = result.catalog.measures.find(
+			(candidate) => candidate.id === id,
+		);
+		assert.equal(measure?.valueKind, "ordinal");
+		assert.equal(measure?.aggregation.kind, "non-aggregatable");
+		// The comparability limit is stated, not left to the caller.
+		assert.match(measure?.notes?.[0] ?? "", /within England alone/);
 	}
 });
 
 test("publishes the northern irish rank on its own nisra codes", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	assert.deepEqual(
+		result.yearlyIndicatorObservations
+			.find(
+				(artifact) =>
+					artifact.measureId ===
+					measureSeriesKey({ measure: "nimdm-rank" }),
+			)
+			?.periods[0]?.records.map((record) => [
+				record.areaCode,
+				record.value,
+			]),
+		[
+			["95AA01S1", 516],
+			["95ZZ06W1", 1],
+		],
 	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		assert.deepEqual(
-			result.yearlyIndicatorObservations
-				.find(
-					(artifact) =>
-						artifact.measureId ===
-						measureSeriesKey({ measure: "nimdm-rank" }),
-				)
-				?.periods[0]?.records.map((record) => [
-					record.areaCode,
-					record.value,
-				]),
-			[
-				["95AA01S1", 516],
-				["95ZZ06W1", 1],
-			],
-		);
-		const measure = result.catalog.measures.find(
-			(candidate) => candidate.id === "nimdm-rank",
-		);
-		// A NISRA code carries no country letter but is still Northern Ireland.
-		assert.deepEqual(measure?.sources[0]?.coverage.countries, ["GB-NIR"]);
-		// Only the rank is published; the decile is not NISRA's.
-		assert.equal(
-			result.catalog.measures.some(
-				(candidate) => candidate.id === "nimdm-decile",
-			),
-			false,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const measure = result.catalog.measures.find(
+		(candidate) => candidate.id === "nimdm-rank",
+	);
+	// A NISRA code carries no country letter but is still Northern Ireland.
+	assert.deepEqual(measure?.sources[0]?.coverage.countries, ["GB-NIR"]);
+	// Only the rank is published; the decile is not NISRA's.
+	assert.equal(
+		result.catalog.measures.some(
+			(candidate) => candidate.id === "nimdm-decile",
+		),
+		false,
+	);
 });
 
 test("publishes each nation's index as its own family on its own geography", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
 
-		assert.deepEqual(measure("wimd-rank")?.sources[0]?.sourceGeography, {
-			type: "lsoa",
-			boundaryYear: 2011,
-		});
-		assert.deepEqual(measure("simd-decile")?.sources[0]?.sourceGeography, {
-			type: "dataZone",
-			boundaryYear: 2011,
-		});
-		assert.deepEqual(measure("simd-rank")?.sources[0]?.coverage.countries, [
-			"GB-SCT",
-		]);
-		// Each says which nation it is a position within.
-		assert.match(
-			measure("wimd-rank")?.notes?.[0] ?? "",
-			/within Wales alone/,
-		);
-		assert.match(
-			measure("simd-rank")?.notes?.[0] ?? "",
-			/within Scotland alone/,
-		);
-		assert.equal(
-			measure("simd-rank")?.unit,
-			"rank of 1 data zones, where 1 is the most deprived",
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	assert.deepEqual(measure("wimd-rank")?.sources[0]?.sourceGeography, {
+		type: "lsoa",
+		boundaryYear: 2011,
+	});
+	assert.deepEqual(measure("simd-decile")?.sources[0]?.sourceGeography, {
+		type: "dataZone",
+		boundaryYear: 2011,
+	});
+	assert.deepEqual(measure("simd-rank")?.sources[0]?.coverage.countries, [
+		"GB-SCT",
+	]);
+	// Each says which nation it is a position within.
+	assert.match(measure("wimd-rank")?.notes?.[0] ?? "", /within Wales alone/);
+	assert.match(
+		measure("simd-rank")?.notes?.[0] ?? "",
+		/within Scotland alone/,
+	);
+	assert.equal(
+		measure("simd-rank")?.unit,
+		"rank of 1 data zones, where 1 is the most deprived",
+	);
 });
 
 test("publishes the life expectancy series with each published interval", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const sources = writeSources();
+	const result = compileDataCatalog(sources);
+	const [male, female] = result.lifeExpectancyObservations;
+
+	assert.equal(
+		male?.measureId,
+		measureSeriesKey({
+			measure: "life-expectancy",
+			dimensions: { sex: "male" },
+		}),
 	);
-	try {
-		const sources = writeSources(directory);
-		const result = compileDataCatalog(sources);
-		const [male, female] = result.lifeExpectancyObservations;
+	assert.deepEqual(
+		male?.periods.map((period) => period.period),
+		["2001-2003", "2020-2022"],
+	);
+	const latest = male?.periods.at(-1)?.records[0];
+	assert.equal(latest?.areaCode, "E06000001");
+	assert.equal(latest?.value, 75.97);
+	assert.ok(
+		Math.abs((latest?.confidenceInterval?.lower ?? 0) - 75.27) < 1e-9,
+	);
+	assert.equal(female?.periods[0]?.records[0]?.value, 78.08);
 
-		assert.equal(
-			male?.measureId,
-			measureSeriesKey({
-				measure: "life-expectancy",
-				dimensions: { sex: "male" },
-			}),
-		);
-		assert.deepEqual(
-			male?.periods.map((period) => period.period),
-			["2001-2003", "2020-2022"],
-		);
-		const latest = male?.periods.at(-1)?.records[0];
-		assert.equal(latest?.areaCode, "E06000001");
-		assert.equal(latest?.value, 75.97);
-		assert.ok(
-			Math.abs((latest?.confidenceInterval?.lower ?? 0) - 75.27) < 1e-9,
-		);
-		assert.equal(female?.periods[0]?.records[0]?.value, 78.08);
-
-		const measure = result.catalog.measures.find(
-			(candidate) => candidate.id === "life-expectancy-female",
-		);
-		assert.equal(measure?.aggregation.kind, "non-aggregatable");
-		assert.deepEqual(measure?.uncertainty?.kind, "confidence-interval");
-		assert.equal(measure?.uncertainty?.level, 0.95);
-		assert.equal(measure?.sources[0]?.datasetId, "life-expectancy-series");
-		assert.equal(
-			result.catalog.measures.some(
-				(candidate) => candidate.id === "life-expectancy-total",
-			),
-			false,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const measure = result.catalog.measures.find(
+		(candidate) => candidate.id === "life-expectancy-female",
+	);
+	assert.equal(measure?.aggregation.kind, "non-aggregatable");
+	assert.deepEqual(measure?.uncertainty?.kind, "confidence-interval");
+	assert.equal(measure?.uncertainty?.level, 0.95);
+	assert.equal(measure?.sources[0]?.datasetId, "life-expectancy-series");
+	assert.equal(
+		result.catalog.measures.some(
+			(candidate) => candidate.id === "life-expectancy-total",
+		),
+		false,
+	);
 });
 
 test("serves April 2023 authorities without the districts they replaced", () => {
@@ -1862,448 +1567,396 @@ test("serves April 2023 authorities without the districts they replaced", () => 
 });
 
 test("publishes census qualifications and ethnic groups as counts on April 2023 codes", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
-		const values = (measure: string, dimension: string, member: string) =>
-			result.censusObservations
-				.find(
-					(artifact) =>
-						artifact.measureId ===
-						measureSeriesKey({
-							measure,
-							dimensions: { [dimension]: member },
-						}),
-				)
-				?.periods[0]?.records.map((record) => [
-					record.areaCode,
-					"value" in record ? record.value : undefined,
-				]);
-
-		assert.equal(
-			measure("qualification-level-4-plus")?.unit,
-			"usual residents aged 16 and over",
-		);
-		assert.deepEqual(
-			values(
-				"usual-residents-16-plus",
-				"highest-qualification",
-				"level-4-plus",
-			),
-			[
-				["E06000001", 35],
-				["W06000001", 25],
-			],
-		);
-		assert.deepEqual(
-			values("usual-residents-16-plus", "highest-qualification", "total"),
-			[
-				["E06000001", 100],
-				["W06000001", 90],
-			],
-		);
-
-		// Nineteen ethnic groups, and no separate total: they are exhaustive.
-		const ethnicMeasures = result.catalog.measures.filter((candidate) =>
-			candidate.id.startsWith("ethnicity-"),
-		);
-		assert.equal(ethnicMeasures.length, 19);
-		assert.deepEqual(
-			values(
-				"usual-residents",
-				"ethnic-group",
-				"english-welsh-scottish-northern-irish-or-british",
-			),
-			[
-				["E06000001", 900],
-				["W06000001", 700],
-			],
-		);
-		for (const candidate of [
-			...ethnicMeasures,
-			measure("qualification-total"),
-		])
-			assert.deepEqual(candidate?.sources[0]?.sourceGeography, {
-				type: "localAuthority",
-				boundaryYear: 2023,
-			});
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
-});
-
-test("publishes a single-period indicator and names the authorities it has no value for", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
-		const records = (id: string) =>
-			result.indicatorObservations.find((artifact) => {
-				const indicator = DATASET_DECLARATIONS.flatMap(
-					(declaration) => declaration.catalogue?.indicators ?? [],
-				).find((candidate) => candidate.id === id);
-				return (
-					indicator &&
-					artifact.measureId ===
-						measureSeriesKey({
-							measure: indicator.measure,
-							dimensions: indicator.members,
-						})
-				);
-			})?.periods;
-
-		assert.deepEqual(records("broadband-superfast-availability"), [
-			{
-				period: "2025-07",
-				records: [
-					{ areaCode: "E06000001", value: 90, status: "observed" },
-					{ areaCode: "N09000001", value: 91, status: "observed" },
-					{ areaCode: "S12000001", value: 92, status: "observed" },
-					{ areaCode: "W06000001", value: 93, status: "observed" },
-				],
-			},
-		]);
-		assert.equal(
-			measure("broadband-superfast-availability")?.sources[0]?.coverage
-				.kind,
-			"source-reported",
-		);
-		// A share is weighted, never summed, and is not offered for aggregation.
-		assert.equal(
-			measure("broadband-gigabit-availability")?.aggregation.kind,
-			"intensive",
-		);
-		assert.equal(
-			measure("broadband-gigabit-availability")?.availability.aggregation,
-			false,
-		);
-
-		assert.deepEqual(measure("adult-social-care-outcomes")?.aggregation, {
-			kind: "non-aggregatable",
-			statistic: "median",
-			note: "This is a survey outcome score, not a count that can be summed.",
-			available: false,
-		});
-
-		const fullFibre = measure("broadband-full-fibre-availability")
-			?.sources[0]?.coverage;
-		assert.equal(fullFibre?.kind, "partial");
-		assert.equal(fullFibre?.recordCount, 3);
-		assert.match(
-			fullFibre?.note ?? "",
-			/No value is published for 1 of the 4 authorities: S12000001\./,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
-});
-
-test("publishes final annual road collisions for Great Britain by severity", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
-		assert.deepEqual(
-			result.indicatorObservations.find(
-				(artifact) =>
-					artifact.measureId ===
-						measureSeriesKey({
-							measure: "road-collisions",
-							dimensions: { "collision-severity": "fatal" },
-						}) &&
-					artifact.sourceGeography.type === "localAuthority",
-			)?.periods,
-			[
-				{
-					period: "2025",
-					records: [
-						{ areaCode: "E06000001", value: 1, status: "observed" },
-						{ areaCode: "S12000001", value: 1, status: "observed" },
-					],
-				},
-			],
-		);
-		const source = measure("road-collisions")?.sources[0];
-		assert.deepEqual(source?.sourceGeography, {
-			type: "localAuthority",
-			boundaryYear: 2024,
-		});
-		// Northern Ireland is outside the source, so only the missing Welsh
-		// authority is named.
-		assert.match(
-			source?.coverage.note ?? "",
-			/No value is published for 1 of the 3 authorities: W06000001\./,
-		);
-		assert.equal(measure("road-collisions")?.aggregation.kind, "extensive");
-		assert.match(
-			measure("road-collisions-serious")?.notes?.join(" ") ?? "",
-			/two different systems/,
-		);
-
-		// The LSOA counts are a second partition of the same measure, with
-		// their own artifact, and notes shared by both appear once.
-		const lsoa = measure("road-collisions")?.sources[1];
-		assert.equal(measure("road-collisions")?.sources.length, 2);
-		assert.deepEqual(lsoa?.sourceGeography, {
-			type: "lsoa",
-			boundaryYear: 2021,
-		});
-		assert.equal(
-			lsoa?.observationArtifact,
-			"road-collisions-lsoa-2021-observations",
-		);
-		assert.match(
-			lsoa?.coverage.note ?? "",
-			/Scotland has no LSOAs and is not in this partition/,
-		);
-		assert.equal(
-			measure("road-collisions")?.notes?.filter((note) =>
-				note.startsWith("Final annual"),
-			).length,
-			1,
-		);
-		assert.deepEqual(
-			result.indicatorObservations.find(
-				(artifact) =>
-					artifact.measureId ===
-						measureSeriesKey({
-							measure: "road-collisions",
-							dimensions: { "collision-severity": "serious" },
-						}) && artifact.sourceGeography.type === "lsoa",
-			)?.periods,
-			[
-				{
-					period: "2025",
-					records: [
-						{ areaCode: "E01000001", value: 1, status: "observed" },
-					],
-				},
-			],
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
-});
-
-test("publishes median pay for authorities only, naming suppressed estimates", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const periods = (measure: string) =>
-			result.indicatorObservations.find(
+	const result = compileDataCatalog(writeSources());
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
+	const values = (measure: string, dimension: string, member: string) =>
+		result.censusObservations
+			.find(
 				(artifact) =>
 					artifact.measureId ===
 					measureSeriesKey({
 						measure,
-						dimensions: {
-							"earnings-place": "residence",
-							"pay-statistic": "median",
-						},
+						dimensions: { [dimension]: member },
 					}),
-			)?.periods;
-		assert.deepEqual(periods("gross-annual-pay"), [
+			)
+			?.periods[0]?.records.map((record) => [
+				record.areaCode,
+				"value" in record ? record.value : undefined,
+			]);
+
+	assert.equal(
+		measure("qualification-level-4-plus")?.unit,
+		"usual residents aged 16 and over",
+	);
+	assert.deepEqual(
+		values(
+			"usual-residents-16-plus",
+			"highest-qualification",
+			"level-4-plus",
+		),
+		[
+			["E06000001", 35],
+			["W06000001", 25],
+		],
+	);
+	assert.deepEqual(
+		values("usual-residents-16-plus", "highest-qualification", "total"),
+		[
+			["E06000001", 100],
+			["W06000001", 90],
+		],
+	);
+
+	// Nineteen ethnic groups, and no separate total: they are exhaustive.
+	const ethnicMeasures = result.catalog.measures.filter((candidate) =>
+		candidate.id.startsWith("ethnicity-"),
+	);
+	assert.equal(ethnicMeasures.length, 19);
+	assert.deepEqual(
+		values(
+			"usual-residents",
+			"ethnic-group",
+			"english-welsh-scottish-northern-irish-or-british",
+		),
+		[
+			["E06000001", 900],
+			["W06000001", 700],
+		],
+	);
+	for (const candidate of [...ethnicMeasures, measure("qualification-total")])
+		assert.deepEqual(candidate?.sources[0]?.sourceGeography, {
+			type: "localAuthority",
+			boundaryYear: 2023,
+		});
+});
+
+test("publishes a single-period indicator and names the authorities it has no value for", () => {
+	const result = compileDataCatalog(writeSources());
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
+	const records = (id: string) =>
+		result.indicatorObservations.find((artifact) => {
+			const indicator = DATASET_DECLARATIONS.flatMap(
+				(declaration) => declaration.catalogue?.indicators ?? [],
+			).find((candidate) => candidate.id === id);
+			return (
+				indicator &&
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: indicator.measure,
+						dimensions: indicator.members,
+					})
+			);
+		})?.periods;
+
+	assert.deepEqual(records("broadband-superfast-availability"), [
+		{
+			period: "2025-07",
+			records: [
+				{ areaCode: "E06000001", value: 90, status: "observed" },
+				{ areaCode: "N09000001", value: 91, status: "observed" },
+				{ areaCode: "S12000001", value: 92, status: "observed" },
+				{ areaCode: "W06000001", value: 93, status: "observed" },
+			],
+		},
+	]);
+	assert.equal(
+		measure("broadband-superfast-availability")?.sources[0]?.coverage.kind,
+		"source-reported",
+	);
+	// A share is weighted, never summed, and is not offered for aggregation.
+	assert.equal(
+		measure("broadband-gigabit-availability")?.aggregation.kind,
+		"intensive",
+	);
+	assert.equal(
+		measure("broadband-gigabit-availability")?.availability.aggregation,
+		false,
+	);
+
+	assert.deepEqual(measure("adult-social-care-outcomes")?.aggregation, {
+		kind: "non-aggregatable",
+		statistic: "median",
+		note: "This is a survey outcome score, not a count that can be summed.",
+		available: false,
+	});
+
+	const fullFibre = measure("broadband-full-fibre-availability")?.sources[0]
+		?.coverage;
+	assert.equal(fullFibre?.kind, "partial");
+	assert.equal(fullFibre?.recordCount, 3);
+	assert.match(
+		fullFibre?.note ?? "",
+		/No value is published for 1 of the 4 authorities: S12000001\./,
+	);
+});
+
+test("publishes final annual road collisions for Great Britain by severity", () => {
+	const result = compileDataCatalog(writeSources());
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
+	assert.deepEqual(
+		result.indicatorObservations.find(
+			(artifact) =>
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "road-collisions",
+						dimensions: { "collision-severity": "fatal" },
+					}) && artifact.sourceGeography.type === "localAuthority",
+		)?.periods,
+		[
 			{
 				period: "2025",
 				records: [
-					{ areaCode: "E06000001", value: 29000, status: "observed" },
+					{ areaCode: "E06000001", value: 1, status: "observed" },
+					{ areaCode: "S12000001", value: 1, status: "observed" },
 				],
 			},
-		]);
-		assert.deepEqual(periods("gross-hourly-pay"), [
-			{ period: "2025", records: [] },
-		]);
-		const hourly = result.catalog.measures.find(
-			(measure) => measure.id === "median-hourly-pay",
-		);
-		assert.equal(hourly?.aggregation.kind, "non-aggregatable");
-		assert.match(
-			hourly?.sources[0]?.coverage.note ?? "",
-			/No value is published for 1 of the 1 authorities: E06000001\./,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+		],
+	);
+	const source = measure("road-collisions")?.sources[0];
+	assert.deepEqual(source?.sourceGeography, {
+		type: "localAuthority",
+		boundaryYear: 2024,
+	});
+	// Northern Ireland is outside the source, so only the missing Welsh
+	// authority is named.
+	assert.match(
+		source?.coverage.note ?? "",
+		/No value is published for 1 of the 3 authorities: W06000001\./,
+	);
+	assert.equal(measure("road-collisions")?.aggregation.kind, "extensive");
+	assert.match(
+		measure("road-collisions-serious")?.notes?.join(" ") ?? "",
+		/two different systems/,
+	);
+
+	// The LSOA counts are a second partition of the same measure, with
+	// their own artifact, and notes shared by both appear once.
+	const lsoa = measure("road-collisions")?.sources[1];
+	assert.equal(measure("road-collisions")?.sources.length, 2);
+	assert.deepEqual(lsoa?.sourceGeography, {
+		type: "lsoa",
+		boundaryYear: 2021,
+	});
+	assert.equal(
+		lsoa?.observationArtifact,
+		"road-collisions-lsoa-2021-observations",
+	);
+	assert.match(
+		lsoa?.coverage.note ?? "",
+		/Scotland has no LSOAs and is not in this partition/,
+	);
+	assert.equal(
+		measure("road-collisions")?.notes?.filter((note) =>
+			note.startsWith("Final annual"),
+		).length,
+		1,
+	);
+	assert.deepEqual(
+		result.indicatorObservations.find(
+			(artifact) =>
+				artifact.measureId ===
+					measureSeriesKey({
+						measure: "road-collisions",
+						dimensions: { "collision-severity": "serious" },
+					}) && artifact.sourceGeography.type === "lsoa",
+		)?.periods,
+		[
+			{
+				period: "2025",
+				records: [
+					{ areaCode: "E01000001", value: 1, status: "observed" },
+				],
+			},
+		],
+	);
+});
+
+test("publishes median pay for authorities only", () => {
+	const result = compileDataCatalog(writeSources());
+	const periods = (measure: string) =>
+		result.indicatorObservations.find(
+			(artifact) =>
+				artifact.measureId ===
+				measureSeriesKey({
+					measure,
+					dimensions: {
+						"earnings-place": "residence",
+						"pay-statistic": "median",
+					},
+				}),
+		)?.periods;
+	assert.deepEqual(periods("gross-annual-pay"), [
+		{
+			period: "2025",
+			records: [
+				{ areaCode: "E06000001", value: 29000, status: "observed" },
+			],
+		},
+	]);
+	assert.deepEqual(periods("gross-hourly-pay"), [
+		{
+			period: "2025",
+			records: [{ areaCode: "E06000001", value: 15, status: "observed" }],
+		},
+	]);
+	const hourly = result.catalog.measures.find(
+		(measure) => measure.id === "median-hourly-pay",
+	);
+	assert.equal(hourly?.aggregation.kind, "non-aggregatable");
+	assert.match(
+		hourly?.sources[0]?.coverage.note ?? "",
+		/English authorities only/,
+	);
 });
 
 test("publishes recorded crime by community safety partnership", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const result = compileDataCatalog(writeSources());
+	const crimeMeasures = result.catalog.measures.filter((measure) =>
+		measure.id.startsWith("crime-"),
 	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const crimeMeasures = result.catalog.measures.filter((measure) =>
-			measure.id.startsWith("crime-"),
-		);
-		assert.equal(crimeMeasures.length, 23);
-		assert.deepEqual(crimeMeasures[0]?.sources[0]?.sourceGeography, {
-			type: "communitySafetyPartnership",
-			boundaryYear: 2023,
-		});
-		const records = (id: string) =>
-			result.indicatorObservations.find(
-				(artifact) => artifact.measureId === id,
-			)?.periods;
-		assert.deepEqual(
-			records(
-				measureSeriesKey({
-					measure: "recorded-crimes",
-					dimensions: { offence: "total" },
-				}),
-			),
-			[
-				{
-					period: "year-ending-2026-03",
-					records: [
-						{
-							areaCode: "E22000100",
-							value: 20000,
-							status: "observed",
-						},
-						{
-							areaCode: "E22000362",
-							value: 10997,
-							status: "observed",
-						},
-					],
-				},
-			],
-		);
-		assert.equal(
-			records(
-				measureSeriesKey({
-					measure: "recorded-crimes",
-					dimensions: { offence: "public-order-offences" },
-				}),
-			)?.[0]?.records[0]?.value,
-			-1,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	assert.equal(crimeMeasures.length, 23);
+	assert.deepEqual(crimeMeasures[0]?.sources[0]?.sourceGeography, {
+		type: "communitySafetyPartnership",
+		boundaryYear: 2023,
+	});
+	const records = (id: string) =>
+		result.indicatorObservations.find(
+			(artifact) => artifact.measureId === id,
+		)?.periods;
+	assert.deepEqual(
+		records(
+			measureSeriesKey({
+				measure: "recorded-crimes",
+				dimensions: { offence: "total" },
+			}),
+		),
+		[
+			{
+				period: "year-ending-2026-03",
+				records: [
+					{
+						areaCode: "E22000100",
+						value: 20000,
+						status: "observed",
+					},
+					{
+						areaCode: "E22000362",
+						value: 10997,
+						status: "observed",
+					},
+				],
+			},
+		],
+	);
+	assert.equal(
+		records(
+			measureSeriesKey({
+				measure: "recorded-crimes",
+				dimensions: { offence: "public-order-offences" },
+			}),
+		)?.[0]?.records[0]?.value,
+		-1,
+	);
 });
 
 test("publishes modelled unemployment in the two code vintages the workbook holds", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	const result = compileDataCatalog(writeSources());
+	const rate = result.catalog.measures.find(
+		(measure) => measure.id === "unemployment-rate",
 	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const rate = result.catalog.measures.find(
-			(measure) => measure.id === "unemployment-rate",
+	assert.deepEqual(
+		rate?.sources.map((source) => [
+			source.sourceGeography.boundaryYear,
+			source.periods,
+		]),
+		[
+			[2019, ["2003-04", "2020", "2021"]],
+			[2021, ["2020", "2021"]],
+		],
+	);
+	assert.equal(rate?.aggregation.kind, "intensive");
+	const partition = (boundaryYear: number) =>
+		result.indicatorObservations.find(
+			(artifact) =>
+				artifact.measureId ===
+					measureSeriesKey({ measure: "unemployment-rate" }) &&
+				artifact.sourceGeography.boundaryYear === boundaryYear,
 		);
-		assert.deepEqual(
-			rate?.sources.map((source) => [
-				source.sourceGeography.boundaryYear,
-				source.periods,
-			]),
-			[
-				[2019, ["2003-04", "2020", "2021"]],
-				[2021, ["2020", "2021"]],
-			],
-		);
-		assert.equal(rate?.aggregation.kind, "intensive");
-		const partition = (boundaryYear: number) =>
-			result.indicatorObservations.find(
-				(artifact) =>
-					artifact.measureId ===
-						measureSeriesKey({ measure: "unemployment-rate" }) &&
-					artifact.sourceGeography.boundaryYear === boundaryYear,
-			);
-		const codes = (boundaryYear: number, period: string) =>
-			partition(boundaryYear)
-				?.periods.find((candidate) => candidate.period === period)
-				?.records.map((record) => record.areaCode);
-		// The April 2020 and 2021 districts are in the 2019 partition only, and
-		// no derived April 2023 authority is served in either.
-		assert.ok(codes(2019, "2021")?.includes("E07000004"));
-		assert.ok(!codes(2021, "2021")?.includes("E07000004"));
-		for (const boundaryYear of [2019, 2021])
-			assert.ok(!codes(boundaryYear, "2020")?.includes("E06000063"));
-		assert.deepEqual(codes(2019, "2003-04"), [
-			"E06000001",
-			"S12000001",
-			"W06000001",
-		]);
-		assert.deepEqual(
-			partition(2019)?.periods.find(
-				(period) => period.period === "2003-04",
-			)?.records[0],
-			{
-				areaCode: "E06000001",
-				value: 6,
-				status: "observed",
-				confidenceInterval: { lower: 4.5, upper: 7.5 },
-			},
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const codes = (boundaryYear: number, period: string) =>
+		partition(boundaryYear)
+			?.periods.find((candidate) => candidate.period === period)
+			?.records.map((record) => record.areaCode);
+	// The April 2020 and 2021 districts are in the 2019 partition only, and
+	// no derived April 2023 authority is served in either.
+	assert.ok(codes(2019, "2021")?.includes("E07000004"));
+	assert.ok(!codes(2021, "2021")?.includes("E07000004"));
+	for (const boundaryYear of [2019, 2021])
+		assert.ok(!codes(boundaryYear, "2020")?.includes("E06000063"));
+	assert.deepEqual(codes(2019, "2003-04"), [
+		"E06000001",
+		"S12000001",
+		"W06000001",
+	]);
+	assert.deepEqual(
+		partition(2019)?.periods.find((period) => period.period === "2003-04")
+			?.records[0],
+		{
+			areaCode: "E06000001",
+			value: 6,
+			status: "observed",
+			confidenceInterval: { lower: 4.5, upper: 7.5 },
+		},
+	);
 });
 
 test("publishes grid area means as derived, weighted by their grid cells", () => {
-	const directory = mkdtempSync(
-		join(tmpdir(), "uk-data-atlas-data-catalog-"),
-	);
-	try {
-		const result = compileDataCatalog(writeSources(directory));
-		const measure = (id: string) =>
-			result.catalog.measures.find((candidate) => candidate.id === id);
-		const statuses = (series: Parameters<typeof measureSeriesKey>[0]) => [
-			...new Set(
-				result.indicatorObservations
-					.find(
-						(artifact) =>
-							artifact.measureId === measureSeriesKey(series),
-					)
-					?.periods[0]?.records.map((record) => record.status),
-			),
-		];
+	const result = compileDataCatalog(writeSources());
+	const measure = (id: string) =>
+		result.catalog.measures.find((candidate) => candidate.id === id);
+	const statuses = (series: Parameters<typeof measureSeriesKey>[0]) => [
+		...new Set(
+			result.indicatorObservations
+				.find(
+					(artifact) =>
+						artifact.measureId === measureSeriesKey(series),
+				)
+				?.periods[0]?.records.map((record) => record.status),
+		),
+	];
 
-		const no2 = measure("no2-background-mean");
-		assert.deepEqual(no2?.aggregation, {
-			kind: "intensive",
-			operation: "weighted-mean",
-			weight: {
-				description:
-					"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
-				datasetField: "gridCells",
-				measureId: "air-quality-grid-cells",
-			},
-			available: true,
-		});
-		assert.deepEqual(
-			statuses({
-				measure: "background-concentration",
-				dimensions: { pollutant: "no2" },
-			}),
-			["derived"],
-		);
-		assert.deepEqual(statuses({ measure: "air-quality-grid-cells" }), [
-			"derived",
-		]);
-		// Defra's own table is served as published, and not combined.
-		assert.deepEqual(statuses({ measure: "pm25-population-weighted" }), [
-			"observed",
-		]);
-		assert.equal(
-			measure("pm25-population-weighted")?.availability.aggregation,
-			false,
-		);
-	} finally {
-		rmSync(directory, { recursive: true, force: true });
-	}
+	const no2 = measure("no2-background-mean");
+	assert.deepEqual(no2?.aggregation, {
+		kind: "intensive",
+		operation: "weighted-mean",
+		weight: {
+			description:
+				"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+			datasetField: "gridCells",
+			measureId: "air-quality-grid-cells",
+		},
+		available: true,
+	});
+	assert.deepEqual(
+		statuses({
+			measure: "background-concentration",
+			dimensions: { pollutant: "no2" },
+		}),
+		["derived"],
+	);
+	assert.deepEqual(statuses({ measure: "air-quality-grid-cells" }), [
+		"derived",
+	]);
+	// Defra's own table is served as published, and not combined.
+	assert.deepEqual(statuses({ measure: "pm25-population-weighted" }), [
+		"observed",
+	]);
+	assert.equal(
+		measure("pm25-population-weighted")?.availability.aggregation,
+		false,
+	);
 });
 
 test("names what covers the nations a measure does not", () => {
