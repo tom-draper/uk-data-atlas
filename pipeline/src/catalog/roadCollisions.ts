@@ -1,4 +1,4 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import { countryForCode } from "@uk-data-atlas/catalogue/node";
 import { type Indicator, publishIndicators } from "./indicators.ts";
 import type { CatalogManifest, CompiledMeasure } from "./manifest.ts";
@@ -7,7 +7,7 @@ import { sha256 } from "./values.ts";
 /** Final annual reported road collisions, by local authority and by LSOA. */
 export const compileRoadCollisions = (
 	manifest: CatalogManifest,
-	roadCollisionsPath: DatasetInput,
+	rows: CatalogueRows,
 	populationCodes: Set<string>,
 ): CompiledMeasure[] => {
 	const compiled: CompiledMeasure[] = [];
@@ -31,17 +31,17 @@ export const compileRoadCollisions = (
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		notes: [note],
 	});
-	const roadCollisionsEditions = Object.values(
-		JSON.parse(readDatasetInput(roadCollisionsPath)) as Record<
-			string,
-			{
-				year: number;
-				boundaryYear: number;
-				excluded?: Array<{ code: string; collisions: number }>;
-				withoutLsoa?: Record<string, number>;
-			}
-		>,
-	).sort((left, right) => left.year - right.year);
+	const roadCollisionsEditions = rows
+		.editions("road-collisions", "localAuthority")
+		.map(({ period, boundaryYear }) => ({
+			period,
+			boundaryYear,
+			excluded: rows.coverageGaps(
+				"road-collisions",
+				period,
+				"collision-area",
+			),
+		}));
 	const collisionCount = (count: number) =>
 		`${count} collision${count === 1 ? "" : "s"}`;
 	const roadCollisionIndicators = [
@@ -115,14 +115,13 @@ export const compileRoadCollisions = (
 			.values(),
 	];
 	for (const roadCollisionsEdition of roadCollisionsEditions) {
-		const period = String(roadCollisionsEdition.year);
+		const { period } = roadCollisionsEdition;
 		compiled.push(
 			...publishIndicators(manifest, {
 				datasetId: "road-collisions",
-				path: roadCollisionsPath,
+				rows,
 				boundaryYear: roadCollisionsEdition.boundaryYear,
 				period,
-				sourcePeriod: period,
 				artifactStem: `local-authority-${roadCollisionsEdition.boundaryYear}`,
 				expectedCodes:
 					roadCollisionsEdition.boundaryYear === 2024
@@ -132,8 +131,8 @@ export const compileRoadCollisions = (
 						: undefined,
 				coverageNote: [
 					"Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file.",
-					...(roadCollisionsEdition.excluded ?? []).map(
-						({ code, collisions: count }) =>
+					...roadCollisionsEdition.excluded.map(
+						({ code, count }) =>
 							`${collisionCount(count)} assigned to ${code}, which is not a local authority code, ${count === 1 ? "is" : "are"} not counted in any authority.`,
 					),
 					"An authority with no collision records has no value rather than zero, since the source cannot distinguish no recorded collision from an unreported one.",
@@ -145,14 +144,12 @@ export const compileRoadCollisions = (
 		compiled.push(
 			...publishIndicators(manifest, {
 				datasetId: "road-collisions",
-				path: roadCollisionsPath,
+				rows,
 				boundaryYear: roadCollisionsEdition.boundaryYear,
 				geography: "lsoa",
 				partitionBoundaryYear: 2021,
-				table: "lsoas",
 				artifactStem: "lsoa-2021",
 				period,
-				sourcePeriod: period,
 				coverageNote: [
 					"Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs and is not in this partition.",
 					"An LSOA with no collision records has no value rather than zero, since the source cannot distinguish no recorded collision from an unreported one.",
