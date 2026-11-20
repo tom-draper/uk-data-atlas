@@ -1,0 +1,204 @@
+# crosswalk-chain: id registry. A key (4 fields) is on each line below that is not a directive, and its id is the one after the line before it, from 1.
+# Append only. Never edit, reorder, remove or reuse a line. See docs/stable-ids.md.
+@constituency	2022-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2021-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2020-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2019-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2018-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2017-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2016-12-uk-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@constituency	2015-12-gb-bgc	2024-07-uk-bgc
+population
+households
+dwellings
+postcodes
+@country	2024-12-uk-bgc	2025-12-uk-bgc
+any
+@country	2023-12-uk-bgc	2025-12-uk-bgc
+any
+@country	2022-12-uk-bgc	2025-12-uk-bgc
+any
+@country	2021-12-uk-bgc	2025-12-uk-bgc
+any
+@country	2020-12-uk-bgc	2025-12-uk-bgc
+any
+@itl1	2021-01-uk-bgc	2025-01-uk-bgc
+any
+@itl2	2021-01-uk-bgc-v2	2025-01-uk-bgc
+any
+@itl3	2021-01-uk-bgc-v3	2025-01-uk-bgc-v2
+any
+@localAuthority	2025-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2025-05-uk-bgc-v2	2026-05-uk-bgc
+any
+@localAuthority	2024-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2024-05-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2023-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2023-05-uk-bgc-v2	2026-05-uk-bgc
+any
+@localAuthority	2022-12-uk-bgc-v2	2026-05-uk-bgc
+any
+@localAuthority	2021-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2020-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2019-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2019-04-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2018-12-uk-bgc	2026-05-uk-bgc
+any
+@localAuthority	2017-12-gb-bgc	2026-05-uk-bgc
+any
+@localAuthority	2016-12-gb-bgc	2026-05-uk-bgc
+any
+@localAuthority	2015-12-gb-bgc	2026-05-uk-bgc
+any
+@localAuthority	2011-12-gb-bgc	2026-05-uk-bgc
+any
+@lsoa	2011-12-w-bgc	2021-12-ew-bgc-v5
+population
+households
+dwellings
+postcodes
+@lsoa	2011-12-ew-bgc-v3	2021-12-ew-bgc-v5
+population
+households
+dwellings
+postcodes
+@lsoa	2001-12-ew-bgc-v2	2021-12-ew-bgc-v5
+population
+households
+dwellings
+postcodes
+@lsoa	2001-12-ew-bgc	2021-12-ew-bgc-v5
+population
+households
+dwellings
+postcodes
+@msoa	2011-12-ew-bgc-v3	2021-12-ew-bgc-v3
+any
+@msoa	2001-12-ew-bgc-v2	2021-12-ew-bgc-v3
+any
+@outputArea	2011-12-ew-bgc-v2	2021-12-ew-bgc-v2
+any
+@outputArea	2001-12-ew-bgc	2021-12-ew-bgc-v2
+any
+@parish	2025-05-ew-bgc	2026-05-ew-bgc
+any
+@parish	2024-12-ew-bgc	2026-05-ew-bgc
+any
+@parish	2023-12-ew-bgc	2026-05-ew-bgc
+any
+@parish	2022-12-ew-bgc-v3	2026-05-ew-bgc
+any
+@parish	2021-12-ew-bgc	2026-05-ew-bgc
+any
+@parish	2019-04-ew-bgc	2026-05-ew-bgc
+any
+@ward	2025-12-uk-bgc	2026-05-uk-bgc
+any
+@ward	2025-05-uk-bgc-v2	2026-05-uk-bgc
+any
+@ward	2024-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2024-05-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2023-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2023-05-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2022-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2021-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2020-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2019-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2019-12-gb-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2018-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2017-12-gb-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2016-12-gb-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2015-12-gb-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2011-12-ew-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
