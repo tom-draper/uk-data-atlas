@@ -3,7 +3,8 @@ import {
 	defineDataset,
 	noCompiledPayload,
 } from "../../../declaration/dataset.ts";
-import { POPULATION } from "../../../declaration/measures.ts";
+import { POPULATION, SEX } from "../../../declaration/measures.ts";
+import { AGE, byAge } from "../../../data/population/statistics.ts";
 import { populationConstituencyStatisticsParts } from "../../../data/population-constituency/source.ts";
 
 export const populationConstituency =
@@ -28,7 +29,7 @@ export const populationConstituency =
 			attribution:
 				"Office for National Statistics. Contains public sector information licensed under the Open Government Licence v3.0.",
 			description:
-				"Mid-year usual resident population for Westminster parliamentary constituencies in England and Wales, on the constituencies first contested in July 2024.",
+				"Mid-year usual resident population for Westminster parliamentary constituencies in England and Wales, on the constituencies first contested in July 2024, with the total and single years of age by sex.",
 			cadence: "annual",
 			notes: [],
 		},
@@ -39,7 +40,7 @@ export const populationConstituency =
 			minimumDatasets: 2,
 			minimumDataRecords: 575,
 			expectedBoundaryYears: [2024],
-			requiredDataFields: ["total"],
+			requiredDataFields: ["allAges", "total", "males", "females"],
 		},
 		load: noCompiledPayload<PopulationConstituencyDataset>(),
 		statistics: {
@@ -51,9 +52,11 @@ export const populationConstituency =
 			payload: {
 				header: { coverageCountries: ["GB-ENG", "GB-WLS"] },
 				code: "constituencyCode",
+				arrays: ["total", "males", "females"],
 			},
 			name: "constituencyName",
 			measures: [POPULATION],
-			fields: [{ path: "total", measure: "population" }],
+			dimensions: [SEX, AGE],
+			fields: [{ path: "allAges", measure: "population" }, ...byAge],
 		},
 	});

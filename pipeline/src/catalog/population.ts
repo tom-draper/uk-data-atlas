@@ -179,8 +179,8 @@ export const compilePopulation = (
 								object(
 									record,
 									`${populationConstituencyPath}.${period}.${areaCode}`,
-								).total,
-								`${populationConstituencyPath}.${period}.${areaCode}.total`,
+								).allAges,
+								`${populationConstituencyPath}.${period}.${areaCode}.allAges`,
 							),
 							status: "observed" as const,
 						};

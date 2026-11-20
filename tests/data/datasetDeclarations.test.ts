@@ -1331,7 +1331,10 @@ describe("declared dataset rows", () => {
 						E14001063: {
 							constituencyCode: "E14001063",
 							constituencyName: "Example",
-							total: year * 30,
+							allAges: year * 30,
+							total: [year * 10, year * 20],
+							males: [year * 4, year * 8],
+							females: [year * 6, year * 12],
 						},
 					},
 				},

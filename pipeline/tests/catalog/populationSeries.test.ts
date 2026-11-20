@@ -36,7 +36,7 @@ test("population partitions and density use canonical series and matching hashes
 				year: 2022,
 				boundaryYear: 2024,
 				boundaryType: "constituency",
-				data: { E14001063: { total: 5 } },
+				data: { E14001063: { allAges: 5 } },
 			},
 		});
 		const land = write("land", {

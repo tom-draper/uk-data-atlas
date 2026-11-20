@@ -914,8 +914,8 @@ const writeSources = (
 		boundaryType: "constituency",
 		boundaryYear: 2024,
 		data: {
-			E14001063: { total: 119256 - offset },
-			W07000081: { total: 90000 - offset },
+			E14001063: { allAges: 119256 - offset },
+			W07000081: { allAges: 90000 - offset },
 		},
 	});
 	writeFileSync(
