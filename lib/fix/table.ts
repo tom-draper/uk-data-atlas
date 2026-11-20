@@ -1,8 +1,12 @@
 import Papa from "papaparse";
 import { detectHeaderRow } from "@/lib/data/custom/csv";
 
-/** Rows read from one file. Larger files are cut here and told so. */
-export const ROW_LIMIT = 10_000;
+/**
+ * Rows read from one file. Larger files are cut here and told so. It is
+ * more than twice Great Britain's LSOAs and data zones (about 42,000), and
+ * a check of that many still fits the API's 8 MB request limit.
+ */
+export const ROW_LIMIT = 100_000;
 
 export interface Table {
 	headers: string[];
@@ -17,16 +21,29 @@ const looksLikeCode = (value: string) => /^[A-Za-z]\d{4,}$/.test(value.trim());
 
 /**
  * Reads CSV, or tab-separated text pasted from a spreadsheet, keeping every
- * cell exactly as written so a download gives the same values back. A pasted
- * column with no header gets one, so its first value is not lost.
+ * cell exactly as written so a download gives the same values back.
  */
 export function readTable(text: string): Table {
-	const parsed = Papa.parse<string[]>(text.replace(/^﻿/, ""), {
+	const parsed = Papa.parse<string[]>(text.replace(/^\uFEFF/, ""), {
 		skipEmptyLines: "greedy",
 	});
-	const lines = parsed.data.filter((row) => row.some((cell) => cell.trim()));
+	return tableFromLines(parsed.data);
+}
+
+/**
+ * Finds the header in lines of cells, whether from a CSV or a sheet, and
+ * squares the rows up beneath it. A pasted column with no header gets one,
+ * so its first value is not lost. `extraRows` is rows already left out.
+ */
+export function tableFromLines(all: string[][], extraRows = 0): Table {
+	const lines = all.filter((row) => row.some((cell) => cell.trim()));
 	if (lines.length === 0)
-		return { headers: [], rows: [], droppedRows: 0, skippedLines: 0 };
+		return {
+			headers: [],
+			rows: [],
+			droppedRows: extraRows,
+			skippedLines: 0,
+		};
 
 	let headerRow = detectHeaderRow(lines);
 	let headers = lines[headerRow];
@@ -37,21 +54,27 @@ export function readTable(text: string): Table {
 		body = lines;
 	}
 
-	const width = Math.max(headers.length, ...body.map((row) => row.length));
+	// A loop, not Math.max(...), which fails on very long tables.
+	let width = headers.length;
+	for (const row of body) if (row.length > width) width = row.length;
 	const named = Array.from(
 		{ length: width },
 		(_, index) => headers[index]?.trim() || `column ${index + 1}`,
 	);
-	const rows = body
-		.slice(0, ROW_LIMIT)
-		.map((row) =>
-			Array.from({ length: width }, (_, index) => row[index] ?? ""),
-		);
+	const kept = Math.min(body.length, ROW_LIMIT);
+	const rows: string[][] = new Array(kept);
+	for (let i = 0; i < kept; i++) {
+		const row = body[i];
+		rows[i] =
+			row.length === width
+				? row
+				: Array.from({ length: width }, (_, index) => row[index] ?? "");
+	}
 
 	return {
 		headers: named,
 		rows,
-		droppedRows: Math.max(0, body.length - ROW_LIMIT),
+		droppedRows: body.length - kept + extraRows,
 		skippedLines: headerRow,
 	};
 }
