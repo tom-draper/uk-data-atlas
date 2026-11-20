@@ -463,6 +463,30 @@ describe("LayerManager boundary values", () => {
 		expect(lastPaint(map, "line-opacity")).toBe(0.05);
 	});
 
+	it("only writes the feature state that changed", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const paint = valuePaint(["get", "value"]);
+
+		manager.paintBoundaries(
+			collection({ 0: 1, 1: 2, 2: 3 }),
+			paint,
+			visibility,
+		);
+		map.setFeatureState.mockClear();
+		manager.paintBoundaries(
+			collection({ 0: 1, 1: 5, 2: 3 }),
+			paint,
+			visibility,
+		);
+
+		expect(map.setFeatureState).toHaveBeenCalledTimes(1);
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", id: 1 },
+			{ outsideDataset: false, value: 5 },
+		);
+	});
+
 	it("hides the boundaries a dataset leaves out instead of re-uploading", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);
