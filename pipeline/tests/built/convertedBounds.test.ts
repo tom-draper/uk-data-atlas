@@ -109,3 +109,25 @@ test("a split with no measured error is a gap and holds no value", () => {
 		0,
 	);
 });
+
+test("the ward population by age split onto constituencies is estimated, with bounds", () => {
+	const ages = `FROM observation o
+		JOIN series s ON s.id = o.series_id
+		WHERE s.key LIKE 'population/population/ward:2023-12-uk-bgc/age=%~converted:constituency:2024-07-uk-bgc'`;
+	assert.ok(
+		one(`SELECT count(*) AS n ${ages} AND o.status_id = ${ESTIMATED}`) > 0,
+	);
+	assert.equal(
+		one(`SELECT count(*) AS n ${ages} AND o.status_id = ${ESTIMATED}
+			   AND (o.lower IS NULL OR o.upper IS NULL)`),
+		0,
+	);
+	// No age series is left a gap for want of a measured factor.
+	assert.equal(
+		one(`SELECT count(*) AS n FROM series_gap g
+			 JOIN series s ON s.id = g.series_id
+			 WHERE g.reason = 'unmeasured-split'
+			   AND s.key LIKE 'population/population/ward:2023-12-uk-bgc/age=%~converted:constituency:2024-07-uk-bgc'`),
+		0,
+	);
+});
