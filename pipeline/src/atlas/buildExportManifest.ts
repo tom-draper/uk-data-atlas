@@ -10,7 +10,6 @@ import { DatabaseSync } from "node:sqlite";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { measureStatisticsSelections } from "../statistics/measureStatisticsSelections.ts";
 import { compileMeasureDownloads } from "../statistics/measureDownloads.ts";
-import type { CompiledMeasure } from "../catalog/manifest.ts";
 import { statisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
 import { readJsonSync } from "../lib/json.ts";
 
@@ -18,12 +17,6 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 	const publicDirectory = artifactDirectory(repositoryRoot);
 	const dataCatalogPath = join(publicDirectory, "data-catalog.json");
 	const dataCatalog = readJsonSync(dataCatalogPath) as DataCatalog;
-	const bindings = readJsonSync(
-		join(repositoryRoot, "data/build/measure-statistics-fields.json"),
-	) as Array<{
-		measureId: string;
-		field: NonNullable<CompiledMeasure["statisticsField"]>;
-	}>;
 	const readPath = readJsonSync(
 		statisticsReadPathPath(repositoryRoot),
 	) as StatisticsReadPath;
@@ -47,9 +40,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 			const selection = measureStatisticsSelections(
 				database,
 				measure,
-				bindings,
 				readPath,
-				undefined,
 				identities,
 			);
 			if (!selection) continue;

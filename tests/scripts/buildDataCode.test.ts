@@ -226,11 +226,6 @@ test("atlas assembly depends on each declared component output", async () => {
 		buildDataStages.find((entry) => entry.name === name)!;
 	assert.ok(
 		stage("data-catalog").requiredOutputs.includes(
-			"data/build/measure-statistics-fields.json",
-		),
-	);
-	assert.ok(
-		stage("data-catalog").requiredOutputs.includes(
 			"data/build/artifacts/data-catalog.json",
 		),
 	);

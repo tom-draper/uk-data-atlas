@@ -1,16 +1,11 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { directPayloadProblem } from "../pipeline/src/checks/directPayloadGoldens";
 import { datasetCatalogInputs } from "../pipeline/src/catalog/buildDataCatalog";
-import {
-	compileDataCatalog,
-	type DataCatalogInputs,
-} from "../pipeline/src/catalog/compileDataCatalog";
-import { AtlasDatasetInput } from "../pipeline/src/catalog/input";
+import { compileDataCatalog } from "../pipeline/src/catalog/compileDataCatalog";
 import { route } from "../services/api/src/routes";
 import { testContext } from "../services/api/tests/routeFixtures";
 
@@ -33,54 +28,18 @@ for (const { type, output, direct } of manifest.datasets) {
 		output,
 	);
 }
-const jsonInputs = datasetCatalogInputs(root);
-// Small-area census tables read raw files in both builds and are outside this migration.
-delete jsonInputs.censusSmallAreaRoot;
-const fromSqlite = (value: unknown) =>
-	value instanceof AtlasDatasetInput
-		? new AtlasDatasetInput(root, value.output, "atlas")
-		: value;
-const sqliteInputs = {
-	...Object.fromEntries(
-		Object.entries(jsonInputs).map(([key, value]) => [
-			key,
-			fromSqlite(value),
-		]),
-	),
-	declared: Object.fromEntries(
-		Object.entries(jsonInputs.declared ?? {}).map(([id, value]) => [
-			id,
-			fromSqlite(value),
-		]),
-	),
-} as DataCatalogInputs;
-const digest = (value: unknown) =>
-	createHash("sha256").update(JSON.stringify(value)).digest("hex");
-function snapshot(inputs: DataCatalogInputs) {
-	const result = compileDataCatalog(inputs);
-	const context = testContext({ dataCatalog: result.catalog });
-	const urls = [
-		"/v1/datasets",
-		"/v1/measures",
-		...result.catalog.datasets.map(({ id }) => `/v1/datasets/${id}`),
-		...result.catalog.measures.map(({ id }) => `/v1/measures/${id}`),
-	];
-	return {
-		artifacts: Object.fromEntries(
-			Object.entries(result).map(([key, value]) => [key, digest(value)]),
-		),
-		responses: Object.fromEntries(
-			urls.map((url) => {
-				const response = route("GET", url, context);
-				assert.equal(response.status, 200, url);
-				return [url, digest(response)];
-			}),
-		),
-	};
-}
-const before = snapshot(jsonInputs);
-const after = snapshot(sqliteInputs);
-assert.deepEqual(after, before);
+const inputs = datasetCatalogInputs(root);
+const result = compileDataCatalog(inputs);
+inputs.rows.close();
+const context = testContext({ dataCatalog: result.catalog });
+const urls = [
+	"/v1/datasets",
+	"/v1/measures",
+	...result.catalog.datasets.map(({ id }) => `/v1/datasets/${id}`),
+	...result.catalog.measures.map(({ id }) => `/v1/measures/${id}`),
+];
+for (const url of urls)
+	assert.equal(route("GET", url, context).status, 200, url);
 console.log(
-	`Matched ${manifest.datasets.length} dataset payloads by value, ${Object.keys(after.artifacts).length} catalogue/observation outputs and ${Object.keys(after.responses).length} API responses byte for byte.`,
+	`Matched ${manifest.datasets.length} dataset payloads by value and served ${urls.length} catalogue responses from the statistics rows.`,
 );
