@@ -173,7 +173,7 @@ type Row = {
 };
 
 /** The ids of the series a selector names. */
-const selectedSeries = (
+export const selectedStatisticsSeries = (
 	database: SqlReader,
 	selector: Pick<
 		StatisticsSelector,
@@ -282,7 +282,7 @@ const periodRows = (
 				)
 				.all(selector.datasetId, selector.measure, selector.geography)
 				.map((row) => Number(row.id))
-		: selectedSeries(database, selector);
+		: selectedStatisticsSeries(database, selector);
 	if (series.length === 0)
 		throw new Error(
 			`No statistics series matches ${artifact.measureId} on ${selector.geography}.`,
@@ -322,6 +322,37 @@ export function rebuildStatisticsObservationText(
 	artifact: StatisticsArtifact,
 ): string {
 	if ("kind" in selector) return rebuildTableText(database, selector);
+	const periods = rebuildStatisticsPeriods(database, selector, artifact);
+	const sourceGeography = {
+		type: artifact.sourceGeography.type,
+		boundaryYear: artifact.sourceGeography.boundaryYear,
+	};
+	const contentHash = sha256(
+		JSON.stringify({
+			schemaVersion: 1,
+			measureId: artifact.measureId,
+			sourceGeography,
+			periods,
+		}),
+	);
+	return `${JSON.stringify({
+		schemaVersion: 1,
+		contentHash,
+		measureId: artifact.measureId,
+		sourceGeography,
+		periods,
+	})}\n`;
+}
+
+/**
+ * The periods of an observation artifact, each with its records in served
+ * code order, read from the statistics tables a selector names.
+ */
+export function rebuildStatisticsPeriods(
+	database: SqlReader,
+	selector: StatisticsSelector,
+	artifact: StatisticsArtifact,
+) {
 	const byPeriod = selector.contest
 		? contestRows(database, selector, selector.contest)
 		: periodRows(database, selector, artifact);
@@ -471,25 +502,7 @@ export function rebuildStatisticsObservationText(
 			}));
 		return { period, records };
 	});
-	const sourceGeography = {
-		type: artifact.sourceGeography.type,
-		boundaryYear: artifact.sourceGeography.boundaryYear,
-	};
-	const contentHash = sha256(
-		JSON.stringify({
-			schemaVersion: 1,
-			measureId: artifact.measureId,
-			sourceGeography,
-			periods,
-		}),
-	);
-	return `${JSON.stringify({
-		schemaVersion: 1,
-		contentHash,
-		measureId: artifact.measureId,
-		sourceGeography,
-		periods,
-	})}\n`;
+	return periods;
 }
 
 /**
