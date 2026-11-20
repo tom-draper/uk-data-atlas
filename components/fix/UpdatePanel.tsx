@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { Download } from "lucide-react";
 import { Card } from "@/components/docs/Page";
 import {
 	boundaryReleases,
@@ -15,17 +14,18 @@ import {
 	readParentLookup,
 	type ParentChoice,
 } from "@/lib/fix/parents";
-import { derivedName, downloadText } from "@/lib/fix/report";
+import { saveTable, type SourceFile } from "@/lib/fix/download";
+import type { FileFormat } from "@/lib/fix/spreadsheet";
 import type { Successor } from "@/lib/fix/successors";
 import type { Table } from "@/lib/fix/table";
 import {
 	changeCounts,
 	rowUpdates,
-	updatedCsv,
+	updatedTable,
 	type CodeMode,
 	type SplitMode,
 } from "@/lib/fix/update";
-import { Button, Check, Choice, labelClass, ToneIcon } from "./ui";
+import { Check, Choice, DownloadButtons, labelClass, ToneIcon } from "./ui";
 
 const count = (value: number) => value.toLocaleString("en-GB");
 const rows = (value: number) => `${count(value)} row${value === 1 ? "" : "s"}`;
@@ -51,12 +51,12 @@ export default function UpdatePanel({
 	table,
 	diagnosis,
 	area,
-	sourceName,
+	source,
 }: {
 	table: Table;
 	diagnosis: Diagnosis;
 	area: number;
-	sourceName: string;
+	source: SourceFile;
 }) {
 	const isCode = diagnosis.kind === "code";
 	const [codes, setCodes] = useState<CodeMode>("add");
@@ -109,7 +109,7 @@ export default function UpdatePanel({
 		},
 	].filter((line) => !!line);
 
-	async function download() {
+	async function download(format: FileFormat) {
 		setBusy(true);
 		setError(null);
 		const parents = choices.filter((choice) => picked.includes(choice.id));
@@ -119,7 +119,7 @@ export default function UpdatePanel({
 					`Reading ${parents.map((p) => p.label).join(" and ")}…`,
 				);
 			const lookups = await Promise.all(parents.map(loadParents));
-			const csv = updatedCsv(table, diagnosis, area, {
+			const updated = updatedTable(table, diagnosis, area, {
 				codes,
 				splits,
 				name,
@@ -128,7 +128,8 @@ export default function UpdatePanel({
 					lookup: lookups[i],
 				})),
 			});
-			downloadText(csv, derivedName(sourceName, "updated"));
+			setStatus("Preparing your file…");
+			await saveTable(source, updated, "updated", format);
 			setStatus("Your updated file is downloading.");
 		} catch (caught) {
 			setStatus("");
@@ -282,10 +283,12 @@ export default function UpdatePanel({
 			</p>
 
 			<div className="mt-4 flex flex-wrap items-center gap-3">
-				<Button variant="primary" onClick={download} disabled={busy}>
-					<Download aria-hidden="true" className="h-4 w-4" />
-					Download updated file
-				</Button>
+				<DownloadButtons
+					format={source.format}
+					label="Download updated file"
+					onDownload={download}
+					disabled={busy}
+				/>
 				<span role="status" className="text-[13px] text-slate-600">
 					{status}
 				</span>

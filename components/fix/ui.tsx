@@ -1,5 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { CircleAlert, CircleCheck, CircleX, Info } from "lucide-react";
+import {
+	CircleAlert,
+	CircleCheck,
+	CircleX,
+	Download,
+	Info,
+} from "lucide-react";
+import type { FileFormat } from "@/lib/fix/spreadsheet";
 import type { Tone } from "@/lib/fix/diagnose";
 
 /** Shared pieces for the fix page, in the slate look of /places and /datasets. */
@@ -21,6 +28,41 @@ export function Button({
 			className={`inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-[14px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed ${look} ${className}`}
 			{...props}
 		/>
+	);
+}
+
+/**
+ * A download in the format the user's file came in, with a CSV alongside
+ * when that is something else.
+ */
+export function DownloadButtons({
+	format,
+	label,
+	onDownload,
+	disabled,
+}: {
+	format: FileFormat;
+	label: string;
+	onDownload: (format: FileFormat) => void;
+	disabled?: boolean;
+}) {
+	return (
+		<>
+			<Button
+				variant="primary"
+				onClick={() => onDownload(format)}
+				disabled={disabled}
+			>
+				<Download aria-hidden="true" className="h-4 w-4" />
+				{label}
+				{format !== "csv" && ` (.${format})`}
+			</Button>
+			{format !== "csv" && (
+				<Button onClick={() => onDownload("csv")} disabled={disabled}>
+					As CSV
+				</Button>
+			)}
+		</>
 	);
 }
 

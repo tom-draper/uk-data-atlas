@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { Download } from "lucide-react";
 import { Card } from "@/components/docs/Page";
 import {
 	boundaryReleases,
@@ -11,7 +10,7 @@ import {
 } from "@/lib/fix/api";
 import {
 	convertChoices,
-	convertedCsv,
+	convertedTable,
 	countInput,
 	type ConvertChoice,
 	type ConvertedColumn,
@@ -19,10 +18,18 @@ import {
 } from "@/lib/fix/convert";
 import type { Diagnosis } from "@/lib/fix/diagnose";
 import { geographyLabel } from "@/lib/fix/releases";
-import { derivedName, downloadText } from "@/lib/fix/report";
+import { saveTable, type SourceFile } from "@/lib/fix/download";
+import type { FileFormat } from "@/lib/fix/spreadsheet";
 import type { Table } from "@/lib/fix/table";
 import type { BoundaryRelease } from "@/lib/fix/types";
-import { Button, Check, labelClass, selectClass, ToneIcon } from "./ui";
+import {
+	Button,
+	Check,
+	DownloadButtons,
+	labelClass,
+	selectClass,
+	ToneIcon,
+} from "./ui";
 
 const count = (value: number) => value.toLocaleString("en-GB");
 const rows = (value: number) => `${count(value)} row${value === 1 ? "" : "s"}`;
@@ -61,13 +68,13 @@ export default function ConvertPanel({
 	table,
 	diagnosis,
 	values,
-	sourceName,
+	source,
 }: {
 	table: Table;
 	diagnosis: Diagnosis;
 	/** The number columns chosen in step 2. */
 	values: number[];
-	sourceName: string;
+	source: SourceFile;
 }) {
 	const [choices, setChoices] = useState<ConvertChoice[] | null>(null);
 	const [allReleases, setReleases] = useState<BoundaryRelease[]>([]);
@@ -190,6 +197,27 @@ export default function ConvertPanel({
 			setError((caught as Error).message);
 		} finally {
 			setBusy(false);
+		}
+	}
+
+	async function downloadConverted(format: FileFormat) {
+		if (!converted) return;
+		setStatus("Preparing your file…");
+		try {
+			await saveTable(
+				source,
+				convertedTable(
+					converted.columns,
+					converted.choice.header,
+					converted.names,
+					sourceNoun,
+				),
+				`by-${converted.choice.header.replace(/_/g, "-")}`,
+				format,
+			);
+			setStatus("Your converted file is downloading.");
+		} catch (caught) {
+			setStatus((caught as Error).message);
 		}
 	}
 
@@ -321,26 +349,11 @@ export default function ConvertPanel({
 					Convert
 				</Button>
 				{converted && (
-					<Button
-						variant="primary"
-						onClick={() =>
-							downloadText(
-								convertedCsv(
-									converted.columns,
-									converted.choice.header,
-									converted.names,
-									sourceNoun,
-								),
-								derivedName(
-									sourceName,
-									`by-${converted.choice.header.replace(/_/g, "-")}`,
-								),
-							)
-						}
-					>
-						<Download aria-hidden="true" className="h-4 w-4" />
-						Download converted file
-					</Button>
+					<DownloadButtons
+						format={source.format}
+						label="Download converted file"
+						onDownload={downloadConverted}
+					/>
 				)}
 				<span role="status" className="text-[13px] text-slate-600">
 					{status}
