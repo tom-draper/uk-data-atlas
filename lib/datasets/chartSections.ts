@@ -19,10 +19,32 @@ export interface ChartSection {
 	title: string;
 }
 
-/** The sections, one per theme, in theme order. */
-export const CHART_SECTIONS: readonly ChartSection[] = DATASET_THEMES.map(
-	({ id, label }) => ({ theme: id, title: label }),
-);
+const SMALL_WORDS = new Set(["and", "or", "of", "the", "to", "in"]);
+
+/** A theme's label in title case, keeping small joining words lower case. */
+const titleCase = (label: string) =>
+	label
+		.split(" ")
+		.map((word, index) =>
+			index > 0 && SMALL_WORDS.has(word)
+				? word
+				: word.charAt(0).toUpperCase() + word.slice(1),
+		)
+		.join(" ");
+
+/** Themes the website lists first, ahead of the rest in theme order. */
+const LEADING_THEMES: readonly DatasetTheme[] = ["politics"];
+
+/**
+ * The sections, one per theme: the leading themes, then the rest in theme
+ * order. Only the website reorders; the API and docs keep the theme order.
+ */
+export const CHART_SECTIONS: readonly ChartSection[] = [
+	...LEADING_THEMES.flatMap((leading) =>
+		DATASET_THEMES.filter(({ id }) => id === leading),
+	),
+	...DATASET_THEMES.filter(({ id }) => !LEADING_THEMES.includes(id)),
+].map(({ id, label }) => ({ theme: id, title: titleCase(label) }));
 
 /** The theme whose section holds a card. */
 export const themeOfChart = (chart: Pick<ChartDefinition, "topic">) =>
@@ -44,7 +66,8 @@ export const compareChartsByTopic = (
  * The cards shown on first load, a few per theme. Every other card is one
  * switch away in the chart settings, and a visitor's own choices win over this
  * list. Keep it short: each card shown loads its dataset. A test holds it to
- * real cards, at least one per theme and no more than five.
+ * real cards, at least one per theme and no more than nine (politics shows the
+ * last four general and local elections).
  */
 export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 	{
@@ -80,7 +103,13 @@ export const DEFAULT_CHARTS_BY_THEME: Record<DatasetTheme, readonly string[]> =
 		],
 		politics: [
 			"generalElection-2024",
+			"generalElection-2019",
+			"generalElection-2017",
+			"generalElection-2015",
 			"localElection-2025",
+			"localElection-2024",
+			"localElection-2023",
+			"localElection-2022",
 			"brexit-electoral",
 		],
 		environment: [

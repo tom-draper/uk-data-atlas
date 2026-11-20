@@ -23,10 +23,13 @@ import { DATASETS } from "./datasetUniverse";
 const topicOfDataset = new Map(DATASETS.map(({ id, topic }) => [id, topic]));
 
 describe("website chart sections", () => {
-	it("has one section per theme, in theme order", () => {
-		expect(CHART_SECTIONS.map(({ theme }) => theme)).toEqual(
-			DATASET_THEMES.map(({ id }) => id),
-		);
+	it("has one section per theme, politics first then theme order", () => {
+		expect(CHART_SECTIONS.map(({ theme }) => theme)).toEqual([
+			"politics",
+			...DATASET_THEMES.map(({ id }) => id).filter(
+				(id) => id !== "politics",
+			),
+		]);
 	});
 
 	it("files every card under the topic of its dataset", () => {
@@ -88,13 +91,13 @@ describe("website chart sections", () => {
 			}
 		});
 
-		it("keep to one to five cards per theme, with none repeated", () => {
+		it("keep to one to nine cards per theme, with none repeated", () => {
 			const all = Object.values(DEFAULT_CHARTS_BY_THEME).flat();
 			expect(new Set(all).size).toBe(all.length);
 			for (const { theme } of CHART_SECTIONS) {
 				const count = DEFAULT_CHARTS_BY_THEME[theme].length;
 				expect(count, theme).toBeGreaterThanOrEqual(1);
-				expect(count, theme).toBeLessThanOrEqual(5);
+				expect(count, theme).toBeLessThanOrEqual(9);
 			}
 		});
 	});
