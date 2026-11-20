@@ -1,4 +1,3 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
@@ -37,13 +36,17 @@ import { compileEnergyConsumption } from "./energyConsumption.ts";
 import { compilePopulation } from "./population.ts";
 import { withNationalVariants } from "./nationalVariants.ts";
 
+/** Names the manifest in errors. */
+const MANIFEST_LABEL = "data/build/atlas-base.sqlite:dataset-manifest";
+
 /**
  * The compiled files the catalogue is built from, by name. Named rather than
  * positional because every published measure adds one, and a shifted
  * positional list compiles fine while reading the wrong file.
  */
-export type DataCatalogInputs<Input = DatasetInput> = {
-	manifest: Input;
+export type DataCatalogInputs = {
+	/** The dataset manifest, as JSON text. */
+	manifest: string;
 	/**
 	 * The statistics rows the measures that no longer read a compiled file
 	 * are built from.
@@ -63,7 +66,7 @@ export type DataCatalogInputs<Input = DatasetInput> = {
  * published inputs declare code vintages, not boundary months.
  */
 export const compileDataCatalog = ({
-	manifest: manifestPath,
+	manifest: manifestText,
 	rows,
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
@@ -76,10 +79,6 @@ export const compileDataCatalog = ({
 	yearlyIndicatorObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
 	observationDatasets: ReadonlyMap<AnyMeasureObservationArtifact, string>;
-	statisticsFields: Array<{
-		measureId: string;
-		field: NonNullable<CompiledMeasure["statisticsField"]>;
-	}>;
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
@@ -87,9 +86,8 @@ export const compileDataCatalog = ({
 	electionObservations: AnyMeasureObservationArtifact[];
 	censusTables: MeasureTableArtifact[];
 } => {
-	const manifest = JSON.parse(
-		readDatasetInput(manifestPath),
-	) as DatasetManifest;
+	const manifestPath = MANIFEST_LABEL;
+	const manifest = JSON.parse(manifestText) as DatasetManifest;
 	if (
 		typeof manifest.version !== "number" ||
 		!Array.isArray(manifest.datasets)
@@ -272,12 +270,6 @@ export const compileDataCatalog = ({
 			...energyConsumption.observationDatasets,
 			...elections.observationDatasets,
 		]),
-		statisticsFields: indicatorObservations.flatMap(
-			({ measure, statisticsField }) =>
-				statisticsField
-					? [{ measureId: measure.id, field: statisticsField }]
-					: [],
-		),
 		lifeExpectancyObservations: lifeExpectancy.artifacts,
 		electionObservations: elections.artifacts,
 		housePriceObservations: housePrice.artifact,

@@ -20,6 +20,17 @@ export type FixtureSeries = {
 	periods: Record<string, Record<string, Cell>>;
 };
 
+/** What a dataset's rows record about it and the source it came from. */
+export type FixtureTerms = {
+	dataset: string;
+	title: string;
+	description: string;
+	publisher: string;
+	url: string;
+	licence: string;
+	licenceUrl?: string;
+};
+
 /** What an edition of a dataset could not place, as the coverage gap rows hold it. */
 export type FixtureGap = {
 	dataset: string;
@@ -43,7 +54,8 @@ const SCHEMA = `
 	CREATE TABLE v_contest (dataset TEXT, geography TEXT, area_code TEXT, polling_day TEXT, winner TEXT);
 	CREATE TABLE area_relationship (dataset_id INTEGER, relation TEXT, period_id INTEGER, child_version_id INTEGER, parent_version_id INTEGER);
 	CREATE TABLE dataset_coverage_gap (dataset_id INTEGER, edition TEXT, kind TEXT, position INTEGER, area_code TEXT, count INTEGER);
-	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
+	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT, title TEXT, description TEXT, source_id INTEGER);
+	CREATE TABLE source (id INTEGER PRIMARY KEY, publisher TEXT, url TEXT, licence TEXT, licence_url TEXT);
 	CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
 	CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT);
@@ -65,6 +77,7 @@ export const fixtureRows = (
 	series: FixtureSeries[],
 	gaps: FixtureGap[] = [],
 	contests: FixtureContest[] = [],
+	terms: FixtureTerms[] = [],
 ): CatalogueRows => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(SCHEMA);
@@ -211,5 +224,29 @@ export const fixtureRows = (
 				contest.pollingDay,
 				contest.winner,
 			);
+	for (const entry of terms) {
+		const source = Number(
+			database
+				.prepare(
+					"INSERT INTO source (publisher, url, licence, licence_url) VALUES (?, ?, ?, ?) RETURNING id",
+				)
+				.get(
+					entry.publisher,
+					entry.url,
+					entry.licence,
+					entry.licenceUrl ?? null,
+				)!.id,
+		);
+		database
+			.prepare(
+				"UPDATE dataset SET title = ?, description = ?, source_id = ? WHERE id = ?",
+			)
+			.run(
+				entry.title,
+				entry.description,
+				source,
+				idOf("dataset", entry.dataset, "slug", [entry.dataset]),
+			);
+	}
 	return new CatalogueRows(database, vocabulary);
 };

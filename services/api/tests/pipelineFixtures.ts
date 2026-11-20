@@ -7,7 +7,6 @@ export { buildTerrainCatalogue } from "../../../pipeline/src/catalog/buildTerrai
 export { buildAtlasSqlite } from "../../../pipeline/src/atlas/buildAtlasSqlite";
 export { buildGeometryStore } from "../../../pipeline/src/maps/buildGeometryStore";
 export { buildLocationProjections } from "../../../pipeline/src/places/buildLocationProjections";
-export { AtlasDatasetInput } from "../../../pipeline/src/catalog/input";
 export { withAliases } from "../../../pipeline/src/catalog/measureAliases";
 export { compileGeometryValidity } from "../../../pipeline/src/maps/compileGeometryValidity";
 export { roundKeepingValidity } from "../../../pipeline/src/maps/compileGeometryValidity";
