@@ -1,8 +1,11 @@
 import { gunzipSync } from "node:zlib";
-import { acceptsEncoding } from "@/lib/helpers/acceptedEncodings";
 import { readAtlasAsset, type AtlasAssetKind } from "@uk-data-atlas/atlas-db";
 
-/** Preserve the browser's existing URLs while serving precompressed SQLite rows. */
+/**
+ * Preserve the browser's existing URLs while serving SQLite rows. Next.js
+ * strips `Content-Encoding` from route responses, so the stored gzip is
+ * inflated here and compressed again by Next.js or the host.
+ */
 export async function atlasAssetResponse(
 	request: Request,
 	params: Promise<{ file: string }>,
@@ -20,7 +23,9 @@ export async function atlasAssetResponse(
 			status: 404,
 			headers: { "Cache-Control": "no-store" },
 		});
-	const etag = `W/"${asset.sha256}"`;
+	// The suffix retires copies cached while the body was sent as gzip bytes
+	// without their Content-Encoding header.
+	const etag = `W/"${asset.sha256}-plain"`;
 	const headers = new Headers({
 		"Content-Type": "application/json; charset=utf-8",
 		"Cache-Control": "public, max-age=0, must-revalidate",
@@ -39,9 +44,7 @@ export async function atlasAssetResponse(
 			})
 	)
 		return new Response(null, { status: 304, headers });
-	const gzip = acceptsEncoding(request, "gzip");
-	const body = new Uint8Array(gzip ? asset.gzip : gunzipSync(asset.gzip));
-	if (gzip) headers.set("Content-Encoding", "gzip");
+	const body = new Uint8Array(gunzipSync(asset.gzip));
 	headers.set("Content-Length", String(body.byteLength));
 	return new Response(body, { headers });
 }

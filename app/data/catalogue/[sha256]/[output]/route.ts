@@ -1,5 +1,4 @@
 import { gunzipSync } from "node:zlib";
-import { acceptsEncoding } from "@/lib/helpers/acceptedEncodings";
 import {
 	readStoredAtlasDataset,
 	readVersionedAtlasDataset,
@@ -28,15 +27,11 @@ export async function GET(request: Request, { params }: Context) {
 		Vary: "Accept-Encoding",
 	});
 	const stored = readStoredAtlasDataset(process.cwd(), name, sha256);
+	// Next.js strips `Content-Encoding` from route responses, so stored gzip
+	// is inflated here and compressed again by Next.js or the host.
 	let body: Uint8Array<ArrayBuffer> | string;
-	if (stored) {
-		// Cached payloads are stored gzipped: send them as they are.
-		if (acceptsEncoding(request, "gzip")) {
-			body = new Uint8Array(stored.gzip);
-			headers.set("Content-Encoding", "gzip");
-		} else body = new Uint8Array(gunzipSync(stored.gzip));
-	} else {
-		// Uncached datasets go out as plain JSON for Next.js to compress.
+	if (stored) body = new Uint8Array(gunzipSync(stored.gzip));
+	else {
 		const payload = readVersionedAtlasDataset(process.cwd(), name, sha256);
 		if (payload === undefined) return notFound();
 		body = payload;

@@ -7,7 +7,6 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { gunzipSync } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET as page } from "@/app/data/atlas-pages/[file]/route";
 import { GET as lookup } from "@/app/data/atlas-lookups/[file]/route";
@@ -61,27 +60,18 @@ describe("SQLite website assets", () => {
 			lookup: "boundary-mappings.json",
 		});
 	});
-	it.each(["gzip", "br, gzip;q=0.5", "*"])(
-		"serves stored gzip for %s",
+	it.each(["gzip", "br, gzip;q=0.5", "*", "*;q=1, gzip;q=0"])(
+		"serves plain JSON for Accept-Encoding %s",
 		async (encoding) => {
 			const response = await request(undefined, {
 				"Accept-Encoding": encoding,
 			});
-			expect(response.headers.get("Content-Encoding")).toBe("gzip");
-			expect(
-				gunzipSync(
-					Buffer.from(await response.arrayBuffer()),
-				).toString(),
-			).toBe('{"value":42}');
+			// Next.js strips Content-Encoding from route responses, so the
+			// body must never be sent compressed.
+			expect(response.headers.get("Content-Encoding")).toBeNull();
+			expect(await response.json()).toEqual({ value: 42 });
 		},
 	);
-	it("honours explicit gzip refusal", async () => {
-		const response = await request(undefined, {
-			"Accept-Encoding": "*;q=1, gzip;q=0",
-		});
-		expect(response.headers.get("Content-Encoding")).toBeNull();
-		expect(await response.json()).toEqual({ value: 42 });
-	});
 	it("revalidates unchanged content without a response body", async () => {
 		const initial = await request();
 		const etag = initial.headers.get("ETag")!;
