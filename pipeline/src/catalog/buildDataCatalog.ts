@@ -37,7 +37,6 @@ export const datasetCatalogInputs = (
 		roadCollisions: precompiled("road-collisions.json"),
 		crime: precompiled("crime.json"),
 		unemployment: precompiled("unemployment.json"),
-		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
