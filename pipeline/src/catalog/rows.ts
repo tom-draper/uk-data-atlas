@@ -64,6 +64,52 @@ export class CatalogueRows {
 			.all(geography, `${year}-%`)
 			.map((row) => String(row.release));
 	}
+	/**
+	 * The editions a dataset publishes on a geography: each period the rows
+	 * hold, with the code vintage of the release that holds it.
+	 */
+	editions(
+		datasetId: string,
+		geography: string,
+	): Array<{ period: string; boundaryYear: number }> {
+		return this.database
+			.prepare(
+				`SELECT DISTINCT p.label AS period, r.release AS release
+				FROM series s JOIN dataset d ON d.id = s.dataset_id
+				JOIN area_release r ON r.id = s.release_id
+				JOIN observation o ON o.series_id = s.id
+				JOIN period p ON p.id = o.period_id
+				WHERE d.slug = ? AND r.geography = ? AND s.method = 'published'
+				ORDER BY p.label, r.release`,
+			)
+			.all(datasetId, geography)
+			.map((row) => ({
+				period: String(row.period),
+				boundaryYear: Number(String(row.release).slice(0, 4)),
+			}));
+	}
+	/**
+	 * What an edition of a dataset could not place, by kind, in the order the
+	 * dataset recorded it: an area code, or a count with no area.
+	 */
+	coverageGaps(
+		datasetId: string,
+		edition: string,
+		kind: string,
+	): Array<{ code: string; count: number }> {
+		return this.database
+			.prepare(
+				`SELECT g.area_code AS code, g.count AS count
+				FROM dataset_coverage_gap g JOIN dataset d ON d.id = g.dataset_id
+				WHERE d.slug = ? AND g.edition = ? AND g.kind = ?
+				ORDER BY g.position`,
+			)
+			.all(datasetId, edition, kind)
+			.map((row) => ({
+				code: String(row.code),
+				count: Number(row.count),
+			}));
+	}
 	/** The selector the API reads the source's observations with. */
 	selector(source: RowSource): StatisticsSelector {
 		const selector = selectorFor(
