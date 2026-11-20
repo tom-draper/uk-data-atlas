@@ -100,6 +100,11 @@ export class BoundaryLayerController {
 	private drawnGeojson: BoundaryGeojson | null = null;
 	/** Which of the drawn collection's properties are set as state. */
 	private stateProperties: string | null = null;
+	/**
+	 * The state last set on each feature of the source, so a new collection
+	 * only writes the features whose values changed.
+	 */
+	private featureStates = new Map<number, Record<string, unknown>>();
 	private hidesFeatures = false;
 	private deferredPaint: {
 		geojson: BoundaryGeojson;
@@ -283,6 +288,7 @@ export class BoundaryLayerController {
 		this.sourceGeometry = null;
 		this.drawnGeojson = null;
 		this.stateProperties = null;
+		this.featureStates.clear();
 		this.hidesFeatures = false;
 	}
 
@@ -333,32 +339,38 @@ export class BoundaryLayerController {
 			};
 			for (const property of properties)
 				state[property] = values[property] ?? null;
-			this.map.setFeatureState(
-				{
-					source: SOURCE_ID,
-					id,
-					...(this.tiles ? { sourceLayer: "boundaries" } : {}),
-				},
-				state,
-			);
+			this.writeState(id, state);
 		}
 		this.hidesFeatures = !!this.tiles || shown.size < (geometry?.size ?? 0);
 		if (this.tiles) {
 			for (const id of this.tiles.ids.values())
 				if (!shown.has(id))
-					this.map.setFeatureState(
-						{ source: SOURCE_ID, sourceLayer: "boundaries", id },
-						{ [OUTSIDE_DATASET_STATE]: true },
-					);
+					this.writeState(id, { [OUTSIDE_DATASET_STATE]: true });
 			return;
 		}
 		if (!this.hidesFeatures) return;
 		for (const id of geometry?.keys() ?? [])
 			if (!shown.has(id))
-				this.map.setFeatureState(
-					{ source: SOURCE_ID, id },
-					{ [OUTSIDE_DATASET_STATE]: true },
-				);
+				this.writeState(id, { [OUTSIDE_DATASET_STATE]: true });
+	}
+
+	/** Sets a feature's state, unless it already holds these values. */
+	private writeState(id: number, state: Record<string, unknown>): void {
+		const known = this.featureStates.get(id);
+		if (
+			known &&
+			Object.keys(state).every((key) => known[key] === state[key])
+		)
+			return;
+		this.featureStates.set(id, { ...known, ...state });
+		this.map.setFeatureState(
+			{
+				source: SOURCE_ID,
+				id,
+				...(this.tiles ? { sourceLayer: "boundaries" } : {}),
+			},
+			state,
+		);
 	}
 
 	/** An opacity that leaves the features outside the dataset invisible. */
