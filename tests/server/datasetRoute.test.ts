@@ -1,4 +1,4 @@
-import { gunzipSync, gzipSync } from "node:zlib";
+import { gzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
 import {
 	mkdirSync,
@@ -210,16 +210,20 @@ describe("versioned dataset route", () => {
 
 describe("versioned dataset route with cached payloads", () => {
 	beforeEach(cacheSample);
-	it.each(["gzip", "br, gzip;q=0.5", "*"])(
-		"sends the stored gzip bytes for %s",
+	it.each([undefined, "gzip", "br, gzip;q=0.5", "*"])(
+		"sends the stored payload inflated for %s",
 		async (encoding) => {
-			const response = await request(sha256, "sample.json", {
-				"Accept-Encoding": encoding,
-			});
+			const response = await request(
+				sha256,
+				"sample.json",
+				encoding ? { "Accept-Encoding": encoding } : {},
+			);
 			expect(response.status).toBe(200);
-			expect(response.headers.get("Content-Encoding")).toBe("gzip");
+			// Next.js strips Content-Encoding from route responses, so the
+			// stored gzip must never be sent as it is.
+			expect(response.headers.get("Content-Encoding")).toBeNull();
 			expect(response.headers.get("Content-Length")).toBe(
-				String(stored.byteLength),
+				String(Buffer.byteLength(payload)),
 			);
 			expect(response.headers.get("Vary")).toBe("Accept-Encoding");
 			expect(response.headers.get("Cache-Control")).toBe(
@@ -229,25 +233,6 @@ describe("versioned dataset route with cached payloads", () => {
 			expect(response.headers.get("Content-Type")).toBe(
 				"application/json; charset=utf-8",
 			);
-			const body = Buffer.from(await response.arrayBuffer());
-			expect(body.equals(stored)).toBe(true);
-			expect(gunzipSync(body).toString()).toBe(payload);
-		},
-	);
-	it.each([undefined, "gzip;q=0", "*;q=1, gzip;q=0", "br"])(
-		"sends identical plain JSON for %s",
-		async (encoding) => {
-			const response = await request(
-				sha256,
-				"sample.json",
-				encoding ? { "Accept-Encoding": encoding } : {},
-			);
-			expect(response.headers.get("Content-Encoding")).toBeNull();
-			expect(response.headers.get("Content-Length")).toBe(
-				String(Buffer.byteLength(payload)),
-			);
-			expect(response.headers.get("Vary")).toBe("Accept-Encoding");
-			expect(response.headers.get("ETag")).toBe(`W/"${sha256}"`);
 			expect(await response.text()).toBe(payload);
 		},
 	);
