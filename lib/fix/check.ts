@@ -111,7 +111,9 @@ async function readFromLookups(
 			tables.lookups,
 		);
 		if (!table) continue;
-		onProgress?.("Reading what retired codes became from the official lookup…");
+		onProgress?.(
+			"Reading what retired codes became from the official lookup…",
+		);
 		let lookup: Map<string, Successor[]>;
 		try {
 			lookup = readParentLookup(await lookupCsv(table.href, signal));
@@ -158,7 +160,13 @@ export async function runCheck(
 	const retired = retiredCodes(primary, latest);
 	const successors = new Map<number, Successor[]>();
 	if (latestRef && retired.length > 0)
-		await readFromLookups(retired, latestRef, successors, signal, onProgress);
+		await readFromLookups(
+			retired,
+			latestRef,
+			successors,
+			signal,
+			onProgress,
+		);
 	const unread = retired.filter((code) => !successors.has(code.index));
 	const toCheck = unread.slice(0, HISTORY_LIMIT);
 	if (latestRef && toCheck.length > 0) {
