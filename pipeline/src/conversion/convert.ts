@@ -1,4 +1,4 @@
-import type { BlockReason, Step } from "./crosswalkSteps.ts";
+import type { BlockReason, Step, StepEdge } from "./crosswalkSteps.ts";
 
 /**
  * Carries a set of values through crosswalk steps onto the last step's areas.
@@ -67,6 +67,48 @@ export const startValues = (
 	return started;
 };
 
+/** What a target has gathered from the edges that reach it, before it is settled. */
+export type Tally = Omit<CarriedValue, "splits"> & {
+	splits: Set<number> | undefined;
+};
+
+export const newTally = (): Tally => ({
+	value: 0,
+	atRisk: 0,
+	pruned: 0,
+	estimated: 0,
+	splits: undefined,
+	inputs: 0,
+});
+
+/**
+ * Adds what one edge takes of a carried value to the target's tally. This is
+ * the one place that composes weights and accumulates error along a route, so
+ * a value converted through steps and a stored chain agree. Every field is
+ * linear in the carried value.
+ */
+export const carryOverEdge = (
+	tally: Tally,
+	carried: CarriedValue,
+	edge: StepEdge,
+) => {
+	tally.value += carried.value * edge.weight;
+	tally.atRisk += carried.atRisk * edge.weight + carried.value * edge.risk;
+	tally.pruned += carried.pruned * edge.weight + carried.value * edge.pruned;
+	const inexact = edge.risk > 0 || edge.pruned > 0;
+	tally.estimated +=
+		carried.estimated * edge.weight +
+		(inexact ? carried.value * edge.weight : 0);
+	tally.inputs += carried.inputs;
+	if (inexact) (tally.splits ??= new Set()).add(edge.crosswalk);
+	for (const id of carried.splits) (tally.splits ??= new Set()).add(id);
+};
+
+export const settle = (tally: Tally): CarriedValue => ({
+	...tally,
+	splits: tally.splits ?? NO_SPLITS,
+});
+
 const throughStep = (
 	step: Step,
 	held: Map<number, CarriedValue>,
@@ -93,12 +135,7 @@ const throughStep = (
 	}
 	for (const target of targets) {
 		if (nextGaps.has(target)) continue;
-		let value = 0;
-		let atRisk = 0;
-		let pruned = 0;
-		let estimated = 0;
-		let inputs = 0;
-		let splits: Set<number> | undefined;
+		const tally = newTally();
 		let missing = false;
 		for (const source of step.feeders.get(target) ?? []) {
 			const carried = held.get(source);
@@ -106,34 +143,11 @@ const throughStep = (
 				missing = true;
 				break;
 			}
-			for (const edge of step.edges.get(source) ?? []) {
-				if (edge.to !== target) continue;
-				value += carried.value * edge.weight;
-				atRisk +=
-					carried.atRisk * edge.weight + carried.value * edge.risk;
-				pruned +=
-					carried.pruned * edge.weight + carried.value * edge.pruned;
-				const inexact = edge.risk > 0 || edge.pruned > 0;
-				estimated +=
-					carried.estimated * edge.weight +
-					(inexact ? carried.value * edge.weight : 0);
-				inputs += carried.inputs;
-				if (inexact) (splits ??= new Set()).add(edge.crosswalk);
-				if (carried.splits.size > 0)
-					for (const id of carried.splits)
-						(splits ??= new Set()).add(id);
-			}
+			for (const edge of step.edges.get(source) ?? [])
+				if (edge.to === target) carryOverEdge(tally, carried, edge);
 		}
 		if (missing) nextGaps.set(target, "missing-input");
-		else
-			next.set(target, {
-				value,
-				atRisk,
-				pruned,
-				estimated,
-				splits: splits ?? NO_SPLITS,
-				inputs,
-			});
+		else next.set(target, settle(tally));
 	}
 	return { next, nextGaps, uncarried };
 };
