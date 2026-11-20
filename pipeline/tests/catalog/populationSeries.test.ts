@@ -7,6 +7,7 @@ import { compilePopulation } from "../../src/catalog/population.ts";
 import { compilePopulationDensity } from "../../src/catalog/populationDensity.ts";
 import type { CatalogManifest } from "../../src/catalog/manifest.ts";
 import { sha256 } from "../../src/catalog/values.ts";
+import { fixtureRows } from "./rowFixtures.ts";
 
 test("population partitions and density use canonical series and matching hashes", () => {
 	const directory = mkdtempSync(join(tmpdir(), "population-series-"));
@@ -39,14 +40,24 @@ test("population partitions and density use canonical series and matching hashes
 				data: { E14001063: { allAges: 5 } },
 			},
 		});
-		const land = write("land", {
-			"2024": {
-				year: 2024,
-				boundaryYear: 2024,
-				boundaryType: "localAuthority",
-				data: { E06000001: { landSquareKm: 2 } },
+		const rows = fixtureRows([
+			{
+				dataset: "population-uk",
+				measure: "population",
+				geography: "localAuthority",
+				release: "2023-uk-bfc",
+				periods: { "2022": { E06000001: 5 } },
 			},
-		});
+			{
+				dataset: "land-area",
+				measure: "area",
+				geography: "localAuthority",
+				release: "2024-uk-bfc",
+				members: { surface: "land" },
+				// Hectares, which the density divides down to square kilometres.
+				periods: { "2024": { E06000001: 200 } },
+			},
+		]);
 		const manifest = {
 			manifestPath: directory,
 			datasets: [
@@ -77,7 +88,7 @@ test("population partitions and density use canonical series and matching hashes
 		);
 		const density = compilePopulationDensity(
 			manifest,
-			land,
+			rows,
 			result.localAuthorityObservations.periods,
 		);
 		for (const artifact of [
