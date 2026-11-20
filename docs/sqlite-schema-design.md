@@ -188,8 +188,9 @@ With a compiler, the manifest's hash, summary and inputs come from it, and the
 build compares the payload generated from the rows with its JSON, which proves
 the reader and the compiler agree. `land-area` is migrated this way.
 
-With `direct.only` there is no JSON. The declaration's `load` is
-`noCompiledPayload()`, which keeps its generated type and throws if called.
+With `direct.only` there is no JSON. The declaration has no `load`; its
+payload type is the `defineDataset<T>` parameter, which the generated registry
+reads back as `payloadType`.
 The `datasets` stage (`compileDirectDataset`) reads the source once with a
 tracked reader and writes the manifest entry from the parts: `inputs` from the
 files read, `summary` from the same validation a compiled dataset gets, and
@@ -226,8 +227,7 @@ To port the next dataset:
    A value that fits none of the declared fields, or names a measure or
    member the declaration lacks, fails the build.
 3. Run `directStatistics.test.ts` and the dataset payload check.
-4. To delete the compiler, add `only: true`, set `load` to
-   `noCompiledPayload<T>()`, move the source path and table options into a
+4. To delete the compiler, add `only: true`, drop `load`, move the source path and table options into a
    module the reader imports, and add the hash and size of the old compiled
    JSON to `directPayloadGoldens.json`.
 

@@ -21,7 +21,7 @@ The type is `DatasetDeclaration` in `packages/datasets/src/declaration/dataset.t
 | `guide`, `mapName`                                              | The words the docs and `/datasets` pages use (title, about, summary) and the name of the dataset's map as people search for it.      |
 | `source`, `sources`                                             | Name, publisher, URLs, licence, attribution, description, edition year, cadence, notes; and the `data/source` folders it reads.      |
 | `boundary`, `additionalBoundaryTypes`, `coverageCountries`      | The geography and boundary release the records are keyed by, and the nations the source can cover.                                   |
-| `load`, `ingestion`, `layout`                                   | How the sources are read (`noCompiledPayload()` for a dataset read straight into rows) and the checks on what the reader returns.    |
+| `ingestion`, `layout`                                           | The checks on what the reader returns and how the payload is laid out. The payload's type is the `defineDataset<T>` parameter.       |
 | `statistics`                                                    | Measures, dimensions and their members, the field of each record that is each series, derived fields, periods and payload header.    |
 | `catalogue`                                                     | The measures the API publishes: id, label, unit, value kind, aggregation, notes, the statistics measure and fixed dimension members. |
 | `display`, `mapViews`, `categories`, `ranking`, `placeHeadline` | How the website draws the dataset: card, map colouring, legend, measure toggle, ranking labels and the place page headline.          |
