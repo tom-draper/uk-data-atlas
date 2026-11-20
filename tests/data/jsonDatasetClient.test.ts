@@ -62,6 +62,33 @@ describe("json dataset client", () => {
 		});
 	});
 
+	it("reuses parsed records across slices", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockImplementation(async (url: string) => ({
+				ok: true,
+				json: async () => ({ E1: { value: url.length } }),
+			})),
+		);
+		const requests = [
+			{ key: "first", url: "/reused-first.json", enabled: true },
+			{ key: "second", url: "/reused-second.json", enabled: true },
+		];
+		const first = await loadJsonDatasetSlice(
+			requests,
+			new AbortController().signal,
+			parseDataset,
+		);
+
+		const again = await loadJsonDatasetSlice(
+			requests,
+			new AbortController().signal,
+			parseDataset,
+		);
+		expect(again.datasets.first).toBe(first.datasets.first);
+		expect(again.datasets.second).toBe(first.datasets.second);
+	});
+
 	it("limits concurrent requests while starting higher priorities first", async () => {
 		let active = 0;
 		let maximumActive = 0;
