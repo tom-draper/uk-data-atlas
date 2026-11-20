@@ -18,6 +18,10 @@ import type { IdRegistries } from "../ids/idRegistries.ts";
  * weight and the error the steps add up to. Nothing here decides how a weight
  * composes: `conversion/chains.ts` does, with the converter's own arithmetic.
  *
+ * A chain starts from the areas in the old release's inventory. An area that
+ * `area_version` lists for the release without being in it (the same code
+ * kept in another release's boundary file) has no value to carry.
+ *
  * A chain that is the same on all four conversion bases (an exact regrouping
  * weighs 1 whatever the basis) is stored once, with a null `basis_id`, which
  * `v_crosswalk_chain_edge` reads as every basis.
@@ -163,7 +167,7 @@ export const writeCrosswalkChains = (
 		"INSERT INTO crosswalk_chain_gap VALUES (?, ?, ?)",
 	);
 	const versionsOf = database.prepare(
-		"SELECT id FROM area_version WHERE release_id = ? ORDER BY id",
+		"SELECT id FROM area_version WHERE release_id = ? AND in_inventory = 1 ORDER BY id",
 	);
 	const summary: CrosswalkChainSummary = {
 		chains: 0,

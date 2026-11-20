@@ -20,7 +20,8 @@ const BASES = ["population", "households", "dwellings", "postcodes"] as const;
  * quarters C by residents, half and half on every other basis. D is all of C.
  * Crosswalk 2 (2018 to 2026, population-overlap): B is all of X, C is half X
  * and half Y on every basis.
- * Area E of 2011 is in no crosswalk.
+ * Area E of 2011 is in no crosswalk. Area F is listed for 2011 but not in its
+ * inventory.
  *
  * Local authorities in two releases joined by extent-continuity, so the chain
  * is exact. Constituencies in two releases with no crosswalk at all.
@@ -31,7 +32,7 @@ const fixture = () => {
 		CREATE TABLE weight_basis (id TEXT PRIMARY KEY);
 		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT, inventory_position INTEGER);
 		CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT);
-		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER, name TEXT);
+		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER, name TEXT, in_inventory INTEGER NOT NULL DEFAULT 1);
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, slug TEXT, method TEXT, purpose TEXT, from_release_id INTEGER, to_release_id INTEGER);
 		CREATE TABLE crosswalk_edge (crosswalk_id INTEGER, from_version_id INTEGER, to_version_id INTEGER, change TEXT, relation TEXT);
 		CREATE TABLE crosswalk_weight (crosswalk_id INTEGER, from_version_id INTEGER, to_version_id INTEGER, basis_id TEXT, weight REAL, source_share REAL);
@@ -42,13 +43,15 @@ const fixture = () => {
 		  (1, 'ward', '2011', 3), (2, 'ward', '2018', 2), (3, 'ward', '2026', 1),
 		  (4, 'localAuthority', '2023', 5), (5, 'localAuthority', '2026', 4),
 		  (6, 'constituency', '2010', 7), (7, 'constituency', '2024', 6);
-		INSERT INTO area VALUES (1, 'A'), (2, 'D'), (3, 'E'), (4, 'B'), (5, 'C'), (6, 'X'), (7, 'Y'), (8, 'LA1'), (9, 'K1'), (10, 'K2');
-		INSERT INTO area_version VALUES
+		INSERT INTO area VALUES (1, 'A'), (2, 'D'), (3, 'E'), (4, 'B'), (5, 'C'), (6, 'X'), (7, 'Y'), (8, 'LA1'), (9, 'K1'), (10, 'K2'), (11, 'F');
+		INSERT INTO area_version (id, area_id, release_id, name) VALUES
 		  (1, 1, 1, 'Alpha'), (2, 2, 1, 'Delta'), (3, 3, 1, 'Echo'),
 		  (4, 4, 2, 'Bravo'), (5, 5, 2, 'Charlie'),
 		  (6, 6, 3, 'Xray'), (7, 7, 3, 'Yankee'),
 		  (8, 8, 4, 'Old LA'), (9, 8, 5, 'New LA'),
 		  (10, 9, 6, 'Old K'), (11, 10, 7, 'New K');
+		INSERT INTO area_version (id, area_id, release_id, name, in_inventory) VALUES
+		  (12, 11, 1, 'Foxtrot', 0);
 		INSERT INTO crosswalk VALUES
 		  (1, 'ward-2011-to-2018', 'population-overlap', NULL, 1, 2),
 		  (2, 'ward-2018-to-2026', 'population-overlap', NULL, 2, 3),
@@ -272,6 +275,17 @@ describe("writeCrosswalkChains", () => {
 				"SELECT 1 FROM v_crosswalk_chain_edge WHERE from_code = 'E'",
 			).length,
 			0,
+		);
+	});
+
+	test("an area outside the old release's inventory is neither an edge nor a gap", () => {
+		const { database } = written();
+		assert.deepEqual(
+			all(
+				database,
+				"SELECT 1 FROM crosswalk_chain_gap g WHERE g.from_version_id = 12 UNION ALL SELECT 1 FROM crosswalk_chain_edge e WHERE e.from_version_id = 12",
+			),
+			[],
 		);
 	});
 
