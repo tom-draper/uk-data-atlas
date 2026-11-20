@@ -44,13 +44,10 @@ import { withNationalVariants } from "./nationalVariants.ts";
  */
 export type DataCatalogInputs<Input = DatasetInput> = {
 	manifest: Input;
-	population: Input;
-	populationUk: Input;
 	travelToWork: Input;
 	carAvailability: Input;
 	qualification: Input;
 	ethnicity: Input;
-	populationConstituency: Input;
 	generalElection: Input;
 	localElection: Input;
 	/**
@@ -75,14 +72,11 @@ export type DataCatalogInputs<Input = DatasetInput> = {
  */
 export const compileDataCatalog = ({
 	manifest: manifestPath,
-	population: populationPath,
-	populationUk: populationUkPath,
 	travelToWork: travelToWorkPath,
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
 	rows,
-	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
 	localElection: localElectionPath,
 	declared = {},
@@ -130,12 +124,7 @@ export const compileDataCatalog = ({
 		throw new Error(`${manifestPath} has duplicate dataset outputs`);
 	}
 	const catalogManifest: CatalogManifest = { manifestPath, datasets };
-	const population = compilePopulation(
-		catalogManifest,
-		populationPath,
-		populationUkPath,
-		populationConstituencyPath,
-	);
+	const population = compilePopulation(catalogManifest, rows);
 	const populationCodes = new Set(
 		population.localAuthorityObservations.periods[0]?.records.map(
 			(record) => record.areaCode,

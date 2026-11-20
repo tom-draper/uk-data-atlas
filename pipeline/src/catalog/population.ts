@@ -1,103 +1,50 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
 import type { CatalogManifest } from "./manifest.ts";
 import type {
 	Measure,
-	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { type PrecompiledFile, sha256, number, object } from "./values.ts";
+import { sha256 } from "./values.ts";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
+import type { CatalogueRows, RowSource } from "./rows.ts";
 
-const recordsFromData = (
-	data: Record<string, unknown>,
-	path: DatasetInput,
+const populationSeries = { measure: "population" } as const;
+
+/** The periods of a population partition, each code checked against its pattern. */
+const partitionPeriods = (
+	rows: CatalogueRows,
+	source: Omit<RowSource, "series">,
 	codePattern: RegExp,
-): PopulationObservation[] =>
-	Object.entries(data)
-		.map(([areaCode, record]) => {
-			if (!codePattern.test(areaCode)) {
-				throw new Error(`${path}: unsupported area code ${areaCode}`);
-			}
-			const field = object(record, `${path}.${areaCode}`).total;
-			// The compiled file holds the ages as an array indexed by age.
-			const values = Array.isArray(field)
-				? field.map((value, age) => [String(age), value] as const)
-				: Object.entries(object(field, `${path}.${areaCode}.total`));
-			if (values.length === 0)
-				throw new Error(`${path}.${areaCode}.total is empty`);
-			return {
-				areaCode,
-				value: values.reduce(
-					(sum, [age, value]) =>
-						sum + number(value, `${path}.${areaCode}.total.${age}`),
-					0,
-				),
-				status: "observed" as const,
-			};
-		})
-		.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
-
-const populationRecords = (path: DatasetInput): PopulationObservation[] => {
-	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
-	const period = object(source["2022"], `${path}.2022`);
-	if (period.boundaryYear !== 2023 || period.boundaryType !== "ward") {
-		throw new Error(
-			`${path}: expected 2022 ward data on the 2023 code vintage`,
-		);
-	}
-	return recordsFromData(
-		object(period.data, `${path}.2022.data`),
-		path,
-		/^[EW]\d{8}$/,
-	);
+	periods?: string[],
+): MeasureObservationArtifact["periods"] => {
+	const read = rows.periods({ ...source, series: populationSeries }, periods);
+	if (read.length === 0)
+		throw new Error(`${source.datasetId} has no population periods`);
+	for (const { period, records } of read)
+		for (const { areaCode } of records)
+			if (!codePattern.test(areaCode))
+				throw new Error(
+					`${source.datasetId}.${period}: unsupported area code ${areaCode}`,
+				);
+	return read;
 };
 
-const localAuthorityPopulationRecords = (
-	path: DatasetInput,
-): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readDatasetInput(path)) as PrecompiledFile;
-	const periods = Object.entries(source)
-		.map(([period, value]) => {
-			if (!/^\d{4}$/.test(period)) {
-				throw new Error(`${path}: invalid population period ${period}`);
-			}
-			const entry = object(value, `${path}.${period}`);
-			if (
-				entry.year !== Number(period) ||
-				entry.boundaryYear !== 2023 ||
-				entry.boundaryType !== "localAuthority"
-			) {
-				throw new Error(
-					`${path}.${period}: expected local-authority data on the 2023 code vintage`,
-				);
-			}
-			return {
-				period,
-				records: recordsFromData(
-					object(entry.data, `${path}.${period}.data`),
-					`${path}.${period}`,
-					/^[ENSW]\d{8}$/,
-				),
-			};
-		})
-		.sort((left, right) => left.period.localeCompare(right.period));
-	if (periods.length === 0)
-		throw new Error(`${path} has no population periods`);
-	const expectedCodes = periods[0]?.records
-		.map((record) => record.areaCode)
-		.join(",");
-	if (
-		periods.some(
-			(period) =>
-				period.records.map((record) => record.areaCode).join(",") !==
-				expectedCodes,
-		)
-	) {
+const localAuthorityPopulationRecords = (rows: CatalogueRows) => {
+	const periods = partitionPeriods(
+		rows,
+		{
+			datasetId: "population-uk",
+			geography: "localAuthority",
+			boundaryYear: 2023,
+		},
+		/^[ENSW]\d{8}$/,
+	);
+	const codes = (period: (typeof periods)[number]) =>
+		period.records.map((record) => record.areaCode).join(",");
+	if (periods.some((period) => codes(period) !== codes(periods[0]!)))
 		throw new Error(
-			`${path}: local-authority codes change between periods`,
+			"population-uk: local-authority codes change between periods",
 		);
-	}
 	return periods;
 };
 
@@ -107,9 +54,7 @@ const localAuthorityPopulationRecords = (
  */
 export const compilePopulation = (
 	{ manifestPath, datasets }: CatalogManifest,
-	populationPath: DatasetInput,
-	populationUkPath: DatasetInput,
-	populationConstituencyPath: DatasetInput,
+	rows: CatalogueRows,
 ): {
 	measure: Measure;
 	wardObservations: MeasureObservationArtifact;
@@ -125,10 +70,15 @@ export const compilePopulation = (
 	);
 	if (!populationUk)
 		throw new Error(`${manifestPath} has no population-uk dataset`);
-	const records = populationRecords(populationPath);
+	const [{ records }] = partitionPeriods(
+		rows,
+		{ datasetId: "population", geography: "ward", boundaryYear: 2023 },
+		/^[EW]\d{8}$/,
+		["2022"],
+	) as [MeasureObservationArtifact["periods"][number]];
 	if (records.length !== population.summary.dataRecordCount) {
 		throw new Error(
-			`${populationPath}: expected ${population.summary.dataRecordCount} records from the manifest, found ${records.length}`,
+			`population: expected ${population.summary.dataRecordCount} records from the manifest, found ${records.length}`,
 		);
 	}
 	if (
@@ -141,56 +91,15 @@ export const compilePopulation = (
 	}
 	const countries = countriesFor(records);
 	// ONS's own constituency estimates, one partition per mid-year.
-	const constituencyPeriods = Object.entries(
-		JSON.parse(
-			readDatasetInput(populationConstituencyPath),
-		) as PrecompiledFile,
-	)
-		.map(([period, value]) => {
-			const entry = object(
-				value,
-				`${populationConstituencyPath}.${period}`,
-			);
-			if (
-				!/^\d{4}$/.test(period) ||
-				entry.year !== Number(period) ||
-				entry.boundaryType !== "constituency" ||
-				entry.boundaryYear !== 2024
-			) {
-				throw new Error(
-					`${populationConstituencyPath}.${period}: expected constituency data on the 2024 code vintage`,
-				);
-			}
-			const data = object(
-				entry.data,
-				`${populationConstituencyPath}.${period}.data`,
-			);
-			return {
-				period,
-				records: Object.entries(data)
-					.map(([areaCode, record]) => {
-						if (!/^(E14|W07)\d{6}$/.test(areaCode))
-							throw new Error(
-								`${populationConstituencyPath}: unsupported constituency code ${areaCode}`,
-							);
-						return {
-							areaCode,
-							value: number(
-								object(
-									record,
-									`${populationConstituencyPath}.${period}.${areaCode}`,
-								).allAges,
-								`${populationConstituencyPath}.${period}.${areaCode}.allAges`,
-							),
-							status: "observed" as const,
-						};
-					})
-					.sort((left, right) =>
-						left.areaCode.localeCompare(right.areaCode),
-					),
-			};
-		})
-		.sort((left, right) => left.period.localeCompare(right.period));
+	const constituencyPeriods = partitionPeriods(
+		rows,
+		{
+			datasetId: "population-constituency",
+			geography: "constituency",
+			boundaryYear: 2024,
+		},
+		/^(E14|W07)\d{6}$/,
+	);
 	const constituencyDataset = datasets.find(
 		(dataset) => dataset.id === "population-constituency",
 	);
@@ -206,7 +115,7 @@ export const compilePopulation = (
 		constituencyRecordCount !== constituencyDataset.summary.dataRecordCount
 	) {
 		throw new Error(
-			`${populationConstituencyPath}: expected ${constituencyDataset.summary.dataRecordCount} records from the manifest, found ${constituencyRecordCount}`,
+			`population-constituency: expected ${constituencyDataset.summary.dataRecordCount} records from the manifest, found ${constituencyRecordCount}`,
 		);
 	}
 	const constituencyContent = JSON.stringify({
@@ -215,19 +124,18 @@ export const compilePopulation = (
 		sourceGeography: { type: "constituency", boundaryYear: 2024 },
 		periods: constituencyPeriods,
 	});
-	const localAuthorityPeriods =
-		localAuthorityPopulationRecords(populationUkPath);
+	const localAuthorityPeriods = localAuthorityPopulationRecords(rows);
 	const localAuthorityRecords = localAuthorityPeriods.flatMap(
 		(period) => period.records,
 	);
 	if (localAuthorityRecords.length !== populationUk.summary.dataRecordCount) {
 		throw new Error(
-			`${populationUkPath}: expected ${populationUk.summary.dataRecordCount} records from the manifest, found ${localAuthorityRecords.length}`,
+			`population-uk: expected ${populationUk.summary.dataRecordCount} records from the manifest, found ${localAuthorityRecords.length}`,
 		);
 	}
 	if (localAuthorityPeriods.length !== populationUk.summary.datasetCount) {
 		throw new Error(
-			`${populationUkPath}: expected ${populationUk.summary.datasetCount} periods from the manifest, found ${localAuthorityPeriods.length}`,
+			`population-uk: expected ${populationUk.summary.datasetCount} periods from the manifest, found ${localAuthorityPeriods.length}`,
 		);
 	}
 	if (
