@@ -4,6 +4,7 @@ import { diagnose } from "@/lib/fix/diagnose";
 import { readTable } from "@/lib/fix/table";
 import {
 	changeCounts,
+	correctedTable,
 	rowUpdates,
 	updatedTable,
 	type UpdateOptions,
@@ -196,5 +197,31 @@ describe("updatedTable", () => {
 			"area_update",
 			"x",
 		]);
+	});
+});
+
+describe("correctedTable", () => {
+	const corrected = correctedTable(table, diagnosis, 0);
+
+	it("keeps every row and column in order, with the new ones beside the area", () => {
+		expect(corrected.rows).toHaveLength(table.rows.length);
+		expect(corrected.headers[0]).toBe("ward_cd");
+		expect(corrected.headers.slice(-2)).toEqual([
+			"ward_name",
+			"households",
+		]);
+		expect(corrected.rows.map((row) => row.at(-1))).toEqual(
+			table.rows.map((row) => row.at(-1)),
+		);
+	});
+
+	it("puts the latest code in place of a retired one, and says what it was", () => {
+		const row = byCode(corrected)("E05016249")[0];
+		expect(row.area_name).toBe("Brinkworth");
+		expect(row.area_update).toMatch(/E05013408/);
+	});
+
+	it("leaves a code it cannot place as it was", () => {
+		expect(byCode(corrected)("E0513457")).toHaveLength(1);
 	});
 });

@@ -1,5 +1,5 @@
 import type { Diagnosis, RowResult } from "./diagnose";
-import { statusWord } from "./report";
+import { checkedTable, statusWord } from "./report";
 import type { Successor } from "./successors";
 import { freeHeader, writeCsv, type Table } from "./table";
 
@@ -175,8 +175,17 @@ export function updatedTable(
 				joined(within.map((p) => p.name)),
 			);
 		}
-		out.push(note(update, byRow.get(index), options.splits === "rows"));
 		const cell = replace && areas.length === 1 ? areas[0].code : original;
+		const text = note(update, byRow.get(index), options.splits === "rows");
+		// Writing over a code would lose it, so the note keeps what it was.
+		out.push(
+			text &&
+				cell !== original &&
+				original.trim() &&
+				(update.change === "updated" || update.change === "current")
+				? `${text} (was ${original.trim()})`
+				: text,
+		);
 		return [...row.slice(0, area), cell, ...out, ...row.slice(area + 1)];
 	};
 
@@ -207,4 +216,24 @@ export function updatedCsv(
 ): string {
 	const { headers, rows } = updatedTable(table, diagnosis, area, options);
 	return writeCsv(headers, rows);
+}
+
+/**
+ * The table fixed with the defaults, for the one-click download: retired
+ * codes replaced by their successor and names turned into codes, with the
+ * area's name and a note of what changed beside it. Without a release to
+ * move to, the checked table: each area's status and name.
+ */
+export function correctedTable(
+	table: Table,
+	diagnosis: Diagnosis,
+	area: number,
+): { headers: string[]; rows: string[][] } {
+	if (!diagnosis.latest) return checkedTable(table, diagnosis, area);
+	return updatedTable(table, diagnosis, area, {
+		codes: diagnosis.kind === "code" ? "replace" : "add",
+		splits: "list",
+		name: true,
+		parents: [],
+	});
 }

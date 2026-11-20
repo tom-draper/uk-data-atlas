@@ -4,10 +4,15 @@ import { useId, useRef, useState, type DragEvent } from "react";
 import { FileUp } from "lucide-react";
 import { Card } from "@/components/docs/Page";
 import { ROW_LIMIT } from "@/lib/fix/table";
+import {
+	csvUpload,
+	readUpload,
+	UploadError,
+	type Upload,
+} from "@/lib/fix/upload";
 import { Button, labelClass } from "./ui";
 
 export const SAMPLE_URL = "/fix/sample-wards.csv";
-const MAX_BYTES = 20 * 1024 * 1024;
 
 /**
  * Three ways in: drop or choose a file, paste a column, or try the sample.
@@ -15,34 +20,34 @@ const MAX_BYTES = 20 * 1024 * 1024;
  * from the keyboard and with screen readers.
  */
 export default function InputPanel({
-	onText,
+	onUpload,
 	onError,
 	busy,
 }: {
-	onText: (text: string, name: string) => void;
+	onUpload: (upload: Upload) => void;
 	onError: (message: string) => void;
 	busy: boolean;
 }) {
 	const input = useRef<HTMLInputElement>(null);
 	const [dragging, setDragging] = useState(false);
 	const [pasted, setPasted] = useState("");
+	const [reading, setReading] = useState(false);
 	const pasteId = useId();
 
 	async function readFile(file: File | undefined) {
 		if (!file) return;
-		if (file.size > MAX_BYTES) {
+		setReading(true);
+		try {
+			onUpload(await readUpload(file));
+		} catch (error) {
 			onError(
-				`${file.name} is larger than 20 MB. Try a smaller file, or the first ${ROW_LIMIT.toLocaleString("en-GB")} rows.`,
+				error instanceof UploadError
+					? error.message
+					: `${file.name} could not be read.`,
 			);
-			return;
+		} finally {
+			setReading(false);
 		}
-		if (/\.(xlsx?|ods|numbers)$/i.test(file.name)) {
-			onError(
-				"That looks like a spreadsheet file. Save it as CSV first, or copy the columns and paste them below.",
-			);
-			return;
-		}
-		onText(await file.text(), file.name);
 	}
 
 	function onDrop(event: DragEvent) {
@@ -55,7 +60,7 @@ export default function InputPanel({
 		try {
 			const response = await fetch(SAMPLE_URL);
 			if (!response.ok) throw new Error();
-			onText(await response.text(), "sample-wards.csv");
+			onUpload(csvUpload(await response.text(), "sample-wards.csv"));
 		} catch {
 			onError("The sample couldn't be loaded. Try again.");
 		}
@@ -74,24 +79,24 @@ export default function InputPanel({
 			>
 				<FileUp aria-hidden="true" className="h-7 w-7 text-slate-400" />
 				<p className="text-[15px] text-slate-700">
-					Drop a CSV file here, or
+					Drop a spreadsheet or CSV file here, or
 				</p>
 				<div className="flex flex-wrap justify-center gap-2">
 					<Button
 						variant="primary"
 						onClick={() => input.current?.click()}
-						disabled={busy}
+						disabled={busy || reading}
 					>
-						Choose a file
+						{reading ? "Reading…" : "Choose a file"}
 					</Button>
-					<Button onClick={trySample} disabled={busy}>
+					<Button onClick={trySample} disabled={busy || reading}>
 						Try a sample
 					</Button>
 				</div>
 				<input
 					ref={input}
 					type="file"
-					accept=".csv,.tsv,.txt,text/csv,text/plain"
+					accept=".xlsx,.xlsm,.ods,.csv,.tsv,.txt,text/csv,text/plain"
 					className="sr-only"
 					tabIndex={-1}
 					aria-hidden="true"
@@ -101,9 +106,10 @@ export default function InputPanel({
 					}}
 				/>
 				<p className="text-[13px] text-slate-500">
-					Up to {ROW_LIMIT.toLocaleString("en-GB")} rows. Your file is
-					read in your browser. Only the columns being checked are
-					sent to our API, which doesn&apos;t store them.
+					Excel (.xlsx), OpenDocument (.ods) or CSV, up to{" "}
+					{ROW_LIMIT.toLocaleString("en-GB")} rows. Your file is read
+					in your browser. Only the columns being checked are sent to
+					our API, which doesn&apos;t store them.
 				</p>
 			</div>
 
@@ -128,7 +134,9 @@ export default function InputPanel({
 					<Button
 						className="mt-2"
 						disabled={busy || !pasted.trim()}
-						onClick={() => onText(pasted, "pasted.csv")}
+						onClick={() =>
+							onUpload(csvUpload(pasted, "pasted.csv"))
+						}
 					>
 						Check pasted data
 					</Button>

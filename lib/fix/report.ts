@@ -72,12 +72,12 @@ export function matchReportCsv(diagnosis: Diagnosis): string {
 	return writeCsv(headers, rows);
 }
 
-/** The user's file with a status and area name added after the area column. */
-export function checkedCsv(
+/** The user's table with a status and area name added after the area column. */
+export function checkedTable(
 	table: Table,
 	diagnosis: Diagnosis,
 	area: number,
-): string {
+): { headers: string[]; rows: string[][] } {
 	const byRow = new Map(diagnosis.results.map((r) => [r.row, r]));
 	const status = freeHeader(table.headers, "area_status");
 	const name = freeHeader(table.headers, "area_name");
@@ -96,6 +96,15 @@ export function checkedCsv(
 			...row.slice(area + 1),
 		];
 	});
+	return { headers, rows };
+}
+
+export function checkedCsv(
+	table: Table,
+	diagnosis: Diagnosis,
+	area: number,
+): string {
+	const { headers, rows } = checkedTable(table, diagnosis, area);
 	return writeCsv(headers, rows);
 }
 
@@ -124,13 +133,9 @@ export function validateCurl(release: ReleaseRef | null, file = "areas.csv") {
 	].join("\n");
 }
 
-/** Offers text to the user as a file download. */
-export function downloadText(
-	text: string,
-	filename: string,
-	type = "text/csv;charset=utf-8",
-) {
-	const url = URL.createObjectURL(new Blob([text], { type }));
+/** Offers a file to the user as a download. */
+export function downloadBlob(blob: Blob, filename: string) {
+	const url = URL.createObjectURL(blob);
 	const link = document.createElement("a");
 	link.href = url;
 	link.download = filename;
@@ -140,8 +145,21 @@ export function downloadText(
 	setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** "households.csv" becomes "households-checked.csv". */
-export function derivedName(source: string, suffix: string): string {
+/** Offers text to the user as a file download. */
+export function downloadText(
+	text: string,
+	filename: string,
+	type = "text/csv;charset=utf-8",
+) {
+	downloadBlob(new Blob([text], { type }), filename);
+}
+
+/** "households.xlsx" becomes "households-checked.xlsx". */
+export function derivedName(
+	source: string,
+	suffix: string,
+	extension = "csv",
+): string {
 	const base = source.replace(/\.[^.]+$/, "") || "data";
-	return `${base}-${suffix}.csv`;
+	return `${base}-${suffix}.${extension}`;
 }
