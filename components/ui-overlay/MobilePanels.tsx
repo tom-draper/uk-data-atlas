@@ -84,7 +84,7 @@ function MenuList({
 					className={item}
 					onClick={() => onOpen("locations")}
 				>
-					Locations
+					Places
 				</button>
 				<button
 					type="button"

@@ -102,18 +102,18 @@ export default function LocationPanel({
 					<h2
 						className={`grow px-2.5 pt-2.5 pb-2 text-sm font-semibold tracking-tight ${t.heading}`}
 					>
-						Locations
+						Places
 					</h2>
 					<div className="flex items-center transition-all duration-200">
 						<div className="grow">
 							<input
 								ref={inputRef}
 								type="text"
-								aria-label="Search locations"
+								aria-label="Search places"
 								value={searchQuery}
 								onChange={handleSearchChange}
 								onKeyDown={handleKeyDown}
-								placeholder="Search locations..."
+								placeholder="Search places..."
 								className={`outline-none text-xs px-1 py-1 mt-0.5 transition-all border-b! border-white/20 duration-200 w-full bg-transparent ${t.text} ${searchOpen ? "opacity-100" : "opacity-0 px-0"}`}
 							/>
 						</div>
