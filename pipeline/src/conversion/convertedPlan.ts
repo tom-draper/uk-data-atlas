@@ -145,7 +145,8 @@ export const CONVERTED_PLAN: PlanEntry[] = [
 		target: CON_2024,
 		route: [hop(CASE_SLUGS.ward2023ToCon2024Overlap)],
 		members: PERSONS,
-		note: "Only constituencies made of whole wards have a value. A breakdown by age is not split.",
+		estimates: true,
+		note: "Single years of age for persons, each split on the postcodes a ward and a constituency share. A constituency made of whole wards has the exact sum, and any other has an estimate with the backtest's bounds, which are wide for the ages where people move, such as students at 19.",
 	},
 	{
 		id: "population/population>ward",

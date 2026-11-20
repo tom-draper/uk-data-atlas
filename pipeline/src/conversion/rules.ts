@@ -150,7 +150,7 @@ export const conversionRule = (
 			rule: "sum",
 			splitBasis,
 			reason: splitBasis
-				? `Additive. Summed where areas regroup exactly. A split is estimated on ${splitBasis} weights for the measure's total alone, within the bounds the backtest measured. A breakdown of it is not split.`
+				? `Additive. Summed where areas regroup exactly. A split is estimated on ${splitBasis} weights for the measure's total and for its single years of age, each within the bounds the backtest measured. Any other breakdown of it is not split.`
 				: "Additive. Summed where areas regroup exactly. No published truth has been found to measure a split of it against, so a split is refused.",
 		};
 	}
