@@ -35,13 +35,13 @@ Measured on the local build of 2026-11-19 unless stated.
 
 ## Status at a glance
 
-| Status      | Tasks                                                           |
-| ----------- | --------------------------------------------------------------- |
-| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 46, 62              |
-| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                            |
-| Partly done | 7, 8, 9, 17, 35, 39                                             |
-| Kept as is  | 12 (measured, keep the wide table)                              |
-| Not started | 13, 18, 24, 26–29, 31–34, 36–38, 40–45, 48–51, and new 52 to 61 |
+| Status      | Tasks                                                                |
+| ----------- | -------------------------------------------------------------------- |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 62               |
+| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                                 |
+| Partly done | 7, 8, 9, 17, 35, 39                                                  |
+| Kept as is  | 12 (measured, keep the wide table)                                   |
+| Not started | 13, 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, and new 52 to 61 |
 
 ## Core data quality
 
@@ -146,7 +146,7 @@ as published data.
 
 | #   | Priority | Status      | Task                                                                                                                                                                                                                                   | Data                          |
 | --- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| 33  | P0       |             | Old code → current code in one step: store chained crosswalks as direct lookups (any ward code since 2011 → 2026 wards), combining weights and recording the accumulated error (#639). The conversion routes already chain internally. | Held                          |
+| 33  | P0       | Done        | Old code → current code in one step: store chained crosswalks as direct lookups (any ward code since 2011 → 2026 wards), combining weights and recording the accumulated error (#639). The conversion routes already chain internally. | Held                          |
 | 34  | P0       |             | How much each area changed between releases: share of land and of residents that moved, and a "materially changed" flag (#414).                                                                                                        | Held                          |
 | 35  | P1       | Partly done | Direct parent and child links are in `area_hierarchy`. Left: one flat hierarchy table, one row per small area with its parent at every level, each marked exact or best-fit (#427).                                                    | Held                          |
 | 36  | P1       |             | Postcode district and sector → official areas, weighted by residential postcodes or population.                                                                                                                                        | Held (ONSPD, postcode counts) |
@@ -264,6 +264,18 @@ as published data.
   with every measure 9.3 ms (`v_observation` 85.6 ms); population on 2021
   LSOAs 34 ms (357 ms); households on 2021 LSOAs 218 ms (11.8 s); unemployment
   on 2024 local authorities 10 ms (73 ms). No index was added.
+- **Task 33** (2026-11-20): `crosswalk_chain` joins each older release of a
+  geography to its current release by the route the converter would take
+  (`pipeline/src/conversion/chains.ts`, written by
+  `pipeline/src/storage/crosswalkChains.ts`). `crosswalk_chain_edge` holds one
+  row per old area and current area with the combined `weight`, `at_risk`,
+  `pruned`, `estimated_share`, bounds and a `complete` flag, so an old code
+  reaches the current areas in one join through `v_crosswalk_chain_edge`. A
+  chain that is exact on every basis is stored once. Stored as tables, since
+  composing the routes takes about 7.5 minutes: 140 chains over 891 hops,
+  1,218,739 edges and 346,138 gaps, adding 41.5 MB (+4.4%) to
+  `atlas.sqlite`. 14 older releases have no route to the current one and get
+  no chain. Ids are in `pipeline/ids/crosswalk-chain.txt`.
 
 ## Licence table coverage
 
