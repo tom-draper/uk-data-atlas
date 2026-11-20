@@ -40,7 +40,6 @@ export const datasetCatalogInputs = (
 		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
 		localElection: precompiled("local-election.json"),
-		regionalGdp: precompiled("regional-gdp.json"),
 		electricityConsumption: precompiled("electricity-consumption.json"),
 		gasConsumption: precompiled("gas-consumption.json"),
 		declared: Object.fromEntries(
