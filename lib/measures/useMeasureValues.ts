@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { fetchMeasureValues, MeasureQueryError } from "./client";
+import { useMemo } from "react";
+import { fetchMeasureValues, type MeasureQueryError } from "./client";
+import { loadMeasureValues, restrictToAreas } from "./cache";
 import { measureValuesUrl } from "./request";
 import type { MeasureValuesPayload, MeasureValuesRequest } from "./types";
+import { useLoaded } from "./useLoaded";
 
 export type MeasureValuesState =
 	| { status: "idle" }
@@ -12,44 +14,30 @@ export type MeasureValuesState =
 	| { status: "error"; error: MeasureQueryError | Error };
 
 /**
- * The values of a measure, fetched when the request changes. A request is
- * identified by the URL it writes, so an equal request made again does not
- * refetch. Pass null to read nothing.
+ * The values of a measure. Every area of the source is read once and shared
+ * through `loadMeasureValues`, then cut down to `request.areas` here, so a
+ * new set of areas reads nothing. A request that combines areas is sent as
+ * it is. Pass null to read nothing.
  */
 export function useMeasureValues(
 	request: MeasureValuesRequest | null,
 ): MeasureValuesState {
-	const url = request ? measureValuesUrl(request) : null;
-	const [result, setResult] = useState<{
-		url: string;
-		state: MeasureValuesState;
-	}>();
-
-	useEffect(() => {
-		if (!request || !url) return;
-		const controller = new AbortController();
-		fetchMeasureValues(request, { signal: controller.signal })
-			.then((data) =>
-				setResult({ url, state: { status: "ready", data } }),
-			)
-			.catch((error: unknown) => {
-				if (controller.signal.aborted) return;
-				setResult({
-					url,
-					state: {
-						status: "error",
-						error:
-							error instanceof Error
-								? error
-								: new Error("The measure could not be read."),
-					},
-				});
-			});
-		return () => controller.abort();
-		// The URL names the request, so an equal request does not refetch.
+	const combined = Boolean(request?.parents);
+	const { areas, ...whole } = request ?? { measure: "" };
+	const sent = combined ? request : request ? whole : null;
+	const key = sent ? measureValuesUrl(sent) : null;
+	const loaded = useLoaded(key, () =>
+		combined ? fetchMeasureValues(sent!) : loadMeasureValues(sent!),
+	);
+	const areasKey = !combined && areas ? areas.join(",") : null;
+	const data = loaded.status === "ready" ? loaded.value : null;
+	const restricted = useMemo(
+		() =>
+			data && areasKey !== null ? restrictToAreas(data, areas!) : data,
+		// The areas are named by their key.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [url]);
-
-	if (!url) return { status: "idle" };
-	return result?.url === url ? result.state : { status: "loading" };
+		[data, areasKey],
+	);
+	if (loaded.status !== "ready") return loaded;
+	return { status: "ready", data: restricted! };
 }
