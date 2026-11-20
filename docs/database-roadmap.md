@@ -273,25 +273,33 @@ as published data.
   reaches the current areas in one join through `v_crosswalk_chain_edge`. A
   chain that is exact on every basis is stored once. Stored as tables, since
   a query cannot compose the routes: assembly takes 8 s inside its transaction
-  (about 3 s reading the steps, 4 s composing, the rest writing): 140 chains over 891 hops and
-  1,218,739 edges, adding 30.7 MB (+3.3%) to `atlas.sqlite`. 214,762 old areas
-  lose some or all of their value, listed by `v_crosswalk_chain_gap`; only the
-  1,508 that edges cannot show (a named reason, or part of the value still
-  arrived) are stored, since an inventory area with no edge and no row is in no
-  crosswalk of a step. A chain starts only from the areas in the old release's
-  inventory. 19 older releases have no route to the current one and get no
-  chain. 17 lack a crosswalk that carries a value to the next release of their
-  geography: the seven `historicalConstituency` releases from 1918 to 1997 and
-  the 2023-04 `integratedCareBoard` (no crosswalk at all), the 2017-05 and
-  2023-05 `countyElectoralDivision` releases, `localAuthority` 2008 and 2009
-  (the 2008 to 2009 crosswalk exists, 2009 to 2011 does not), the 2011
-  `dataZone` (only a containment to intermediate zones), the three
-  `scottishParliamentaryConstituency` releases before 2026 (2022 to 2026 is
-  missing) and the 2022 `seneddConstituency`. One, `nhsEnglandRegion` 2022-07,
-  has a crosswalk, but it is `area-overlap`, which is deliberately not a
-  carrying method (5 of its 7 regions are the same area in 2024-01). One,
-  `dataZone` 2021-ni, is a Northern Ireland release in a Scottish geography
-  and has no Scottish successor. Ids are in `pipeline/ids/crosswalk-chain.txt`.
+  (about 3 s reading the steps, 4 s composing, the rest writing): 158 chains over 956 hops and
+  1,220,796 edges, adding 28.4 MB (+3.0%) to `atlas.sqlite` in a full build.
+  214,956 old areas lose some or all of their value, listed by
+  `v_crosswalk_chain_gap`; only the 1,591 that edges cannot show (a named
+  reason, or part of the value still arrived) are stored, since an inventory
+  area with no edge and no row is in no crosswalk of a step. A chain starts
+  only from the areas in the old release's inventory. 13 older releases have no
+  route to the current one and get no chain. 11 lack a crosswalk that carries a
+  value to the next release of their geography: the seven
+  `historicalConstituency` releases from 1918 to 1997 and the 2023-04
+  `integratedCareBoard` (no crosswalk at all), the 2017-05 and 2023-05
+  `countyElectoralDivision` releases, and the 2011 `dataZone` (only a
+  containment to intermediate zones). One, `nhsEnglandRegion` 2022-07, has a
+  crosswalk, but it is `area-overlap`, which is deliberately not a carrying
+  method (5 of its 7 regions are the same area in 2024-01). One, `dataZone`
+  2021-ni, is a Northern Ireland release in a Scottish geography, which looks
+  like an ingest classification fault rather than a missing crosswalk, so it
+  is left out of the chains rather than given an invented Scottish successor.
+  Three `postcode-overlap` crosswalks join the releases that had no route
+  before: `localAuthority` 2009 to 2011 (the 00xx codes became Exx, so no code
+  is shared and `extent-continuity` has no sample to judge noise from), which
+  routes `localAuthority` 2008 and 2009, `scottishParliamentaryConstituency`
+  2022 to 2026 (routes the three releases before 2026) and
+  `seneddConstituency` 2022 to 2026 (routes the 2022 release). Their minimum
+  source coverage is 0.998, 0.993 and 1. The Scottish dwellings basis is
+  thinner (45 of 111 edges), so 28 areas show as gaps on it. Ids are in
+  `pipeline/ids/crosswalk-chain.txt`.
   No API route serves the chains: the documented join is `v_crosswalk_chain_edge`
   with `v_crosswalk_chain_gap` (worked examples in the schema docs and in
   `docs/sqlite-schema-design.md`), and an API reader would use the stored tables
