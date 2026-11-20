@@ -4,6 +4,7 @@ import {
 	observationsFor,
 } from "@uk-data-atlas/catalogue/node";
 import {
+	ALL_PERIODS,
 	queryMeasureValues,
 	type MeasureValues,
 	type MeasureValuesColumn,
@@ -127,6 +128,18 @@ describe("measure values", () => {
 		const held = column(result, "2023");
 		expect(held.values).toEqual([620, null, 110]);
 		expect(result.statuses[held.status[1]!]).toBe("missing");
+	});
+
+	it("reads every period the source publishes for the all-periods token", () => {
+		const result = values({
+			measure: "population",
+			periods: [ALL_PERIODS],
+		});
+		expect(result.periods).toEqual(["2022", "2023"]);
+		expect(result.columns.map((entry) => entry.period)).toEqual([
+			"2022",
+			"2023",
+		]);
 	});
 
 	it("refuses a period the source does not publish", () => {

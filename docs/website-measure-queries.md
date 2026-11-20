@@ -142,7 +142,7 @@ Request:
 | `datasetId`    | Chooses between datasets that publish the same members                            |
 | `geography`    | The source geography level, such as `localAuthority`                              |
 | `boundaryYear` | The release (code year) of that geography                                         |
-| `periods`      | Periods wanted; default is the source's latest                                    |
+| `periods`      | Periods wanted; default is the source's latest; `*` for the newest 40             |
 | `areas`        | Optional area codes to keep                                                       |
 | `parents`      | Optional `{ code, memberCodes }` groups to aggregate children onto                |
 

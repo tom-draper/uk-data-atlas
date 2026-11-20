@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { closeAllReadOnlyDatabases } from "@uk-data-atlas/atlas-db";
 import { createMeasureValuesHandler } from "@/lib/measures/handler";
 import {
+	ALL_PERIODS,
 	measureValuesUrl,
 	parseMeasureValuesQuery,
 } from "@/lib/measures/request";
@@ -212,6 +213,17 @@ describe("measure query URLs", () => {
 			new URL(url, "http://localhost").searchParams,
 		);
 		expect(parsed).toEqual({ ok: true, request });
+	});
+
+	it("reads the all-periods token", () => {
+		const url = measureValuesUrl({ measure: "m", periods: [ALL_PERIODS] });
+		expect(url).toBe("/data/measures/m?period=*");
+		expect(
+			parseMeasureValuesQuery(
+				"m",
+				new URL(url, "http://localhost").searchParams,
+			),
+		).toEqual({ ok: true, request: { measure: "m", periods: ["*"] } });
 	});
 
 	it("writes the same URL however the request was built", () => {
