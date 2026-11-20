@@ -1,8 +1,7 @@
-import { type DatasetInput, readDatasetInput } from "./input.ts";
+import type { CatalogueRows } from "./rows.ts";
 import type {
 	MeasureSource,
 	Measure,
-	PopulationObservation,
 	MeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
 import {
@@ -30,54 +29,14 @@ import { measureSeriesKey } from "@uk-data-atlas/measures";
  */
 export const compileUnemployment = (
 	{ manifestPath, datasets }: CatalogManifest,
-	unemploymentPath: DatasetInput,
+	rows: CatalogueRows,
 	populationCodes: Set<string>,
 ) => {
-	const unemploymentFile = JSON.parse(
-		readDatasetInput(unemploymentPath),
-	) as Record<
-		string,
-		{
-			periodLabels?: Record<string, string>;
-			data?: Record<
-				string,
-				{
-					rates?: Record<string, number | null>;
-					rateIntervals?: Record<string, number | null>;
-					levels?: Record<string, number | null>;
-					levelIntervals?: Record<string, number | null>;
-					derivedFromPredecessors?: string[];
-				}
-			>;
-		}
-	>;
 	const unemploymentDataset = datasets.find(
 		(candidate) => candidate.id === "unemployment",
 	);
 	if (!unemploymentDataset)
 		throw new Error(`${manifestPath} has no unemployment dataset`);
-	const [unemploymentEdition, ...laterEditions] =
-		Object.values(unemploymentFile);
-	if (
-		!unemploymentEdition?.data ||
-		!unemploymentEdition.periodLabels ||
-		laterEditions.length > 0
-	)
-		throw new Error(
-			`${unemploymentPath}: expected one edition with its period labels`,
-		);
-	const unemploymentData = unemploymentEdition.data;
-	/** "April 1996 to March 1997" as 1996-97, "January to December 2004" as 2004. */
-	const unemploymentPeriods = Object.entries(
-		unemploymentEdition.periodLabels,
-	).map(([key, label]) => {
-		const financial = /^April (\d{4}) to March (\d{4})$/.exec(label);
-		const calendar = /^January to December (\d{4})$/.exec(label);
-		if (financial && Number(financial[2]) === Number(financial[1]) + 1)
-			return { key, period: `${financial[1]}-${financial[2].slice(2)}` };
-		if (calendar && calendar[1] === key) return { key, period: key };
-		throw new Error(`${unemploymentPath}: unrecognised period ${label}`);
-	});
 	const notModelled = new Set(["E09000001", "E06000053"]);
 	const greatBritain2021 = [
 		...[...populationCodes].filter(
@@ -92,79 +51,41 @@ export const compileUnemployment = (
 		),
 		...Object.values(APRIL_2020_2021_LAD_MERGERS).flat(),
 	];
-	const derivedCodes = Object.entries(unemploymentData)
-		.filter(([, record]) => record.derivedFromPredecessors)
-		.map(([code]) => code)
-		.sort();
-	if (
-		derivedCodes.join() !==
-		Object.keys(APRIL_2023_LAD_MERGERS).sort().join()
-	)
-		throw new Error(
-			`${unemploymentPath}: only the April 2023 authorities may be derived, found ${derivedCodes.join(", ")}`,
-		);
-	const published = Object.keys(unemploymentData)
-		.filter((code) => !derivedCodes.includes(code))
-		.sort();
-	const expectedPublished = [
-		...new Set([...greatBritain2019, ...greatBritain2021]),
-	].sort();
-	if (published.join() !== expectedPublished.join())
-		throw new Error(
-			`${unemploymentPath}: estimated authorities are not exactly the April 2019 and April 2021 Great Britain code sets`,
-		);
-	const round1 = (value: number) => Number(value.toFixed(1));
 	const unemploymentPartition = (
 		measureId: string,
 		valueField: "rates" | "levels",
-		intervalField: "rateIntervals" | "levelIntervals",
 		boundaryYear: 2019 | 2021,
 	) => {
 		const codes =
 			boundaryYear === 2019 ? greatBritain2019 : greatBritain2021;
-		const periods = unemploymentPeriods
-			.map(({ key, period }) => ({
-				period,
-				records: codes
-					.flatMap((areaCode): PopulationObservation[] => {
-						const value =
-							unemploymentData[areaCode]?.[valueField]?.[key];
-						if (value === null || value === undefined) return [];
-						const halfWidth =
-							unemploymentData[areaCode]?.[intervalField]?.[key];
-						return [
-							{
-								areaCode,
-								value,
-								status: "observed",
-								...(halfWidth === null ||
-								halfWidth === undefined
-									? {}
-									: {
-											confidenceInterval: {
-												lower: round1(
-													value - halfWidth,
-												),
-												upper: round1(
-													value + halfWidth,
-												),
-											},
-										}),
-							},
-						];
-					})
-					.sort((left, right) =>
-						left.areaCode.localeCompare(right.areaCode),
-					),
-			}))
+		const periods = rows
+			.periods({
+				series: {
+					measure:
+						valueField === "levels"
+							? "unemployed-people"
+							: "unemployment-rate",
+				},
+				datasetId: "unemployment",
+				geography: "localAuthority",
+				boundaryYear,
+			})
 			// The 2021 partition holds only years every one of its authorities
 			// is estimated; the districts' partition holds every year.
 			.filter((period) =>
 				boundaryYear === 2019
 					? period.records.length > 0
 					: period.records.length === codes.length,
-			)
-			.sort((left, right) => left.period.localeCompare(right.period));
+			);
+		for (const { period, records } of periods) {
+			const unexpected = records.find(
+				(record) => !codes.includes(record.areaCode),
+			);
+			if (unexpected)
+				throw new Error(
+					`unemployment ${period}: ${unexpected.areaCode} is not an April ${boundaryYear} Great Britain authority`,
+				);
+		}
 		const observationArtifact = `${measureId}-localAuthority-${boundaryYear}-observations`;
 		const sourceGeography = {
 			type: "localAuthority" as const,
@@ -227,7 +148,6 @@ export const compileUnemployment = (
 			valueKind: "ratio" as const,
 			unit: "% of economically active residents aged 16 and over",
 			valueField: "rates" as const,
-			intervalField: "rateIntervals" as const,
 			aggregation: {
 				kind: "intensive" as const,
 				operation: "weighted-mean" as const,
@@ -246,7 +166,6 @@ export const compileUnemployment = (
 			valueKind: "count" as const,
 			unit: "unemployed residents aged 16 and over",
 			valueField: "levels" as const,
-			intervalField: "levelIntervals" as const,
 			aggregation: {
 				kind: "extensive" as const,
 				operation: "sum" as const,
@@ -259,7 +178,6 @@ export const compileUnemployment = (
 			unemploymentPartition(
 				spec.id,
 				spec.valueField,
-				spec.intervalField,
 				boundaryYear,
 			),
 		);
