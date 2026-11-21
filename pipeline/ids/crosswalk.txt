@@ -211,3 +211,17 @@ local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-postcode-overlap
 local-authority-2009-12-gb-bgc-to-2011-12-gb-bgc-postcode-overlap
 scottish-parliamentary-constituency-2022-12-sc-bgc-to-2026-05-sc-bgc-postcode-overlap
 senedd-constituency-2022-12-w-bgc-to-2026-05-w-bgc-postcode-overlap
+ward-2011-12-ew-bgc-to-2015-12-gb-bgc-official-history
+ward-2015-12-gb-bgc-to-2016-12-gb-bgc-official-history
+ward-2016-12-gb-bgc-to-2017-12-gb-bgc-official-history
+ward-2017-12-gb-bgc-to-2018-12-uk-bgc-official-history
+ward-2018-12-uk-bgc-to-2019-12-uk-bgc-official-history
+ward-2019-12-uk-bgc-to-2020-12-uk-bgc-official-history
+ward-2020-12-uk-bgc-to-2021-12-uk-bgc-official-history
+ward-2021-12-uk-bgc-to-2022-12-uk-bgc-official-history
+ward-2022-12-uk-bgc-to-2023-05-uk-bgc-official-history
+ward-2023-05-uk-bgc-to-2023-12-uk-bgc-official-history
+ward-2023-12-uk-bgc-to-2024-05-uk-bgc-official-history
+ward-2024-05-uk-bgc-to-2024-12-uk-bgc-official-history
+ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-official-history
+ward-2025-12-uk-bgc-to-2026-05-uk-bgc-official-history
