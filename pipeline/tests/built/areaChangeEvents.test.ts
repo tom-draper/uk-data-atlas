@@ -98,7 +98,7 @@ test("the kind matches the members on each side", () => {
 					sum(m.side = 'from') AS froms, sum(m.side = 'to') AS tos
 				FROM area_change_event e JOIN area_change_member m ON m.event_id = e.id GROUP BY e.id)
 			SELECT id, kind, froms, tos FROM n WHERE NOT (
-				(kind IN ('renamed', 'recoded') AND froms = 1 AND tos = 1)
+				(kind IN ('renamed', 'recoded', 'redrawn') AND froms = 1 AND tos = 1)
 				OR (kind = 'split' AND froms = 1 AND tos > 1)
 				OR (kind = 'merged' AND froms > 1 AND tos = 1)
 				OR (kind = 'redistributed' AND froms > 1 AND tos > 1)
@@ -106,6 +106,32 @@ test("the kind matches the members on each side", () => {
 				OR (kind = 'created' AND froms = 0 AND tos = 1)) LIMIT 5`,
 		),
 		[],
+	);
+});
+
+test("only recoded and redrawn events are realigned, and redrawn ones keep their code", () => {
+	assert.deepEqual(
+		all(
+			`SELECT id, kind FROM area_change_event
+			WHERE realigned = 1 AND kind NOT IN ('recoded', 'redrawn') LIMIT 5`,
+		),
+		[],
+	);
+	assert.deepEqual(
+		all(
+			`SELECT e.id FROM area_change_event e
+			JOIN area_change_member f ON f.event_id = e.id AND f.side = 'from'
+			JOIN area_change_member t ON t.event_id = e.id AND t.side = 'to'
+			JOIN area_version fv ON fv.id = f.area_version_id
+			JOIN area_version tv ON tv.id = t.area_version_id
+			WHERE e.kind = 'redrawn' AND fv.area_id <> tv.area_id LIMIT 5`,
+		),
+		[],
+	);
+	assert.ok(
+		all(
+			"SELECT 1 FROM area_change_event WHERE kind = 'redrawn' AND realigned = 1",
+		).length > 0,
 	);
 });
 
