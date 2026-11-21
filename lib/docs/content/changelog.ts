@@ -30,6 +30,14 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-21",
+		title: "Ward splits and merges from the Code History Database",
+		changes: [
+			"The change events (`area_change_event`, `v_area_change`) gain `basis`: `official-lookup`, `extent-continuity`, `clean-containment` or `publisher-statement`. A split or merge can only have the first.",
+			"Ward changes between 2011 and 2026 are read from the ONS Code History Database as 14 more official-lookup crosswalks (ids 211 to 224), so wards that were ended and created are now split, merged or redistributed events. The crosswalk listings gain those 14 entries. No existing field or parameter changed.",
+		],
+	},
+	{
+		date: "2026-11-21",
 		title: "Area lineage lookup retired",
 		breaking: true,
 		changes: [
