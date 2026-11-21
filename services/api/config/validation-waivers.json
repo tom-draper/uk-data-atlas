@@ -200,6 +200,18 @@
 			"resources": [
 				"crosswalks/ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-history"
 			]
+		},
+		{
+			"check": "source-names-consistent",
+			"reason": "The ONS Code History Database gives a few ward codes more than one name across its rows, as a spelling variant (Breaage and Breage, Nuthall East & Strelley and Nuthall East and Strelley) or as a different ward under one code (E05009219, E05001076). Both names are kept as the publisher's labels rather than the Atlas correcting the source.",
+			"resources": [
+				"crosswalks/ward-2011-12-ew-bgc-to-2015-12-gb-bgc-official-history",
+				"crosswalks/ward-2016-12-gb-bgc-to-2017-12-gb-bgc-official-history",
+				"crosswalks/ward-2017-12-gb-bgc-to-2018-12-uk-bgc-official-history",
+				"crosswalks/ward-2020-12-uk-bgc-to-2021-12-uk-bgc-official-history",
+				"crosswalks/ward-2022-12-uk-bgc-to-2023-05-uk-bgc-official-history",
+				"crosswalks/ward-2025-12-uk-bgc-to-2026-05-uk-bgc-official-history"
+			]
 		}
 	]
 }

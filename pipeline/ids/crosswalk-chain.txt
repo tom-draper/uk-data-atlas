@@ -226,3 +226,13 @@ population
 households
 dwellings
 postcodes
+@ward	2025-12-uk-bgc	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes
+@ward	2025-05-uk-bgc-v2	2026-05-uk-bgc
+population
+households
+dwellings
+postcodes

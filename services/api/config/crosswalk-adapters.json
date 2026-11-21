@@ -4245,6 +4245,286 @@
 				"geography": "constituency",
 				"boundaryRelease": "2024-07-uk-bgc"
 			}
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-official-history",
+			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": { "status": "not-provided" },
+			"filterToEndpoints": true,
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "PREDECESSORCD",
+				"nameProperty": "PREDECESSORNM"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"codeProperty": "SUCCESSORCD",
+				"nameProperty": "SUCCESSORNM"
+			}
 		}
 	]
 }
