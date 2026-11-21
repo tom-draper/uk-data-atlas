@@ -30,7 +30,7 @@ exports[`atlas lookups answer 503 before they are built 1`] = `
 
 exports[`atlas lookups keep their HTTP responses 1`] = `
 {
-  "DELETE /v1/atlas-lookups/area-lineage.json": {
+  "DELETE /v1/atlas-lookups/boundary-mappings.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
 ",
     "bytes": 262,
@@ -78,7 +78,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/%61rea-lineage.json": {
+  "GET /v1/atlas-lookups/%62oundary-mappings.json": {
     "body": "{"wards":{"E1":"E2"}}",
     "bytes": 21,
     "headers": [
@@ -126,7 +126,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/AREA-LINEAGE.json": {
+  "GET /v1/atlas-lookups/BOUNDARY-MAPPINGS.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No atlas lookup matches that id."}
 ",
     "bytes": 135,
@@ -150,7 +150,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/area-lineage": {
+  "GET /v1/atlas-lookups/boundary-mappings": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
 ",
     "bytes": 137,
@@ -162,7 +162,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/area-lineage.JSON": {
+  "GET /v1/atlas-lookups/boundary-mappings.JSON": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
 ",
     "bytes": 137,
@@ -174,7 +174,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/area-lineage.json": {
+  "GET /v1/atlas-lookups/boundary-mappings.json": {
     "body": "{"wards":{"E1":"E2"}}",
     "bytes": 21,
     "headers": [
@@ -186,7 +186,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 200,
   },
-  "GET /v1/atlas-lookups/area-lineage.json/": {
+  "GET /v1/atlas-lookups/boundary-mappings.json/": {
     "body": "{"wards":{"E1":"E2"}}",
     "bytes": 21,
     "headers": [
@@ -198,7 +198,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 200,
   },
-  "GET /v1/atlas-lookups/area-lineage.json/extra": {
+  "GET /v1/atlas-lookups/boundary-mappings.json/extra": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No API resource matches that path."}
 ",
     "bytes": 137,
@@ -210,7 +210,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "GET /v1/atlas-lookups/area-lineage.json?unexpected=1": {
+  "GET /v1/atlas-lookups/boundary-mappings.json?unexpected=1": {
     "body": "{"wards":{"E1":"E2"}}",
     "bytes": 21,
     "headers": [
@@ -258,7 +258,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "HEAD /v1/atlas-lookups/area-lineage.json": {
+  "HEAD /v1/atlas-lookups/boundary-mappings.json": {
     "body": "",
     "bytes": 0,
     "headers": [
@@ -281,7 +281,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 404,
   },
-  "OPTIONS /v1/atlas-lookups/area-lineage.json": {
+  "OPTIONS /v1/atlas-lookups/boundary-mappings.json": {
     "body": "",
     "bytes": 0,
     "headers": [
@@ -294,7 +294,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 204,
   },
-  "PATCH /v1/atlas-lookups/area-lineage.json": {
+  "PATCH /v1/atlas-lookups/boundary-mappings.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
 ",
     "bytes": 262,
@@ -318,7 +318,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 405,
   },
-  "POST /v1/atlas-lookups/area-lineage.json": {
+  "POST /v1/atlas-lookups/boundary-mappings.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate, a boundary release's :join and a crosswalk's :convert, where a request carries more than a URL can."}
 ",
     "bytes": 317,
@@ -342,7 +342,7 @@ exports[`atlas lookups keep their HTTP responses 1`] = `
     ],
     "status": 405,
   },
-  "PUT /v1/atlas-lookups/area-lineage.json": {
+  "PUT /v1/atlas-lookups/boundary-mappings.json": {
     "body": "{"type":"https://api.ukdataatlas.com/problems/method-not-allowed","title":"Method Not Allowed","status":405,"detail":"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join."}
 ",
     "bytes": 262,

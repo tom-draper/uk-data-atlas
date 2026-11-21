@@ -25,7 +25,10 @@ const stored = (name: string, json: string) => {
 const built = testContext({
 	atlasRelease,
 	atlasLookups: new Map([
-		["area-lineage", stored("area-lineage", '{"wards":{"E1":"E2"}}')],
+		[
+			"boundary-mappings",
+			stored("boundary-mappings", '{"wards":{"E1":"E2"}}'),
+		],
 		["lsoa-lad-mappings-2021", stored("lsoa", "{}")],
 	]),
 	atlasPages: new Map([
@@ -82,7 +85,7 @@ const requestsFor = (kind: "lookups" | "pages", id: string, other: string) => {
 };
 
 const assets = [
-	["lookups", "area-lineage", "lsoa-lad-mappings-2021"],
+	["lookups", "boundary-mappings", "lsoa-lad-mappings-2021"],
 	["pages", "places-index", "Places-Area-E050001"],
 ] as const;
 

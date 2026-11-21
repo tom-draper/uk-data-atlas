@@ -505,9 +505,9 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	getAtlasLookup: {
 		title: "Download an atlas lookup",
-		intro: "Download one of the lookups the atlas map reads: where each ward, LSOA and parish sits, which authorities each constituency overlaps, and where each area went between boundary releases.",
+		intro: "Download one of the lookups the atlas map reads: where each ward, LSOA and parish sits, and which authorities each constituency overlaps.",
 		tips: [
-			"Name the lookup in the path, such as `/v1/atlas-lookups/area-lineage.json`. An unknown id returns 404.",
+			"Name the lookup in the path, such as `/v1/atlas-lookups/boundary-mappings.json`. An unknown id returns 404.",
 			"Each file follows the atlas's own shape, so it may change with the atlas. For a stable contract, use the crosswalk and area routes.",
 		],
 	},
