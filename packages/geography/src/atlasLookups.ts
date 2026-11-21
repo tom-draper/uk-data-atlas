@@ -12,11 +12,6 @@ import {
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
 } from "./areaContainment.ts";
-import {
-	compileAreaLineage,
-	type AreaLineage,
-	type LineageAnswer,
-} from "./areaLineage.ts";
 import { encodeBoundaryMappings, encodeParishLadMappings } from "./mappings.ts";
 
 import type {
@@ -39,10 +34,6 @@ export type LookupResolver = {
 	}>;
 	crosswalk(id: string): unknown;
 	sameArea(source: AreaIdentity, to: Endpoint): { code: string } | undefined;
-	successorArea(
-		source: AreaIdentity,
-		to: Endpoint,
-	): LineageAnswer | undefined;
 };
 
 /** The release the atlas draws for each year, by geography. */
@@ -60,9 +51,14 @@ export const LINEAGE_GEOGRAPHIES = [
 	"constituency",
 ] as const;
 
-/** The lookup files the atlas reads, by name. */
+/**
+ * The website's lineage file. The pipeline derives it from the change events
+ * when it builds the website's lookups; the API serves the events, not this.
+ */
+export const AREA_LINEAGE_FILE = "area-lineage.json";
+
+/** The lookup files the API compiles and serves, by name. */
 export const ATLAS_LOOKUP_FILES = [
-	"area-lineage.json",
 	"boundary-mappings.json",
 	"constituency-lad-overlaps.json",
 	"parish-lad-mappings.json",
@@ -95,23 +91,6 @@ export const compileAtlasLookups = (
 				throw new Error(
 					`${geography}/${release} is drawn by the atlas but not compiled by the API.`,
 				);
-
-	const lineage: Record<string, AreaLineage> = {};
-	for (const geography of LINEAGE_GEOGRAPHIES) {
-		const releases = [
-			...new Set(Object.values(vintages[geography])),
-		].sort();
-		lineage[geography] = compileAreaLineage(
-			geography,
-			releases,
-			(release) => resolver.areaCodes(geography, release) ?? [],
-			(code, from, to) =>
-				resolver.successorArea(
-					{ geography, boundaryRelease: from, code },
-					{ geography, boundaryRelease: to },
-				),
-		);
-	}
 
 	const wardReleases = releasesOf(vintages, "ward");
 	const lsoaReleases = releasesOf(vintages, "lsoa");
@@ -197,7 +176,6 @@ export const compileAtlasLookups = (
 	);
 
 	return new Map([
-		["area-lineage.json", JSON.stringify(lineage)],
 		[
 			"boundary-mappings.json",
 			JSON.stringify(encodeBoundaryMappings(containment)),

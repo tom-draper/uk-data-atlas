@@ -47,10 +47,11 @@ export const websiteStages = [
 	),
 	// The website's pages and lookups, in a file of their own. Nothing in the
 	// API's release (`atlas.sqlite`) is built from it, so the API stages do not
-	// wait for it, and changing it does not invalidate them.
+	// wait for it, and changing it does not invalidate them. Its lineage lookup
+	// is derived from the release's change events, so it follows the assembly.
 	stage(
 		"website-lookups",
-		["atlas-lookups", "atlas-pages"],
+		["assemble-atlas", "atlas-lookups", "atlas-pages"],
 		["pipeline/src/stages/build-atlas-assets.ts"],
 		{
 			writes: ["data/build/website-assets.sqlite"],

@@ -12,9 +12,10 @@ import {
 	writeEmptyPostcodeComponent,
 } from "@/services/api/tests/atlasComponentFixtures";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
+import { AREA_LINEAGE_FILE } from "@uk-data-atlas/geography";
 
 const buildAtlasAssets = (root: string) => {
-	stageAtlasAssets(root);
+	stageAtlasAssets(root, {});
 	assembleAtlas(root, { crosswalkWeights: false });
 };
 
@@ -58,10 +59,9 @@ export function websiteAssetsFixture(pages: Record<string, unknown> = {}) {
 	write(
 		"lookups",
 		Object.fromEntries(
-			ATLAS_LOOKUP_NAMES.map((name) => [
-				name.slice(0, -5),
-				{ lookup: name },
-			]),
+			ATLAS_LOOKUP_NAMES.filter((name) => name !== AREA_LINEAGE_FILE).map(
+				(name) => [name.slice(0, -5), { lookup: name }],
+			),
 		),
 	);
 	write("pages", {

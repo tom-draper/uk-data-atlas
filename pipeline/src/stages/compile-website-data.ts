@@ -1,5 +1,8 @@
 import { assembleAtlas } from "../atlas/assembleAtlas.ts";
-import { buildAtlasAssets } from "../atlas/buildAtlasAssets.ts";
+import {
+	buildAtlasAssets,
+	readAreaLineages,
+} from "../atlas/buildAtlasAssets.ts";
 import { buildAtlasSqlite } from "../atlas/buildAtlasSqlite.ts";
 import { readDirectPartsFor } from "../statistics/directSources.ts";
 import { buildDataCatalog } from "../catalog/buildDataCatalog.ts";
@@ -104,8 +107,8 @@ async function compileSelected(names: readonly string[]) {
 	await compileCatalogueDatasets(names);
 	buildAtlasSqlite(ROOT, { direct: await readDirectPartsFor(ROOT) });
 	buildDataCatalog(ROOT);
-	buildAtlasAssets(ROOT);
 	assembleAtlas(ROOT);
+	buildAtlasAssets(ROOT, readAreaLineages(ROOT));
 	const { datasets: datasetFingerprints } =
 		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
