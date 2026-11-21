@@ -53,7 +53,7 @@ Measured on the local build of 2026-11-19 unless stated.
 | 4   | P0       | Done        | Every measure has a conversion rule and reason in `measure_conversion`, with `numerator_id`, `denominator_id` and `weight_id`. Lifting a refusal means holding the missing part as a measure.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 5   | P0       | Done        | Licences in the database: `v_source_terms`, `v_election_terms`, `delivery_licence`. The CC BY-SA 2016–19 local elections are isolated in the `politics-sharealike` add-on.                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 62  | P0       | Done        | A safe default observation view: `v_observation_default` returns one value for each quantity, area and period, so naive SQL does not double count. Built from `measure_dimension` (breakdown or qualifier, 52 rows), `quantity` (845) and `series_preference` (1,260 ranked series, 129 quantities with more than one). Measured on a copy of the build: one area with every measure 9 ms against 86 ms on `v_observation`, one measure on one release 34 ms against 357 ms, all households on 2021 LSOAs 218 ms against 11.8 s. Choices are in `packages/measures/src/measurePreferences.ts`. |
-| 6   | P1       | Done        | Code changes as dated events in `area_change_event`. The website's area lineage is now written from the table, and the API no longer serves `area-lineage.json`. Ward splits and merges now come from the ONS Code History Database lookups. Follow-up: legal dates from the ONS Code History Database.                                                                                                                                                                                                                                                                                        |
+| 6   | P1       | Done        | Code changes as dated events in `area_change_event`. The website's area lineage is now written from the table, and the API no longer serves `area-lineage.json`. Ward splits and merges now come from the ONS Code History Database lookups. Events are dated by their legal effective date where the ONS Code History Database has one.                                                                                                                                                                                                                                                       |
 | 7   | P1       | Partly done | Area versions have an interior point and bounding box, or an explicit gap; published 2021 output-area centroids are used where available. Left: wider population-weighted coverage and GeoParquet boundaries as a module. `area_location` is 89 MB (see task 55).                                                                                                                                                                                                                                                                                                                              |
 
 ## Structure and maintainability
@@ -313,6 +313,26 @@ as published data.
   exist only between the hub releases, so successors were not derived from
   postcodes or output areas; the 88 and 87 left are wards whose lookup chain
   runs through a release the atlas does not hold.
+  Follow-up 3 (2026-11-21): the ONS Code History Database's dated pairs and
+  the first and last use of each code are fetched as a lookup source
+  (`core/lookups/code-history/2026-06-uk`, Open Government Licence;
+  `pipeline/src/sources/fetch-ons-code-history.ts`). `effective_date` is the
+  legal date and `date_basis` is `legal` where an event matches it: first by
+  an operative date of a predecessor and successor pair the event links, then,
+  for a created or ended area, by the day its code came into or went out of
+  use. A date counts only between the earlier edition's date and the end of
+  the later edition's month, which drops the 1 January 2009 dates of the bulk
+  recode, and the earliest such date is used (no event had two in-window
+  dates that differed). Renamed and redrawn events, events with no match and
+  geographies the database does not cover keep the edition date
+  (`date_basis = 'edition'`); `edition_date` holds the edition date for every
+  event. The event counts are unchanged (47,137 events, 73,424 members).
+  Matched of events: ward 3,115 of 3,223; output area 33,417 of 33,453; parish
+  879 of 974; constituency 134 of 157; MSOA 544 of 1,344; LSOA 2,962 of 7,755;
+  local authority 49 of 111; ITL1 to ITL3 and Scottish Parliamentary
+  constituencies 0 (not covered). A legal date can be up to 30 days after the
+  edition date, because an edition date is the first of its month. Without
+  the source the build warns and every event keeps its edition date.
 - **Task 10** (2026-11-15): the build fails when a table, view or column has
   no description, or a description names something that does not exist.
   `search` added 25 MB.

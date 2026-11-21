@@ -30,6 +30,14 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-21",
+		title: "Legal dates for area change events",
+		changes: [
+			"Change events (`area_change_event`, `v_area_change`) are dated by the day the change took legal effect where the ONS Code History Database has it: `effective_date` holds that date and `date_basis` is `legal`. Other events keep the later release's edition date with `date_basis` `edition`. The new `edition_date` column always holds the edition date.",
+			"Legal dates cover most ward, output area and parish events and many MSOA, LSOA, local authority and constituency events. ITL areas and Scottish Parliamentary constituencies are not in the database and keep edition dates. The `effective_date` of a changed event can now be earlier than before, so a query that filtered on an edition date such as 2021-12-01 should use `edition_date`.",
+		],
+	},
+	{
+		date: "2026-11-21",
 		title: "Ward splits and merges from the Code History Database",
 		changes: [
 			"The change events (`area_change_event`, `v_area_change`) gain `basis`: `official-lookup`, `extent-continuity`, `clean-containment` or `publisher-statement`. A split or merge can only have the first.",
