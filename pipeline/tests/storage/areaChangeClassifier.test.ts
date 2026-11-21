@@ -116,3 +116,33 @@ test("a link to an area outside the two releases is refused", () => {
 		/not in the two releases/,
 	);
 });
+
+test("a redrawn link makes a same-code area redrawn, not unchanged", () => {
+	const [change] = classifyChanges(
+		[area(1, "A", "Alpha")],
+		[area(101, "A", "Alpha")],
+		[{ ...link(1, 101), redrawn: true }],
+	);
+	assert.equal(change!.kind, "redrawn");
+	assert.equal(change!.realigned, false);
+});
+
+test("a realigned link to another code is recoded and marked realigned", () => {
+	const [change] = classifyChanges(
+		[area(1, "A")],
+		[area(101, "B")],
+		[{ ...link(1, 101), realigned: true }],
+	);
+	assert.equal(change!.kind, "recoded");
+	assert.equal(change!.realigned, true);
+});
+
+test("a redrawn link inside a split leaves the split a split", () => {
+	const [change] = classifyChanges(
+		[area(1, "A")],
+		[area(101, "A"), area(102, "B")],
+		[{ ...link(1, 101), redrawn: true }, link(1, 102)],
+	);
+	assert.equal(change!.kind, "split");
+	assert.equal(change!.realigned, false);
+});

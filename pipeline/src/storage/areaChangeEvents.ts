@@ -26,7 +26,8 @@ CREATE TABLE area_change_event (
 	geography_id INTEGER NOT NULL REFERENCES geography(id),
 	from_release_id INTEGER NOT NULL REFERENCES area_release(id),
 	to_release_id INTEGER NOT NULL REFERENCES area_release(id),
-	kind TEXT NOT NULL CHECK (kind IN ('renamed', 'recoded', 'split', 'merged', 'redistributed', 'ended', 'created')),
+	kind TEXT NOT NULL CHECK (kind IN ('renamed', 'recoded', 'redrawn', 'split', 'merged', 'redistributed', 'ended', 'created')),
+	realigned INTEGER NOT NULL CHECK (realigned IN (0, 1)),
 	effective_date TEXT NOT NULL,
 	date_basis TEXT NOT NULL CHECK (date_basis IN ('edition')),
 	source TEXT NOT NULL CHECK (source IN ('crosswalk', 'publisher')),
@@ -44,7 +45,7 @@ CREATE TABLE area_change_member (
 CREATE INDEX area_change_member_version ON area_change_member (area_version_id);
 CREATE INDEX area_change_event_kind ON area_change_event (geography_id, kind, effective_date);
 CREATE VIEW v_area_change AS
-SELECT e.id AS event_id, g.slug AS geography, e.kind, e.effective_date, e.date_basis, e.source,
+SELECT e.id AS event_id, g.slug AS geography, e.kind, e.realigned, e.effective_date, e.date_basis, e.source,
 	fr.release AS from_release, tr.release AS to_release,
 	m.side, a.code, v.name, m.share, m.area_version_id
 FROM area_change_event e
@@ -84,7 +85,9 @@ export type IdentityCrosswalk = {
 const countryOf = (code: string) => code.slice(0, 1);
 
 /**
- * The identity crosswalks that say what changed over time. A crosswalk whose
+ * The identity crosswalks that say what changed over time. A publisher's
+ * lookup between two releases of one geography that declares no purpose is an
+ * identity crosswalk, as the relationship resolver reads it. A crosswalk whose
  * two releases share an edition date links variants of one edition (a filtered
  * copy, a reissue), not a change. Where several crosswalks reach one release
  * from reissues of the same edition, the official lookup is used, else the
@@ -104,7 +107,8 @@ export function selectIdentityCrosswalks(
 			JOIN geography g ON g.slug = fr.geography
 			JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
 			JOIN boundary_release_edition te ON te.geography = tr.geography AND te.release = tr.release
-			WHERE c.purpose = 'identity' AND fr.geography = tr.geography AND fe.edition_from < te.edition_from
+			WHERE (c.purpose = 'identity' OR (c.purpose IS NULL AND c.method = 'official-lookup'))
+				AND fr.geography = tr.geography AND fe.edition_from < te.edition_from
 			ORDER BY c.id`,
 		)
 		.all();
@@ -178,6 +182,53 @@ const withoutFalseEnds = (
 	);
 };
 
+/**
+ * What an extent-continuity crosswalk says about the areas it leaves out of its
+ * edges, read from its validation: an area that kept its code but whose extent
+ * moved is `redrawn`, and one whose successor the crosswalk lists as realigned
+ * links to that successor. Other crosswalks have none.
+ */
+function continuityLinks(
+	database: DatabaseSync,
+	crosswalk: IdentityCrosswalk,
+	from: readonly ChangeArea[],
+	to: readonly ChangeArea[],
+): ChangeLink[] {
+	if (crosswalk.method !== "extent-continuity") return [];
+	const row = database
+		.prepare("SELECT validation FROM crosswalk WHERE id = ?")
+		.get(crosswalk.id) as { validation: string | null } | undefined;
+	if (!row?.validation) return [];
+	const continuity = (
+		JSON.parse(row.validation) as {
+			continuity?: {
+				changedExtent?: Array<{ code: string }>;
+				realigned?: Array<{ code: string; successor: string }>;
+			};
+		}
+	).continuity;
+	if (!continuity) return [];
+	const fromByCode = new Map(from.map((area) => [area.code, area]));
+	const toByCode = new Map(to.map((area) => [area.code, area]));
+	const links = new Map<string, ChangeLink>();
+	const add = (code: string, successor: string, realigned: boolean) => {
+		const source = fromByCode.get(code);
+		const target = toByCode.get(successor);
+		if (!source || !target) return;
+		links.set(`${source.versionId}|${target.versionId}`, {
+			fromVersionId: source.versionId,
+			toVersionId: target.versionId,
+			weight: null,
+			redrawn: code === successor,
+			realigned,
+		});
+	};
+	for (const { code } of continuity.changedExtent ?? []) add(code, code, false);
+	for (const { code, successor } of continuity.realigned ?? [])
+		add(code, successor, true);
+	return [...links.values()];
+}
+
 function crosswalkChanges(
 	database: DatabaseSync,
 	crosswalk: IdentityCrosswalk,
@@ -227,6 +278,7 @@ function crosswalkChanges(
 		}));
 	const from = releaseAreas(database, crosswalk.fromReleaseId);
 	const to = releaseAreas(database, crosswalk.toReleaseId);
+	links.push(...continuityLinks(database, crosswalk, from, to));
 	const linkedFrom = new Set(links.map((link) => link.fromVersionId));
 	const linkedTo = new Set(links.map((link) => link.toVersionId));
 	return classifyChanges(
@@ -385,8 +437,8 @@ export function writeAreaChangeEvents(
 	database.exec(TABLES);
 	const addEvent = database.prepare(
 		`INSERT INTO area_change_event
-			(id, geography_id, from_release_id, to_release_id, kind, effective_date, date_basis, source, crosswalk_id)
-		VALUES (?, ?, ?, ?, ?, ?, 'edition', ?, ?)`,
+			(id, geography_id, from_release_id, to_release_id, kind, realigned, effective_date, date_basis, source, crosswalk_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?, 'edition', ?, ?)`,
 	);
 	const addMember = database.prepare(
 		"INSERT INTO area_change_member (event_id, side, area_version_id, share) VALUES (?, ?, ?, ?)",
@@ -401,6 +453,7 @@ export function writeAreaChangeEvents(
 			event.fromReleaseId,
 			event.toReleaseId,
 			change.kind,
+			change.realigned ? 1 : 0,
 			event.effectiveDate,
 			event.source,
 			event.crosswalkId,

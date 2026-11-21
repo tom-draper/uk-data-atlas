@@ -7,11 +7,19 @@
  * change: one area to one area is unchanged, renamed or recoded, one to many is
  * a split, many to one is a merge and many to many is a redistribution. An
  * earlier area with no link ended, a later area with no link was created.
+ *
+ * A link can say how it was found. A `redrawn` link joins an area to the area
+ * of its own code whose extent moved; alone in its component it makes a
+ * `redrawn` change, where an area with no such flag would be unchanged. A
+ * `realigned` link joins an area to the successor an extent-continuity
+ * crosswalk lists, its extent moved by a street but each keeping nearly all of
+ * the other, and marks its change `realigned`.
  */
 export const CHANGE_KINDS = [
 	"unchanged",
 	"renamed",
 	"recoded",
+	"redrawn",
 	"split",
 	"merged",
 	"redistributed",
@@ -33,10 +41,16 @@ export type ChangeLink = {
 	toVersionId: number;
 	/** The population weight of the link, when one is held. */
 	weight: number | null;
+	/** The area kept its code but its extent moved, and no successor is claimed. */
+	redrawn?: boolean;
+	/** The successor is one an extent-continuity crosswalk lists as realigned. */
+	realigned?: boolean;
 };
 
 export type AreaChange = {
 	kind: ChangeKind;
+	/** Whether any link of the change is realigned rather than a same-area match. */
+	realigned: boolean;
 	/** Sorted by code. Empty for a created area. */
 	from: ChangeArea[];
 	/** Sorted by code. Empty for an ended area. */
@@ -55,9 +69,11 @@ const byCode = (a: ChangeArea, b: ChangeArea) =>
 export function classifyComponent(
 	from: readonly ChangeArea[],
 	to: readonly ChangeArea[],
+	redrawn = false,
 ): ChangeKind {
 	if (from.length === 1 && to.length === 1) {
 		if (from[0]!.code !== to[0]!.code) return "recoded";
+		if (redrawn) return "redrawn";
 		return from[0]!.name === to[0]!.name ? "unchanged" : "renamed";
 	}
 	if (from.length === 1) return "split";
@@ -131,8 +147,16 @@ export function classifyChanges(
 				? "ended"
 				: found.from.length === 0
 					? "created"
-					: classifyComponent(found.from, found.to);
-		changes.push({ kind, ...found });
+					: classifyComponent(
+							found.from,
+							found.to,
+							found.links.some((link) => link.redrawn),
+						);
+		changes.push({
+			kind,
+			realigned: found.links.some((link) => link.realigned),
+			...found,
+		});
 	}
 	return changes.sort(
 		(a, b) =>
