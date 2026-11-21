@@ -212,6 +212,13 @@
 				"crosswalks/ward-2022-12-uk-bgc-to-2023-05-uk-bgc-official-history",
 				"crosswalks/ward-2025-12-uk-bgc-to-2026-05-uk-bgc-official-history"
 			]
+		},
+		{
+			"check": "source-names-consistent",
+			"reason": "The ONS Code History Database gives two parish codes more than one name across its rows, as a spelling variant (E04003020 Colebrook and Colebrooke, E04008798 Kingston St. Mary and Kinston St. Mary). Both names are kept as the publisher's labels rather than the Atlas correcting the source.",
+			"resources": [
+				"crosswalks/parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-official-history"
+			]
 		}
 	]
 }
