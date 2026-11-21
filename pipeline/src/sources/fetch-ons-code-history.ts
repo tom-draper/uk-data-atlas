@@ -343,7 +343,6 @@ export const extractOnsCodeHistory = (
 		sourceDir("lookups", DIRECTORY),
 	);
 	mkdirSync(directory, { recursive: true });
-	writeFileSync(join(directory, CHANGES_FILE), changesToCsv(changes));
 	writeFileSync(join(directory, CODES_FILE), codesToCsv(codes));
 	const named = Object.entries(HISTORY_GEOGRAPHIES).map(
 		([geography, { file, entities }]) => {
@@ -356,6 +355,20 @@ export const extractOnsCodeHistory = (
 		changesText,
 		HISTORY_GEOGRAPHIES.localAuthority.entities,
 		parseLegacyCodes(archiveFile(archive, "Equivalents.csv")),
+	);
+	// The 2008 and 2009 local authority releases are keyed by old ONS codes, so
+	// their changes are dated by the pairs under those codes as well.
+	writeFileSync(
+		join(directory, CHANGES_FILE),
+		changesToCsv([
+			...changes,
+			...legacy.map(({ predecessor, successor, date, entity }) => ({
+				predecessor,
+				successor,
+				date,
+				entity,
+			})),
+		]),
 	);
 	writeFileSync(
 		join(directory, LEGACY_LOCAL_AUTHORITY_FILE),
