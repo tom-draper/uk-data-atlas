@@ -33,13 +33,23 @@ type CardDataset = {
 	data: Record<string, unknown>;
 };
 
+const formatters = new Map<number, Intl.NumberFormat>();
+
+const formatterFor = (digits: number) => {
+	let formatter = formatters.get(digits);
+	if (!formatter) {
+		formatter = new Intl.NumberFormat("en-GB", {
+			maximumFractionDigits: digits,
+			minimumFractionDigits: digits,
+		});
+		formatters.set(digits, formatter);
+	}
+	return formatter;
+};
+
 const formatValue = (config: ValueCardConfig, value: number) => {
 	if (config.format) return config.format(value);
-	const digits = config.digits ?? 0;
-	return `${config.prefix ?? ""}${value.toLocaleString("en-GB", {
-		maximumFractionDigits: digits,
-		minimumFractionDigits: digits,
-	})}`;
+	return `${config.prefix ?? ""}${formatterFor(config.digits ?? 0).format(value)}`;
 };
 
 /**

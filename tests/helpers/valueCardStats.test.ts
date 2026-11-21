@@ -482,5 +482,25 @@ describe("value card registrations", () => {
 				),
 			).toBeNull();
 		});
+
+		it("repeats the same figures from the cache and recomputes for another combiner", () => {
+			const resolve = (card: ReturnType<typeof fuelCard>) =>
+				resolveValueCardStats(
+					card,
+					lsoas,
+					undefined,
+					area("localAuthority", "E09000001"),
+					undefined,
+					false,
+					byLad,
+				);
+			const card = fuelCard("rate");
+			const first = resolve(card);
+			expect(first?.viaLocalAuthority).toBe(true);
+			expect(resolve(card)).toEqual(first);
+			const other = { ...card, fromLsoas: () => ({ value: 1 }) };
+			expect(resolve(other as typeof card)?.stats.value).toBe(1);
+			expect(resolve(card)).toEqual(first);
+		});
 	});
 });

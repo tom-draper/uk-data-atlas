@@ -27,6 +27,29 @@ export function groupLsoasByLocalAuthority(
 	return groups;
 }
 
+type LsoaTotals = {
+	fromLsoas: NonNullable<ValueCardConfig["fromLsoas"]>;
+	stats: ValueCardStats | null;
+};
+
+/**
+ * Combined figures per local authority's record list. The list is stable per
+ * dataset (see `groupLsoasByLocalAuthority`), so a repeat hover is a lookup.
+ * The combiner is stored with the result because a card's config can change.
+ */
+const lsoaTotals = new WeakMap<unknown[], LsoaTotals>();
+
+const totalsFor = (
+	fromLsoas: NonNullable<ValueCardConfig["fromLsoas"]>,
+	records: unknown[],
+): ValueCardStats | null => {
+	const cached = lsoaTotals.get(records);
+	if (cached?.fromLsoas === fromLsoas) return cached.stats;
+	const stats = fromLsoas(records);
+	lsoaTotals.set(records, { fromLsoas, stats });
+	return stats;
+};
+
 const found = (
 	stats: ValueCardStats | null,
 	viaLocalAuthority = false,
@@ -57,7 +80,9 @@ export function resolveValueCardStats(
 			return found(config.fromRecord(dataset, selectedArea.code));
 		const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
 		const records = ladCode ? lsoasByLad?.[ladCode] : undefined;
-		return records ? found(config.fromLsoas(records), true) : null;
+		return records
+			? found(totalsFor(config.fromLsoas, records), true)
+			: null;
 	}
 
 	if (dataset.boundaryType === "localAuthority") {

@@ -425,6 +425,14 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 				declaration.id
 			]?.measure,
 		);
+	// One card per measure, so a card's functions keep their identity across
+	// renders and the value card's per-authority cache can hit.
+	const cards = new Map<DisplayMeasure, ValueCardConfig | undefined>();
+	const cardOf = (measure: DisplayMeasure) => {
+		if (!cards.has(measure))
+			cards.set(measure, cardFor(declaration, measure));
+		return cards.get(measure);
+	};
 	return {
 		...definitionOf(declaration),
 		chart: {
@@ -434,13 +442,11 @@ const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
 			componentPath: display.component ?? DECLARED_CHART_COMPONENT,
 			...(display.card
 				? {
-						card: cardFor(
-							declaration,
+						card: cardOf(
 							measureFor(display, display.card.fixedMeasure),
 						),
 						cardForOptions: (options: MapOptions) =>
-							cardFor(
-								declaration,
+							cardOf(
 								display.card?.fixedMeasure
 									? measureFor(
 											display,
