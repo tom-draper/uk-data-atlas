@@ -344,13 +344,17 @@ export const extractOnsCodeHistory = (
 	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(join(directory, CODES_FILE), codesToCsv(codes));
-	const named = Object.entries(HISTORY_GEOGRAPHIES).map(
-		([geography, { file, entities }]) => {
-			const pairs = parseNamedChanges(changesText, entities);
-			writeFileSync(join(directory, file), namedChangesToGeoJson(pairs));
-			return { geography, file, pairs: pairs.length };
-		},
-	);
+	const named: { geography: string; file: string; pairs: number }[] =
+		Object.entries(HISTORY_GEOGRAPHIES).map(
+			([geography, { file, entities }]) => {
+				const pairs = parseNamedChanges(changesText, entities);
+				writeFileSync(
+					join(directory, file),
+					namedChangesToGeoJson(pairs),
+				);
+				return { geography, file, pairs: pairs.length };
+			},
+		);
 	const legacy = parseNamedChanges(
 		changesText,
 		HISTORY_GEOGRAPHIES.localAuthority.entities,
