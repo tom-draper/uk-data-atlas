@@ -236,3 +236,53 @@ population
 households
 dwellings
 postcodes
+@msoa	2011-12-ew-bgc-v3	2021-12-ew-bgc-v3
+population
+households
+dwellings
+postcodes
+@msoa	2001-12-ew-bgc-v2	2021-12-ew-bgc-v3
+population
+households
+dwellings
+postcodes
+@outputArea	2011-12-ew-bgc-v2	2021-12-ew-bgc-v2
+population
+households
+dwellings
+postcodes
+@outputArea	2001-12-ew-bgc	2021-12-ew-bgc-v2
+population
+households
+dwellings
+postcodes
+@parish	2025-05-ew-bgc	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
+@parish	2024-12-ew-bgc	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
+@parish	2023-12-ew-bgc	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
+@parish	2022-12-ew-bgc-v3	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
+@parish	2021-12-ew-bgc	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
+@parish	2019-04-ew-bgc	2026-05-ew-bgc
+population
+households
+dwellings
+postcodes
