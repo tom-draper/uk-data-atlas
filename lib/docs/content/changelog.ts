@@ -30,6 +30,14 @@ export interface ChangelogEntry {
 export const CHANGELOG: ChangelogEntry[] = [
 	{
 		date: "2026-11-21",
+		title: "Splits and merges for more geographies",
+		changes: [
+			"Output area, LSOA, MSOA, parish and local authority changes are read from the ONS Code History Database as 15 more official-lookup crosswalks, so areas that were ended and created are now split, merged or redistributed events. The change events fall from 47,137 to 20,676. The crosswalk listings gain those 15 entries. No existing field or parameter changed.",
+			"The 2009 local authority reorganisation now shows as merges dated 2009-04-01. Wards, ITL areas and a few parishes and output areas are still ended or created where the database has no successor.",
+		],
+	},
+	{
+		date: "2026-11-21",
 		title: "Legal dates for area change events",
 		changes: [
 			"Change events (`area_change_event`, `v_area_change`) are dated by the day the change took legal effect where the ONS Code History Database has it: `effective_date` holds that date and `date_basis` is `legal`. Other events keep the later release's edition date with `date_basis` `edition`. The new `edition_date` column always holds the edition date.",
