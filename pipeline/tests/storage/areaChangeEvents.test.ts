@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
 	buildAreaChangeEvents,
+	legalDateRates,
 	selectIdentityCrosswalks,
 	writeAreaChangeEvents,
 } from "../../src/storage/areaChangeEvents";
+import { parseLegalDates } from "../../src/storage/legalDates";
 import { edge, fixture } from "./areaChangeFixture";
 
 test("a publisher's lookup that declares no purpose is an identity crosswalk", () => {
@@ -174,4 +176,104 @@ test("the tables hold the basis, and the view shows it", () => {
 	assert.throws(() =>
 		db.prepare("UPDATE area_change_event SET basis = 'guess'").run(),
 	);
+});
+
+test("an event matched to the Code History Database has its legal date, and keeps its edition date", () => {
+	const { db, v } = fixture();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 2, 3, NULL)",
+	).run();
+	edge(db, 1, v("2021", "C"), v("2022", "E"));
+	edge(db, 1, v("2021", "D"), v("2022", "E"));
+	writeAreaChangeEvents(
+		db,
+		parseLegalDates(
+			"predecessor,successor,date,entity\nC,E,2022-04-01,E05\nD,E,2022-04-01,E05",
+			"code,introduced,terminated,entity",
+		),
+	);
+	assert.deepEqual(
+		db
+			.prepare(
+				"SELECT DISTINCT kind, effective_date, date_basis, edition_date FROM v_area_change",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{
+				kind: "merged",
+				effective_date: "2022-04-01",
+				date_basis: "legal",
+				edition_date: "2022-12-01",
+			},
+		],
+	);
+	assert.throws(() =>
+		db.prepare("UPDATE area_change_event SET date_basis = 'guess'").run(),
+	);
+});
+
+test("an event with no match, or a match outside its editions, keeps its edition date", () => {
+	const { db, v } = fixture();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 2, 3, NULL)",
+	).run();
+	edge(db, 1, v("2021", "C"), v("2022", "E"));
+	edge(db, 1, v("2021", "D"), v("2022", "E"));
+	const events = (changes: string) =>
+		buildAreaChangeEvents(
+			db,
+			parseLegalDates(
+				`predecessor,successor,date,entity\n${changes}`,
+				"code,introduced,terminated,entity",
+			),
+		).map((event) => [event.effectiveDate, event.dateBasis]);
+	assert.deepEqual(events("C,X,2022-04-01,E05"), [["2022-12-01", "edition"]]);
+	assert.deepEqual(events("C,E,2009-01-01,E05"), [["2022-12-01", "edition"]]);
+	assert.deepEqual(events("C,E,2023-02-01,E05"), [["2022-12-01", "edition"]]);
+});
+
+test("without a Code History Database every event keeps its edition date", () => {
+	const { db, v } = fixture();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 2, 3, NULL)",
+	).run();
+	edge(db, 1, v("2021", "C"), v("2022", "E"));
+	edge(db, 1, v("2021", "D"), v("2022", "E"));
+	writeAreaChangeEvents(db);
+	assert.deepEqual(
+		db
+			.prepare(
+				"SELECT DISTINCT effective_date, date_basis, edition_date FROM v_area_change",
+			)
+			.all()
+			.map((row) => ({ ...row })),
+		[
+			{
+				effective_date: "2022-12-01",
+				date_basis: "edition",
+				edition_date: "2022-12-01",
+			},
+		],
+	);
+});
+
+test("the legal date rate counts events by geography", () => {
+	const { db, v } = fixture();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 2, 3, NULL)",
+	).run();
+	edge(db, 1, v("2021", "C"), v("2022", "E"));
+	edge(db, 1, v("2021", "D"), v("2022", "E"));
+	assert.deepEqual(legalDateRates(db), []);
+	writeAreaChangeEvents(
+		db,
+		parseLegalDates(
+			"predecessor,successor,date,entity\nC,E,2022-04-01,E05",
+			"code,introduced,terminated,entity",
+		),
+	);
+	assert.deepEqual(legalDateRates(db), [
+		{ geography: "ward", events: 1, legal: 1 },
+	]);
 });

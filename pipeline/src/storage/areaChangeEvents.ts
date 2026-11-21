@@ -7,6 +7,7 @@ import {
 	type ChangeKind,
 	type ChangeLink,
 } from "./areaChangeClassifier.ts";
+import { matchLegalDate, type LegalDates } from "./legalDates.ts";
 
 /**
  * `area_change_event`, `area_change_member` and `v_area_change`: what became
@@ -16,9 +17,11 @@ import {
  * geography) and, for anything they do not cover, the publishers' predecessor
  * statements in `area_relationship`.
  *
- * Dates are edition dates: the change happened by the later release's edition,
- * not necessarily on that day. The atlas does not hold the ONS Code History
- * Database, which has the legal dates.
+ * Each event has two dates. `edition_date` is the later release's edition date:
+ * the change had happened by then, not necessarily on that day. `effective_date`
+ * is the legal date from the ONS Code History Database when the event can be
+ * matched to it (`date_basis` 'legal'), and otherwise the edition date
+ * (`date_basis` 'edition'). The matching rules are in `legalDates.ts`.
  */
 const TABLES = `
 CREATE TABLE area_change_event (
@@ -29,7 +32,8 @@ CREATE TABLE area_change_event (
 	kind TEXT NOT NULL CHECK (kind IN ('renamed', 'recoded', 'redrawn', 'split', 'merged', 'redistributed', 'ended', 'created')),
 	realigned INTEGER NOT NULL CHECK (realigned IN (0, 1)),
 	effective_date TEXT NOT NULL,
-	date_basis TEXT NOT NULL CHECK (date_basis IN ('edition')),
+	date_basis TEXT NOT NULL CHECK (date_basis IN ('edition', 'legal')),
+	edition_date TEXT NOT NULL,
 	source TEXT NOT NULL CHECK (source IN ('crosswalk', 'publisher')),
 	basis TEXT NOT NULL CHECK (basis IN ('official-lookup', 'extent-continuity', 'clean-containment', 'publisher-statement')),
 	crosswalk_id INTEGER REFERENCES crosswalk(id),
@@ -46,7 +50,7 @@ CREATE TABLE area_change_member (
 CREATE INDEX area_change_member_version ON area_change_member (area_version_id);
 CREATE INDEX area_change_event_kind ON area_change_event (geography_id, kind, effective_date);
 CREATE VIEW v_area_change AS
-SELECT e.id AS event_id, g.slug AS geography, e.kind, e.realigned, e.effective_date, e.date_basis, e.source, e.basis,
+SELECT e.id AS event_id, g.slug AS geography, e.kind, e.realigned, e.effective_date, e.date_basis, e.edition_date, e.source, e.basis,
 	fr.release AS from_release, tr.release AS to_release,
 	m.side, a.code, v.name, m.share, m.area_version_id
 FROM area_change_event e
@@ -64,7 +68,13 @@ export type ChangeEvent = {
 	toReleaseId: number;
 	fromRelease: string;
 	toRelease: string;
+	/** The legal date where one was matched, else the edition date. */
 	effectiveDate: string;
+	dateBasis: "edition" | "legal";
+	/** Edition date of the earlier release. */
+	fromEdition: string;
+	/** Edition date of the later release. */
+	editionDate: string;
 	source: "crosswalk" | "publisher";
 	basis: ChangeBasis;
 	crosswalkId: number | null;
@@ -458,6 +468,9 @@ function publisherChanges(
 				fromRelease: String(first.from_release),
 				toRelease: String(first.to_release),
 				effectiveDate: String(first.to_edition),
+				dateBasis: "edition",
+				fromEdition: String(first.from_edition),
+				editionDate: String(first.to_edition),
 				source: "publisher",
 				basis: "publisher-statement",
 				crosswalkId: null,
@@ -467,8 +480,38 @@ function publisherChanges(
 	return events;
 }
 
+/**
+ * Gives each event its legal date where the Code History Database has one in
+ * the interval its two editions bound. Every other event keeps its edition
+ * date. Returns new events and leaves the others unchanged.
+ */
+export function dateEvents(
+	events: readonly ChangeEvent[],
+	legalDates: LegalDates | undefined,
+): ChangeEvent[] {
+	if (!legalDates) return [...events];
+	return events.map((event) => {
+		const match = matchLegalDate(
+			{
+				kind: event.change.kind,
+				fromCodes: event.change.from.map((area) => area.code),
+				toCodes: event.change.to.map((area) => area.code),
+				fromEdition: event.fromEdition,
+				toEdition: event.editionDate,
+			},
+			legalDates,
+		);
+		return match.date
+			? { ...event, effectiveDate: match.date, dateBasis: "legal" }
+			: event;
+	});
+}
+
 /** The events to store, in id order. */
-export function buildAreaChangeEvents(database: DatabaseSync): ChangeEvent[] {
+export function buildAreaChangeEvents(
+	database: DatabaseSync,
+	legalDates?: LegalDates,
+): ChangeEvent[] {
 	const events: ChangeEvent[] = [];
 	const covered = new Set<string>();
 	for (const crosswalk of selectIdentityCrosswalks(database))
@@ -481,6 +524,9 @@ export function buildAreaChangeEvents(database: DatabaseSync): ChangeEvent[] {
 				fromRelease: crosswalk.fromRelease,
 				toRelease: crosswalk.toRelease,
 				effectiveDate: crosswalk.toEdition,
+				dateBasis: "edition",
+				fromEdition: crosswalk.fromEdition,
+				editionDate: crosswalk.toEdition,
 				source: "crosswalk",
 				basis,
 				crosswalkId: crosswalk.id,
@@ -492,7 +538,7 @@ export function buildAreaChangeEvents(database: DatabaseSync): ChangeEvent[] {
 		}
 	events.push(...publisherChanges(database, covered));
 	const smallest = (areas: readonly ChangeArea[]) => areas[0]?.code ?? "";
-	return events.sort(
+	events.sort(
 		(a, b) =>
 			compareText(a.geography, b.geography) ||
 			compareText(a.fromRelease, b.fromRelease) ||
@@ -500,6 +546,7 @@ export function buildAreaChangeEvents(database: DatabaseSync): ChangeEvent[] {
 			compareText(smallest(a.change.from), smallest(b.change.from)) ||
 			compareText(smallest(a.change.to), smallest(b.change.to)),
 	);
+	return dateEvents(events, legalDates);
 }
 
 /**
@@ -525,6 +572,7 @@ function memberShares(change: AreaChange) {
 /** Creates and fills the change tables and the view, and returns the event count by kind. */
 export function writeAreaChangeEvents(
 	database: DatabaseSync,
+	legalDates?: LegalDates,
 ): Map<ChangeKind, number> {
 	// A database with no crosswalks, such as a test fixture, has nothing to read.
 	const hasCrosswalks = database
@@ -534,14 +582,14 @@ export function writeAreaChangeEvents(
 	database.exec(TABLES);
 	const addEvent = database.prepare(
 		`INSERT INTO area_change_event
-			(id, geography_id, from_release_id, to_release_id, kind, realigned, effective_date, date_basis, source, basis, crosswalk_id)
-		VALUES (?, ?, ?, ?, ?, ?, ?, 'edition', ?, ?, ?)`,
+			(id, geography_id, from_release_id, to_release_id, kind, realigned, effective_date, date_basis, edition_date, source, basis, crosswalk_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 	);
 	const addMember = database.prepare(
 		"INSERT INTO area_change_member (event_id, side, area_version_id, share) VALUES (?, ?, ?, ?)",
 	);
 	const counts = new Map<ChangeKind, number>();
-	buildAreaChangeEvents(database).forEach((event, index) => {
+	buildAreaChangeEvents(database, legalDates).forEach((event, index) => {
 		const id = index + 1;
 		const { change } = event;
 		addEvent.run(
@@ -552,6 +600,8 @@ export function writeAreaChangeEvents(
 			change.kind,
 			change.realigned ? 1 : 0,
 			event.effectiveDate,
+			event.dateBasis,
+			event.editionDate,
 			event.source,
 			event.basis,
 			event.crosswalkId,
@@ -564,4 +614,35 @@ export function writeAreaChangeEvents(
 		counts.set(change.kind, (counts.get(change.kind) ?? 0) + 1);
 	});
 	return counts;
+}
+
+export type LegalDateRate = {
+	geography: string;
+	events: number;
+	legal: number;
+};
+
+/** How many events of each geography have a legal date, for the assembly log. */
+export function legalDateRates(database: DatabaseSync): LegalDateRate[] {
+	if (
+		!database
+			.prepare(
+				"SELECT 1 FROM sqlite_schema WHERE name = 'area_change_event'",
+			)
+			.get()
+	)
+		return [];
+	return database
+		.prepare(
+			`SELECT g.slug AS geography, count(*) AS events,
+				sum(e.date_basis = 'legal') AS legal
+			FROM area_change_event e JOIN geography g ON g.id = e.geography_id
+			GROUP BY g.slug ORDER BY g.slug`,
+		)
+		.all()
+		.map((row) => ({
+			geography: String(row.geography),
+			events: Number(row.events),
+			legal: Number(row.legal),
+		}));
 }
