@@ -17,6 +17,8 @@ import {
 } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { withCDN } from "@/lib/helpers/cdn";
+import { payloadKeysQuery } from "@/lib/data/payloadKeys";
+import type { ActiveViz } from "@/lib/types";
 import {
 	regionChunkPath,
 	regionChunksForLocation,
@@ -78,16 +80,45 @@ export function datasetLoadPriority(
 }
 
 /**
+ * The payload keys a dataset's view reads, or `null` to fetch them all.
+ *
+ * A value card reads one year, yet a payload can carry decades of them, so a
+ * dataset drawn only by value cards fetches its cards' years, plus the year the
+ * map is drawing when it is another (a shared link can name any year). Other
+ * charts, such as series and breakdowns, may read every year, and region
+ * chunks are already split another way, so both keep the whole payload.
+ */
+export function datasetPayloadKeys(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	activeViz?: Pick<ActiveViz, "datasetType" | "datasetYear">,
+): string[] | null {
+	if (definition.payload?.regionChunks) return null;
+	const charts = getChartDefinitions(definition);
+	if (!charts.every((chart) => chart.card || chart.cardForOptions))
+		return null;
+	const keys = charts.map((chart) => chart.datasetId ?? String(chart.year));
+	if (activeViz?.datasetType === definition.type)
+		keys.push(String(activeViz.datasetYear));
+	return [...new Set(keys)].sort();
+}
+
+function payloadUrl(url: string, keys: string[] | null): string {
+	if (!keys) return url;
+	return `${url}${url.includes("?") ? "&" : "?"}keys=${payloadKeysQuery(keys)}`;
+}
+
+/**
  * The chart datasets for the current view.
  *
- * @param activeDatasetType The dataset the map is drawing, kept loaded whether
- * or not its card is shown. See `datasetIsNeeded`.
+ * @param activeViz What the map is drawing, kept loaded whether or not its
+ * card is shown. See `datasetIsNeeded`.
  */
 export function useDatasets(
 	datasetUrls: Readonly<Record<string, string>>,
 	selectedLocation: string,
-	activeDatasetType?: string,
+	activeViz?: Pick<ActiveViz, "datasetType" | "datasetYear">,
 ): UseDatasetsResult {
+	const activeDatasetType = activeViz?.datasetType;
 	const visibility = useSyncExternalStore(
 		subscribeVisibility,
 		getVisibilitySnapshot,
@@ -97,7 +128,10 @@ export function useDatasets(
 	const chartDatasets = useJsonDatasetLoaders(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
-			url: datasetUrls[definition.precompiledFile]!,
+			url: payloadUrl(
+				datasetUrls[definition.precompiledFile]!,
+				datasetPayloadKeys(definition, activeViz),
+			),
 			filter: {
 				location: selectedLocation,
 				boundaryType: definition.boundaryType,

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { datasetIsNeeded, datasetLoadPriority } from "@/lib/hooks/useDatasets";
+import {
+	datasetIsNeeded,
+	datasetLoadPriority,
+	datasetPayloadKeys,
+} from "@/lib/hooks/useDatasets";
 import { DEFAULT_VISIBILITY } from "@/lib/context/ChartVisibilityContext";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -97,5 +101,41 @@ describe("datasetIsNeeded", () => {
 		const visible = definitionFor("local-election");
 		expect(datasetLoadPriority(active, active.type)).toBe(0);
 		expect(datasetLoadPriority(visible)).toBe(1);
+	});
+});
+
+describe("datasetPayloadKeys", () => {
+	it("fetches only a value card's year", () => {
+		expect(datasetPayloadKeys(definitionFor("ghg-emissions"))).toEqual([
+			"2024",
+		]);
+	});
+
+	// A shared link can name any year, and the map reads it by that key.
+	it("adds the year the map is drawing", () => {
+		expect(
+			datasetPayloadKeys(definitionFor("ghg-emissions"), {
+				datasetType: "ghg-emissions",
+				datasetYear: 2010,
+			}),
+		).toEqual(["2010", "2024"]);
+	});
+
+	it("keeps the URL when the map draws the card's own year", () => {
+		expect(
+			datasetPayloadKeys(definitionFor("ghg-emissions"), {
+				datasetType: "ghg-emissions",
+				datasetYear: 2024,
+			}),
+		).toEqual(["2024"]);
+	});
+
+	it("fetches every year for charts that may read them", () => {
+		for (const type of ["house-price", "unemployment", "general-election"])
+			expect(datasetPayloadKeys(definitionFor(type))).toBeNull();
+	});
+
+	it("leaves region-chunked datasets whole", () => {
+		expect(datasetPayloadKeys(definitionFor("fuel-poverty"))).toBeNull();
 	});
 });
