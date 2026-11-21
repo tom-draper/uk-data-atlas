@@ -17,7 +17,7 @@ import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { websiteAssetsFixture } from "@/tests/fixtures/websiteAssets";
 
 const buildAtlasAssets = (root: string) => {
-	stageAtlasAssets(root);
+	stageAtlasAssets(root, {});
 	assembleAtlas(root, { crosswalkWeights: false });
 };
 
@@ -95,7 +95,7 @@ describe("SQLite website assets", () => {
 	it("stages assets without changing the database", () => {
 		const path = join(fixture.root, "data/build/atlas.sqlite");
 		const before = readFileSync(path);
-		stageAtlasAssets(fixture.root);
+		stageAtlasAssets(fixture.root, {});
 		expect(readFileSync(path)).toEqual(before);
 		expect(
 			existsSync(join(fixture.root, "data/build/website-assets.sqlite")),

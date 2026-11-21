@@ -6,7 +6,7 @@ import { buildAtlasAssets as stageAtlasAssets } from "@/pipeline/src/atlas/build
 import { assembleAtlas } from "@/pipeline/src/atlas/assembleAtlas";
 
 const buildAtlasAssets = (root: string) => {
-	stageAtlasAssets(root);
+	stageAtlasAssets(root, {});
 	assembleAtlas(root, { crosswalkWeights: false });
 };
 

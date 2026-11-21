@@ -1,13 +1,18 @@
 import { join } from "node:path";
 import { ATLAS_BOUNDARY_VINTAGES } from "@uk-data-atlas/geography";
 import {
+	AREA_LINEAGE_FILE,
 	ATLAS_LOOKUP_FILES,
 	lsoaLadMappingsFile,
 } from "@uk-data-atlas/geography";
 
-/** Every lookup file the atlas reads, by file name. */
+/**
+ * Every lookup the website reads, by file name: the lookups the API compiles
+ * and serves, and the lineage the pipeline derives for the website alone.
+ */
 export const ATLAS_LOOKUP_NAMES: readonly string[] = [
 	...ATLAS_LOOKUP_FILES,
+	AREA_LINEAGE_FILE,
 	...Object.keys(ATLAS_BOUNDARY_VINTAGES.lsoa).map((year) =>
 		lsoaLadMappingsFile(Number(year)),
 	),

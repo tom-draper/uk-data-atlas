@@ -35,7 +35,6 @@ export const createLookupResolver = (
 		crosswalkSummaries: () => inputs.crosswalkInventory.crosswalks,
 		crosswalk: (id) => translator.artifact(id),
 		sameArea: (source, to) => translator.sameArea(source, to),
-		successorArea: (source, to) => translator.successorArea(source, to),
 	};
 };
 

@@ -3,21 +3,46 @@ import { sha256Hex } from "../lib/hash.ts";
 import { readFileSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import { gunzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import {
 	ATLAS_LOOKUP_NAMES,
 	atlasAssetsDirectory,
+	atlasDatabasePath,
 	websiteAssetsPath,
 } from "@uk-data-atlas/atlas-db";
 import type { AtlasAssetKind } from "@uk-data-atlas/atlas-db";
+import {
+	AREA_LINEAGE_FILE,
+	ATLAS_BOUNDARY_VINTAGES,
+	type AreaLineage,
+} from "@uk-data-atlas/geography";
 import { readJsonSync } from "../lib/json.ts";
+import { compileLineagesFromEvents } from "./areaLineageFromEvents.ts";
+
+/** The lineage of the areas the atlas draws, read from the release's change events. */
+export function readAreaLineages(root: string): Record<string, AreaLineage> {
+	const database = new DatabaseSync(atlasDatabasePath(root), {
+		readOnly: true,
+	});
+	try {
+		return compileLineagesFromEvents(database, ATLAS_BOUNDARY_VINTAGES);
+	} finally {
+		database.close();
+	}
+}
+
+const lineageId = AREA_LINEAGE_FILE.replace(/\.json$/, "");
 
 /**
  * Validate the website's pages and lookups and write them to
- * `website-assets.sqlite`. The file is the final home of `website_asset`: it
- * is not merged into `atlas.sqlite`, which holds only what the API serves.
+ * `website-assets.sqlite`, with the lineage given as a lookup of its own. The
+ * file is the final home of `website_asset`: it is not merged into
+ * `atlas.sqlite`, which holds only what the API serves.
  */
-export function buildAtlasAssets(root: string) {
+export function buildAtlasAssets(
+	root: string,
+	lineage: Record<string, AreaLineage>,
+) {
 	const publicDirectory = atlasAssetsDirectory(root);
 	const assets: {
 		kind: AtlasAssetKind;
@@ -28,7 +53,9 @@ export function buildAtlasAssets(root: string) {
 	for (const [kind, required] of [
 		[
 			"lookups",
-			ATLAS_LOOKUP_NAMES.map((name) => name.replace(/\.json$/, "")),
+			ATLAS_LOOKUP_NAMES.filter((name) => name !== AREA_LINEAGE_FILE).map(
+				(name) => name.replace(/\.json$/, ""),
+			),
 		],
 		[
 			"pages",
@@ -86,6 +113,13 @@ export function buildAtlasAssets(root: string) {
 			if (!ids.has(id))
 				throw new Error(`Missing atlas ${kind} asset ${id}`);
 	}
+	const lineageJson = Buffer.from(JSON.stringify(lineage));
+	assets.push({
+		kind: "lookups",
+		id: lineageId,
+		sha256: sha256Hex(lineageJson),
+		gzip: gzipSync(lineageJson),
+	});
 	const path = websiteAssetsPath(root);
 	const temporary = `${path}.${randomUUID()}.tmp`;
 	try {

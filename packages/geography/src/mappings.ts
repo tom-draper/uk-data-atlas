@@ -15,8 +15,9 @@ type YearMasked<K extends string> = {
 
 /**
  * The file `boundary-mappings.json` holds. Version 4 dropped the name-matched
- * code mappings between years: the area lineage the API's geography resolver
- * writes (`area-lineage.json`) carries areas across years instead.
+ * code mappings between years: the area lineage the website's data build
+ * compiles from the change events (`area-lineage`) carries areas across years
+ * instead.
  */
 export interface BoundaryMappingsFile {
 	version: 4;

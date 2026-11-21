@@ -16,7 +16,6 @@ const resolver = (missing: string): LookupResolver => ({
 	crosswalkSummaries: () => [],
 	crosswalk: () => undefined,
 	sameArea: () => undefined,
-	successorArea: () => undefined,
 });
 
 describe("compiling the atlas's lookups", () => {

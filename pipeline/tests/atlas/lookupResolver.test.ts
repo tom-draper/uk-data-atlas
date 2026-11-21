@@ -36,8 +36,4 @@ test("lookup compilation uses only area and crosswalk inputs", () => {
 		focused.sameArea(source, target),
 		original.sameArea(source, target),
 	);
-	assert.deepEqual(
-		focused.successorArea(source, target),
-		original.successorArea(source, target),
-	);
 });
