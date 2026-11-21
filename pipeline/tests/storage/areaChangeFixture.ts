@@ -22,23 +22,59 @@ export const fixture = () => {
 	`);
 	const areaIds = new Map<string, number>();
 	const versions = new Map<string, number>();
-	const release = (id: number, name: string, edition: string, areas: Array<[string, string]>) => {
-		db.prepare("INSERT INTO area_release VALUES (?, 'ward', ?)").run(id, name);
-		db.prepare("INSERT INTO boundary_release_edition VALUES ('ward', ?, ?)").run(name, edition);
+	const release = (
+		id: number,
+		name: string,
+		edition: string,
+		areas: Array<[string, string]>,
+	) => {
+		db.prepare("INSERT INTO area_release VALUES (?, 'ward', ?)").run(
+			id,
+			name,
+		);
+		db.prepare(
+			"INSERT INTO boundary_release_edition VALUES ('ward', ?, ?)",
+		).run(name, edition);
 		for (const [code, label] of areas) {
-			if (!areaIds.has(code)) {
-				areaIds.set(code, areaIds.size + 1);
-				db.prepare("INSERT INTO area VALUES (?, 1, ?)").run(areaIds.get(code), code);
+			let areaId = areaIds.get(code);
+			if (areaId === undefined) {
+				areaId = areaIds.size + 1;
+				areaIds.set(code, areaId);
+				db.prepare("INSERT INTO area VALUES (?, 1, ?)").run(
+					areaId,
+					code,
+				);
 			}
 			const version = versions.size + 1;
 			versions.set(`${name}|${code}`, version);
-			db.prepare("INSERT INTO area_version VALUES (?, ?, ?, ?, 1)").run(version, areaIds.get(code), id, label);
+			db.prepare("INSERT INTO area_version VALUES (?, ?, ?, ?, 1)").run(
+				version,
+				areaId,
+				id,
+				label,
+			);
 		}
 	};
-	release(1, "2020", "2020-12-01", [["A", "Alpha"], ["B", "Beta"], ["C", "Gamma"], ["D", "Delta"]]);
-	release(2, "2021", "2021-12-01", [["A", "Alpha"], ["B2", "Beta"], ["C", "Gamma"], ["D", "Delta"]]);
-	release(3, "2022", "2022-12-01", [["A", "Alpha"], ["B2", "Beta"], ["C", "Gamma"], ["E", "Epsilon"]]);
-	const v = (release: string, code: string) => versions.get(`${release}|${code}`)!;
+	release(1, "2020", "2020-12-01", [
+		["A", "Alpha"],
+		["B", "Beta"],
+		["C", "Gamma"],
+		["D", "Delta"],
+	]);
+	release(2, "2021", "2021-12-01", [
+		["A", "Alpha"],
+		["B2", "Beta"],
+		["C", "Gamma"],
+		["D", "Delta"],
+	]);
+	release(3, "2022", "2022-12-01", [
+		["A", "Alpha"],
+		["B2", "Beta"],
+		["C", "Gamma"],
+		["E", "Epsilon"],
+	]);
+	const v = (release: string, code: string) =>
+		versions.get(`${release}|${code}`)!;
 	return { db, v };
 };
 

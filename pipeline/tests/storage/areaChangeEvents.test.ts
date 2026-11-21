@@ -9,9 +9,15 @@ import { edge, fixture } from "./areaChangeFixture";
 
 test("a publisher's lookup that declares no purpose is an identity crosswalk", () => {
 	const { db, v } = fixture();
-	db.prepare("INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 1, 2, NULL)").run();
-	db.prepare("INSERT INTO crosswalk VALUES (2, 'derived', 'area-overlap', NULL, 2, 3, NULL)").run();
-	db.prepare("INSERT INTO crosswalk VALUES (3, 'membership', 'clean-containment', 'membership', 1, 3, NULL)").run();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 1, 2, NULL)",
+	).run();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (2, 'derived', 'area-overlap', NULL, 2, 3, NULL)",
+	).run();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (3, 'membership', 'clean-containment', 'membership', 1, 3, NULL)",
+	).run();
 	edge(db, 1, v("2020", "A"), v("2021", "A"));
 	assert.deepEqual(
 		selectIdentityCrosswalks(db).map((crosswalk) => crosswalk.id),
@@ -64,7 +70,9 @@ test("the tables hold the realigned flag, and the view shows it", () => {
 	assert.deepEqual(Object.fromEntries(counts), { recoded: 1 });
 	assert.deepEqual(
 		db
-			.prepare("SELECT kind, realigned, side, code FROM v_area_change ORDER BY side, code")
+			.prepare(
+				"SELECT kind, realigned, side, code FROM v_area_change ORDER BY side, code",
+			)
 			.all()
 			.map((row) => ({ ...row })),
 		[
