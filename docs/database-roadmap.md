@@ -53,7 +53,7 @@ Measured on the local build of 2026-11-19 unless stated.
 | 4   | P0       | Done        | Every measure has a conversion rule and reason in `measure_conversion`, with `numerator_id`, `denominator_id` and `weight_id`. Lifting a refusal means holding the missing part as a measure.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 5   | P0       | Done        | Licences in the database: `v_source_terms`, `v_election_terms`, `delivery_licence`. The CC BY-SA 2016–19 local elections are isolated in the `politics-sharealike` add-on.                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 62  | P0       | Done        | A safe default observation view: `v_observation_default` returns one value for each quantity, area and period, so naive SQL does not double count. Built from `measure_dimension` (breakdown or qualifier, 52 rows), `quantity` (845) and `series_preference` (1,260 ranked series, 129 quantities with more than one). Measured on a copy of the build: one area with every measure 9 ms against 86 ms on `v_observation`, one measure on one release 34 ms against 357 ms, all households on 2021 LSOAs 218 ms against 11.8 s. Choices are in `packages/measures/src/measurePreferences.ts`. |
-| 6   | P1       | Done        | Code changes as dated events in `area_change_event`. The website's area lineage is now written from the table, and the API no longer serves `area-lineage.json`. Follow-ups: legal dates from the ONS Code History Database, and the official lookups that would show ward splits and merges.                                                                                                                                                                                                                                                                                                  |
+| 6   | P1       | Done        | Code changes as dated events in `area_change_event`. The website's area lineage is now written from the table, and the API no longer serves `area-lineage.json`. Ward splits and merges now come from the ONS Code History Database lookups. Follow-up: legal dates from the ONS Code History Database.                                                                                                                                                                                                                                                                                        |
 | 7   | P1       | Partly done | Area versions have an interior point and bounding box, or an explicit gap; published 2021 output-area centroids are used where available. Left: wider population-weighted coverage and GeoParquet boundaries as a module. `area_location` is 89 MB (see task 55).                                                                                                                                                                                                                                                                                                                              |
 
 ## Structure and maintainability
@@ -297,6 +297,22 @@ as published data.
   tables by `pipeline/src/atlas/areaLineageFromEvents.ts` and stored as the
   `area-lineage` website asset; the API route and `successorArea` are gone from
   the lookup path.
+  Follow-up 2 (2026-11-21): the ONS Code History Database's ward history is
+  read as 14 more official lookups (ward 2011-12 to 2015-12 through 2025-12 to
+  2026-05, crosswalk ids 211 to 224; four of the pairs have no change in it),
+  next to the 2024-12 to 2025-05 lookup and the 2010 to 2024 constituency
+  lookup the events already used. Ward ended and created events fall from
+  6,330 and 5,331 to 88 and 87, and the wards they held become 235 merged, 29
+  split and 1,260 redistributed events (from 2, 2 and 49). `basis` says how
+  each event was found: `official-lookup`, `extent-continuity`,
+  `clean-containment` or `publisher-statement`. A lookup pair takes the same
+  pair's extent-continuity crosswalk's redrawn and realigned findings and its
+  recodes where the lookup lists neither area, and the lineage still follows a
+  ward the continuity crosswalk succeeds when the lookup makes it a
+  redistribution. 47,137 events and 73,424 members. Weighted ward crosswalks
+  exist only between the hub releases, so successors were not derived from
+  postcodes or output areas; the 88 and 87 left are wards whose lookup chain
+  runs through a release the atlas does not hold.
 - **Task 10** (2026-11-15): the build fails when a table, view or column has
   no description, or a description names something that does not exist.
   `search` added 25 MB.
