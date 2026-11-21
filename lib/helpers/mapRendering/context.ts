@@ -4,6 +4,7 @@
  * take this context rather than reaching for the map itself.
  */
 import type { BoundaryGeojson, Features, PropertyKeys } from "@lib/types";
+import { boundaryTiles } from "@/lib/data/boundaries/tiles";
 import type { EventHandler } from "../mapManager/eventHandler";
 import type { FeatureBuilder } from "../mapManager/featureBuilder";
 import type { LayerManager } from "../mapManager/layerManager";
@@ -41,13 +42,21 @@ export function valueGeojson<T extends object>(
 		feature: Features[number],
 	) => number | null | undefined,
 ): BoundaryGeojson {
+	const tiles = boundaryTiles.get(geojson);
 	return ctx.transformed(geojson, dataset, mode, () =>
 		ctx.featureBuilder.formatBoundaryGeoJson(
-			ctx.featureBuilder.buildValueFeatures(
-				geojson.features,
-				codeProp,
-				valueFor,
-			),
+			tiles
+				? ctx.featureBuilder.buildTileValueFeatures(
+						geojson.features,
+						codeProp,
+						tiles.codeKey,
+						valueFor,
+					)
+				: ctx.featureBuilder.buildValueFeatures(
+						geojson.features,
+						codeProp,
+						valueFor,
+					),
 		),
 	);
 }

@@ -55,7 +55,7 @@ export function useMeasureMembers(
 			throw (settled[0] as PromiseRejectedResult).reason;
 		return payloads;
 	});
-	const areasKey = areas ? areas.join(",") : null;
+	const areasKey = useMemo(() => (areas ? areas.join(",") : null), [areas]);
 	const all = loaded.status === "ready" ? loaded.value : null;
 	const payloads = useMemo(
 		() =>
@@ -71,6 +71,12 @@ export function useMeasureMembers(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[all, areasKey],
 	);
+	// The same object while the payloads are, so callers' memoised work
+	// holds. The React Compiler skips this file, so it is kept by hand.
+	const ready = useMemo(
+		() => ({ status: "ready" as const, payloads: payloads! }),
+		[payloads],
+	);
 	if (loaded.status !== "ready") return loaded;
-	return { status: "ready", payloads: payloads! };
+	return ready;
 }
