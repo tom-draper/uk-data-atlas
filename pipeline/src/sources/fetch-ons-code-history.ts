@@ -171,6 +171,99 @@ export const parseCodes = (text: string): CodeDates[] => {
 	);
 };
 
+/**
+ * The geographies whose predecessor and successor pairs are kept with their
+ * names, as one file each, so that a crosswalk adapter can read them as an
+ * official lookup. Wards are extracted separately.
+ */
+export const HISTORY_GEOGRAPHIES = {
+	outputArea: { file: "output-area.geojson", entities: ["E00", "W00"] },
+	lsoa: { file: "lsoa.geojson", entities: ["E01", "W01"] },
+	msoa: { file: "msoa.geojson", entities: ["E02", "W02"] },
+	parish: { file: "parish.geojson", entities: ["E04", "W04"] },
+	localAuthority: {
+		file: "local-authority.geojson",
+		entities: ["E06", "E07", "E08", "E09", "W06", "S12", "N09"],
+	},
+} as const;
+
+const GSS_CODE = /^[EWSN]\d{8}$/;
+
+export type NamedChange = {
+	predecessor: string;
+	predecessorName: string;
+	successor: string;
+	successorName: string;
+	date: string;
+	entity: string;
+};
+
+/**
+ * Predecessor and successor pairs of the given entities with their names, once
+ * per pair at the earliest date, with legacy codes left out. A name the database leaves blank, as it does
+ * for output areas, falls back to the code.
+ */
+export const parseNamedChanges = (
+	text: string,
+	entities: readonly string[],
+): NamedChange[] => {
+	const wanted = new Set(entities);
+	const [header, ...rows] = csvRecords(text);
+	const columns = columnIndex(header, [
+		"GEOGCD",
+		"GEOGNM",
+		"GEOGCD_P",
+		"GEOGNM_P",
+		"OPER_DATE",
+		"ENTITYCD",
+	]);
+	const seen = new Map<string, NamedChange>();
+	for (const row of rows) {
+		const entity = (row[columns.ENTITYCD!] ?? "").trim();
+		if (!wanted.has(entity)) continue;
+		const successor = (row[columns.GEOGCD!] ?? "").trim();
+		const predecessor = (row[columns.GEOGCD_P!] ?? "").trim();
+		const date = isoDate(row[columns.OPER_DATE!] ?? "");
+		if (!successor || !predecessor || successor === predecessor) continue;
+		// Pre-2009 legacy codes never appear in a boundary release.
+		if (!GSS_CODE.test(predecessor) || !GSS_CODE.test(successor)) continue;
+		const key = `${predecessor}|${successor}`;
+		const held = seen.get(key);
+		if (held && (!date || (held.date && held.date <= date))) continue;
+		seen.set(key, {
+			predecessor,
+			predecessorName:
+				(row[columns.GEOGNM_P!] ?? "").trim() || predecessor,
+			successor,
+			successorName: (row[columns.GEOGNM!] ?? "").trim() || successor,
+			date,
+			entity,
+		});
+	}
+	return [...seen.values()].sort(
+		(left, right) =>
+			left.predecessor.localeCompare(right.predecessor) ||
+			left.successor.localeCompare(right.successor),
+	);
+};
+
+export const namedChangesToGeoJson = (changes: readonly NamedChange[]) =>
+	JSON.stringify({
+		type: "FeatureCollection",
+		features: changes.map((change) => ({
+			type: "Feature",
+			geometry: null,
+			properties: {
+				PREDECESSORCD: change.predecessor,
+				PREDECESSORNM: change.predecessorName,
+				SUCCESSORCD: change.successor,
+				SUCCESSORNM: change.successorName,
+				OPER_DATE: change.date,
+				ENTITYCD: change.entity,
+			},
+		})),
+	});
+
 const csvField = (value: string) =>
 	/[",\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
 
@@ -216,7 +309,8 @@ export const extractOnsCodeHistory = (
 	archive: string,
 	retrieved = new Date().toISOString().slice(0, 10),
 ) => {
-	const changes = parseChanges(archiveFile(archive, "Changes.csv"));
+	const changesText = archiveFile(archive, "Changes.csv");
+	const changes = parseChanges(changesText);
 	const codes = parseCodes(archiveFile(archive, "ChangeHistory.csv"));
 	const directory = join(
 		repositoryRoot,
@@ -226,6 +320,13 @@ export const extractOnsCodeHistory = (
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(join(directory, CHANGES_FILE), changesToCsv(changes));
 	writeFileSync(join(directory, CODES_FILE), codesToCsv(codes));
+	const named = Object.entries(HISTORY_GEOGRAPHIES).map(
+		([geography, { file, entities }]) => {
+			const pairs = parseNamedChanges(changesText, entities);
+			writeFileSync(join(directory, file), namedChangesToGeoJson(pairs));
+			return { geography, file, pairs: pairs.length };
+		},
+	);
 	writeFileSync(
 		join(directory, "meta.json"),
 		`${JSON.stringify(
@@ -234,7 +335,7 @@ export const extractOnsCodeHistory = (
 				kind: "lookup",
 				title: "Area code change dates",
 				description:
-					"Legal operative dates of area code changes and of the first and last use of each code, extracted from the ONS Code History Database for wards, local authorities, constituencies, statistical areas and parishes.",
+					"Legal operative dates of area code changes and of the first and last use of each code, and the named predecessor and successor pairs of output areas, LSOAs, MSOAs, parishes and local authorities, extracted from the ONS Code History Database.",
 				publisher: "Office for National Statistics",
 				sourceUrl: SOURCE_URL,
 				retrieved,
@@ -254,13 +355,23 @@ export const extractOnsCodeHistory = (
 						role: "source",
 						note: `First and last operative date of each code from ChangeHistory.csv; ${codes.length} codes.`,
 					},
+					...named.map(({ geography, file, pairs }) => ({
+						path: file,
+						role: "source",
+						note: `Named predecessor and successor pairs of ${geography} areas from Changes.csv, for the official lookup crosswalks; ${pairs} pairs.`,
+					})),
 				],
 			},
 			null,
 			"\t",
 		)}\n`,
 	);
-	return { directory, changes: changes.length, codes: codes.length };
+	return {
+		directory,
+		changes: changes.length,
+		codes: codes.length,
+		named,
+	};
 };
 
 const download = async () => {
