@@ -33,7 +33,9 @@ export class MapManager implements MapRenderContext {
 
 	constructor(map: MapInstance, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
-		this.eventHandler = new EventHandler(map, callbacks);
+		this.eventHandler = new EventHandler(map, callbacks, () =>
+			this.layerManager.boundaryLayerIds(),
+		);
 		this.propertyDetector = new PropertyDetector();
 		this.featureBuilder = new FeatureBuilder();
 		this.datasetAggregator = new DatasetAggregator(this.propertyDetector);
