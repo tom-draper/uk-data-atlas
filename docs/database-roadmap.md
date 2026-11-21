@@ -333,6 +333,20 @@ as published data.
   constituencies 0 (not covered). A legal date can be up to 30 days after the
   edition date, because an edition date is the first of its month. Without
   the source the build warns and every event keeps its edition date.
+  Follow-up 4 (2026-11-21): the Code History Database's named pairs for
+  output areas, LSOAs, MSOAs, parishes and local authorities are read as 15
+  more official lookups (`*-official-history` crosswalks), so most of the
+  areas that were ended and created are split, merged or redistributed
+  instead. The 2008 to 2009 local authority release uses the old ONS codes,
+  so its pairs are re-keyed through the database's equivalents file
+  (`local-authority-legacy-codes.geojson`, 62 pairs); the 2009 reorganisation
+  is now 8 merges dated 2009-04-01. Events fall from 47,137 to 20,676 and
+  members stay at about 73,460. What remains ended or created: wards 88 and
+  87 (no successor in the database), ITL2 and ITL3 areas (not covered),
+  parishes 12 and 8 and output areas created 41. Matched to a legal date:
+  output area 9,264 of 9,300; LSOA 1,625 of 6,418 (most of the rest are
+  renamed); MSOA 225 of 1,025; parish 283 of 380; local authority 35 of 53.
+  The new lookup files need a new data release.
 - **Task 10** (2026-11-15): the build fails when a table, view or column has
   no description, or a description names something that does not exist.
   `search` added 25 MB.
