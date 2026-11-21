@@ -5,7 +5,9 @@ import {
 	codesToCsv,
 	isoDate,
 	keepEntity,
+	namedChangesToGeoJson,
 	parseChanges,
+	parseNamedChanges,
 	parseCodes,
 } from "../../src/sources/fetch-ons-code-history";
 
@@ -111,4 +113,63 @@ test("the compact files have a header and quote fields that need it", () => {
 		]),
 		"code,introduced,terminated,entity\nA,2009-01-01,,E05\n",
 	);
+});
+
+const NAMED = [
+	"GEOGCD,GEOGNM,GEOGNMW,GEOGCD_P,GEOGNM_P,GEOGNMW_P,SI_ID,SI_TITLE,OPER_DATE,ENTITYCD,YEAR",
+	"E01000002,Two,,E01000001,One,,,,31/12/2011 00:00,E01,2011",
+	"E01000002,Two,,E01000001,One,,,,15/06/2011 00:00,E01,2011",
+	"E01000003,Three,,E01000001,One,,,,31/12/2011 00:00,E01,2011",
+	"E00000002,,,E00000001,,,,,21/03/2021 00:00,E00,2021",
+	"E00000001,,,00AAFA0001,,,,,01/01/2009 00:00,E00,2009",
+	"E01000009,Nine,,E01000009,Nine,,,,31/12/2011 00:00,E01,2011",
+	"E05000009,Ward,,E05000008,Ward,,,,31/12/2011 00:00,E05,2011",
+].join("\n");
+
+test("named pairs keep one geography once at the earliest date and fall back to codes for blank names", () => {
+	assert.deepEqual(parseNamedChanges(NAMED, ["E01", "W01"]), [
+		{
+			predecessor: "E01000001",
+			predecessorName: "One",
+			successor: "E01000002",
+			successorName: "Two",
+			date: "2011-06-15",
+			entity: "E01",
+		},
+		{
+			predecessor: "E01000001",
+			predecessorName: "One",
+			successor: "E01000003",
+			successorName: "Three",
+			date: "2011-12-31",
+			entity: "E01",
+		},
+	]);
+	assert.deepEqual(parseNamedChanges(NAMED, ["E00"]), [
+		{
+			predecessor: "E00000001",
+			predecessorName: "E00000001",
+			successor: "E00000002",
+			successorName: "E00000002",
+			date: "2021-03-21",
+			entity: "E00",
+		},
+	]);
+});
+
+test("named pairs become a geometry-free feature collection with predecessor as source", () => {
+	const [pair] = parseNamedChanges(NAMED, ["E00"]);
+	const collection = JSON.parse(namedChangesToGeoJson([pair!])) as {
+		features: { geometry: null; properties: Record<string, string> }[];
+	};
+	assert.equal(collection.features.length, 1);
+	assert.equal(collection.features[0]!.geometry, null);
+	assert.deepEqual(collection.features[0]!.properties, {
+		PREDECESSORCD: "E00000001",
+		PREDECESSORNM: "E00000001",
+		SUCCESSORCD: "E00000002",
+		SUCCESSORNM: "E00000002",
+		OPER_DATE: "2021-03-21",
+		ENTITYCD: "E00",
+	});
 });
