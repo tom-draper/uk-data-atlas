@@ -57,6 +57,10 @@ describe("dataset catalogue", () => {
 		expect(definitionFor("house-price")?.payload?.regionChunks).toEqual({
 			kind: "regional",
 		});
+		expect(definitionFor("fuel-poverty")?.payload?.regionChunks).toEqual({
+			kind: "regional",
+			lsoaToLad: true,
+		});
 		expect(definitionFor("nhs-waiting")?.payload?.locationScope).toEqual({
 			kind: "mapped",
 			mappingField: "ladToIcb",

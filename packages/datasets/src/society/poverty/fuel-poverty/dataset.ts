@@ -41,6 +41,7 @@ export const fuelPoverty = defineDataset<FuelPovertyDataset>({
 			"Households in fuel poverty under the Low Income Low Energy Efficiency measure.",
 		],
 	},
+	layout: { regionChunks: { kind: "regional", lsoaToLad: true } },
 	statistics: {
 		payload: {
 			parts: yearParts(
