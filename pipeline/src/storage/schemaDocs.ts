@@ -1858,6 +1858,19 @@ export const schemaExamples: readonly SchemaExample[] = [
 		expect: "A recoded event dated 2023-05-01: E05000719 Alexandra became E05014646 Alexandra. A ward with no row was unchanged, or changed extent without a new code.",
 	},
 	{
+		id: "ward-redrawn",
+		question:
+			"Which wards kept their code but changed extent, and was the change a realignment of the line?",
+		sql: "SELECT code, name, from_release, to_release, effective_date, realigned FROM v_area_change WHERE geography = 'ward' AND kind = 'redrawn' AND side = 'from' ORDER BY from_release, code LIMIT 20",
+		expect: "41 wards in all, from E05004089 Canvey Island Winter Gardens in 2020-12. realigned is 1 where an extent-continuity crosswalk matched the ward to the same area after a small boundary move, and 0 where it changed extent and no successor is claimed.",
+	},
+	{
+		id: "ward-recoded-by-realignment",
+		question: "Which wards got a new code because their line moved?",
+		sql: "SELECT f.code, f.name, t.code AS became, t.name AS became_name, f.effective_date FROM v_area_change f JOIN v_area_change t ON t.event_id = f.event_id AND t.side = 'to' WHERE f.geography = 'ward' AND f.kind = 'recoded' AND f.realigned = 1 AND f.side = 'from' ORDER BY f.effective_date, f.code LIMIT 20",
+		expect: "1,742 wards in all, from E05000012 Coleman Street, which became E05009299 Coleman Street in 2015-12. The pair was found from the extents, not from a publisher's lookup.",
+	},
+	{
 		id: "lsoa-splits-2021",
 		question: "Which 2011 LSOAs were split in the 2021 boundaries?",
 		sql: "SELECT f.code, f.name, count(*) AS parts, group_concat(t.code, ' ') AS became FROM v_area_change f JOIN v_area_change t ON t.event_id = f.event_id AND t.side = 'to' WHERE f.geography = 'lsoa' AND f.kind = 'split' AND f.effective_date = '2021-12-01' AND f.side = 'from' GROUP BY f.event_id ORDER BY f.code LIMIT 20",
