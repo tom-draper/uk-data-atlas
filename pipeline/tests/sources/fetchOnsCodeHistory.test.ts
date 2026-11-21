@@ -7,6 +7,7 @@ import {
 	keepEntity,
 	namedChangesToGeoJson,
 	parseChanges,
+	parseLegacyCodes,
 	parseNamedChanges,
 	parseCodes,
 } from "../../src/sources/fetch-ons-code-history";
@@ -172,4 +173,37 @@ test("named pairs become a geometry-free feature collection with predecessor as 
 		OPER_DATE: "2021-03-21",
 		ENTITYCD: "E00",
 	});
+});
+
+test("pairs can be re-keyed by old ONS code, dropping any pair that has no old code", () => {
+	const legacy = parseLegacyCodes(
+		[
+			"GEOGCD,GEOGNM,GEOGCDO",
+			"E07000001,Mid Beds,09UC",
+			"E06000056,Central Beds,00KC",
+			"E07000002,Unmapped,",
+		].join("\n"),
+	);
+	assert.deepEqual(
+		[...legacy],
+		[
+			["E07000001", "09UC"],
+			["E06000056", "00KC"],
+		],
+	);
+	const text = [
+		"GEOGCD,GEOGNM,GEOGNMW,GEOGCD_P,GEOGNM_P,GEOGNMW_P,SI_ID,SI_TITLE,OPER_DATE,ENTITYCD,YEAR",
+		"E06000056,Central Beds,,E07000001,Mid Beds,,,,01/04/2009 00:00,E06,2009",
+		"E06000056,Central Beds,,E07000002,Unmapped,,,,01/04/2009 00:00,E06,2009",
+	].join("\n");
+	assert.deepEqual(parseNamedChanges(text, ["E06"], legacy), [
+		{
+			predecessor: "09UC",
+			predecessorName: "Mid Beds",
+			successor: "00KC",
+			successorName: "Central Beds",
+			date: "2009-04-01",
+			entity: "E06",
+		},
+	]);
 });

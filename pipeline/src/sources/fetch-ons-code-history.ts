@@ -187,6 +187,10 @@ export const HISTORY_GEOGRAPHIES = {
 	},
 } as const;
 
+/** The local authority pairs again, under the old ONS codes the 2008 and 2009 releases use. */
+export const LEGACY_LOCAL_AUTHORITY_FILE =
+	"local-authority-legacy-codes.geojson";
+
 const GSS_CODE = /^[EWSN]\d{8}$/;
 
 export type NamedChange = {
@@ -206,6 +210,8 @@ export type NamedChange = {
 export const parseNamedChanges = (
 	text: string,
 	entities: readonly string[],
+	/** Replaces each code by its old ONS code, and drops a pair with no old code. */
+	recode?: ReadonlyMap<string, string>,
 ): NamedChange[] => {
 	const wanted = new Set(entities);
 	const [header, ...rows] = csvRecords(text);
@@ -227,15 +233,17 @@ export const parseNamedChanges = (
 		if (!successor || !predecessor || successor === predecessor) continue;
 		// Pre-2009 legacy codes never appear in a boundary release.
 		if (!GSS_CODE.test(predecessor) || !GSS_CODE.test(successor)) continue;
-		const key = `${predecessor}|${successor}`;
+		const from = recode ? recode.get(predecessor) : predecessor;
+		const to = recode ? recode.get(successor) : successor;
+		if (!from || !to || from === to) continue;
+		const key = `${from}|${to}`;
 		const held = seen.get(key);
 		if (held && (!date || (held.date && held.date <= date))) continue;
 		seen.set(key, {
-			predecessor,
-			predecessorName:
-				(row[columns.GEOGNM_P!] ?? "").trim() || predecessor,
-			successor,
-			successorName: (row[columns.GEOGNM!] ?? "").trim() || successor,
+			predecessor: from,
+			predecessorName: (row[columns.GEOGNM_P!] ?? "").trim() || from,
+			successor: to,
+			successorName: (row[columns.GEOGNM!] ?? "").trim() || to,
 			date,
 			entity,
 		});
@@ -245,6 +253,23 @@ export const parseNamedChanges = (
 			left.predecessor.localeCompare(right.predecessor) ||
 			left.successor.localeCompare(right.successor),
 	);
+};
+
+/**
+ * The old ONS code of each code that had one, from `Equivalents.csv`. The 2008
+ * and 2009 local authority releases are keyed by these (`09UC`, `00KC`), not by
+ * the GSS codes (`E07000001`, `E06000056`) the changes are published under.
+ */
+export const parseLegacyCodes = (text: string): Map<string, string> => {
+	const [header, ...rows] = csvRecords(text);
+	const columns = columnIndex(header, ["GEOGCD", "GEOGCDO"]);
+	const codes = new Map<string, string>();
+	for (const row of rows) {
+		const code = (row[columns.GEOGCD!] ?? "").trim();
+		const old = (row[columns.GEOGCDO!] ?? "").trim();
+		if (code && old && !codes.has(code)) codes.set(code, old);
+	}
+	return codes;
 };
 
 export const namedChangesToGeoJson = (changes: readonly NamedChange[]) =>
@@ -327,6 +352,20 @@ export const extractOnsCodeHistory = (
 			return { geography, file, pairs: pairs.length };
 		},
 	);
+	const legacy = parseNamedChanges(
+		changesText,
+		HISTORY_GEOGRAPHIES.localAuthority.entities,
+		parseLegacyCodes(archiveFile(archive, "Equivalents.csv")),
+	);
+	writeFileSync(
+		join(directory, LEGACY_LOCAL_AUTHORITY_FILE),
+		namedChangesToGeoJson(legacy),
+	);
+	named.push({
+		geography: "localAuthority (old ONS codes)",
+		file: LEGACY_LOCAL_AUTHORITY_FILE,
+		pairs: legacy.length,
+	});
 	writeFileSync(
 		join(directory, "meta.json"),
 		`${JSON.stringify(
