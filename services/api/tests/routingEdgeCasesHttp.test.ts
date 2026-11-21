@@ -349,7 +349,7 @@ test("methods a route does not accept answer 405 or 404 as before", async (t) =>
 		"/v1/boundary-releases:compare",
 		"/v1/geographies",
 		"/v1/documents/fixture.json",
-		"/v1/atlas-lookups/area-lineage.json",
+		"/v1/atlas-lookups/boundary-mappings.json",
 		"/v1/atlas-pages/places-index.json",
 		"/v1/coordinates:convert",
 		"/v1/translations",

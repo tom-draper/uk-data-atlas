@@ -120,12 +120,14 @@ The website data build reads `data/build/datasets/` when cutting regional chunks
 without copying the catalogue payloads. `public/data/datasets/` retains
 gazetteer, road-safety, chunk and SEO assets and the website build manifest.
 
-The atlas's containment and lineage lookups (`area-lineage`,
-`boundary-mappings`, `parish-lad-mappings`, `lsoa-lad-mappings-{year}` and
-`constituency-lad-overlaps`) are not in the repository. The data build
-compiles them with `@uk-data-atlas/geography` for the boundary releases
-`@uk-data-atlas/catalogue` lists. The API serves them at
-`/v1/atlas-lookups/{id}.json`. The website never reads them from the API.
+The atlas's containment lookups (`boundary-mappings`, `parish-lad-mappings`,
+`lsoa-lad-mappings-{year}` and `constituency-lad-overlaps`) are not in the
+repository. The data build compiles them with `@uk-data-atlas/geography` for
+the boundary releases `@uk-data-atlas/catalogue` lists. The API serves them at
+`/v1/atlas-lookups/{id}.json`. The website never reads them from the API. Its
+`area-lineage` lookup is not served by the API: the `website-lookups` stage
+compiles it from the release's change events (`area_change_event`) and stores
+it with the other lookups.
 The `pipeline/` workspace runs `pnpm data:build --only website-lookups` to import them
 from `data/build/atlas-assets/` into the shared database. Page and lookup compiler
 entry points still live in API scripts until their shared readers are extracted. The browser fetches them at

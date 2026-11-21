@@ -2046,17 +2046,21 @@ stands even where it is no. It must name one area, and translating that area
 back must reach only the one asked about, so a successor that merged several
 areas, or took part of one, is not the same area.
 
-The website cannot hold the crosswalks, so the data build's `atlas-lookups`
-stage writes what `sameArea` answers between the ward, local authority and
-constituency releases the website serves to `area-lineage`, served at
-`/v1/atlas-lookups/area-lineage.json` (about 90 KB gzipped). It stores the
-codes that do not carry on unchanged between neighbouring releases, and
-overrides for the few pairs further apart whose direct answer is not what
-those steps compose to: a lookup joining two releases directly, as the 2010 to
-2024 constituency lookup does, can say an area held where a derived step in
-between cannot. `followLineage` in `packages/geography/src/areaLineage.ts` reads it, in
-the website and the API alike, and a built test checks a sample of its answers
-against the resolver, so the map shows what the API would say.
+The website cannot reach the API, so the data build writes what `sameArea`
+answers between the ward, local authority and constituency releases it serves
+to a file of its own, `area-lineage`, in `website-assets.sqlite`. The API does
+not serve it: the same answers are in `area_change_event`, which the assembly
+writes from the identity crosswalks (see "Area change events"), and the
+`website-lookups` stage reads them from the release and compiles them. An area
+that no event names is the same area under the same code, and a rename, a
+recode or a realigned redrawing keeps it. The file stores the codes that do not carry on
+unchanged between neighbouring releases, and overrides for the few pairs
+further apart whose direct answer is not what those steps compose to: a lookup
+joining two releases directly, as the 2010 to 2024 constituency lookup does,
+can say an area held where a derived step in between cannot. `followLineage`
+in `packages/geography/src/areaLineage.ts` reads it, and a built test checks a
+sample of its answers against the resolver, so the map shows what the API
+would say.
 
 ### 5. Retrieve data
 
@@ -3248,7 +3252,7 @@ second inventory to maintain:
 - `GET /v1/crosswalks`, List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}`, Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records`, List (optionally filtered) records for one crosswalk
-- `GET /v1/atlas-lookups/{lookup-id}.json`, Download a containment or lineage lookup the atlas reads
+- `GET /v1/atlas-lookups/{lookup-id}.json`, Download a containment lookup the atlas reads
 - `GET /v1/atlas-pages/{page-id}.json`, Download a website place profile or catalogue artifact
 - `GET /v1/translations`, Translate one code through a published conversion path in either direction
 - `GET /v1/locations`, List the curated area collections
@@ -3510,8 +3514,9 @@ pair such as Wigan's Ince, renumbered in 2023 with a strip 47 m wide moved.
 They are not records, so no identity path or conversion follows them. The
 resolver's `successorArea` does: it answers `sameArea` where there is one,
 and otherwise the area a realigned step leads to, one to one both ways, with
-`realigned: true`. The atlas's area lineage is built from it, so a ward's
-election history carries on across a small redrawing.
+`realigned: true`. The change events record these pairs as `recoded` or `redrawn` events with
+`realigned` set, and the website's area lineage is compiled from them, so a
+ward's election history carries on across a small redrawing.
 
 They chain each geography's releases in date order. Each date links to the
 next through its widest-coverage release, and same-month variants, such as

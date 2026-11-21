@@ -19,11 +19,11 @@ const lookup = {
 
 test("serves a built atlas lookup as stored", () => {
 	const context = testContext({
-		atlasLookups: new Map([["area-lineage", lookup]]),
+		atlasLookups: new Map([["boundary-mappings", lookup]]),
 	});
 	const response = routeRequest(
 		"GET",
-		"/v1/atlas-lookups/area-lineage.json",
+		"/v1/atlas-lookups/boundary-mappings.json",
 		context,
 	);
 	assert.equal(response.status, 200);
@@ -35,7 +35,7 @@ test("serves a built atlas lookup as stored", () => {
 
 test("refuses an atlas lookup that is not built", () => {
 	const built = testContext({
-		atlasLookups: new Map([["area-lineage", lookup]]),
+		atlasLookups: new Map([["boundary-mappings", lookup]]),
 	});
 	assert.equal(
 		routeRequest("GET", "/v1/atlas-lookups/unknown.json", built).status,
@@ -44,7 +44,7 @@ test("refuses an atlas lookup that is not built", () => {
 	assert.equal(
 		routeRequest(
 			"GET",
-			"/v1/atlas-lookups/area-lineage.json",
+			"/v1/atlas-lookups/boundary-mappings.json",
 			testContext(),
 		).status,
 		503,
@@ -73,12 +73,12 @@ test("reads the lookup manifest and checks each stored file", () => {
 			recursive: true,
 		});
 		writeFileSync(
-			join(directory, "atlas-lookups", "area-lineage.json.gz"),
+			join(directory, "atlas-lookups", "boundary-mappings.json.gz"),
 			gzipped,
 		);
 		const entry = {
-			id: "area-lineage",
-			artifact: "atlas-lookups/area-lineage.json.gz",
+			id: "boundary-mappings",
+			artifact: "atlas-lookups/boundary-mappings.json.gz",
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
@@ -89,8 +89,8 @@ test("reads the lookup manifest and checks each stored file", () => {
 				JSON.stringify({ schemaVersion: 1, lookups }),
 			);
 		writeManifest([entry]);
-		assert.deepEqual(readAtlasLookups(root).get("area-lineage"), {
-			path: join(directory, "atlas-lookups", "area-lineage.json.gz"),
+		assert.deepEqual(readAtlasLookups(root).get("boundary-mappings"), {
+			path: join(directory, "atlas-lookups", "boundary-mappings.json.gz"),
 			bytes: json.length,
 			gzipBytes: gzipped.length,
 			contentHash: "sha256:00",
