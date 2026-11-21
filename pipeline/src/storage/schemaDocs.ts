@@ -1255,7 +1255,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	area_change_event: {
 		audience: "core",
 		description:
-			"One change to the areas of a geography between two of its boundary releases: a rename, a new code, a redrawn extent, a split, a merge, a redistribution, an area that ended or an area that was created. Areas that did not change have no event. The areas involved are in area_change_member. The date is an edition date, not a legal one.",
+			"One change to the areas of a geography between two of its boundary releases: a rename, a new code, a redrawn extent, a split, a merge, a redistribution, an area that ended or an area that was created. Areas that did not change have no event. The areas involved are in area_change_member. effective_date is the legal date of the change from the ONS Code History Database where the event could be matched to it (date_basis 'legal'), and otherwise the later release's edition date (date_basis 'edition'). edition_date always holds the edition date, so the two can be compared.",
 		columns: {
 			id: "Event number. Events are numbered in order of geography, earlier release, later release, then the smallest code on each side, so a rebuild from the same data gives the same ids.",
 			geography_id: "The geography (geography.id).",
@@ -1265,9 +1265,11 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			realigned:
 				"1 when the event rests on a successor an extent-continuity crosswalk lists as realigned: the extent moved by a street but each area kept nearly all of the other, so the later area is the earlier one's successor and not a new area. 0 otherwise. A redrawn event with realigned 0 is an area whose extent moved too far to be called its own successor. A split, merge or redistribution from an official lookup has realigned 1 when one of its areas is also such a successor.",
 			effective_date:
-				"The later release's edition date (ISO date, boundary_release_edition.edition_from). The change had happened by this edition.",
+				"When the change took effect (ISO date). The legal date from the ONS Code History Database where date_basis is 'legal'; otherwise the later release's edition date, by which the change had happened. A legal date is the day the change was in force (typically 1 April, 1 May or another operative date), so it can be several months before edition_date.",
 			date_basis:
-				"What effective_date means. 'edition': the edition date of the later release, not the legal date of the change. The ONS Code History Database has legal dates, but the events do not use them yet.",
+				"What effective_date means. 'legal': the operative date in the ONS Code History Database, taken from a predecessor and successor pair the event links or, for a created or ended area, from the day its code came into or went out of use, and only when it lies between the earlier release's edition date and the end of the later release's edition month. 'edition': no such date was found (renamed and redrawn events never have one, nor do areas the database does not cover such as ITL areas), so effective_date is the later release's edition date and is not the legal date of the change. Where an event has several candidate dates the earliest in that interval is used.",
+			edition_date:
+				"The later release's edition date (ISO date, boundary_release_edition.edition_from). The change had happened by this edition. The same as effective_date when date_basis is 'edition'.",
 			source: "What the event is evidenced by: 'crosswalk' (an identity crosswalk) or 'publisher' (a predecessor statement in area_relationship that no crosswalk event holds).",
 			basis: "How the change was found, which says how far to trust a split or merge. 'official-lookup': a publisher's lookup between the two releases (the local authority and LSOA lookups, and the ONS Code History Database for wards and constituencies), so a split or merge is a recorded one. 'extent-continuity': an extent-continuity crosswalk, which links only areas whose extent held, so a split or merge cannot appear and a missing one is not evidence there was none. 'clean-containment': an identity crosswalk built from containment of extents. 'publisher-statement': a predecessor statement in area_relationship. An official lookup pair that an extent-continuity crosswalk also covers keeps basis 'official-lookup' and takes the continuity crosswalk's redrawn and realigned findings.",
 			crosswalk_id:
@@ -1296,6 +1298,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			realigned: "As area_change_event.realigned.",
 			effective_date: "As area_change_event.effective_date.",
 			date_basis: "As area_change_event.date_basis.",
+			edition_date: "As area_change_event.edition_date.",
 			source: "As area_change_event.source.",
 			basis: "As area_change_event.basis.",
 			from_release: "Slug of the earlier boundary release.",

@@ -13,11 +13,14 @@ import { DatabaseSync } from "node:sqlite";
 import {
 	artifactDirectory,
 	buildMetadataPathOf,
+	buildLog,
 	closeReadOnlyDatabase,
+	formatCount,
 	packText,
 	readBuildPayload,
 } from "@uk-data-atlas/atlas-db";
 import {
+	legalDateRates,
 	publishVacuumed,
 	writeAreaChangeEvents,
 	writeDefaultObservation,
@@ -28,6 +31,7 @@ import {
 	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
+import { readLegalDates } from "../storage/legalDates.ts";
 import { crosswalkSetHash } from "../crosswalk-weights/crosswalkSetHash.ts";
 import { crosswalkWeightsPath } from "../crosswalk-weights/paths.ts";
 import { convertedSeriesPath } from "../conversion/paths.ts";
@@ -267,7 +271,19 @@ export function assembleAtlas(
 				writeSeriesAttribution(database);
 			}
 			// After the crosswalks and their weights, which the events read.
-			writeAreaChangeEvents(database);
+			// Dated by the ONS Code History Database where it has the change,
+			// else by edition. A release built without that source keeps
+			// edition dates throughout, and says so.
+			const legalDates = readLegalDates(root);
+			if (!legalDates)
+				buildLog.warn(
+					"No Code History Database source: area change events keep their edition dates.",
+				);
+			writeAreaChangeEvents(database, legalDates);
+			for (const { geography, events, legal } of legalDateRates(database))
+				buildLog.info(
+					`Area change events ${geography}: ${formatCount(legal)} of ${formatCount(events)} have a legal date`,
+				);
 			if (placeProducts) {
 				writeAreaHierarchy(database);
 				writePlaceLocations(database);
