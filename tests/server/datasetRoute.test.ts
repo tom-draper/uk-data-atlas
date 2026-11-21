@@ -247,3 +247,31 @@ describe("versioned dataset route with cached payloads", () => {
 		expect(response.headers.get("Cache-Control")).toBe("no-store");
 	});
 });
+
+describe("versioned dataset route with requested keys", () => {
+	beforeEach(cacheSample);
+	const requestKeys = (keys: string) =>
+		GET(new Request(`http://localhost/data/catalogue?keys=${keys}`), {
+			params: Promise.resolve({ sha256, output: "sample.json" }),
+		});
+
+	it("sends only the requested entries, with their own ETag", async () => {
+		const response = await requestKeys("2024,2023");
+		expect(response.status).toBe(200);
+		expect(await response.json()).toEqual({ "2024": { value: 42 } });
+		expect(response.headers.get("ETag")).toBe(`W/"${sha256}:2023,2024"`);
+		expect(response.headers.get("Cache-Control")).toBe(
+			"public, max-age=31536000, immutable",
+		);
+	});
+	it("sends an empty payload when no entry matches", async () => {
+		const response = await requestKeys("2010");
+		expect(await response.text()).toBe("{}");
+		expect(response.headers.get("Content-Length")).toBe("2");
+	});
+	it.each(["", "a b", "../x"])("rejects keys %j", async (keys) => {
+		const response = await requestKeys(keys);
+		expect(response.status).toBe(404);
+		expect(response.headers.get("Cache-Control")).toBe("no-store");
+	});
+});
