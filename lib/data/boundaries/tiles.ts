@@ -16,6 +16,8 @@ import { fetchBoundaryProperties } from "./boundaries";
 import type { BoundaryFeatureFilter } from "./filter";
 import { filterFeatures } from "./filter";
 import { fetchLsoaToLad, lsoaYearForBoundaryAsset } from "./lsoaLadMappings";
+import { pmtilesURL } from "@/lib/map/tilesUrl";
+import { prefetchPMTiles } from "@/lib/map/pmtilesProtocol";
 
 export type BoundaryTiles = {
 	href: string;
@@ -64,6 +66,31 @@ export function selectBoundaryTiles(
 		maxZoom: manifest.maxZoom,
 		codeKey: release.codeKey,
 	};
+}
+
+const prefetched = new Set<string>();
+
+/**
+ * Reads what drawing a boundary release first waits on, its properties and its
+ * archive's header and root directory, so switching to it starts on its tiles.
+ * Each release is read once; both reads are cached where the map looks.
+ */
+export function prefetchBoundaryRelease(type: BoundaryType, year: number) {
+	const path = BOUNDARY_CATALOG[type]?.vintages[year];
+	if (!path || prefetched.has(path)) return;
+	prefetched.add(path);
+	const forget = () => prefetched.delete(path);
+	fetchBoundaryProperties(propertiesAsset(path)).catch(forget);
+	fetchManifest()
+		.then((manifest) => {
+			const { href } = selectBoundaryTiles(manifest, type, path);
+			return prefetchPMTiles(
+				pmtilesURL(href, window.location.href).slice(
+					"pmtiles://".length,
+				),
+			);
+		})
+		.catch(forget);
 }
 
 // Rendering uses sidecars for values and filtering, tiles for coordinates.
