@@ -281,11 +281,13 @@ test("a legal date lies between the earlier edition and the end of the later edi
 });
 
 test("the Code History Database dates most events of the geographies it covers", () => {
+	// Renamed and redrawn events have no operative date to match, so they are left out.
 	const rates = Object.fromEntries(
 		all(
 			`SELECT g.slug AS geography, count(*) AS events,
 				sum(e.date_basis = 'legal') AS legal
 			FROM area_change_event e JOIN geography g ON g.id = e.geography_id
+			WHERE e.kind NOT IN ('renamed', 'redrawn')
 			GROUP BY g.slug`,
 		).map((row) => [row.geography, Number(row.legal) / Number(row.events)]),
 	);
@@ -314,6 +316,41 @@ test("ward changes are mostly splits, merges and redistributions, not ended and 
 	// What the lookups cannot place stays ended or created, and is small.
 	assert.ok((counts.ended ?? 0) < 200, `${counts.ended} ended`);
 	assert.ok((counts.created ?? 0) < 200, `${counts.created} created`);
+});
+
+test("output area, LSOA, MSOA, parish and local authority changes are splits and merges, not ended and created pairs", () => {
+	const count = (geography: string, kinds: string) =>
+		Number(
+			all(
+				`SELECT count(*) AS n FROM area_change_event
+				WHERE geography_id = (SELECT id FROM geography WHERE slug = '${geography}')
+					AND kind IN (${kinds})`,
+			)[0]!.n,
+		);
+	const place = "'split', 'merged', 'redistributed'";
+	const unplaced = "'ended', 'created'";
+	// The 2011 to 2021 censuses split thousands of output areas and hundreds of LSOAs.
+	assert.ok(count("outputArea", "'split'") > 5000, "output area splits");
+	assert.ok(count("outputArea", "'merged'") > 500, "output area merges");
+	assert.ok(count("lsoa", "'split'") > 1000, "LSOA splits");
+	assert.ok(count("msoa", "'split'") > 50, "MSOA splits");
+	assert.ok(count("parish", "'merged'") > 10, "parish merges");
+	assert.ok(
+		count("localAuthority", "'merged'") > 10,
+		"local authority merges",
+	);
+	// What the Code History Database cannot place stays ended or created, and is small.
+	for (const geography of [
+		"outputArea",
+		"lsoa",
+		"msoa",
+		"parish",
+		"localAuthority",
+	])
+		assert.ok(
+			count(geography, unplaced) < count(geography, place) / 5 + 10,
+			`${geography} ended or created events outnumber its placed ones`,
+		);
 });
 
 test("an event's basis is the lookup unless only an extent-continuity crosswalk made it", () => {
