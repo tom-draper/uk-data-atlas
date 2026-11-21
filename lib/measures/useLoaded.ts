@@ -8,6 +8,12 @@ export type Loaded<T> =
 	| { status: "ready"; value: T }
 	| { status: "error"; error: Error };
 
+// Shared, so a caller sees the same object on every render while nothing has
+// changed and its memoised work holds. This file is not compiled by the React
+// Compiler (see the eslint comment below), so nothing else would keep it.
+const IDLE = { status: "idle" } as const;
+const LOADING = { status: "loading" } as const;
+
 /**
  * The result of `load`, read again when `key` changes. Null reads nothing.
  * Nothing is cancelled: the loads are shared, so another card may still want
@@ -48,6 +54,6 @@ export function useLoaded<T>(
 		// The key names what is loaded.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [key]);
-	if (!key) return { status: "idle" };
-	return result?.key === key ? result.state : { status: "loading" };
+	if (!key) return IDLE;
+	return result?.key === key ? result.state : LOADING;
 }

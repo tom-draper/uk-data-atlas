@@ -29,7 +29,12 @@ export function useMeasureValues(
 	const loaded = useLoaded(key, () =>
 		combined ? fetchMeasureValues(sent!) : loadMeasureValues(sent!),
 	);
-	const areasKey = !combined && areas ? areas.join(",") : null;
+	// Joining every code costs real time for a national scope, so it is done
+	// once per list rather than on every render.
+	const areasKey = useMemo(
+		() => (!combined && areas ? areas.join(",") : null),
+		[combined, areas],
+	);
 	const data = loaded.status === "ready" ? loaded.value : null;
 	const restricted = useMemo(
 		() =>
@@ -38,6 +43,12 @@ export function useMeasureValues(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[data, areasKey],
 	);
+	// The same object while the data is, so callers' memoised work holds.
+	// The React Compiler skips this file, so it is kept by hand.
+	const ready = useMemo(
+		() => ({ status: "ready" as const, data: restricted! }),
+		[restricted],
+	);
 	if (loaded.status !== "ready") return loaded;
-	return { status: "ready", data: restricted! };
+	return ready;
 }
