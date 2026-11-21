@@ -16,7 +16,13 @@ import {
 	useCardAccent,
 } from "@/lib/hooks/useCardAccent";
 import { toChartTitleCase } from "@/lib/helpers/titleCase";
-import { useObserveCard } from "@/components/ViewportGatedChart";
+import {
+	useObserveCard,
+	usePrefetchCard,
+} from "@/components/ViewportGatedChart";
+
+/** How long the pointer rests on a card before its map data is read ahead. */
+const PREFETCH_INTENT_MS = 80;
 
 interface ChartCardProps {
 	heading: ReactNode;
@@ -105,6 +111,22 @@ export function ChartCard({
 		},
 		[cardRef, observeCard],
 	);
+	// Reads ahead what the map waits on if this card is picked, once the
+	// pointer rests on it, so sweeping across the panel reads nothing.
+	const prefetch = usePrefetchCard();
+	const prefetchTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const cancelPrefetch = () => clearTimeout(prefetchTimer.current);
+	useEffect(() => cancelPrefetch, []);
+	const handleMouseEnter = () => {
+		onMouseEnter();
+		if (!prefetch || isActive) return;
+		cancelPrefetch();
+		prefetchTimer.current = setTimeout(prefetch, PREFETCH_INTENT_MS);
+	};
+	const handleMouseLeave = () => {
+		cancelPrefetch();
+		onMouseLeave();
+	};
 	const displayHeading =
 		typeof heading === "string" ? toChartTitleCase(heading) : heading;
 
@@ -124,8 +146,8 @@ export function ChartCard({
 			className={cardClass(isActive, isDark, minHeightClassName)}
 			data-active={isActive}
 			title={[title, coverage].filter(Boolean).join("\n") || undefined}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
 		>
 			<ChartLoadingBackground />
 			{background}

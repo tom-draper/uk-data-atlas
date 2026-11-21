@@ -1,12 +1,11 @@
-import { Protocol } from "pmtiles";
 import { Map as MapLibreMap, Popup, addProtocol } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { adaptMapPopup } from "@/lib/helpers/mapPopup";
 import type { MapInstance, MapPopupOptions } from "@/lib/types/mapInstance";
 import type { MapInitializationOptions } from "./options";
+import { pmtilesProtocol } from "./pmtilesProtocol";
 
-const protocol = new Protocol();
-addProtocol("pmtiles", protocol.tile);
+addProtocol("pmtiles", pmtilesProtocol.tile);
 
 export function createMapLibreMap(
 	container: HTMLElement,
