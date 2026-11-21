@@ -20,9 +20,10 @@ import { selectIdentityCrosswalks } from "../storage/areaChangeEvents.ts";
  * code. An event with one area on each side keeps the area when it is a
  * rename, a recode, or a redrawing that an extent-continuity crosswalk
  * realigned; every other event leaves no same area, as the retired resolver
- * did not name one. An extent-continuity crosswalk's realigned areas are then
- * applied on top, so a ward the crosswalk lists as realigned still succeeds
- * itself where an official lookup's slivers made the event a split.
+ * did not name one. An extent-continuity crosswalk's realigned areas, and its
+ * areas that kept their extent under a new code, are then applied on top, so a
+ * ward the crosswalk succeeds still succeeds itself where an official lookup's
+ * slivers made the event a split or a redistribution.
  */
 
 /** What one release pair says of an area: its successor, or none. */
@@ -140,13 +141,13 @@ function readEvents(
 	}
 	// The events use one crosswalk per release pair, the official lookup where
 	// there is one, so a ward that an extent-continuity crosswalk lists as
-	// realigned may sit in a split or redistribution that a lookup's slivers
-	// made. The ward still succeeds itself, as the resolver's `successorArea`
+	// realigned, or recoded with its extent kept, may sit in a split or
+	// redistribution that a lookup's slivers made. The ward still succeeds itself, as the resolver's `successorArea`
 	// holds: the realigned successor stands where the event names none, and
 	// confirms the one it names.
 	for (const row of database
 		.prepare(
-			`SELECT fr.release AS from_release, tr.release AS to_release, c.validation
+			`SELECT c.id, fr.release AS from_release, tr.release AS to_release, c.validation
 			FROM crosswalk c
 			JOIN area_release fr ON fr.id = c.from_release_id
 			JOIN area_release tr ON tr.id = c.to_release_id
@@ -164,14 +165,29 @@ function readEvents(
 				};
 			}
 		).continuity?.realigned;
+		// The crosswalk's edges between differing codes are areas that kept their
+		// extent and took a new code: they succeed themselves as well, which an
+		// official lookup's slivers can hide inside a redistribution.
+		const recoded = database
+			.prepare(
+				`SELECT fa.code AS code, ta.code AS successor
+				FROM crosswalk_edge e
+				JOIN area_version fv ON fv.id = e.from_version_id
+				JOIN area fa ON fa.id = fv.area_id
+				JOIN area_version tv ON tv.id = e.to_version_id
+				JOIN area ta ON ta.id = tv.area_id
+				WHERE e.crosswalk_id = ? AND fa.code <> ta.code`,
+			)
+			.all(row.id) as Array<{ code: string; successor: string }>;
+		const successions = [...(realigned ?? []), ...recoded];
 		const sources = new Map<string, number>();
 		const successors = new Map<string, number>();
-		for (const { code, successor } of realigned ?? []) {
+		for (const { code, successor } of successions) {
 			sources.set(code, (sources.get(code) ?? 0) + 1);
 			successors.set(successor, (successors.get(successor) ?? 0) + 1);
 		}
 		const [from, to] = pair.split(">") as [string, string];
-		for (const { code, successor } of realigned ?? []) {
+		for (const { code, successor } of successions) {
 			if (sources.get(code) !== 1 || successors.get(successor) !== 1)
 				continue;
 			const settle = (
