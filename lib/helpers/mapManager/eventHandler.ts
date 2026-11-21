@@ -8,10 +8,13 @@ import {
 	boundaryYearForCodeKey,
 	nameKeyForCodeKey,
 } from "@/lib/data/boundaries/catalog";
-import { OUTSIDE_DATASET_STATE } from "./boundaryLayers";
+import { OUTSIDE_DATASET_STATE, type BoundaryLayerIds } from "./boundaryLayers";
 
-const SOURCE_ID = "location-wards";
-const FILL_LAYER_ID = "wards-fill";
+const DEFAULT_IDS: BoundaryLayerIds = {
+	source: "location-wards",
+	fill: "wards-fill",
+	line: "wards-line",
+};
 
 type MapMouseEventType = MapMouseEvent;
 
@@ -82,11 +85,16 @@ export class EventHandler {
 	private _clickHandler: (
 		e: MapMouseEventType & { features?: MapFeature[] },
 	) => void;
-	private handlersAttached = false;
+	/** The fill layer the handlers are bound to, while they are. */
+	private boundFill: string | null = null;
+	/** The source holding the feature last marked as hovered. */
+	private hoveredSource: string | null = null;
 
 	constructor(
 		private map: MapInstance,
 		private callbacks: MapManagerCallbacks,
+		/** The boundary layers drawn now, which change with the release. */
+		private layerIds: () => BoundaryLayerIds = () => DEFAULT_IDS,
 	) {
 		this.canvas = this.map.getCanvas();
 		const { handler, cancel } = rafThrottle(
@@ -101,8 +109,9 @@ export class EventHandler {
 	}
 
 	setupEventHandlers(data: Record<string, unknown>, codeProp: string): void {
+		const fill = this.layerIds().fill;
 		const handlersAreCurrent =
-			this.handlersAttached &&
+			this.boundFill === fill &&
 			this.currentData === data &&
 			this.currentCodeProp === codeProp;
 		this.currentData = data;
@@ -115,16 +124,12 @@ export class EventHandler {
 
 		this.map.on(
 			"mousemove",
-			FILL_LAYER_ID,
+			fill,
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
-		this.map.on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
-		this.map.on(
-			"click",
-			FILL_LAYER_ID,
-			this._clickHandler as MapLayerMouseHandler,
-		);
-		this.handlersAttached = true;
+		this.map.on("mouseleave", fill, this._mouseLeaveHandler);
+		this.map.on("click", fill, this._clickHandler as MapLayerMouseHandler);
+		this.boundFill = fill;
 	}
 
 	// The catalogue pairs each code property with its name property and
@@ -211,29 +216,35 @@ export class EventHandler {
 		this.callbacks.onAreaClick?.(area);
 	}
 
-	private sourceLayer() {
-		return this.map.getSource(SOURCE_ID)?.type === "vector"
-			? { sourceLayer: "boundaries" }
-			: {};
+	private feature(source: string, id: string | number) {
+		return this.map.getSource(source)?.type === "vector"
+			? { source, sourceLayer: "boundaries", id }
+			: { source, id };
+	}
+
+	/**
+	 * Clears the hover mark, on the source that holds it: the release may
+	 * have changed since, and its source with it.
+	 */
+	private unhover(): void {
+		const source = this.hoveredSource;
+		const id = this.lastHoveredFeatureId;
+		this.lastHoveredFeatureId = null;
+		this.hoveredSource = null;
+		if (source === null || id === null || !this.map.getSource(source))
+			return;
+		this.map.setFeatureState(this.feature(source, id), { hover: false });
 	}
 
 	private setHoveredFeature(featureId: string | number): void {
-		if (!this.map.getSource(SOURCE_ID)) return;
-		if (this.lastHoveredFeatureId !== null) {
-			this.map.setFeatureState(
-				{
-					source: SOURCE_ID,
-					...this.sourceLayer(),
-					id: this.lastHoveredFeatureId,
-				},
-				{ hover: false },
-			);
-		}
-		this.map.setFeatureState(
-			{ source: SOURCE_ID, ...this.sourceLayer(), id: featureId },
-			{ hover: true },
-		);
+		const source = this.layerIds().source;
+		if (!this.map.getSource(source)) return;
+		this.unhover();
+		this.map.setFeatureState(this.feature(source, featureId), {
+			hover: true,
+		});
 		this.lastHoveredFeatureId = featureId;
+		this.hoveredSource = source;
 	}
 
 	private handleMouseLeave(): void {
@@ -241,37 +252,23 @@ export class EventHandler {
 			this.canvas.style.cursor = "";
 			return;
 		}
-		if (this.lastHoveredFeatureId !== null) {
-			if (this.map.getSource(SOURCE_ID)) {
-				this.map.setFeatureState(
-					{
-						source: SOURCE_ID,
-						...this.sourceLayer(),
-						id: this.lastHoveredFeatureId,
-					},
-					{ hover: false },
-				);
-			}
-			this.lastHoveredFeatureId = null;
-		}
+		this.unhover();
 		this.canvas.style.cursor = "";
 		this.callbacks.onAreaHover?.(null);
 	}
 
 	private removeHandlers(): void {
+		const fill = this.boundFill;
+		if (fill === null) return;
 		// Use the bound handlers for off
 		this.map.off(
 			"mousemove",
-			FILL_LAYER_ID,
+			fill,
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
-		this.map.off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
-		this.map.off(
-			"click",
-			FILL_LAYER_ID,
-			this._clickHandler as MapLayerMouseHandler,
-		);
-		this.handlersAttached = false;
+		this.map.off("mouseleave", fill, this._mouseLeaveHandler);
+		this.map.off("click", fill, this._clickHandler as MapLayerMouseHandler);
+		this.boundFill = null;
 	}
 
 	clearAreaLock(): void {
@@ -282,19 +279,9 @@ export class EventHandler {
 	destroy(): void {
 		this._cancelMouseMove();
 		this.removeHandlers();
-		if (this.lastHoveredFeatureId !== null) {
-			try {
-				this.map.setFeatureState(
-					{
-						source: SOURCE_ID,
-						...this.sourceLayer(),
-						id: this.lastHoveredFeatureId,
-					},
-					{ hover: false },
-				);
-			} catch {}
-			this.lastHoveredFeatureId = null;
-		}
+		try {
+			this.unhover();
+		} catch {}
 		this._mouseMoveHandler = () => {};
 		this._mouseLeaveHandler = () => {};
 		this._clickHandler = () => {};

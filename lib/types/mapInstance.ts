@@ -10,6 +10,7 @@ export type MapEngine = Pick<
 	| "getLayer"
 	| "getSource"
 	| "getZoom"
+	| "isSourceLoaded"
 	| "isStyleLoaded"
 	| "off"
 	| "on"

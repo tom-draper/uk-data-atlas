@@ -419,6 +419,52 @@ describe("LayerManager boundary values", () => {
 		});
 	});
 
+	it("keeps the old release drawn until the new release's tiles load", () => {
+		vi.stubGlobal("window", {
+			location: { href: "http://localhost:3000/atlas" },
+		});
+		const map = createMap();
+		let onData: ((event: unknown) => void) | undefined;
+		map.on.mockImplementation((event: string, handler: unknown) => {
+			if (event === "sourcedata")
+				onData = handler as (event: unknown) => void;
+		});
+		let loaded = false;
+		(map as any).isSourceLoaded = () => loaded;
+		const addLayer = vi.spyOn(map, "addLayer");
+		const removeSource = vi.spyOn(map, "removeSource");
+		const manager = new LayerManager(map as any);
+		const tiles = (href: string) => ({
+			href,
+			minZoom: 0,
+			maxZoom: 12,
+			codeKey: "WD26CD" as any,
+			ids: new Map([["E001", 1]]),
+		});
+		const data = collection({ 0: 10 });
+		data.features[0].properties = { WD26CD: "E001", value: 10 };
+		data.features[0].geometry = null;
+		const paint = valuePaint(["get", "value"]);
+
+		manager.setBoundaryTiles(tiles("/a.pmtiles"));
+		manager.paintBoundaries(data, paint, visibility);
+		manager.setBoundaryTiles(tiles("/b.pmtiles"));
+		manager.paintBoundaries({ ...data }, paint, visibility);
+
+		expect(removeSource).not.toHaveBeenCalled();
+		expect(manager.boundaryLayerIds().source).toBe("location-wards-next");
+		expect(addLayer.mock.calls.at(-2)).toEqual([
+			expect.objectContaining({ id: "wards-fill-next" }),
+			"wards-fill",
+		]);
+
+		onData?.({ sourceId: "location-wards-next" });
+		loaded = true;
+		onData?.({ sourceId: "location-wards-next", tile: {} });
+		expect(removeSource).toHaveBeenCalledWith("location-wards");
+		expect(map.sources.has("location-wards-next")).toBe(true);
+	});
+
 	it("sets new values on the same boundaries as feature state", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);

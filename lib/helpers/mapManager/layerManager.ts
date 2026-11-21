@@ -5,7 +5,10 @@ import type { MapInstance } from "@/lib/types/mapInstance";
 import type { MapLayer } from "./layers";
 import type { FillPaintConfig } from "./expressions";
 import { valuePaint } from "../mapRendering/fillPaint";
-import { BoundaryLayerController } from "./boundaryLayers";
+import {
+	BoundaryLayerController,
+	type BoundaryLayerIds,
+} from "./boundaryLayers";
 import { LineLayerController } from "./lineLayers";
 import { PointLayerController } from "./pointLayers";
 
@@ -49,6 +52,11 @@ export class LayerManager {
 				this.lines.updateVector(layer);
 				return;
 		}
+	}
+
+	/** The ids of the boundary layers drawn now. */
+	boundaryLayerIds(): BoundaryLayerIds {
+		return this.boundaries.ids;
 	}
 
 	setBoundaryTiles(tiles: BoundaryTiles | null): void {
