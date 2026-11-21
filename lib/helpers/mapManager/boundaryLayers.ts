@@ -16,9 +16,27 @@ import {
 	type PaintValue,
 } from "./expressions";
 
-const SOURCE_ID = "location-wards";
-const FILL_LAYER_ID = "wards-fill";
-const LINE_LAYER_ID = "wards-line";
+export type BoundaryLayerIds = {
+	source: string;
+	fill: string;
+	line: string;
+};
+
+/**
+ * Two sets of ids, so a new boundary release can load under one while the
+ * old release stays drawn under the other.
+ */
+const LAYER_IDS: readonly [BoundaryLayerIds, BoundaryLayerIds] = [
+	{ source: "location-wards", fill: "wards-fill", line: "wards-line" },
+	{
+		source: "location-wards-next",
+		fill: "wards-fill-next",
+		line: "wards-line-next",
+	},
+];
+
+/** Longest an old release stays drawn while the new one's tiles load. */
+const RETIRE_AFTER_MS = 5000;
 /**
  * Feature state marking an area the source still holds but the dataset being
  * drawn leaves out. Exported so hover and click can ignore those areas too.
@@ -84,6 +102,20 @@ const geometryById = (
  */
 export class BoundaryLayerController {
 	private tiles: BoundaryTiles | null = null;
+	private slot: 0 | 1 = 0;
+	/** The ids of the release drawn now, which hover and click follow. */
+	get ids(): BoundaryLayerIds {
+		return LAYER_IDS[this.slot];
+	}
+	/**
+	 * The previous release, kept drawn above the new one until the new one's
+	 * tiles have loaded, so a change of release never shows a bare basemap.
+	 */
+	private retiring: {
+		ids: BoundaryLayerIds;
+		drop: () => void;
+		watched: boolean;
+	} | null = null;
 	private sourceTiles: BoundaryTiles | null = null;
 
 	setTiles(tiles: BoundaryTiles | null): void {
@@ -141,18 +173,29 @@ export class BoundaryLayerController {
 		}
 		this.deferredPaint = null;
 
-		if (this.sourceTiles?.href !== this.tiles?.href)
-			this.removeExistingLayers();
+		if (this.sourceTiles?.href !== this.tiles?.href) {
+			if (
+				this.sourceTiles &&
+				this.tiles &&
+				this.map.getLayer(this.ids.fill) &&
+				this.map.getLayer(this.ids.line)
+			)
+				this.retireLayers();
+			else {
+				this.retiring?.drop();
+				this.removeExistingLayers();
+			}
+		}
 
-		const sourceExists = !!this.map.getSource(SOURCE_ID);
-		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
-		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
+		const sourceExists = !!this.map.getSource(this.ids.source);
+		const fillLayerExists = !!this.map.getLayer(this.ids.fill);
+		const lineLayerExists = !!this.map.getLayer(this.ids.line);
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			if (this.drawnGeojson !== geojson) {
 				if (!this.tiles && !this.sourceHolds(geojson)) {
-					(this.map.getSource(SOURCE_ID) as GeoJSONSource).setData(
-						asMapData(geojson),
-					);
+					(
+						this.map.getSource(this.ids.source) as GeoJSONSource
+					).setData(asMapData(geojson));
 					this.uploaded(geojson);
 				}
 				this.drawnGeojson = geojson;
@@ -164,26 +207,36 @@ export class BoundaryLayerController {
 
 		this.removeExistingLayers();
 		this.addSource(geojson);
+		// Under the release being retired, which is removed once this one has
+		// loaded, so the switch shows no gap.
+		const below = this.retiring?.ids.fill;
+		if (this.retiring) this.awaitRetirement(this.ids.source);
 		this.uploaded(geojson);
 		this.drawnGeojson = geojson;
-		this.map.addLayer({
-			id: FILL_LAYER_ID,
-			type: "fill",
-			source: SOURCE_ID,
-			...(this.tiles ? { "source-layer": "boundaries" } : {}),
-			paint: { "fill-color": DEFAULT_COLOR, "fill-opacity": 0 },
-		});
-		this.map.addLayer({
-			id: LINE_LAYER_ID,
-			type: "line",
-			source: SOURCE_ID,
-			...(this.tiles ? { "source-layer": "boundaries" } : {}),
-			paint: {
-				"line-color": "#000",
-				"line-width": 1,
-				"line-opacity": 0,
+		this.map.addLayer(
+			{
+				id: this.ids.fill,
+				type: "fill",
+				source: this.ids.source,
+				...(this.tiles ? { "source-layer": "boundaries" } : {}),
+				paint: { "fill-color": DEFAULT_COLOR, "fill-opacity": 0 },
 			},
-		});
+			below,
+		);
+		this.map.addLayer(
+			{
+				id: this.ids.line,
+				type: "line",
+				source: this.ids.source,
+				...(this.tiles ? { "source-layer": "boundaries" } : {}),
+				paint: {
+					"line-color": "#000",
+					"line-width": 1,
+					"line-opacity": 0,
+				},
+			},
+			below,
+		);
 		this.applyVisibility(visibility);
 	}
 
@@ -193,21 +246,22 @@ export class BoundaryLayerController {
 	}
 
 	clear(): void {
+		this.retiring?.drop();
 		if (this.sourceTiles) {
 			this.removeExistingLayers();
 			return;
 		}
 		this.forgetSource();
-		const source = this.map.getSource(SOURCE_ID) as
+		const source = this.map.getSource(this.ids.source) as
 			GeoJSONSource | undefined;
 		if (source) source.setData(emptyFeatureCollection());
 	}
 
 	setBorderVisibility(hidden: boolean): void {
 		if (!styleIsReady(this.map)) return;
-		if (this.map.getLayer(LINE_LAYER_ID)) {
+		if (this.map.getLayer(this.ids.line)) {
 			this.map.setPaintProperty(
-				LINE_LAYER_ID,
+				this.ids.line,
 				"line-opacity",
 				hidden ? 0 : this.shownOnly(BORDER_OPACITY),
 			);
@@ -225,8 +279,8 @@ export class BoundaryLayerController {
 	private applyVisibility(visibility: MapOptions["visibility"]): void {
 		if (!this.lastFillPaint) return;
 		if (
-			!this.map.getLayer(FILL_LAYER_ID) ||
-			!this.map.getLayer(LINE_LAYER_ID)
+			!this.map.getLayer(this.ids.fill) ||
+			!this.map.getLayer(this.ids.line)
 		)
 			return;
 
@@ -248,15 +302,15 @@ export class BoundaryLayerController {
 						: this.lastFillPaint.opacity(overlayOpacity),
 				);
 
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
+		this.map.setPaintProperty(this.ids.fill, "fill-color", fillColor);
+		this.map.setPaintProperty(this.ids.fill, "fill-opacity", fillOpacity);
 		this.map.setPaintProperty(
-			LINE_LAYER_ID,
+			this.ids.line,
 			"line-color",
 			hidden ? "transparent" : "#000",
 		);
 		this.map.setPaintProperty(
-			LINE_LAYER_ID,
+			this.ids.line,
 			"line-opacity",
 			hidden || visibility.hideBorders
 				? 0
@@ -365,7 +419,7 @@ export class BoundaryLayerController {
 		this.featureStates.set(id, { ...known, ...state });
 		this.map.setFeatureState(
 			{
-				source: SOURCE_ID,
+				source: this.ids.source,
 				id,
 				...(this.tiles ? { sourceLayer: "boundaries" } : {}),
 			},
@@ -382,20 +436,68 @@ export class BoundaryLayerController {
 		) as PaintValue<number>;
 	}
 
+	/**
+	 * Keeps the drawn release on screen and moves to the other ids, where the
+	 * new release is added. Any release still being retired goes now.
+	 */
+	private retireLayers(): void {
+		this.retiring?.drop();
+		const ids = this.ids;
+		const drop = () => {
+			if (this.retiring?.ids !== ids) return;
+			this.retiring = null;
+			this.removeLayers(ids);
+		};
+		this.retiring = { ids, drop, watched: false };
+		this.forgetSource();
+		this.slot = this.slot === 0 ? 1 : 0;
+	}
+
+	/** Drops the retiring release once `source` has loaded its tiles. */
+	private awaitRetirement(source: string): void {
+		const retiring = this.retiring;
+		if (!retiring || retiring.watched) return;
+		retiring.watched = true;
+		const onData = (event: { sourceId?: string; tile?: unknown }) => {
+			// Every tile in view has loaded. Checked on tile events only, since
+			// a source with no tiles requested yet also counts as loaded.
+			if (
+				event.sourceId === source &&
+				event.tile &&
+				this.map.isSourceLoaded(source)
+			)
+				retiring.drop();
+		};
+		const timer = setTimeout(() => retiring.drop(), RETIRE_AFTER_MS);
+		const drop = retiring.drop;
+		retiring.drop = () => {
+			this.map.off("sourcedata", onData);
+			clearTimeout(timer);
+			drop();
+		};
+		this.map.on("sourcedata", onData);
+	}
+
+	private removeLayers(ids: BoundaryLayerIds): void {
+		if (this.map.getLayer(ids.fill)) this.map.removeLayer(ids.fill);
+		if (this.map.getLayer(ids.line)) this.map.removeLayer(ids.line);
+		if (this.map.getSource(ids.source)) this.map.removeSource(ids.source);
+	}
+
 	private removeExistingLayers(): void {
 		this.forgetSource();
-		if (!this.map.getSource(SOURCE_ID)) return;
-		if (this.map.getLayer(FILL_LAYER_ID))
-			this.map.removeLayer(FILL_LAYER_ID);
-		if (this.map.getLayer(LINE_LAYER_ID))
-			this.map.removeLayer(LINE_LAYER_ID);
-		this.map.removeSource(SOURCE_ID);
+		if (!this.map.getSource(this.ids.source)) return;
+		if (this.map.getLayer(this.ids.fill))
+			this.map.removeLayer(this.ids.fill);
+		if (this.map.getLayer(this.ids.line))
+			this.map.removeLayer(this.ids.line);
+		this.map.removeSource(this.ids.source);
 	}
 
 	private addSource(geojson: BoundaryGeojson): void {
 		if (this.tiles) {
 			this.sourceTiles = this.tiles;
-			this.map.addSource(SOURCE_ID, {
+			this.map.addSource(this.ids.source, {
 				type: "vector",
 				url: pmtilesURL(this.tiles.href, window.location.href),
 				minzoom: this.tiles.minZoom,
@@ -403,7 +505,7 @@ export class BoundaryLayerController {
 			});
 			return;
 		}
-		this.map.addSource(SOURCE_ID, {
+		this.map.addSource(this.ids.source, {
 			type: "geojson",
 			data: asMapData(geojson),
 		});

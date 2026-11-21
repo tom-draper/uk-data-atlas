@@ -55,7 +55,7 @@ describe("EventHandler", () => {
 		handler.setupEventHandlers(data, "LAD24CD");
 
 		expect(map.on).toHaveBeenCalledTimes(3);
-		expect(map.off).toHaveBeenCalledTimes(3);
+		expect(map.off).not.toHaveBeenCalled();
 	});
 
 	it("reattaches handlers when the boundary code property changes", () => {
@@ -69,7 +69,56 @@ describe("EventHandler", () => {
 		handler.setupEventHandlers(data, "WD24CD");
 
 		expect(map.on).toHaveBeenCalledTimes(6);
-		expect(map.off).toHaveBeenCalledTimes(6);
+		expect(map.off).toHaveBeenCalledTimes(3);
+	});
+
+	it("follows the boundary layers to a new release", () => {
+		const map = createMap();
+		map.getSource.mockReturnValue({ type: "vector" });
+		let ids = {
+			source: "location-wards",
+			fill: "wards-fill",
+			line: "wards-line",
+		};
+		const handler = new EventHandler(
+			map as any,
+			{ onLocationChange: () => {} },
+			() => ids,
+		);
+		const data = { E001: { value: 10 } };
+		handler.setupEventHandlers(data, "WD24CD");
+		const click = map.on.mock.calls.find(
+			([event]) => event === "click",
+		)?.[2] as (event: unknown) => void;
+		click({ features: [{ id: 1, properties: { code: "E001" } }] });
+
+		ids = {
+			source: "location-wards-next",
+			fill: "wards-fill-next",
+			line: "wards-line-next",
+		};
+		handler.setupEventHandlers(data, "WD24CD");
+		expect(map.off).toHaveBeenCalledWith(
+			"click",
+			"wards-fill",
+			expect.any(Function),
+		);
+		expect(map.on).toHaveBeenLastCalledWith(
+			"click",
+			"wards-fill-next",
+			expect.any(Function),
+		);
+		click({ features: [{ id: 2, properties: { code: "E001" } }] });
+		click({ features: [{ id: 3, properties: { code: "E001" } }] });
+		// The old release's mark is cleared on its own source.
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards", sourceLayer: "boundaries", id: 1 },
+			{ hover: false },
+		);
+		expect(map.setFeatureState).toHaveBeenCalledWith(
+			{ source: "location-wards-next", sourceLayer: "boundaries", id: 3 },
+			{ hover: true },
+		);
 	});
 
 	it("switches the locked area on click and releases it on a second click", () => {
