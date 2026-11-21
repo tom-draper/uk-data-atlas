@@ -45,3 +45,12 @@ describe("greenhouse gas emissions card", () => {
 		expect(sector?.secondary).toBe("5.3 t per person");
 	});
 });
+
+describe("declared ghg emissions card identity", () => {
+	// The value card caches per-authority totals against the card's functions,
+	// so the same measure must give the same card on every render.
+	it("returns one card per measure", () => {
+		expect(cardFor("waste")).toBe(cardFor("waste"));
+		expect(cardFor("waste")).not.toBe(cardFor("transport"));
+	});
+});
