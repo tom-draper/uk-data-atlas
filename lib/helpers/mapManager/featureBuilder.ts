@@ -90,6 +90,38 @@ export class FeatureBuilder {
 		});
 	}
 
+	/**
+	 * The values of features drawn from boundary tiles. The tiles hold the
+	 * geometry and the map only reads each feature's code and value, as state,
+	 * so each feature carries just those two rather than a copy of every
+	 * property: a national LSOA scope has ~35k of them to rebuild per switch.
+	 */
+	buildTileValueFeatures(
+		features: Features,
+		codeProp: PropertyKeys,
+		codeKey: PropertyKeys,
+		valueFor: (code: string, feature: Feature) => number | null | undefined,
+	): Features {
+		const out = new Array(features.length) as Features;
+		for (let i = 0; i < features.length; i++) {
+			const feature = features[i];
+			const value = valueFor(
+				getFeatureProp(feature.properties, codeProp) ?? "",
+				feature,
+			);
+			out[i] = {
+				type: "Feature",
+				id: feature.id,
+				geometry: feature.geometry,
+				properties: {
+					[codeKey]: getFeatureProp(feature.properties, codeKey),
+					value: Number.isFinite(value) ? value : null,
+				},
+			} as unknown as Feature;
+		}
+		return out;
+	}
+
 	getFeatureAreaSqKm(feature: Feature): number {
 		return featureAreaSqKm(feature);
 	}
