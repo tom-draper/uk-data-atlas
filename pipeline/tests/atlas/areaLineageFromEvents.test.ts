@@ -89,3 +89,32 @@ test("a realigned area still succeeds itself where an official lookup adds a sli
 	// The sliver names no same area of its own.
 	assert.equal(followLineage(ward, "C", "2021", "2020"), undefined);
 });
+
+test("an area that kept its extent under a new code still succeeds itself inside a lookup's redistribution", () => {
+	const { db, v } = fixture();
+	// The lookup ties B and C to B2 and C together, so the event is a redistribution.
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'lookup', 'official-lookup', NULL, 1, 2, NULL)",
+	).run();
+	edge(db, 1, v("2020", "B"), v("2021", "B2"));
+	edge(db, 1, v("2020", "B"), v("2021", "C"));
+	edge(db, 1, v("2020", "C"), v("2021", "C"));
+	// The continuity crosswalk of the same pair knows B kept its extent as B2.
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (2, 'continuity', 'extent-continuity', 'identity', 1, 2, ?)",
+	).run(JSON.stringify({ continuity: {} }));
+	edge(db, 2, v("2020", "B"), v("2021", "B2"));
+	writeAreaChangeEvents(db);
+	assert.equal(
+		db
+			.prepare(
+				"SELECT kind FROM area_change_event WHERE kind = 'redistributed'",
+			)
+			.all().length,
+		1,
+	);
+	const ward = compileLineagesFromEvents(db, vintages).ward!;
+	assert.equal(followLineage(ward, "B", "2020", "2021"), "B2");
+	assert.equal(followLineage(ward, "B2", "2021", "2020"), "B");
+	assert.equal(isRealigned(ward, "B", "2020", "2021"), true);
+});
