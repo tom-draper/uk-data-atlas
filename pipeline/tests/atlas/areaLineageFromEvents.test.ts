@@ -63,3 +63,29 @@ test("an area that changed extent unclaimed, or ended, has no same area", () => 
 	// E was created in 2022.
 	assert.equal(followLineage(ward, "E", "2022", "2021"), undefined);
 });
+
+test("a realigned area still succeeds itself where an official lookup adds a sliver", () => {
+	const { db, v } = fixture();
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (1, 'continuity', 'extent-continuity', 'identity', 1, 2, ?)",
+	).run(
+		JSON.stringify({
+			continuity: { realigned: [{ code: "B", successor: "B2" }] },
+		}),
+	);
+	edge(db, 1, v("2020", "A"), v("2021", "A"));
+	// The official lookup for the same pair wins, and sends a sliver of B to C.
+	db.prepare(
+		"INSERT INTO crosswalk VALUES (2, 'lookup', 'official-lookup', NULL, 1, 2, NULL)",
+	).run();
+	edge(db, 2, v("2020", "A"), v("2021", "A"));
+	edge(db, 2, v("2020", "B"), v("2021", "B2"));
+	edge(db, 2, v("2020", "B"), v("2021", "C"));
+	writeAreaChangeEvents(db);
+	const ward = compileLineagesFromEvents(db, vintages).ward!;
+	assert.equal(followLineage(ward, "B", "2020", "2021"), "B2");
+	assert.equal(followLineage(ward, "B2", "2021", "2020"), "B");
+	assert.equal(isRealigned(ward, "B", "2020", "2021"), true);
+	// The sliver names no same area of its own.
+	assert.equal(followLineage(ward, "C", "2021", "2020"), undefined);
+});
