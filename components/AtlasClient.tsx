@@ -70,7 +70,7 @@ export default function AtlasClient({
 		datasets,
 		loading: datasetsLoading,
 		errors,
-	} = useDatasets(datasetUrls, selectedLocation, activeViz.datasetType);
+	} = useDatasets(datasetUrls, selectedLocation, activeViz);
 	// Only the selected dataset's points are worth fetching, so tell the loader
 	// which visualisation is showing.
 	const roadSafety = useRoadSafetyData(
