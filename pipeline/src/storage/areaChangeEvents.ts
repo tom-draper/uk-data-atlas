@@ -223,7 +223,8 @@ function continuityLinks(
 			realigned,
 		});
 	};
-	for (const { code } of continuity.changedExtent ?? []) add(code, code, false);
+	for (const { code } of continuity.changedExtent ?? [])
+		add(code, code, false);
 	for (const { code, successor } of continuity.realigned ?? [])
 		add(code, successor, true);
 	return [...links.values()];

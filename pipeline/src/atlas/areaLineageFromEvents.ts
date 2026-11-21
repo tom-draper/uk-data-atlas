@@ -90,7 +90,10 @@ function readEvents(
 		const id = Number(row.id);
 		let event = events.get(id);
 		if (!event) {
-			const pair = pairKey(String(row.from_release), String(row.to_release));
+			const pair = pairKey(
+				String(row.from_release),
+				String(row.to_release),
+			);
 			covered.add(pair);
 			events.set(
 				id,
@@ -121,12 +124,16 @@ function readEvents(
 		for (const code of event.from)
 			hop(forward, event.pair).set(
 				code,
-				kept ? { code: event.to[0]!, realigned: event.realigned } : null,
+				kept
+					? { code: event.to[0]!, realigned: event.realigned }
+					: null,
 			);
 		for (const code of event.to)
 			hop(backward, pairKey(to, from)).set(
 				code,
-				kept ? { code: event.from[0]!, realigned: event.realigned } : null,
+				kept
+					? { code: event.from[0]!, realigned: event.realigned }
+					: null,
 			);
 	}
 	return { codes, forward, backward, covered };
@@ -213,7 +220,9 @@ export function compileLineagesFromEvents(
 	for (const geography of LINEAGE_GEOGRAPHIES) {
 		const events = readEvents(database, geography);
 		const successor = successorFrom(events);
-		const releases = [...new Set(Object.values(vintages[geography]))].sort();
+		const releases = [
+			...new Set(Object.values(vintages[geography])),
+		].sort();
 		for (const release of releases)
 			if (!events.codes.has(release))
 				throw new Error(
