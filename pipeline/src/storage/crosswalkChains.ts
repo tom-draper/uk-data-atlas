@@ -258,7 +258,10 @@ export const writeCrosswalkChains = (
 				edge.from,
 				edge.to,
 				edge.weight,
-				edge.atRisk,
+				// The converter adds the risk of each split along a route, so over
+				// several splits the sum can pass the value that arrived. A share of
+				// the weight cannot, and the bounds above already used the sum.
+				Math.min(edge.atRisk, edge.weight),
 				edge.pruned,
 				estimatedShareOf({
 					value: edge.weight,
