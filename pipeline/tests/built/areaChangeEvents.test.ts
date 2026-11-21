@@ -198,7 +198,7 @@ test("Allerdale, a 2022 ward and the 2023 splits are each one query", () => {
 	// Local authorities and LSOAs have splits from their official lookups.
 	assert.ok(
 		all(
-			"SELECT 1 FROM v_area_change WHERE kind = 'split' AND geography = 'lsoa' AND effective_date = '2021-12-01' AND side = 'from'",
+			"SELECT 1 FROM v_area_change WHERE kind = 'split' AND geography = 'lsoa' AND effective_date = '2021-03-21' AND date_basis = 'legal' AND side = 'from'",
 		).length > 800,
 	);
 });
@@ -232,6 +232,70 @@ test("a ward the Code History Database splits is a split, whose basis is the loo
 			},
 		],
 	);
+});
+
+test("an event the Code History Database dates has its legal date, and keeps the edition date", () => {
+	// Cumberland took effect on 1 April 2023, a month before the 2023-05 edition.
+	assert.deepEqual(
+		all(
+			`SELECT DISTINCT kind, effective_date, date_basis, edition_date FROM v_area_change
+			WHERE event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E07000026' AND side = 'from')`,
+		).map((row) => ({ ...row })),
+		[
+			{
+				kind: "merged",
+				effective_date: "2023-04-01",
+				date_basis: "legal",
+				edition_date: "2023-05-01",
+			},
+		],
+	);
+	// A rename or a redraw has no operative date, so it keeps its edition date.
+	assert.deepEqual(
+		all(
+			`SELECT count(*) AS n FROM area_change_event
+			WHERE kind IN ('renamed', 'redrawn') AND date_basis <> 'edition'`,
+		).map((row) => ({ ...row })),
+		[{ n: 0 }],
+	);
+});
+
+test("a legal date lies between the earlier edition and the end of the later edition's month", () => {
+	const problems = all(
+		`SELECT e.id, e.effective_date, e.edition_date, fe.edition_from AS earlier
+		FROM area_change_event e
+		JOIN area_release fr ON fr.id = e.from_release_id
+		JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
+		WHERE e.date_basis = 'legal'
+			AND (e.effective_date < fe.edition_from
+				OR e.effective_date > date(e.edition_date, 'start of month', '+1 month', '-1 day'))`,
+	);
+	assert.deepEqual(problems, []);
+	// An event with an edition basis has the edition date and nothing else.
+	assert.deepEqual(
+		all(
+			"SELECT count(*) AS n FROM area_change_event WHERE date_basis = 'edition' AND effective_date <> edition_date",
+		).map((row) => ({ ...row })),
+		[{ n: 0 }],
+	);
+});
+
+test("the Code History Database dates most events of the geographies it covers", () => {
+	const rates = Object.fromEntries(
+		all(
+			`SELECT g.slug AS geography, count(*) AS events,
+				sum(e.date_basis = 'legal') AS legal
+			FROM area_change_event e JOIN geography g ON g.id = e.geography_id
+			GROUP BY g.slug`,
+		).map((row) => [row.geography, Number(row.legal) / Number(row.events)]),
+	);
+	assert.ok(rates.ward! > 0.9, `ward ${rates.ward}`);
+	assert.ok(rates.outputArea! > 0.9, `output area ${rates.outputArea}`);
+	assert.ok(rates.parish! > 0.8, `parish ${rates.parish}`);
+	assert.ok(rates.constituency! > 0.7, `constituency ${rates.constituency}`);
+	// The database does not cover these, so they keep their edition dates.
+	assert.equal(rates.itl3, 0);
+	assert.equal(rates.scottishParliamentaryConstituency, 0);
 });
 
 test("ward changes are mostly splits, merges and redistributions, not ended and created pairs", () => {
