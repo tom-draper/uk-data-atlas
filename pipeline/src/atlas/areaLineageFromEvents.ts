@@ -19,8 +19,10 @@ import { selectIdentityCrosswalks } from "../storage/areaChangeEvents.ts";
  * that no event names was unchanged, so it is the same area under the same
  * code. An event with one area on each side keeps the area when it is a
  * rename, a recode, or a redrawing that an extent-continuity crosswalk
- * realigned; every other event leaves no same area, as `successorArea` does
- * not name one.
+ * realigned; every other event leaves no same area, as the retired resolver
+ * did not name one. An extent-continuity crosswalk's realigned areas are then
+ * applied on top, so a ward the crosswalk lists as realigned still succeeds
+ * itself where an official lookup's slivers made the event a split.
  */
 
 /** What one release pair says of an area: its successor, or none. */
@@ -135,6 +137,59 @@ function readEvents(
 					? { code: event.from[0]!, realigned: event.realigned }
 					: null,
 			);
+	}
+	// The events use one crosswalk per release pair, the official lookup where
+	// there is one, so a ward that an extent-continuity crosswalk lists as
+	// realigned may sit in a split or redistribution that a lookup's slivers
+	// made. The ward still succeeds itself, as the resolver's `successorArea`
+	// holds: the realigned successor stands where the event names none, and
+	// confirms the one it names.
+	for (const row of database
+		.prepare(
+			`SELECT fr.release AS from_release, tr.release AS to_release, c.validation
+			FROM crosswalk c
+			JOIN area_release fr ON fr.id = c.from_release_id
+			JOIN area_release tr ON tr.id = c.to_release_id
+			WHERE c.method = 'extent-continuity' AND c.purpose = 'identity'
+				AND fr.geography = ? AND tr.geography = ?
+			ORDER BY c.id`,
+		)
+		.all(geography, geography)) {
+		const pair = pairKey(String(row.from_release), String(row.to_release));
+		if (!covered.has(pair) || typeof row.validation !== "string") continue;
+		const realigned = (
+			JSON.parse(row.validation) as {
+				continuity?: {
+					realigned?: Array<{ code: string; successor: string }>;
+				};
+			}
+		).continuity?.realigned;
+		const sources = new Map<string, number>();
+		const successors = new Map<string, number>();
+		for (const { code, successor } of realigned ?? []) {
+			sources.set(code, (sources.get(code) ?? 0) + 1);
+			successors.set(successor, (successors.get(successor) ?? 0) + 1);
+		}
+		const [from, to] = pair.split(">") as [string, string];
+		for (const { code, successor } of realigned ?? []) {
+			if (sources.get(code) !== 1 || successors.get(successor) !== 1)
+				continue;
+			const settle = (
+				map: Map<string, Hop>,
+				at: string,
+				area: string,
+				other: string,
+			) => {
+				const held = hop(map, at);
+				const now = held.get(area);
+				if (now === undefined || now === null || now.code === other)
+					held.set(area, { code: other, realigned: true });
+			};
+			if (codes.get(from)?.has(code) && codes.get(to)?.has(successor)) {
+				settle(forward, pair, code, successor);
+				settle(backward, pairKey(to, from), successor, code);
+			}
+		}
 	}
 	return { codes, forward, backward, covered };
 }
