@@ -82,7 +82,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "boundary-changes",
-		body: "Start with v_area_change, which lists what happened to each area whose code, name or extent changed between two releases of one geography. Each event (area_change_event) has a kind (renamed, recoded, redrawn, split, merged, redistributed, ended or created), the two releases and an effective_date, and its areas are the members on the from side (the earlier release) and the to side. What replaced Allerdale: SELECT * FROM v_area_change WHERE event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E07000026' AND side = 'from'). The dates are edition dates (date_basis 'edition'): the change had happened by the later release's edition, not necessarily on that day, because the atlas does not hold the ONS Code History Database. Events come from the identity crosswalks, which link releases of one geography. Official lookups (local authorities 2022 to 2023 and 2024 to 2025, LSOA 2011 to 2021) show splits and merges. The other identity crosswalks (extent-continuity) only link areas whose extent did not change, so a ward or output area that was split or merged shows as ended and its successors as created, and only recodes and renames are linked: filter on kind and source before treating a missing split as no split. An area that kept its code but whose extent moved has a 'redrawn' event, and where the extent-continuity crosswalk finds the area's successor across a small realignment, the event has realigned = 1: a ward moved by a street is recoded or redrawn with realigned 1, not ended and created. Official lookups with no declared purpose between two releases of one geography (constituencies 2019 to 2024) count as identity crosswalks too. Publisher statements (area_relationship, relation 'predecessor') add events only where no crosswalk event already holds them, and have source 'publisher'. The crosswalk_edge.change flag (unchanged, split, merged or complex) exists on the LSOA 2011 to 2021 lookup only. area_relationship also holds a publisher's statements that an area sits inside another ('parent'), was published under another's code ('published-as') or has the same extent ('coterminous'); for example Cumberland E06000063 has predecessors Allerdale E07000026 and Carlisle E07000028.",
+		body: "Start with v_area_change, which lists what happened to each area whose code, name or extent changed between two releases of one geography. Each event (area_change_event) has a kind (renamed, recoded, redrawn, split, merged, redistributed, ended or created), the two releases and an effective_date, and its areas are the members on the from side (the earlier release) and the to side. What replaced Allerdale: SELECT * FROM v_area_change WHERE event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E07000026' AND side = 'from'). The dates are edition dates (date_basis 'edition'): the change had happened by the later release's edition, not necessarily on that day, because the events do not use the legal dates in the ONS Code History Database. Events come from the identity crosswalks, which link releases of one geography. Official lookups show splits, merges and redistributions: local authorities 2022 to 2023 and 2024 to 2025, LSOA 2011 to 2021, and the ONS Code History Database for wards (every consecutive pair of the ward releases that has a change, 2011 to 2026) and the 2010 to 2024 constituency lookup. Each event's basis says how it was found: 'official-lookup' for a publisher's lookup, 'extent-continuity' for the geometric comparison, which only links areas whose extent did not change. Where there is no lookup (output areas, parishes, and the ward pairs the Code History Database has no change for), a split or merge shows as ended and its successors as created: filter on basis before treating a missing split as no split. Where a ward's successors cannot be found in the lookup either, the ward stays ended or created: 88 ended and 87 created wards remain. An area that kept its code but whose extent moved has a 'redrawn' event, and where the extent-continuity crosswalk finds the area's successor across a small realignment, the event has realigned = 1: a ward moved by a street is recoded or redrawn with realigned 1, not ended and created. Official lookups with no declared purpose between two releases of one geography (constituencies 2019 to 2024) count as identity crosswalks too. Publisher statements (area_relationship, relation 'predecessor') add events only where no crosswalk event already holds them, and have source 'publisher'. The crosswalk_edge.change flag (unchanged, split, merged or complex) exists on the LSOA 2011 to 2021 lookup only. area_relationship also holds a publisher's statements that an area sits inside another ('parent'), was published under another's code ('published-as') or has the same extent ('coterminous'); for example Cumberland E06000063 has predecessors Allerdale E07000026 and Carlisle E07000028.",
 	},
 	{
 		topic: "licences",
@@ -1263,12 +1263,13 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			to_release_id: "The later boundary release (area_release.id).",
 			kind: "renamed (same code, new name), recoded (one area, new code), redrawn (same code, but the extent moved and the extent-continuity crosswalk measured it), split (one area became several), merged (several became one), redistributed (several became several, in one tangle of overlaps), ended (no area continues it) or created (no earlier area).",
 			realigned:
-				"1 when the event rests on a successor an extent-continuity crosswalk lists as realigned: the extent moved by a street but each area kept nearly all of the other, so the later area is the earlier one's successor and not a new area. 0 otherwise. A redrawn event with realigned 0 is an area whose extent moved too far to be called its own successor.",
+				"1 when the event rests on a successor an extent-continuity crosswalk lists as realigned: the extent moved by a street but each area kept nearly all of the other, so the later area is the earlier one's successor and not a new area. 0 otherwise. A redrawn event with realigned 0 is an area whose extent moved too far to be called its own successor. A split, merge or redistribution from an official lookup has realigned 1 when one of its areas is also such a successor.",
 			effective_date:
 				"The later release's edition date (ISO date, boundary_release_edition.edition_from). The change had happened by this edition.",
 			date_basis:
-				"What effective_date means. 'edition': the edition date of the later release, not the legal date of the change. The ONS Code History Database has legal dates and is not held.",
+				"What effective_date means. 'edition': the edition date of the later release, not the legal date of the change. The ONS Code History Database has legal dates, but the events do not use them yet.",
 			source: "What the event is evidenced by: 'crosswalk' (an identity crosswalk) or 'publisher' (a predecessor statement in area_relationship that no crosswalk event holds).",
+			basis: "How the change was found, which says how far to trust a split or merge. 'official-lookup': a publisher's lookup between the two releases (the local authority and LSOA lookups, and the ONS Code History Database for wards and constituencies), so a split or merge is a recorded one. 'extent-continuity': an extent-continuity crosswalk, which links only areas whose extent held, so a split or merge cannot appear and a missing one is not evidence there was none. 'clean-containment': an identity crosswalk built from containment of extents. 'publisher-statement': a predecessor statement in area_relationship. An official lookup pair that an extent-continuity crosswalk also covers keeps basis 'official-lookup' and takes the continuity crosswalk's redrawn and realigned findings.",
 			crosswalk_id:
 				"The identity crosswalk the event was read from (crosswalk.id). Null when source is 'publisher'.",
 		},
@@ -1296,6 +1297,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			effective_date: "As area_change_event.effective_date.",
 			date_basis: "As area_change_event.date_basis.",
 			source: "As area_change_event.source.",
+			basis: "As area_change_event.basis.",
 			from_release: "Slug of the earlier boundary release.",
 			to_release: "Slug of the later boundary release.",
 			side: "'from' for the earlier release, 'to' for the later.",
@@ -1855,20 +1857,32 @@ export const schemaExamples: readonly SchemaExample[] = [
 		question:
 			"What did the Alexandra ward (E05000719) in 2022 become in 2023?",
 		sql: "SELECT kind, effective_date, side, code, name FROM v_area_change WHERE geography = 'ward' AND event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E05000719' AND side = 'from' AND from_release = '2022-12-uk-bgc') ORDER BY side, code",
-		expect: "A recoded event dated 2023-05-01: E05000719 Alexandra became E05014646 Alexandra. A ward with no row was unchanged, or changed extent without a new code.",
+		expect: "One redistributed event dated 2023-05-01, basis 'official-lookup', realigned 1: the fifteen Oldham wards of 2022 (E05000719 Alexandra to E05000738 Werneth) and the fifteen of 2023 (E05014646 Alexandra and the others), 30 rows. E05000719 Alexandra became E05014646 Alexandra on the extent-continuity crosswalk, so lineage lookups follow it. A ward with no row was unchanged, or changed extent without a new code.",
 	},
 	{
 		id: "ward-redrawn",
 		question:
 			"Which wards kept their code but changed extent, and was the change a realignment of the line?",
 		sql: "SELECT code, name, from_release, to_release, effective_date, realigned FROM v_area_change WHERE geography = 'ward' AND kind = 'redrawn' AND side = 'from' ORDER BY from_release, code LIMIT 20",
-		expect: "41 wards in all, from E05004089 Canvey Island Winter Gardens in 2020-12. realigned is 1 where an extent-continuity crosswalk matched the ward to the same area after a small boundary move, and 0 where it changed extent and no successor is claimed.",
+		expect: "41 wards in all, from E05005193 Heyhouses in the 2011-12 to 2015-12 pair. realigned is 1 where an extent-continuity crosswalk matched the ward to the same area after a small boundary move, and 0 where it changed extent and no successor is claimed.",
 	},
 	{
 		id: "ward-recoded-by-realignment",
 		question: "Which wards got a new code because their line moved?",
 		sql: "SELECT f.code, f.name, t.code AS became, t.name AS became_name, f.effective_date FROM v_area_change f JOIN v_area_change t ON t.event_id = f.event_id AND t.side = 'to' WHERE f.geography = 'ward' AND f.kind = 'recoded' AND f.realigned = 1 AND f.side = 'from' ORDER BY f.effective_date, f.code LIMIT 20",
-		expect: "1,742 wards in all, from E05000012 Coleman Street, which became E05009299 Coleman Street in 2015-12. The pair was found from the extents, not from a publisher's lookup.",
+		expect: "138 wards in all, from E05003724 Castle, which became E05010750 Castle in 2015-12. The pair was found from the extents. Where a publisher's lookup puts the ward inside a redistribution, the event is a redistributed one with realigned 1 instead, so the 2023 Oldham wards are not here.",
+	},
+	{
+		id: "ward-splits-2025",
+		question: "Which wards in England split in 2025?",
+		sql: "SELECT f.code, f.name, count(*) AS parts, group_concat(t.code, ' ') AS became, f.basis FROM v_area_change f JOIN v_area_change t ON t.event_id = f.event_id AND t.side = 'to' WHERE f.geography = 'ward' AND f.kind = 'split' AND f.side = 'from' AND f.effective_date >= '2025-01-01' GROUP BY f.event_id ORDER BY f.code",
+		expect: "Two wards, both dated 2025-05-01 with basis 'official-lookup': E05008153 Church Stretton and Craven Arms became E05016036 and E05016076, and E05013142 Downley became E05015948 and E05015949.",
+	},
+	{
+		id: "ward-merges-by-year",
+		question: "How many ward merges does each year's lookup record?",
+		sql: "SELECT effective_date, count(DISTINCT event_id) AS merges FROM v_area_change WHERE geography = 'ward' AND kind = 'merged' AND basis = 'official-lookup' GROUP BY effective_date ORDER BY effective_date",
+		expect: "235 merges in nine editions, the most in 2022-12-01 (139) and 2015-12-01 (30). Only an official lookup (the ONS Code History Database for wards) can show a merge, so a ward edition with none may simply have no lookup.",
 	},
 	{
 		id: "lsoa-splits-2021",

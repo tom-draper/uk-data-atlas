@@ -109,11 +109,14 @@ test("the kind matches the members on each side", () => {
 	);
 });
 
-test("only recoded and redrawn events are realigned, and redrawn ones keep their code", () => {
+test("only events with a successor are realigned, and redrawn ones keep their code", () => {
+	// A lookup's split, merge or redistribution carries the flag when one of
+	// its areas is also a realigned succession; an area that only ended or was
+	// created, or only changed name, cannot be.
 	assert.deepEqual(
 		all(
 			`SELECT id, kind FROM area_change_event
-			WHERE realigned = 1 AND kind NOT IN ('recoded', 'redrawn') LIMIT 5`,
+			WHERE realigned = 1 AND kind IN ('renamed', 'ended', 'created') LIMIT 5`,
 		),
 		[],
 	);
@@ -185,16 +188,91 @@ test("Allerdale, a 2022 ward and the 2023 splits are each one query", () => {
 			{ code: "E06000063", side: "to" },
 		],
 	);
+	// Oldham's Alexandra ward was recoded in 2023 inside a redistribution the
+	// Code History Database records for the whole authority.
 	assert.ok(
 		all(
-			"SELECT 1 FROM v_area_change WHERE code = 'E05000719' AND side = 'from' AND kind = 'recoded'",
+			"SELECT 1 FROM v_area_change WHERE code = 'E05000719' AND side = 'from' AND kind = 'redistributed' AND basis = 'official-lookup' AND realigned = 1",
 		).length > 0,
 	);
-	// Ward crosswalks that are not official lookups cannot see a split, so
-	// there are none in 2023. Local authorities do have them.
+	// Local authorities and LSOAs have splits from their official lookups.
 	assert.ok(
 		all(
 			"SELECT 1 FROM v_area_change WHERE kind = 'split' AND geography = 'lsoa' AND effective_date = '2021-12-01' AND side = 'from'",
 		).length > 800,
+	);
+});
+
+test("a ward the Code History Database splits is a split, whose basis is the lookup", () => {
+	const split = all(
+		`SELECT code, side, basis, effective_date FROM v_area_change WHERE event_id IN
+			(SELECT event_id FROM v_area_change WHERE code = 'E05008153' AND side = 'from' AND kind = 'split')
+		ORDER BY side, code`,
+	);
+	assert.deepEqual(
+		split.map((row) => ({ ...row })),
+		[
+			{
+				code: "E05008153",
+				side: "from",
+				basis: "official-lookup",
+				effective_date: "2025-05-01",
+			},
+			{
+				code: "E05016036",
+				side: "to",
+				basis: "official-lookup",
+				effective_date: "2025-05-01",
+			},
+			{
+				code: "E05016076",
+				side: "to",
+				basis: "official-lookup",
+				effective_date: "2025-05-01",
+			},
+		],
+	);
+});
+
+test("ward changes are mostly splits, merges and redistributions, not ended and created pairs", () => {
+	const counts = Object.fromEntries(
+		all(
+			`SELECT kind, count(*) AS n FROM area_change_event
+			WHERE geography_id = (SELECT id FROM geography WHERE slug = 'ward') GROUP BY kind`,
+		).map((row) => [row.kind, Number(row.n)]),
+	);
+	assert.ok((counts.merged ?? 0) > 200, `${counts.merged} merges`);
+	assert.ok((counts.split ?? 0) > 20, `${counts.split} splits`);
+	assert.ok(
+		(counts.redistributed ?? 0) > 1000,
+		`${counts.redistributed} redistributions`,
+	);
+	// What the lookups cannot place stays ended or created, and is small.
+	assert.ok((counts.ended ?? 0) < 200, `${counts.ended} ended`);
+	assert.ok((counts.created ?? 0) < 200, `${counts.created} created`);
+});
+
+test("an event's basis is the lookup unless only an extent-continuity crosswalk made it", () => {
+	const problems = all(
+		`SELECT e.id, e.basis, c.method FROM area_change_event e
+		JOIN crosswalk c ON c.id = e.crosswalk_id
+		WHERE (c.method = 'extent-continuity' AND e.basis <> 'extent-continuity')
+			OR (c.method = 'clean-containment' AND e.basis <> 'clean-containment')
+			OR (c.method = 'official-lookup' AND e.basis NOT IN ('official-lookup', 'extent-continuity'))
+		LIMIT 5`,
+	);
+	assert.deepEqual(problems, []);
+	assert.deepEqual(
+		all(
+			"SELECT id FROM area_change_event WHERE source = 'publisher' AND basis <> 'publisher-statement' LIMIT 5",
+		),
+		[],
+	);
+	assert.deepEqual(
+		all(
+			`SELECT id FROM area_change_event WHERE kind IN ('split', 'merged', 'redistributed')
+				AND basis = 'extent-continuity' LIMIT 5`,
+		),
+		[],
 	);
 });
