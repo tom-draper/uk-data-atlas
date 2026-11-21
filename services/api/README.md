@@ -2058,9 +2058,9 @@ unchanged between neighbouring releases, and overrides for the few pairs
 further apart whose direct answer is not what those steps compose to: a lookup
 joining two releases directly, as the 2010 to 2024 constituency lookup does,
 can say an area held where a derived step in between cannot. `followLineage`
-in `packages/geography/src/areaLineage.ts` reads it, and a built test checks a
-sample of its answers against the resolver, so the map shows what the API
-would say.
+in `packages/geography/src/areaLineage.ts` reads it, and a built test checks
+its answers against the events it was compiled from, so the map shows what the
+change events say.
 
 ### 5. Retrieve data
 
@@ -3252,7 +3252,7 @@ second inventory to maintain:
 - `GET /v1/crosswalks`, List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}`, Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records`, List (optionally filtered) records for one crosswalk
-- `GET /v1/atlas-lookups/{lookup-id}.json`, Download a containment lookup the atlas reads
+- `GET /v1/atlas-lookups/{lookup-id}.json`, Download a containment or lineage lookup the atlas reads
 - `GET /v1/atlas-pages/{page-id}.json`, Download a website place profile or catalogue artifact
 - `GET /v1/translations`, Translate one code through a published conversion path in either direction
 - `GET /v1/locations`, List the curated area collections
