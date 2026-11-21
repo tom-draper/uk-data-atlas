@@ -29,6 +29,14 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-21",
+		title: "Area lineage lookup retired",
+		breaking: true,
+		changes: [
+			"`GET /v1/atlas-lookups/area-lineage.json` is no longer served. Where an area went between releases is in the change events (`area_change_event`, `v_area_change`) and the relationship routes. The other atlas lookups are unchanged.",
+		],
+	},
+	{
 		date: "2026-11-19",
 		title: "Time series on one boundary release",
 		changes: [
