@@ -23,7 +23,11 @@ import {
 import { createResolver, type Resolver } from "./pinnedRoutes.ts";
 import { conversionRules, readMeasures } from "./rules.ts";
 import { openConversionSource } from "./runConversionBacktest.ts";
-import { planStandardReleases, type PlanSkip } from "./standardPlan.ts";
+import {
+	planPopulationReleases,
+	planStandardReleases,
+	type PlanSkip,
+} from "./standardPlan.ts";
 import { areaNamer, type SeriesRow } from "./seriesValues.ts";
 import { BACKTEST_TABLES, number, percent, table } from "./storeBacktest.ts";
 import {
@@ -312,11 +316,14 @@ export const buildConvertedSeries = (
 	try {
 		const rules = conversionRules(readMeasures(database));
 		const resolver = createResolver(database);
-		const { entries, skips: planSkips } = planStandardReleases(
+		const standard = planStandardReleases(
 			database,
 			resolver,
 			new Map(rules.map((ruled) => [ruled.measure.slug, ruled])),
 		);
+		const population = planPopulationReleases(database, resolver);
+		const entries = [...standard.entries, ...population.entries];
+		const planSkips = [...standard.skips, ...population.skips];
 		const skipped = new Map<string, Skip>();
 		const addSkip = (skip: Omit<Skip, "series">, series = 1) => {
 			const key = JSON.stringify(skip);

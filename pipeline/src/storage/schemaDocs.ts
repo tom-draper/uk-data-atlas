@@ -840,7 +840,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	series_input: {
 		audience: "reference",
 		description:
-			"For a converted series, every series it was computed from and the role each played.",
+			"For a converted series, every series it was computed from and the role each played. A population total converted onto an older or newer release names each single year of age it adds up, all as value, and holds the members they share (sex=all).",
 		columns: {
 			series_id: "The converted series (series.id).",
 			input_series_id: "An input (series.id).",
