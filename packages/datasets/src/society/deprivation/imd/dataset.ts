@@ -112,6 +112,7 @@ const EDITIONS = {
 		lad: {
 			code: "Local Authority District code (2013)",
 			name: "Local Authority District name (2013)",
+			parent: "ladCode2013",
 		},
 		population: "Total population: mid 2012 (excluding prisoners)",
 		areas: 32844,
@@ -124,6 +125,7 @@ const EDITIONS = {
 		lad: {
 			code: "Local Authority District code (2024)",
 			name: "Local Authority District name (2024)",
+			parent: "ladCode",
 		},
 		population: "Total population: mid 2022",
 		areas: 33755,
@@ -156,7 +158,7 @@ const parseEdition = async (
 			code,
 			name: row[lsoa.name]?.trim() || "",
 			parents: {
-				ladCode: {
+				[lad.parent]: {
 					code: row[lad.code]?.trim() || "",
 					name: row[lad.name]?.trim() || "",
 				},
@@ -241,11 +243,19 @@ export const imd = defineDataset<IMDDataset>({
 	},
 	statistics: {
 		...base,
-		parents: (base.parents ?? []).map((parent) => ({
-			...parent,
-			// Councils of 2013 that no longer exist are found on the 2015 release.
-			alsoIn: [{ geography: "localAuthority", year: 2015 }],
-		})),
+		/**
+		 * The 2015 file names its councils as they stood in 2013, so they are
+		 * held as a parent of their own on the 2015 release. A council renamed
+		 * since (Shepway, now Folkestone and Hythe) keeps the name of its year.
+		 */
+		parents: [
+			...(base.parents ?? []),
+			{
+				code: "ladCode2013",
+				name: "ladName2013",
+				release: { geography: "localAuthority", year: 2015 },
+			},
+		],
 		payload: {
 			...base.payload,
 			parts: (labels) =>
