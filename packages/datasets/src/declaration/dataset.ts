@@ -142,7 +142,7 @@ export type IndicatorDeclaration = {
 	/** Path of the compiled record field holding the value. */
 	field: string;
 	valueKind: IndicatorValueKind;
-	/** The unit; `{areas}` stands for the records of the dataset's manifest entry. */
+	/** The unit; `{areas}` stands for the areas of the declared boundary's first period. */
 	unit: string;
 	/**
 	 * The aggregation the API offers: a plain sum over areas, or a share that
