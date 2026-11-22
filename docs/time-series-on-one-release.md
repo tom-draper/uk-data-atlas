@@ -6,8 +6,8 @@ value says how it got there.
 
 ## Target releases
 
-Only the four standard releases are offered. They are the releases the build
-converts every convertible series onto (see
+Every measure is offered on the four standard releases. They are the
+releases the build converts every convertible series onto (see
 [conversion accuracy](conversion-accuracy.md#what-the-atlas-converts)):
 
 | `on=`                           |
@@ -17,9 +17,17 @@ converts every convertible series onto (see
 | `constituency/2024-07-uk-bgc`   |
 | `lsoa/2021-12-ew-bgc-v5`        |
 
+Population is also offered on every other ward, local authority and
+constituency release (task 41), as the total of persons of all ages. The
+single years of age are not converted there, so a read of
+`population?…&on=ward/2015-12-gb-bgc` is served from the converted total,
+with the same provenance as any converted value. Which years each release
+holds is in [data gaps](data-gaps.md#3-population-on-every-release): 2011 to
+2024 on the authorities from 2023-05, and 2022 elsewhere.
+
 The list is read from the database (`convertedReleases`, the releases that
 hold a `converted` series), not hard-coded. Any other release is refused with
-a 422 that lists these four.
+a 422 that lists the releases that hold converted series.
 
 There is no on-request path. Converting at request time would mean walking
 crosswalk chains of up to seven hops and applying split weights per value. A
@@ -144,6 +152,19 @@ not as a flag.
   native unchanged, exact, weighted with its share and flags, no route,
   rebuilt rate, native-parts rate, refused split ratio, refused median, an
   absent member of a sum, and an unknown area or release.
+- `tests/server/releaseSeries.test.ts` also covers a sum converted only as its
+  total: the total fills a period whose single years have no value, carries
+  its bounds and `exactShare`, never replaces a native value, and does not
+  stand in where the parts were converted.
+- `pipeline/tests/conversion/populationPlan.test.ts` covers the coverage of
+  the plan: every release a source reaches is offered as a total split on
+  population, the standard releases and the deprivation denominators are left
+  out, a coarser source is a `better-route` skip where finer ones reach all its
+  years, and a target with no route is a `no-route` skip.
+- `pipeline/tests/conversion/convertTotal.test.ts` covers adding the single
+  years into one total before converting it, an area with a part missing
+  being a `missing-input` gap, and an official figure on the target being
+  kept and never converted over.
 - `services/api/tests/releaseSeriesRoutes.test.ts` covers the route: 200s,
   warnings, and the 400, 404 and 422 refusals.
 - `services/api/tests/built/releaseSeries.test.ts` is the golden case on the
