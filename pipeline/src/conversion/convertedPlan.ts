@@ -24,6 +24,14 @@ export type PlanEntry = {
 	 * Without it only exact regroupings are kept and a split value is a gap.
 	 */
 	estimates?: boolean;
+	/**
+	 * Add the source series the entry keeps into one series before converting
+	 * it, where every one of them holds an observed value for the area and
+	 * period. The sum keeps the members every part shares, so persons by
+	 * single year of age become persons of all ages. Only a summed measure
+	 * can be added.
+	 */
+	total?: true;
 	/** What a reader of the series must know about it. Stored beside it. */
 	note?: string;
 };
@@ -83,7 +91,7 @@ const onLatestLa = (
 });
 
 /** Persons only. The breakdown by sex triples the size for little interest. */
-const PERSONS = /(^|\/)sex=all$/;
+export const PERSONS = /(^|\/)sex=all$/;
 
 export const CONVERTED_PLAN: PlanEntry[] = [
 	onLatestLa(
