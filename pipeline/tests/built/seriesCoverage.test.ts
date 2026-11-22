@@ -174,6 +174,7 @@ test("the worked answers hold", () => {
 			   AND release = '2026-05-uk-bgc' AND members IS NULL
 			 ORDER BY period, preference_rank`),
 		[
+			{ period: "2015", method: "converted" },
 			{ period: "2019", method: "converted" },
 			{ period: "2021", method: "converted" },
 			{ period: "2022", method: "converted" },
