@@ -4921,6 +4921,90 @@
 				"nameProperty": "PCON24NM",
 				"aliasProperty": "PCON24NMW"
 			}
+		},
+		{
+			"id": "itl3-2025-01-uk-bgc-v2-to-itl2-2025-01-uk-bgc-official-lookup",
+			"input": "lookups/local-authority-to-itl/2025-01-uk/ITL125_ITL225_ITL325_LAU125_LAD25_UK_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2025-01-uk-bgc-v2",
+				"codeProperty": "ITL325CD",
+				"nameProperty": "ITL325NM"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc",
+				"codeProperty": "ITL225CD",
+				"nameProperty": "ITL225NM"
+			}
+		},
+		{
+			"id": "itl2-2025-01-uk-bgc-to-itl1-2025-01-uk-bgc-official-lookup",
+			"input": "lookups/local-authority-to-itl/2025-01-uk/ITL125_ITL225_ITL325_LAU125_LAD25_UK_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc",
+				"codeProperty": "ITL225CD",
+				"nameProperty": "ITL225NM"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc",
+				"codeProperty": "ITL125CD",
+				"nameProperty": "ITL125NM"
+			}
+		},
+		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-official-history",
+			"input": "lookups/itl-changes/itl3-2021-to-2025-uk/ITL321_ITL325_UK_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3",
+				"codeProperty": "ITL321CD",
+				"nameProperty": "ITL321NM"
+			},
+			"to": {
+				"geography": "itl3",
+				"boundaryRelease": "2025-01-uk-bgc-v2",
+				"codeProperty": "ITL325CD",
+				"nameProperty": "ITL325NM"
+			}
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-official-history",
+			"input": "lookups/itl-changes/itl2-2021-to-2025-uk/ITL221_ITL225_UK_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2",
+				"codeProperty": "ITL221CD",
+				"nameProperty": "ITL221NM"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc",
+				"codeProperty": "ITL225CD",
+				"nameProperty": "ITL225NM"
+			}
 		}
 	]
 }
