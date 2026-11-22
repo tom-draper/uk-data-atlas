@@ -286,3 +286,13 @@ population
 households
 dwellings
 postcodes
+@itl2	2021-01-uk-bgc-v2	2025-01-uk-bgc
+population
+households
+dwellings
+postcodes
+@itl3	2021-01-uk-bgc-v3	2025-01-uk-bgc-v2
+population
+households
+dwellings
+postcodes

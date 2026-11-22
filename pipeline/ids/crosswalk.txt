@@ -240,3 +240,11 @@ parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-official-history
 parish-2023-12-ew-bgc-to-2024-12-ew-bgc-official-history
 parish-2024-12-ew-bgc-to-2025-05-ew-bgc-official-history
 parish-2025-05-ew-bgc-to-2026-05-ew-bgc-official-history
+lsoa-2021-12-ew-bgc-v5-to-ward-2024-05-uk-bgc-official-lookup
+lsoa-2021-12-ew-bgc-v5-to-ward-2025-05-uk-bgc-v2-official-lookup
+lsoa-2021-12-ew-bgc-v5-to-ward-2026-05-uk-bgc-official-lookup
+lsoa-2021-12-ew-bgc-v5-to-constituency-2024-07-uk-bgc-official-lookup
+itl3-2025-01-uk-bgc-v2-to-itl2-2025-01-uk-bgc-official-lookup
+itl2-2025-01-uk-bgc-to-itl1-2025-01-uk-bgc-official-lookup
+itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-official-history
+itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-official-history
