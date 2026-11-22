@@ -110,7 +110,7 @@ const write = (config: DeclaredDataset, text: string) => {
 };
 
 const CRIMES = measure(
-	"crimes",
+	"recorded-crimes",
 	"Crimes",
 	"offences",
 	"count",
@@ -118,7 +118,7 @@ const CRIMES = measure(
 	"Recorded offences.",
 );
 const RATE = measure(
-	"rate",
+	"smoking-prevalence",
 	"Rate",
 	"percent",
 	"rate",
@@ -146,16 +146,16 @@ describe("declared statistics", () => {
 			fields: [
 				{
 					path: "headline",
-					measure: "crimes",
+					measure: "recorded-crimes",
 					members: { offence: "all" },
 					wins: true,
 				},
-				{ path: "byOffence.{offence}", measure: "crimes" },
+				{ path: "byOffence.{offence}", measure: "recorded-crimes" },
 				{
 					path: "rate",
 					lower: "interval.lower",
 					upper: "interval.upper",
-					measure: "rate",
+					measure: "smoking-prevalence",
 				},
 			],
 			payload: {
@@ -311,7 +311,7 @@ describe("declared statistics", () => {
 			topic: "labour-market",
 			name: "name",
 			measures: [CRIMES],
-			fields: [{ path: "by.{period}", measure: "crimes" }],
+			fields: [{ path: "by.{period}", measure: "recorded-crimes" }],
 			payload: {
 				parts: yearParts("example", "localAuthority", 2024, {}, [
 					"2024",
@@ -365,7 +365,7 @@ describe("declared statistics", () => {
 			name: "name",
 			measures: [CRIMES],
 			dimensions: [{ slug: "group", label: "Group" }],
-			fields: [{ path: "{group}.{group}.n", measure: "crimes" }],
+			fields: [{ path: "{group}.{group}.n", measure: "recorded-crimes" }],
 			payload: {
 				parts: yearParts("example", "localAuthority", 2024),
 				fill: (record) => {
@@ -404,7 +404,7 @@ describe("declared statistics", () => {
 			topic: "labour-market",
 			name: "name",
 			measures: [CRIMES],
-			fields: [{ path: "total", measure: "crimes" }],
+			fields: [{ path: "total", measure: "recorded-crimes" }],
 			records: [
 				{ from: "data" },
 				{
@@ -454,7 +454,7 @@ describe("declared statistics", () => {
 			topic: "labour-market",
 			name: "name",
 			measures: [CRIMES],
-			fields: [{ path: "total", measure: "crimes" }],
+			fields: [{ path: "total", measure: "recorded-crimes" }],
 			headerRelationships: [
 				{
 					field: "links",
@@ -499,7 +499,7 @@ describe("declared statistics", () => {
 			period: () => periods.date("2024-07-04"),
 			measures: [CRIMES],
 			dimensions: [{ slug: "party", label: "Party" }],
-			fields: [{ path: "votes.{party}", measure: "crimes" }],
+			fields: [{ path: "votes.{party}", measure: "recorded-crimes" }],
 			election: {
 				kind: "general",
 				date: () => "2024-07-04",
@@ -720,7 +720,7 @@ describe("declared statistics", () => {
 			topic: "labour-market",
 			name: { data: "name", regions: "regionName" },
 			measures: [CRIMES],
-			fields: [{ path: "total", measure: "crimes" }],
+			fields: [{ path: "total", measure: "recorded-crimes" }],
 			records: [
 				{ from: "data" },
 				{
@@ -780,7 +780,7 @@ describe("declared statistics", () => {
 			name: "name",
 			alsoIn: [{ geography: "localAuthority", year: 2022 }],
 			measures: [CRIMES],
-			fields: [{ path: "total", measure: "crimes" }],
+			fields: [{ path: "total", measure: "recorded-crimes" }],
 			parents: [
 				{
 					code: "regionCode",
@@ -848,12 +848,12 @@ describe("declared statistics", () => {
 				},
 			],
 			fields: [
-				{ path: "{offence}", measure: "crimes" },
+				{ path: "{offence}", measure: "recorded-crimes" },
 				{
 					path: "rates.{period}.value",
 					lower: "rates.{period}.lower",
 					upper: "rates.{period}.upper",
-					measure: "rate",
+					measure: "smoking-prevalence",
 					period: (key) => periods.financialYear(Number(key)),
 				},
 			],
@@ -882,7 +882,7 @@ describe("declared statistics", () => {
 			.map((row) => ({ ...row }));
 		expect(rows).toEqual([
 			{
-				measure: "crimes",
+				measure: "recorded-crimes",
 				members: "offence=all",
 				area_code: "E06000001",
 				area_name: "Hartlepool",
@@ -893,7 +893,7 @@ describe("declared statistics", () => {
 				upper: null,
 			},
 			{
-				measure: "crimes",
+				measure: "recorded-crimes",
 				members: "offence=theft",
 				area_code: "E06000001",
 				area_name: "Hartlepool",
@@ -904,7 +904,7 @@ describe("declared statistics", () => {
 				upper: null,
 			},
 			{
-				measure: "rate",
+				measure: "smoking-prevalence",
 				members: null,
 				area_code: "E06000001",
 				area_name: "Hartlepool",
@@ -915,7 +915,7 @@ describe("declared statistics", () => {
 				upper: 6,
 			},
 			{
-				measure: "crimes",
+				measure: "recorded-crimes",
 				members: "offence=all",
 				area_code: "E07000026",
 				area_name: "Allerdale",
@@ -926,7 +926,7 @@ describe("declared statistics", () => {
 				upper: null,
 			},
 			{
-				measure: "crimes",
+				measure: "recorded-crimes",
 				members: "offence=all",
 				area_code: "E12000001",
 				area_name: "North East region",
@@ -937,7 +937,7 @@ describe("declared statistics", () => {
 				upper: null,
 			},
 			{
-				measure: "crimes",
+				measure: "recorded-crimes",
 				members: "offence=theft",
 				area_code: "E12000001",
 				area_name: "North East region",
@@ -974,7 +974,12 @@ describe("declared statistics", () => {
 				topic: "labour-market",
 				measures: [CRIMES],
 				dimensions: [{ slug: "group", label: "Group" }],
-				fields: [{ path: "{group}.{group}.count", measure: "crimes" }],
+				fields: [
+					{
+						path: "{group}.{group}.count",
+						measure: "recorded-crimes",
+					},
+				],
 			},
 			file({
 				E06000001: {
@@ -1011,7 +1016,7 @@ describe("declared statistics", () => {
 				fields: [
 					{
 						path: "value",
-						measure: "rate",
+						measure: "smoking-prevalence",
 						status: {
 							path: "known",
 							values: { observed: true, estimated: false },
@@ -1047,7 +1052,7 @@ describe("declared statistics", () => {
 					fields: [
 						{
 							path: "value",
-							measure: "rate",
+							measure: "smoking-prevalence",
 							status: {
 								path: "known",
 								values: { observed: true },
@@ -1069,7 +1074,7 @@ describe("declared statistics", () => {
 					type: "example",
 					topic: "labour-market",
 					measures: [CRIMES],
-					fields: [{ path: "total", measure: "crimes" }],
+					fields: [{ path: "total", measure: "recorded-crimes" }],
 				},
 				file({ E06000001: { total: 1, extra: 2 } }),
 			),
@@ -1085,7 +1090,7 @@ describe("declared statistics", () => {
 					type: "example",
 					topic: "labour-market",
 					measures: [CRIMES],
-					fields: [{ path: "total", measure: "crimes" }],
+					fields: [{ path: "total", measure: "recorded-crimes" }],
 				},
 				file({ E07000026: { total: 1 } }),
 			),
@@ -1106,7 +1111,7 @@ describe("declared statistics", () => {
 				topic: "labour-market",
 				alsoIn: [{ geography: "localAuthority", year: 2024 }],
 				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
+				fields: [{ path: "total", measure: "recorded-crimes" }],
 			},
 			text,
 		);
@@ -1122,7 +1127,7 @@ describe("declared statistics", () => {
 					type: "example",
 					topic: "labour-market",
 					measures: [CRIMES],
-					fields: [{ path: "total", measure: "crimes" }],
+					fields: [{ path: "total", measure: "recorded-crimes" }],
 				},
 				text,
 			),
@@ -1143,7 +1148,7 @@ describe("declared statistics", () => {
 							members: [{ key: "total" }],
 						},
 					],
-					fields: [{ path: "{offence}", measure: "crimes" }],
+					fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 				},
 				file({ E06000001: { total: 1, theft: 2 } }),
 			),
@@ -1195,7 +1200,7 @@ describe("declared statistics", () => {
 				fields: [
 					{
 						path: "counts.{period}",
-						measure: "crimes",
+						measure: "recorded-crimes",
 						period: (index) => periods.year(2020 + Number(index)),
 					},
 				],
@@ -1226,7 +1231,7 @@ describe("declared statistics", () => {
 				fields: [
 					{
 						path: "value",
-						measure: "rate",
+						measure: "smoking-prevalence",
 						status: {
 							path: "known",
 							values: { observed: true, estimated: false },
@@ -1254,7 +1259,7 @@ describe("declared statistics", () => {
 				keys: { QHM: "E06000001" },
 				keyScheme: "nhs-ods",
 				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
+				fields: [{ path: "total", measure: "recorded-crimes" }],
 				payload: { ...payload, code: "code" },
 			};
 			const expected = JSON.parse(
@@ -1298,7 +1303,7 @@ describe("declared statistics", () => {
 				name: "name",
 				measures: [
 					measure(
-						"residents",
+						"population",
 						"Residents",
 						"people",
 						"count",
@@ -1306,7 +1311,7 @@ describe("declared statistics", () => {
 						"Residents.",
 					),
 				],
-				fields: [{ path: "total", measure: "residents" }],
+				fields: [{ path: "total", measure: "population" }],
 				payload: {
 					parts: yearParts("people", "localAuthority", 2024),
 				},
@@ -1316,7 +1321,7 @@ describe("declared statistics", () => {
 				topic: "labour-market",
 				name: "name",
 				measures: [CRIMES],
-				fields: [{ path: "total", measure: "crimes" }],
+				fields: [{ path: "total", measure: "recorded-crimes" }],
 				derived: { perResident: "Crimes over the area's residents." },
 				computed: {
 					perResident: (record, _path, { code, header, dataset }) => {

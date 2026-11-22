@@ -438,7 +438,7 @@ describe("statistics model is generic", () => {
 		fingerprint: "fixture",
 		measures: [
 			{
-				slug: "crime-count",
+				slug: "recorded-crimes",
 				label: "Crimes",
 				description: "Recorded crimes.",
 				unit: "crimes",
@@ -446,7 +446,7 @@ describe("statistics model is generic", () => {
 				aggregation: "sum",
 			},
 			{
-				slug: "most-common-crime",
+				slug: "source-winning-party",
 				label: "Most common crime",
 				description: "Crime type with the most records.",
 				unit: "category",
@@ -475,16 +475,16 @@ describe("statistics model is generic", () => {
 		],
 		series: [
 			{
-				measure: "crime-count",
+				measure: "recorded-crimes",
 				release: local,
 				members: { "crime-type": "burglary" },
 			},
 			{
-				measure: "crime-count",
+				measure: "recorded-crimes",
 				release: local,
 				members: { "crime-type": "robbery" },
 			},
-			{ measure: "most-common-crime", release: local },
+			{ measure: "source-winning-party", release: local },
 		],
 		*observations() {
 			yield { series: 0, code: "E09000002", period: "2024", value: 120 };
@@ -549,21 +549,21 @@ describe("statistics model is generic", () => {
 					.all(),
 			).toEqual([
 				{
-					measure: "crime-count",
+					measure: "recorded-crimes",
 					members: "crime-type=burglary",
 					value: 120,
 					category: null,
 					status: "observed",
 				},
 				{
-					measure: "crime-count",
+					measure: "recorded-crimes",
 					members: "crime-type=robbery",
 					value: null,
 					category: null,
 					status: "suppressed",
 				},
 				{
-					measure: "most-common-crime",
+					measure: "source-winning-party",
 					members: null,
 					value: null,
 					category: "burglary",
