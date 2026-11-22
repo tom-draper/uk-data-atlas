@@ -84,7 +84,7 @@ export function electionWinnerStatistics(
 				label: "Winning party",
 				description: "Winning party code reported by the source.",
 				unit: "party",
-				valueKind: "category",
+				statistic: "category",
 				aggregation: "none",
 			},
 		],

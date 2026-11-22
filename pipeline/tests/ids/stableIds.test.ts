@@ -468,7 +468,7 @@ const dataset = (
 			label: measure,
 			description: measure,
 			unit: "people",
-			valueKind: "count",
+			statistic: "count",
 			aggregation: "sum",
 		})),
 		dimensions: [

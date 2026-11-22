@@ -333,7 +333,7 @@ CREATE TABLE series_preference (
  * as long to read one measure on one release.
  */
 export const DEFAULT_OBSERVATION_VIEW = `
-SELECT d.slug AS dataset, m.slug AS measure, m.unit,
+SELECT d.slug AS dataset, m.slug AS measure, mu.label AS unit,
   (SELECT group_concat(dim.slug || '=' || dm.code, '; ')
    FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
    JOIN dimension_member dm ON dm.id = sm.member_id
@@ -353,6 +353,7 @@ JOIN series s ON s.id = sp.series_id
 JOIN observation o ON o.series_id = sp.series_id
 JOIN dataset d ON d.id = s.dataset_id
 JOIN measure m ON m.id = s.measure_id
+JOIN unit mu ON mu.id = m.unit_id
 JOIN area_version v ON v.id = o.area_version_id
 JOIN area a ON a.id = v.area_id
 JOIN area_release r ON r.id = s.release_id
