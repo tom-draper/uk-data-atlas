@@ -434,6 +434,12 @@ and the dataset pages do not move. The `module` field of those six datasets
 changes from `population` to `population-detail` (breaking, in the API
 changelog). It needs nothing but core.
 
+The small-area mid-year totals added since (`population-lsoa`,
+`population-data-zone-scotland` and `population-data-zone-ni`, task 41) went
+straight into `population-detail`. They hold 618,016 published values on
+47,000 small areas, too many for the light `population` module, and the
+measured table above predates them.
+
 ### `politics-sharealike`
 
 An add-on, not a home for datasets. `local-election` stays a `politics`
