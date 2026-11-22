@@ -25,7 +25,10 @@ Many measures cover England only, or England and Wales only.
 
 Sources to collect:
 
-- NRS and NISRA mid-year population estimates.
+- NRS and NISRA mid-year estimates by age and sex. Task 41 step 2 added the
+  small-area totals (`population-data-zone-scotland` and
+  `population-data-zone-ni`), so the totals are held, but not the age and
+  sex breakdown.
 - Scottish and Welsh equivalents for education, planning, homelessness,
   council tax and waste.
 - Police Scotland and PSNI recorded crime.
@@ -107,17 +110,33 @@ collection.
 
 ### 3. Population on every release
 
-Task 41 step 1 converts the mid-year estimates already held, as a total of
-persons of all ages, onto every ward, authority and constituency release. What
-it cannot reach without new data:
+Task 41 step 1 converts the mid-year estimates held, as a total of persons of
+all ages, onto every ward, authority and constituency release. Step 2 added
+three small-area sources, which feed the same conversion: the finest source
+for each nation is tried first, and an official figure always beats a
+converted one.
 
-- Ward estimates are held for 2022 only, on the 2023-12 wards, so every ward
-  and constituency release, and every authority release before 2023-05, holds
-  2022 alone. 2015 on the 2024 wards needs ward or LSOA estimates for 2015.
-- No LSOA mid-year estimates are compiled. The only LSOA population is the
-  IMD 2025 and WIMD 2019 denominators, one year each, which are not offered.
-  ONS LSOA estimates for 2011 to 2022 would give every year on every ward and
-  constituency release.
+- `population-lsoa`: ONS LSOA mid-year estimates, 2011 to 2024, England and
+  Wales (2021 LSOAs, 35,672 areas).
+- `population-data-zone-scotland`: NRS small-area estimates, 2011 to 2024, on
+  the 2022 data zones (7,392 areas).
+- `population-data-zone-ni`: NISRA small-area estimates, 2021 to 2024, on the
+  2021 data zones (3,780 areas).
+
+What is still out of reach:
+
+- LSOA estimates reach only authority releases (2023-05 onwards, every year
+  2011 to 2024). There is no LSOA to ward or LSOA to constituency crosswalk, so
+  English and Welsh wards and constituencies still hold the 2022 ward
+  estimates alone, and 2015 on the 2024 wards is still missing.
+- NI data zones reach only the 2025-05, 2025-12 and 2026-05 authority
+  releases. NI wards and constituencies get nothing, and NISRA super data
+  zones are not compiled because no release holds them.
+- Scottish data zones reach wards (2015-12 onwards), constituencies (2015-12
+  to 2024-07) and authorities (2011-12 onwards). Authority releases before
+  2017 carry a value for only 4 Scottish councils (28 to 32 from 2017).
+- The NRS and NISRA council-area files are not compiled. Their totals are
+  already in `population-uk`.
 - The authority estimates (2011 to 2024, on the 2023-12 authorities) reach
   only the authority releases from 2023-05. No crosswalk carries the April
   2023 mergers back, and a total is never split down onto smaller areas, so
@@ -129,10 +148,8 @@ it cannot reach without new data:
 - The constituency estimates (2021 and 2022, on the 2024 constituencies) have
   no route back across the 2024 review, and every authority release they
   reach is already covered by the authority estimates, so none are converted.
-- Scotland and Northern Ireland small-area estimates (NRS data zones, NISRA
-  data zones and wards) are not held, so their wards and constituencies have no
-  converted population (see
-  [section 1](#1-scotland-and-northern-ireland-across-most-topics)).
+- The new source folders must be in a published data release before other
+  checkouts can build them.
 
 ### 4. Other open roadmap items
 
@@ -148,7 +165,8 @@ it cannot reach without new data:
 
 ## Where to start
 
-1. Scotland and Northern Ireland population and census.
+1. Scotland and Northern Ireland census, and an LSOA to ward lookup so the
+   LSOA population reaches wards and constituencies.
 2. The ITL change lookup, a small file that closes the largest remaining
    ended and created block.
 3. Compile the staged census and population files.
