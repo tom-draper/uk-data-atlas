@@ -122,11 +122,12 @@ export const AGE_SEX_POPULATION = "population by age and sex";
 
 /**
  * The class of a population series, by its members, or undefined where no split
- * of it has been measured. The total has no members, and the breakdown is a
- * single year of age for one sex or for persons.
+ * of it has been measured. The total has no members, or is persons of every
+ * age added up (`sex=all`), and the breakdown is a single year of age for one
+ * sex or for persons.
  */
 export const populationClassOf = (members: string) =>
-	members === ""
+	members === "" || members === "sex=all"
 		? TOTAL_POPULATION
 		: /^age=(\d+|90-plus)\/sex=(all|male|female)$/.test(members)
 			? AGE_SEX_POPULATION
