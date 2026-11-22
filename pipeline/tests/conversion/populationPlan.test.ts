@@ -4,7 +4,13 @@ import { test } from "vitest";
 import { MAX_CHAIN_HOPS } from "../../src/conversion/chains.ts";
 import type { Resolver } from "../../src/conversion/pinnedRoutes.ts";
 import type { Hop, Route } from "../../src/conversion/routes.ts";
-import { planPopulationReleases } from "../../src/conversion/standardPlan.ts";
+import {
+	planPopulationReleases,
+	POPULATION_DATASETS,
+} from "../../src/conversion/standardPlan.ts";
+
+const rank = (dataset: string) =>
+	(POPULATION_DATASETS as readonly string[]).indexOf(dataset);
 
 const releases = new Map([
 	[1, { id: 1, geography: "ward", release: "2023-12" }],
@@ -106,6 +112,8 @@ test("every held year of population is offered every release its source reaches"
 		[
 			"population-lsoa/population@lsoa:2021-12>localAuthority:2015-12#total",
 			"population-lsoa/population@lsoa:2021-12>localAuthority:2023-12#total",
+			"population/population@ward:2023-12>localAuthority:2015-12#total",
+			"population/population@ward:2023-12>localAuthority:2023-12#total",
 			"population/population@ward:2023-12>ward:2015-12#total",
 			"population-uk/population@localAuthority:2023-12>localAuthority:2015-12#total",
 		],
@@ -131,24 +139,11 @@ test("the standard releases, other geographies and other datasets are not offere
 	assert.ok(!skips.some((skip) => skip.startsWith("imd ")));
 });
 
-test("a coarser source is skipped where finer ones already reach all its years", () => {
-	// The ward and constituency years are all reached from the LSOAs.
-	assert.ok(
-		skips.includes(
-			"population ward:2023-12 > localAuthority:2015-12 better-route",
-		),
-	);
-	assert.ok(
-		skips.includes(
-			"population-constituency constituency:2024-07 > localAuthority:2023-12 better-route",
-		),
-	);
-	// And from the wards, which LSOAs do not reach.
-	assert.ok(
-		skips.includes(
-			"population-constituency constituency:2024-07 > ward:2015-12 better-route",
-		),
-	);
+test("a coarser source is offered every target it reaches, even where finer ones reach all its years", () => {
+	// The LSOAs reach every year the ward estimates hold on the councils, but
+	// not necessarily every council, so which keeps a value is decided per
+	// area and period after conversion.
+	assert.ok(!skips.some((skip) => skip.endsWith("better-route")));
 	assert.ok(
 		skips.includes("population-lsoa lsoa:2021-12 > ward:2015-12 no-route"),
 	);
@@ -157,18 +152,16 @@ test("a coarser source is skipped where finer ones already reach all its years",
 			"population-uk localAuthority:2023-12 > ward:2015-12 no-route",
 		),
 	);
-});
-
-test("a coarser source is kept for the nations the finer ones do not hold", () => {
-	// LSOAs hold every year of England and Wales on the 2015 councils, not the
-	// Scottish councils the council estimates also hold.
 	assert.ok(
-		!skips.some((skip) =>
-			skip.startsWith(
-				"population-uk localAuthority:2023-12 > localAuthority:2015-12",
-			),
+		skips.includes(
+			"population-constituency constituency:2024-07 > ward:2015-12 no-route",
 		),
 	);
+});
+
+test("the datasets are planned finest first", () => {
+	const order = plan.entries.map((entry) => entry.source.dataset);
+	assert.deepEqual(order, [...order].sort((a, b) => rank(a) - rank(b)));
 });
 
 test("a small-area total is noted as published, not summed from ages", () => {
