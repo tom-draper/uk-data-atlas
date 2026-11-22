@@ -27,9 +27,10 @@ export type Hop = {
 	/** True where no crosswalk in the hop can split a value. */
 	exact: boolean;
 	/**
-	 * True where a crosswalk in the hop is a publisher's membership lookup,
-	 * which places each source area whole in one target although it may
-	 * straddle several, such as the ONS LSOA to ward best-fit lookups.
+	 * True where the hop has only a publisher's membership lookup, which
+	 * places each source area whole in one target although it may straddle
+	 * several, such as the ONS LSOA to ward best-fit lookups. A hop that also
+	 * has an overlap between the same releases splits by the overlap.
 	 */
 	bestFit?: boolean;
 };
@@ -105,7 +106,7 @@ export const createRouter = (database: DatabaseSync): Router => {
 			crosswalks: [...ids].sort((a, b) => a - b),
 			reversed,
 			exact: rows.every((row) => isExactMethod(row.method)),
-			bestFit: rows.some(
+			bestFit: rows.every(
 				(row) =>
 					row.method === "official-lookup" && row.purpose === "membership",
 			),
