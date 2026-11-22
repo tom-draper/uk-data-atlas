@@ -10,6 +10,7 @@ import type { businessActivity } from "../../economy/business/business-activity/
 import type { carAvailability } from "../../transport/vehicles/car-availability/dataset.ts";
 import type { childPoverty } from "../../society/poverty/child-poverty/dataset.ts";
 import type { claimantCount } from "../../economy/labour-market/claimant-count/dataset.ts";
+import type { claimantCountHistory } from "../../economy/labour-market/claimant-count-history/dataset.ts";
 import type { councilTax } from "../../housing/housing-stock/council-tax/dataset.ts";
 import type { crime } from "../../society/crime-and-justice/crime/dataset.ts";
 import type { electricVehicleChargers } from "../../transport/vehicles/electric-vehicle-chargers/dataset.ts";
@@ -69,6 +70,7 @@ export type CatalogueDataset =
 	| NonNullable<(typeof carAvailability)["payloadType"]>
 	| NonNullable<(typeof childPoverty)["payloadType"]>
 	| NonNullable<(typeof claimantCount)["payloadType"]>
+	| NonNullable<(typeof claimantCountHistory)["payloadType"]>
 	| NonNullable<(typeof councilTax)["payloadType"]>
 	| NonNullable<(typeof crime)["payloadType"]>
 	| NonNullable<(typeof electricVehicleChargers)["payloadType"]>
@@ -152,6 +154,10 @@ export type DeclaredDatasetRecords = {
 	"claimant-count": Record<
 		string,
 		NonNullable<(typeof claimantCount)["payloadType"]>
+	>;
+	"claimant-count-history": Record<
+		string,
+		NonNullable<(typeof claimantCountHistory)["payloadType"]>
 	>;
 	"council-tax": Record<
 		string,

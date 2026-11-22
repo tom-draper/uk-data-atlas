@@ -15,6 +15,7 @@ export const DECLARED_SOURCES = {
 	"census-2021-ts054": { topic: "housing-stock" },
 	"child-poverty": { topic: "poverty" },
 	"claimant-count": { topic: "labour-market" },
+	"claimant-count-history": { topic: "labour-market" },
 	"council-tax": { topic: "housing-stock" },
 	crime: { topic: "crime-and-justice" },
 	"electric-vehicle-chargers": { topic: "vehicles" },
@@ -127,6 +128,10 @@ export const DECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 	["economy/earnings-and-income/income", ["income", "workplace-income"]],
 	["economy/economic-output/regional-gdp", ["regional-gdp"]],
 	["economy/labour-market/claimant-count", ["claimant-count"]],
+	[
+		"economy/labour-market/claimant-count-history",
+		["claimant-count-history"],
+	],
 	["economy/labour-market/jobs", ["jobs"]],
 	["economy/labour-market/unemployment", ["unemployment"]],
 	[

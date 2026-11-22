@@ -13,6 +13,7 @@ import { businessActivity } from "../economy/business/business-activity/dataset.
 import { carAvailability } from "../transport/vehicles/car-availability/dataset.ts";
 import { childPoverty } from "../society/poverty/child-poverty/dataset.ts";
 import { claimantCount } from "../economy/labour-market/claimant-count/dataset.ts";
+import { claimantCountHistory } from "../economy/labour-market/claimant-count-history/dataset.ts";
 import { councilTax } from "../housing/housing-stock/council-tax/dataset.ts";
 import { crime } from "../society/crime-and-justice/crime/dataset.ts";
 import { electricVehicleChargers } from "../transport/vehicles/electric-vehicle-chargers/dataset.ts";
@@ -73,6 +74,7 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	carAvailability,
 	childPoverty,
 	claimantCount,
+	claimantCountHistory,
 	councilTax,
 	crime,
 	electricVehicleChargers,

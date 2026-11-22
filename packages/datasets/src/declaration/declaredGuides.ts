@@ -66,6 +66,13 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		summary:
 			"How many people in each local authority count as claimants of Universal Credit or Jobseeker's Allowance, in total and for 16 to 24 year olds.",
 	},
+	"claimant-count-history": {
+		title: "Claimant Count (monthly history)",
+		topic: "labour-market",
+		about: "The share of working-age residents claiming unemployment-related benefits, Universal Credit or Jobseeker's Allowance, in each local authority, every month from January 2013. It is the monthly trend behind the single month the Claimant Count shows.",
+		summary:
+			"Monthly claimants of Universal Credit or Jobseeker's Allowance in each local authority, January 2013 to October 2026, as a count and as a share of residents aged 16 to 64.",
+	},
 	"council-tax": {
 		title: "Council Tax levels in England",
 		topic: "housing-stock",
