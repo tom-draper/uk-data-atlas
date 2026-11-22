@@ -15,6 +15,7 @@ import { boundsOf } from "./errorModel.ts";
 import { stepsOf, type Resolver } from "./pinnedRoutes.ts";
 import type { ConversionRule } from "./rules.ts";
 import {
+	membersOfKey,
 	periodsOfSeries,
 	publishedSeries,
 	type PeriodRow,
@@ -223,6 +224,79 @@ const periodsPublished = (
 	return published;
 };
 
+/**
+ * The periods a release publishes for a measure in any dataset. A total is
+ * official on the target if any series of the measure is published there for
+ * the period, since a published breakdown adds up to the total.
+ */
+const periodsOfMeasure = (
+	database: DatabaseSync,
+	measure: string,
+	release: number,
+) =>
+	new Set(
+		(
+			database
+				.prepare(
+					`SELECT DISTINCT o.period_id AS period
+					FROM series s
+					JOIN measure m ON m.id = s.measure_id
+					JOIN observation o ON o.series_id = s.id
+					WHERE m.slug = ? AND s.release_id = ? AND s.method = 'published'`,
+				)
+				.all(measure, release) as { period: number }[]
+		).map((row) => row.period),
+	);
+
+/**
+ * The key of the sum of series: the release they share and the members every
+ * one of them holds, so the dimension summed over is dropped.
+ */
+export const totalKey = (parts: readonly SeriesRow[]) => {
+	const [first] = parts;
+	if (!first) throw new Error("A total needs a series to add");
+	const shared = first.members
+		.split("/")
+		.filter(
+			(member) =>
+				member !== "" &&
+				parts.every((part) => part.members.split("/").includes(member)),
+		);
+	return [first.key.split("/").slice(0, 3).join("/"), ...shared].join("/");
+};
+
+/**
+ * The observed values of several series added up, by area, where every one of
+ * them holds an observed value for the area. An area any part lacks is left
+ * out, so converting it reports the targets it feeds as a missing input.
+ */
+const summedValues = (
+	database: DatabaseSync,
+	parts: readonly SeriesRow[],
+	period: number,
+) => {
+	const sums = new Map<number, { value: number; count: number }>();
+	const statement = database.prepare(
+		"SELECT area_version_id AS area, value FROM observation WHERE series_id = ? AND period_id = ? AND value IS NOT NULL AND status_id = ?",
+	);
+	for (const part of parts)
+		for (const row of statement.all(part.id, period, STATUS_OBSERVED) as {
+			area: number;
+			value: number;
+		}[]) {
+			const held = sums.get(row.area);
+			if (held) {
+				held.value += row.value;
+				held.count += 1;
+			} else sums.set(row.area, { value: row.value, count: 1 });
+		}
+	return startValues(
+		[...sums]
+			.filter(([, sum]) => sum.count === parts.length)
+			.map(([area, sum]) => [area, sum.value] as const),
+	);
+};
+
 /** Only observed values are converted. A flagged or empty one is a missing input. */
 const observedValues = (
 	database: DatabaseSync,
@@ -323,7 +397,17 @@ function* convertSources(
 			measure,
 			release: from,
 		});
-	const onTarget = periodsPublished(database, entry, to);
+	if (entry.total && rule.rule !== "sum")
+		throw new Error(`${entry.id}: only a summed measure can be added up`);
+	// A total is official on the target where any dataset publishes the
+	// measure there for the period. A series is native only where the same
+	// dataset publishes the same members.
+	const officialTotal = entry.total
+		? periodsOfMeasure(database, entry.source.measure, to)
+		: undefined;
+	const onTarget = entry.total
+		? undefined
+		: periodsPublished(database, entry, to);
 	const skip = (source: SeriesRow, reason: SkipReason) =>
 		context.skipped?.(entry, source, reason);
 	// A period the target publishes stays native there. Only the others are
@@ -331,7 +415,7 @@ function* convertSources(
 	const periodsToConvert = new Map<SeriesRow, PeriodRow[]>();
 	const sources = seriesOf(entry.source.measure).filter((series) => {
 		if (entry.members && !entry.members.test(series.members)) return false;
-		const native = onTarget.get(series.members);
+		const native = officialTotal ?? onTarget!.get(series.members);
 		const periods = periodsOfSeries(database, series.id).filter(
 			(period) => !native?.has(period.id),
 		);
@@ -364,68 +448,128 @@ function* convertSources(
 				}
 			: undefined;
 
-	for (const source of sources) {
-		const observations: ConvertedObservation[] = [];
-		const gaps: SeriesGap[] = [];
-		const periods = periodsToConvert.get(source)!;
-		const base = {
-			planId: entry.id,
-			key: convertedKey(source.key, entry.target),
-			...idsOfSeries(database, source.id),
-			releaseId: to,
-			basis,
-			crosswalks: crosswalksOf(steps),
-			note: entry.note ?? null,
-			periods: periods.length,
-			observations,
-			gaps,
-		};
-		if (rule.rule === "sum") {
-			const measureClass =
-				entry.estimates === true && rule.splitBasis === basis
-					? populationClassOf(source.members)
-					: undefined;
-			for (const period of periods) {
-				const converted = convertThroughSteps(
-					steps,
-					observedValues(database, source.id, period.id),
-				);
-				const seen = collectGaps(converted, period.id, gaps);
-				for (const [area, carried] of converted.values) {
-					if (isRegrouped(carried)) {
-						observations.push({
-							area,
-							period: period.id,
-							value: carried.value,
-							status: STATUS_DERIVED,
-							lower: null,
-							upper: null,
-						});
-						continue;
-					}
-					const factor =
-						measureClass === undefined
-							? undefined
-							: factorOf(carried, measureClass);
-					if (factor === undefined) {
-						if (!seen.has(area))
-							gaps.push({
-								area,
-								period: period.id,
-								reason: "unmeasured-split",
-							});
-						continue;
-					}
+	/**
+	 * Values summed over the areas carried through the route: kept where they
+	 * regrouped whole areas, estimated with bounds where they took a measured
+	 * split, and a gap otherwise.
+	 */
+	const convertSums = (
+		periods: readonly PeriodRow[],
+		valuesOf: (period: number) => Map<number, CarriedValue>,
+		members: string,
+		observations: ConvertedObservation[],
+		gaps: SeriesGap[],
+	) => {
+		if (rule.rule !== "sum") throw new Error("Not a summed measure");
+		const measureClass =
+			entry.estimates === true && rule.splitBasis === basis
+				? populationClassOf(members)
+				: undefined;
+		for (const period of periods) {
+			const converted = convertThroughSteps(steps, valuesOf(period.id));
+			const seen = collectGaps(converted, period.id, gaps);
+			for (const [area, carried] of converted.values) {
+				if (isRegrouped(carried)) {
 					observations.push({
 						area,
 						period: period.id,
 						value: carried.value,
-						status: STATUS_ESTIMATED,
-						estimated: carried.estimated,
-						...boundsOf(carried, factor),
+						status: STATUS_DERIVED,
+						lower: null,
+						upper: null,
 					});
+					continue;
 				}
+				const factor =
+					measureClass === undefined
+						? undefined
+						: factorOf(carried, measureClass);
+				if (factor === undefined) {
+					if (!seen.has(area))
+						gaps.push({
+							area,
+							period: period.id,
+							reason: "unmeasured-split",
+						});
+					continue;
+				}
+				observations.push({
+					area,
+					period: period.id,
+					value: carried.value,
+					status: STATUS_ESTIMATED,
+					estimated: carried.estimated,
+					...boundsOf(carried, factor),
+				});
 			}
+		}
+	};
+	const baseOf = (
+		source: SeriesRow,
+		key: string,
+		periods: number,
+		observations: ConvertedObservation[],
+		gaps: SeriesGap[],
+	) => ({
+		planId: entry.id,
+		key: convertedKey(key, entry.target),
+		...idsOfSeries(database, source.id),
+		releaseId: to,
+		basis,
+		crosswalks: crosswalksOf(steps),
+		note: entry.note ?? null,
+		periods,
+		observations,
+		gaps,
+	});
+
+	if (entry.total) {
+		if (sources.length === 0) return;
+		const byId = new Map<number, PeriodRow>();
+		for (const source of sources)
+			for (const period of periodsToConvert.get(source)!)
+				byId.set(period.id, period);
+		const periods = [...byId.values()].sort(
+			(a, b) => a.start.localeCompare(b.start) || a.id - b.id,
+		);
+		const key = totalKey(sources);
+		const observations: ConvertedObservation[] = [];
+		const gaps: SeriesGap[] = [];
+		convertSums(
+			periods,
+			(period) => summedValues(database, sources, period),
+			membersOfKey(key),
+			observations,
+			gaps,
+		);
+		yield {
+			...baseOf(sources[0]!, key, periods.length, observations, gaps),
+			quality: qualityOf(observations, gaps),
+			rule: "sum",
+			inputs: sources.map((series) => ({ role: "value", series })),
+		};
+		return;
+	}
+
+	for (const source of sources) {
+		const observations: ConvertedObservation[] = [];
+		const gaps: SeriesGap[] = [];
+		const periods = periodsToConvert.get(source)!;
+		const base = baseOf(
+			source,
+			source.key,
+			periods.length,
+			observations,
+			gaps,
+		);
+		if (rule.rule === "sum") {
+			convertSums(
+				periods,
+				(period) => observedValues(database, source.id, period),
+				source.members,
+				observations,
+				gaps,
+			);
 			yield {
 				...base,
 				quality: qualityOf(observations, gaps),
