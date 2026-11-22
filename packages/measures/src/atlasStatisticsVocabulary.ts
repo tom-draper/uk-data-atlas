@@ -1,5 +1,10 @@
 import type { StatisticsVocabulary } from "./index.ts";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
+import {
+	legacyValueKind,
+	type MeasureStatistic,
+	type MeasureUnit,
+} from "@uk-data-atlas/datasets";
 
 /**
  * The measures and dimensions the statistics tables hold, in the form the
@@ -12,14 +17,18 @@ export function readStatisticsVocabulary(path: string): StatisticsVocabulary {
 		const measures: StatisticsVocabulary["measures"] = {};
 		for (const row of database
 			.prepare(
-				"SELECT slug, label, description, unit, value_kind, aggregation FROM measure ORDER BY slug",
+				"SELECT m.slug, m.label, m.description, u.label AS unit, u.kind AS unit_kind, m.statistic, m.aggregation FROM measure m JOIN unit u ON u.id = m.unit_id ORDER BY m.slug",
 			)
 			.all())
 			measures[String(row.slug)] = {
 				label: String(row.label),
 				description: String(row.description),
 				unit: String(row.unit),
-				valueKind: String(row.value_kind),
+				valueKind: legacyValueKind(
+					String(row.slug),
+					String(row.statistic) as MeasureStatistic,
+					String(row.unit_kind) as MeasureUnit["kind"],
+				),
 				aggregation: String(row.aggregation),
 			};
 		const dimensions: StatisticsVocabulary["dimensions"] = {};

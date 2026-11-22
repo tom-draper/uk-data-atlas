@@ -2,7 +2,7 @@ import type { DeclaredDataset, DeclaredDimension, Json } from "./statistics.ts";
 import type {
 	Aggregation,
 	StatisticsMeasure,
-	ValueKind,
+	MeasureStatistic,
 } from "./vocabulary.ts";
 
 /**
@@ -15,7 +15,7 @@ export const measure = (
 	slug: string,
 	label: string,
 	unit: string,
-	valueKind: ValueKind,
+	statistic: MeasureStatistic,
 	aggregation: Aggregation,
 	description: string,
 	parts?: { numerator: string; denominator: string } | { weight: string },
@@ -24,7 +24,7 @@ export const measure = (
 	label,
 	description,
 	unit,
-	valueKind,
+	statistic,
 	aggregation,
 	...parts,
 });

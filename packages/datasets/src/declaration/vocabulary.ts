@@ -4,16 +4,25 @@
  * database code, so a dataset declaration can use it beside its loader.
  */
 
-export type ValueKind =
+/**
+ * What a measure's value is, as a statistic over its universe. `by-dimension`
+ * names the statistic through a dimension, as the pay measures do.
+ */
+export type MeasureStatistic =
 	| "count"
+	| "total"
+	| "mean"
+	| "median"
+	| "quantile"
 	| "rate"
 	| "share"
-	| "median"
-	| "mean"
 	| "index"
 	| "rank"
-	| "amount"
-	| "category";
+	| "category"
+	| "ratio"
+	| "difference"
+	| "interval"
+	| "by-dimension";
 export type Aggregation = "sum" | "ratio" | "weighted_mean" | "none";
 export type PeriodKind =
 	| "year"
@@ -51,7 +60,7 @@ export type StatisticsMeasure = {
 	label: string;
 	description: string;
 	unit: string;
-	valueKind: ValueKind;
+	statistic: MeasureStatistic;
 	aggregation: Aggregation;
 	/** Slugs of measures declared earlier, for `ratio` measures. */
 	numerator?: string;
