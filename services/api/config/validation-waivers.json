@@ -98,6 +98,13 @@
 		},
 		{
 			"check": "containment-verified",
+			"reason": "TLK51 Bristol, City of overhangs TLK5 by up to 540 m at Avonmouth, in the Severn estuary, where the ITL3 and ITL2 releases draw the channel line against South Gloucestershire differently. The vertices beyond tolerance lie in water or across that line in TLK6; Bristol is wholly in TLK5 and the ONS lookup assignment is correct.",
+			"resources": [
+				"crosswalks/itl3-2025-01-uk-bgc-v2-to-itl2-2025-01-uk-bgc-official-lookup"
+			]
+		},
+		{
+			"check": "containment-verified",
 			"reason": "8 LSOAs overhang their May 2023 authority by 102 to 741 m, at the River Yare in Norwich, Portsmouth Harbour and Welsh estuaries. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
 			"resources": [
 				"crosswalks/lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup"
