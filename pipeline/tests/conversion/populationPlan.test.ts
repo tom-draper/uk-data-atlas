@@ -120,6 +120,8 @@ test("a coarser source is skipped where finer ones already reach all its years",
 		),
 	);
 	assert.ok(
-		skips.includes("population-uk localAuthority:2023-12 > ward:2015-12 no-route"),
+		skips.includes(
+			"population-uk localAuthority:2023-12 > ward:2015-12 no-route",
+		),
 	);
 });

@@ -279,8 +279,15 @@ describe("a measure's series rebuilt on one boundary release", () => {
 		`;
 
 		it("fills a period its parts lack, with the error bounds", () => {
-			const series = readReleaseSeries(withTotals(total), votes, target, "W1")!;
-			expect(series.values.find((v) => v.period === "2015")).toMatchObject({
+			const series = readReleaseSeries(
+				withTotals(total),
+				votes,
+				target,
+				"W1",
+			)!;
+			expect(
+				series.values.find((v) => v.period === "2015"),
+			).toMatchObject({
 				value: 11,
 				status: "estimated",
 				lower: 9,
@@ -296,28 +303,51 @@ describe("a measure's series rebuilt on one boundary release", () => {
 		});
 
 		it("never replaces a value its parts already give", () => {
-			const series = readReleaseSeries(withTotals(total), votes, target, "W1")!;
-			expect(series.values.find((v) => v.period === "2019")).toMatchObject({
+			const series = readReleaseSeries(
+				withTotals(total),
+				votes,
+				target,
+				"W1",
+			)!;
+			expect(
+				series.values.find((v) => v.period === "2019"),
+			).toMatchObject({
 				value: 50,
 				method: "exact",
 			});
 		});
 
 		it("keeps the parts where they combine and its gaps elsewhere", () => {
-			const series = readReleaseSeries(withTotals(total), votes, target, "W2")!;
-			expect(series.values.find((v) => v.period === "2015")).toMatchObject({
+			const series = readReleaseSeries(
+				withTotals(total),
+				votes,
+				target,
+				"W2",
+			)!;
+			expect(
+				series.values.find((v) => v.period === "2015"),
+			).toMatchObject({
 				value: 4,
 				method: "exact",
 			});
 			// W2's 2019 parts combine to a value, so the total's gap is unused.
-			expect(series.values.find((v) => v.period === "2019")).toMatchObject({
+			expect(
+				series.values.find((v) => v.period === "2019"),
+			).toMatchObject({
 				value: 10,
 			});
 		});
 
 		it("is not stood in for by a total of other series", () => {
-			const series = readReleaseSeries(withTotals(""), votes, target, "W1")!;
-			expect(series.values.find((v) => v.period === "2015")).toBeUndefined();
+			const series = readReleaseSeries(
+				withTotals(""),
+				votes,
+				target,
+				"W1",
+			)!;
+			expect(
+				series.values.find((v) => v.period === "2015"),
+			).toBeUndefined();
 		});
 	});
 

@@ -140,7 +140,11 @@ publish(1, "age=0/sex=male", 10, [[1, 1, 1000]]);
 
 const entry = (measureSlug = "population"): PlanEntry => ({
 	id: `population/${measureSlug}#total`,
-	source: { dataset: "population", measure: measureSlug, release: "ward:from" },
+	source: {
+		dataset: "population",
+		measure: measureSlug,
+		release: "ward:from",
+	},
 	target: "ward:to",
 	route: [{ crosswalks: ["merge"] }],
 	basis: "population",
@@ -154,8 +158,7 @@ const context: ConversionContext = {
 	resolver,
 	rules,
 	factors: () => undefined,
-	skipped: (planned, source, reason) =>
-		skips.push([source.key, reason]),
+	skipped: (planned, source, reason) => skips.push([source.key, reason]),
 };
 const converted = (slug?: string) => [...convertEntry(context, entry(slug))];
 
@@ -180,7 +183,10 @@ test("the persons of every age are added up into one converted total", () => {
 	const series = converted();
 	assert.equal(series.length, 1);
 	const [total] = series;
-	assert.equal(total!.key, "population/population/ward:from/sex=all~converted:ward:to");
+	assert.equal(
+		total!.key,
+		"population/population/ward:from/sex=all~converted:ward:to",
+	);
 	assert.equal(total!.rule, "sum");
 	assert.deepEqual(
 		total!.inputs.map((input) => [input.role, input.series.members]),
@@ -223,14 +229,18 @@ test("an official figure on the target is kept and never converted over", () => 
 	assert.ok(total!.observations.every((o) => o.period === 1));
 
 	// With every year official, nothing is converted and each part is skipped.
-	database.exec(
-		`INSERT INTO observation VALUES (${official}, 20, 1, 1, 1)`,
-	);
+	database.exec(`INSERT INTO observation VALUES (${official}, 20, 1, 1, 1)`);
 	skips.length = 0;
 	assert.deepEqual(converted(), []);
 	assert.deepEqual(skips, [
-		["population/population/ward:from/age=0/sex=all", "published-on-target"],
-		["population/population/ward:from/age=1/sex=all", "published-on-target"],
+		[
+			"population/population/ward:from/age=0/sex=all",
+			"published-on-target",
+		],
+		[
+			"population/population/ward:from/age=1/sex=all",
+			"published-on-target",
+		],
 	]);
 	database.exec(`DELETE FROM observation WHERE series_id = ${official}`);
 	database.exec(`DELETE FROM series WHERE id = ${official}`);
