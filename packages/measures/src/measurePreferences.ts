@@ -141,6 +141,10 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 			},
 		},
 		claimants: {
+			datasets: {
+				order: ["claimant-count", "claimant-count-history"],
+				reason: "claimant-count is the month the website and API already serve, as the Department for Work and Pensions published it for that release. claimant-count-history restates every month on the April 2023 authorities, so its April 2026 figures can differ slightly. It fills the months claimant-count does not hold.",
+			},
 			dimensions: {
 				"age-group": breakdown(
 					"16-plus is the root of the dimension: 16-to-24 sits within it.",
