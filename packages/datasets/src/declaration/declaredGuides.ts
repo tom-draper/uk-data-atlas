@@ -266,6 +266,27 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		summary:
 			"Official population estimates for the Westminster constituencies first contested in 2024.",
 	},
+	"population-data-zone-ni": {
+		title: "Population (Northern Ireland data zones)",
+		topic: "population-estimates",
+		about: "How many people live in each data zone of Northern Ireland, the small areas built for the 2021 census, every year from 2021. The base the atlas adds up to put population on Northern Ireland's councils.",
+		summary:
+			"Official mid-year population estimates for Northern Ireland's 2021 data zones, 2021 to 2024.",
+	},
+	"population-data-zone-scotland": {
+		title: "Population (Scottish data zones)",
+		topic: "population-estimates",
+		about: "How many people live in each data zone of Scotland, the small neighbourhoods Scotland's statistics are built from, every year from 2011. The base the atlas adds up to put every year of population on Scottish wards, councils and constituencies.",
+		summary:
+			"Official mid-year population estimates for Scotland's 2022 data zones, 2011 to 2024.",
+	},
+	"population-lsoa": {
+		title: "Population (LSOA)",
+		topic: "population-estimates",
+		about: "How many people live in each small neighbourhood (Lower layer Super Output Area) of England and Wales, every year from 2011. The finest official population count each year, and the base the atlas adds up to put every year of population on every council boundary.",
+		summary:
+			"Official mid-year population estimates for the 2021 Lower layer Super Output Areas of England and Wales, 2011 to 2024.",
+	},
 	"population-uk": {
 		title: "Population (Local Authority)",
 		topic: "population-estimates",
