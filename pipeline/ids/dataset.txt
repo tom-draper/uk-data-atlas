@@ -68,3 +68,4 @@ regional-gdp
 population-data-zone-ni
 population-data-zone-scotland
 population-lsoa
+claimant-count-history

@@ -3562,3 +3562,6 @@ population-lsoa/population/lsoa:2021-12-ew-bgc-v5/sex=all~converted:ward:2024-05
 population-lsoa/population/lsoa:2021-12-ew-bgc-v5/sex=all~converted:ward:2024-12-uk-bgc
 population-lsoa/population/lsoa:2021-12-ew-bgc-v5/sex=all~converted:ward:2025-05-uk-bgc-v2
 population-lsoa/population/lsoa:2021-12-ew-bgc-v5/sex=all~converted:ward:2025-12-uk-bgc
+claimant-count-history/claimants/localAuthority:2023-12-uk-bgc/age-group=16-plus
+claimant-count-history/claimant-rate/localAuthority:2023-12-uk-bgc
+claimant-count-history/claimants/localAuthority:2023-12-uk-bgc/age-group=16-plus~converted:localAuthority:2026-05-uk-bgc
