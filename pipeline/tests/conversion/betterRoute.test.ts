@@ -3,6 +3,7 @@ import { test } from "vitest";
 import {
 	BETTER_ROUTE,
 	chooseRoutes,
+	keepUnclaimed,
 	type RouteCandidate,
 } from "../../src/conversion/betterRoute.ts";
 import type {
@@ -251,4 +252,34 @@ test("a series is chosen the same whichever order the sources arrive in", () => 
 	const choice = chooseRoutes(forward);
 	assert.deepEqual(kept(choice), ["r"]);
 	assert.deepEqual(kept(chooseRoutes([...make()].reverse())), ["r"]);
+});
+
+test("a series claimed in order keeps only the cells finer ones left", () => {
+	const claimed = new Set<string>();
+	const finer = candidate({
+		key: "lsoa",
+		observations: [value(1, 2021), value(1, 2022)],
+	}).series;
+	const coarser = candidate({
+		key: "ward",
+		observations: [value(1, 2022, 9), value(2, 2022, 9)],
+	}).series;
+	const covered = candidate({
+		key: "constituency",
+		observations: [value(2, 2022, 7)],
+	}).series;
+	// Nothing is claimed yet, so the finer series is returned as it is.
+	assert.equal(keepUnclaimed(finer, claimed), finer);
+	const left = keepUnclaimed(coarser, claimed);
+	assert.deepEqual(
+		left!.observations.map((o) => [o.area, o.period, o.value]),
+		[[2, 2022, 9]],
+	);
+	assert.deepEqual(left!.gaps, [
+		{ area: 1, period: 2022, reason: BETTER_ROUTE },
+	]);
+	assert.equal(left!.quality.coverage, 0.5);
+	// Every cell of the last one is claimed, so nothing is left of it.
+	assert.equal(keepUnclaimed(covered, claimed), null);
+	assert.equal(claimed.size, 3);
 });
