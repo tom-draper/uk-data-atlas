@@ -109,7 +109,14 @@ const config: DeclaredDataset = {
 	topic: "labour-market",
 	name: "ladName",
 	measures: [
-		measure("crimes", "Crimes", "offences", "count", "sum", "Offences."),
+		measure(
+			"recorded-crimes",
+			"Crimes",
+			"offences",
+			"count",
+			"sum",
+			"Offences.",
+		),
 	],
 	dimensions: [
 		{
@@ -121,7 +128,7 @@ const config: DeclaredDataset = {
 			],
 		},
 	],
-	fields: [{ path: "{offence}", measure: "crimes" }],
+	fields: [{ path: "{offence}", measure: "recorded-crimes" }],
 	exclude: [{ codes: /^E07/, reason: "Districts are not in this release." }],
 	payload: {
 		parts: yearParts("example", "localAuthority", 2024),
@@ -133,7 +140,7 @@ const parts = (...records: DirectPart["records"]): DirectPart[] => [
 	{ key: "2024", records },
 ];
 const value = (offence: string, number: number | null) => ({
-	measure: "crimes",
+	measure: "recorded-crimes",
 	members: { offence },
 	value: number,
 });
@@ -238,7 +245,7 @@ describe("directStatistics", () => {
 		expect(() =>
 			build({
 				code: "E06000001",
-				values: [{ measure: "crimes", value: 1 }],
+				values: [{ measure: "recorded-crimes", value: 1 }],
 			}),
 		).toThrow(/fits none of the declared fields/);
 		expect(() => build({ code: "E99999999", values: [] })).toThrow(
