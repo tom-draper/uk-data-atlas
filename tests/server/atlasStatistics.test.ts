@@ -368,7 +368,7 @@ describe("statistics model is generic", () => {
 		label: "Households",
 		description: "Number of households.",
 		unit: "households",
-		valueKind: "count" as const,
+		statistic: "count" as const,
 		aggregation: "sum" as const,
 	};
 	const local = { geography: "localAuthority", id: "2024-05-uk-bgc" };
@@ -442,7 +442,7 @@ describe("statistics model is generic", () => {
 				label: "Crimes",
 				description: "Recorded crimes.",
 				unit: "crimes",
-				valueKind: "count",
+				statistic: "count",
 				aggregation: "sum",
 			},
 			{
@@ -450,7 +450,7 @@ describe("statistics model is generic", () => {
 				label: "Most common crime",
 				description: "Crime type with the most records.",
 				unit: "category",
-				valueKind: "category",
+				statistic: "category",
 				aggregation: "none",
 			},
 		],

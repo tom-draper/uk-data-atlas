@@ -18,7 +18,7 @@ export function writeSearchTable(database: DatabaseSync): void {
 	);
 	database.exec(`
 INSERT INTO search (kind, key, label, body)
-	SELECT 'measure', slug, label, description || ' ' || unit FROM measure ORDER BY id;
+	SELECT 'measure', m.slug, m.label, m.description || ' ' || u.label FROM measure m JOIN unit u ON u.id = m.unit_id ORDER BY m.id;
 INSERT INTO search (kind, key, label, body)
 	SELECT 'dataset', slug, title, description || ' ' || module FROM dataset ORDER BY id;
 INSERT INTO search (kind, key, label, body)

@@ -257,10 +257,11 @@ export function exportStatisticsMeasure(
 		: "r.release";
 	const statement = database.prepare(
 		election?.sql ??
-			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "m.unit"}, r.geography, ${release},
+			`SELECT d.slug, ?, ${density ? "'people per square kilometre'" : "mu.label"}, r.geography, ${release},
 		${areaCode}, p.label, ${values}
 		${memberColumns ? `, ${memberColumns}` : ""}
 		FROM ${source} JOIN measure m ON m.id = s.measure_id
+		JOIN unit mu ON mu.id = m.unit_id
 		JOIN dataset d ON d.id = s.dataset_id
 		JOIN area_release r ON r.id = s.release_id
 		JOIN area_version av ON av.id = o.area_version_id
@@ -271,7 +272,7 @@ export function exportStatisticsMeasure(
 		${intervalJoins}
 		${houseJoin}
 		WHERE ${filter}
-		${aggregatePopulation ? "GROUP BY d.slug, m.unit, r.geography, r.release, a.code, p.label" : ""}
+		${aggregatePopulation ? "GROUP BY d.slug, mu.label, r.geography, r.release, a.code, p.label" : ""}
 		ORDER BY 4, 5, 7, 6, 1${aggregatePopulation ? "" : ", s.key"}`,
 	);
 	statement.setReturnArrays(true);

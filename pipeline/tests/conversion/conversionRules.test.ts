@@ -13,23 +13,18 @@ const measure = (
 	id,
 	slug,
 	unit: "people",
-	valueKind: "count",
+	statistic: "count",
 	aggregation: "sum",
 	numerator: null,
 	denominator: null,
 	weight: null,
 	...fields,
-	statistic:
-		fields.statistic ??
-		(fields.valueKind === "amount"
-			? "total"
-			: (fields.valueKind ?? "count")),
 });
 
 const ratio = (id: number, slug: string, fields: Partial<MeasureRow> = {}) =>
 	measure(id, slug, {
 		unit: "percent",
-		valueKind: "share",
+		statistic: "share",
 		aggregation: "ratio",
 		...fields,
 	});
@@ -46,7 +41,7 @@ test("an additive measure is summed, and split only where a split was backtested
 	const rules = rulesOf([
 		measure(1, "population"),
 		measure(2, "households"),
-		measure(3, "spend", { unit: "gbp", valueKind: "amount" }),
+		measure(3, "spend", { unit: "gbp", statistic: "total" }),
 	]);
 	const population = rules.get("population")!;
 	assert.equal(population.rule, "sum");
@@ -66,7 +61,7 @@ test("a ratio is rebuilt from an additive numerator and denominator, or refused"
 		measure(1, "fuel-poor-households"),
 		measure(2, "households"),
 		measure(3, "median-income", {
-			valueKind: "median",
+			statistic: "median",
 			aggregation: "none",
 		}),
 		ratio(4, "fuel-poverty-rate", {
@@ -106,11 +101,11 @@ test("a ratio is rebuilt from an additive numerator and denominator, or refused"
 });
 
 test("a weighted mean is rebuilt over an additive weight it names, or refused", () => {
-	const mean = { valueKind: "mean", aggregation: "weighted_mean" };
+	const mean = { statistic: "mean", aggregation: "weighted_mean" };
 	const rules = rulesOf([
 		measure(1, "pupils"),
 		measure(2, "median-income", {
-			valueKind: "median",
+			statistic: "median",
 			aggregation: "none",
 		}),
 		measure(3, "attainment", { ...mean, weight: "pupils" }),
@@ -133,9 +128,9 @@ test("a weighted mean is rebuilt over an additive weight it names, or refused", 
 
 test("a refusal names what is not held where the measure has a specific reason", () => {
 	const rules = rulesOf([
-		measure(1, "claimant-rate", { valueKind: "rate", aggregation: "none" }),
+		measure(1, "claimant-rate", { statistic: "rate", aggregation: "none" }),
 		measure(2, "band-d-council-tax", {
-			valueKind: "mean",
+			statistic: "mean",
 			aggregation: "weighted_mean",
 		}),
 	]);
@@ -148,14 +143,14 @@ test("a refusal names what is not held where the measure has a specific reason",
 
 test("everything that is not additive or a rebuildable ratio is refused with a reason", () => {
 	const refused = [
-		measure(1, "median-age", { valueKind: "median", aggregation: "none" }),
-		measure(2, "imd-rank", { valueKind: "rank", aggregation: "none" }),
-		measure(3, "imd-score", { valueKind: "index", aggregation: "none" }),
-		measure(4, "winner", { valueKind: "category", aggregation: "none" }),
-		measure(5, "turnout", { valueKind: "rate", aggregation: "none" }),
-		measure(6, "mean-price", { valueKind: "mean", aggregation: "none" }),
+		measure(1, "median-age", { statistic: "median", aggregation: "none" }),
+		measure(2, "imd-rank", { statistic: "rank", aggregation: "none" }),
+		measure(3, "imd-score", { statistic: "index", aggregation: "none" }),
+		measure(4, "winner", { statistic: "category", aggregation: "none" }),
+		measure(5, "turnout", { statistic: "rate", aggregation: "none" }),
+		measure(6, "mean-price", { statistic: "mean", aggregation: "none" }),
 		measure(7, "attainment", {
-			valueKind: "mean",
+			statistic: "mean",
 			aggregation: "weighted_mean",
 		}),
 		// A count declared as not additive is not summed.
@@ -172,7 +167,7 @@ test("everything that is not additive or a rebuildable ratio is refused with a r
 
 test("conversion never sums a non-additive statistic", () => {
 	const rule = rulesOf([
-		measure(1, "inconsistent", { valueKind: "count", statistic: "median" }),
+		measure(1, "inconsistent", { statistic: "median" }),
 	]).get("inconsistent")!;
 	assert.notEqual(rule.rule, "sum");
 });

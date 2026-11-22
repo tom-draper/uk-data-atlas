@@ -314,7 +314,8 @@ describe("rankSeries", () => {
 const fixture = () => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(`
-		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT, unit TEXT);
+		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT, unit_id INTEGER);
+		CREATE TABLE unit (id INTEGER PRIMARY KEY, label TEXT);
 		CREATE TABLE dimension (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, dimension_id INTEGER, code TEXT, parent_id INTEGER);
 		CREATE TABLE source (id INTEGER PRIMARY KEY, licence TEXT);
@@ -328,7 +329,8 @@ const fixture = () => {
 		CREATE TABLE status (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE dataset_area_name (dataset_id INTEGER, area_version_id INTEGER, name TEXT);
 		CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER, value REAL, status_id INTEGER, lower REAL, upper REAL, category_id INTEGER, PRIMARY KEY (series_id, area_version_id, period_id));
-		INSERT INTO measure VALUES (1, 'households', 'households');
+		INSERT INTO unit VALUES (1, 'households');
+		INSERT INTO measure VALUES (1, 'households', 1);
 		INSERT INTO dimension VALUES (1, 'tenure');
 		INSERT INTO dimension_member VALUES (1, 1, 'total', NULL), (2, 1, 'owned', 1);
 		INSERT INTO source VALUES (1, 'OGL');
@@ -393,7 +395,7 @@ describe("writeDefaultObservation", () => {
 		const database = fixture();
 		writeDefaultObservation(database, preferences);
 		database.exec(
-			"CREATE VIEW v_observation AS SELECT d.slug AS dataset, m.slug AS measure, m.unit, NULL AS members, a.code AS area_code, v.name AS area_name, r.geography, r.release AS release, p.label AS period, o.value, o.lower, o.upper, NULL AS category, st.slug AS status, s.method, src.licence FROM observation o JOIN series s ON s.id = o.series_id JOIN dataset d ON d.id = s.dataset_id JOIN source src ON src.id = d.source_id JOIN measure m ON m.id = s.measure_id JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = s.release_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id",
+			"CREATE VIEW v_observation AS SELECT d.slug AS dataset, m.slug AS measure, mu.label AS unit, NULL AS members, a.code AS area_code, v.name AS area_name, r.geography, r.release AS release, p.label AS period, o.value, o.lower, o.upper, NULL AS category, st.slug AS status, s.method, src.licence FROM observation o JOIN series s ON s.id = o.series_id JOIN dataset d ON d.id = s.dataset_id JOIN source src ON src.id = d.source_id JOIN measure m ON m.id = s.measure_id JOIN unit mu ON mu.id = m.unit_id JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = s.release_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id",
 		);
 		const names = (view: string) =>
 			(
