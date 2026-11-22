@@ -105,15 +105,44 @@ collection.
   (task 26), and rates are not rebuilt from numerator and denominator
   (task 27).
 
-### 3. Other open roadmap items
+### 3. Population on every release
+
+Task 41 step 1 converts the mid-year estimates already held, as a total of
+persons of all ages, onto every ward, authority and constituency release. What
+it cannot reach without new data:
+
+- Ward estimates are held for 2022 only, on the 2023-12 wards, so every ward
+  and constituency release, and every authority release before 2023-05, holds
+  2022 alone. 2015 on the 2024 wards needs ward or LSOA estimates for 2015.
+- No LSOA mid-year estimates are compiled. The only LSOA population is the
+  IMD 2025 and WIMD 2019 denominators, one year each, which are not offered.
+  ONS LSOA estimates for 2011 to 2022 would give every year on every ward and
+  constituency release.
+- The authority estimates (2011 to 2024, on the 2023-12 authorities) reach
+  only the authority releases from 2023-05. No crosswalk carries the April
+  2023 mergers back, and a total is never split down onto smaller areas, so
+  authorities before 2023-05, wards and constituencies get none of them.
+- Wards made after a release cannot be carried back onto it: 52,902
+  `not-carried` gaps, most on the 2011 to 2018 releases (a value for 2,235 of 8,588 wards
+  on 2011-12, 6,579 of 8,482 on 2022-12).
+- Authority releases 2008 and 2009 have no route from any population source.
+- The constituency estimates (2021 and 2022, on the 2024 constituencies) have
+  no route back across the 2024 review, and every authority release they
+  reach is already covered by the authority estimates, so none are converted.
+- Scotland and Northern Ireland small-area estimates (NRS data zones, NISRA
+  data zones and wards) are not held, so their wards and constituencies have no
+  converted population (see
+  [section 1](#1-scotland-and-northern-ireland-across-most-topics)).
+
+### 4. Other open roadmap items
 
 - Population-weighted centroids exist only for 2021 England and Wales output
   areas (task 39).
 - No postcode district or sector lookup (task 36).
 - No GP practice to LSOA lookup (task 37).
 - Neighbours are computed at request time (task 38).
-- Population is not rebuilt for every release and year (task 41), and there
-  are no per-person measures (task 42).
+- Population reaches every release only for the years held (task 41, see
+  above), and there are no per-person measures (task 42).
 - No release manifest or diff between releases (task 24).
 - Crosswalk weights lack Northern Ireland and Scottish dwellings (task 1).
 
