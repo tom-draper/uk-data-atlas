@@ -8,6 +8,8 @@ import {
 
 test("a population series is of the class its members were measured as", () => {
 	assert.equal(populationClassOf(""), TOTAL_POPULATION);
+	// Persons of all ages, the single years added up, is the same total.
+	assert.equal(populationClassOf("sex=all"), TOTAL_POPULATION);
 	for (const members of [
 		"age=0/sex=all",
 		"age=45/sex=male",
@@ -19,7 +21,7 @@ test("a population series is of the class its members were measured as", () => {
 
 test("a breakdown no backtest measured has no class", () => {
 	for (const members of [
-		"sex=all",
+		"sex=male",
 		"age=0",
 		"age=10-14/sex=all",
 		"age=0/sex=all/ethnicity=white",
