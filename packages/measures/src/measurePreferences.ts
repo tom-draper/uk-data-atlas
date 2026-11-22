@@ -296,8 +296,13 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 		majority: { datasets: ELECTION_ORDER },
 		population: {
 			datasets: {
-				order: ["imd", "population-constituency"],
-				reason: "imd is published on LSOAs and holds the latest period (2025). population-constituency holds 2021 and 2022 only, so the two do not share a period and the order only makes the choice explicit.",
+				order: [
+					"imd",
+					"population",
+					"population-uk",
+					"population-constituency",
+				],
+				reason: "The finest areas first, so a value converted onto another release is built from the most areas. imd is published on LSOAs and holds the latest period (2025). population holds wards for 2022, which population-uk also converts onto councils from the 2023 authorities: the ward sum is preferred there. population-constituency holds 2021 and 2022 only. A value published on the release itself is native and wins over any of these.",
 			},
 			dimensions: {
 				age: breakdown(
