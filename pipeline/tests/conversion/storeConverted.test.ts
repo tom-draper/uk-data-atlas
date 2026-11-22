@@ -353,3 +353,52 @@ test("an estimated share is the part of the value a split carried, and a split z
 	assert.equal(estimatedShareOf({ value: 0, estimated: 2 }), 1);
 	assert.equal(estimatedShareOf({ value: 0, estimated: 0 }), 0);
 });
+
+test("a total names every series it adds and keeps only the members they share", () => {
+	const input = converted().inputs[0]!;
+	const database = atlasWith(
+		converted({
+			key: "population/ward/sex=all~converted:constituency:2024",
+			inputs: [
+				{
+					...input,
+					series: { ...input.series, key: "population/ward/age=0/sex=all" },
+				},
+				{
+					...input,
+					series: {
+						...input.series,
+						id: 2,
+						key: "population/ward/age=1/sex=all",
+					},
+				},
+			],
+		}),
+	);
+	// Dimension 8 is age, which the total adds over; 10 is sex, held by both.
+	database.exec(`
+		UPDATE series SET key = 'population/ward/age=0/sex=all' WHERE id = 1;
+		INSERT INTO series VALUES (2, 3, 4, 5, 'published', NULL, 'population/ward/age=1/sex=all');
+		INSERT INTO series_member VALUES (1, 10, 11), (2, 8, 12), (2, 10, 11);`);
+	copyConvertedSeries(database, registries().ids);
+	const rows = (sql: string) =>
+		database
+			.prepare(sql)
+			.all()
+			.map((row) => ({ ...row }));
+	assert.deepEqual(
+		rows(
+			"SELECT input_series_id AS input, role FROM series_input WHERE series_id = 50 ORDER BY 1",
+		),
+		[
+			{ input: 1, role: "value" },
+			{ input: 2, role: "value" },
+		],
+	);
+	assert.deepEqual(
+		rows(
+			"SELECT dimension_id AS dimension, member_id AS member FROM series_member WHERE series_id = 50",
+		),
+		[{ dimension: 10, member: 11 }],
+	);
+});

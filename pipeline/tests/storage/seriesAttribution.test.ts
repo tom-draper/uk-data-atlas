@@ -68,7 +68,7 @@ Source: Weights Office'),
 			(9, 3, 4, 2, 'modelled', 2, 'notional-sharealike');
 		CREATE TABLE observation (series_id INTEGER, period_id INTEGER, PRIMARY KEY (series_id, period_id));
 		INSERT INTO observation VALUES (1, 3), (2, 3), (3, 3), (4, 3), (5, 1), (6, 2), (7, 3), (8, 1), (9, 2);
-		CREATE TABLE series_input (series_id INTEGER, input_series_id INTEGER, role TEXT, PRIMARY KEY (series_id, role));
+		CREATE TABLE series_input (series_id INTEGER, input_series_id INTEGER, role TEXT, PRIMARY KEY (series_id, input_series_id));
 		INSERT INTO series_input VALUES (3, 1, 'value'), (4, 3, 'numerator'), (4, 2, 'denominator');
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, basis_id TEXT);
 		INSERT INTO crosswalk VALUES (1, 'population');
