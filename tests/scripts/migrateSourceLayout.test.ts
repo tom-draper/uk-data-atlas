@@ -18,6 +18,7 @@ import {
 	movedPath,
 	SOURCE_MOVES,
 	SOURCE_RENAMES,
+	SOURCES_SINCE_MIGRATION,
 } from "@/scripts/migrate-source-layout.mjs";
 
 const write = (root: string, path: string, text = path) => {
@@ -36,13 +37,15 @@ test("every SOURCES folder is the final path of one move, the rest go to _stagin
 		SOURCE_RENAMES.find(([from]) => from === to)?.[1] ?? to;
 	const targets = SOURCE_MOVES.map(([, to]) => final(to));
 	expect(new Set(targets).size).toBe(targets.length);
-	for (const name of Object.keys(SOURCES))
-		expect(targets, name).toContain(
-			sourceDir(name as keyof typeof SOURCES),
-		);
+	const migrated = Object.keys(SOURCES)
+		.map((name) => sourceDir(name as keyof typeof SOURCES))
+		.filter((folder) => !SOURCES_SINCE_MIGRATION.includes(folder));
+	for (const folder of migrated) expect(targets).toContain(folder);
+	for (const folder of SOURCES_SINCE_MIGRATION)
+		expect(targets).not.toContain(folder);
 	const staged = SOURCE_MOVES.filter(([, to]) => to.startsWith("_staging/"));
 	expect(staged.length).toBe(14);
-	expect(targets.length).toBe(Object.keys(SOURCES).length + staged.length);
+	expect(targets.length).toBe(migrated.length + staged.length);
 });
 
 test("every rename starts at a folder of the theme layout", () => {

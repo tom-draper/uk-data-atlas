@@ -18,9 +18,20 @@ import {
 	migrateSourceMeta,
 	SUPPORT_FOLDERS,
 } from "@/scripts/migrate-source-meta.mjs";
-import { migrateMarker } from "@/scripts/migrate-source-layout.mjs";
+import {
+	migrateMarker,
+	SOURCES_SINCE_MIGRATION,
+} from "@/scripts/migrate-source-layout.mjs";
 import { DATASETS } from "../data/datasetUniverse";
-import { DATASET_SOURCES, SUPPORT_SOURCES } from "../data/sourceDatasets";
+import {
+	DATASET_SOURCES as ALL_DATASET_SOURCES,
+	SUPPORT_SOURCES,
+} from "../data/sourceDatasets";
+
+/** The folders an older release can hold, which the migration names. */
+const DATASET_SOURCES = ALL_DATASET_SOURCES.filter(
+	([folder]) => !SOURCES_SINCE_MIGRATION.includes(folder),
+);
 
 const sha = (text: string) => createHash("sha256").update(text).digest("hex");
 

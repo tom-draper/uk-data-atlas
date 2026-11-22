@@ -270,6 +270,17 @@ export const SOURCE_MOVES = [
 ];
 
 /**
+ * Source folders first published in the final layout, with their dataset
+ * already in `meta.json`. No older release holds them, so neither migration
+ * has anything to move or name for them.
+ */
+export const SOURCES_SINCE_MIGRATION = [
+	"population/population-estimates/population-lsoa",
+	"population/population-estimates/population-data-zone-scotland",
+	"population/population-estimates/population-data-zone-ni",
+];
+
+/**
  * [path in the theme layout, final path], relative to `data/source`. The second
  * stage renames a folder to the id of the dataset it feeds (task 6). It runs
  * after the first, so a machine on either layout ends up in the same place.
