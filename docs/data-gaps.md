@@ -145,13 +145,19 @@ What is still out of reach:
   and 2026-05 has every year 2011 to 2024 (7,536, 7,545 and 7,552 wards), as
   do all 575 English and Welsh 2024 constituencies. December releases get
   only the wards unchanged since May. About 43 small wards per release have
-  no best-fit LSOA, so no value. On the 2024 constituencies and the 2026-05
-  wards the LSOA series is not the default: the published constituency
-  estimates and the IMD 2025 denominator rank first, because the default is
-  one series per measure and release, not per period. For the same reason the
-  Scottish data-zone values on the 2026-05 wards are held but not the default,
-  and on the 2011-12 wards the LSOA series replaces the ONS ward
-  estimates for 2022 (1,898 wards with a value, down from 2,235).
+  no best-fit LSOA, so no value. The default view (`v_observation_default`)
+  takes the best-ranked value for each area and period, so on the 2024
+  constituencies and the 2026-05 wards the LSOA years show beside the
+  published constituency estimates and the IMD 2025 denominator, and the
+  Scottish data-zone values show on the 2026-05 wards. `v_coverage.is_default`
+  flags only the top-ranked series of each release, not every series the
+  default view draws on.
+- Every population source is converted onto every release it reaches,
+  finest first, and a coarser source keeps a value only for an area and
+  period no finer source reached (`better-route` gaps for the rest). The ONS
+  ward estimates for 2022 therefore fill the wards LSOAs miss: 2,235 of the
+  8,588 wards on 2011-12 have a 2022 value, and 22 to 31 more authorities and
+  14 more constituencies per release before 2023.
 - Conversion takes a publisher's best-fit membership lookup (such as LSOA to
   ward) only where no route avoids it, so IMD 2025 reaches every 2026-05
   authority through the authority lookups rather than through the wards.
@@ -195,8 +201,6 @@ What is still out of reach:
    other staged census and population files.
 2. Compile the staged claimant and IMD 2015 back-years, and collect ASHE
    back-years.
-3. Choose the default population series per period, so the LSOA years show
-   on constituencies and the 2026 wards.
-4. Police Scotland and PSNI recorded crime, once a direct download is found.
-5. Events for data zones and Senedd constituencies, the cheapest compiled
+3. Police Scotland and PSNI recorded crime, once a direct download is found.
+4. Events for data zones and Senedd constituencies, the cheapest compiled
    gap to close.
