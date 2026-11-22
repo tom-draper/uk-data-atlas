@@ -245,6 +245,82 @@ describe("a measure's series rebuilt on one boundary release", () => {
 		});
 	});
 
+	describe("a sum converted only as its total", () => {
+		const votes: ReleaseSeriesSpec = {
+			parts: [{ ...part("votes"), sum: ["party"] }],
+		};
+		/**
+		 * The 2019 parties also hold 2015 for W1's old version, converted only
+		 * as their total (14). A total of lab and another series (15) never
+		 * stands in for the two parties.
+		 */
+		const withTotals = (totals: string) => {
+			const database = atlas();
+			database.exec(`
+				INSERT INTO observation VALUES (7, 11, 1, 5, 1, NULL, NULL), (8, 11, 1, 6, 1, NULL, NULL);
+				INSERT INTO series VALUES
+					(14, 1, 4, 2, 'converted', 'votes@2019~converted:ward:2026-05-uk-bgc'),
+					(15, 1, 4, 2, 'converted', 'votes@2019/other~converted:ward:2026-05-uk-bgc');
+				INSERT INTO series_input VALUES (15, 7, 'value'), (15, 9, 'value');
+				INSERT INTO observation VALUES (15, 12, 1, 999, 6, NULL, NULL);
+				${totals}
+			`);
+			return database;
+		};
+		const total = `
+			INSERT INTO series_input VALUES (14, 7, 'value'), (14, 8, 'value');
+			INSERT INTO observation VALUES
+				(14, 12, 1, 11, 2, 9, 13), (14, 12, 2, 777, 6, NULL, NULL),
+				(14, 22, 1, 4, 6, NULL, NULL);
+			INSERT INTO series_estimate VALUES (14, 12, 1, 0.5);
+			INSERT INTO series_conversion VALUES (14, 'sum', 'population', 0, 0.5, 1, NULL);
+			INSERT INTO series_crosswalk VALUES (14, 0, 1, 0);
+			INSERT INTO series_gap VALUES (14, 22, 2, 'missing-input');
+		`;
+
+		it("fills a period its parts lack, with the error bounds", () => {
+			const series = readReleaseSeries(withTotals(total), votes, target, "W1")!;
+			expect(series.values.find((v) => v.period === "2015")).toMatchObject({
+				value: 11,
+				status: "estimated",
+				lower: 9,
+				upper: 13,
+				method: "weighted",
+				exactShare: 0.5,
+				source: {
+					release: "ward:2019-12-uk-bgc",
+					basis: "population",
+					crosswalks: ["ward-2019-to-2026"],
+				},
+			});
+		});
+
+		it("never replaces a value its parts already give", () => {
+			const series = readReleaseSeries(withTotals(total), votes, target, "W1")!;
+			expect(series.values.find((v) => v.period === "2019")).toMatchObject({
+				value: 50,
+				method: "exact",
+			});
+		});
+
+		it("keeps the parts where they combine and its gaps elsewhere", () => {
+			const series = readReleaseSeries(withTotals(total), votes, target, "W2")!;
+			expect(series.values.find((v) => v.period === "2015")).toMatchObject({
+				value: 4,
+				method: "exact",
+			});
+			// W2's 2019 parts combine to a value, so the total's gap is unused.
+			expect(series.values.find((v) => v.period === "2019")).toMatchObject({
+				value: 10,
+			});
+		});
+
+		it("is not stood in for by a total of other series", () => {
+			const series = readReleaseSeries(withTotals(""), votes, target, "W1")!;
+			expect(series.values.find((v) => v.period === "2015")).toBeUndefined();
+		});
+	});
+
 	it("is undefined for an area or release that does not exist", () => {
 		expect(
 			readReleaseSeries(atlas(), people, target, "W0"),
