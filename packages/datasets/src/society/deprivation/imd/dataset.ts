@@ -15,6 +15,7 @@ import { parseCsv } from "../../../helpers/parseCsv.ts";
 import { parseNum, parseNumInt } from "../../../helpers/parseNumber.ts";
 import { sourceDir } from "../../../declaration/sources.ts";
 import type { DirectRecord } from "../../../declaration/statistics.ts";
+import { yearParts } from "../../../declaration/yearParts.ts";
 
 /** The overall score and its seven domains, each a map measure. */
 const SCORES = [
@@ -103,15 +104,116 @@ const base = deprivationStatistics({
 	},
 });
 
+/** The two editions held, each on the LSOAs it was published for. */
+const EDITIONS = {
+	"2015": {
+		file: "File_7_ID_2015_All_ranks__deciles_and_scores_for_the_Indices_of_Deprivation__and_population_denominators.csv",
+		lsoa: { code: "LSOA code (2011)", name: "LSOA name (2011)" },
+		lad: {
+			code: "Local Authority District code (2013)",
+			name: "Local Authority District name (2013)",
+		},
+		population: "Total population: mid 2012 (excluding prisoners)",
+		areas: 32844,
+		boundaryYear: 2011,
+		source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2015.",
+	},
+	"2025": {
+		file: "File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
+		lsoa: { code: "LSOA code (2021)", name: "LSOA name (2021)" },
+		lad: {
+			code: "Local Authority District code (2024)",
+			name: "Local Authority District name (2024)",
+		},
+		population: "Total population: mid 2022",
+		areas: 33755,
+		boundaryYear: 2021,
+		source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2025.",
+	},
+} as const;
+
+type Edition = keyof typeof EDITIONS;
+
+const parseEdition = async (
+	text: (path: string) => Promise<string>,
+	edition: Edition,
+): Promise<DirectRecord[]> => {
+	const { file, lsoa, lad, population } = EDITIONS[edition];
+	const { data } = await parseCsv(await text(sourceDir("imd", file)), {
+		header: true,
+	});
+	const records = new Map<string, DirectRecord>();
+	for (const row of data) {
+		const code = row[lsoa.code]?.trim();
+		if (!code || !code.startsWith("E")) continue;
+		const score = (column: string) => parseNum(row[column]);
+		const domain = (member: string, column: string) => ({
+			measure: "imd-domain-score",
+			members: { "deprivation-domain": member },
+			value: score(column),
+		});
+		records.set(code, {
+			code,
+			name: row[lsoa.name]?.trim() || "",
+			parents: {
+				ladCode: {
+					code: row[lad.code]?.trim() || "",
+					name: row[lad.name]?.trim() || "",
+				},
+			},
+			values: [
+				{
+					measure: "imd-score",
+					value: score("Index of Multiple Deprivation (IMD) Score"),
+				},
+				{
+					measure: "imd-rank",
+					value: parseNumInt(
+						row[
+							"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
+						],
+					),
+				},
+				{
+					measure: "imd-decile",
+					value: parseNumInt(
+						row[
+							"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
+						],
+					),
+				},
+				{ measure: "population", value: parseNumInt(row[population]) },
+				domain("incomeScore", "Income Score (rate)"),
+				domain("employmentScore", "Employment Score (rate)"),
+				domain(
+					"educationScore",
+					"Education, Skills and Training Score",
+				),
+				domain(
+					"healthScore",
+					"Health Deprivation and Disability Score",
+				),
+				domain("crimeScore", "Crime Score"),
+				domain(
+					"housingScore",
+					"Barriers to Housing and Services Score",
+				),
+				domain("livingEnvironmentScore", "Living Environment Score"),
+			],
+		});
+	}
+	return [...records.values()];
+};
+
 export const imd = defineDataset<IMDDataset>({
 	id: "imd",
 	topic: "deprivation",
 	boundary: { type: "lsoa", year: 2021 },
 	guide: {
 		title: "Indices of Multiple Deprivation",
-		about: "The English Indices of Deprivation rank every small neighbourhood in England from most to least deprived, combining income, employment, education, health, crime, housing and living environment. It's the standard way to find the most deprived areas in England.",
+		about: "The English Indices of Deprivation rank every small neighbourhood in England from most to least deprived, combining income, employment, education, health, crime, housing and living environment. It's the standard way to find the most deprived areas in England. The 2015 and 2025 editions are held; each ranks neighbourhoods against England in its own year.",
 		summary:
-			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles.",
+			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles. The 2015 edition is on the 2011 neighbourhoods and the 2025 edition on the 2021 neighbourhoods, so a neighbourhood's rank or decile in one year is not comparable with its value in the other.",
 	},
 	mapName: "Deprivation (IMD)",
 	source: {
@@ -126,7 +228,7 @@ export const imd = defineDataset<IMDDataset>({
 		attribution:
 			"Ministry of Housing, Communities & Local Government. Contains public sector information licensed under the Open Government Licence v3.0.",
 		description:
-			"Deprivation scores, ranks and deciles by 2021 small area (LSOA) for England.",
+			"Deprivation scores, ranks and deciles by small area (LSOA) for England: 2015 on 2011 areas and 2025 on 2021 areas.",
 		cadence: "irregular",
 		notes: [],
 	},
@@ -139,97 +241,41 @@ export const imd = defineDataset<IMDDataset>({
 	},
 	statistics: {
 		...base,
-		direct: {
-			only: true,
-			read: async ({ text }) => {
-				const csv = await text(
-					sourceDir(
+		parents: (base.parents ?? []).map((parent) => ({
+			...parent,
+			// Councils of 2013 that no longer exist are found on the 2015 release.
+			alsoIn: [{ geography: "localAuthority", year: 2015 }],
+		})),
+		payload: {
+			...base.payload,
+			parts: (labels) =>
+				(Object.keys(EDITIONS) as Edition[]).flatMap((key) =>
+					yearParts(
 						"imd",
-						"File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
-					),
-				);
-				const { data } = await parseCsv(csv, { header: true });
-				const records = new Map<string, DirectRecord>();
-				for (const row of data) {
-					const code = row["LSOA code (2021)"]?.trim();
-					if (!code || !code.startsWith("E")) continue;
-					const score = (column: string) => parseNum(row[column]);
-					const domain = (member: string, column: string) => ({
-						measure: "imd-domain-score",
-						members: { "deprivation-domain": member },
-						value: score(column),
-					});
-					records.set(code, {
-						code,
-						name: row["LSOA name (2021)"]?.trim() || "",
-						parents: {
-							ladCode: {
-								code:
-									row[
-										"Local Authority District code (2024)"
-									]?.trim() || "",
-								name:
-									row[
-										"Local Authority District name (2024)"
-									]?.trim() || "",
+						"lsoa",
+						EDITIONS[key].boundaryYear,
+						{
+							metadata: {
+								source: EDITIONS[key].source,
+								notes: [
+									"England only. Decile 1 = most deprived 10% of LSOAs.",
+									`Ranks and deciles are relative to the ${EDITIONS[key].areas.toLocaleString("en-GB")} LSOAs of England in ${key} and are not comparable as values with another edition.`,
+								],
 							},
 						},
-						values: [
-							{
-								measure: "imd-score",
-								value: score(
-									"Index of Multiple Deprivation (IMD) Score",
-								),
-							},
-							{
-								measure: "imd-rank",
-								value: parseNumInt(
-									row[
-										"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
-									],
-								),
-							},
-							{
-								measure: "imd-decile",
-								value: parseNumInt(
-									row[
-										"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
-									],
-								),
-							},
-							{
-								measure: "population",
-								value: parseNumInt(
-									row["Total population: mid 2022"],
-								),
-							},
-							domain("incomeScore", "Income Score (rate)"),
-							domain(
-								"employmentScore",
-								"Employment Score (rate)",
-							),
-							domain(
-								"educationScore",
-								"Education, Skills and Training Score",
-							),
-							domain(
-								"healthScore",
-								"Health Deprivation and Disability Score",
-							),
-							domain("crimeScore", "Crime Score"),
-							domain(
-								"housingScore",
-								"Barriers to Housing and Services Score",
-							),
-							domain(
-								"livingEnvironmentScore",
-								"Living Environment Score",
-							),
-						],
-					});
-				}
-				return [{ key: "2025", records: [...records.values()] }];
-			},
+						[key],
+					)(labels),
+				),
+		},
+		direct: {
+			only: true,
+			read: async ({ text }) =>
+				Promise.all(
+					(Object.keys(EDITIONS) as Edition[]).map(async (key) => ({
+						key,
+						records: await parseEdition(text, key),
+					})),
+				),
 		},
 		measures: [
 			...base.measures,
@@ -273,7 +319,7 @@ export const imd = defineDataset<IMDDataset>({
 				},
 				notes: [
 					"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
-					"Ranks 1 to 33,755 are served as published.",
+					"Ranks 1 to 33,755 are served as published for 2025 and ranks 1 to 32,844 for 2015. Each edition ranks its own LSOAs against England in its own year, on the 2021 LSOAs for 2025 and the 2011 LSOAs for 2015, so a rank in one edition is not comparable as a value with a rank in the other.",
 				],
 				measure: "imd-rank",
 			},
@@ -290,7 +336,7 @@ export const imd = defineDataset<IMDDataset>({
 				},
 				notes: [
 					"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
-					"Deciles divide England's 33,755 LSOAs into ten near-equal groups by rank.",
+					"Deciles divide England's LSOAs into ten near-equal groups by rank: 33,755 LSOAs in 2025 and 32,844 in 2015. A 2015 decile is relative to 2015 England on the 2011 LSOAs, so it is not comparable as a value with a 2025 decile.",
 				],
 				measure: "imd-decile",
 			},

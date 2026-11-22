@@ -178,9 +178,9 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	imd: {
 		title: "Indices of Multiple Deprivation",
 		topic: "deprivation",
-		about: "The English Indices of Deprivation rank every small neighbourhood in England from most to least deprived, combining income, employment, education, health, crime, housing and living environment. It's the standard way to find the most deprived areas in England.",
+		about: "The English Indices of Deprivation rank every small neighbourhood in England from most to least deprived, combining income, employment, education, health, crime, housing and living environment. It's the standard way to find the most deprived areas in England. The 2015 and 2025 editions are held; each ranks neighbourhoods against England in its own year.",
 		summary:
-			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles.",
+			"The English Indices of Deprivation, ranking small neighbourhoods from most to least deprived. The legend switches between the overall index and its seven domain scores. Income and employment scores are rates; health and crime scores can be negative. Each domain uses its own scale. Area summaries show population-weighted scores, and domain views do not imply domain deciles. The 2015 edition is on the 2011 neighbourhoods and the 2025 edition on the 2021 neighbourhoods, so a neighbourhood's rank or decile in one year is not comparable with its value in the other.",
 	},
 	income: {
 		title: "Income",
