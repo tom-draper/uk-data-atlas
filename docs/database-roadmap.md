@@ -291,6 +291,11 @@ as published data.
   Measures with `aggregation = none` carry a refusal reason that names the
   missing part. The temporary accommodation rate would become a ratio once the
   publisher's household count, already in the source table, is published.
+  `measure.value_kind` and `measure.unit` are no longer stored. Declarations
+  state `statistic` and a unit that resolves to `unit_id`, readers join `unit`
+  for the label, and the public `valueKind` and unit text are derived by
+  `legacyValueKind` and the unit label so the v1 surface is unchanged.
+  Replacing them in the v1 surface (#714) is the follow-up.
 - **Task 4**: turnout is weighted by the electorate and background air quality
   by its grid cells, so both are rebuilt. Every other refused rate, share,
   mean and index names the part that is not held (for example the 16 to 64
