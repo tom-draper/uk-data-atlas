@@ -31,24 +31,31 @@ Sources to collect:
   sex breakdown.
 - Scottish and Welsh equivalents for education, planning, homelessness,
   council tax and waste.
-- Police Scotland and PSNI recorded crime.
-- Census tables for Scotland (2022) and Northern Ireland (2021). The 2022
-  Scottish output-area and 2021 Northern Ireland data-zone files are held in
-  `data/source/core`, but only feed crosswalk weights.
+- Police Scotland and PSNI recorded crime. Not collected on 2026-11-22:
+  statistics.gov.scot now redirects to data.gov.scot, which has no direct
+  file for the council-area series, and the PSNI statistics pages link no
+  downloadable tables. The OpenDataNI monthly file ends in December 2021.
+- Census tables for Scotland (2022) and Northern Ireland (2021) are now
+  staged (section 5) but not compiled.
 
 ### 2. Earlier years
 
 Many measures hold one period, so they have no trend. Seen with one period:
-IMD 2025 (no 2019 or 2015), claimants (one month), broadband, premises,
+IMD 2025 (no 2019; 2015 is now staged), claimants (one month compiled; January
+2013 to October 2026 is now staged), broadband, premises,
 mobile coverage, public EV chargers, ASHE, council tax, enterprises and the
 NHS waiting-list data. Back-years are the cheapest data to add. Roadmap task
 44 (change between periods on fixed boundaries) depends on them.
 
 ### 3. ITL history
 
-The Code History Database does not cover ITL areas. That is why 25 ITL2 and
-43 ITL3 events are still ended or created, none has a legal date, and only
-two ITL releases are held. ONS publishes ITL change lookups to collect.
+Closed on 2026-11-22. The Code History Database does not cover ITL areas, so
+the ONS ITL2 and ITL3 2021 to 2025 change lookups
+(`core/lookups/itl-changes`) and the 2025 ITL hierarchy are now held. Every
+ITL2 and ITL3 change between the two releases is explained: ITL3 has 37
+recoded, 10 redrawn, 5 split, 5 redistributed and 2 renamed, and ITL2 has 4
+redistributed and 2 split, with none ended or created. None has a legal date,
+and only two ITL releases are held.
 
 ### 4. Only one release for many geographies
 
@@ -75,6 +82,13 @@ These sit in `data/source/_staging`:
 - ethnic group by age and sex
 - household economic activity
 - local labour market indicators
+- claimant count by local authority, January 2013 to October 2026
+  (`claimant-count-history`)
+- the English Indices of Deprivation 2015 on the 2011 LSOAs (`imd-2015`)
+- Scotland's Census 2022, 76 tables on the 2022 data zones
+  (`census-2022-scotland-data-zone`)
+- the Northern Ireland Census 2021 main statistics, with sheets from data
+  zone to Northern Ireland (`census-2021-northern-ireland`)
 
 The `commuting` and `vehicles` folders under `data/source/transport` also have
 no measures in default coverage. Compiling the staged files needs no new
@@ -125,10 +139,16 @@ converted one.
 
 What is still out of reach:
 
-- LSOA estimates reach only authority releases (2023-05 onwards, every year
-  2011 to 2024). There is no LSOA to ward or LSOA to constituency crosswalk, so
-  English and Welsh wards and constituencies still hold the 2022 ward
-  estimates alone, and 2015 on the 2024 wards is still missing.
+- LSOA estimates now reach wards and constituencies through the ONS LSOA to
+  ward lookups (2024, 2025 and 2026 wards) and the LSOA to 2024 constituency
+  lookup, added 2026-11-22. Every English and Welsh ward on 2024-05, 2025-05
+  and 2026-05 has every year 2011 to 2024 (7,536, 7,545 and 7,552 wards), as
+  do all 575 English and Welsh 2024 constituencies. December releases get
+  only the wards unchanged since May. About 43 small wards per release have
+  no best-fit LSOA, so no value. On the 2024 constituencies and the 2026-05
+  wards the LSOA series is not the default: the published constituency
+  estimates and the IMD 2025 denominator rank first, because the default is
+  one series per measure and release, not per period.
 - NI data zones reach only the 2025-05, 2025-12 and 2026-05 authority
   releases. NI wards and constituencies get nothing, and NISRA super data
   zones are not compiled because no release holds them.
@@ -165,11 +185,12 @@ What is still out of reach:
 
 ## Where to start
 
-1. Scotland and Northern Ireland census, and an LSOA to ward lookup so the
-   LSOA population reaches wards and constituencies.
-2. The ITL change lookup, a small file that closes the largest remaining
-   ended and created block.
-3. Compile the staged census and population files.
-4. Back-years for IMD, claimants and ASHE.
+1. Compile the staged Scotland and Northern Ireland census tables, and the
+   other staged census and population files.
+2. Compile the staged claimant and IMD 2015 back-years, and collect ASHE
+   back-years.
+3. Choose the default population series per period, so the LSOA years show
+   on constituencies and the 2026 wards.
+4. Police Scotland and PSNI recorded crime, once a direct download is found.
 5. Events for data zones and Senedd constituencies, the cheapest compiled
    gap to close.
