@@ -32,6 +32,24 @@ const count = (text: string | undefined, what: string): number => {
 	return value;
 };
 
+/**
+ * One owned copy of each distinct cell text. A reader's text can be a slice of
+ * the whole sheet's text, and a held slice keeps all of it alive: the 14 NRS
+ * workbooks held 300 MB for 100,000 records. The same codes and names also
+ * repeat every year, so one copy serves them all.
+ */
+const sharedText = () => {
+	const copies = new Map<string, string>();
+	return (text: string): string => {
+		let copy = copies.get(text);
+		if (copy === undefined) {
+			copy = Buffer.from(text, "utf8").toString("utf8");
+			copies.set(copy, copy);
+		}
+		return copy;
+	};
+};
+
 /** Parts in year order, with a check that each year holds every area. */
 const partsOf = (
 	label: string,
@@ -74,6 +92,7 @@ export async function populationLsoaYear(
 	readRows: ReadRows,
 	path: string,
 	year: number,
+	own = sharedText(),
 ): Promise<Map<string, DirectRecord>> {
 	const sheet = `Mid-${year} LSOA 2021`;
 	const records = new Map<string, DirectRecord>();
@@ -86,7 +105,7 @@ export async function populationLsoaYear(
 			header = true;
 			return;
 		}
-		const code = row.get(2)?.trim() ?? "";
+		const code = own(row.get(2)?.trim() ?? "");
 		if (!LSOA_CODE.test(code)) return;
 		if (records.has(code))
 			throw new Error(`${path} ${sheet}: ${code} appears twice`);
@@ -94,7 +113,7 @@ export async function populationLsoaYear(
 			code,
 			record(
 				code,
-				row.get(3)?.trim(),
+				own(row.get(3)?.trim() ?? ""),
 				count(row.get(4), `${sheet} ${code}`),
 			),
 		);
@@ -109,6 +128,7 @@ export async function populationLsoaStatisticsParts(
 	expected = LSOA_2021_COUNT,
 ): Promise<DirectPart[]> {
 	const years = new Map<number, Map<string, DirectRecord>>();
+	const own = sharedText();
 	for (const [file, fileYears] of Object.entries(POPULATION_LSOA_WORKBOOKS))
 		for (const year of fileYears)
 			years.set(
@@ -143,6 +163,7 @@ export async function populationDataZoneScotlandYear(
 	readRows: ReadRows,
 	path: string,
 	year: number,
+	own = sharedText(),
 ): Promise<Map<string, DirectRecord>> {
 	const records = new Map<string, DirectRecord>();
 	let header = false;
@@ -159,7 +180,7 @@ export async function populationDataZoneScotlandYear(
 			header = true;
 			return;
 		}
-		const code = row.get(0)?.trim() ?? "";
+		const code = own(row.get(0)?.trim() ?? "");
 		if (!SCOTTISH_DATA_ZONE.test(code)) return;
 		if (row.get(4)?.trim() !== "Persons") return;
 		if (records.has(code))
@@ -168,7 +189,7 @@ export async function populationDataZoneScotlandYear(
 			code,
 			record(
 				code,
-				row.get(1)?.trim(),
+				own(row.get(1)?.trim() ?? ""),
 				count(row.get(5), `${year} ${code}`),
 			),
 		);
@@ -183,6 +204,7 @@ export async function populationDataZoneScotlandStatisticsParts(
 	expected = DATA_ZONE_2022_COUNT,
 ): Promise<DirectPart[]> {
 	const years = new Map<number, Map<string, DirectRecord>>();
+	const own = sharedText();
 	for (const year of POPULATION_DATA_ZONE_SCOTLAND_YEARS)
 		years.set(
 			year,
@@ -215,6 +237,7 @@ export async function populationDataZoneNiStatisticsParts(
 	path = sourceDir("population-data-zone-ni", "MYE24_DZ.xlsx"),
 ): Promise<DirectPart[]> {
 	const years = new Map<number, Map<string, DirectRecord>>();
+	const own = sharedText();
 	let header = false;
 	await readRows(path, "Flat", NISRA_COLUMNS, (row) => {
 		if (!header) {
@@ -228,7 +251,7 @@ export async function populationDataZoneNiStatisticsParts(
 			header = true;
 			return;
 		}
-		const code = row.get(1)?.trim() ?? "";
+		const code = own(row.get(1)?.trim() ?? "");
 		if (!NI_DATA_ZONE.test(code)) return;
 		const year = count(row.get(2), `${path} ${code} year`);
 		const records = years.get(year) ?? new Map<string, DirectRecord>();
