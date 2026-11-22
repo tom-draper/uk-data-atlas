@@ -23,7 +23,9 @@ single years of age are not converted there, so a read of
 `population?…&on=ward/2015-12-gb-bgc` is served from the converted total,
 with the same provenance as any converted value. Which years each release
 holds is in [data gaps](data-gaps.md#3-population-on-every-release): 2011 to
-2024 on the authorities from 2023-05, and 2022 elsewhere.
+2024 on the authorities from 2023-05 and on Scottish wards, constituencies and
+authorities (from the NRS data zones), 2021 to 2024 on the Northern Ireland
+authorities from 2025-05, and 2022 on the other releases.
 
 The list is read from the database (`convertedReleases`, the releases that
 hold a `converted` series), not hard-coded. Any other release is refused with

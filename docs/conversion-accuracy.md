@@ -415,7 +415,17 @@ it holds. A period the target publishes itself is never converted onto it.
 That is 43 series and 112,996 values, of which 3,346 are split and carry
 bounds, with 55,446 gaps (52,902 `not-carried`, 1,298 `unmeasured-split`, 914
 `missing-input`, 332 `no-weight`) and an exact share from 0.88 to 1 (mean
-0.978). The atlas grows by 4,059,136 bytes (0.39%). What it cannot reach is in
+0.978). The atlas grows by 4,059,136 bytes (0.39%).
+Step 2 adds the official small-area totals as sources, tried before the
+others for their nation: `population-lsoa` (England and Wales),
+`population-data-zone-scotland` and `population-data-zone-ni`. They add 6
+LSOA series (26,712 values, every year 2011 to 2024 on the authorities from
+2023-05), 41 Scottish data zone series (82,008 values on wards, constituencies
+and authorities, 2011 to 2024) and 3 Northern Ireland series (132 values on
+the 2025 and 2026 authorities, 2021 to 2024). Where a finer source reaches a
+year, the coarser one is skipped, so some step 1 series give way to them. The
+atlas grows by a further 15,491,072 bytes (1.50%), mostly the published
+small-area values. What is still out of reach is in
 [data gaps](data-gaps.md#3-population-on-every-release).
 
 ### How a route is chosen
