@@ -97,31 +97,73 @@ export const compileYearlyIndicators = (
 	const { year } = declaration.boundary;
 	const dataset = datasets.find((candidate) => candidate.id === id);
 	if (!dataset) throw new Error(`${manifestPath} has no ${id} dataset`);
-	if (
-		dataset.summary.boundaryYears.length !== 1 ||
-		dataset.summary.boundaryYears[0] !== year
-	)
+	const { boundaryYears } = dataset.summary;
+	if (!boundaryYears.includes(year))
 		throw new Error(
 			`${manifestPath}: ${id} must declare boundary year ${year}`,
 		);
 	const geography = declaration.boundary.type as SourceGeography["type"];
-	const areas = () => dataset.summary.dataRecordCount.toLocaleString("en-GB");
-	const published = catalogue.indicators.map((indicator) => {
-		const periods = rows.periods({
+	// A dataset may also hold editions published on other boundary years (IMD
+	// 2015 is on the 2011 LSOAs). The catalogue lists the declared boundary
+	// only, and the manifest counts cover every boundary the dataset holds.
+	const editions = rows.editions(id, geography);
+	const periodsOn = (
+		indicator: (typeof catalogue.indicators)[number],
+		boundaryYear: number,
+	) => {
+		const source = {
 			series: {
 				measure: indicator.measure,
 				dimensions: indicator.members,
 			},
 			datasetId: id,
 			geography,
-			boundaryYear: year,
-		});
+			boundaryYear,
+		};
+		const elsewhere = new Set(
+			editions
+				.filter(
+					(edition) =>
+						edition.boundaryYear !== year &&
+						!editions.some(
+							(other) =>
+								other.period === edition.period &&
+								other.boundaryYear === year,
+						),
+				)
+				.map(({ period }) => period),
+		);
+		return boundaryYear === year
+			? rows.periods(
+					source,
+					rows
+						.heldPeriods(rows.selector(source))
+						.filter((period) => !elsewhere.has(period)),
+				)
+			: rows.periods(
+					source,
+					editions
+						.filter(
+							(edition) => edition.boundaryYear === boundaryYear,
+						)
+						.map(({ period }) => period),
+				);
+	};
+	const published = catalogue.indicators.map((indicator) => {
+		const periods = periodsOn(indicator, year);
 		if (periods.length === 0)
 			throw new Error(
 				`${id}: the rows hold no periods of ${indicator.id}`,
 			);
-		const records = periods.reduce(
-			(total, period) => total + period.records.length,
+		const everyBoundary = boundaryYears.map((boundaryYear) =>
+			boundaryYear === year
+				? periods
+				: periodsOn(indicator, boundaryYear),
+		);
+		const records = everyBoundary.reduce(
+			(total, held) =>
+				total +
+				held.reduce((sum, period) => sum + period.records.length, 0),
 			0,
 		);
 		const { summary } = dataset;
@@ -133,14 +175,21 @@ export const compileYearlyIndicators = (
 			throw new Error(
 				`${id}: expected ${summary.dataRecordCount} records from the manifest, found ${records}`,
 			);
+		const heldPeriods = everyBoundary.reduce(
+			(total, held) => total + held.length,
+			0,
+		);
 		if (
 			checks.includes("manifest-periods") &&
-			periods.length !== summary.datasetCount
+			heldPeriods !== summary.datasetCount
 		)
 			throw new Error(
-				`${id}: expected ${summary.datasetCount} periods from the manifest, found ${periods.length}`,
+				`${id}: expected ${summary.datasetCount} periods from the manifest, found ${heldPeriods}`,
 			);
-		const first = periods[0]?.records.length ?? 0;
+		const first = everyBoundary.reduce(
+			(total, held) => total + (held[0]?.records.length ?? 0),
+			0,
+		);
 		if (
 			checks.includes("manifest-areas") &&
 			first !== summary.dataRecordCount
@@ -178,7 +227,12 @@ export const compileYearlyIndicators = (
 				label: indicator.label,
 				valueKind: indicator.valueKind,
 				unit: indicator.unit.includes("{areas}")
-					? indicator.unit.replace("{areas}", areas())
+					? indicator.unit.replace(
+							"{areas}",
+							(
+								artifact.periods[0]?.records.length ?? 0
+							).toLocaleString("en-GB"),
+						)
 					: indicator.unit,
 				aggregation,
 				sources: [
