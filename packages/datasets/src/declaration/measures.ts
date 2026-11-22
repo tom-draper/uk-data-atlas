@@ -166,3 +166,35 @@ export const PARTY_VOTES = measure(
 	"sum",
 	"Votes for a party's candidates. Where a ward elects several councillors, the votes of the party's highest-polling candidate, so each voter counts once.",
 );
+
+export const CLAIMANTS = measure(
+	"claimants",
+	"Claimants",
+	"people",
+	"count",
+	"sum",
+	"People claiming unemployment-related benefits (the claimant count).",
+);
+
+export const CLAIMANT_RATE = measure(
+	"claimant-rate",
+	"Claimant rate",
+	"percent",
+	"rate",
+	"none",
+	"Claimants as a percentage of residents aged 16 to 64. Published, except for authorities formed in 2023, where the compiler divides by the 2024 mid-year population.",
+);
+
+export const CLAIMANT_AGE_GROUP: DeclaredDimension = {
+	slug: "age-group",
+	label: "Age group",
+	members: [
+		{ key: "totalCount", code: "16-plus", label: "Aged 16 and over" },
+		{
+			key: "youthCount",
+			code: "16-to-24",
+			label: "Aged 16 to 24",
+			parent: "totalCount",
+		},
+	],
+};
