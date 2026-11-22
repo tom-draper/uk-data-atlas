@@ -82,20 +82,21 @@ export const publishedGroups = (database: DatabaseSync): PublishedGroup[] =>
 		.all() as PublishedGroup[];
 
 /**
- * The best route of those found: the fewest hops that can split a value, then
- * the fewest that pass through a best-fit membership lookup, then the fewest
- * hops, then the order of their keys, so the choice never moves. A best-fit
- * lookup is taken only where no route avoids it: LSOAs nest in authorities,
- * so a route through the LSOA to ward lookup reaches an authority no better
- * and drops those whose small wards no LSOA is fitted to.
+ * The best route of those found: the fewest hops through a best-fit
+ * membership lookup, then the fewest hops that can split a value, then the
+ * fewest hops, then the order of their keys, so the choice never moves. A
+ * best-fit lookup is taken only where no route avoids it: it places a
+ * straddling area whole in one target, and LSOAs nest in authorities, so a
+ * route through the LSOA to ward lookup reaches an authority no better and
+ * drops those whose small wards no LSOA is fitted to.
  */
 export const bestRoute = (routes: readonly Route[]): Route | undefined =>
 	[...routes].sort(
 		(a, b) =>
-			a.filter((hop) => !hop.exact).length -
-				b.filter((hop) => !hop.exact).length ||
 			a.filter((hop) => hop.bestFit).length -
 				b.filter((hop) => hop.bestFit).length ||
+			a.filter((hop) => !hop.exact).length -
+				b.filter((hop) => !hop.exact).length ||
 			a.length - b.length ||
 			routeKey(a).localeCompare(routeKey(b)),
 	)[0];

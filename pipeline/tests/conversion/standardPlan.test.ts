@@ -28,13 +28,13 @@ test("the best route splits least, then is shortest, then sorts by key", () => {
 	assert.equal(bestRoute([]), undefined);
 });
 
-test("the best route avoids a best-fit lookup where it splits no more", () => {
+test("the best route avoids a best-fit lookup wherever it can", () => {
 	const throughLookup: Route = [
 		{ ...hop(1, 1, 2, false), bestFit: true },
 		hop(2, 2, 3, true),
 	];
 	const around: Route = [
-		hop(3, 1, 4, true),
+		hop(3, 1, 4, false),
 		hop(4, 4, 5, true),
 		hop(5, 5, 3, false),
 	];
