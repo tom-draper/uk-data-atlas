@@ -298,11 +298,14 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 			datasets: {
 				order: [
 					"imd",
+					"population-lsoa",
+					"population-data-zone-scotland",
+					"population-data-zone-ni",
 					"population",
 					"population-uk",
 					"population-constituency",
 				],
-				reason: "The finest areas first, so a value converted onto another release is built from the most areas. imd is published on LSOAs and holds the latest period (2025). population holds wards for 2022, which population-uk also converts onto councils from the 2023 authorities: the ward sum is preferred there. population-constituency holds 2021 and 2022 only. A value published on the release itself is native and wins over any of these.",
+				reason: "The finest areas first, so a value converted onto another release is built from the most areas. imd is published on LSOAs and holds the latest period (2025). population-lsoa, population-data-zone-scotland and population-data-zone-ni are the official small-area estimates of each nation (2011 to 2024, and 2021 to 2024 for Northern Ireland), so their sums are preferred on every release they reach. population holds wards for 2022, which population-uk also converts onto councils from the 2023 authorities: the ward sum is preferred there. population-constituency holds 2021 and 2022 only. A value published on the release itself is native and wins over any of these.",
 			},
 			dimensions: {
 				age: breakdown(
