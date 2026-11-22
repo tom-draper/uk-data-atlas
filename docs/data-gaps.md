@@ -41,10 +41,15 @@ Sources to collect:
 ### 2. Earlier years
 
 Many measures hold one period, so they have no trend. Seen with one period:
-IMD 2025 (no 2019; 2015 is now staged), broadband, premises,
-mobile coverage, public EV chargers, ASHE, council tax, enterprises and the
-NHS waiting-list data. Back-years are the cheapest data to add. Roadmap task
-44 (change between periods on fixed boundaries) depends on them.
+broadband, premises, mobile coverage, public EV chargers, ASHE, council tax,
+enterprises and the NHS waiting-list data. IMD holds 2015 and 2025, with no
+2019 (the 2019 file is in the folder but not read). The 2015 edition is
+England only, on the 2011 LSOAs (32,844 areas). Its scores, ranks and deciles
+are not converted, because ranks and deciles are relative to the year's own
+England and cannot be summed or compared across editions. Its population
+converts to 31,907 of the 35,672 2021 LSOAs and to coarser areas. Back-years
+are the cheapest data to add. Roadmap task 44 (change between periods on fixed
+boundaries) depends on them.
 
 ### 3. ITL history
 
@@ -81,7 +86,6 @@ These sit in `data/source/_staging`:
 - ethnic group by age and sex
 - household economic activity
 - local labour market indicators
-- the English Indices of Deprivation 2015 on the 2011 LSOAs (`imd-2015`)
 - Scotland's Census 2022, 76 tables on the 2022 data zones
   (`census-2022-scotland-data-zone`)
 - the Northern Ireland Census 2021 main statistics, with sheets from data
@@ -196,7 +200,7 @@ What is still out of reach:
 
 1. Compile the staged Scotland and Northern Ireland census tables, and the
    other staged census and population files.
-2. Compile the staged IMD 2015 back-years, and collect ASHE back-years.
+2. Collect ASHE back-years.
 3. Police Scotland and PSNI recorded crime, once a direct download is found.
 4. Events for data zones and Senedd constituencies, the cheapest compiled
    gap to close.
