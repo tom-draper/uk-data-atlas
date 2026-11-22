@@ -156,5 +156,38 @@
 		"title": "2021 LSOA to Westminster Parliamentary Constituency, July 2024 (England and Wales)",
 		"description": "Official ONS best-fit lookup from 2021 Lower Layer Super Output Areas to the 2024 Westminster Parliamentary Constituencies. An LSOA is assigned to the constituency that holds most of its population, so it is a membership lookup, not containment.",
 		"temporalCoverage": "2024-07"
+	},
+	{
+		"service": "ITL125_ITL225_ITL325_LAU125_LAD25_UK_LU",
+		"directory": "local-authority-to-itl/2025-01-uk",
+		"title": "Local authority district to LAU1 and ITL levels 3, 2 and 1, 2025 (United Kingdom)",
+		"description": "Official ONS lookup from 2025 Local Authority Districts through Local Administrative Units to the January 2025 International Territorial Levels 3, 2 and 1.",
+		"temporalCoverage": "2025",
+		"distinctColumns": [
+			"LAD25CD",
+			"LAD25NM",
+			"LAU125CD",
+			"LAU125NM",
+			"ITL325CD",
+			"ITL325NM",
+			"ITL225CD",
+			"ITL225NM",
+			"ITL125CD",
+			"ITL125NM"
+		]
+	},
+	{
+		"service": "ITL321_ITL325_UK_LU",
+		"directory": "itl-changes/itl3-2021-to-2025-uk",
+		"title": "ITL3 2021 to ITL3 2025 changes (United Kingdom)",
+		"description": "Official ONS lookup from the 2021 International Territorial Level 3 areas to their January 2025 successors.",
+		"temporalCoverage": "2025-01"
+	},
+	{
+		"service": "ITL221_ITL225_UK_LU",
+		"directory": "itl-changes/itl2-2021-to-2025-uk",
+		"title": "ITL2 2021 to ITL2 2025 changes (United Kingdom)",
+		"description": "Official ONS lookup from the 2021 International Territorial Level 2 areas to their January 2025 successors.",
+		"temporalCoverage": "2025-01"
 	}
 ]
