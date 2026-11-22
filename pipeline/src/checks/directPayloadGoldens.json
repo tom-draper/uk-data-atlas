@@ -214,5 +214,17 @@
 	"public-health": {
 		"sha256": "ea13b81bf705483f4746690614b01107418eeffc250ce1fe0d2ebf008f5d9ca2",
 		"bytes": 35992
+	},
+	"population-lsoa": {
+		"sha256": "3aa7b45ddaf2e8c5a617447aebbf390e61bd8ec823d432b2ebd01848a107785c",
+		"bytes": 35870775
+	},
+	"population-data-zone-scotland": {
+		"sha256": "168de5912fcd1da4c3a1f5505db9be74a324904c7f352623af44ad337dc8c6a5",
+		"bytes": 8081446
+	},
+	"population-data-zone-ni": {
+		"sha256": "4c51cc95aad666c8b7319ef1faae8e02e6ede03ef84c926bbfe206b546ffa767",
+		"bytes": 681165
 	}
 }
