@@ -17,8 +17,8 @@ import type { ConversionBasis } from "./crosswalkSteps.ts";
 export type MeasureRow = {
 	id: number;
 	slug: string;
+	/** The label of the measure's unit. */
 	unit: string;
-	valueKind: string;
 	statistic: string;
 	aggregation: string;
 	numerator: string | null;
@@ -206,30 +206,31 @@ export const conversionRule = (
 	}
 	const specific = MEASURE_REFUSALS[measure.slug];
 	if (specific) return { rule: "refuse", reason: specific };
-	const byKind = REFUSALS[measure.valueKind];
+	const byKind = REFUSALS[measure.statistic];
 	if (byKind) return { rule: "refuse", reason: byKind };
-	if (measure.valueKind === "rate" || measure.valueKind === "share")
+	if (measure.statistic === "rate" || measure.statistic === "share")
 		return {
 			rule: "refuse",
 			reason: "A rate or share must be rebuilt from its numerator and denominator, and the measure names neither. Averaging it would weight a small area the same as a large one.",
 		};
-	if (measure.valueKind === "mean")
+	if (measure.statistic === "mean")
 		return {
 			rule: "refuse",
 			reason: "A mean can only be recombined with the counts it was taken over, and none is linked to the measure.",
 		};
 	return {
 		rule: "refuse",
-		reason: `The measure is declared as not additive (${measure.valueKind}, aggregation ${measure.aggregation}), and no other method is held for it.`,
+		reason: `The measure is declared as not additive (${measure.statistic}, aggregation ${measure.aggregation}), and no other method is held for it.`,
 	};
 };
 
 export const readMeasures = (database: DatabaseSync): MeasureRow[] =>
 	database
 		.prepare(
-			`SELECT m.id, m.slug, m.unit, m.value_kind AS valueKind, m.statistic, m.aggregation,
+			`SELECT m.id, m.slug, u.label AS unit, m.statistic, m.aggregation,
 				n.slug AS numerator, d.slug AS denominator, w.slug AS weight
 			FROM measure m
+			JOIN unit u ON u.id = m.unit_id
 			LEFT JOIN measure n ON n.id = m.numerator_id
 			LEFT JOIN measure d ON d.id = m.denominator_id
 			LEFT JOIN measure w ON w.id = m.weight_id

@@ -46,7 +46,7 @@ export type SchemaDocs = {
 export const schemaGuide: readonly GuideTopic[] = [
 	{
 		topic: "measure-semantics",
-		body: "Join measure.unit_id to unit for kind, scale, currency and symbol, and universe_id to universe for the population or entity base. For percent and per_n, unit scale is the denominator (100 for percent). For count and currency units expressed in thousands or millions it multiplies the published value; otherwise it is 1. Every measure names its base: unknown is reserved and no published measure uses it, and not-applicable is used only for totals such as tonnes or pounds that are not statistics over a population, each with a reason checked at build. statistic describes the statistic; value_kind and unit are retained as legacy text. When statistic is by-dimension, join statistic_dimension_id to dimension and inspect series_member for the member. In the pay measures this is pay-statistic: mean, median or a percentile. For pay-change measures it selects the underlying pay statistic whose percentage change is reported. Five published weighted means have no linkable weight (the PM2.5 population-weighted pair, Band D council tax, mobile area coverage and Progress 8). Conversion reads a weight from the same dataset as the measure, so it refuses them and measure_conversion gives each reason.",
+		body: "Join measure.unit_id to unit for kind, scale, currency and symbol, and universe_id to universe for the population or entity base. For percent and per_n, unit scale is the denominator (100 for percent). For count and currency units expressed in thousands or millions it multiplies the published value; otherwise it is 1. Every measure names its base: unknown is reserved and no published measure uses it, and not-applicable is used only for totals such as tonnes or pounds that are not statistics over a population, each with a reason checked at build. statistic describes the statistic and unit_id the unit, and nothing else stores a value kind or unit text. When statistic is by-dimension, join statistic_dimension_id to dimension and inspect series_member for the member. In the pay measures this is pay-statistic: mean, median or a percentile. For pay-change measures it selects the underlying pay statistic whose percentage change is reported. Five published weighted means have no linkable weight (the PM2.5 population-weighted pair, Band D council tax, mobile area coverage and Progress 8). Conversion reads a weight from the same dataset as the measure, so it refuses them and measure_conversion gives each reason.",
 	},
 	{
 		topic: "start-here",
@@ -401,7 +401,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			slug: "Measure name used across the atlas, such as recorded-crimes.",
 			label: "Human-readable name.",
 			description: "What the measure counts and over what population.",
-			unit: "Legacy published unit label. Use unit_id for structured metadata.",
 			unit_id: "Reference to the value unit (unit.id).",
 			statistic:
 				"Statistic represented by the value. By-dimension means the statistic is selected by statistic_dimension_id.",
@@ -409,8 +408,6 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"Dimension selecting the statistic, or null when statistic is fixed.",
 			universe_id:
 				"Population or entity base (universe.id), including explicit unknown or not applicable.",
-			value_kind:
-				"Legacy mixed number and statistic classification, retained for compatibility. Use statistic and unit_id.",
 			aggregation:
 				"How values combine across areas: sum, ratio (rebuild from numerator and denominator), weighted_mean (average weighted by weight_id) or none (cannot be combined).",
 			numerator_id: "For a ratio, the measure on top (measure.id).",
@@ -1815,7 +1812,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 	{
 		id: "find-measure",
 		question: "Which measures are about households?",
-		sql: "SELECT m.slug, m.label, m.unit FROM search JOIN measure m ON m.slug = search.key WHERE search MATCH 'household*' AND search.kind = 'measure' ORDER BY rank",
+		sql: "SELECT m.slug, m.label, u.label AS unit FROM search JOIN measure m ON m.slug = search.key JOIN unit u ON u.id = m.unit_id WHERE search MATCH 'household*' AND search.kind = 'measure' ORDER BY rank",
 		expect: "households, fuel-poor-households, households-in-temporary-accommodation and others, best match first.",
 	},
 	{

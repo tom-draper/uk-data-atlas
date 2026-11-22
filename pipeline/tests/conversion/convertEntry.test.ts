@@ -75,31 +75,26 @@ const measure = (
 	id,
 	slug,
 	unit: "count",
-	valueKind: "count",
+	statistic: "count",
 	aggregation: "sum",
 	numerator: null,
 	denominator: null,
 	weight: null,
 	...fields,
-	statistic:
-		fields.statistic ??
-		(fields.valueKind === "amount"
-			? "total"
-			: (fields.valueKind ?? "count")),
 });
 const measures = [
 	measure(1, "people"),
 	measure(2, "employed"),
 	measure(3, "employment-rate", {
 		unit: "percent",
-		valueKind: "share",
+		statistic: "share",
 		aggregation: "ratio",
 		numerator: "employed",
 		denominator: "people",
 	}),
 	measure(4, "score", {
 		unit: "score",
-		valueKind: "mean",
+		statistic: "mean",
 		aggregation: "weighted_mean",
 		weight: "people",
 	}),

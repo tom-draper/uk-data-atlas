@@ -3,6 +3,7 @@ import { test } from "vitest";
 import type { StatisticsMeasure } from "@uk-data-atlas/measures";
 import {
 	MEASURE_UNITS,
+	legacyValueKind,
 	NOT_APPLICABLE_REASONS,
 	measureSemantics,
 } from "@uk-data-atlas/datasets";
@@ -13,7 +14,7 @@ const base: StatisticsMeasure = {
 	label: "Fixture",
 	description: "Fixture",
 	unit: "people",
-	valueKind: "count",
+	statistic: "count",
 	aggregation: "sum",
 };
 
@@ -23,11 +24,11 @@ test("validation rejects incomplete or inconsistent measure metadata", () => {
 		[{ aggregation: "weighted_mean" }, /requires a weight/],
 		[{ unit: "missing" }, /unknown unit/],
 		[
-			{ valueKind: "share", unit: "people", aggregation: "none" },
+			{ statistic: "share", unit: "people", aggregation: "none" },
 			/share requires/,
 		],
 		[{ unit: "percent", aggregation: "none" }, /percent unit/],
-		[{ valueKind: "median" }, /sum is incompatible/],
+		[{ statistic: "median" }, /sum is incompatible/],
 	] as const)
 		assert.throws(
 			() => validateMeasureSemantics({ ...base, ...changes }),
@@ -40,7 +41,7 @@ test("pay names its statistic dimension and missing-weight exceptions stay speci
 		measureSemantics({
 			...base,
 			slug: "gross-annual-pay",
-			valueKind: "amount",
+			statistic: "by-dimension",
 			aggregation: "none",
 		}).statisticDimension,
 		"pay-statistic",
@@ -50,7 +51,7 @@ test("pay names its statistic dimension and missing-weight exceptions stay speci
 			...base,
 			slug: "progress-8",
 			unit: "score",
-			valueKind: "mean",
+			statistic: "mean",
 			aggregation: "weighted_mean",
 		}),
 	);
@@ -60,7 +61,7 @@ test("pay names its statistic dimension and missing-weight exceptions stay speci
 				...base,
 				slug: "another-mean",
 				unit: "score",
-				valueKind: "mean",
+				statistic: "mean",
 				aggregation: "weighted_mean",
 			}),
 		/requires a weight/,
@@ -77,7 +78,7 @@ test("every measure states its universe or why it has none", () => {
 			...base,
 			slug: "collected-waste",
 			unit: "tonnes",
-			valueKind: "amount",
+			statistic: "total",
 		}),
 	);
 	for (const slug of Object.keys(NOT_APPLICABLE_REASONS))
@@ -85,6 +86,41 @@ test("every measure states its universe or why it has none", () => {
 	assert.equal(
 		measureSemantics({ ...base, slug: "band-d-council-tax" }).universeId,
 		38,
+	);
+});
+
+test("the legacy value kind is derived from the statistic, the unit kind and two exceptions", () => {
+	assert.equal(legacyValueKind("population", "count", "count"), "count");
+	assert.equal(legacyValueKind("gdp", "total", "currency"), "amount");
+	assert.equal(
+		legacyValueKind("house-price-mean", "mean", "currency"),
+		"mean",
+	);
+	assert.equal(
+		legacyValueKind("band-d-council-tax", "mean", "currency"),
+		"amount",
+	);
+	assert.equal(
+		legacyValueKind("social-care-quality-of-life", "mean", "index"),
+		"index",
+	);
+	assert.equal(legacyValueKind("attainment-8", "mean", "index"), "mean");
+	assert.equal(
+		legacyValueKind("house-price-to-earnings-ratio", "ratio", "ratio"),
+		"index",
+	);
+	assert.equal(
+		legacyValueKind("gross-annual-pay", "by-dimension", "currency"),
+		"amount",
+	);
+	assert.equal(
+		legacyValueKind("gross-annual-pay-change", "by-dimension", "percent"),
+		"rate",
+	);
+	assert.equal(legacyValueKind("majority", "difference", "count"), "count");
+	assert.equal(
+		legacyValueKind("party-vote-share-change", "difference", "other"),
+		"rate",
 	);
 });
 

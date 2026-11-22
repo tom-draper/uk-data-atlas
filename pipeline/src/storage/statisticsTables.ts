@@ -277,12 +277,10 @@ export function statisticsTables(
 				"slug TEXT NOT NULL UNIQUE",
 				"label TEXT NOT NULL",
 				"description TEXT NOT NULL",
-				"unit TEXT NOT NULL",
 				"unit_id INTEGER NOT NULL REFERENCES unit(id)",
 				"statistic TEXT NOT NULL CHECK (statistic IN ('count','total','mean','median','quantile','rate','share','index','rank','category','ratio','difference','interval','by-dimension'))",
 				"statistic_dimension_id INTEGER REFERENCES dimension(id)",
 				"universe_id INTEGER NOT NULL REFERENCES universe(id)",
-				"value_kind TEXT NOT NULL CHECK (value_kind IN ('count','rate','share','median','mean','index','rank','amount','category'))",
 				"aggregation TEXT NOT NULL CHECK (aggregation IN ('sum','ratio','weighted_mean','none'))",
 				"numerator_id INTEGER REFERENCES measure(id)",
 				"denominator_id INTEGER REFERENCES measure(id)",
@@ -303,7 +301,6 @@ export function statisticsTables(
 						measure.slug,
 						measure.label,
 						measure.description,
-						measure.unit,
 						unitId(measure.unit),
 						semantics.statistic,
 						semantics.statisticDimension
@@ -313,7 +310,6 @@ export function statisticsTables(
 								)
 							: null,
 						semantics.universeId,
-						measure.valueKind,
 						measure.aggregation,
 						measure.numerator === undefined
 							? null
@@ -413,7 +409,7 @@ export function statisticsTables(
 			],
 			views: {
 				v_series: `
-SELECT s.id AS series_id, s.key, d.slug AS dataset, m.slug AS measure, m.unit,
+SELECT s.id AS series_id, s.key, d.slug AS dataset, m.slug AS measure, mu.label AS unit,
   (SELECT group_concat(dim.slug || '=' || dm.code, '; ')
    FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
    JOIN dimension_member dm ON dm.id = sm.member_id
@@ -422,6 +418,7 @@ SELECT s.id AS series_id, s.key, d.slug AS dataset, m.slug AS measure, m.unit,
 FROM series s
 JOIN dataset d ON d.id = s.dataset_id
 JOIN measure m ON m.id = s.measure_id
+JOIN unit mu ON mu.id = m.unit_id
 JOIN area_release r ON r.id = s.release_id
 LEFT JOIN series df ON df.id = s.derived_from_id`,
 			},
@@ -676,7 +673,7 @@ LEFT JOIN series df ON df.id = s.derived_from_id`,
 			}),
 			views: {
 				v_observation: `
-SELECT d.slug AS dataset, m.slug AS measure, m.unit,
+SELECT d.slug AS dataset, m.slug AS measure, mu.label AS unit,
   (SELECT group_concat(dim.slug || '=' || dm.code, '; ')
    FROM series_member sm JOIN dimension dim ON dim.id = sm.dimension_id
    JOIN dimension_member dm ON dm.id = sm.member_id
@@ -690,6 +687,7 @@ JOIN series s ON s.id = o.series_id
 JOIN dataset d ON d.id = s.dataset_id
 JOIN source src ON src.id = d.source_id
 JOIN measure m ON m.id = s.measure_id
+JOIN unit mu ON mu.id = m.unit_id
 JOIN area_version v ON v.id = o.area_version_id
 JOIN area a ON a.id = v.area_id
 JOIN area_release r ON r.id = s.release_id
