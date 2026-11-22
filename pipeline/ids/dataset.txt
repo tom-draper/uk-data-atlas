@@ -65,3 +65,6 @@ census-2021-ts066
 census-2021-ts021
 census-2021-ts037
 regional-gdp
+population-data-zone-ni
+population-data-zone-scotland
+population-lsoa
