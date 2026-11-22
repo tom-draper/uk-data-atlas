@@ -362,7 +362,10 @@ test("a total names every series it adds and keeps only the members they share",
 			inputs: [
 				{
 					...input,
-					series: { ...input.series, key: "population/ward/age=0/sex=all" },
+					series: {
+						...input.series,
+						key: "population/ward/age=0/sex=all",
+					},
 				},
 				{
 					...input,
