@@ -277,7 +277,20 @@ as published data.
   `boundary_release_validity`. Missing evidence is not a claim of invalidity.
 - **Measure semantics**: `measure` links structured `unit` and `universe`
   references and records `statistic`. Build validation checks aggregation
-  components, unit consistency and additive conversion.
+  components, unit consistency and additive conversion. Every measure now
+  names a universe, or is listed in `NOT_APPLICABLE_REASONS` with the reason it
+  has none, and the build refuses `unknown`. Band D council tax is a charge
+  per Band D equivalent dwelling (universe 38), the house price to earnings
+  ratio has no entity base, and electricity and gas consumption are over
+  energy meters. Five weighted means still have no linkable weight
+  (`MISSING_WEIGHT_EXCEPTIONS`), because conversion reads a weight from the
+  same dataset and area vintage as the measure: the PM2.5 population-weighted
+  pair, Band D council tax (the tax base is not published), mobile area
+  coverage (land area is in `land-area`) and Progress 8 (the exact Progress 8
+  pupil count is not published, and key stage 4 pupils is a different count).
+  Measures with `aggregation = none` carry a refusal reason that names the
+  missing part. The temporary accommodation rate would become a ratio once the
+  publisher's household count, already in the source table, is published.
 - **Task 4**: turnout is weighted by the electorate and background air quality
   by its grid cells, so both are rebuilt. Every other refused rate, share,
   mean and index names the part that is not held (for example the 16 to 64
