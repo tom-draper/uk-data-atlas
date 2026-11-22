@@ -198,14 +198,26 @@ export const planStandardReleases = (
 
 /**
  * The datasets of mid-year population estimates, finest areas first, each on
- * the release it is published on. Deprivation indices hold population as a
- * denominator, for one year each, and are not offered.
+ * the release it is published on: the small areas of each nation (LSOAs and
+ * the data zones of Scotland and Northern Ireland), then wards, councils and
+ * constituencies. Deprivation indices hold population as a denominator, for
+ * one year each, and are not offered.
  */
 export const POPULATION_DATASETS = [
+	"population-lsoa",
+	"population-data-zone-scotland",
+	"population-data-zone-ni",
 	"population",
 	"population-uk",
 	"population-constituency",
 ] as const;
+
+/** The small-area datasets, which publish the total of persons alone. */
+const SMALL_AREA_POPULATION: ReadonlySet<string> = new Set([
+	"population-lsoa",
+	"population-data-zone-scotland",
+	"population-data-zone-ni",
+]);
 
 /** The geographies a population total is converted onto, on every release. */
 export const POPULATION_GEOGRAPHIES = [
@@ -226,8 +238,11 @@ export const POPULATION_GEOGRAPHIES = [
  * population, the one basis a population split is backtested on.
  *
  * The finest source of each year is preferred: a dataset is not offered a
- * target that finer datasets already reach for every year it holds, and the
- * target is recorded as a `better-route` skip for it.
+ * target that finer datasets already reach for every year and nation it
+ * holds, and the target is recorded as a `better-route` skip for it. Nations
+ * count because the small areas are published one nation at a time: LSOAs
+ * reaching a council release for every year leave its Scottish and Northern
+ * Irish councils to the council estimates.
  */
 export const planPopulationReleases = (
 	database: DatabaseSync,
@@ -260,21 +275,27 @@ export const planPopulationReleases = (
 				a.releaseId - b.releaseId,
 		);
 	const periodsOf = database.prepare(
-		`SELECT DISTINCT o.period_id AS period
+		`SELECT DISTINCT o.period_id AS period, substr(a.code, 1, 1) AS nation
 		FROM series s
 		JOIN dataset d ON d.id = s.dataset_id
 		JOIN measure m ON m.id = s.measure_id
 		JOIN observation o ON o.series_id = s.id
+		JOIN area_version v ON v.id = o.area_version_id
+		JOIN area a ON a.id = v.area_id
 		WHERE d.slug = ? AND m.slug = ? AND s.release_id = ? AND s.method = 'published'`,
 	);
-	/** The periods the finer datasets already planned reach, by target. */
-	const reached = new Map<string, Set<number>>();
+	/**
+	 * The periods and nations the finer datasets already planned reach, by
+	 * target, as `period:nation` (the first letter of the area code).
+	 */
+	const reached = new Map<string, Set<string>>();
 	for (const group of groups) {
-		const periods = (
+		const held = (
 			periodsOf.all(group.dataset, group.measure, group.releaseId) as {
 				period: number;
+				nation: string;
 			}[]
-		).map((row) => row.period);
+		).map((row) => `${row.period}:${row.nation}`);
 		const { geography, release } = resolver.router.release(group.releaseId);
 		const source = `${geography}:${release}`;
 		for (const target of targets) {
@@ -289,7 +310,7 @@ export const planPopulationReleases = (
 					series: group.series,
 				});
 			const finer = reached.get(target);
-			if (finer && periods.every((period) => finer.has(period))) {
+			if (finer && held.every((key) => finer.has(key))) {
 				skip("better-route");
 				continue;
 			}
@@ -304,9 +325,9 @@ export const planPopulationReleases = (
 				skip("no-route");
 				continue;
 			}
-			const held = reached.get(target) ?? new Set<number>();
-			for (const period of periods) held.add(period);
-			reached.set(target, held);
+			const reach = reached.get(target) ?? new Set<string>();
+			for (const key of held) reach.add(key);
+			reached.set(target, reach);
 			entries.push({
 				id: `${group.dataset}/${group.measure}@${source}>${target}#total`,
 				source: {
@@ -320,7 +341,9 @@ export const planPopulationReleases = (
 				members: PERSONS,
 				estimates: true,
 				total: true,
-				note: "Persons of all ages, the sum of the single years of age, converted.",
+				note: SMALL_AREA_POPULATION.has(group.dataset)
+					? "Persons of all ages, the published small-area total, converted."
+					: "Persons of all ages, the sum of the single years of age, converted.",
 			});
 		}
 	}

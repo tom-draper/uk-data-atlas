@@ -22,8 +22,19 @@ const hop = (from: number, to: number): Hop => ({
 	reversed: false,
 	exact: false,
 });
-// Wards reach every release; councils and constituencies reach no other.
-const routed = new Set(["1>2", "1>3", "1>4", "1>5", "1>6"]);
+// Wards reach every release, LSOAs reach the councils, and the 2023 councils
+// reach the 2015 ones. Constituencies reach no other release.
+const routed = new Set([
+	"1>2",
+	"1>3",
+	"1>4",
+	"1>5",
+	"1>6",
+	"7>2",
+	"7>3",
+	"7>5",
+	"2>5",
+]);
 const hopsAsked: number[] = [];
 const resolver = {
 	releaseId: (key: string) =>
@@ -46,7 +57,9 @@ database.exec(`
 	CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
 	CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT);
-	CREATE TABLE observation (series_id INTEGER, period_id INTEGER);
+	CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT);
+	CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER);
+	CREATE TABLE observation (series_id INTEGER, area_version_id INTEGER, period_id INTEGER);
 	INSERT INTO area_release VALUES
 		(1, 'ward', '2023-12'), (2, 'localAuthority', '2023-12'),
 		(3, 'localAuthority', '2026-05'), (4, 'ward', '2015-12'),
@@ -54,17 +67,28 @@ database.exec(`
 		(7, 'lsoa', '2021-12');
 	INSERT INTO dataset VALUES
 		(1, 'population'), (2, 'population-uk'),
-		(3, 'population-constituency'), (4, 'imd');
+		(3, 'population-constituency'), (4, 'imd'), (5, 'population-lsoa');
 	INSERT INTO measure VALUES (1, 'population'), (2, 'households');
+	INSERT INTO area VALUES
+		(1, 'E05000001'), (2, 'E06000001'), (3, 'S12000033'),
+		(4, 'E14001063'), (5, 'E01000001'), (6, 'W01000001');
+	INSERT INTO area_version SELECT id, id FROM area;
 	INSERT INTO series VALUES
 		(1, 1, 1, 1, 'published'),
 		(2, 2, 1, 2, 'published'),
 		(3, 3, 1, 6, 'published'),
 		(4, 4, 1, 7, 'published'),
 		(5, 1, 2, 1, 'published'),
-		(6, 1, 1, 5, 'converted');
+		(6, 1, 1, 5, 'converted'),
+		(7, 5, 1, 7, 'published');
 	INSERT INTO observation VALUES
-		(1, 2022), (2, 2021), (2, 2022), (3, 2022), (4, 2019), (5, 2022), (6, 2022);
+		(1, 1, 2022),
+		(2, 2, 2021), (2, 2, 2022), (2, 3, 2021), (2, 3, 2022),
+		(3, 4, 2022),
+		(4, 5, 2019),
+		(5, 1, 2022),
+		(6, 2, 2022),
+		(7, 5, 2021), (7, 5, 2022), (7, 6, 2022);
 `);
 
 const plan = planPopulationReleases(database, resolver, undefined, [
@@ -80,9 +104,10 @@ test("every held year of population is offered every release its source reaches"
 	assert.deepEqual(
 		plan.entries.map((entry) => entry.id),
 		[
-			"population/population@ward:2023-12>localAuthority:2015-12#total",
-			"population/population@ward:2023-12>localAuthority:2023-12#total",
+			"population-lsoa/population@lsoa:2021-12>localAuthority:2015-12#total",
+			"population-lsoa/population@lsoa:2021-12>localAuthority:2023-12#total",
 			"population/population@ward:2023-12>ward:2015-12#total",
+			"population-uk/population@localAuthority:2023-12>localAuthority:2015-12#total",
 		],
 	);
 	for (const entry of plan.entries) {
@@ -107,21 +132,55 @@ test("the standard releases, other geographies and other datasets are not offere
 });
 
 test("a coarser source is skipped where finer ones already reach all its years", () => {
-	// The constituency years are all reached from the wards.
+	// The ward and constituency years are all reached from the LSOAs.
 	assert.ok(
 		skips.includes(
-			"population-constituency constituency:2024-07 > localAuthority:2015-12 better-route",
+			"population ward:2023-12 > localAuthority:2015-12 better-route",
 		),
 	);
-	// The council years are not, so it is offered, and has no route back.
 	assert.ok(
 		skips.includes(
-			"population-uk localAuthority:2023-12 > localAuthority:2015-12 no-route",
+			"population-constituency constituency:2024-07 > localAuthority:2023-12 better-route",
 		),
+	);
+	// And from the wards, which LSOAs do not reach.
+	assert.ok(
+		skips.includes(
+			"population-constituency constituency:2024-07 > ward:2015-12 better-route",
+		),
+	);
+	assert.ok(
+		skips.includes("population-lsoa lsoa:2021-12 > ward:2015-12 no-route"),
 	);
 	assert.ok(
 		skips.includes(
 			"population-uk localAuthority:2023-12 > ward:2015-12 no-route",
 		),
+	);
+});
+
+test("a coarser source is kept for the nations the finer ones do not hold", () => {
+	// LSOAs hold every year of England and Wales on the 2015 councils, not the
+	// Scottish councils the council estimates also hold.
+	assert.ok(
+		!skips.some((skip) =>
+			skip.startsWith(
+				"population-uk localAuthority:2023-12 > localAuthority:2015-12",
+			),
+		),
+	);
+});
+
+test("a small-area total is noted as published, not summed from ages", () => {
+	const notes = new Map(
+		plan.entries.map((entry) => [entry.source.dataset, entry.note]),
+	);
+	assert.match(
+		notes.get("population-lsoa") ?? "",
+		/published small-area total/,
+	);
+	assert.match(
+		notes.get("population") ?? "",
+		/sum of the single years of age/,
 	);
 });
