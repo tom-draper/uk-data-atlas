@@ -148,7 +148,13 @@ What is still out of reach:
   no best-fit LSOA, so no value. On the 2024 constituencies and the 2026-05
   wards the LSOA series is not the default: the published constituency
   estimates and the IMD 2025 denominator rank first, because the default is
-  one series per measure and release, not per period.
+  one series per measure and release, not per period. For the same reason the
+  Scottish data-zone values on the 2026-05 wards are held but not the default,
+  and on the 2011-12 wards the LSOA series replaces the published ward
+  estimates for 2022.
+- Conversion takes a publisher's best-fit membership lookup (such as LSOA to
+  ward) only where no route avoids it, so IMD 2025 reaches every 2026-05
+  authority through the authority lookups rather than through the wards.
 - NI data zones reach only the 2025-05, 2025-12 and 2026-05 authority
   releases. NI wards and constituencies get nothing, and NISRA super data
   zones are not compiled because no release holds them.
