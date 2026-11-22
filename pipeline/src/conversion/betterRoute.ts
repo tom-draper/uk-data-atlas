@@ -71,6 +71,36 @@ const seriesGroup = (series: ConvertedSeries) =>
 	`${series.datasetId}|${series.measureId}|${series.releaseId}|${series.inputs[0]!.series.members}`;
 
 /**
+ * The series without the values whose area and period are already in
+ * `claimed`, which then holds the values it keeps as well. Each value left
+ * out becomes a `better-route` gap and the quality is counted again on what
+ * is kept. Returns the series itself when nothing was claimed, and null when
+ * everything was.
+ */
+export const keepUnclaimed = (
+	series: ConvertedSeries,
+	claimed: Set<string>,
+): ConvertedSeries | null => {
+	const kept: ConvertedObservation[] = [];
+	const lost: SeriesGap[] = [];
+	for (const o of series.observations) {
+		if (claimed.has(cell(o)))
+			lost.push({ area: o.area, period: o.period, reason: BETTER_ROUTE });
+		else kept.push(o);
+	}
+	for (const o of kept) claimed.add(cell(o));
+	if (lost.length === 0) return series;
+	if (kept.length === 0) return null;
+	const gaps = [...series.gaps, ...lost];
+	return {
+		...series,
+		observations: kept,
+		gaps,
+		quality: qualityOf(kept, gaps),
+	};
+};
+
+/**
  * Keeps one value for each area and period of each group of series that
  * share a dataset, measure, members and target release.
  *
@@ -100,30 +130,10 @@ export const chooseRoutes = (
 		const ranked = [...group].sort(compareRoutes);
 		const claimed = new Set<string>();
 		for (const { series } of ranked) {
-			const kept: ConvertedObservation[] = [];
-			const lost: SeriesGap[] = [];
-			for (const o of series.observations) {
-				if (claimed.has(cell(o)))
-					lost.push({
-						area: o.area,
-						period: o.period,
-						reason: BETTER_ROUTE,
-					});
-				else kept.push(o);
-			}
-			for (const o of kept) claimed.add(cell(o));
-			if (lost.length === 0) result.set(series, series);
-			else if (kept.length === 0) result.set(series, null);
-			else {
-				clipped += lost.length;
-				const gaps = [...series.gaps, ...lost];
-				result.set(series, {
-					...series,
-					observations: kept,
-					gaps,
-					quality: qualityOf(kept, gaps),
-				});
-			}
+			const left = keepUnclaimed(series, claimed);
+			if (left !== null && left !== series)
+				clipped += series.observations.length - left.observations.length;
+			result.set(series, left);
 		}
 	}
 	const kept: ConvertedSeries[] = [];
