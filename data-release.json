@@ -1,33 +1,43 @@
 {
 	"version": 2,
-	"tag": "data-2026-11-14",
-	"commit": "af5506d69198b8f176a79f524bf67780a68e47c7",
+	"tag": "data-2026-11-22",
+	"commit": "0bb5b56868bea23e67969c5c951b8565f6c881de",
 	"repository": "tom-draper/uk-data-atlas",
 	"assets": [
 		{
-			"name": "data-2026-11-14.1.tar.gz",
-			"bytes": 1776310594,
-			"sha256": "ac800052ffaa57a3423065b0747451efe72f5c602cc58beec4703eb61a5ed313"
+			"name": "data-2026-11-22.1.tar.gz",
+			"bytes": 956944700,
+			"sha256": "b9a2700234ea70cd1cb31ffd84f3ad7a3636f41bf7ec16697a71480225cc7f11"
 		},
 		{
-			"name": "data-2026-11-14.2.tar.gz",
-			"bytes": 653391483,
-			"sha256": "c39fe87d0694654921047dd428f7d9078d04e37d7cc36bf17c5cae40749964f2"
+			"name": "data-2026-11-22.2.tar.gz",
+			"bytes": 975451942,
+			"sha256": "a3c5f6b1ce6adb4fe795e1f0fb9a7da7dd62df79253f40bd335c53ab46b50cc0"
 		},
 		{
-			"name": "data-2026-11-14.3.tar.gz",
-			"bytes": 446370231,
-			"sha256": "49a739db6e1938f514e7b84ce748558717d47cb89009d41e3c83f1b0627c3367"
+			"name": "data-2026-11-22.3.tar.gz",
+			"bytes": 656864078,
+			"sha256": "ce5fdba99ba66f8d86c9747d23239cf19251bdec6eb911a677ad24fba7eab11e"
 		},
 		{
-			"name": "data-2026-11-14.4.tar.gz",
-			"bytes": 586563645,
-			"sha256": "acc29aa6c1f923d4dd3c5f54879c9035931b92c41d1d7f79cd88a9468c8061ec"
+			"name": "data-2026-11-22.4.tar.gz",
+			"bytes": 446465548,
+			"sha256": "404e59cfbffaaff6821a675cebe136fc774a8d4003532775d8c7ae9e6c3a7c70"
 		},
 		{
-			"name": "data-2026-11-14.5.tar.gz",
-			"bytes": 950497413,
-			"sha256": "97c1d823d1a2499a4f93662ae1ce22d31f685fed9812493e85dc254c7ba38020"
+			"name": "data-2026-11-22.5.tar.gz",
+			"bytes": 586644676,
+			"sha256": "c200e3a38badcf70c30ee180389bcf3c35f5ce720e3b675bc5a284599a0cf8a0"
+		},
+		{
+			"name": "data-2026-11-22.6.tar.gz",
+			"bytes": 1015780096,
+			"sha256": "74482ea0ca8f762152120bfb30516085fabe7e7284c50a67c832b4beecda5bcf"
+		},
+		{
+			"name": "data-2026-11-22.7.tar.gz",
+			"bytes": 471722905,
+			"sha256": "7d1e934aa24cfe453ed0f9bee8405ebecf5877a4a42585b09b2f84c32019cdb0"
 		}
 	]
 }
