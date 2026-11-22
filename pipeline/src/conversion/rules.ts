@@ -89,7 +89,7 @@ const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
 	"children-in-relative-low-income-rate":
 		"A ratio of children in low income families to children under 16. The numerator is held, but the count of children under 16 is not held as a measure.",
 	"households-in-temporary-accommodation-rate":
-		"Per 1,000 households on the publisher's own household estimate, which is not held. Another household count would give a different rate.",
+		"Per 1,000 households on the publisher's own household estimate. The source table carries that household count, but it is not published as a measure, so the numerator is held and the denominator is not. Another household count would give a different rate.",
 	"unemployment-rate":
 		"A model-based rate over the economically active aged 16 and over. The economically active count is not held, and a rate from a model is not the ratio of two held counts.",
 	"unemployment-rate-interval":
@@ -116,6 +116,10 @@ const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
 		"A change between two years of a published pay figure. Both years' underlying figures and their weights are not held.",
 	"gross-hourly-pay-change":
 		"A change between two years of a published pay figure. Both years' underlying figures and their weights are not held.",
+	"social-care-quality-of-life":
+		"An average score from the adult social care users' survey. The number of respondents each area's score was averaged over is not held.",
+	"house-price-to-earnings-ratio":
+		"The publisher's ratio of the median price of existing dwellings to median gross annual residence-based earnings. A ratio of two medians cannot be rebuilt for other areas, and neither median is held with the sales or workers behind it.",
 	"band-d-council-tax":
 		"An average of the Band D charge in the area. The number of properties it was averaged over is not held.",
 	"house-price-mean":
