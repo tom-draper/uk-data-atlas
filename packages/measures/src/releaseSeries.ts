@@ -153,7 +153,10 @@ export const LOW_EXACT_SHARE = 0.8;
 /** Below this coverage, a converted series' values are flagged. */
 export const LOW_SERIES_COVERAGE = 0.9;
 
-/** The releases that hold converted series: the standard ones. */
+/**
+ * The releases that hold converted series: the standard ones, and every
+ * release of the geographies population totals are converted onto.
+ */
 export const convertedReleases = (database: SqlReader) =>
 	database
 		.prepare(
@@ -405,7 +408,92 @@ const readQuantity = (
 				sources: why.map((w) => ({ ...w })),
 			});
 	}
+	if (parts.some((part) => (part.sum ?? []).length > 0))
+		readTotals(database, published, target, area, cells, converted);
 	return { cells, converted };
+};
+
+/**
+ * Where a release's parts of a sum were converted only as their total, as
+ * population is on every release outside the standard ones, the total fills
+ * each period the parts leave without a value. It is the converted series
+ * whose added inputs are exactly the parts the spec names on that release, so
+ * a total of other members never stands in. A native value is never replaced.
+ */
+const readTotals = (
+	database: SqlReader,
+	published: readonly SeriesRow[],
+	target: { id: number; key: string },
+	area: number,
+	cells: Map<number, Map<string, Cell>>,
+	converted: Set<number>,
+) => {
+	const byRelease = new Map<number, SeriesRow[]>();
+	for (const series of published)
+		if (series.releaseId !== target.id)
+			byRelease.set(series.releaseId, [
+				...(byRelease.get(series.releaseId) ?? []),
+				series,
+			]);
+	const totalsOf = database.prepare(
+		`SELECT s.id, group_concat(si.input_series_id) AS inputs FROM series s
+		JOIN series_input si ON si.series_id = s.id AND si.role = 'value'
+		WHERE s.method = 'converted' AND s.release_id = ?
+			AND s.id IN (SELECT series_id FROM series_input WHERE input_series_id = ? AND role = 'value')
+		GROUP BY s.id HAVING count(*) > 1`,
+	);
+	const observations = database.prepare(
+		`SELECT o.period_id AS period, o.value, st.slug AS status, o.lower, o.upper,
+			e.estimated_share AS share
+		FROM observation o JOIN status st ON st.id = o.status_id
+		LEFT JOIN series_estimate e ON e.series_id = o.series_id
+			AND e.area_version_id = o.area_version_id AND e.period_id = o.period_id
+		WHERE o.series_id = ? AND o.area_version_id = ?`,
+	);
+	const gaps = database.prepare(
+		"SELECT period_id AS period, reason FROM series_gap WHERE series_id = ? AND area_version_id = ?",
+	);
+	for (const parts of byRelease.values()) {
+		const ids = new Set(parts.map((series) => series.id));
+		const total = totalsOf
+			.all(target.id, parts[0]!.id)
+			.map((row) => ({
+				id: Number(row.id),
+				inputs: String(row.inputs).split(",").map(Number),
+			}))
+			.find(
+				(row) =>
+					row.inputs.length === ids.size &&
+					row.inputs.every((input) => ids.has(input)),
+			);
+		if (!total) continue;
+		const fill = (period: number, cell: Cell) => {
+			const held = cells.get(period);
+			if (held && combine(held).kind === "value") return;
+			cells.set(period, new Map([["", cell]]));
+			if (cell.kind === "value") converted.add(total.id);
+		};
+		const release = parts[0]!.release;
+		for (const row of observations.all(total.id, area)) {
+			const value = num(row.value);
+			if (value === null) continue;
+			fill(Number(row.period), {
+				kind: "value",
+				value,
+				status: String(row.status),
+				lower: num(row.lower),
+				upper: num(row.upper),
+				method: row.status === "estimated" ? "weighted" : "exact",
+				estimated: Number(row.share ?? 0) * Math.abs(value),
+				converted: total.id,
+			});
+		}
+		for (const row of gaps.all(total.id, area))
+			fill(Number(row.period), {
+				kind: "gap",
+				sources: [{ release, reason: String(row.reason) }],
+			});
+	}
 };
 
 type Combined =

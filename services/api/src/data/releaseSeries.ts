@@ -275,7 +275,7 @@ export const releaseSeriesResponse = ({
 			return problem(
 				422,
 				"Operation Not Supported",
-				`Series are rebuilt only on the standard boundary releases: ${supported.releases
+				`Series are rebuilt only on the boundary releases that hold converted series: ${supported.releases
 					.map((release) => `${release.geography}/${release.release}`)
 					.join(", ")}. Leave out on= for a source's own release.`,
 			);
