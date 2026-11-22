@@ -28,6 +28,20 @@ test("the best route splits least, then is shortest, then sorts by key", () => {
 	assert.equal(bestRoute([]), undefined);
 });
 
+test("the best route avoids a best-fit lookup where it splits no more", () => {
+	const throughLookup: Route = [
+		{ ...hop(1, 1, 2, false), bestFit: true },
+		hop(2, 2, 3, true),
+	];
+	const around: Route = [
+		hop(3, 1, 4, true),
+		hop(4, 4, 5, true),
+		hop(5, 5, 3, false),
+	];
+	assert.equal(bestRoute([throughLookup, around]), around);
+	assert.equal(bestRoute([throughLookup]), throughLookup);
+});
+
 const releases = new Map([
 	[1, { id: 1, geography: "localAuthority", release: "2024-05" }],
 	[2, { id: 2, geography: "localAuthority", release: "2026-05" }],
