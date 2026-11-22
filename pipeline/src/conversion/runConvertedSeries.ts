@@ -5,6 +5,7 @@ import { quantile } from "./backtest.ts";
 import {
 	BETTER_ROUTE,
 	chooseRoutes,
+	keepUnclaimed,
 	type RouteCandidate,
 } from "./betterRoute.ts";
 import {
@@ -369,6 +370,31 @@ export const buildConvertedSeries = (
 		// releases, can reach the same area and period. Their series are
 		// converted together and one value is kept for each of them.
 		const targets = new Map<string, PlanEntry[]>();
+		// The population datasets are planned finest first and converted in
+		// that order, so on each target a coarser dataset keeps only the areas
+		// and periods the finer ones did not reach.
+		const populationEntries = new Set(population.entries);
+		const populationClaims = new Map<string, Set<string>>();
+		const unclaimed = (
+			entry: PlanEntry,
+			series: ConvertedSeries,
+		): ConvertedSeries | null => {
+			if (!populationEntries.has(entry)) return series;
+			const claimed = populationClaims.get(entry.target) ?? new Set();
+			populationClaims.set(entry.target, claimed);
+			const left = keepUnclaimed(series, claimed);
+			if (left === null) {
+				const input = series.inputs[0]!.series;
+				addSkip({
+					dataset: input.dataset,
+					measure: input.measure,
+					source: entry.source.release,
+					target: entry.target,
+					reason: BETTER_ROUTE,
+				});
+			}
+			return left;
+		};
 		for (const entry of entries) {
 			const key = `${entry.source.dataset}|${entry.source.measure}|${entry.target}`;
 			const held = targets.get(key);
@@ -381,8 +407,10 @@ export const buildConvertedSeries = (
 				const started = performance.now();
 				const summary = summaryOf(entry);
 				for (const converted of convertEntry(context, entry)) {
-					writer.add(converted);
-					summarise(summary, converted);
+					const left = unclaimed(entry, converted);
+					if (left === null) continue;
+					writer.add(left);
+					summarise(summary, left);
 				}
 				summaries.push(summary);
 				onEntry?.(summary, performance.now() - started);
@@ -422,8 +450,10 @@ export const buildConvertedSeries = (
 				const summary = summaryOf(entry);
 				for (const converted of kept)
 					if (entryOf.get(converted.key) === entry) {
-						writer.add(converted);
-						summarise(summary, converted);
+						const left = unclaimed(entry, converted);
+						if (left === null) continue;
+						writer.add(left);
+						summarise(summary, left);
 					}
 				summaries.push(summary);
 				onEntry?.(summary, elapsed);
