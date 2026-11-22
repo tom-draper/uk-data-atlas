@@ -226,5 +226,9 @@
 	"population-data-zone-ni": {
 		"sha256": "4c51cc95aad666c8b7319ef1faae8e02e6ede03ef84c926bbfe206b546ffa767",
 		"bytes": 681165
+	},
+	"claimant-count-history": {
+		"sha256": "4edf8ea03b9ce5a52cd9fbeaa6608384c8f93c997d05f3a5955a12f313a2a0e6",
+		"bytes": 5671323
 	}
 }
