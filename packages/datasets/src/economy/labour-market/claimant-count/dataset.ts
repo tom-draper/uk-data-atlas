@@ -1,6 +1,10 @@
 import type { ClaimantCountDataset } from "../../../types/claimantCount.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
-import { measure } from "../../../declaration/measures.ts";
+import {
+	CLAIMANT_AGE_GROUP,
+	CLAIMANT_RATE,
+	CLAIMANTS,
+} from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
 import { aggregateClaimantCount } from "./aggregate.ts";
 import { claimantCountStatisticsPart } from "../../../data/claimant-count/source.ts";
@@ -52,43 +56,8 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 			read: async ({ text, xlsxSheet }) =>
 				claimantCountStatisticsPart(text, xlsxSheet),
 		},
-		measures: [
-			measure(
-				"claimants",
-				"Claimants",
-				"people",
-				"count",
-				"sum",
-				"People claiming unemployment-related benefits (the claimant count).",
-			),
-			measure(
-				"claimant-rate",
-				"Claimant rate",
-				"percent",
-				"rate",
-				"none",
-				"Claimants as a percentage of residents aged 16 to 64. Published, except for authorities formed in 2023, where the compiler divides by the 2024 mid-year population.",
-			),
-		],
-		dimensions: [
-			{
-				slug: "age-group",
-				label: "Age group",
-				members: [
-					{
-						key: "totalCount",
-						code: "16-plus",
-						label: "Aged 16 and over",
-					},
-					{
-						key: "youthCount",
-						code: "16-to-24",
-						label: "Aged 16 to 24",
-						parent: "totalCount",
-					},
-				],
-			},
-		],
+		measures: [CLAIMANTS, CLAIMANT_RATE],
+		dimensions: [CLAIMANT_AGE_GROUP],
 		fields: [
 			{ path: "{age-group}", measure: "claimants" },
 			{ path: "totalRate", measure: "claimant-rate" },
