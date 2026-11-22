@@ -1,4 +1,5 @@
-import type { StatisticsMeasure } from "./vocabulary.ts";
+import type { MeasureUnit } from "./measureUnits.ts";
+import type { MeasureStatistic, StatisticsMeasure } from "./vocabulary.ts";
 
 /** Population or entity base of a measure. Unknown is kept for compatibility only: the
  * build refuses a measure that resolves to it. Not applicable covers totals
@@ -203,46 +204,57 @@ for (const [slug, measures] of Object.entries(UNIVERSE_MEASURES)) {
 	}
 }
 
-export type MeasureStatistic =
+/**
+ * The valueKind the public API and the published vocabulary file still carry.
+ * It is derived here, in one place, from the statistic, the unit kind and a
+ * short list of measures whose old kind said something else. Nothing stores
+ * it: replacing it in the v1 surface is a separate change.
+ */
+export type LegacyValueKind =
 	| "count"
-	| "total"
-	| "mean"
-	| "median"
-	| "quantile"
 	| "rate"
 	| "share"
+	| "median"
+	| "mean"
 	| "index"
 	| "rank"
-	| "category"
-	| "ratio"
-	| "difference"
-	| "interval"
-	| "by-dimension";
+	| "amount"
+	| "category";
 
-/** Exceptions to the legacy value_kind mapping, which conflated statistic and unit. */
-const STATISTIC_OVERRIDES: Readonly<Record<string, MeasureStatistic>> = {
-	"band-d-council-tax": "mean",
-	"social-care-quality-of-life": "mean",
-	"house-price-to-earnings-ratio": "ratio",
-	majority: "difference",
-	"party-vote-share-change": "difference",
-	"gcse-english-maths-grade-4-gap": "difference",
-	"unemployed-people-interval": "interval",
-	"unemployment-rate-interval": "interval",
-	"gross-annual-pay": "by-dimension",
-	"gross-hourly-pay": "by-dimension",
-	"gross-annual-pay-change": "by-dimension",
-	"gross-hourly-pay-change": "by-dimension",
+const LEGACY_KIND_OVERRIDES: Readonly<Record<string, LegacyValueKind>> = {
+	"band-d-council-tax": "amount",
+	"social-care-quality-of-life": "index",
 };
 
+export function legacyValueKind(
+	slug: string,
+	statistic: MeasureStatistic,
+	unitKind: MeasureUnit["kind"],
+): LegacyValueKind {
+	const override = LEGACY_KIND_OVERRIDES[slug];
+	if (override) return override;
+	switch (statistic) {
+		case "total":
+			return "amount";
+		case "ratio":
+			return "index";
+		case "quantile":
+			return "median";
+		case "difference":
+		case "interval":
+			return unitKind === "count" ? "count" : "rate";
+		case "by-dimension":
+			return unitKind === "percent" ? "rate" : "amount";
+		default:
+			return statistic;
+	}
+}
+
 export function measureSemantics(measure: StatisticsMeasure) {
-	const statistic: MeasureStatistic =
-		STATISTIC_OVERRIDES[measure.slug] ??
-		(measure.valueKind === "amount" ? "total" : measure.valueKind);
 	return {
-		statistic,
+		statistic: measure.statistic,
 		statisticDimension:
-			statistic === "by-dimension" ? "pay-statistic" : null,
+			measure.statistic === "by-dimension" ? "pay-statistic" : null,
 		universeId: universeByMeasure.get(measure.slug) ?? 1,
 	};
 }

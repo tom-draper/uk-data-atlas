@@ -68,7 +68,7 @@ export const housingAffordability = defineDataset<
 				"house-price-to-earnings-ratio",
 				"House price to earnings ratio",
 				"ratio",
-				"index",
+				"ratio",
 				"none",
 				"Median price of existing dwellings divided by median gross annual residence-based earnings.",
 			),

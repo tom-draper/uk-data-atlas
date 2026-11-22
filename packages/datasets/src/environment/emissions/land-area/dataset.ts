@@ -56,7 +56,7 @@ export const landArea = defineDataset<LandAreaDataset>({
 				"area",
 				"Area",
 				"hectares",
-				"amount",
+				"total",
 				"sum",
 				"Area of the boundary, in hectares.",
 			),

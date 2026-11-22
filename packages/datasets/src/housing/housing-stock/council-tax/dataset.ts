@@ -69,7 +69,7 @@ export const councilTax = defineDataset<IndicatorDataset<"council-tax">>({
 				"band-d-council-tax",
 				"Average Band D council tax",
 				"gbp",
-				"amount",
+				"mean",
 				"weighted_mean",
 				"Average area Band D council tax, including major precepts.",
 			),

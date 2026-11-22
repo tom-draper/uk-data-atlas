@@ -60,7 +60,7 @@ export const localGovernmentFinance = defineDataset<
 				"education-services-budget",
 				"Education services revenue budget",
 				"gbp thousand",
-				"amount",
+				"total",
 				"sum",
 				"Budgeted net revenue expenditure on education services.",
 			),
