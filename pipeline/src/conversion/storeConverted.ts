@@ -75,7 +75,9 @@ ${BACKTEST_SCHEMA}
  * What `atlas.sqlite` holds about a converted series beside its `series` row
  * and its observations.
  *
- * - `series_input`: the published series it was computed from.
+ * - `series_input`: the published series it was computed from. A total
+ *   added up before it was converted names every series it adds, each as a
+ *   `value`.
  * - `series_conversion`: its rule and weight basis. `exact` is 1 where every
  *   value is an exact regrouping and 0 where some are estimated splits.
  *   `exact_share` is the share of the series' value that reached its area by
@@ -98,7 +100,7 @@ CREATE TABLE series_input (
 	series_id INTEGER NOT NULL REFERENCES series(id),
 	input_series_id INTEGER NOT NULL REFERENCES series(id),
 	role TEXT NOT NULL CHECK (role IN ('value','numerator','denominator','weight')),
-	PRIMARY KEY (series_id, role)) WITHOUT ROWID, STRICT;
+	PRIMARY KEY (series_id, input_series_id)) WITHOUT ROWID, STRICT;
 CREATE TABLE series_conversion (
 	series_id INTEGER PRIMARY KEY REFERENCES series(id),
 	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild')),
@@ -313,8 +315,14 @@ export const copyConvertedSeries = (
 	const insertSeries = database.prepare(
 		"INSERT INTO series (id, dataset_id, measure_id, release_id, method, derived_from_id, key) VALUES (?,?,?,?,'converted',?,?)",
 	);
+	// The members every input of the first role shares: all of a single
+	// input's, and those left once a total drops the dimension it adds over.
 	const insertMembers = database.prepare(
-		"INSERT INTO series_member (series_id, dimension_id, member_id) SELECT ?, dimension_id, member_id FROM series_member WHERE series_id = ?",
+		`INSERT INTO series_member (series_id, dimension_id, member_id)
+		SELECT ?1, m.dimension_id, m.member_id FROM series_member m
+		JOIN series_input i ON i.input_series_id = m.series_id AND i.series_id = ?1 AND i.role = ?2
+		GROUP BY m.dimension_id, m.member_id
+		HAVING count(*) = (SELECT count(*) FROM series_input WHERE series_id = ?1 AND role = ?2)`,
 	);
 	const insertInput = database.prepare(
 		"INSERT INTO series_input VALUES (?,?,?)",
@@ -360,8 +368,8 @@ export const copyConvertedSeries = (
 			from[0]!.id,
 			row.key,
 		);
-		insertMembers.run(id, from[0]!.id);
 		for (const input of from) insertInput.run(id, input.id, input.role);
+		insertMembers.run(id, from[0]!.role);
 		insertConversion.run(
 			id,
 			row.rule,
