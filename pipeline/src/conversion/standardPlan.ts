@@ -244,12 +244,12 @@ export const POPULATION_GEOGRAPHIES = [
  * of the oldest release does (`MAX_CHAIN_HOPS`), and the total is split on
  * population, the one basis a population split is backtested on.
  *
- * The finest source of each year is preferred: a dataset is not offered a
- * target that finer datasets already reach for every year and nation it
- * holds, and the target is recorded as a `better-route` skip for it. Nations
- * count because the small areas are published one nation at a time: LSOAs
- * reaching a council release for every year leave its Scottish and Northern
- * Irish councils to the council estimates.
+ * Every dataset is offered every target it has a route to, finest first.
+ * Which one keeps a value is decided after conversion, for each target area
+ * and period (`keepUnclaimed`), because only then is it known which areas a
+ * route reaches: LSOAs reach every year of the 2011 wards but only the wards
+ * whose LSOAs still nest in them, and the ward estimates fill most of the
+ * rest.
  */
 export const planPopulationReleases = (
 	database: DatabaseSync,
@@ -281,28 +281,7 @@ export const planPopulationReleases = (
 				datasets.indexOf(a.dataset) - datasets.indexOf(b.dataset) ||
 				a.releaseId - b.releaseId,
 		);
-	const periodsOf = database.prepare(
-		`SELECT DISTINCT o.period_id AS period, substr(a.code, 1, 1) AS nation
-		FROM series s
-		JOIN dataset d ON d.id = s.dataset_id
-		JOIN measure m ON m.id = s.measure_id
-		JOIN observation o ON o.series_id = s.id
-		JOIN area_version v ON v.id = o.area_version_id
-		JOIN area a ON a.id = v.area_id
-		WHERE d.slug = ? AND m.slug = ? AND s.release_id = ? AND s.method = 'published'`,
-	);
-	/**
-	 * The periods and nations the finer datasets already planned reach, by
-	 * target, as `period:nation` (the first letter of the area code).
-	 */
-	const reached = new Map<string, Set<string>>();
 	for (const group of groups) {
-		const held = (
-			periodsOf.all(group.dataset, group.measure, group.releaseId) as {
-				period: number;
-				nation: string;
-			}[]
-		).map((row) => `${row.period}:${row.nation}`);
 		const { geography, release } = resolver.router.release(group.releaseId);
 		const source = `${geography}:${release}`;
 		for (const target of targets) {
@@ -316,11 +295,6 @@ export const planPopulationReleases = (
 					reason,
 					series: group.series,
 				});
-			const finer = reached.get(target);
-			if (finer && held.every((key) => finer.has(key))) {
-				skip("better-route");
-				continue;
-			}
 			const route = bestRoute(
 				resolver.router.routes(
 					group.releaseId,
@@ -332,9 +306,6 @@ export const planPopulationReleases = (
 				skip("no-route");
 				continue;
 			}
-			const reach = reached.get(target) ?? new Set<string>();
-			for (const key of held) reach.add(key);
-			reached.set(target, reach);
 			entries.push({
 				id: `${group.dataset}/${group.measure}@${source}>${target}#total`,
 				source: {
