@@ -4825,6 +4825,102 @@
 				"codeProperty": "SUCCESSORCD",
 				"nameProperty": "SUCCESSORNM"
 			}
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-ward-2024-05-uk-bgc-official-lookup",
+			"input": "lookups/lsoa-to-ward/2024-ew/LSOA21_WD24_LAD24_EW_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc",
+				"codeProperty": "WD24CD",
+				"nameProperty": "WD24NM",
+				"aliasProperty": "WD24NMW"
+			}
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-ward-2025-05-uk-bgc-v2-official-lookup",
+			"input": "lookups/lsoa-to-ward/2025-ew/LSOA21_WD25_LAD25_EW_LU_v2.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"codeProperty": "WD25CD",
+				"nameProperty": "WD25NM",
+				"aliasProperty": "WD25NMW"
+			}
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-ward-2026-05-uk-bgc-official-lookup",
+			"input": "lookups/lsoa-to-ward/2026-ew/LSOA21_WD26_LAD26_EW_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"codeProperty": "WD26CD",
+				"nameProperty": "WD26NM",
+				"aliasProperty": "WD26NMW"
+			}
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-constituency-2024-07-uk-bgc-official-lookup",
+			"input": "lookups/lsoa-to-constituency/2024-07-ew/LSOA21_PCON24_LAD21_EW_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc",
+				"codeProperty": "PCON24CD",
+				"nameProperty": "PCON24NM",
+				"aliasProperty": "PCON24NMW"
+			}
 		}
 	]
 }

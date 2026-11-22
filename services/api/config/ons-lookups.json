@@ -128,5 +128,33 @@
 		"description": "Official ONS exact-fit lookup from 2001 Output Areas to Lower and Middle Layer Super Output Areas, December 2001, stored at LSOA level: every 2001 LSOA lies wholly in one 2001 MSOA.",
 		"temporalCoverage": "2001-12",
 		"distinctColumns": ["LSOA01CD", "LSOA01NM", "MSOA01CD", "MSOA01NM"]
+	},
+	{
+		"service": "LSOA21_WD24_LAD24_EW_LU",
+		"directory": "lsoa-to-ward/2024-ew",
+		"title": "2021 LSOA to electoral ward, 2024 (England and Wales)",
+		"description": "Official ONS best-fit lookup from 2021 Lower Layer Super Output Areas to the 2024 electoral wards and their Local Authority Districts. An LSOA is assigned to the ward that holds most of its population, so it is a membership lookup, not containment.",
+		"temporalCoverage": "2024"
+	},
+	{
+		"service": "LSOA21_WD25_LAD25_EW_LU_v2",
+		"directory": "lsoa-to-ward/2025-ew",
+		"title": "2021 LSOA to electoral ward, 2025 (England and Wales)",
+		"description": "Official ONS best-fit lookup from 2021 Lower Layer Super Output Areas to the 2025 electoral wards and their Local Authority Districts. An LSOA is assigned to the ward that holds most of its population, so it is a membership lookup, not containment.",
+		"temporalCoverage": "2025"
+	},
+	{
+		"service": "LSOA21_WD26_LAD26_EW_LU",
+		"directory": "lsoa-to-ward/2026-ew",
+		"title": "2021 LSOA to electoral ward, 2026 (England and Wales)",
+		"description": "Official ONS best-fit lookup from 2021 Lower Layer Super Output Areas to the 2026 electoral wards and their Local Authority Districts. An LSOA is assigned to the ward that holds most of its population, so it is a membership lookup, not containment.",
+		"temporalCoverage": "2026"
+	},
+	{
+		"service": "LSOA21_PCON24_LAD21_EW_LU",
+		"directory": "lsoa-to-constituency/2024-07-ew",
+		"title": "2021 LSOA to Westminster Parliamentary Constituency, July 2024 (England and Wales)",
+		"description": "Official ONS best-fit lookup from 2021 Lower Layer Super Output Areas to the 2024 Westminster Parliamentary Constituencies. An LSOA is assigned to the constituency that holds most of its population, so it is a membership lookup, not containment.",
+		"temporalCoverage": "2024-07"
 	}
 ]
