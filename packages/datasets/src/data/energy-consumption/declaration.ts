@@ -66,7 +66,7 @@ export const energyStatistics = (
 				`${fuel}-consumption`,
 				`${label} consumption`,
 				"gwh",
-				"amount",
+				"total",
 				"sum",
 				`Metered ${fuel} consumption in gigawatt hours.`,
 			),

@@ -66,7 +66,7 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 				"ghg-emissions",
 				"Greenhouse gas emissions",
 				"kt co2e",
-				"amount",
+				"total",
 				"sum",
 				"Territorial greenhouse gas emissions in kilotonnes of carbon dioxide equivalent.",
 			),

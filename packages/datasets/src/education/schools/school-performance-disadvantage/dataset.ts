@@ -125,7 +125,7 @@ export const schoolPerformanceDisadvantage =
 					"gcse-english-maths-grade-4-gap",
 					"Disadvantage gap in English and maths at grade 4 or above",
 					"percentage points",
-					"rate",
+					"difference",
 					"none",
 					"Other pupils' rate of grade 4 or above in English and maths less disadvantaged pupils' rate.",
 				),

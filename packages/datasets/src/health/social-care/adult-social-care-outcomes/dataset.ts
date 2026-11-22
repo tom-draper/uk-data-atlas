@@ -61,7 +61,7 @@ export const adultSocialCareOutcomes = defineDataset<
 				"social-care-quality-of-life",
 				"Social care-related quality of life",
 				"score out of 24",
-				"index",
+				"mean",
 				"none",
 				"Average social care-related quality of life score of service users (ASCOF 1A).",
 			),
