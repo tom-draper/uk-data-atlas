@@ -392,6 +392,32 @@ published series. The full table of what was converted from each source is in
 `data/build/converted-series/converted-series.md`, written by the
 `converted-series` stage.
 
+### Population on every release
+
+Population is also converted onto every other ward, local authority and
+constituency release (task 41), by `planPopulationReleases` in the same
+module. Each entry adds the persons of every single year of age into one total
+per area before converting it, so a release holds the total, not the 91 ages.
+The total is split on population, the backtested pair, over at most
+`MAX_CHAIN_HOPS` crosswalks, and keeps the error model's bounds on every split
+value. The finest source is tried first (`population` on wards, then
+`population-uk` on authorities, then `population-constituency`), and a coarser
+one is skipped as `better-route` where the finer ones already reach every year
+it holds. A period the target publishes itself is never converted onto it.
+
+| Target                                         | Series | Years        | Values |
+| ---------------------------------------------- | ------ | ------------ | ------ |
+| Authorities 2023-05 to 2025-12 (5 releases)    | 10     | 2011 to 2024 | 26,850 |
+| Authorities 2011-12 to 2022-12 (10 releases)   | 10     | 2022         | 2,132  |
+| Wards 2011-12 to 2025-12 (15 releases)         | 15     | 2022         | 79,461 |
+| Constituencies 2015-12 to 2022-12 (8 releases) | 8      | 2022         | 4,553  |
+
+That is 43 series and 112,996 values, of which 3,346 are split and carry
+bounds, with 55,446 gaps (52,902 `not-carried`, 1,298 `unmeasured-split`, 914
+`missing-input`, 332 `no-weight`) and an exact share from 0.88 to 1 (mean
+0.978). The atlas grows by 4,059,136 bytes (0.39%). What it cannot reach is in
+[data gaps](data-gaps.md#3-population-on-every-release).
+
 ### How a route is chosen
 
 The planner (`pipeline/src/conversion/standardPlan.ts`) takes each published
@@ -401,7 +427,7 @@ keeps the one with the fewest hops that can split a value, then the fewest
 hops, then the first by key, so the choice does not move between builds. The
 planner only writes routes that regroup whole areas, so no generated series
 holds an estimated value. An estimated split is converted only where
-`convertedPlan.ts` pins it with `estimates: true`, and two entries do: the
+`convertedPlan.ts` pins it with `estimates: true`, and two pinned entries do, beside the population totals above: the
 constituency population total split onto authorities, and the ward population by
 single year of age, for persons, split onto constituencies. A pinned entry
 replaces the generated one for the same source and target and may carry a note
