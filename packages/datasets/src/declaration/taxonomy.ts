@@ -157,11 +157,14 @@ const SPLIT_MODULE_DEFINITIONS = [
 		theme: "population",
 		label: "Population detail",
 		description:
-			"Population by single year of age and sex for wards and local authorities, and Census 2021 tables for lower and middle layer super output areas. The bulk of the population data.",
+			"Population by single year of age and sex for wards and local authorities, mid-year totals for lower layer super output areas and data zones, and Census 2021 tables for lower and middle layer super output areas. The bulk of the population data.",
 		holds: "datasets",
 		datasets: [
 			"population",
 			"population-uk",
+			"population-lsoa",
+			"population-data-zone-scotland",
+			"population-data-zone-ni",
 			"census-2021-ts001",
 			"census-2021-ts003",
 			"census-2021-ts007a",
