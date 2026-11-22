@@ -26,6 +26,12 @@ export type Hop = {
 	reversed: boolean;
 	/** True where no crosswalk in the hop can split a value. */
 	exact: boolean;
+	/**
+	 * True where a crosswalk in the hop is a publisher's membership lookup,
+	 * which places each source area whole in one target although it may
+	 * straddle several, such as the ONS LSOA to ward best-fit lookups.
+	 */
+	bestFit?: boolean;
 };
 
 export type Route = Hop[];
@@ -99,6 +105,10 @@ export const createRouter = (database: DatabaseSync): Router => {
 			crosswalks: [...ids].sort((a, b) => a - b),
 			reversed,
 			exact: rows.every((row) => isExactMethod(row.method)),
+			bestFit: rows.some(
+				(row) =>
+					row.method === "official-lookup" && row.purpose === "membership",
+			),
 		};
 	};
 
