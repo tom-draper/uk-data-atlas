@@ -150,6 +150,25 @@ test("measure semantics describe units, universes and dimension-selected pay", (
 		[["by-dimension", "pay-statistic"]],
 	);
 	assert.deepEqual(
+		all(
+			`SELECT m.slug FROM measure m JOIN universe p ON p.id = m.universe_id
+				WHERE p.slug = 'unknown'`,
+		),
+		[],
+	);
+	assert.deepEqual(
+		all(
+			`SELECT m.slug, p.slug AS universe FROM measure m
+				JOIN universe p ON p.id = m.universe_id
+				WHERE m.slug IN ('band-d-council-tax', 'house-price-to-earnings-ratio')
+				ORDER BY m.slug`,
+		).map((row) => [row.slug, row.universe]),
+		[
+			["band-d-council-tax", "band-d-equivalent-dwellings"],
+			["house-price-to-earnings-ratio", "not-applicable"],
+		],
+	);
+	assert.deepEqual(
 		all(`SELECT m.slug FROM measure m JOIN measure_conversion c ON c.measure_id = m.id
 			WHERE c.rule = 'sum' AND m.statistic NOT IN ('count', 'total')`),
 		[],

@@ -1,20 +1,32 @@
-import { MEASURE_UNITS, measureSemantics } from "@uk-data-atlas/datasets";
+import {
+	MEASURE_UNITS,
+	NOT_APPLICABLE_REASONS,
+	measureSemantics,
+} from "@uk-data-atlas/datasets";
 import type { StatisticsMeasure } from "@uk-data-atlas/measures";
 
-/** The source publishes a weighted mean but not the weight needed to combine
- * areas. Conversion refuses these measures, see conversion/rules.ts. */
+/**
+ * The source publishes a weighted mean but conversion has no weight it can
+ * use, so it refuses the measure, see conversion/rules.ts. Conversion reads a
+ * weight from the same dataset and on the same area vintage as the measure,
+ * so a weight held elsewhere cannot be linked. Each reason says what is
+ * missing, and an entry goes as soon as a usable weight is linked.
+ */
 export const MISSING_WEIGHT_EXCEPTIONS: Readonly<Record<string, string>> = {
 	"band-d-council-tax":
-		"The council tax base used for the published average is not held as a measure.",
+		"Weighted by each authority's Band D equivalent dwellings, the council tax base. The dataset publishes the charge but not the base, so no weight is held.",
 	"mobile-area-coverage":
-		"The land area used as the published weight is not linked as a measure.",
+		"Weighted by the area's land. The land area is held only in the land-area dataset, on another period and area structure, and conversion reads a weight from the dataset of the measure.",
 	"pm25-population-weighted":
-		"The gridded population used for the published mean is not held.",
+		"Weighted by where people live within the area. The gridded population is not held, and the population measure is in another dataset and release.",
 	"pm25-population-weighted-anthropogenic":
-		"The gridded population used for the published mean is not held.",
+		"Weighted by where people live within the area. The gridded population is not held, and the population measure is in another dataset and release.",
 	"progress-8":
-		"The eligible pupil count used for the published mean is not held.",
+		"Weighted by the pupils with a key stage 2 result who are in the Progress 8 count. The dataset holds key stage 4 pupils, which is a different and larger count, and does not publish the Progress 8 pupil count.",
 };
+
+const UNKNOWN_UNIVERSE = 1;
+const NOT_APPLICABLE_UNIVERSE = 2;
 
 /** Fail rather than publish metadata that suggests an invalid calculation. */
 export function validateMeasureSemantics(measure: StatisticsMeasure): void {
@@ -23,7 +35,7 @@ export function validateMeasureSemantics(measure: StatisticsMeasure): void {
 	};
 	const unit = MEASURE_UNITS.find((item) => item.label === measure.unit);
 	if (!unit) return fail(`unknown unit ${JSON.stringify(measure.unit)}`);
-	const { statistic } = measureSemantics(measure);
+	const { statistic, universeId } = measureSemantics(measure);
 	const ratio = measure.aggregation === "ratio";
 	if (ratio && (!measure.numerator || !measure.denominator))
 		fail("ratio requires a numerator and denominator");
@@ -54,4 +66,13 @@ export function validateMeasureSemantics(measure: StatisticsMeasure): void {
 		statistic !== "total"
 	)
 		fail(`sum is incompatible with statistic ${statistic}`);
+	if (universeId === UNKNOWN_UNIVERSE)
+		fail(
+			"no universe. Name the population or entity it is a statistic over, or list it as not applicable with a reason",
+		);
+	if (
+		universeId === NOT_APPLICABLE_UNIVERSE &&
+		!NOT_APPLICABLE_REASONS[measure.slug]
+	)
+		fail("not applicable needs a reason in NOT_APPLICABLE_REASONS");
 }
