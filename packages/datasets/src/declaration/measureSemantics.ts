@@ -1,7 +1,7 @@
 import type { StatisticsMeasure } from "./vocabulary.ts";
 
-/** Population or entity base of a measure. Unknown is used where the source
- * declaration does not specify a common base. Not applicable covers totals
+/** Population or entity base of a measure. Unknown is kept for compatibility only: the
+ * build refuses a measure that resolves to it. Not applicable covers totals
  * whose values are not statistics over a population. IDs are permanent. */
 export const MEASURE_UNIVERSES = [
 	[1, "unknown", "Unknown"],
@@ -49,21 +49,35 @@ export const MEASURE_UNIVERSES = [
 	[35, "pathways", "Incomplete referral to treatment pathways"],
 	[36, "seats", "Parliamentary seats"],
 	[37, "contests", "Election contests"],
+	[38, "band-d-equivalent-dwellings", "Band D equivalent dwellings"],
 ] as const;
 
-/** Grouping is deliberately explicit. Slugs absent here have an unknown base. */
+/**
+ * Why a measure has no population or entity base. Every not-applicable
+ * measure needs one, so the base is a decision and never a gap.
+ */
+export const NOT_APPLICABLE_REASONS: Readonly<Record<string, string>> = {
+	area: "The measure is the land area itself, not a statistic over entities.",
+	"collected-waste":
+		"Tonnes of material collected. No population or entity count is the base of a tonnage.",
+	"household-waste-recycled":
+		"Tonnes of material recycled. No population or entity count is the base of a tonnage.",
+	gdp: "A monetary output total. It is a sum of values in pounds, not a count over entities.",
+	gva: "A monetary output total. It is a sum of values in pounds, not a count over entities.",
+	"ghg-emissions":
+		"Tonnes of gas emitted. Emissions are attributed to the area, not to a population or entity count.",
+	"education-services-budget":
+		"A monetary budget total. It is a sum of values in pounds, not a count over entities.",
+	"house-price-to-earnings-ratio":
+		"The publisher's ratio of the median price of existing dwellings to median gross annual residence-based earnings. It has no population or entity count of its own.",
+};
+
+/**
+ * Grouping is deliberately explicit. A measure listed nowhere here fails the
+ * build, so a new measure must state its base or why it has none.
+ */
 const UNIVERSE_MEASURES: Readonly<Record<string, readonly string[]>> = {
-	"not-applicable": [
-		"area",
-		"collected-waste",
-		"electricity-consumption",
-		"gas-consumption",
-		"gdp",
-		"gva",
-		"ghg-emissions",
-		"education-services-budget",
-		"household-waste-recycled",
-	],
+	"not-applicable": Object.keys(NOT_APPLICABLE_REASONS),
 	residents: [
 		"population",
 		"ghg-population",
@@ -142,7 +156,13 @@ const UNIVERSE_MEASURES: Readonly<Record<string, readonly string[]>> = {
 		"children-in-temporary-accommodation",
 	],
 	claimants: ["claimants"],
-	"energy-meters": ["electricity-meters", "gas-meters"],
+	"energy-meters": [
+		"electricity-meters",
+		"gas-meters",
+		"electricity-consumption",
+		"gas-consumption",
+	],
+	"band-d-equivalent-dwellings": ["band-d-council-tax"],
 	enterprises: ["enterprises"],
 	"small-areas": [
 		"imd-decile",
