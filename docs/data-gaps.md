@@ -41,8 +41,7 @@ Sources to collect:
 ### 2. Earlier years
 
 Many measures hold one period, so they have no trend. Seen with one period:
-IMD 2025 (no 2019; 2015 is now staged), claimants (one month compiled; January
-2013 to October 2026 is now staged), broadband, premises,
+IMD 2025 (no 2019; 2015 is now staged), broadband, premises,
 mobile coverage, public EV chargers, ASHE, council tax, enterprises and the
 NHS waiting-list data. Back-years are the cheapest data to add. Roadmap task
 44 (change between periods on fixed boundaries) depends on them.
@@ -82,8 +81,6 @@ These sit in `data/source/_staging`:
 - ethnic group by age and sex
 - household economic activity
 - local labour market indicators
-- claimant count by local authority, January 2013 to October 2026
-  (`claimant-count-history`)
 - the English Indices of Deprivation 2015 on the 2011 LSOAs (`imd-2015`)
 - Scotland's Census 2022, 76 tables on the 2022 data zones
   (`census-2022-scotland-data-zone`)
@@ -199,8 +196,7 @@ What is still out of reach:
 
 1. Compile the staged Scotland and Northern Ireland census tables, and the
    other staged census and population files.
-2. Compile the staged claimant and IMD 2015 back-years, and collect ASHE
-   back-years.
+2. Compile the staged IMD 2015 back-years, and collect ASHE back-years.
 3. Police Scotland and PSNI recorded crime, once a direct download is found.
 4. Events for data zones and Senedd constituencies, the cheapest compiled
    gap to close.
