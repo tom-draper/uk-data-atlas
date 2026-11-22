@@ -128,3 +128,41 @@ test("yearly indicators refuse a measure the rows do not hold", () => {
 		/population is not in the statistics tables/,
 	);
 });
+
+test("yearly indicators publish the declared boundary and count the others in the manifest", () => {
+	const series = (release: string, period: string, values: number[]) => ({
+		dataset: "example",
+		measure: "population",
+		geography: "localAuthority",
+		release,
+		members: { age: "child" },
+		periods: {
+			[period]: Object.fromEntries(
+				values.map((value, index) => [`E0800000${index + 1}`, value]),
+			),
+		},
+	});
+	// The 2015 edition sits on the 2023 boundary; the declared one is 2025.
+	const rows = fixtureRows([
+		series("2025-uk-bfc", "2025", [12, 7]),
+		series("2023-uk-bfc", "2015", [9]),
+	]);
+	const { artifacts } = compileYearlyIndicators(
+		{
+			...manifest,
+			datasets: [
+				{
+					...manifest.datasets[0]!,
+					summary: {
+						dataRecordCount: 3,
+						datasetCount: 2,
+						boundaryYears: [2023, 2025],
+					},
+				},
+			],
+		} as CatalogManifest,
+		declaration,
+		rows,
+	);
+	expect(artifacts[0]?.periods.map(({ period }) => period)).toEqual(["2025"]);
+});
