@@ -341,6 +341,13 @@ function directOnlyOf(
 	return {
 		directOnly: {
 			read: direct.read,
+			...(declaration.statistics.exclude
+				? {
+						exclude: declaration.statistics.exclude.map(
+							({ codes }) => codes,
+						),
+					}
+				: {}),
 			// A direct part is named by a period label, which a payload may key
 			// differently (`2001-2003` is part `2003`). Asked for one label, the
 			// payload gives that label's one part.

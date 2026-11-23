@@ -175,6 +175,8 @@ export interface DatasetDefinition<
 	directOnly?: {
 		read: (reader: DatasetReader) => Promise<DirectPart[]>;
 		header: (key: string) => DeclaredHeader | undefined;
+		/** Codes the rows leave out (`statistics.exclude`), so the summary does too. */
+		exclude?: RegExp[];
 	};
 	/** The shape of the payload, which exists only as a type. */
 	readonly payloadType?: T;
