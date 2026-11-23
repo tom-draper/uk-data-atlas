@@ -1777,7 +1777,10 @@ test("publishes final annual road collisions for Great Britain by severity", () 
 test("publishes median pay for authorities only", () => {
 	const result = compileDataCatalog(writeSources());
 	const periods = (measure: string) =>
-		result.indicatorObservations.find(
+		[
+			...result.indicatorObservations,
+			...result.yearlyIndicatorObservations,
+		].find(
 			(artifact) =>
 				artifact.measureId ===
 				measureSeriesKey({
@@ -1808,7 +1811,7 @@ test("publishes median pay for authorities only", () => {
 	assert.equal(hourly?.aggregation.kind, "non-aggregatable");
 	assert.match(
 		hourly?.sources[0]?.coverage.note ?? "",
-		/English authorities only/,
+		/England, Wales and Scotland, from 2012/,
 	);
 });
 
