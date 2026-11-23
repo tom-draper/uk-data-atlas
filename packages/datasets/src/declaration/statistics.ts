@@ -432,9 +432,16 @@ export const periods = {
 		start: `${year}-${pad(month)}-01`,
 		end: `${year}-${pad(month)}-${lastDay(year, month)}`,
 	}),
-	/** Census day, labelled `2021-census`. */
+	/**
+	 * Census day, labelled `2021-census`. Scotland's census was a year late,
+	 * on 20 March 2022.
+	 */
 	census: (year: number): StatisticsPeriod => {
-		const day = { 2011: "2011-03-27", 2021: "2021-03-21" }[year];
+		const day = {
+			2011: "2011-03-27",
+			2021: "2021-03-21",
+			2022: "2022-03-20",
+		}[year];
 		if (!day) throw new Error(`Unknown census day for ${year}`);
 		return { label: `${year}-census`, kind: "date", start: day, end: day };
 	},
