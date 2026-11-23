@@ -107,21 +107,24 @@ test("countries is a sorted list of nations, empty only where no area has a valu
 	);
 });
 
-test("v_coverage has one row for each series_coverage row, and one default series for each quantity", () => {
+test("v_coverage has one row for each series_coverage row, and the rank 1 series of a quantity is always a default", () => {
 	assert.equal(
 		one("SELECT count(*) AS n FROM v_coverage"),
 		one("SELECT count(*) AS n FROM series_coverage"),
 	);
-	assert.deepEqual(
-		all(`SELECT quantity FROM v_coverage WHERE is_default = 1
-			 GROUP BY quantity HAVING count(DISTINCT series_id) > 1`),
-		[],
-	);
-	// The default flag is series_preference's rank 1.
+	// A rank 1 series takes every area it has, and a series in no quantity none.
 	assert.deepEqual(
 		all(`SELECT v.series_id FROM v_coverage v
 			 JOIN series_preference sp ON sp.series_id = v.series_id
-			 WHERE v.is_default <> (sp.rank = 1) OR v.preference_rank <> sp.rank`),
+			 WHERE v.preference_rank <> sp.rank
+			    OR (sp.rank = 1 AND (v.is_default <> 1 OR v.default_areas <> v.areas))`),
+		[],
+	);
+	assert.deepEqual(
+		all(`SELECT series_id FROM v_coverage
+			 WHERE (quantity IS NULL AND default_areas <> 0)
+			    OR is_default <> (default_areas > 0)
+			    OR default_areas > areas`),
 		[],
 	);
 	// Quality columns exist for a converted series and for no other.
@@ -197,4 +200,38 @@ test("the worked answers hold", () => {
 			 WHERE measure = 'claimant-rate' AND geography = 'ward'`),
 		[{ reason: "refused-measure" }],
 	);
+});
+
+test("the areas the default view takes from each series add up to its rows for each period", () => {
+	// The population of a ward or a local authority draws on several series,
+	// period by period and area by area.
+	for (const where of [
+		"geography = 'ward'",
+		"geography = 'localAuthority' AND release = '2026-05-uk-bgc'",
+	]) {
+		assert.deepEqual(
+			all(`WITH covered AS (
+				   SELECT quantity, period, sum(default_areas) AS n
+				   FROM v_coverage
+				   WHERE measure = 'population' AND ${where}
+				   GROUP BY quantity, period),
+				 rows AS (
+				   SELECT quantity, period, count(*) AS n
+				   FROM v_observation_default
+				   WHERE measure = 'population' AND ${where}
+				   GROUP BY quantity, period)
+			   SELECT coalesce(c.quantity, r.quantity) AS quantity,
+			     coalesce(c.period, r.period) AS period, c.n AS covered, r.n AS rows
+			   FROM covered c FULL JOIN rows r ON r.quantity = c.quantity AND r.period = c.period
+			   WHERE coalesce(c.n, 0) <> coalesce(r.n, 0)`),
+			[],
+			where,
+		);
+		assert.ok(
+			one(
+				`SELECT count(*) AS n FROM v_coverage WHERE measure = 'population' AND ${where} AND is_default = 1 AND preference_rank > 1`,
+			) > 0,
+			`${where}: some period is supplied by a series other than rank 1`,
+		);
+	}
 });
