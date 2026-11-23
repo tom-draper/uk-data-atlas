@@ -59,6 +59,11 @@ const CENSUS_DIMENSIONS: StatisticsDimension[] = [
 			{ code: "75-to-79", label: "Aged 75 to 79" },
 			{ code: "80-to-84", label: "Aged 80 to 84" },
 			{ code: "85-plus", label: "Aged 85 and over" },
+			// Finer than the England and Wales band, which only Scotland
+			// publishes, so each nests under it.
+			{ code: "15", label: "Aged 15", parent: "15-to-19" },
+			{ code: "16-to-17", label: "Aged 16 to 17", parent: "15-to-19" },
+			{ code: "18-to-19", label: "Aged 18 to 19", parent: "15-to-19" },
 		],
 	},
 	{
@@ -188,6 +193,63 @@ const CENSUS_DIMENSIONS: StatisticsDimension[] = [
 				label: "Other household type with dependent children",
 				parent: "total",
 			},
+			// Finer than the England and Wales categories, which only
+			// Scotland publishes, so each nests under the one it splits.
+			{
+				code: "married-one-dependent-child",
+				label: "Married or civil partnership couple, one dependent child",
+				parent: "married-dependent-children",
+			},
+			{
+				code: "married-two-plus-dependent-children",
+				label: "Married or civil partnership couple, two or more dependent children",
+				parent: "married-dependent-children",
+			},
+			{
+				code: "cohabiting-one-dependent-child",
+				label: "Cohabiting couple, one dependent child",
+				parent: "cohabiting-dependent-children",
+			},
+			{
+				code: "cohabiting-two-plus-dependent-children",
+				label: "Cohabiting couple, two or more dependent children",
+				parent: "cohabiting-dependent-children",
+			},
+			{
+				code: "lone-parent-one-dependent-child",
+				label: "Lone parent, one dependent child",
+				parent: "lone-parent-dependent-children",
+			},
+			{
+				code: "lone-parent-two-plus-dependent-children",
+				label: "Lone parent, two or more dependent children",
+				parent: "lone-parent-dependent-children",
+			},
+			{
+				code: "other-one-dependent-child",
+				label: "Other household type, one dependent child",
+				parent: "other-with-dependent-children",
+			},
+			{
+				code: "other-two-plus-dependent-children",
+				label: "Other household type, two or more dependent children",
+				parent: "other-with-dependent-children",
+			},
+			{
+				code: "other-all-students",
+				label: "Other household type, all full-time students",
+				parent: "other",
+			},
+			{
+				code: "other-all-66-plus",
+				label: "Other household type, all aged 66 or over",
+				parent: "other",
+			},
+			{
+				code: "other-remaining",
+				label: "Other household type, none of the above",
+				parent: "other",
+			},
 		],
 	},
 	{
@@ -235,6 +297,19 @@ const CENSUS_MEMBERS: Readonly<Record<string, StatisticsDimension["members"]>> =
 				code: "social-rented-other",
 				label: "Other social rented",
 				parent: "social-rented",
+			},
+			// Scotland counts shared equity (such as Help to Buy) apart from
+			// owning with a mortgage, so its figure is not the England and
+			// Wales category and is published as members of its own.
+			{
+				code: "owned-with-mortgage-excluding-shared-equity",
+				label: "Owned with a mortgage or loan, excluding shared equity",
+				parent: "owned",
+			},
+			{
+				code: "shared-equity",
+				label: "Shared equity, such as LIFT or Help to Buy",
+				parent: "owned",
 			},
 		],
 	};
