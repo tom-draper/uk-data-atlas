@@ -153,11 +153,30 @@ test("a summed series that scores full coverage keeps the total of its source", 
 		.prepare(
 			`SELECT s.id, s.key,
 				(SELECT sum(value) FROM observation WHERE series_id = s.id) AS converted,
-				(SELECT sum(value) FROM observation WHERE series_id = s.derived_from_id) AS source
+				(SELECT sum(value) FROM observation WHERE series_id = s.derived_from_id) AS source,
+				(SELECT k.key FROM series k WHERE k.id = s.derived_from_id) AS sourceKey
 			FROM series s JOIN series_conversion c ON c.series_id = s.id
 			WHERE s.method = 'converted' AND c.rule = 'sum' AND c.coverage = 1`,
 		)
-		.all() as { key: string; converted: number; source: number }[];
+		.all() as {
+		key: string;
+		converted: number;
+		source: number;
+		sourceKey: string;
+	}[];
+	// A total of persons of all ages is summed from the single years of age, and
+	// names one of them as its source. What it must keep is the sum of them all.
+	const ages = database.prepare(
+		`SELECT sum(o.value) AS total FROM observation o JOIN series k ON k.id = o.series_id
+		WHERE k.method = 'published' AND k.key LIKE ? ESCAPE '\\'`,
+	);
+	for (const row of rows) {
+		if (!/\/age=/.test(row.sourceKey) || /\/age=/.test(row.key)) continue;
+		const like = row.sourceKey
+			.replace(/[\\%_]/g, "\\$&")
+			.replace(/\/age=[^/]*/, "/age=%");
+		row.source = (ages.get(like) as { total: number }).total;
+	}
 	assert.ok(rows.length > 0);
 	const lost = rows.filter(
 		(row) =>

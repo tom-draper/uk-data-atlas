@@ -161,7 +161,10 @@ test("a coarser source is offered every target it reaches, even where finer ones
 
 test("the datasets are planned finest first", () => {
 	const order = plan.entries.map((entry) => entry.source.dataset);
-	assert.deepEqual(order, [...order].sort((a, b) => rank(a) - rank(b)));
+	assert.deepEqual(
+		order,
+		[...order].sort((a, b) => rank(a) - rank(b)),
+	);
 });
 
 test("a small-area total is noted as published, not summed from ages", () => {
@@ -176,4 +179,15 @@ test("a small-area total is noted as published, not summed from ages", () => {
 		notes.get("population") ?? "",
 		/sum of the single years of age/,
 	);
+});
+
+test("the nations' own estimates are planned before the ONS repackaging of them", () => {
+	for (const nation of [
+		"population-council-scotland",
+		"population-district-ni",
+	]) {
+		assert.ok(rank(nation) >= 0, `${nation} is planned`);
+		assert.ok(rank(nation) > rank("population"));
+		assert.ok(rank(nation) < rank("population-uk"));
+	}
 });
