@@ -172,6 +172,8 @@ it.each([
 	"population-data-zone-ni",
 	"ethnicity",
 	"population-uk",
+	"population-council-scotland",
+	"population-district-ni",
 	"car-availability",
 	"travel-to-work",
 	"road-collisions",
