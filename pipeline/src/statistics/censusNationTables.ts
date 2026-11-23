@@ -8,14 +8,16 @@ import {
  * The census tables of Scotland (2022) and Northern Ireland (2021) that count
  * the same thing as an England and Wales table, on data zones.
  *
- * A table is here only where its universe, its categories and its reference
- * date agree with the England and Wales table it joins. Each category borrows
- * its suffix, label and member from that table, so the measure it feeds is the
- * same measure and the two nations' series differ only in the dataset and the
- * geography. A category the nations define differently (Scotland combines
- * council and housing association renting, separates shared equity, and
- * splits ages 15 to 19 as 15, 16 to 17 and 18 to 19) is left out, never
- * approximated, and `docs/data-gaps.md` lists it.
+ * A table is here only where its universe and its reference date agree with
+ * the England and Wales table it joins. A category the England and Wales
+ * table also publishes borrows its suffix, label and member from it, so the
+ * measure it feeds is the same measure and the two nations' series differ only
+ * in the dataset and the geography. A category the nations define differently
+ * is never approximated to an England and Wales one. Where a nation publishes
+ * a category more finely (Scotland's single years of age, dependent children
+ * by number, shared equity) or differently (Scotland's combined social
+ * renting) it carries its own label and is published as a measure and member
+ * of its own, nested under the England and Wales category it refines.
  *
  * Scotland's census day was 20 March 2022. Northern Ireland's and England and
  * Wales's was 21 March 2021.
@@ -42,11 +44,17 @@ export type CensusNationTable = {
 	/** What the publisher counts, in the publisher's words. */
 	universe: string;
 	/**
-	 * Each category: the England and Wales suffix and where to find it in the
-	 * table. In Scotland's CSV a row's labels joined with `|`, in a Northern
-	 * Ireland sheet the column heading.
+	 * Each category: its suffix and where to find it in the table. In
+	 * Scotland's CSV a row's labels joined with `|`, in a Northern Ireland
+	 * sheet the column heading. Without a label the suffix is that of an
+	 * England and Wales category. With one the nation publishes the category
+	 * alone, as the measure and member of that suffix.
 	 */
-	categories: readonly (readonly [suffix: string, key: string])[];
+	categories: readonly (readonly [
+		suffix: string,
+		key: string,
+		label?: string,
+	])[];
 	notes: readonly string[];
 };
 
@@ -265,10 +273,13 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 
 /**
  * The members of the joined dimension for each category of a table, in
- * category order: the same member the England and Wales table gives it.
+ * category order: the member the England and Wales table gives it, or for a
+ * category only the nation publishes, the member of its own suffix.
  */
 export const censusNationMembers = (table: CensusNationTable) =>
-	table.categories.map(([suffix]) => {
+	table.categories.map(([suffix, , label]) => {
+		// A category only the nation publishes is the member of its own suffix.
+		if (label !== undefined) return { [table.joins.dimension]: suffix };
 		const category = table.joins.categories.find(
 			([each]) => each === suffix,
 		);
@@ -284,3 +295,9 @@ export const censusNationArtifactName = (
 	table: CensusNationTable,
 	boundaryYear: number,
 ) => `${table.dataset}-data-zone-${boundaryYear}-table`;
+
+/** The categories only the nation publishes, each with the label of its measure. */
+export const censusNationOnlyCategories = (table: CensusNationTable) =>
+	table.categories.flatMap(([suffix, , label]) =>
+		label === undefined ? [] : [{ suffix, label }],
+	);
