@@ -496,7 +496,7 @@ function publisherReplacementChanges(
 		`SELECT g.id AS geography_id, r.id, e.edition_from
 		FROM area_release r
 		JOIN geography g ON g.slug = r.geography
-		JOIN boundary_release_edition e ON e.geography = r.geography AND e.release = r.release
+		JOIN boundary_release_edition e ON e.release_id = r.id
 		WHERE r.geography = ? AND r.release = ?`,
 	);
 	const events: ChangeEvent[] = [];
