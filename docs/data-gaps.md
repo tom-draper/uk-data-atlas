@@ -150,9 +150,11 @@ What is still out of reach:
   takes the best-ranked value for each area and period, so on the 2024
   constituencies and the 2026-05 wards the LSOA years show beside the
   published constituency estimates and the IMD 2025 denominator, and the
-  Scottish data-zone values show on the 2026-05 wards. `v_coverage.is_default`
-  flags only the top-ranked series of each release, not every series the
-  default view draws on.
+  Scottish data-zone values show on the 2026-05 wards. A period of a quantity
+  can therefore draw on several series, area by area. `v_coverage.is_default`
+  is 1 for every series the default view takes at least one area from in that
+  period, whatever its rank, and `default_areas` and `default_share` say how
+  many areas and what share of the release it supplies.
 - Every population source is converted onto every release it reaches,
   finest first, and a coarser source keeps a value only for an area and
   period no finer source reached (`better-route` gaps for the rest). The ONS
