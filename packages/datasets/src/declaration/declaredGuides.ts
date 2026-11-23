@@ -185,9 +185,9 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	income: {
 		title: "Income",
 		topic: "earnings-and-income",
-		about: "Pay for employees who live in each local authority in England, from the Annual Survey of Hours and Earnings. Select annual or hourly pay and median or mean. The median is the middle value, so a few very high earners don't skew it. Regional hourly figures average the available authority estimates without population weighting.",
+		about: "Pay for employees who live in each local authority in England, Wales and Scotland, from the Annual Survey of Hours and Earnings. Select annual or hourly pay and median or mean. The median is the middle value, so a few very high earners don't skew it. Regional hourly figures average the available authority estimates without population weighting.",
 		summary:
-			"Median and mean annual and hourly pay for employees in each English local authority, by where workers live. The income legend switches between annual and hourly pay and between median and mean. Regional cards show an unweighted average of the available authority estimates, rather than a pooled regional median or mean.",
+			"Median and mean annual and hourly pay for employees in each local authority of England, Wales and Scotland, by where workers live, from 2012. The income legend switches between annual and hourly pay and between median and mean. Regional cards show an unweighted average of the available authority estimates, rather than a pooled regional median or mean.",
 	},
 	jobs: {
 		title: "Jobs",
@@ -395,8 +395,8 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 	"workplace-income": {
 		title: "Workplace income",
 		topic: "earnings-and-income",
-		about: "Pay for jobs based in each local authority in England, whoever does them. Enable the Workplace Pay card and select annual or hourly pay, median or mean. Regional figures average the available authority estimates without population weighting. Compare it with the resident Income card to see differences between where people work and live.",
+		about: "Pay for jobs based in each local authority in England, Wales and Scotland, whoever does them. Enable the Workplace Pay card and select annual or hourly pay, median or mean. Regional figures average the available authority estimates without population weighting. Compare it with the resident Income card to see differences between where people work and live.",
 		summary:
-			"Median and mean annual and hourly pay for employees in each English local authority, by where their jobs are located. Enable the Workplace Pay card to map earnings where jobs are located. Its legend offers annual or hourly median and mean pay, separately from the resident Income card. Regional workplace figures average available authority estimates; suppressed estimates remain unavailable.",
+			"Median and mean annual and hourly pay for employees in each local authority of England, Wales and Scotland, by where their jobs are located, from 2012. Enable the Workplace Pay card to map earnings where jobs are located. Its legend offers annual or hourly median and mean pay, separately from the resident Income card. Regional workplace figures average available authority estimates; suppressed estimates remain unavailable.",
 	},
 };
