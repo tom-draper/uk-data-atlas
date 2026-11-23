@@ -64,12 +64,12 @@
 		"bytes": 22771412
 	},
 	"income": {
-		"sha256": "004e746643ec6b37d7457ee1cf1278cc4607ebc951cff6f1b19d02c611f9e390",
-		"bytes": 181712
+		"sha256": "659852b9b7de5cbc632b13348afe3cbd108552c47dca079fb6141ea9072d0258",
+		"bytes": 3095223
 	},
 	"workplace-income": {
-		"sha256": "314a39c39fd4d9a7f2e5aff1f4deb742a4fcf24de43b50e29f9120b66316b3df",
-		"bytes": 181715
+		"sha256": "1979dee613b0941fdcfd15d652b2aad267c84b4bed6d9d878716f3c6685cd169",
+		"bytes": 3095875
 	},
 	"claimant-count": {
 		"sha256": "cc660d32aad9b321e6d9b3c017897e2a3954aaad29dcc2a104bd630c8a358bee",
