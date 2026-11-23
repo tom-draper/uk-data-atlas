@@ -26,6 +26,7 @@ import { compileRoadCollisions } from "./roadCollisions.ts";
 import { compileCrime } from "./crime.ts";
 import { compileUnemployment } from "./unemployment.ts";
 import { compileCensus } from "./census.ts";
+import { compileCensusNation } from "./censusNation.ts";
 import { compileCensusSmallArea } from "./censusSmallArea.ts";
 import { withAliases } from "./measureAliases.ts";
 import type { MeasureTableArtifact } from "@uk-data-atlas/catalogue/node";
@@ -97,9 +98,18 @@ export const compileDataCatalog = ({
 	const censusSmallArea = censusSmallAreaRoot
 		? compileCensusSmallArea(censusSmallAreaRoot, rows)
 		: undefined;
+	// Joins the measures the small-area tables publish, so it follows them.
+	const censusNation = censusSmallArea
+		? compileCensusNation(
+				censusSmallAreaRoot!,
+				rows,
+				censusSmallArea.measures,
+			)
+		: undefined;
 	const datasets = [
 		...manifest.datasets.map(compileDataset),
 		...(censusSmallArea?.datasets ?? []),
+		...(censusNation?.datasets ?? []),
 	].sort((left, right) => left.id.localeCompare(right.id));
 	if (
 		new Set(datasets.map((dataset) => dataset.id)).size !== datasets.length
@@ -207,7 +217,10 @@ export const compileDataCatalog = ({
 			datasets,
 			measures,
 		},
-		censusTables: censusSmallArea?.tables ?? [],
+		censusTables: [
+			...(censusSmallArea?.tables ?? []),
+			...(censusNation?.tables ?? []),
+		],
 		populationObservations: [
 			population.wardObservations,
 			population.localAuthorityObservations,

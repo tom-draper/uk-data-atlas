@@ -154,7 +154,7 @@ export const compileCensusSmallArea = (
 							})),
 						),
 						recordCount: artifact.records.length,
-						note: `Census 2021 covers all ${geography.label} in England and Wales; Scotland and Northern Ireland hold their own censuses on other geographies.`,
+						note: `Census 2021 covers all ${geography.label} in England and Wales; Scotland and Northern Ireland hold their own censuses, which this measure also draws on where their definitions agree.`,
 					},
 				}),
 			);
