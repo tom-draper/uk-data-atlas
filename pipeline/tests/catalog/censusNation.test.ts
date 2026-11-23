@@ -131,3 +131,57 @@ test("refuses a table whose measure no census table publishes", () => {
 		rows.close();
 	}
 });
+
+test("publishes a category only the nation counts as a measure of its own", () => {
+	const root = repository();
+	const rows = rowsOf();
+	const own = {
+		...households,
+		categories: [["one-or-more-people", "All households", "Fixture own"]],
+	} as unknown as typeof households;
+	const measures: Measure[] = [];
+	try {
+		const compiled = compileCensusNation(root, rows, measures, [own]);
+		const [created] = measures;
+		assert.equal(created?.id, `${own.joins.measurePrefix}-one-or-more-people`);
+		assert.equal(created?.label, "Fixture own");
+		assert.deepEqual(created?.series, {
+			measure: own.joins.measure,
+			dimensions: { [own.joins.dimension]: "one-or-more-people" },
+		});
+		assert.equal(created?.unit, own.joins.unit);
+		assert.deepEqual(
+			created?.sources.map((source) => source.observationArtifact),
+			[compiled.tables[0]?.id],
+		);
+		assert.equal(created?.notes?.[0], own.universe);
+		assert.match(created!.notes!.at(-1)!, /^Northern Ireland: /);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+		rows.close();
+	}
+});
+
+test("refuses a category of the nation's own whose measure already exists", () => {
+	const root = repository();
+	const rows = rowsOf();
+	const own = {
+		...households,
+		categories: [["total", "All households", "Fixture own"]],
+	} as unknown as typeof households;
+	try {
+		assert.throws(
+			() =>
+				compileCensusNation(
+					root,
+					rows,
+					[measure(`${own.joins.measurePrefix}-total`)],
+					[own],
+				),
+			/a census measure has that id/,
+		);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+		rows.close();
+	}
+});
