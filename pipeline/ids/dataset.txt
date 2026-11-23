@@ -76,3 +76,5 @@ census-2022-scotland-uv404
 census-2022-scotland-uv113
 census-2021-ni-a01
 census-2021-ni-e01
+population-council-scotland
+population-district-ni
