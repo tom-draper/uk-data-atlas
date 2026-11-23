@@ -186,5 +186,24 @@ export async function payStatisticsParts(
 	parts.push(
 		await payStatisticsPart("2025", read, place, currentFiles(place)),
 	);
-	return parts;
+	return withLatestNames(parts);
+}
+
+/**
+ * Every area under the name of its latest edition. The editions spell an area
+ * differently over the years ("Darlington UA", "Darlington"), and an area has
+ * one name in the atlas.
+ */
+function withLatestNames(parts: DirectPart[]): DirectPart[] {
+	const names = new Map<string, string>();
+	for (const part of parts)
+		for (const record of part.records)
+			if (record.name) names.set(record.code, record.name);
+	return parts.map((part) => ({
+		...part,
+		records: part.records.map((record) => ({
+			...record,
+			name: names.get(record.code) ?? record.name,
+		})),
+	}));
 }
