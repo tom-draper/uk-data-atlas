@@ -120,6 +120,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 2,
 					release_areas: 4,
 					countries: "E,S",
+					default_areas: 3,
 				},
 				{
 					series_id: 1,
@@ -128,6 +129,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 1,
 					release_areas: 4,
 					countries: "E",
+					default_areas: 1,
 				},
 				{
 					series_id: 2,
@@ -136,6 +138,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 2,
 					release_areas: 4,
 					countries: "E,W",
+					default_areas: 0,
 				},
 				{
 					series_id: 3,
@@ -144,6 +147,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 1,
 					release_areas: 4,
 					countries: "E",
+					default_areas: 0,
 				},
 				// A status-only row has no value, a category-only row has one. The
 				// release covers Northern Ireland alone, so a code with no prefix is N.
@@ -154,6 +158,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 0,
 					release_areas: 1,
 					countries: "",
+					default_areas: 1,
 				},
 				{
 					series_id: 4,
@@ -162,6 +167,7 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 1,
 					release_areas: 1,
 					countries: "N",
+					default_areas: 1,
 				},
 			],
 		);
@@ -183,7 +189,7 @@ describe("writeSeriesCoverage", () => {
 		assert.deepEqual(
 			rows(
 				database,
-				"SELECT measure, quantity, members, dataset, geography, release, period, period_kind, period_start, period_end, method, is_default, preference_rank, areas_with_value, release_areas, share, countries, exact_share, coverage FROM v_coverage WHERE series_id IN (1, 2, 3) AND period = '2021' ORDER BY series_id",
+				"SELECT measure, quantity, members, dataset, geography, release, period, period_kind, period_start, period_end, method, is_default, preference_rank, areas_with_value, release_areas, share, default_areas, default_share, countries, exact_share, coverage FROM v_coverage WHERE series_id IN (1, 2, 3) AND period = '2021' ORDER BY series_id",
 			),
 			[
 				{
@@ -203,6 +209,8 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 2,
 					release_areas: 4,
 					share: 0.5,
+					default_areas: 3,
+					default_share: 0.75,
 					countries: "E,S",
 					exact_share: null,
 					coverage: null,
@@ -224,6 +232,8 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 2,
 					release_areas: 4,
 					share: 0.5,
+					default_areas: 0,
+					default_share: 0,
 					countries: "E,W",
 					exact_share: 0.75,
 					coverage: 0.9,
@@ -246,11 +256,130 @@ describe("writeSeriesCoverage", () => {
 					areas_with_value: 1,
 					release_areas: 4,
 					share: 0.25,
+					default_areas: 0,
+					default_share: 0,
 					countries: "E",
 					exact_share: null,
 					coverage: null,
 				},
 			],
+		);
+	});
+
+	test("a lower-ranked series is the default for a period the better one lacks", () => {
+		const database = fixture();
+		database.exec(`
+			INSERT INTO period VALUES (3, '2023', 'year', '2023-01-01', '2023-12-31');
+			INSERT INTO observation VALUES (2, 1, 3, 8, 1, NULL), (2, 2, 3, 7, 1, NULL), (2, 4, 3, 6, 1, NULL);`);
+		writeSeriesCoverage(database);
+		assert.deepEqual(
+			rows(
+				database,
+				"SELECT series_id, period, is_default, preference_rank, default_areas, default_share FROM v_coverage WHERE series_id IN (1, 2) ORDER BY period, series_id",
+			),
+			[
+				// 2021: series 1 holds three areas, so series 2 takes none, even though it has two.
+				{
+					series_id: 1,
+					period: "2021",
+					is_default: 1,
+					preference_rank: 1,
+					default_areas: 3,
+					default_share: 0.75,
+				},
+				{
+					series_id: 2,
+					period: "2021",
+					is_default: 0,
+					preference_rank: 2,
+					default_areas: 0,
+					default_share: 0,
+				},
+				{
+					series_id: 1,
+					period: "2022",
+					is_default: 1,
+					preference_rank: 1,
+					default_areas: 1,
+					default_share: 0.25,
+				},
+				// 2023: only series 2 has a row, so it is the default for all three areas.
+				{
+					series_id: 2,
+					period: "2023",
+					is_default: 1,
+					preference_rank: 2,
+					default_areas: 3,
+					default_share: 0.75,
+				},
+			],
+		);
+	});
+
+	test("a lower-ranked series is the default only for the areas the better one misses", () => {
+		const database = fixture();
+		// 2022: series 1 holds area 1. Series 2 holds areas 1, 2 and 4, so it wins 2 and 4.
+		database.exec(
+			"INSERT INTO observation VALUES (2, 1, 2, 12, 1, NULL), (2, 2, 2, 5, 1, NULL), (2, 4, 2, 3, 1, NULL)",
+		);
+		writeSeriesCoverage(database);
+		assert.deepEqual(
+			rows(
+				database,
+				"SELECT series_id, is_default, areas, default_areas, default_share FROM v_coverage WHERE period = '2022' AND series_id IN (1, 2) ORDER BY series_id",
+			),
+			[
+				{
+					series_id: 1,
+					is_default: 1,
+					areas: 1,
+					default_areas: 1,
+					default_share: 0.25,
+				},
+				{
+					series_id: 2,
+					is_default: 1,
+					areas: 3,
+					default_areas: 2,
+					default_share: 0.5,
+				},
+			],
+		);
+		// Every area of the default view has one series: the counts add up to its rows.
+		assert.equal(
+			rows(
+				database,
+				"SELECT sum(default_areas) AS n FROM series_coverage WHERE series_id IN (1, 2) AND period_id = 2",
+			)[0]!.n,
+			3,
+		);
+	});
+
+	test("a NULL-valued row of the better series keeps its area", () => {
+		const database = fixture();
+		writeSeriesCoverage(database);
+		// Series 1 has a NULL value for area 2 in 2021, and series 2 has a value there.
+		assert.deepEqual(
+			rows(
+				database,
+				"SELECT series_id, areas, default_areas FROM v_coverage WHERE period = '2021' AND series_id IN (1, 2) ORDER BY series_id",
+			),
+			[
+				{ series_id: 1, areas: 3, default_areas: 3 },
+				{ series_id: 2, areas: 2, default_areas: 0 },
+			],
+		);
+	});
+
+	test("a series in no quantity is the default for no area", () => {
+		const database = fixture();
+		writeSeriesCoverage(database);
+		assert.deepEqual(
+			rows(
+				database,
+				"SELECT is_default, default_areas, default_share FROM v_coverage WHERE series_id = 3",
+			),
+			[{ is_default: 0, default_areas: 0, default_share: 0 }],
 		);
 	});
 

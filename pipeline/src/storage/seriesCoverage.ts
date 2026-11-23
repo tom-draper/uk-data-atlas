@@ -8,12 +8,14 @@ import type { DatabaseSync } from "node:sqlite";
  *
  * - `series_coverage` has one row for each (series, period) that holds
  *   observations: how many areas have a row, how many of those have a value,
- *   how many areas the series' release holds, and which nations have a value.
- *   About 9,000 rows for 10.7 million observations.
+ *   how many areas the series' release holds, which nations have a value and
+ *   how many areas `v_observation_default` takes from the series. About 9,000
+ *   rows for 10.7 million observations.
  * - `v_coverage` reads one readable row per (series, period), with the method,
- *   whether the series is the default of its quantity (`series_preference`),
- *   the share of the release covered and, for a converted series, its
- *   `series_conversion` quality.
+ *   whether the default view takes any area from the series (`is_default`),
+ *   how many and what share of the release (`default_areas`,
+ *   `default_share`), the share of the release covered and, for a converted
+ *   series, its `series_conversion` quality.
  * - `v_coverage_missing` lists the measure, geography and release
  *   combinations the conversion planner considered and left with no series,
  *   and why (`conversion_skip`).
@@ -73,14 +75,17 @@ CREATE TABLE series_coverage (
 	areas_with_value INTEGER NOT NULL CHECK (areas_with_value BETWEEN 0 AND areas),
 	release_areas INTEGER NOT NULL CHECK (release_areas >= 0),
 	countries TEXT NOT NULL,
+	default_areas INTEGER NOT NULL DEFAULT 0 CHECK (default_areas BETWEEN 0 AND areas),
 	PRIMARY KEY (series_id, period_id)
 ) WITHOUT ROWID, STRICT;`;
 
 /**
- * One readable row per (series, period). The quantity, rank and default flag
- * are empty for a series that is not at the default of every breakdown (a
- * part of a total), which is in no quantity. The members lookup matches the
- * one in `v_observation_default`.
+ * One readable row per (series, period). The quantity and rank are empty for
+ * a series that is not at the default of every breakdown (a part of a total),
+ * which is in no quantity, and it has no default areas. `is_default` is 1
+ * when `v_observation_default` takes at least one area from the series in the
+ * period, whatever its rank. The members lookup matches the one in
+ * `v_observation_default`.
  */
 export const COVERAGE_VIEW = `
 SELECT m.slug AS measure, q.key AS quantity,
@@ -90,10 +95,13 @@ SELECT m.slug AS measure, q.key AS quantity,
    WHERE sm.series_id = s.id) AS members,
   d.slug AS dataset, r.geography, r.release, p.label AS period,
   p.kind AS period_kind, p.start_date AS period_start, p.end_date AS period_end,
-  s.method, coalesce(sp.rank = 1, 0) AS is_default, sp.rank AS preference_rank,
+  s.method, sc.default_areas > 0 AS is_default, sp.rank AS preference_rank,
   sc.areas, sc.areas_with_value, sc.release_areas,
   CASE WHEN sc.release_areas > 0
     THEN round(1.0 * sc.areas_with_value / sc.release_areas, 4) END AS share,
+  sc.default_areas,
+  CASE WHEN sc.release_areas > 0
+    THEN round(1.0 * sc.default_areas / sc.release_areas, 4) END AS default_share,
   sc.countries, c.exact_share, c.coverage, s.id AS series_id
 FROM series_coverage sc
 JOIN series s ON s.id = sc.series_id
@@ -189,6 +197,34 @@ const writeAreaNations = (database: DatabaseSync) => {
 };
 
 /**
+ * Fills `series_coverage.default_areas` with the rule of
+ * `v_observation_default`: an area and period of a quantity belong to the
+ * best-ranked series that has an observation row there, a NULL value
+ * included. The rank 1 series of a quantity takes every area it has. Only a
+ * series of lower rank needs a lookup, and one grouped pass over the
+ * observations of those series counts the areas no better series holds.
+ */
+const writeDefaultAreas = (database: DatabaseSync) => {
+	database.exec(`
+UPDATE series_coverage SET default_areas = areas
+WHERE series_id IN (SELECT series_id FROM series_preference WHERE rank = 1)`);
+	database.exec(`
+UPDATE series_coverage SET default_areas = t.n
+FROM (
+  SELECT o.series_id, o.period_id, count(*) AS n
+  FROM series_preference sp
+  JOIN observation o ON o.series_id = sp.series_id
+  WHERE sp.rank > 1 AND NOT EXISTS (
+    SELECT 1 FROM series_preference better
+    JOIN observation ob ON ob.series_id = better.series_id
+      AND ob.area_version_id = o.area_version_id AND ob.period_id = o.period_id
+    WHERE better.quantity_id = sp.quantity_id AND better.rank < sp.rank)
+  GROUP BY o.series_id, o.period_id) t
+WHERE series_coverage.series_id = t.series_id
+  AND series_coverage.period_id = t.period_id`);
+};
+
+/**
  * Fails, naming what is wrong, when a (series, period) of `observation` has no
  * coverage row or the reverse, the counts do not nest, or a series holds
  * observations on more areas than its release (reported, never clamped).
@@ -265,6 +301,7 @@ GROUP BY o.series_id, o.period_id`);
 	} finally {
 		database.exec("DROP TABLE temp.area_nation");
 	}
+	writeDefaultAreas(database);
 	checkSeriesCoverage(database);
 	database.exec(`CREATE VIEW v_coverage AS${COVERAGE_VIEW}`);
 	database.exec(`CREATE VIEW v_coverage_missing AS${COVERAGE_MISSING_VIEW}`);
