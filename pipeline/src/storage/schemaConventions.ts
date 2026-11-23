@@ -15,7 +15,7 @@ import type { DatabaseSync } from "node:sqlite";
 
 export type ConventionRule =
 	| "strict"
-	| "camel-case"
+	| "snake-case"
 	| "plural-table"
 	| "build-metadata"
 	| "payload-table";
@@ -32,7 +32,7 @@ export type ConventionFinding = { rule: ConventionRule; subject: string };
 
 /** Columns that describe how a file was built, not what the data says. */
 const BUILD_METADATA_COLUMN =
-	/(^|_)(artifact|artifact_path|content_hash|compiled_sha256|sha256|bytes|byte_count)$/;
+	/(^|_)(artifact|artifact_path|content_hash|compiled_sha256|sha256|bytes|byte_count|header)$/;
 
 /**
  * Tables that exist to hold build metadata. They belong in the build
@@ -40,12 +40,13 @@ const BUILD_METADATA_COLUMN =
  * apply, so one in a domain database is a finding.
  */
 const BUILD_METADATA_TABLE =
-	/(_metadata|_build|_shard_hash)$|^(boundary_registry|crosswalk_coverage_entry|statistics_read_path|statistics_observation_fallback)$|^statistics_selector/;
+	/(_metadata|_build|_shard_hash)$|^(boundary_registry|build_provenance|crosswalk_coverage_entry|statistics_read_path|statistics_observation_fallback)$|^statistics_selector/;
 
 /** Tables that hold documents as blobs or text, which are build payloads. */
-const PAYLOAD_TABLE = /^payloads?$/;
+const PAYLOAD_TABLE = /(^|_)payloads?$/;
 
-const isCamelCase = (name: string): boolean => /[a-z0-9][A-Z]/.test(name);
+const isSnakeCase = (name: string): boolean =>
+	/^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/.test(name);
 
 /** Plural unless the last word ends in ss, us or is, or is `series`. */
 const isPlural = (name: string): boolean =>
@@ -68,27 +69,27 @@ export const checkSchemaConventions = (
 	const objects = database
 		.prepare(
 			`SELECT name, type, strict FROM pragma_table_list
-			 WHERE schema = 'main' AND name NOT LIKE 'sqlite_%'
+			 WHERE schema = 'main' AND name NOT GLOB 'sqlite_*'
 			 ORDER BY name`,
 		)
 		.all() as Array<{ name: string; type: string; strict: number }>;
 	for (const { name, type, strict } of objects) {
 		// FTS5 virtual and shadow tables are managed by SQLite and cannot be
-		// STRICT; they follow the FTS naming, so no other rule applies.
-		if (type === "virtual" || type === "shadow") continue;
+		// STRICT. The public virtual table still uses the naming convention.
+		if (type === "shadow") continue;
 		if (type === "table" && !strict) report("strict", name);
-		if (isCamelCase(name)) report("camel-case", name);
+		if (!isSnakeCase(name)) report("snake-case", name);
 		if (type === "table" && isPlural(name)) report("plural-table", name);
 		if (type === "table" && PAYLOAD_TABLE.test(name))
 			report("payload-table", name);
 		if (type === "table" && BUILD_METADATA_TABLE.test(name))
 			report("build-metadata", name);
 		const columns = database
-			.prepare("SELECT name FROM pragma_table_info(?)")
+			.prepare("SELECT name FROM pragma_table_xinfo(?) WHERE hidden <> 1")
 			.all(name) as Array<{ name: string }>;
 		for (const column of columns) {
 			const subject = `${name}.${column.name}`;
-			if (isCamelCase(column.name)) report("camel-case", subject);
+			if (!isSnakeCase(column.name)) report("snake-case", subject);
 			if (type === "table" && BUILD_METADATA_COLUMN.test(column.name))
 				report("build-metadata", subject);
 		}

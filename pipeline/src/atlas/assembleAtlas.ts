@@ -1,3 +1,4 @@
+import { checkSchemaConventions } from "../storage/schemaConventions.ts";
 import { writeAreaHierarchy } from "../storage/areaHierarchy.ts";
 import { writePlaceLocations } from "../storage/placeLocations.ts";
 import { writeAreaLocations } from "../storage/areaLocations.ts";
@@ -293,6 +294,13 @@ export function assembleAtlas(
 			if (documentSchema) {
 				writeSearchTable(database);
 				writeSchemaDocs(database);
+				const findings = checkSchemaConventions(database);
+				if (findings.length > 0)
+					throw new Error(
+						`The atlas schema violates its conventions:\n${findings
+							.map(({ rule, subject }) => `- ${rule}: ${subject}`)
+							.join("\n")}`,
+					);
 			}
 			database.exec("COMMIT");
 			build.exec("COMMIT");
@@ -319,6 +327,17 @@ export function assembleAtlas(
 		publishVacuumed(buildTemporary, buildPath, {
 			atlasIdentity: false,
 			check: "integrity_check",
+			finish: (database) => {
+				if (Object.keys(provenance).length === 0) return;
+				writeSqliteTables(database, {
+					build_provenance: {
+						strict: true,
+						columns: ["key TEXT NOT NULL", "value TEXT NOT NULL"],
+						key: ["key"],
+						rows: Object.entries(provenance),
+					},
+				});
+			},
 			beforeReplace: () => closeReadOnlyDatabase(buildPath),
 		});
 		// The build's one vacuum of atlas.sqlite: written once beside the
@@ -327,19 +346,7 @@ export function assembleAtlas(
 			check: "integrity_check",
 			// Planner statistics ship with the file, so ad-hoc queries choose
 			// indexes without the reader running ANALYZE.
-			finish: (database) => {
-				if (Object.keys(provenance).length > 0) {
-					database.exec(
-						"DELETE FROM meta WHERE key IN ('buildId', 'buildTimestamp', 'gitCommit', 'gitDirty', 'dataRelease')",
-					);
-					const insert = database.prepare(
-						"INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)",
-					);
-					for (const [key, value] of Object.entries(provenance))
-						insert.run(key, value);
-				}
-				database.exec("ANALYZE; PRAGMA optimize");
-			},
+			finish: (database) => database.exec("ANALYZE; PRAGMA optimize"),
 			// Readers in this process must not keep the file about to be replaced.
 			beforeReplace: () => closeReadOnlyDatabase(path),
 		});

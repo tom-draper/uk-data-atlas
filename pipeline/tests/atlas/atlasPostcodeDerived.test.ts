@@ -806,11 +806,13 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	});
 	const assemble = () => assembleAtlas(root, { crosswalkWeights: false });
 	const metadata = () => {
-		const db = new DatabaseSync(path, { readOnly: true });
+		const db = new DatabaseSync(buildMetadataPathOf(path), {
+			readOnly: true,
+		});
 		try {
 			return Object.fromEntries(
 				db
-					.prepare("SELECT key, value FROM meta")
+					.prepare("SELECT key, value FROM build_provenance")
 					.all()
 					.map(({ key, value }) => [String(key), String(value)]),
 			);
@@ -820,14 +822,28 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	};
 	assemble();
 	const noGit = metadata();
+	const db = new DatabaseSync(path, { readOnly: true });
+	try {
+		assert.deepEqual(
+			db
+				.prepare("SELECT key FROM meta ORDER BY key")
+				.all()
+				.map((row) => row.key),
+			["postcodeAreaLayout", "schemaVersion"],
+		);
+	} finally {
+		db.close();
+	}
 	assert.match(noGit.buildId!, /^sha256:[0-9a-f]{64}$/);
 	assert.equal(noGit.buildTimestamp, "2023-11-14T22:13:20.000Z");
 	assert.equal(noGit.gitCommit, undefined);
 	assert.equal(noGit.dataRelease, undefined);
 	const first = readFileSync(path);
+	const firstBuild = readFileSync(buildMetadataPathOf(path));
 	assemble();
 	assert.deepEqual(metadata(), noGit);
 	assert.deepEqual(readFileSync(path), first);
+	assert.deepEqual(readFileSync(buildMetadataPathOf(path)), firstBuild);
 	writeBuildMetadata(join(root, "data/build/atlas-base.sqlite"), {
 		payload: payloadTable([["existing", "changed"]]),
 	});

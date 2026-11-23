@@ -23,7 +23,7 @@ const objectsOf = (database: DatabaseSync) =>
 	(
 		database
 			.prepare(
-				"SELECT name, type FROM pragma_table_list WHERE schema = 'main' AND name NOT LIKE 'sqlite_%' AND type IN ('table', 'view', 'virtual') ORDER BY name",
+				"SELECT name, type FROM pragma_table_list WHERE schema = 'main' AND name NOT GLOB 'sqlite_*' AND type IN ('table', 'view', 'virtual') ORDER BY name",
 			)
 			.all() as Array<{ name: string; type: string }>
 	).map(({ name, type }) => ({
@@ -34,14 +34,16 @@ const objectsOf = (database: DatabaseSync) =>
 const columnsOf = (database: DatabaseSync, table: string) =>
 	(
 		database
-			.prepare("SELECT name FROM pragma_table_info(?) ORDER BY cid")
+			.prepare(
+				"SELECT name FROM pragma_table_xinfo(?) WHERE hidden <> 1 ORDER BY cid",
+			)
 			.all(table) as Array<{ name: string }>
 	).map(({ name }) => name);
 
 /**
  * Matches the docs against the tables the writers created, and returns the
  * rows to store with every difference found. A difference is a table, view
- * or column (of a core or reference table) with no description, or a
+ * or column with no description, or a
  * description of one that does not exist.
  */
 export const resolveSchemaDocs = (
@@ -81,8 +83,7 @@ export const resolveSchemaDocs = (
 			if (pattern && own === undefined) used.add(pattern.pattern);
 			if (description?.trim())
 				columns.push({ table: name, column, description });
-			else if (doc.audience !== "internal")
-				problems.push(`Column ${name}.${column} has no description`);
+			else problems.push(`Column ${name}.${column} has no description`);
 		}
 		for (const { pattern } of doc.columnPatterns ?? [])
 			if (!used.has(pattern))

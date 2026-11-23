@@ -94,6 +94,17 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 ];
 
+const postcodeAreaMatchColumns = {
+	district: "Postcode district.",
+	release_position: "Release position (postcode_area_release.position).",
+	postcode_position: "Position of the postcode within the district.",
+	position: "Rank of this match within the same postcode and release.",
+	area_id: "Matching area version (area_version.id).",
+	containment:
+		"Contains or near the postcode, according to the boundary lookup.",
+	distance_cm: "Distance to the boundary in centimetres.",
+};
+
 export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	area_location: {
 		audience: "core",
@@ -983,25 +994,74 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	conversion_backtest_gap: {
 		audience: "internal",
 		description: "Backtest areas that could not be compared, and why.",
-		columns: {},
+		columns: {
+			case_id: "The backtest case.",
+			basis_id: "Weight basis tested.",
+			reason: "Why the areas could not be compared.",
+			areas: "Number of areas omitted for this reason.",
+		},
 	},
 	conversion_backtest_worst: {
 		audience: "internal",
 		description:
 			"The worst individual errors in each backtest, for inspection.",
-		columns: {},
+		columns: {
+			case_id: "The backtest case.",
+			basis_id: "Weight basis tested.",
+			value_class: "Regrouped whole areas or apportioned split values.",
+			position:
+				"Rank among the worst errors in the case, basis and class.",
+			code: "Target area code.",
+			name: "Target area name.",
+			members: "Series member selection for the comparison.",
+			period: "Period label for the comparison.",
+			converted: "Estimated value after conversion.",
+			truth: "Published value on the target boundaries.",
+			at_risk:
+				"Part of the input value apportioned across a boundary split.",
+		},
 	},
 	conversion_error: {
 		audience: "internal",
 		description:
 			"Error factors per crosswalk method and weight basis, used to set the bounds of estimated values.",
-		columns: {},
+		columns: {
+			method: "Crosswalk method used in the calibration.",
+			basis_id: "Weight basis used in the calibration.",
+			measure_class: "Class of measure to which the factor applies.",
+			case_id: "The calibration backtest case.",
+			compared:
+				"Number of converted values compared with published values.",
+			median_factor: "Median absolute error per unit of value at risk.",
+			p95_factor:
+				"95th percentile absolute error per unit of value at risk.",
+			max_factor: "Largest absolute error per unit of value at risk.",
+			factor: "Factor used to set the bounds on estimated values.",
+			pruned_only:
+				"Number of comparisons with pruned contributions and no value at risk.",
+			pruned_only_exact:
+				"Number of pruning-only comparisons that matched exactly.",
+		},
 	},
 	conversion_error_check: {
 		audience: "internal",
 		description:
 			"Held-out checks that the error factors in conversion_error cover the observed errors.",
-		columns: {},
+		columns: {
+			case_id: "The held-out backtest case.",
+			basis_id: "Weight basis tested.",
+			method: "Crosswalk method tested.",
+			factor: "Error factor used to calculate estimate bounds.",
+			held_out: "Whether the case was held out of factor calibration.",
+			compared: "Number of values compared with published values.",
+			covered: "Number of published values within the estimated bounds.",
+			median_relative_error:
+				"Median absolute error relative to the published value.",
+			median_relative_half_width:
+				"Median interval half-width relative to the published value.",
+			p95_relative_half_width:
+				"95th percentile interval half-width relative to the published value.",
+		},
 	},
 	crosswalk: {
 		audience: "core",
@@ -1631,23 +1691,42 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	postcode_area_release: {
 		audience: "internal",
 		description: "Which postcode columns hold which geography and release.",
-		columns: {},
+		columns: {
+			position: "Release position used by the postcode lookup.",
+			geography: "Geography slug.",
+			boundary_release: "Boundary release slug.",
+			area_column:
+				"Column holding the primary area version id for this release.",
+			distance_column:
+				"Column holding the distance to the nearest competing area, in centimetres.",
+			distance_fallback:
+				"Release position to use for a distance when this release has none.",
+		},
 	},
 	postcode_area_match: {
 		audience: "internal",
 		description:
 			"Postcodes near a boundary that match more than one area, with containment and distance. Used by the API.",
-		columns: {},
+		columns: {
+			...postcodeAreaMatchColumns,
+		},
 	},
 	postcode_area_match_decoded: {
 		audience: "internal",
 		description: "View: postcode_area_match with codes and names.",
-		columns: {},
+		columns: {
+			...postcodeAreaMatchColumns,
+			geography: "Geography slug for the matching release.",
+			boundary_release:
+				"Boundary release slug for the matching area version.",
+			code: "Code of the matching area.",
+			name: "Name of the matching area in the release.",
+		},
 	},
 	meta: {
 		audience: "reference",
 		description:
-			"File settings and provenance: schemaVersion matches PRAGMA user_version. buildId hashes the assembled work file and provenance; buildTimestamp is present only when SOURCE_DATE_EPOCH is supplied. gitCommit and gitDirty are present when Git is available; gitDirty includes non-ignored untracked files. dataRelease is present when data-release.json exists. PRAGMA application_id is 0x554b4441 (UKDA). File hashes are in the release manifest.",
+			"File settings: schemaVersion matches PRAGMA user_version, and postcodeAreaLayout identifies the postcode lookup layout. PRAGMA application_id is 0x554b4441 (UKDA). Build provenance lives in build_provenance in atlas-build.sqlite.",
 		columns: { key: "Setting name.", value: "Setting value." },
 	},
 	schema_table: {
