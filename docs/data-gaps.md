@@ -19,8 +19,13 @@ Many measures cover England only, or England and Wales only.
   accommodation, council tax and budgets, waste, ASHE pay, fuel poverty,
   smoking, physical activity, excess weight, preventable mortality, net
   additional dwellings and NHS waiting lists.
-- England and Wales only: `population`, `recorded-crimes`, `usual-residents`,
-  `households`, `people-in-employment` and the ward house prices.
+- England and Wales only: `population`, `recorded-crimes`,
+  `people-in-employment` and the ward house prices.
+- England and Wales, with Scotland (2022) and Northern Ireland (2021) for the
+  census tables compiled so far: `usual-residents`, `households`, age in
+  five-year bands, general health, tenure and household composition. Each
+  nation counts as at its own census day, so they are separate periods of the
+  same measure. Section 5 lists what is left.
 - ASHE covers Great Britain, but only the England rows are compiled.
 
 Sources to collect:
@@ -35,8 +40,9 @@ Sources to collect:
   statistics.gov.scot now redirects to data.gov.scot, which has no direct
   file for the council-area series, and the PSNI statistics pages link no
   downloadable tables. The OpenDataNI monthly file ends in December 2021.
-- Census tables for Scotland (2022) and Northern Ireland (2021) are now
-  staged (section 5) but not compiled.
+- Seven census tables for Scotland (2022) and Northern Ireland (2021) are
+  compiled onto their data zones (section 5 lists the rest, which are staged
+  but not compiled).
 
 ### 2. Earlier years
 
@@ -86,10 +92,33 @@ These sit in `data/source/_staging`:
 - ethnic group by age and sex
 - household economic activity
 - local labour market indicators
-- Scotland's Census 2022, 76 tables on the 2022 data zones
-  (`census-2022-scotland-data-zone`)
-- the Northern Ireland Census 2021 main statistics, with sheets from data
-  zone to Northern Ireland (`census-2021-northern-ireland`)
+
+The Scotland and Northern Ireland census folders have moved out of `_staging`
+to `data/source/population/population-estimates`, because five Scottish tables
+(UV101b, UV102b, UV302, UV404 and UV113) and two Northern Ireland tables
+(MS-A01 and MS-E01) are compiled. The rest of both folders is left:
+
+- Scotland's Census 2022 (`census-2022-scotland-data-zone`, 76 tables on the
+  2022 data zones), apart from the five above. Ethnic group (UV201) and
+  economic activity are defined differently from England and Wales. Age 15 to
+  19 is not compiled, because Scotland splits it as 15, 16 to 17 and 18 to 19.
+  In tenure, owned with a mortgage (Scotland counts shared equity apart) and
+  social rented (council and housing association are one figure) are left out.
+  In household composition, the categories with dependent children (Scotland
+  splits one from two or more) and the other household types are left out.
+  The other UV tables are not read.
+- The Northern Ireland Census 2021 main statistics
+  (`census-2021-northern-ireland`), apart from MS-A01 and MS-E01. A09, A14,
+  E02 and E04 have categories to match, and some tables have no data zone
+  sheet. The phase 2, phase 3 and supplemental archives are not read. The
+  Northern Ireland household default is the household composition total,
+  because no tenure table is compiled for it.
+- Scotland's disclosure control shows a small count as a dash, read here as
+  zero. UV101b supports this, with households equal to all people in 5,818 of
+  5,844 data zones and higher in the rest, but NRS does not state it. Neither
+  nation's tables add to their totals, so the sums are not checked.
+- Conversion backtests for the nation tables (`CENSUS_TABLES` in
+  `backtestCases.ts`).
 
 The `commuting` and `vehicles` folders under `data/source/transport` also have
 no measures in default coverage. Compiling the staged files needs no new
@@ -188,7 +217,8 @@ What is still out of reach:
 - The constituency estimates (2021 and 2022, on the 2024 constituencies) have
   no route back across the 2024 review, and every authority release they
   reach is already covered by the authority estimates, so none are converted.
-- The new source folders must be in a published data release before other
+- The new source folders, and the Scotland and Northern Ireland census folders
+  moved out of `_staging`, must be in a published data release before other
   checkouts can build them.
 
 ### 4. Other open roadmap items
@@ -205,8 +235,8 @@ What is still out of reach:
 
 ## Where to start
 
-1. Compile the staged Scotland and Northern Ireland census tables, and the
-   other staged census and population files.
+1. Compile the rest of the staged Scotland and Northern Ireland census
+   tables (section 5), and the other staged census and population files.
 2. Collect ASHE back-years.
 3. Police Scotland and PSNI recorded crime, once a direct download is found.
 4. Collect official predecessor lookups to link the Scottish data-zone and
