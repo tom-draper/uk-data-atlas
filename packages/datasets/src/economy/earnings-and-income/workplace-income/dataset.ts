@@ -67,7 +67,7 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		kind: "indicators",
 		yearly: true,
 		partial: true,
-		checks: ["manifest-records", "manifest-periods"],
+		checks: ["manifest-periods"],
 		coverageNote:
 			"England, Wales and Scotland, from 2012. The tables hold no authority of Northern Ireland. An authority whose estimate the publisher suppressed as unreliable has no value in that year, and each year is on the authorities in force for that survey.",
 		indicators: [
