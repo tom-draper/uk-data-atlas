@@ -47,6 +47,14 @@ const EARNINGS_PLACE: DeclaredDimension = {
 		{ key: "workplace", label: "Where employees work" },
 	],
 };
+/**
+ * What breaks the series, for the measures that hold more than one year. The
+ * tables are the revised edition of each year from 2012 to 2024 and the
+ * provisional edition for 2025.
+ */
+const SERIES_NOTE =
+	" From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with earlier years. Estimates for 2020 and 2021 come from a smaller sample and include furloughed employees, and the publisher advises caution with them. The 2025 figures are provisional.";
+
 const PAY_MEASURES = [
 	measure(
 		"ashe-jobs",
@@ -62,7 +70,8 @@ const PAY_MEASURES = [
 		"gbp per year",
 		"by-dimension",
 		"none",
-		"Gross annual pay of employees, from the Annual Survey of Hours and Earnings.",
+		"Gross annual pay of employees, from the Annual Survey of Hours and Earnings. Annual pay covers employees in the same job for more than a year." +
+			SERIES_NOTE,
 	),
 	measure(
 		"gross-hourly-pay",
@@ -70,7 +79,8 @@ const PAY_MEASURES = [
 		"gbp per hour",
 		"by-dimension",
 		"none",
-		"Gross hourly pay of employees, excluding overtime, from the Annual Survey of Hours and Earnings.",
+		"Gross hourly pay of employees, including overtime, from the Annual Survey of Hours and Earnings." +
+			SERIES_NOTE,
 	),
 	measure(
 		"gross-annual-pay-change",
@@ -78,7 +88,7 @@ const PAY_MEASURES = [
 		"percent",
 		"by-dimension",
 		"none",
-		"Percentage change in gross annual pay on the previous year.",
+		"Percentage change in gross annual pay on the previous year, as the tables publish it. The tables give it for 2012 to 2017 only. It is not adjusted for changes in the make-up of the workforce.",
 	),
 	measure(
 		"gross-hourly-pay-change",
@@ -86,7 +96,7 @@ const PAY_MEASURES = [
 		"percent",
 		"by-dimension",
 		"none",
-		"Percentage change in gross hourly pay on the previous year.",
+		"Percentage change in gross hourly pay on the previous year, as the tables publish it. The tables give it for 2012 to 2017 only. It is not adjusted for changes in the make-up of the workforce.",
 	),
 ];
 
@@ -121,12 +131,25 @@ const payFields = (place: "residence" | "workplace"): DeclaredField[] =>
 		];
 	});
 
-/** Pay tables cover England with its regions and counties as well as districts. */
+/**
+ * Pay tables cover England, Wales and Scotland with their nations, regions,
+ * counties and authorities. Each year is on the authorities in force for that
+ * survey, so earlier years reach the releases of 2016, 2019 and 2020 too.
+ */
 const payAreas = {
 	alsoIn: [
 		{ geography: "country", year: 2025 },
 		{ geography: "region", year: 2025 },
 		{ geography: "countyAndUnitaryAuthority", year: 2025 },
+		{ geography: "localAuthority", year: 2020 },
+		{ geography: "localAuthority", year: 2019 },
+		{ geography: "localAuthority", year: 2016 },
+	],
+	exclude: [
+		{
+			codes: /^E100000(02|06|09|21|23|27)$/,
+			reason: "Buckinghamshire, Cumbria, Dorset, Northamptonshire, North Yorkshire and Somerset were counties of two tiers until 2023 and have no boundary release in the atlas, which holds the county areas that are still in force. Their districts are held.",
+		},
 	],
 };
 
@@ -135,7 +158,7 @@ export const payStatistics = (
 	place: "residence" | "workplace",
 ): Pick<
 	DeclaredStatistics,
-	"alsoIn" | "measures" | "dimensions" | "fields"
+	"alsoIn" | "exclude" | "measures" | "dimensions" | "fields"
 > => ({
 	...payAreas,
 	measures: PAY_MEASURES,
