@@ -33,10 +33,12 @@ Many measures cover England only, or England and Wales only.
 
 Sources to collect:
 
-- NRS and NISRA mid-year estimates by age and sex. Task 41 step 2 added the
-  small-area totals (`population-data-zone-scotland` and
-  `population-data-zone-ni`), so the totals are held, but not the age and
-  sex breakdown.
+- NRS and NISRA mid-year estimates by age and sex are now collected
+  (`population-council-scotland`, 1981 to 2025, and `population-district-ni`,
+  2001 to 2025, single years of age 0 to 90 and over by sex, compiled
+  2026-11-23). Their small-area files (data zones) are held as before, for 2011 to
+  2024 in Scotland and 2021 to 2024 in Northern Ireland, and are not
+  updated.
 - Scottish and Welsh equivalents for education, planning, homelessness,
   council tax and waste.
 - Police Scotland and PSNI recorded crime. Not collected on 2026-11-22:
@@ -179,6 +181,12 @@ converted one.
   the 2022 data zones (7,392 areas).
 - `population-data-zone-ni`: NISRA small-area estimates, 2021 to 2024, on the
   2021 data zones (3,780 areas).
+- `population-council-scotland`: NRS mid-year estimates by single year of age
+  and sex for the 32 council areas, mid-1981 to mid-2025 (45 years), from the
+  mid-2025 time series (393,120 published values).
+- `population-district-ni`: NISRA mid-year estimates by single year of age and
+  sex for the 11 local government districts, mid-2001 to mid-2025 (25 years),
+  from the mid-2025 file `MYE25-SYA` (75,075 published values).
 
 What is still out of reach:
 
@@ -212,8 +220,46 @@ What is still out of reach:
 - Scottish data zones reach wards (2015-12 onwards), constituencies (2015-12
   to 2024-07) and authorities (2011-12 onwards). Authority releases before
   2017 carry a value for only 4 Scottish councils (28 to 32 from 2017).
-- The NRS and NISRA council-area files are not compiled. Their totals are
-  already in `population-uk`.
+- The NRS and NISRA council-area files are compiled (task 41 step 3,
+  2026-11-23), with the same age (0 to 89, 90 and over) and sex members as
+  `population-uk`. Both publish exactly those bands, so no band is mapped or
+  split. They rank after `population` and before `population-uk` (see
+  `measurePreferences.ts`), so a data-zone sum still wins wherever one is held
+  (Scotland 2011 to 2024, Northern Ireland 2021 to 2024) and the council and
+  district files fill the rest. England and Wales defaults are unchanged
+  (`v_observation_default` is identical for every English and Welsh area).
+  What they add, on the authority releases from 2023-05 to 2025-12: Scotland
+  1981 to 2010 and 2025 (45 years, up from 14), and Northern Ireland 2001 to
+  2010 and 2025 (25 years). Authority-release cells of
+  Scotland with a default value rise from 224 to 379, and of Northern
+  Ireland from 74 to 129. NI values for 2011 to 2024 are the same as the
+  ones `population-uk` held, and Scotland's 2023 and 2024 values are NRS's
+  revised ones, which are higher than the unrevised 5,506,000 and 5,546,900
+  `population-uk` holds for the whole country (it was compiled before NRS
+  revised them). The totals agree with the data zones: the sum of the
+  council areas equals the sum of the data zones for every year 2011 to 2024.
+- The NRS time series files each year under the code the council area had
+  then. Sixteen old codes are mapped to the current ones (the 1995 codes to
+  2001, the 2011 codes to 2002, Fife and Perth and Kinross from 2018, Glasgow
+  City and North Lanarkshire from 2019). Each is a one-to-one renaming, which
+  NRS describes as a very minor boundary change, so no population is moved
+  between areas (`COUNCIL_AREA_CURRENT_CODE` in `nationSource.ts`).
+- Scottish and Northern Ireland wards and constituencies get no new years.
+  There is no route from the authority release these files are published on
+  to a ward or constituency release (`no-route` in the conversion skips, as
+  for `population-uk`), and a total is never split down. Authority releases
+  before 2023-05 get none either, as for every authority-level source. NI
+  has no ward or constituency population at all, as before.
+- The standard releases (the 2026-05 authorities, wards, constituencies and
+  the 2021 LSOAs) hold the new datasets only as converted series by age and
+  sex, which `v_observation_default` does not rank. The default total of a
+  standard release is still built from the small-area and mid-year totals, so
+  Scotland and Northern Ireland on the 2026-05 authorities keep 2011 to 2024
+  and 2021 to 2024 as before. The 1981 to 2010 and 2025 years show on the
+  five authority releases above.
+- Data zones are not updated. No data-zone release newer than 2011 to 2024
+  (Scotland) and 2021 to 2024 (NI) is held, and the council files are on
+  authorities.
 - The authority estimates (2011 to 2024, on the 2023-12 authorities) reach
   only the authority releases from 2023-05. No crosswalk carries the April
   2023 mergers back, and a total is never split down onto smaller areas, so
@@ -246,9 +292,13 @@ What is still out of reach:
 
 ## Where to start
 
-1. Compile the rest of the staged Scotland and Northern Ireland census
+1. Publish a data release holding the new source folders
+   (`population-council-scotland`, `population-district-ni`, and the
+   Scotland and Northern Ireland census folders): other checkouts cannot
+   build the atlas without it.
+2. Compile the rest of the staged Scotland and Northern Ireland census
    tables (section 5), and the other staged census and population files.
-2. Collect ASHE back-years.
-3. Police Scotland and PSNI recorded crime, once a direct download is found.
-4. Collect official predecessor lookups to link the Scottish data-zone and
+3. Collect ASHE back-years.
+4. Police Scotland and PSNI recorded crime, once a direct download is found.
+5. Collect official predecessor lookups to link the Scottish data-zone and
    Senedd constituency events, and add the 2001 Scottish data-zone inventory.
