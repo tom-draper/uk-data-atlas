@@ -69,3 +69,10 @@ population-data-zone-ni
 population-data-zone-scotland
 population-lsoa
 claimant-count-history
+census-2022-scotland-uv101b
+census-2022-scotland-uv102b
+census-2022-scotland-uv302
+census-2022-scotland-uv404
+census-2022-scotland-uv113
+census-2021-ni-a01
+census-2021-ni-e01
