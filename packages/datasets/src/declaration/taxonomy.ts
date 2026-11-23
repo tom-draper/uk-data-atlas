@@ -157,7 +157,7 @@ const SPLIT_MODULE_DEFINITIONS = [
 		theme: "population",
 		label: "Population detail",
 		description:
-			"Population by single year of age and sex for wards and local authorities, mid-year totals for lower layer super output areas and data zones, and Census 2021 tables for lower and middle layer super output areas. The bulk of the population data.",
+			"Population by single year of age and sex for wards and local authorities, mid-year totals for lower layer super output areas and data zones, Census 2021 tables for lower and middle layer super output areas, and Scotland and Northern Ireland census tables on data zones. The bulk of the population data.",
 		holds: "datasets",
 		datasets: [
 			"population",
@@ -169,6 +169,11 @@ const SPLIT_MODULE_DEFINITIONS = [
 			"census-2021-ts003",
 			"census-2021-ts007a",
 			"census-2021-ts021",
+			"census-2022-scotland-uv101b",
+			"census-2022-scotland-uv102b",
+			"census-2022-scotland-uv113",
+			"census-2021-ni-a01",
+			"census-2021-ni-e01",
 		],
 		requires: [],
 	},
