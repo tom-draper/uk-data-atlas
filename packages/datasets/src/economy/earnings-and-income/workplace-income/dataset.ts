@@ -25,7 +25,7 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		name: "Workplace income",
 		publisher: "Office for National Statistics",
 		sourceUrl:
-			"https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/workplacebylocalauthorityashetable7",
+			"https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofworkbylocalauthorityashetable7",
 		year: "2025",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
