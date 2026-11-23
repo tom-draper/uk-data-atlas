@@ -25,7 +25,10 @@ Many measures cover England only, or England and Wales only.
   census tables compiled so far: `usual-residents`, `households`, age in
   five-year bands, general health, tenure and household composition. Each
   nation counts as at its own census day, so they are separate periods of the
-  same measure. Section 5 lists what is left.
+  same measure. Scotland also publishes finer categories England and Wales do
+  not (single years from 15 to 19, dependent children by number, shared
+  equity), which are measures with Scotland as their only source. Section 5
+  lists what is left.
 - ASHE covers Great Britain, but only the England rows are compiled.
 
 Sources to collect:
@@ -100,13 +103,18 @@ to `data/source/population/population-estimates`, because five Scottish tables
 
 - Scotland's Census 2022 (`census-2022-scotland-data-zone`, 76 tables on the
   2022 data zones), apart from the five above. Ethnic group (UV201) and
-  economic activity are defined differently from England and Wales. Age 15 to
-  19 is not compiled, because Scotland splits it as 15, 16 to 17 and 18 to 19.
-  In tenure, owned with a mortgage (Scotland counts shared equity apart) and
-  social rented (council and housing association are one figure) are left out.
-  In household composition, the categories with dependent children (Scotland
-  splits one from two or more) and the other household types are left out.
-  The other UV tables are not read.
+  economic activity are defined differently from England and Wales, so they
+  are not compiled. Where Scotland publishes a category more finely or
+  differently, it is published as a measure of its own and never summed or
+  matched to an England and Wales one: ages 15, 16 to 17 and 18 to 19 (in
+  place of 15 to 19), shared equity, owned with a mortgage excluding shared
+  equity, and council and housing association renting as one social rented
+  figure. In household composition, the dependent-children categories are split
+  into one and two or more, and the other household types into one, two or
+  more, all full-time students, all aged 66 and over, and the rest. The England
+  and Wales parents of these (15 to 19, owned with a mortgage, social rented
+  from a council, and so on) have no Scottish value. The other UV tables are not
+  read.
 - The Northern Ireland Census 2021 main statistics
   (`census-2021-northern-ireland`), apart from MS-A01 and MS-E01. A09, A14,
   E02 and E04 have categories to match, and some tables have no data zone
