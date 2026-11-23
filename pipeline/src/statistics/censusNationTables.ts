@@ -111,7 +111,7 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 		table: "UV102b",
 		title: "Scotland's Census 2022 age in five-year bands",
 		description:
-			"Usual residents in Scotland by age in five-year bands, all people. NRS table UV102b. As at Census Day, 20 March 2022. The 15 to 19 band is not here, because Scotland publishes ages 15, 16 to 17 and 18 to 19 separately.",
+			"Usual residents in Scotland by age in five-year bands, all people. NRS table UV102b. As at Census Day, 20 March 2022. Scotland publishes ages 15, 16 to 17 and 18 to 19 in place of the 15 to 19 band.",
 		entry: "Table UV102b - Age (20) by sex.csv",
 		topic: "population-estimates",
 		joins: ew("ts007a"),
@@ -120,6 +120,9 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 			["0-to-4", "0 - 4|All people"],
 			["5-to-9", "5 - 9|All people"],
 			["10-to-14", "10 - 14|All people"],
+			["15", "15|All people", "Aged 15"],
+			["16-to-17", "16 - 17|All people", "Aged 16 to 17"],
+			["18-to-19", "18 - 19|All people", "Aged 18 to 19"],
 			["20-to-24", "20 - 24|All people"],
 			["25-to-29", "25 - 29|All people"],
 			["30-to-34", "30 - 34|All people"],
@@ -137,7 +140,7 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 		],
 		notes: [
 			SDC,
-			"Ages 15 to 19 are left out: Scotland publishes 15, 16 to 17 and 18 to 19, and the sum of three disclosure-controlled cells is not the figure for the band.",
+			"Scotland publishes ages 15, 16 to 17 and 18 to 19 in place of the 15 to 19 band, so they are published as ages of their own. The sum of three disclosure-controlled cells is not the figure for the band.",
 		],
 	},
 	{
@@ -168,13 +171,28 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 		table: "UV404",
 		title: "Scotland's Census 2022 household tenure",
 		description:
-			"Occupied households in Scotland by tenure. NRS table UV404. As at Census Day, 20 March 2022. Owned with a mortgage or loan and social rented are not here, because Scotland counts shared equity apart and combines council and housing association renting.",
+			"Occupied households in Scotland by tenure. NRS table UV404. As at Census Day, 20 March 2022. Scotland counts shared equity apart from owning with a mortgage, and combines council and housing association renting.",
 		entry: "Table UV404 - Household tenure - Households.csv",
 		topic: "housing-stock",
 		joins: ew("ts054"),
 		universe: "All occupied households, each counted once.",
 		categories: [
 			["owned-outright", "Owned: Owned outright"],
+			[
+				"owned-with-mortgage-excluding-shared-equity",
+				"Owned: Owned with a mortgage or loan",
+				"Owned with a mortgage or loan, excluding shared equity",
+			],
+			[
+				"shared-equity",
+				"Owned: Shared Equity (e.g. LIFT or Help-to-Buy)",
+				"Shared equity, such as LIFT or Help to Buy",
+			],
+			[
+				"social-rented",
+				"Social Rented: Council (LA) or Housing Association/ Registered Social Landlord",
+				"Social rented from a council or housing association",
+			],
 			[
 				"shared-ownership",
 				"Owned: Shared ownership (part owned and part rented)",
@@ -189,7 +207,7 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 		],
 		notes: [
 			SDC,
-			"Left out because the two nations define them differently: owned with a mortgage or loan (Scotland counts shared equity, such as Help to Buy, as its own category, England and Wales count it here) and social rented (Scotland publishes council and housing association renting as one figure).",
+			"Scotland counts shared equity, such as Help to Buy, as a category of its own, where England and Wales count it with owning with a mortgage or loan, so Scotland's owned with a mortgage or loan excludes it and is not the England and Wales category. Scotland publishes council and housing association renting as one figure, so it is not either England and Wales social rented category.",
 		],
 	},
 	{
@@ -198,7 +216,7 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 		table: "UV113",
 		title: "Scotland's Census 2022 household composition",
 		description:
-			"Households in Scotland by composition. NRS table UV113. As at Census Day, 20 March 2022. Categories split by number of dependent children are not here, because Scotland publishes one and two or more dependent children separately.",
+			"Households in Scotland by composition. NRS table UV113. As at Census Day, 20 March 2022. Scotland splits households with dependent children into one and two or more, and splits the other household types differently from England and Wales.",
 		entry: "Table UV113 - Household composition - Households.csv",
 		topic: "population-estimates",
 		joins: ew("ts003"),
@@ -231,10 +249,65 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 				"One family household: Lone parent family: All children non-dependent",
 			],
 			["total", "All households"],
+			[
+				"married-one-dependent-child",
+				"One family household: Married or civil partnership couple: One dependent child",
+				"Married or civil partnership couple, one dependent child",
+			],
+			[
+				"married-two-plus-dependent-children",
+				"One family household: Married or civil partnership couple: Two or more dependent children",
+				"Married or civil partnership couple, two or more dependent children",
+			],
+			[
+				"cohabiting-one-dependent-child",
+				"One family household: Cohabiting couple: One dependent child",
+				"Cohabiting couple, one dependent child",
+			],
+			[
+				"cohabiting-two-plus-dependent-children",
+				"One family household: Cohabiting couple: Two or more dependent children",
+				"Cohabiting couple, two or more dependent children",
+			],
+			[
+				"lone-parent-one-dependent-child",
+				"One family household: Lone parent family: One dependent child",
+				"Lone parent, one dependent child",
+			],
+			[
+				"lone-parent-two-plus-dependent-children",
+				"One family household: Lone parent family: Two or more dependent children",
+				"Lone parent, two or more dependent children",
+			],
+			[
+				"other-one-dependent-child",
+				"Other household types: One dependent child",
+				"Other household type, one dependent child",
+			],
+			[
+				"other-two-plus-dependent-children",
+				"Other household types: Two or more dependent children",
+				"Other household type, two or more dependent children",
+			],
+			[
+				"other-all-students",
+				"Other household types: All full-time students",
+				"Other household type, all full-time students",
+			],
+			[
+				"other-all-66-plus",
+				"Other household types: All aged 66 and over",
+				"Other household type, all aged 66 or over",
+			],
+			[
+				"other-remaining",
+				"Other household types: Other",
+				"Other household type, none of the above",
+			],
 		],
 		notes: [
 			SDC,
-			"Left out: the categories with dependent children, which Scotland splits into one and two or more, and the other household types, which Scotland groups differently.",
+			"Scotland splits households with dependent children into one and two or more, which England and Wales publish as one category, and so publishes the splits as categories of their own. The other household types are split into those with one or two or more dependent children, all full-time students, all aged 66 and over, and the rest, which is not how England and Wales group them.",
 		],
 	},
 	{
