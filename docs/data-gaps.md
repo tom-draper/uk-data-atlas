@@ -201,8 +201,8 @@ What is still out of reach:
   finest first, and a coarser source keeps a value only for an area and
   period no finer source reached (`better-route` gaps for the rest). The ONS
   ward estimates for 2022 therefore fill the wards LSOAs miss: 2,235 of the
-  8,588 wards on 2011-12 have a 2022 value, and 22 to 31 more authorities and
-  14 more constituencies per release before 2023.
+  8,588 wards on 2011-12 have a 2022 value, and 23 to 32 more authorities and
+  13 to 14 more constituencies per release before 2023.
 - Conversion takes a publisher's best-fit membership lookup (such as LSOA to
   ward) only where no route avoids it, so IMD 2025 reaches every 2026-05
   authority through the authority lookups rather than through the wards.
@@ -218,9 +218,12 @@ What is still out of reach:
   only the authority releases from 2023-05. No crosswalk carries the April
   2023 mergers back, and a total is never split down onto smaller areas, so
   authorities before 2023-05, wards and constituencies get none of them.
-- Wards made after a release cannot be carried back onto it: 52,902
-  `not-carried` gaps, most on the 2011 to 2018 releases (a value for 2,235 of 8,588 wards
-  on 2011-12, 6,579 of 8,482 on 2022-12).
+- Some ward and year cells cannot be reached by a population source. There are
+  525,030 distinct cells with a `not-carried` gap and no default population
+  value, most on the 2011 to 2018 ward releases. For 2022, 2,235 of 8,588
+  wards on 2011-12 and 6,932 of 8,482 on 2022-12 have a value. A gap records
+  a missing route for one source, so counting gap rows also counts cells that
+  another source fills and can count the same cell more than once.
 - Authority releases 2008 and 2009 have no route from any population source.
 - The constituency estimates (2021 and 2022, on the 2024 constituencies) have
   no route back across the 2024 review, and every authority release they
