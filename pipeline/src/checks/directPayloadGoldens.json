@@ -179,6 +179,14 @@
 		"sha256": "2f2b3844f3c06ac6a1677a65f0f2196ede883694922fba643695f5ce675e84a0",
 		"bytes": 6532310
 	},
+	"population-council-scotland": {
+		"sha256": "b880528092174d34430e30fe085aae97b9a5c618738f158276901f2a46f5884f",
+		"bytes": 1832670
+	},
+	"population-district-ni": {
+		"sha256": "1af63fd31bf6c4c9d752d0b0f00161735c19ee7ddabd492c0c13374858ccf511",
+		"bytes": 362703
+	},
 	"car-availability": {
 		"sha256": "31e2a69c67f1ab6a5da06f75087c8fa7d316bfd5764a228da1b9d7ff833c0db6",
 		"bytes": 44564

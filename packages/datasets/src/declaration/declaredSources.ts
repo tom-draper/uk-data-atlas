@@ -103,8 +103,10 @@ export const DECLARED_SOURCES = {
 	"planning-applications": { topic: "planning" },
 	population: { topic: "population-estimates" },
 	"population-constituency": { topic: "population-estimates" },
+	"population-council-scotland": { topic: "population-estimates" },
 	"population-data-zone-ni": { topic: "population-estimates" },
 	"population-data-zone-scotland": { topic: "population-estimates" },
+	"population-district-ni": { topic: "population-estimates" },
 	"population-lsoa": { topic: "population-estimates" },
 	"population-uk": { topic: "population-estimates" },
 	"public-health": { topic: "health-status" },
@@ -224,12 +226,20 @@ export const DECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 		["population-constituency"],
 	],
 	[
+		"population/population-estimates/population-council-scotland",
+		["population-council-scotland"],
+	],
+	[
 		"population/population-estimates/population-data-zone-ni",
 		["population-data-zone-ni"],
 	],
 	[
 		"population/population-estimates/population-data-zone-scotland",
 		["population-data-zone-scotland"],
+	],
+	[
+		"population/population-estimates/population-district-ni",
+		["population-district-ni"],
 	],
 	["population/population-estimates/population-lsoa", ["population-lsoa"]],
 	["population/population-estimates/population-uk", ["population-uk"]],

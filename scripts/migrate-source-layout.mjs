@@ -281,6 +281,8 @@ export const SOURCES_SINCE_MIGRATION = [
 	"economy/labour-market/claimant-count-history",
 	"population/population-estimates/census-2022-scotland-data-zone",
 	"population/population-estimates/census-2021-northern-ireland",
+	"population/population-estimates/population-council-scotland",
+	"population/population-estimates/population-district-ni",
 ];
 
 /**

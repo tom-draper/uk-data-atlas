@@ -273,6 +273,13 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		summary:
 			"Official population estimates for the Westminster constituencies first contested in 2024.",
 	},
+	"population-council-scotland": {
+		title: "Population (Scottish council areas)",
+		topic: "population-estimates",
+		about: "How many people live in each council area of Scotland, by age and sex, every year since 1981, as National Records of Scotland estimates them. It is the publisher's own series, which carries the latest revisions and reaches back thirty years before the UK-wide series does.",
+		summary:
+			"Official mid-year population estimates for Scotland's council areas by single year of age and sex, 1981 to 2025.",
+	},
 	"population-data-zone-ni": {
 		title: "Population (Northern Ireland data zones)",
 		topic: "population-estimates",
@@ -286,6 +293,13 @@ export const DECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		about: "How many people live in each data zone of Scotland, the small neighbourhoods Scotland's statistics are built from, every year from 2011. The base the atlas adds up to put every year of population on Scottish wards, councils and constituencies.",
 		summary:
 			"Official mid-year population estimates for Scotland's 2022 data zones, 2011 to 2024.",
+	},
+	"population-district-ni": {
+		title: "Population (Northern Ireland districts)",
+		topic: "population-estimates",
+		about: "How many people live in each local government district of Northern Ireland, by age and sex, every year since 2001, as the Northern Ireland Statistics and Research Agency estimates them. It is the agency's own series, which reaches back ten years before the UK-wide series does.",
+		summary:
+			"Official mid-year population estimates for Northern Ireland's 11 local government districts by single year of age and sex, 2001 to 2025.",
 	},
 	"population-lsoa": {
 		title: "Population (LSOA)",

@@ -162,6 +162,8 @@ const SPLIT_MODULE_DEFINITIONS = [
 		datasets: [
 			"population",
 			"population-uk",
+			"population-council-scotland",
+			"population-district-ni",
 			"population-lsoa",
 			"population-data-zone-scotland",
 			"population-data-zone-ni",

@@ -44,8 +44,10 @@ import { nimdm } from "../society/deprivation/nimdm/dataset.ts";
 import { planningApplications } from "../housing/planning/planning-applications/dataset.ts";
 import { population } from "../population/population-estimates/population/dataset.ts";
 import { populationConstituency } from "../population/population-estimates/population-constituency/dataset.ts";
+import { populationCouncilScotland } from "../population/population-estimates/population-council-scotland/dataset.ts";
 import { populationDataZoneNi } from "../population/population-estimates/population-data-zone-ni/dataset.ts";
 import { populationDataZoneScotland } from "../population/population-estimates/population-data-zone-scotland/dataset.ts";
+import { populationDistrictNi } from "../population/population-estimates/population-district-ni/dataset.ts";
 import { populationLsoa } from "../population/population-estimates/population-lsoa/dataset.ts";
 import { populationUk } from "../population/population-estimates/population-uk/dataset.ts";
 import { publicHealth } from "../health/health-status/public-health/dataset.ts";
@@ -105,8 +107,10 @@ export const DATASET_DECLARATIONS: readonly DatasetDeclaration[] = [
 	planningApplications,
 	population,
 	populationConstituency,
+	populationCouncilScotland,
 	populationDataZoneNi,
 	populationDataZoneScotland,
+	populationDistrictNi,
 	populationLsoa,
 	populationUk,
 	publicHealth,

@@ -41,8 +41,10 @@ import type { nimdm } from "../../society/deprivation/nimdm/dataset.ts";
 import type { planningApplications } from "../../housing/planning/planning-applications/dataset.ts";
 import type { population } from "../../population/population-estimates/population/dataset.ts";
 import type { populationConstituency } from "../../population/population-estimates/population-constituency/dataset.ts";
+import type { populationCouncilScotland } from "../../population/population-estimates/population-council-scotland/dataset.ts";
 import type { populationDataZoneNi } from "../../population/population-estimates/population-data-zone-ni/dataset.ts";
 import type { populationDataZoneScotland } from "../../population/population-estimates/population-data-zone-scotland/dataset.ts";
+import type { populationDistrictNi } from "../../population/population-estimates/population-district-ni/dataset.ts";
 import type { populationLsoa } from "../../population/population-estimates/population-lsoa/dataset.ts";
 import type { populationUk } from "../../population/population-estimates/population-uk/dataset.ts";
 import type { publicHealth } from "../../health/health-status/public-health/dataset.ts";
@@ -101,8 +103,10 @@ export type CatalogueDataset =
 	| NonNullable<(typeof planningApplications)["payloadType"]>
 	| NonNullable<(typeof population)["payloadType"]>
 	| NonNullable<(typeof populationConstituency)["payloadType"]>
+	| NonNullable<(typeof populationCouncilScotland)["payloadType"]>
 	| NonNullable<(typeof populationDataZoneNi)["payloadType"]>
 	| NonNullable<(typeof populationDataZoneScotland)["payloadType"]>
+	| NonNullable<(typeof populationDistrictNi)["payloadType"]>
 	| NonNullable<(typeof populationLsoa)["payloadType"]>
 	| NonNullable<(typeof populationUk)["payloadType"]>
 	| NonNullable<(typeof publicHealth)["payloadType"]>
@@ -255,6 +259,10 @@ export type DeclaredDatasetRecords = {
 		string,
 		NonNullable<(typeof populationConstituency)["payloadType"]>
 	>;
+	"population-council-scotland": Record<
+		string,
+		NonNullable<(typeof populationCouncilScotland)["payloadType"]>
+	>;
 	"population-data-zone-ni": Record<
 		string,
 		NonNullable<(typeof populationDataZoneNi)["payloadType"]>
@@ -262,6 +270,10 @@ export type DeclaredDatasetRecords = {
 	"population-data-zone-scotland": Record<
 		string,
 		NonNullable<(typeof populationDataZoneScotland)["payloadType"]>
+	>;
+	"population-district-ni": Record<
+		string,
+		NonNullable<(typeof populationDistrictNi)["payloadType"]>
 	>;
 	"population-lsoa": Record<
 		string,
