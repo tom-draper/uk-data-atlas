@@ -88,7 +88,7 @@ const PAY_MEASURES = [
 		"percent",
 		"by-dimension",
 		"none",
-		"Percentage change in gross annual pay on the previous year, as the tables publish it. The tables give it for 2012 to 2017 only. It is not adjusted for changes in the make-up of the workforce.",
+		"Percentage change in gross annual pay on the previous year, as the tables publish it. The tables leave it blank for 2018 to 2022. It is not adjusted for changes in the make-up of the workforce.",
 	),
 	measure(
 		"gross-hourly-pay-change",
@@ -96,7 +96,7 @@ const PAY_MEASURES = [
 		"percent",
 		"by-dimension",
 		"none",
-		"Percentage change in gross hourly pay on the previous year, as the tables publish it. The tables give it for 2012 to 2017 only. It is not adjusted for changes in the make-up of the workforce.",
+		"Percentage change in gross hourly pay on the previous year, as the tables publish it. The tables leave it blank for 2018 to 2022. It is not adjusted for changes in the make-up of the workforce.",
 	),
 ];
 
