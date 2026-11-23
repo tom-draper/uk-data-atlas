@@ -48,7 +48,14 @@ export async function compileDirectDataset(
 						...header,
 						type: header.type as string,
 						data: Object.fromEntries(
-							records.map(({ code }) => [code, {}]),
+							records
+								.filter(
+									({ code }) =>
+										!direct.exclude?.some((codes) =>
+											codes.test(code),
+										),
+								)
+								.map(({ code }) => [code, {}]),
 						),
 					},
 				];
