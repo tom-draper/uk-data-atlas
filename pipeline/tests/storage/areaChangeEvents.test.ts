@@ -277,3 +277,61 @@ test("the legal date rate counts events by geography", () => {
 		{ geography: "ward", events: 1, legal: 1 },
 	]);
 });
+
+test("publisher replacements record only inventory changes when the crosswalk measures overlap", () => {
+	const { db, v } = fixture();
+	db.exec(`
+		UPDATE geography SET slug = 'seneddConstituency';
+		UPDATE area_release SET geography = 'seneddConstituency';
+		UPDATE boundary_release_edition SET geography = 'seneddConstituency';
+		UPDATE area_release SET release = '2022-12-w-bgc' WHERE id = 1;
+		UPDATE area_release SET release = '2026-05-w-bgc' WHERE id = 2;
+		UPDATE boundary_release_edition SET release = '2022-12-w-bgc', edition_from = '2022-12-01' WHERE release = '2020';
+		UPDATE boundary_release_edition SET release = '2026-05-w-bgc', edition_from = '2026-05-01' WHERE release = '2021';
+		INSERT INTO crosswalk VALUES (1, 'overlap', 'postcode-overlap', NULL, 1, 2, NULL);
+	`);
+	edge(db, 1, v("2020", "B"), v("2021", "B2"));
+	const dates = parseLegalDates(
+		"predecessor,successor,date\n",
+		"code,introduced,terminated\nB2,2026-05-07,\n",
+	);
+	assert.deepEqual(
+		buildAreaChangeEvents(db, dates).map((event) => [
+			event.change.kind,
+			event.change.from[0]?.code,
+			event.change.to[0]?.code,
+			event.change.links.length,
+			event.basis,
+			event.effectiveDate,
+			event.dateBasis,
+		]),
+		[
+			[
+				"created",
+				undefined,
+				"B2",
+				0,
+				"publisher-statement",
+				"2026-05-07",
+				"legal",
+			],
+			[
+				"ended",
+				"B",
+				undefined,
+				0,
+				"publisher-statement",
+				"2026-05-01",
+				"edition",
+			],
+		],
+	);
+	db.exec("UPDATE crosswalk SET method = 'official-lookup' WHERE id = 1");
+	assert.deepEqual(
+		buildAreaChangeEvents(db).map((event) => [
+			event.change.kind,
+			event.source,
+		]),
+		[["recoded", "crosswalk"]],
+	);
+});

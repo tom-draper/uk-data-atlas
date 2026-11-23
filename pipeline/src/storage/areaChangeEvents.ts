@@ -15,7 +15,7 @@ import { matchLegalDate, type LegalDates } from "./legalDates.ts";
  * events. Written at atlas assembly, after the crosswalks and their weights
  * are in, from the identity crosswalks (the ones that link releases of one
  * geography) and, for anything they do not cover, the publishers' predecessor
- * statements in `area_relationship`.
+ * statements in `area_relationship` and documented edition replacements.
  *
  * Each event has two dates. `edition_date` is the later release's edition date:
  * the change had happened by then, not necessarily on that day. `effective_date`
@@ -480,6 +480,62 @@ function publisherChanges(
 	return events;
 }
 
+// Publisher-confirmed replacements without a compiled predecessor lookup.
+const publisherReplacements = [
+	// https://blogs.gov.scot/statistics/2024/12/16/updates-to-data-zones-and-intermediate-zones-now-published/
+	["dataZone", "2011-12-sc-bfc", "2022-sc-bfc"],
+	// https://www.dbcc.gov.wales/reviews/03-25/2026-review-final-determinations
+	["seneddConstituency", "2022-12-w-bgc", "2026-05-w-bgc"],
+] as const;
+
+function publisherReplacementChanges(
+	database: DatabaseSync,
+	coveredPairs: ReadonlySet<string>,
+): ChangeEvent[] {
+	const release = database.prepare(
+		`SELECT g.id AS geography_id, r.id, e.edition_from
+		FROM area_release r
+		JOIN geography g ON g.slug = r.geography
+		JOIN boundary_release_edition e ON e.geography = r.geography AND e.release = r.release
+		WHERE r.geography = ? AND r.release = ?`,
+	);
+	const events: ChangeEvent[] = [];
+	for (const [geography, fromRelease, toRelease] of publisherReplacements) {
+		const earlier = release.get(geography, fromRelease);
+		const later = release.get(geography, toRelease);
+		if (!earlier || !later) continue;
+		const fromReleaseId = Number(earlier.id);
+		const toReleaseId = Number(later.id);
+		if (coveredPairs.has(`${fromReleaseId}|${toReleaseId}`)) continue;
+		const from = releaseAreas(database, fromReleaseId);
+		const to = releaseAreas(database, toReleaseId);
+		const fromEdition = String(earlier.edition_from);
+		const editionDate = String(later.edition_from);
+		for (const change of classifyChanges(
+			withoutFalseEnds(from, new Set(), to),
+			withoutFalseEnds(to, new Set(), from),
+			[],
+		))
+			events.push({
+				geographyId: Number(earlier.geography_id),
+				geography,
+				fromReleaseId,
+				toReleaseId,
+				fromRelease,
+				toRelease,
+				effectiveDate: editionDate,
+				dateBasis: "edition",
+				fromEdition,
+				editionDate,
+				source: "publisher",
+				basis: "publisher-statement",
+				crosswalkId: null,
+				change,
+			});
+	}
+	return events;
+}
+
 /**
  * Gives each event its legal date where the Code History Database has one in
  * the interval its two editions bound. Every other event keeps its edition
@@ -514,7 +570,8 @@ export function buildAreaChangeEvents(
 ): ChangeEvent[] {
 	const events: ChangeEvent[] = [];
 	const covered = new Set<string>();
-	for (const crosswalk of selectIdentityCrosswalks(database))
+	const crosswalks = selectIdentityCrosswalks(database);
+	for (const crosswalk of crosswalks)
 		for (const { change, basis } of crosswalkChanges(database, crosswalk)) {
 			events.push({
 				geographyId: crosswalk.geographyId,
@@ -537,6 +594,13 @@ export function buildAreaChangeEvents(
 					covered.add(`${from.areaId}|${to.areaId}`);
 		}
 	events.push(...publisherChanges(database, covered));
+	const coveredPairs = new Set(
+		[...crosswalks, ...events].map(
+			({ fromReleaseId, toReleaseId }) =>
+				`${fromReleaseId}|${toReleaseId}`,
+		),
+	);
+	events.push(...publisherReplacementChanges(database, coveredPairs));
 	const smallest = (areas: readonly ChangeArea[]) => areas[0]?.code ?? "";
 	events.sort(
 		(a, b) =>
