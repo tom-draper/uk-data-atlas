@@ -13,9 +13,11 @@ const PARTITION_BY_CODE_YEAR = new Set([
 	"car-availability",
 	"claimant-count",
 	"ethnicity",
+	"income",
 	"qualification",
 	"travel-to-work",
 	"unemployment",
+	"workplace-income",
 ]);
 
 /** A catalogue partition that deliberately serves only its code year's areas. */
