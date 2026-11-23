@@ -16,7 +16,7 @@ Many measures cover England only, or England and Wales only.
 
 - England only, about 30 measures: education (attainment, progress, key stage
   4 pupils, enrolments, sessions), social care, planning, temporary
-  accommodation, council tax and budgets, waste, ASHE pay, fuel poverty,
+  accommodation, council tax and budgets, waste, fuel poverty,
   smoking, physical activity, excess weight, preventable mortality, net
   additional dwellings and NHS waiting lists.
 - England and Wales only: `population`, `recorded-crimes`,
@@ -29,7 +29,8 @@ Many measures cover England only, or England and Wales only.
   not (single years from 15 to 19, dependent children by number, shared
   equity), which are measures with Scotland as their only source. Section 5
   lists what is left.
-- ASHE covers Great Britain, but only the England rows are compiled.
+- ASHE pay covers England, Wales and Scotland, from 2012 to 2025. Northern
+  Ireland is not in these ONS tables, which publish no authority rows for it.
 
 Sources to collect:
 
@@ -39,6 +40,10 @@ Sources to collect:
   2026-11-23). Their small-area files (data zones) are held as before, for 2011 to
   2024 in Scotland and 2021 to 2024 in Northern Ireland, and are not
   updated.
+- ASHE for Northern Ireland, which the ONS tables do not carry, and for
+  years before 2012, which are not compiled. The earnings and hours
+  tables for those years use earlier occupation codings and layouts, so they
+  need checking before they are read as the same series.
 - Scottish and Welsh equivalents for education, planning, homelessness,
   council tax and waste.
 - Police Scotland and PSNI recorded crime. Not collected on 2026-11-22:
@@ -52,7 +57,7 @@ Sources to collect:
 ### 2. Earlier years
 
 Many measures hold one period, so they have no trend. Seen with one period:
-broadband, premises, mobile coverage, public EV chargers, ASHE, council tax,
+broadband, premises, mobile coverage, public EV chargers, council tax,
 enterprises and the NHS waiting-list data. IMD holds 2015 and 2025, with no
 2019 (the 2019 file is in the folder but not read). The 2015 edition is
 England only, on the 2011 LSOAs (32,844 areas). Its scores, ranks and deciles
@@ -61,6 +66,14 @@ England and cannot be summed or compared across editions. Its population
 converts to 31,907 of the 35,672 2021 LSOAs and to coarser areas. Back-years
 are the cheapest data to add. Roadmap task 44 (change between periods on fixed
 boundaries) depends on them.
+
+ASHE now holds 2012 to 2025, by area of residence and by workplace, for
+England, Wales and Scotland. 2012 to 2024 are the revised editions and 2025 is
+provisional. From 2021 the survey codes occupations to SOC 2020, so 2021 onward
+is not directly comparable with earlier years, and 2020 and 2021 come from a
+smaller sample that includes furloughed employees. The measure notes say so.
+The catalogue and API serve the authorities of the latest code year only; the
+rows for retired authorities stay in the database on their own releases.
 
 ### 3. ITL history
 
@@ -293,12 +306,11 @@ What is still out of reach:
 ## Where to start
 
 1. Publish a data release holding the new source folders
-   (`population-council-scotland`, `population-district-ni`, and the
-   Scotland and Northern Ireland census folders): other checkouts cannot
+   (`population-council-scotland`, `population-district-ni`,
+   `income-history`, and the Scotland and Northern Ireland census folders): other checkouts cannot
    build the atlas without it.
 2. Compile the rest of the staged Scotland and Northern Ireland census
    tables (section 5), and the other staged census and population files.
-3. Collect ASHE back-years.
-4. Police Scotland and PSNI recorded crime, once a direct download is found.
-5. Collect official predecessor lookups to link the Scottish data-zone and
+3. Police Scotland and PSNI recorded crime, once a direct download is found.
+4. Collect official predecessor lookups to link the Scottish data-zone and
    Senedd constituency events, and add the 2001 Scottish data-zone inventory.
