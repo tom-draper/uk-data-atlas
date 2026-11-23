@@ -17,6 +17,7 @@ import { CENSUS_NATION_AREAS } from "../statistics/censusNationSource.ts";
 import {
 	CENSUS_NATION_TABLES,
 	censusNationArtifactName,
+	censusNationOnlyCategories,
 	type CensusNationTable,
 } from "../statistics/censusNationTables.ts";
 import { censusTableSelector } from "../statistics/selectorPlans.ts";
@@ -43,15 +44,17 @@ export type CensusNation = {
 
 /**
  * The Scotland and Northern Ireland census tables, read from the statistics
- * rows. Each is a further source of a measure the England and Wales tables
- * already publish, so its sources are added to `measures`, which must hold
- * every measure the tables join. Only the lineage of the archive the rows
- * were built from, its size and hash, is read from data/source.
+ * rows. Each category is a further source of a measure the England and Wales
+ * tables already publish, so its sources are added to `measures`, which must
+ * hold every measure the tables join. A category only the nation publishes is
+ * a new measure, added to `measures` with the nation as its only source. Only
+ * the lineage of the archive the rows were built from, its size and hash, is
+ * read from data/source.
  */
 export const compileCensusNation = (
 	repositoryRoot: string,
 	rows: CatalogueRows,
-	measures: readonly Measure[],
+	measures: Measure[],
 	tablesToCompile: readonly CensusNationTable[] = CENSUS_NATION_TABLES,
 ): CensusNation => {
 	const datasets: DatasetCatalogueEntry[] = [];
@@ -131,8 +134,44 @@ export const compileCensusNation = (
 				note: nation.coverage,
 			},
 		};
+		const only = new Map(
+			censusNationOnlyCategories(table).map(({ suffix, label }) => [
+				suffix,
+				label,
+			]),
+		);
 		for (const [suffix] of table.categories) {
 			const measureId = `${table.joins.measurePrefix}-${suffix}`;
+			const label = only.get(suffix);
+			if (label !== undefined) {
+				if (measures.some(({ id }) => id === measureId))
+					throw new Error(
+						`${table.dataset} publishes ${measureId} on its own, but a census measure has that id.`,
+					);
+				measures.push({
+					id: measureId,
+					series: {
+						measure: table.joins.measure,
+						dimensions: { [table.joins.dimension]: suffix },
+					},
+					label,
+					valueKind: "count",
+					unit: table.joins.unit,
+					aggregation: {
+						kind: "extensive",
+						operation: "sum",
+						available: true,
+					},
+					sources: [],
+					availability: {
+						sourceExact: true,
+						conversion: false,
+						aggregation: true,
+					},
+					links: { data: `/v1/data/${measureId}` },
+					notes: [table.universe],
+				});
+			}
 			const measure = measures.find(({ id }) => id === measureId);
 			if (!measure)
 				throw new Error(
