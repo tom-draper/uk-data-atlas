@@ -1,3 +1,4 @@
+import { SOURCE_FIELDS } from "./crosswalkSourceFields.ts";
 import { type SQLOutputValue } from "@uk-data-atlas/atlas-db";
 import type { CrosswalkArtifact } from "./crosswalkTypes.ts";
 import type { CrosswalkInventory } from "./crosswalkInventory.ts";
@@ -21,12 +22,6 @@ import {
 type Values = Record<string, SQLOutputValue>;
 
 /** Source fields beyond `code` and `labels`, and the column holding each. */
-const SOURCE_FIELDS: Record<string, string> = {
-	areaM2: "area_m2",
-	population: "population",
-	coverage: "coverage",
-};
-
 /** Target fields with the same place whatever the crosswalk's weighting. */
 const EDGE_FIELDS: Record<string, string> = {
 	relation: "relation",

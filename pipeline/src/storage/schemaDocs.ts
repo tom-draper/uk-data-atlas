@@ -1241,7 +1241,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	crosswalk_source: {
 		audience: "reference",
 		description:
-			"Source areas of a crosswalk that are only partly covered, or have no target at all.",
+			"Source areas of a crosswalk that are only partly covered, or have no target at all. Source area and population are stored in area_version.",
 		columns: {
 			crosswalk_id: "The crosswalk (crosswalk.id).",
 			from_version_id: "The source area (area_version.id).",
