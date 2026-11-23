@@ -315,6 +315,10 @@ as published data.
   tables by `pipeline/src/atlas/areaLineageFromEvents.ts` and stored as the
   `area-lineage` website asset; the API route and `successorArea` are gone from
   the lookup path.
+  Publisher-confirmed replacements of the Scottish 2011 data zones and the
+  pre-2026 Senedd constituencies add ended and created events for the codes
+  present on only one side. A compiled identity lookup takes precedence when
+  available.
   Follow-up 2 (2026-11-21): the ONS Code History Database's ward history is
   read as 14 more official lookups (ward 2011-12 to 2015-12 through 2025-12 to
   2026-05, crosswalk ids 211 to 224; four of the pairs have no change in it),

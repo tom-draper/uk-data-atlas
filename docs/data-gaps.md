@@ -99,10 +99,15 @@ collection.
 
 ### 1. Change events (`area_change_event`)
 
-- No events for geographies that have crosswalks: data zones (6 crosswalks),
-  Senedd constituencies (4), county electoral divisions (4), ICBs, sub-ICB
-  locations and fire and rescue authorities. Their identity crosswalk counts
-  are 0 or null, which is probably the reason. This has not been confirmed.
+- The Scottish 2011 to 2022 data-zone replacement and the 2026 Senedd
+  replacement now have ended and created events. The six data-zone crosswalks
+  connect to other geographies. The Senedd crosswalk between editions measures
+  postcode overlap. Both transitions still need official predecessor lookups
+  to show splits, merges or other linked changes. The 2001 Scottish data-zone
+  edition is absent from the atlas.
+- County electoral divisions, integrated care boards, sub-ICB locations and
+  fire and rescue authorities still have no events. Their crosswalks connect
+  different geographies, so they cannot supply changes between editions.
 - Very few events elsewhere: Scottish Parliament constituencies have 2 and
   ITL1 has 1.
 - Legal dates matched: LSOA 1,625 of 6,418, MSOA 225 of 1,025, local
@@ -202,5 +207,5 @@ What is still out of reach:
    other staged census and population files.
 2. Collect ASHE back-years.
 3. Police Scotland and PSNI recorded crime, once a direct download is found.
-4. Events for data zones and Senedd constituencies, the cheapest compiled
-   gap to close.
+4. Collect official predecessor lookups to link the Scottish data-zone and
+   Senedd constituency events, and add the 2001 Scottish data-zone inventory.
