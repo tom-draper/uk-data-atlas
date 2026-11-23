@@ -83,3 +83,5 @@
 ["Office for National Statistics","https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareamidyearpopulationestimates","Open Government Licence v3.0"]
 ["National Records of Scotland","https://www.scotlandscensus.gov.uk/documents/2022-data-zone-area-data","Open Government Licence v3.0"]
 ["Northern Ireland Statistics and Research Agency","https://www.nisra.gov.uk/publications/census-2021-bulk-download","Open Government Licence v3.0"]
+["National Records of Scotland","https://www.nrscotland.gov.uk/publications/population-estimates-time-series-data/","Open Government Licence v3.0"]
+["Northern Ireland Statistics and Research Agency","https://www.nisra.gov.uk/publications/2025-mid-year-population-estimates-northern-ireland-and-estimates-population-aged-85","Open Government Licence v3.0"]
