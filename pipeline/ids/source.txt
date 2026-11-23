@@ -81,3 +81,5 @@
 ["Northern Ireland Statistics and Research Agency","https://www.nisra.gov.uk/publications/2024-mid-year-population-estimates-small-geographical-areas-within-northern-ireland","Open Government Licence v3.0"]
 ["National Records of Scotland","https://www.nrscotland.gov.uk/publications/small-area-population-estimates-for-mid-2011-to-mid-2024-2022-data-zones/","Open Government Licence v3.0"]
 ["Office for National Statistics","https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareamidyearpopulationestimates","Open Government Licence v3.0"]
+["National Records of Scotland","https://www.scotlandscensus.gov.uk/documents/2022-data-zone-area-data","Open Government Licence v3.0"]
+["Northern Ireland Statistics and Research Agency","https://www.nisra.gov.uk/publications/census-2021-bulk-download","Open Government Licence v3.0"]
