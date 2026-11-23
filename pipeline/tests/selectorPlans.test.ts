@@ -75,3 +75,34 @@ test("census table selector follows the declared category order", () => {
 		censusTableSelector("other", "income", "localAuthority", 2024, "2024"),
 	).toBeUndefined();
 });
+
+test("census table selector follows a nation table's categories on its data zones", () => {
+	expect(
+		censusTableSelector(
+			"census-2021-ni-a01-data-zone-2021-table",
+			"census-2021-ni-a01",
+			"dataZone",
+			2021,
+			"2021",
+		),
+	).toEqual({
+		kind: "measure-table",
+		id: "census-2021-ni-a01-data-zone-2021-table",
+		datasetId: "census-2021-ni-a01",
+		geography: "dataZone",
+		boundaryYear: 2021,
+		period: "2021",
+		measures: [
+			measureSeriesKey({
+				measure: "usual-residents",
+				dimensions: { "residence-type": "total" },
+			}),
+		],
+		columns: [
+			{
+				measure: "usual-residents",
+				dimensions: { "residence-type": "total" },
+			},
+		],
+	});
+});
