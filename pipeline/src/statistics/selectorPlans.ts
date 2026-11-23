@@ -3,6 +3,10 @@ import {
 	type StatisticsSelector,
 	type StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
+import {
+	CENSUS_NATION_TABLES,
+	censusNationMembers,
+} from "./censusNationTables.ts";
 import { CENSUS_SMALL_AREA_TABLES } from "./censusSmallAreaSource.ts";
 
 const PARTITION_BY_CODE_YEAR = new Set([
@@ -35,14 +39,22 @@ export function censusTableSelector(
 	boundaryYear: number,
 	period: string,
 ): StatisticsTableSelector | undefined {
+	const nation = CENSUS_NATION_TABLES.find(
+		(table) => datasetId === table.dataset,
+	);
 	const census = CENSUS_SMALL_AREA_TABLES.find(
 		(table) => datasetId === `census-2021-${table.table}`,
 	);
-	if (!census) return undefined;
-	const columns = census.categories.map(([suffix, , , member]) => ({
-		measure: census.measure,
-		dimensions: { [census.dimension]: member ?? suffix },
-	}));
+	const columns = nation
+		? censusNationMembers(nation).map((dimensions) => ({
+				measure: nation.joins.measure,
+				dimensions,
+			}))
+		: census?.categories.map(([suffix, , , member]) => ({
+				measure: census.measure,
+				dimensions: { [census.dimension]: member ?? suffix },
+			}));
+	if (!columns) return undefined;
 	return {
 		kind: "measure-table",
 		id: name,
