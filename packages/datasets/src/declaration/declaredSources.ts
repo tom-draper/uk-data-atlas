@@ -56,6 +56,7 @@ export const DECLARED_SOURCES = {
 	"housing-affordability": { topic: "prices-and-affordability" },
 	imd: { topic: "deprivation" },
 	income: { topic: "earnings-and-income" },
+	"income-history": { topic: "earnings-and-income" },
 	jobs: { topic: "labour-market" },
 	"land-area": { topic: "core" },
 	"life-expectancy": { topic: "life-expectancy" },
@@ -128,6 +129,10 @@ export const DECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 	["core/land-area", ["land-area"]],
 	["economy/business/business-activity", ["business-activity"]],
 	["economy/earnings-and-income/income", ["income", "workplace-income"]],
+	[
+		"economy/earnings-and-income/income-history",
+		["income", "workplace-income"],
+	],
 	["economy/economic-output/regional-gdp", ["regional-gdp"]],
 	["economy/labour-market/claimant-count", ["claimant-count"]],
 	[
