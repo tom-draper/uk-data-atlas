@@ -49,7 +49,7 @@ const fixture = () => {
 		CREATE TABLE dimension_member (id INTEGER PRIMARY KEY, dimension_id INTEGER, code TEXT);
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
-		CREATE TABLE boundary_release_country (geography TEXT, release TEXT, country TEXT);
+		CREATE TABLE boundary_release_country (release_id INTEGER, country TEXT);
 		CREATE TABLE period (id INTEGER PRIMARY KEY, label TEXT, kind TEXT, start_date TEXT, end_date TEXT);
 		CREATE TABLE area (id INTEGER PRIMARY KEY, code TEXT);
 		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER, in_inventory INTEGER);
@@ -67,7 +67,7 @@ const fixture = () => {
 		INSERT INTO dataset VALUES (1, 'census'), (2, 'claimants');
 		-- release 1: local authorities on England, Wales and Scotland. Release 2: wards, converted onto.
 		INSERT INTO area_release VALUES (1, 'localAuthority', '2024'), (2, 'ward', '2024'), (3, 'superOutputArea', '2011-ni');
-		INSERT INTO boundary_release_country VALUES ('localAuthority', '2024', 'GB-ENG'), ('localAuthority', '2024', 'GB-WLS'), ('localAuthority', '2024', 'GB-SCT'), ('superOutputArea', '2011-ni', 'GB-NIR');
+		INSERT INTO boundary_release_country VALUES (1, 'GB-ENG'), (1, 'GB-WLS'), (1, 'GB-SCT'), (3, 'GB-NIR');
 		INSERT INTO period VALUES (1, '2021', 'year', '2021-01-01', '2021-12-31'), (2, '2022', 'year', '2022-01-01', '2022-12-31');
 		INSERT INTO area VALUES (1, 'E06000001'), (2, 'W06000001'), (3, 'S12000033'), (4, 'E06000002'), (5, '95AA01');
 		-- Release 1 holds four areas in its inventory and one outside it.

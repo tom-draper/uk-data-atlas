@@ -49,12 +49,10 @@ Source: Weights Office'),
 		INSERT INTO election_licence VALUES (1, 'open-parliament'), (2, 'cc-by-sa-3.0');
 		CREATE TABLE measure (id INTEGER PRIMARY KEY, slug TEXT);
 		INSERT INTO measure VALUES (1, 'population'), (2, 'dwellings'), (3, 'ratio'), (4, 'votes');
-		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
-		INSERT INTO area_release VALUES (1, 'ward', '2021'), (2, 'ward', '2024');
-		CREATE TABLE boundary_release (geography TEXT, release TEXT, publisher TEXT, reference_year INTEGER);
-		INSERT INTO boundary_release VALUES ('ward', '2021', 'Office for National Statistics', 2021), ('ward', '2024', 'Office for National Statistics', 2024);
-		CREATE TABLE boundary_release_source (geography TEXT, release TEXT, source_id INTEGER);
-		INSERT INTO boundary_release_source VALUES ('ward', '2021', 5), ('ward', '2024', 5);
+		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT, publisher TEXT, reference_year INTEGER);
+		INSERT INTO area_release VALUES (1, 'ward', '2021', 'Office for National Statistics', 2021), (2, 'ward', '2024', 'Office for National Statistics', 2024);
+		CREATE TABLE boundary_release_source (release_id INTEGER, source_id INTEGER);
+		INSERT INTO boundary_release_source VALUES (1, 5), (2, 5);
 		CREATE TABLE series (id INTEGER PRIMARY KEY, dataset_id INTEGER, measure_id INTEGER, release_id INTEGER, method TEXT, derived_from_id INTEGER, key TEXT UNIQUE);
 		INSERT INTO series VALUES
 			(1, 1, 1, 1, 'published', NULL, 'population/ward:2021'),

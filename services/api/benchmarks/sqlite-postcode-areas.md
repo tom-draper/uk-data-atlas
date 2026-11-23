@@ -36,7 +36,7 @@ Changed storage, in bytes:
 - `postcode_area_codes`: 6,975,488 after.
 - `postcode_area_columns`: 1,196,032 after.
 - `postcode_area_matches`: 454,656 after.
-- `postcode_area_releases`: 4,096 after, plus two 4,096-byte indexes.
+- `postcode_area_release`: 4,096 after, plus two 4,096-byte indexes.
 
 A single `postcodes` table lets users join directly through an area ID, without
 repeating 2,665,797 postcode keys in a separate wide table. The postcode primary

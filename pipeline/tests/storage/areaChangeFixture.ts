@@ -11,7 +11,7 @@ export const fixture = () => {
 		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT);
 		CREATE TABLE area (id INTEGER PRIMARY KEY, geography_id INTEGER, code TEXT);
 		CREATE TABLE area_release (id INTEGER PRIMARY KEY, geography TEXT, release TEXT);
-		CREATE TABLE boundary_release_edition (geography TEXT, release TEXT, edition_from TEXT);
+		CREATE TABLE boundary_release_edition (release_id INTEGER, edition_from TEXT);
 		CREATE TABLE area_version (id INTEGER PRIMARY KEY, area_id INTEGER, release_id INTEGER, name TEXT, in_inventory INTEGER);
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, slug TEXT, method TEXT, purpose TEXT, from_release_id INTEGER, to_release_id INTEGER, validation TEXT);
 		CREATE TABLE crosswalk_edge (crosswalk_id INTEGER, from_version_id INTEGER, to_version_id INTEGER);
@@ -32,9 +32,10 @@ export const fixture = () => {
 			id,
 			name,
 		);
-		db.prepare(
-			"INSERT INTO boundary_release_edition VALUES ('ward', ?, ?)",
-		).run(name, edition);
+		db.prepare("INSERT INTO boundary_release_edition VALUES (?, ?)").run(
+			id,
+			edition,
+		);
 		for (const [code, label] of areas) {
 			let areaId = areaIds.get(code);
 			if (areaId === undefined) {

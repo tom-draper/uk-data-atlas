@@ -1,3 +1,4 @@
+import { ATLAS_SCHEMA_VERSION } from "@uk-data-atlas/atlas-db";
 import { execFileSync } from "node:child_process";
 import { resolve as resolveRepositoryRoot } from "node:path";
 import { compilePostcodeAreas } from "../../src/postcodes/postcodeAreaCompiler";
@@ -796,7 +797,7 @@ test("assembly records reproducible provenance and detects untracked inputs", (t
 	const { root, path } = fixture(t);
 	const base = new DatabaseSync(join(root, "data/build/atlas-base.sqlite"));
 	base.exec(
-		"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID; INSERT INTO meta VALUES ('schemaVersion', '4')",
+		`CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID; INSERT INTO meta VALUES ('schemaVersion', '${ATLAS_SCHEMA_VERSION}')`,
 	);
 	base.close();
 	vi.stubEnv("SOURCE_DATE_EPOCH", "1700000000");

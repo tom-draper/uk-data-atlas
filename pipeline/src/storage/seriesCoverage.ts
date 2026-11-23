@@ -166,7 +166,7 @@ const writeAreaNations = (database: DatabaseSync) => {
 	if (tableExists(database, "boundary_release_country"))
 		for (const row of database
 			.prepare(
-				"SELECT r.id, c.country FROM area_release r JOIN boundary_release_country c ON c.geography = r.geography AND c.release = r.release",
+				"SELECT release_id AS id, country FROM boundary_release_country",
 			)
 			.all() as Array<{ id: number; country: string }>) {
 			const nation = COUNTRY_CODES[row.country];

@@ -1,3 +1,4 @@
+import { ATLAS_SCHEMA_VERSION } from "@uk-data-atlas/atlas-db";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -94,7 +95,7 @@ async function write(name: string, type: string) {
 	);
 	writeSqliteIndex(
 		path,
-		{ schemaVersion: "4" },
+		{ schemaVersion: String(ATLAS_SCHEMA_VERSION) },
 		{
 			...areaTables(artifactDirectory(root)),
 			payloads: {

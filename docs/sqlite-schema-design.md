@@ -7,7 +7,7 @@ caches. See `data/build/README.md` for the tables, keys and build stages.
 ## File identity and provenance
 
 Published atlas and module SQLite files have `application_id` 0x554b4441
-(ASCII UKDA) and `user_version` equal to `meta.schemaVersion` (currently 3).
+(ASCII UKDA) and `user_version` equal to `meta.schemaVersion` (currently 5).
 Bump the schema version when the published SQLite schema changes. Internal
 cache files do not carry this identity. Inspect both header values with
 `sqlite3 atlas.sqlite 'PRAGMA application_id; PRAGMA user_version;'`.
@@ -36,7 +36,7 @@ file it produced, even if the current checkout or environment has changed.
 When a fresh publication timestamp is required, supply `SOURCE_DATE_EPOCH` and
 run assembly again.
 
-Source edition information is already in `boundary_release.reference_year` and
+Source edition information is already in `area_release.reference_year` and
 `reference_month`, `boundary_release_edition`, and `dataset.released` where
 known. The atlas does not assert dates that the sources do not provide. Module
 files repeat provenance in `module_info`; assembled files retain core `meta`.
@@ -387,9 +387,9 @@ Every database in `data/build` follows these rules (#713):
 
 - Tables are STRICT, except FTS5 virtual and shadow tables.
 - Table, view and column names are snake_case, and table names are singular
-  (`area_release`, not `area_releases`).
-- A reference to another table is a declared foreign key. `boundary_release.geography`
-  references `geography(slug)`; `area` and the release tables use integer ids.
+  (`area_release`, for example).
+- A reference to another table is a declared foreign key. `area_release.geography`
+  references `geography(slug)`; `area` references `geography(id)`.
   A build metadata file never declares a foreign key into the database it
   describes, because the two are separate files.
 - Domain tables hold data, not build metadata (artifact paths, content hashes,
@@ -416,7 +416,7 @@ The separation moved, out of `atlas.sqlite` and into the build metadata file:
 | `payloads`                                                                                                                                      | `payload`                   |
 | `area_inventory_metadata`, `crosswalk_inventory_metadata`, `crosswalk_coverage_entry`, `named_location_inventory_metadata`, `boundary_registry` | the same names              |
 | `area_release.artifact`, `content_hash`, `record_count` and the parse properties                                                                | `area_release_build`        |
-| `boundary_release.metadata_hash`                                                                                                                | `boundary_release_build`    |
+| Boundary registry metadata hash                                                                                                                 | `boundary_release_build`    |
 | `crosswalk.artifact`, `content_hash`, `record_count`, `bytes`                                                                                   | `crosswalk_build`           |
 | `dataset.fingerprint`, `compiled_*`, `payload_id`                                                                                               | `dataset_build`             |
 | `statistics_read_path`, `statistics_selector*`, `statistics_observation_fallback`                                                               | the same names              |

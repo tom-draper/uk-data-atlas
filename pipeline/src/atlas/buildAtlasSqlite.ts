@@ -293,9 +293,10 @@ export const buildAtlasSqlite = (
 				yield [`dataset:${entry.output}`, content] as const;
 		}
 	}
+	const registry = readBuildBoundaryRegistry(repositoryRoot);
 	const tables = {
-		...areaTables(artifactDirectory(repositoryRoot), ids),
-		...boundaryReleaseTables(readBuildBoundaryRegistry(repositoryRoot)),
+		...areaTables(artifactDirectory(repositoryRoot), ids, registry),
+		...boundaryReleaseTables(registry, ids),
 		...crosswalkTables(artifactDirectory(repositoryRoot), ids),
 		...namedLocationTables(artifactDirectory(repositoryRoot), ids),
 		...statisticsTables(
@@ -329,7 +330,7 @@ export const buildAtlasSqlite = (
 			),
 		),
 		...datasetCoverageGapTables(directory, manifest.datasets, direct),
-		...licenceTables(readBuildBoundaryRegistry(repositoryRoot), ids),
+		...licenceTables(registry, ids),
 		...crosswalkInputSourceTables(repositoryRoot, ids),
 	};
 	writeSqliteIndex(

@@ -134,8 +134,8 @@ export function selectIdentityCrosswalks(
 			JOIN area_release fr ON fr.id = c.from_release_id
 			JOIN area_release tr ON tr.id = c.to_release_id
 			JOIN geography g ON g.slug = fr.geography
-			JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
-			JOIN boundary_release_edition te ON te.geography = tr.geography AND te.release = tr.release
+			JOIN boundary_release_edition fe ON fe.release_id = fr.id
+			JOIN boundary_release_edition te ON te.release_id = tr.id
 			WHERE (c.purpose = 'identity' OR (c.purpose IS NULL AND c.method = 'official-lookup'))
 				AND fr.geography = tr.geography AND fe.edition_from < te.edition_from
 			ORDER BY c.id`,
@@ -418,8 +418,8 @@ function publisherChanges(
 			JOIN geography g ON g.id = pa.geography_id
 			JOIN area_release fr ON fr.id = pv.release_id
 			JOIN area_release tr ON tr.id = cv.release_id
-			JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
-			JOIN boundary_release_edition te ON te.geography = tr.geography AND te.release = tr.release
+			JOIN boundary_release_edition fe ON fe.release_id = fr.id
+			JOIN boundary_release_edition te ON te.release_id = tr.id
 			WHERE r.relation = 'predecessor' AND ca.geography_id = pa.geography_id
 				AND pa.id <> ca.id AND fe.edition_from < te.edition_from`,
 		)
