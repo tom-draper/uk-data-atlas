@@ -19,7 +19,7 @@ export const workplaceIncome = defineDataset<WorkplaceIncomeDataset>({
 		summary:
 			"Median and mean annual and hourly pay for employees in each English local authority, by where their jobs are located. Enable the Workplace Pay card to map earnings where jobs are located. Its legend offers annual or hourly median and mean pay, separately from the resident Income card. Regional workplace figures average available authority estimates; suppressed estimates remain unavailable.",
 	},
-	sources: [{ name: "income" }],
+	sources: [{ name: "income" }, { name: "income-history" }],
 	mapName: "Workplace Pay",
 	source: {
 		name: "Workplace income",

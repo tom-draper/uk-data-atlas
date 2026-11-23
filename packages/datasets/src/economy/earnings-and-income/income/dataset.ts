@@ -8,6 +8,7 @@ import { payStatisticsPart, incomeFiles } from "../../../data/income/source.ts";
 export const income = defineDataset<IncomeDataset>({
 	id: "income",
 	topic: "earnings-and-income",
+	sources: [{ name: "income" }, { name: "income-history" }],
 	boundary: { type: "localAuthority", year: 2025 },
 	coverageCountries: ["GB-ENG"],
 	guide: {

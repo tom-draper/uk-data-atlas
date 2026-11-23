@@ -283,6 +283,7 @@ export const SOURCES_SINCE_MIGRATION = [
 	"population/population-estimates/census-2021-northern-ireland",
 	"population/population-estimates/population-council-scotland",
 	"population/population-estimates/population-district-ni",
+	"economy/earnings-and-income/income-history",
 ];
 
 /**
