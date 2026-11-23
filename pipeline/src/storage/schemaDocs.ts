@@ -1792,8 +1792,8 @@ export const schemaExamples: readonly SchemaExample[] = [
 		id: "coverage-population-periods",
 		question:
 			"Which periods of population exist for local authorities on the latest release, and by which method?",
-		sql: "SELECT period, method, dataset, areas_with_value, release_areas, share, default_areas, default_share, is_default FROM v_coverage WHERE measure = 'population' AND geography = 'localAuthority' AND release = '2026-05-uk-bgc' AND members IS NULL ORDER BY period, preference_rank",
-		expect: "Three rows, all converted onto the 2026-05 boundaries: 2021 and 2022 from population-constituency (318 of 361 areas, England and Wales, share 0.88) and 2025 from imd (296 areas, England only, share 0.82, the default). No period is published directly on this release.",
+		sql: "SELECT period, dataset, preference_rank, default_areas, release_areas, default_share FROM v_coverage WHERE measure = 'population' AND geography = 'localAuthority' AND release = '2026-05-uk-bgc' AND period >= '2024' AND is_default = 1 ORDER BY period, preference_rank",
+		expect: "Four rows, all converted onto the 2026-05 boundaries. 2024 is filled by three series at once: population-lsoa (rank 1, 318 of 361 areas, default_share 0.88), population-data-zone-scotland (rank 2, 32 areas, 0.09) and population-data-zone-ni (rank 3, 11 areas, 0.03). 2025 comes from imd (296 areas, 0.82). The is_default = 1 filter keeps the series the default view actually reads, so a lower-ranked series is listed where it supplies areas the higher ranks lack.",
 	},
 	{
 		id: "coverage-median-pay-geographies",
