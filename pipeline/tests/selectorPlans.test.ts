@@ -16,7 +16,7 @@ test("code-year partitions restrict only declared datasets", () => {
 		...selector,
 		areasIn: ["2019-12"],
 	});
-	expect(partitionByCodeYear(selector, "income", ["2019-12"])).toEqual(
+	expect(partitionByCodeYear(selector, "crime", ["2019-12"])).toEqual(
 		selector,
 	);
 	expect(partitionByCodeYear(selector, "unemployment", [])).toEqual(selector);
