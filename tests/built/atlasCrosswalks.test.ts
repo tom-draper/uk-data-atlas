@@ -15,11 +15,19 @@ it("rebuilds every crosswalk artifact from edge rows, with labels from area vers
 	const inventory = readSqliteCrosswalkInventory(root);
 	expect(inventory.crosswalks.length).toBeGreaterThan(0);
 	const mismatches: string[] = [];
+	const remainingSourceFields = new Set(["areaM2", "population", "coverage"]);
 	for (const entry of inventory.crosswalks) {
 		const text = readStoredText(
 			join(artifactDirectory(root), entry.artifact),
 		);
 		const { artifact, bytes } = readSqliteCrosswalk(root, entry);
+		for (const field of remainingSourceFields)
+			if (
+				artifact.records.some(({ source }) =>
+					Object.hasOwn(source, field),
+				)
+			)
+				remainingSourceFields.delete(field);
 		// Endpoint labels come from area versions, so the stored JSON's
 		// source-supplied labels are replaced; everything else must match.
 		const expected: typeof artifact = JSON.parse(text);
@@ -39,6 +47,7 @@ it("rebuilds every crosswalk artifact from edge rows, with labels from area vers
 			mismatches.push(entry.id);
 	}
 	expect(mismatches).toEqual([]);
+	expect([...remainingSourceFields]).toEqual([]);
 	const database = new DatabaseSync(atlasDatabasePath(root), {
 		readOnly: true,
 	});
