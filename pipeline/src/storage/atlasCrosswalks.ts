@@ -1,3 +1,4 @@
+import { SOURCE_FIELDS } from "@uk-data-atlas/relationships/crosswalk-source-fields";
 import { join } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
@@ -28,12 +29,6 @@ import { readJsonSync } from "../lib/json.ts";
 type Endpoint = Record<string, unknown> & { code: string; labels: string[] };
 
 /** Source fields beyond `code` and `labels`, and the column holding each. */
-const SOURCE_FIELDS: Record<string, string> = {
-	areaM2: "area_m2",
-	population: "population",
-	coverage: "coverage",
-};
-
 /** Target fields with the same place whatever the crosswalk's weighting. */
 const EDGE_FIELDS: Record<string, string> = {
 	relation: "relation",
