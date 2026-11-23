@@ -132,6 +132,7 @@ export const DECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 	[
 		"economy/earnings-and-income/income-history",
 		["income", "workplace-income"],
+		"The 2012 to 2024 editions of the same tables, filed apart from the 2025 download.",
 	],
 	["economy/economic-output/regional-gdp", ["regional-gdp"]],
 	["economy/labour-market/claimant-count", ["claimant-count"]],
