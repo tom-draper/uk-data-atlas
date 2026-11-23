@@ -1,43 +1,43 @@
 {
 	"version": 2,
-	"tag": "data-2026-11-22",
-	"commit": "0bb5b56868bea23e67969c5c951b8565f6c881de",
+	"tag": "data-2026-11-23",
+	"commit": "e5bcb8d7dbcdcea6e5d3b0bb9f238e01237ce09e",
 	"repository": "tom-draper/uk-data-atlas",
 	"assets": [
 		{
-			"name": "data-2026-11-22.1.tar.gz",
+			"name": "data-2026-11-23.1.tar.gz",
 			"bytes": 956944700,
-			"sha256": "b9a2700234ea70cd1cb31ffd84f3ad7a3636f41bf7ec16697a71480225cc7f11"
+			"sha256": "8f03443ea7b365181e9940efe82916707a47dca072ec4eedabcea47112a74850"
 		},
 		{
-			"name": "data-2026-11-22.2.tar.gz",
+			"name": "data-2026-11-23.2.tar.gz",
 			"bytes": 975451942,
-			"sha256": "a3c5f6b1ce6adb4fe795e1f0fb9a7da7dd62df79253f40bd335c53ab46b50cc0"
+			"sha256": "40ce305f7a9d9e3c87f864f85ad80f8e5feab6fb45d17edaa0150f09f08ad5ce"
 		},
 		{
-			"name": "data-2026-11-22.3.tar.gz",
-			"bytes": 656864078,
-			"sha256": "ce5fdba99ba66f8d86c9747d23239cf19251bdec6eb911a677ad24fba7eab11e"
+			"name": "data-2026-11-23.3.tar.gz",
+			"bytes": 653116197,
+			"sha256": "c5b3de934d95f2ca32facf30f84b8a191d66bca487696940d246edc9d91a432c"
 		},
 		{
-			"name": "data-2026-11-22.4.tar.gz",
+			"name": "data-2026-11-23.4.tar.gz",
 			"bytes": 446465548,
-			"sha256": "404e59cfbffaaff6821a675cebe136fc774a8d4003532775d8c7ae9e6c3a7c70"
+			"sha256": "f2ad33ffcbc77ad8022830cf874aafbb0ca765fdb358acba3d684af5032764c0"
 		},
 		{
-			"name": "data-2026-11-22.5.tar.gz",
+			"name": "data-2026-11-23.5.tar.gz",
 			"bytes": 586644676,
-			"sha256": "c200e3a38badcf70c30ee180389bcf3c35f5ce720e3b675bc5a284599a0cf8a0"
+			"sha256": "5ace0cea8dc25734651c5b7b64efaecb72aa11467679d28afcaf9a89a533427b"
 		},
 		{
-			"name": "data-2026-11-22.6.tar.gz",
-			"bytes": 1015780096,
-			"sha256": "74482ea0ca8f762152120bfb30516085fabe7e7284c50a67c832b4beecda5bcf"
+			"name": "data-2026-11-23.6.tar.gz",
+			"bytes": 1016967946,
+			"sha256": "69d6a7a2abdb670d1101489821f5117a1cde0aaccbcc4bcc42f94df9a1999fec"
 		},
 		{
-			"name": "data-2026-11-22.7.tar.gz",
-			"bytes": 471722905,
-			"sha256": "7d1e934aa24cfe453ed0f9bee8405ebecf5877a4a42585b09b2f84c32019cdb0"
+			"name": "data-2026-11-23.7.tar.gz",
+			"bytes": 475462306,
+			"sha256": "e9dc741d01af48201ed804f4c2edc5a1b2ae001e869c1d763068aecd2d192027"
 		}
 	]
 }
