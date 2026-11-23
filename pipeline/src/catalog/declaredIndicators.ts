@@ -250,8 +250,9 @@ export const compileYearlyIndicators = (
 							countries: countriesFor(
 								artifact.periods[0]?.records ?? [],
 							),
+							// The latest period, since coverage can vary by period.
 							recordCount:
-								artifact.periods[0]?.records.length ?? 0,
+								artifact.periods.at(-1)?.records.length ?? 0,
 							note: catalogue.coverageNote,
 						},
 					},
