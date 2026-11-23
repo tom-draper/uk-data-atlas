@@ -349,18 +349,32 @@ const websiteFallbackBoundaryInputs = Object.values(BOUNDARY_CATALOG).flatMap(
 		}),
 );
 
+// The archives of the nation census tables, which `censusNationTables.ts` reads.
+const CENSUS_NATION_ARCHIVES = {
+	"census-2022-scotland-data-zone": ["Datazone2022.zip"],
+	"census-2021-northern-ireland": [
+		"census-2021-main-statistics-for-northern-ireland-phase-1-all-tables.zip",
+	],
+};
+
 const censusSmallAreaInputs = () => {
 	const tables = Object.keys(SOURCES)
 		.filter((name) => /^census-2021-ts\d/.test(name))
 		.map((name) => name.slice("census-2021-".length));
-	return tables.flatMap((table) => {
-		const directory = sourceDir(`census-2021-${table}`);
-		return [
-			join(directory, "meta.json"),
-			join(directory, `census2021-${table}-lsoa.csv`),
-			join(directory, `census2021-${table}-msoa.csv`),
-		];
-	});
+	return [
+		...tables.flatMap((table) => {
+			const directory = sourceDir(`census-2021-${table}`);
+			return [
+				join(directory, "meta.json"),
+				join(directory, `census2021-${table}-lsoa.csv`),
+				join(directory, `census2021-${table}-msoa.csv`),
+			];
+		}),
+		...Object.entries(CENSUS_NATION_ARCHIVES).flatMap(([name, archives]) => [
+			join(sourceDir(name), "meta.json"),
+			...archives.map((archive) => join(sourceDir(name), archive)),
+		]),
+	];
 };
 
 // The files `weight-atoms` and `crosswalk-weights` share between postcodes: counts of residents,
