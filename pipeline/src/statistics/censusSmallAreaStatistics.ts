@@ -241,7 +241,7 @@ const CENSUS_MEMBERS: Readonly<Record<string, StatisticsDimension["members"]>> =
 
 const BOUNDARY_YEAR = 2021;
 
-type Meta = {
+export type Meta = {
 	title: string;
 	description: string;
 	publisher: string;
@@ -249,8 +249,33 @@ type Meta = {
 	licence: { name: string; url?: string };
 };
 
+/**
+ * The dimensions a census dataset declares for the dimensions its series use:
+ * a stored dimension with this census's finer members added, or one only the
+ * census tables publish. A dimension whose members another dataset stores in
+ * full is that dataset's own and is not declared again.
+ */
+export const censusDimensions = (
+	stored: ReadonlyMap<string, StatisticsDimension>,
+	used: readonly string[],
+) => {
+	const dimensions: StatisticsDimension[] = [];
+	for (const slugOf of new Set(used)) {
+		const extra = CENSUS_MEMBERS[slugOf] ?? [];
+		const own = stored.get(slugOf);
+		const census = CENSUS_DIMENSIONS.find(
+			(dimension) => dimension.slug === slugOf,
+		);
+		if (own && extra.length > 0)
+			dimensions.push({ ...own, members: [...own.members, ...extra] });
+		else if (census) dimensions.push(census);
+		// Otherwise every member is stored already, by its own dataset.
+	}
+	return dimensions;
+};
+
 /** Every measure and fully listed dimension the declared datasets store. */
-const declared = () => {
+export const declared = () => {
 	const measures = new Map<string, StatisticsMeasure>();
 	const dimensions = new Map<string, StatisticsDimension>();
 	for (const dataset of STATISTICS_DATASETS) {
@@ -326,23 +351,10 @@ export function censusSmallAreaStatistics(
 			};
 		});
 
-		const dimensions: StatisticsDimension[] = [];
-		for (const slugOf of new Set(
+		const dimensions = censusDimensions(
+			stored.dimensions,
 			columns.flatMap(({ members }) => Object.keys(members)),
-		)) {
-			const extra = CENSUS_MEMBERS[slugOf] ?? [];
-			const own = stored.dimensions.get(slugOf);
-			const census = CENSUS_DIMENSIONS.find(
-				(dimension) => dimension.slug === slugOf,
-			);
-			if (own && extra.length > 0)
-				dimensions.push({
-					...own,
-					members: [...own.members, ...extra],
-				});
-			else if (census) dimensions.push(census);
-			// Otherwise every member is stored already, by its own dataset.
-		}
+		);
 
 		const releases = files.map(({ geography }) =>
 			areas.release(geography.type, BOUNDARY_YEAR),
