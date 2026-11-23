@@ -34,6 +34,11 @@ import { AREA_GEOGRAPHY_MISMATCH, areaTables } from "../storage/index.ts";
 import { DatabaseSync } from "node:sqlite";
 import { loadIdRegistries } from "../ids/idRegistries.ts";
 import { verifyStableIds } from "../ids/databaseKeys.ts";
+import { censusNationStatistics } from "../statistics/censusNationStatistics.ts";
+import {
+	CENSUS_NATION_TABLES,
+	type CensusNationTable,
+} from "../statistics/censusNationTables.ts";
 import { censusSmallAreaStatistics } from "../statistics/censusSmallAreaStatistics.ts";
 import {
 	CENSUS_SMALL_AREA_TABLES,
@@ -161,12 +166,17 @@ export const buildAtlasSqlite = (
 	{
 		unstored = {},
 		censusTables = CENSUS_SMALL_AREA_TABLES,
+		censusNationTables = censusTables.length === 0
+			? []
+			: CENSUS_NATION_TABLES,
 		direct = new Map(),
 	}: {
 		unstored?: Readonly<
 			Record<string, { reason: string; topic: DatasetTopic }>
 		>;
 		censusTables?: readonly CensusTable[];
+		/** The Scotland and Northern Ireland census tables stored, likewise. */
+		censusNationTables?: readonly CensusNationTable[];
 		/** Rows read straight from sources, by type; see `readDirectParts`. */
 		direct?: DirectParts;
 	} = {},
@@ -313,6 +323,7 @@ export const buildAtlasSqlite = (
 				// After the declared datasets, whose measures and members
 				// the census tables share.
 				...censusSmallAreaStatistics(repositoryRoot, censusTables),
+				...censusNationStatistics(repositoryRoot, censusNationTables),
 			],
 			ids,
 			new Map(
