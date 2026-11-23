@@ -527,7 +527,7 @@ test("a rebuild keeps the ids of the last and will not renumber without its regi
 			nameProperty: "name",
 		};
 	};
-	const writeInventory = (releases: unknown[]) =>
+	const writeReleases = (releases: ReturnType<typeof addRelease>[]) => {
 		writeFileSync(
 			join(artifacts, "area-inventory.json"),
 			JSON.stringify({
@@ -537,6 +537,26 @@ test("a rebuild keeps the ids of the last and will not renumber without its regi
 				releases,
 			}),
 		);
+		writeFileSync(
+			join(root, "data/build/geography/boundary-releases.json"),
+			JSON.stringify({
+				schemaVersion: 1,
+				contentHash: "registry",
+				releases: releases.map(({ id, geography }) => ({
+					id,
+					geography,
+					title: `Wards ${id}`,
+					coverage: { countries: ["GB-ENG"] },
+					source: {
+						publisher: "Fixture publisher",
+						url: "https://example.org/boundaries",
+						licence: { name: "OGL" },
+					},
+					metadataHash: id,
+				})),
+			}),
+		);
+	};
 	const ids = () => {
 		const database = new DatabaseSync(
 			join(root, "data/build/atlas-base.sqlite"),
@@ -554,7 +574,7 @@ test("a rebuild keeps the ids of the last and will not renumber without its regi
 		}
 	};
 	const later = addRelease("2025", ["A", "C"]);
-	writeInventory([later]);
+	writeReleases([later]);
 	buildAtlasSqlite(root, { censusTables: [] });
 	const first = ids();
 	assert.deepEqual(
@@ -565,7 +585,7 @@ test("a rebuild keeps the ids of the last and will not renumber without its regi
 		],
 	);
 	// A release added before it in the inventory changes none of the ids.
-	writeInventory([addRelease("2024", ["A", "B"]), later]);
+	writeReleases([addRelease("2024", ["A", "B"]), later]);
 	buildAtlasSqlite(root, { censusTables: [] });
 	assert.deepEqual(
 		ids().map((row) => [row.id, row.release, row.code]),
