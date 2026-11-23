@@ -23,7 +23,7 @@ test("all ordinary published tables are strict", () => {
 	assert.deepEqual(
 		all(`SELECT name FROM pragma_table_list
 			 WHERE schema = 'main' AND type = 'table'
-			   AND name NOT LIKE 'sqlite_%' AND strict = 0`),
+			   AND name NOT GLOB 'sqlite_*' AND strict = 0`),
 		[],
 	);
 });
@@ -40,7 +40,7 @@ test("every worked example returns rows", () => {
 test("schema_table covers every table and view", () => {
 	const missing = all(
 		`SELECT l.name FROM pragma_table_list l
-		 WHERE l.schema = 'main' AND l.name NOT LIKE 'sqlite_%' AND l.type IN ('table', 'view', 'virtual')
+		 WHERE l.schema = 'main' AND l.name NOT GLOB 'sqlite_*' AND l.type IN ('table', 'view', 'virtual')
 		   AND l.name NOT IN (SELECT name FROM schema_table)`,
 	);
 	assert.deepEqual(missing, []);
@@ -57,11 +57,11 @@ test("schema_table covers every table and view", () => {
 	);
 });
 
-test("schema_column covers every column of a core or reference table", () => {
+test("schema_column covers every declared column", () => {
 	const missing = all(
 		`SELECT t.name AS table_name, c.name AS column_name
-		 FROM schema_table t JOIN pragma_table_info(t.name) c
-		 WHERE t.audience <> 'internal'
+		 FROM schema_table t JOIN pragma_table_xinfo(t.name) c
+		 WHERE c.hidden <> 1
 		   AND NOT EXISTS (SELECT 1 FROM schema_column d WHERE d.table_name = t.name AND d.column_name = c.name)`,
 	);
 	assert.deepEqual(missing, []);

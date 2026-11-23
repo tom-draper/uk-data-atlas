@@ -49,7 +49,7 @@ const count = (database: DatabaseSync, sql: string) =>
 
 test("a module file holds only the rows of its datasets", async (t) => {
 	const root = scratch(t);
-	await buildFixtureRelease(root);
+	await buildFixtureRelease(root, { companionProvenance: true });
 	const atlas = open(join(root, "atlas.sqlite"));
 	assert.equal(
 		count(atlas, "SELECT count(*) AS n FROM crosswalk_edge_check"),

@@ -19,7 +19,8 @@ Add this under its SQLite rule; the ID is not registered upstream:
 >68 belong =0x554b4441 UK Data Atlas SQLite database -
 ```
 
-`meta.schemaVersion` records the schema version. `buildId` is a SHA-256 of
+`meta.schemaVersion` records the schema version. The `build_provenance` table
+in `atlas-build.sqlite` records the build facts. `buildId` is a SHA-256 of
 an intermediate assembled database and its provenance, before final publication.
 It identifies the assembly without hashing the file that contains the hash.
 `dataRelease` contains the pinned `data-release.json` when present. `gitCommit`
@@ -420,11 +421,12 @@ The separation moved, out of `atlas.sqlite` and into the build metadata file:
 | `crosswalk.artifact`, `content_hash`, `record_count`, `bytes`                                                                                   | `crosswalk_build`           |
 | `dataset.fingerprint`, `compiled_*`, `payload_id`                                                                                               | `dataset_build`             |
 | `statistics_read_path`, `statistics_selector*`, `statistics_observation_fallback`                                                               | the same names              |
+| `meta` build provenance keys                                                                                                                    | `build_provenance`          |
 | `postcode_area_shard_hash`                                                                                                                      | the same name               |
 
-`meta` still holds `buildId`, `gitCommit`, `gitDirty` and `dataRelease`:
-the file describes itself (#678, #724), so those stamps stay. The schema
-version is 4 because the table layout changed.
+The `meta` table holds the file settings `schemaVersion` and
+`postcodeAreaLayout`. The assembly provenance stamps live in
+`atlas-build.sqlite.build_provenance`.
 
 Some references stay undeclared on purpose:
 

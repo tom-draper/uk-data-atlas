@@ -1,4 +1,7 @@
-import { ATLAS_SCHEMA_VERSION } from "@uk-data-atlas/atlas-db";
+import {
+	ATLAS_SCHEMA_VERSION,
+	buildMetadataPathOf,
+} from "@uk-data-atlas/atlas-db";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -203,10 +206,30 @@ export const fixtureManifests = (): ModuleManifest[] => {
  */
 export const buildFixtureRelease = async (
 	root: string,
-	{ coreKey = CORE_COMPATIBILITY_KEY }: { coreKey?: string } = {},
+	{
+		coreKey = CORE_COMPATIBILITY_KEY,
+		companionProvenance = false,
+	}: { coreKey?: string; companionProvenance?: boolean } = {},
 ): Promise<ModuleManifest[]> => {
 	const atlas = join(root, "atlas.sqlite");
 	writeFixtureAtlas(atlas);
+	if (companionProvenance) {
+		const domain = new DatabaseSync(atlas);
+		try {
+			domain.exec("DELETE FROM meta WHERE key = 'buildId'");
+		} finally {
+			domain.close();
+		}
+		const build = new DatabaseSync(buildMetadataPathOf(atlas));
+		try {
+			build.exec(`
+				CREATE TABLE build_provenance (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID;
+				INSERT INTO build_provenance VALUES ('buildId', 'fixture-build');
+			`);
+		} finally {
+			build.close();
+		}
+	}
 	const release = join(root, "release");
 	const manifests = fixtureManifests();
 	const builds = await buildModules({

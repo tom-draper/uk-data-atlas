@@ -1,5 +1,9 @@
+import {
+	buildMetadataPathOf,
+	openBuildMetadata,
+} from "@uk-data-atlas/atlas-db";
 import { createHash } from "node:crypto";
-import { createReadStream, mkdirSync, rmSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, rmSync } from "node:fs";
 import { stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -363,6 +367,36 @@ const rowSelection = (id: string): readonly ModuleTable[] => {
 	});
 };
 
+/** Read the companion file for current builds, with a fallback for older releases. */
+const moduleProvenance = (database: DatabaseSync, atlasPath: string) => {
+	const rows = database
+		.prepare(
+			"SELECT key, value FROM src.meta WHERE key IN ('schemaVersion', 'buildId', 'buildTimestamp', 'gitCommit', 'gitDirty', 'dataRelease')",
+		)
+		.all();
+	if (existsSync(buildMetadataPathOf(atlasPath))) {
+		const build = openBuildMetadata(atlasPath, { fresh: true });
+		try {
+			const hasProvenance = build
+				.prepare(
+					"SELECT 1 FROM sqlite_schema WHERE name = 'build_provenance' AND type = 'table'",
+				)
+				.get();
+			if (hasProvenance)
+				rows.push(
+					...build
+						.prepare("SELECT key, value FROM build_provenance")
+						.all(),
+				);
+		} finally {
+			build.release();
+		}
+	}
+	return Object.fromEntries(
+		rows.map(({ key, value }) => [String(key), String(value)]),
+	);
+};
+
 /** Builds the SQLite file of one theme module or of `postcodes`. */
 export const buildModuleDatabase = (
 	atlasPath: string,
@@ -406,16 +440,9 @@ export const buildModuleDatabase = (
 				for (const { table, where } of rowSelection(manifest.id))
 					copyTable(database, table, where);
 			}
-			const provenance = Object.fromEntries(
-				database
-					.prepare(
-						"SELECT key, value FROM src.meta WHERE key IN ('schemaVersion', 'buildId', 'buildTimestamp', 'gitCommit', 'gitDirty', 'dataRelease')",
-					)
-					.all()
-					.map((row) => [String(row.key), String(row.value)]),
-			);
+
 			moduleInfo(database, {
-				...provenance,
+				...moduleProvenance(database, atlasPath),
 				id: manifest.id,
 				coreCompatibility: CORE_COMPATIBILITY_KEY,
 				kind: manifest.kind,

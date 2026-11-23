@@ -23,7 +23,7 @@ test("each rule reports its own violation", () => {
 		"CREATE TABLE loose (id INTEGER)",
 		"CREATE TABLE areas (id INTEGER) STRICT",
 		"CREATE TABLE area_set (areaId INTEGER) STRICT",
-		"CREATE TABLE crosswalk (id INTEGER, artifact TEXT, content_hash TEXT) STRICT",
+		"CREATE TABLE crosswalk (id INTEGER, artifact TEXT, content_hash TEXT, header TEXT) STRICT",
 		"CREATE TABLE payloads (id TEXT, payload TEXT) STRICT",
 		"CREATE TABLE area_inventory_metadata (id INTEGER) STRICT",
 		"CREATE TABLE dataset_build (id INTEGER) STRICT",
@@ -33,9 +33,10 @@ test("each rule reports its own violation", () => {
 		expect.arrayContaining([
 			{ rule: "strict", subject: "loose" },
 			{ rule: "plural-table", subject: "areas" },
-			{ rule: "camel-case", subject: "area_set.areaId" },
+			{ rule: "snake-case", subject: "area_set.areaId" },
 			{ rule: "build-metadata", subject: "crosswalk.artifact" },
 			{ rule: "build-metadata", subject: "crosswalk.content_hash" },
+			{ rule: "build-metadata", subject: "crosswalk.header" },
 			{ rule: "payload-table", subject: "payloads" },
 			{ rule: "build-metadata", subject: "area_inventory_metadata" },
 			{ rule: "build-metadata", subject: "dataset_build" },
@@ -44,14 +45,14 @@ test("each rule reports its own violation", () => {
 	);
 });
 
-test("a camelCase table or view name is reported", () => {
+test("table, view and generated column names must be snake_case", () => {
 	const database = open(
-		"CREATE TABLE areaSet (id INTEGER) STRICT",
+		"CREATE TABLE areaSet (id INTEGER, AREA_ID INTEGER GENERATED ALWAYS AS (id)) STRICT",
 		"CREATE VIEW areaView AS SELECT id FROM areaSet",
 	);
 	assert.deepEqual(
 		checkSchemaConventions(database).map((finding) => finding.subject),
-		["areaSet", "areaView"],
+		["areaSet", "areaSet.AREA_ID", "areaView"],
 	);
 });
 
@@ -79,7 +80,7 @@ test("table.* allows every column of a table", () => {
 		"CREATE TABLE area_set (areaId INTEGER, otherId INTEGER) STRICT",
 	);
 	assert.deepEqual(
-		checkSchemaConventions(database, { "camel-case": ["area_set.*"] }),
+		checkSchemaConventions(database, { "snake-case": ["area_set.*"] }),
 		[],
 	);
 });

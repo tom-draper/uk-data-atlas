@@ -66,7 +66,11 @@ const complete = {
 		description: "Areas.",
 		columns: { id: "Id.", code: "Code." },
 	},
-	plumbing: { audience: "internal", description: "Cache.", columns: {} },
+	plumbing: {
+		audience: "internal",
+		description: "Cache.",
+		columns: { x: "Cached value." },
+	},
 	v_area: {
 		audience: "reference",
 		description: "Areas.",
@@ -166,7 +170,11 @@ test("fails on a missing description, a missing column and an unknown name", () 
 	);
 });
 
-test("internal tables need only a description", () => {
-	const { problems } = resolveSchemaDocs(fixture(), docs(complete));
-	assert.deepEqual(problems, []);
+test("internal generated columns also need a description", () => {
+	const database = fixture();
+	database.exec(
+		"ALTER TABLE plumbing ADD COLUMN doubled INTEGER GENERATED ALWAYS AS (x * 2)",
+	);
+	const { problems } = resolveSchemaDocs(database, docs(complete));
+	assert.deepEqual(problems, ["Column plumbing.doubled has no description"]);
 });

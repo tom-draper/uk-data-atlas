@@ -31,7 +31,7 @@ const DATABASES: Array<[string, ConventionAllowlist]> = [
 		"atlas-cache.sqlite",
 		{
 			"plural-table": ["payloads"],
-			"payload-table": ["payloads"],
+			"payload-table": ["dataset_payload", "payloads"],
 			"build-metadata": [
 				"dataset_payload.sha256",
 				"dataset_payload.source_sha256",
