@@ -59,6 +59,19 @@ export interface PopulationUkDataset {
 	data: Record<string, PopulationLocalAuthorityData>;
 }
 
+/**
+ * One nation's authority estimates by age and sex, from the nation's own
+ * statistics office, on the authority boundaries of the 2023 release.
+ */
+export interface PopulationNationDataset<Type extends string> {
+	id: string;
+	type: Type;
+	year: number;
+	boundaryYear: LocalAuthorityYear;
+	boundaryType: "localAuthority";
+	data: Record<string, PopulationLocalAuthorityData>;
+}
+
 export interface AgeGroups {
 	"0-17": number;
 	"18-29": number;
