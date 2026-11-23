@@ -49,6 +49,22 @@ const UNDECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 	["health/health-status/census-2021-ts037", ["census-2021-ts037"]],
 	["housing/housing-stock/census-2021-ts054", ["census-2021-ts054"]],
 	["economy/labour-market/census-2021-ts066", ["census-2021-ts066"]],
+	[
+		"population/population-estimates/census-2022-scotland-data-zone",
+		[
+			"census-2022-scotland-uv101b",
+			"census-2022-scotland-uv102b",
+			"census-2022-scotland-uv302",
+			"census-2022-scotland-uv404",
+			"census-2022-scotland-uv113",
+		],
+		"One NRS archive of the census tables on data zones, so it feeds a dataset for each table it is read for.",
+	],
+	[
+		"population/population-estimates/census-2021-northern-ireland",
+		["census-2021-ni-a01", "census-2021-ni-e01"],
+		"NISRA publishes the census main statistics as archives of workbooks, so one folder feeds a dataset for each table it is read for.",
+	],
 ];
 
 /**

@@ -39,6 +39,8 @@ export const SOURCES = {
 	"census-2021-ts037": entry("health-status"),
 	"census-2021-ts054": entry("housing-stock"),
 	"census-2021-ts066": entry("labour-market"),
+	"census-2022-scotland-data-zone": entry("population-estimates"),
+	"census-2021-northern-ireland": entry("population-estimates"),
 
 	// Foundation: denominators, lookups and the geometry inputs of crosswalks
 	lookups: entry("core", "lookups"),

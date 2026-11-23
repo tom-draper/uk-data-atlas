@@ -1,5 +1,6 @@
 import { STATISTICS_DATASETS } from "@uk-data-atlas/measures";
 import { datasetSlug } from "@/lib/datasets";
+import { CENSUS_NATION_TABLES } from "../../pipeline/src/statistics/censusNationTables";
 import { CENSUS_SMALL_AREA_TABLES } from "../../pipeline/src/statistics/censusSmallAreaTables";
 
 /**
@@ -20,6 +21,12 @@ export const DATASETS: readonly {
 	})),
 	...CENSUS_SMALL_AREA_TABLES.map((table) => ({
 		id: `census-2021-${table.table}`,
+		topic: table.topic,
+		related: table.related ?? [],
+		origin: "census tables",
+	})),
+	...CENSUS_NATION_TABLES.map((table) => ({
+		id: table.dataset,
 		topic: table.topic,
 		related: table.related ?? [],
 		origin: "census tables",

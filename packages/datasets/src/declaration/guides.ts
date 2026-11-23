@@ -71,6 +71,55 @@ const UNDECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		summary:
 			"Census 2021 counts of residents aged 16 and over in England and Wales by economic activity, for lower and middle layer super output areas.",
 	},
+	"census-2022-scotland-uv101b": {
+		title: "Scotland's Census 2022 usual residents by residence type",
+		topic: "population-estimates",
+		about: "How many usual residents lived in households and in communal establishments such as care homes and student halls on Census Day 2022, for data zones in Scotland.",
+		summary:
+			"Scotland's Census 2022 counts of usual residents, split between people living in households and in communal establishments, for 2022 data zones. Published by National Records of Scotland. Scotland's Census Day was 20 March 2022, a year after England, Wales and Northern Ireland.",
+	},
+	"census-2022-scotland-uv102b": {
+		title: "Scotland's Census 2022 age in five-year bands",
+		topic: "population-estimates",
+		about: "How many residents of each five-year age band lived in data zones in Scotland on Census Day 2022, except ages 15 to 19.",
+		summary:
+			"Scotland's Census 2022 counts of residents by age in five-year bands, for 2022 data zones. Ages 15 to 19 are not included, because Scotland publishes 15, 16 to 17 and 18 to 19 separately. Published by National Records of Scotland.",
+	},
+	"census-2022-scotland-uv302": {
+		title: "Scotland's Census 2022 general health",
+		topic: "health-status",
+		about: "How residents of data zones in Scotland rated their own general health in the 2022 Census, from very good to very bad.",
+		summary:
+			"Scotland's Census 2022 counts of residents by self-assessed general health, for 2022 data zones. Published by National Records of Scotland.",
+	},
+	"census-2022-scotland-uv404": {
+		title: "Scotland's Census 2022 household tenure",
+		topic: "housing-stock",
+		about: "How many households owned outright, part owned, rented privately or lived rent free in data zones in Scotland on Census Day 2022.",
+		summary:
+			"Scotland's Census 2022 counts of households by tenure, for 2022 data zones. Owned with a mortgage or loan and social rented are not included, because Scotland counts shared equity apart and combines council and housing association renting. Published by National Records of Scotland.",
+	},
+	"census-2022-scotland-uv113": {
+		title: "Scotland's Census 2022 household composition",
+		topic: "population-estimates",
+		about: "How many households of each type, such as one person, couples or lone parents, there were in data zones in Scotland on Census Day 2022.",
+		summary:
+			"Scotland's Census 2022 counts of households by composition, for 2022 data zones. Types with dependent children are not included, because Scotland counts one and two or more dependent children separately. Published by National Records of Scotland.",
+	},
+	"census-2021-ni-a01": {
+		title: "Census 2021 Northern Ireland usual residents",
+		topic: "population-estimates",
+		about: "How many usual residents lived in each data zone in Northern Ireland on Census Day 2021.",
+		summary:
+			"Census 2021 counts of usual residents in Northern Ireland, for 2021 data zones. Published by the Northern Ireland Statistics and Research Agency.",
+	},
+	"census-2021-ni-e01": {
+		title: "Census 2021 Northern Ireland households",
+		topic: "population-estimates",
+		about: "How many households there were in each data zone in Northern Ireland on Census Day 2021.",
+		summary:
+			"Census 2021 counts of households in Northern Ireland, for 2021 data zones. Published by the Northern Ireland Statistics and Research Agency.",
+	},
 	"census-2021-ts054": {
 		title: "Census 2021 tenure",
 		topic: "housing-stock",

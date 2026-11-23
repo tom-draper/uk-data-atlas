@@ -251,7 +251,10 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 			datasets: {
 				order: [
 					"census-2021-ts001",
+					"census-2022-scotland-uv101b",
+					"census-2021-ni-a01",
 					"census-2021-ts037",
+					"census-2022-scotland-uv302",
 					"general-health",
 				],
 				reason: `census-2021-ts001 is the census's own count of usual residents. ${CENSUS_DISCLOSURE}`,
@@ -277,8 +280,11 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 			datasets: {
 				order: [
 					"census-2021-ts054",
+					"census-2022-scotland-uv404",
 					"housing-tenure",
 					"census-2021-ts003",
+					"census-2022-scotland-uv113",
+					"census-2021-ni-e01",
 					"fuel-poverty",
 					"car-availability",
 				],
