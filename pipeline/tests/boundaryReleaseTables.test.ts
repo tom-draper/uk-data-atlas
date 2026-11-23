@@ -1,10 +1,33 @@
+import type { BoundaryRegistry } from "@uk-data-atlas/geography";
+import { IdRegistries } from "../src/ids/idRegistries.ts";
 import { DatabaseSync } from "node:sqlite";
 import { expect, test } from "vitest";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 import {
+	areaReleaseTable,
 	boundaryReleaseTables,
 	releaseReferencePeriod,
 } from "../src/storage/boundaryReleaseTables.ts";
+
+const writeReleases = (db: DatabaseSync, registry: BoundaryRegistry) => {
+	const ids = IdRegistries.memory();
+	const releaseIds = registry.releases.map((release) =>
+		ids.release.assign(release.geography, release.id),
+	);
+	writeSqliteTables(db, {
+		area_release: areaReleaseTable(
+			registry.releases.map(({ geography, id }) => ({
+				geography,
+				id,
+				status: "not-compiled",
+				reason: "Fixture",
+			})),
+			releaseIds,
+			registry,
+		),
+		...boundaryReleaseTables(registry, ids),
+	});
+};
 
 test("stores boundary source metadata and country coverage as queryable rows", () => {
 	const db = new DatabaseSync(":memory:");
@@ -12,46 +35,43 @@ test("stores boundary source metadata and country coverage as queryable rows", (
 		db.exec(
 			"PRAGMA foreign_keys = ON; CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE); INSERT INTO geography VALUES (1, 'ward')",
 		);
-		writeSqliteTables(
-			db,
-			boundaryReleaseTables({
-				schemaVersion: 1,
-				contentHash: "registry-hash",
-				releases: [
-					{
-						id: "2024-12-ew-bgc",
-						geography: "ward",
-						title: "Wards",
-						temporalCoverage: "2024",
-						validity: [
-							{
-								purpose: "election_poll",
-								validFrom: "2024-07-04",
-								validTo: "2024-07-04",
-								sourceUrl: "https://example.org/evidence",
-								note: "Election day",
-							},
-						],
-						coverage: { countries: ["GB-ENG", "GB-WLS"] },
-						source: {
-							publisher: "ONS",
-							url: "https://example.org",
-							licence: { name: "OGL" },
+		writeReleases(db, {
+			schemaVersion: 1,
+			contentHash: "registry-hash",
+			releases: [
+				{
+					id: "2024-12-ew-bgc",
+					geography: "ward",
+					title: "Wards",
+					temporalCoverage: "2024",
+					validity: [
+						{
+							purpose: "election_poll",
+							validFrom: "2024-07-04",
+							validTo: "2024-07-04",
+							sourceUrl: "https://example.org/evidence",
+							note: "Election day",
 						},
-						metadataHash: "hash",
-						deprecation: {
-							deprecated: "2026-01-01",
-							replacedBy: "new",
-							reason: "Replaced",
-						},
+					],
+					coverage: { countries: ["GB-ENG", "GB-WLS"] },
+					source: {
+						publisher: "ONS",
+						url: "https://example.org",
+						licence: { name: "OGL" },
 					},
-				],
-			}),
-		);
+					metadataHash: "hash",
+					deprecation: {
+						deprecated: "2026-01-01",
+						replacedBy: "new",
+						reason: "Replaced",
+					},
+				},
+			],
+		});
 		expect(
 			db
 				.prepare(
-					"SELECT temporal_coverage, licence, replaced_by FROM boundary_release WHERE geography = ? AND release = ?",
+					"SELECT temporal_coverage, licence, replaced_by FROM area_release WHERE geography = ? AND release = ?",
 				)
 				.get("ward", "2024-12-ew-bgc"),
 		).toMatchObject({
@@ -59,8 +79,14 @@ test("stores boundary source metadata and country coverage as queryable rows", (
 			licence: "OGL",
 			replaced_by: "new",
 		});
+		expect(() =>
+			db.exec("UPDATE area_release SET geography = 'missing'"),
+		).toThrow(/FOREIGN KEY constraint failed/);
+		expect(() =>
+			db.exec("UPDATE boundary_release_country SET release_id = 999"),
+		).toThrow(/FOREIGN KEY constraint failed/);
 		const valid = db.prepare(
-			"SELECT release FROM boundary_release_validity WHERE geography = ? AND purpose = ? AND ? BETWEEN valid_from AND valid_to",
+			"SELECT r.release FROM boundary_release_validity v JOIN area_release r ON r.id = v.release_id WHERE r.geography = ? AND purpose = ? AND ? BETWEEN valid_from AND valid_to",
 		);
 		expect(valid.all("ward", "election_poll", "2024-07-04")).toHaveLength(
 			1,
@@ -101,23 +127,20 @@ test("answers which snapshot was current on a date from release reference period
 		db.exec(
 			"CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE); INSERT INTO geography VALUES (1, 'la'), (2, 'zone')",
 		);
-		writeSqliteTables(
-			db,
-			boundaryReleaseTables({
-				schemaVersion: 1,
-				contentHash: "registry-hash",
-				releases: [
-					release("la", "2022-12-uk-bgc", "LAD, December 2022"),
-					release("la", "2023-05-uk-bgc", "LAD, May 2023"),
-					release("la", "2023-05-uk-bgc-v2", "LAD, May 2023, v2"),
-					release("la", "2023-12-uk-bgc", "LAD, December 2023"),
-					release("zone", "2011-ni"),
-					release("zone", "2021-ni"),
-				],
-			}),
-		);
+		writeReleases(db, {
+			schemaVersion: 1,
+			contentHash: "registry-hash",
+			releases: [
+				release("la", "2022-12-uk-bgc", "LAD, December 2022"),
+				release("la", "2023-05-uk-bgc", "LAD, May 2023"),
+				release("la", "2023-05-uk-bgc-v2", "LAD, May 2023, v2"),
+				release("la", "2023-12-uk-bgc", "LAD, December 2023"),
+				release("zone", "2011-ni"),
+				release("zone", "2021-ni"),
+			],
+		});
 		const current = db.prepare(
-			"SELECT release FROM boundary_release_edition WHERE geography = ? AND ? >= edition_from AND (edition_until IS NULL OR ? < edition_until) ORDER BY release",
+			"SELECT r.release FROM boundary_release_edition e JOIN area_release r ON r.id = e.release_id WHERE r.geography = ? AND ? >= e.edition_from AND (e.edition_until IS NULL OR ? < e.edition_until) ORDER BY r.release",
 		);
 		const on = (geography: string, date: string) =>
 			current.all(geography, date, date).map((row) => row.release);

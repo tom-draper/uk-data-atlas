@@ -1,3 +1,5 @@
+import type { BoundaryRegistry } from "@uk-data-atlas/geography";
+import { areaReleaseTable } from "./boundaryReleaseTables.ts";
 import { IdRegistries } from "../ids/idRegistries.ts";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -91,6 +93,7 @@ export const AREA_GEOGRAPHY_MISMATCH = `SELECT count(*) AS n FROM area_version v
 export const areaTables = (
 	directory: string,
 	ids: IdRegistries = IdRegistries.memory(),
+	registry?: BoundaryRegistry,
 ): Record<string, SqliteTable> => {
 	const inventory: AreaInventory = readJsonSync(
 		join(directory, "area-inventory.json"),
@@ -195,40 +198,11 @@ export const areaTables = (
 			key: ["id"],
 			rows: [...geographies].map(([slug, id]) => [id, slug]),
 		},
-		area_release: {
-			strict: true,
-			columns: [
-				// The release's stable id, assigned once and never reused. It is
-				// not an order: `inventory_position` is.
-				"id INTEGER NOT NULL UNIQUE",
-				"geography TEXT NOT NULL REFERENCES geography(slug)",
-				// The boundary release's name, such as `2024-12-uk-bgc`.
-				"release TEXT NOT NULL",
-				"inventory_position INTEGER NOT NULL UNIQUE",
-				"status TEXT NOT NULL",
-				"reason TEXT",
-			],
-			key: ["geography", "release"],
-			rows: inventory.releases.map((release, inventoryPosition) =>
-				release.status === "available"
-					? [
-							releasePositions[inventoryPosition]!,
-							release.geography,
-							release.id,
-							inventoryPosition,
-							release.status,
-							null,
-						]
-					: [
-							releasePositions[inventoryPosition]!,
-							release.geography,
-							release.id,
-							inventoryPosition,
-							release.status,
-							release.reason,
-						],
-			),
-		},
+		area_release: areaReleaseTable(
+			inventory.releases,
+			releasePositions,
+			registry,
+		),
 		// How each available release's compiled artifact was read. Only the
 		// build checks the artifact's header, so it is not in `area_release`.
 		area_release_build: {

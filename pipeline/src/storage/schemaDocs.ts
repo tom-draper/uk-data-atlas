@@ -54,7 +54,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "areas-and-releases",
-		body: "An area is one code in one geography, for all time (area). Boundaries are published in dated releases, such as localAuthority 2025-05-uk-bgc-v2, listed in area_release and described in boundary_release. An area_version is an area as it is in one release, with that release's name, size and population. The same code in two releases is two area_version rows sharing one area_id. Every statistic is attached to an area_version, so it is always clear which boundaries a figure is on. Some codes appear in more than one geography, for example a metropolitan borough is both a localAuthority and a countyAndUnitaryAuthority, so filter on geography when looking up a code. Release slugs read as YYYY-MM, then the countries covered (uk, gb, ew, en, sc, w, ni), then the boundary detail (bgc generalised and clipped, bfc full and clipped), then a version suffix if the publisher revised it.",
+		body: "An area is one code in one geography, for all time (area). Boundaries are published in dated releases, such as localAuthority 2025-05-uk-bgc-v2, listed and described in area_release. An area_version is an area as it is in one release, with that release's name, size and population. The same code in two releases is two area_version rows sharing one area_id. Every statistic is attached to an area_version, so it is always clear which boundaries a figure is on. Some codes appear in more than one geography, for example a metropolitan borough is both a localAuthority and a countyAndUnitaryAuthority, so filter on geography when looking up a code. Release slugs read as YYYY-MM, then the countries covered (uk, gb, ew, en, sc, w, ni), then the boundary detail (bgc generalised and clipped, bfc full and clipped), then a version suffix if the publisher revised it.",
 	},
 	{
 		topic: "statistics",
@@ -159,7 +159,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 	area_release: {
 		audience: "core",
 		description:
-			"Every boundary release of every geography. series, crosswalk, election and area_version refer to it through release_id. boundary_release holds the publisher's description of the same release.",
+			"Every boundary release of every geography, with its availability and the publisher's description. Series, crosswalk, election and area_version refer to its stable integer id.",
 		columns: {
 			id: "Stable integer id, assigned once.",
 			geography: "The geography slug (geography.slug).",
@@ -167,17 +167,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 				"The release slug, such as 2025-05-uk-bgc-v2: year and month, countries covered, boundary detail and version.",
 			inventory_position:
 				"Build order of the release. Not stable between builds.",
-			status: "'available' if the release's areas are held, otherwise 'unavailable' with a reason.",
+			status: "'available' if the release's areas are held, otherwise 'not-compiled' with a reason.",
 			reason: "Why an unavailable release is not held. Null for available releases.",
-		},
-	},
-	boundary_release: {
-		audience: "core",
-		description:
-			"The publisher's description of a boundary release: title, period covered, publisher, licence and deprecation. Keyed by geography and release slug, matching area_release.",
-		columns: {
-			geography: "The geography slug.",
-			release: "The release slug.",
 			title: "Human-readable title, such as 'Wards, May 2025 (UK, generalised, clipped)'.",
 			description: "Longer description from the boundary registry.",
 			temporal_coverage:
@@ -191,7 +182,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			licence: "Licence name as the publisher states it.",
 			licence_url: "Licence URL.",
 			deprecated:
-				"1 if the atlas no longer recommends this release, else 0.",
+				"Date the atlas stopped recommending this release (ISO date), or null.",
 			sunset: "Date after which a deprecated release may be removed.",
 			replaced_by: "The release slug that replaces a deprecated one.",
 			deprecation_reason: "Why a release is deprecated.",
@@ -202,8 +193,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"The countries a boundary release covers, one row per country.",
 		columns: {
-			geography: "The geography slug.",
-			release: "The release slug.",
+			release_id: "The boundary release (area_release.id).",
 			country:
 				"A country it covers: England, Wales, Scotland or Northern Ireland.",
 		},
@@ -213,8 +203,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"Links a boundary release to its source row, so its publisher and licence join like a dataset's.",
 		columns: {
-			geography: "The geography slug.",
-			release: "The release slug.",
+			release_id: "The boundary release (area_release.id).",
 			source_id: "The source (source.id).",
 		},
 	},
@@ -223,8 +212,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"Evidence that a release was in force for a purpose on given dates, such as the constituencies used at a general election. Only verified entries are stored; a missing row is not a claim that a release was invalid.",
 		columns: {
-			geography: "The geography slug.",
-			release: "The release slug.",
+			release_id: "The boundary release (area_release.id).",
 			purpose: "What the release was used for, such as election_poll.",
 			valid_from: "First date the evidence covers (ISO date).",
 			valid_to: "Last date the evidence covers (ISO date).",
@@ -237,6 +225,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"View: which edition of each geography's boundaries was the latest held on a date. edition_from is the release's edition date and edition_until the next release's. This orders the snapshots the atlas holds; it is not the legal date the boundaries took effect.",
 		columns: {
+			release_id: "The boundary release (area_release.id).",
 			geography: "The geography slug.",
 			release: "The release slug.",
 			edition_from: "Edition date of this release (ISO date).",

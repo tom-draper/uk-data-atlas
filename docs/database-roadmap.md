@@ -269,8 +269,9 @@ as published data.
   2026-11-04 build so no existing id changed. Order is stored apart as
   `inventory_position`, and `area_release` is now `id` and `release`. CI
   checks the registries against the base branch. See `docs/stable-ids.md`.
-- **Task 3**: `boundary_release` and `boundary_release_country` store registry
-  metadata and country coverage. Each release stores the reference year and
+- **Task 3**: `area_release` stores the inventory and registry on one stable id
+  with a foreign key to `geography(slug)`. Country, source, validity and edition
+  data join by `release_id`. Each release stores the reference year and
   month of its edition, and `boundary_release_edition` answers "which
   snapshot was current on date X?". This orders the held snapshots and is not
   a legal effective-date interval. Four polling dates are recorded in

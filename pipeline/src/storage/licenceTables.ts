@@ -53,14 +53,10 @@ export function licenceTables(
 		boundary_release_source: {
 			strict: true,
 			columns: [
-				"geography TEXT NOT NULL",
-				"release TEXT NOT NULL",
+				"release_id INTEGER NOT NULL REFERENCES area_release(id)",
 				"source_id INTEGER NOT NULL REFERENCES source(id)",
 			],
-			key: ["geography", "release"],
-			constraints: [
-				"FOREIGN KEY (geography, release) REFERENCES boundary_release(geography, release)",
-			],
+			key: ["release_id"],
 			rows: function* (database) {
 				const insert = database.prepare(
 					"INSERT OR IGNORE INTO source (id, publisher, url, licence, licence_url, citation) VALUES (?, ?, ?, ?, ?, NULL)",
@@ -81,7 +77,10 @@ export function licenceTables(
 						source.licence.name,
 						source.licence.url ?? null,
 					);
-					yield [release.geography, release.id, id];
+					yield [
+						ids.release.assign(release.geography, release.id),
+						id,
+					];
 				}
 			},
 		},
@@ -144,7 +143,7 @@ export function licenceTables(
 			key: ["crosswalk_id", "source_id", "input"],
 			rows: function* (database) {
 				const find = database.prepare(
-					"SELECT source_id FROM boundary_release_source WHERE geography = ? AND release = ?",
+					"SELECT source_id FROM boundary_release_source WHERE release_id = ?",
 				);
 				const normalise = (value: string) =>
 					value.replace(/[^a-z0-9]/gi, "").toLowerCase();
@@ -170,10 +169,11 @@ export function licenceTables(
 							typeof item.geometryInput !== "string"
 						)
 							continue;
-						const source = find.get(
+						const releaseId = ids.release.id(
 							item.geography,
 							item.boundaryRelease,
 						);
+						const source = find.get(releaseId ?? null);
 						if (!source)
 							throw new Error(
 								`Missing boundary source ${item.geography}/${item.boundaryRelease}`,
@@ -204,7 +204,9 @@ export function licenceTables(
 							`${normalise(match[1]!)}/${match[2]!}`,
 						);
 						if (!release) continue;
-						const source = find.get(release.geography, release.id);
+						const source = find.get(
+							ids.release.assign(release.geography, release.id),
+						);
 						if (source)
 							yield [
 								row.id as number,

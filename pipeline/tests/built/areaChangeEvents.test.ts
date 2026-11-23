@@ -264,8 +264,7 @@ test("a legal date lies between the earlier edition and the end of the later edi
 	const problems = all(
 		`SELECT e.id, e.effective_date, e.edition_date, fe.edition_from AS earlier
 		FROM area_change_event e
-		JOIN area_release fr ON fr.id = e.from_release_id
-		JOIN boundary_release_edition fe ON fe.geography = fr.geography AND fe.release = fr.release
+		JOIN boundary_release_edition fe ON fe.release_id = e.from_release_id
 		WHERE e.date_basis = 'legal'
 			AND (e.effective_date < fe.edition_from
 				OR e.effective_date > date(e.edition_date, 'start of month', '+1 month', '-1 day'))`,

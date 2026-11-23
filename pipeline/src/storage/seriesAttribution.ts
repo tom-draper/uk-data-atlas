@@ -343,25 +343,16 @@ const readLineage = (database: DatabaseSync) => {
 				] as const,
 		),
 	);
-	const releases = new Map<number, { geography: string; release: string }>();
-	for (const row of all(
-		database,
-		"SELECT id, geography, release FROM area_release",
-	))
-		releases.set(row.id as number, {
-			geography: row.geography as string,
-			release: row.release as string,
-		});
 	const boundaryReleases = new Map<
-		string,
+		number,
 		{ sourceId: number; publisher: string; year: number }
 	>();
 	for (const row of optionalAll(
 		database,
 		"boundary_release_source",
-		"SELECT b.geography, b.release, b.source_id, r.publisher, r.reference_year FROM boundary_release_source b JOIN boundary_release r ON r.geography = b.geography AND r.release = b.release",
+		"SELECT b.release_id, b.source_id, r.publisher, r.reference_year FROM boundary_release_source b JOIN area_release r ON r.id = b.release_id",
 	))
-		boundaryReleases.set(`${row.geography}|${row.release}`, {
+		boundaryReleases.set(row.release_id as number, {
 			sourceId: row.source_id as number,
 			publisher: row.publisher as string,
 			year: row.reference_year as number,
@@ -440,7 +431,6 @@ const readLineage = (database: DatabaseSync) => {
 		sourceLicences,
 		electionLicences,
 		inputs,
-		releases,
 		boundaryReleases,
 		crosswalks,
 		crosswalkProvenance,
@@ -540,12 +530,7 @@ export const walkSeriesLineage = (
 			citationNotices(lineage.sources.get(dataset.sourceId)!.citation),
 		);
 
-		const release = lineage.releases.get(row.releaseId);
-		const boundary =
-			release &&
-			lineage.boundaryReleases.get(
-				`${release.geography}|${release.release}`,
-			);
+		const boundary = lineage.boundaryReleases.get(row.releaseId);
 		if (boundary)
 			add(
 				closure,

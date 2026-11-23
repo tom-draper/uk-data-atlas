@@ -2,7 +2,6 @@ import { DatabaseSync } from "node:sqlite";
 import { expect, test } from "vitest";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 import { IdRegistries } from "../src/ids/idRegistries.ts";
-import { boundaryReleaseTables } from "../src/storage/boundaryReleaseTables.ts";
 import { licenceTables } from "../src/storage/licenceTables.ts";
 
 test("records boundary provenance and isolates historical local election licences", () => {
@@ -31,6 +30,7 @@ test("records boundary provenance and isolates historical local election licence
 		CREATE TABLE geography (id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
 		CREATE TABLE dataset (id INTEGER PRIMARY KEY, slug TEXT NOT NULL);
 		INSERT INTO geography VALUES (1, 'ward');
+		CREATE TABLE area_release (id INTEGER PRIMARY KEY);
 		CREATE TABLE election (id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL REFERENCES dataset(id), label TEXT NOT NULL, date TEXT NOT NULL);
 		CREATE TABLE crosswalk (id INTEGER PRIMARY KEY, provenance TEXT NOT NULL);
 		INSERT INTO source VALUES (1, 'mixed', 'https://example.org/mixed', 'Open Parliament Licence (2021–2025); CC BY-SA 3.0 (2016–2019)', NULL, NULL);
@@ -42,11 +42,18 @@ test("records boundary provenance and isolates historical local election licence
 				inputs: [
 					{ input: "boundaries/ward/2024/ward.geojson" },
 					{ input: "other/unknown.csv" },
+					{
+						geography: "ward",
+						boundaryRelease: "2024",
+						geometryInput: "ward-shape",
+					},
 				],
 			}),
 		);
-		writeSqliteTables(db, boundaryReleaseTables(registry));
 		const ids = IdRegistries.memory();
+		db.prepare("INSERT INTO area_release VALUES (?)").run(
+			ids.release.assign("ward", "2024"),
+		);
 		ids.source.assign(
 			JSON.stringify([
 				"mixed",
@@ -74,10 +81,19 @@ test("records boundary provenance and isolates historical local election licence
 		expect(
 			db
 				.prepare(
-					"SELECT l.share_alike FROM crosswalk_provenance_source c JOIN source_licence sl ON sl.source_id = c.source_id JOIN licence l ON l.id = sl.licence_id",
+					"SELECT c.input, l.share_alike FROM crosswalk_provenance_source c JOIN source_licence sl ON sl.source_id = c.source_id JOIN licence l ON l.id = sl.licence_id ORDER BY c.input",
 				)
 				.all(),
-		).toEqual([expect.objectContaining({ share_alike: 0 })]);
+		).toEqual([
+			expect.objectContaining({
+				input: "boundaries/ward/2024/ward.geojson",
+				share_alike: 0,
+			}),
+			expect.objectContaining({
+				input: "geometry:ward/2024:ward-shape",
+				share_alike: 0,
+			}),
+		]);
 		expect(
 			db
 				.prepare(
