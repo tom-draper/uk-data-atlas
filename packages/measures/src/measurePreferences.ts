@@ -312,10 +312,12 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 					"population-data-zone-ni",
 					"imd",
 					"population",
+					"population-council-scotland",
+					"population-district-ni",
 					"population-uk",
 					"population-constituency",
 				],
-				reason: "The finest areas first, so a value converted onto another release is built from the most areas. population-lsoa, population-data-zone-scotland and population-data-zone-ni are the official small-area estimates of each nation (2011 to 2024, and 2021 to 2024 for Northern Ireland), so their sums are preferred on every release they reach. imd is published on LSOAs and holds the denominators of its two editions, counted at mid-2012 for 2015 and mid-2022 for 2025 and held under the edition year, so it comes after the mid-year estimates: it fills the 2025 period they do not reach and never replaces a mid-year estimate for 2015. population holds wards for 2022, which population-uk also converts onto councils from the 2023 authorities: the ward sum is preferred there. population-constituency holds 2021 and 2022 only. A value published on the release itself is native and wins over any of these.",
+				reason: "The finest areas first, so a value converted onto another release is built from the most areas. population-lsoa, population-data-zone-scotland and population-data-zone-ni are the official small-area estimates of each nation (2011 to 2024, and 2021 to 2024 for Northern Ireland), so their sums are preferred on every release they reach. imd is published on LSOAs and holds the denominators of its two editions, counted at mid-2012 for 2015 and mid-2022 for 2025 and held under the edition year, so it comes after the mid-year estimates: it fills the 2025 period they do not reach and never replaces a mid-year estimate for 2015. population holds wards for 2022, which population-uk also converts onto councils from the 2023 authorities: the ward sum is preferred there. population-council-scotland and population-district-ni are the single-year estimates of National Records of Scotland and NISRA for their own councils and districts, which hold every year from 1981 and 2001 and Scotland's revised mid-2023 and mid-2024, so they come before population-uk, which repackages the same two nations through the ONS. population-constituency holds 2021 and 2022 only. A value published on the release itself is native and wins over any of these.",
 			},
 			dimensions: {
 				age: breakdown(

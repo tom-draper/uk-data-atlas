@@ -215,6 +215,8 @@ export const POPULATION_DATASETS = [
 	"population-data-zone-scotland",
 	"population-data-zone-ni",
 	"population",
+	"population-council-scotland",
+	"population-district-ni",
 	"population-uk",
 	"population-constituency",
 ] as const;
