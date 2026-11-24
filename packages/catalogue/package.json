@@ -11,6 +11,7 @@
 		"./place-facts": "./src/placeFacts.ts",
 		"./compactPayload": "./src/compactPayload.ts",
 		"./place-profile": "./src/placeProfile.ts",
+		"./place-trends": "./src/placeTrends.ts",
 		"./node": "./src/node/index.ts"
 	},
 	"scripts": {
