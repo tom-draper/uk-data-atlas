@@ -8,6 +8,7 @@ export {
 	ageShare,
 	ethnicGroups,
 } from "@uk-data-atlas/catalogue/place-facts";
+import type { DisplayFormat } from "@uk-data-atlas/datasets";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 
 /**
@@ -93,6 +94,16 @@ export type RankingRecipe = {
 	/** Areas built some other way, such as neighbourhoods rolled up. */
 	rows?: (context: RankingContext) => RankingRow[];
 	columns?: readonly RankingColumn[];
+	/**
+	 * What the value column measures, where neither the dataset's declaration
+	 * nor the map's name says.
+	 */
+	label?: string;
+	/**
+	 * How a value reads in the table, where the dataset declares no ranking
+	 * format. A map's legend rounds for a key ("1k GWh"); a table must not.
+	 */
+	format?: DisplayFormat;
 };
 
 const num = (value: unknown) =>
@@ -449,8 +460,18 @@ export function boardName(name: string) {
 
 // Recipes ------------------------------------------------------------------
 
+const percentOne: DisplayFormat = { kind: "decimal", digits: 1, suffix: "%" };
+
+const gigawattHours: DisplayFormat = {
+	kind: "count",
+	locale: "en-GB",
+	round: true,
+	suffix: " GWh",
+};
+
 export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	"air-quality": {
+		format: { kind: "decimal", digits: 1, suffix: " µg/m³" },
 		columns: [column("PM2.5", "micrograms", field("pm25Mean"))],
 	},
 	brexit: {
@@ -459,6 +480,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	},
 	"brexit-constituency": constituencyRecipe(field("pctLeave")),
 	broadband: {
+		format: percentOne,
 		columns: [
 			column("Superfast", "percent", field("pctSuperfast")),
 			column("Gigabit", "percent", field("pctGigabit")),
@@ -484,7 +506,10 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		columns: [perThousandResidents],
 	},
 	"electric-vehicle-chargers": { columns: [per100k] },
-	"electricity-consumption": { columns: [changeSince("percent")] },
+	"electricity-consumption": {
+		format: gigawattHours,
+		columns: [changeSince("percent")],
+	},
 	ethnicity: {
 		value: (record) => {
 			const groups = ethnicGroups(record);
@@ -538,7 +563,10 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		},
 		columns: [column("Fuel-poor households", "count", field("fuelPoor"))],
 	},
-	"gas-consumption": { columns: [changeSince("percent")] },
+	"gas-consumption": {
+		format: gigawattHours,
+		columns: [changeSince("percent")],
+	},
 	"general-election": constituencyRecipe(
 		(record) => share(num(record.majority), num(record.validVotes)),
 		[
@@ -592,6 +620,8 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		],
 	},
 	jobs: {
+		// Published to the nearest thousand: "1,000", not "1k" like its legend.
+		format: { kind: "count", locale: "en-GB", round: true },
 		columns: [
 			column("Per 100 residents", "count", (record) => {
 				const per100kPeople = field(
@@ -603,7 +633,13 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 			changeSince("percent"),
 		],
 	},
+	"housing-affordability": {
+		label: "House prices to earnings",
+		format: { kind: "decimal", digits: 2, suffix: "×" },
+	},
 	"life-expectancy": {
+		label: "Life expectancy at birth",
+		format: { kind: "decimal", digits: 1, suffix: " years" },
 		columns: [
 			column("Male", "years", field("maleBirthLE")),
 			column("Female", "years", field("femaleBirthLE")),
@@ -648,6 +684,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		],
 	},
 	"mobile-coverage": {
+		format: percentOne,
 		columns: [
 			column(
 				"4G indoors, all operators",
@@ -746,6 +783,8 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	},
 
 	"school-performance": {
+		label: "English and maths at grade 4 or above",
+		format: percentOne,
 		columns: [
 			changeOnYearBefore("points", (record, year) =>
 				field("series", String(year), "ptL2basics94")(record),
