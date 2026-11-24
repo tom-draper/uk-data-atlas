@@ -16,6 +16,17 @@ import { ChartCard } from "@/components/ChartCard";
 import { resolvePopulationDensity } from "@/lib/helpers/populationDensity";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
+import { getProp } from "@uk-data-atlas/datasets";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
+import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
+import {
+	formatNationCoverage,
+	useNationPopulation,
+	type NationPopulationState,
+} from "@/lib/hooks/useNationPopulation";
+import { loadLandArea } from "@/lib/measures/landArea";
+import { useLoaded } from "@/lib/measures/useLoaded";
+import type { BoundaryType } from "@/lib/types";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -113,6 +124,72 @@ function DensityGrid({ density }: { density: number }) {
 	);
 }
 
+/** The area of a boundary on the map, in square kilometres, if loaded. */
+const boundaryAreaSqKm = (
+	boundaryData: BoundaryData,
+	type: string,
+	year: number,
+	code: string,
+): number | null => {
+	const geojson = (
+		boundaryData as Partial<
+			Record<string, Record<number, { features: unknown[] } | null>>
+		>
+	)[type]?.[year];
+	const keys = BOUNDARY_CATALOG[type as BoundaryType]?.properties.code;
+	if (!geojson || !keys) return null;
+	const feature = (
+		geojson.features as Parameters<typeof featureAreaSqKm>[0][]
+	).find((candidate) => getProp(candidate.properties, keys) === code);
+	return feature ? featureAreaSqKm(feature) : null;
+};
+
+/**
+ * Density for an area in a nation the dataset leaves out: the nation's own
+ * estimate over the council's measured land area, or a data zone's boundary.
+ */
+function useNationDensity(
+	nation: NationPopulationState | null,
+	boundaryData: BoundaryData,
+) {
+	const target = nation?.target;
+	const council =
+		target?.geography === "localAuthority" ? target.code : undefined;
+	const land = useLoaded(
+		council
+			? { key: `land-area|${council}`, load: () => loadLandArea(council) }
+			: null,
+	);
+	if (!nation || !target) return null;
+	const population = nation.population;
+	const total =
+		population?.males != null && population.females != null
+			? population.males + population.females
+			: null;
+	const areaSqKm = council
+		? land.status === "ready"
+			? (land.value?.sqKm ?? null)
+			: null
+		: boundaryAreaSqKm(
+				boundaryData,
+				target.geography,
+				target.boundaryYear,
+				target.code,
+			);
+	return {
+		total,
+		areaSqKm,
+		density: total != null && areaSqKm ? total / areaSqKm : null,
+		loading:
+			nation.status === "loading" ||
+			(!!council &&
+				(land.status === "loading" || land.status === "idle")),
+		areaSource: council
+			? "Land area, without inland water: Office for National Statistics, Standard Area Measurements."
+			: "Area of the data zone's boundary.",
+	};
+}
+
 export default function PopulationDensityChart({
 	dataset,
 	aggregatedData,
@@ -126,24 +203,48 @@ export default function PopulationDensityChart({
 	const isDark = useIsDark();
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "density";
-	const { density, areaSqKm, total, fallbackLadCode } =
-		resolvePopulationDensity({
-			dataset,
-			aggregatedData,
-			boundaryData,
-			selectedArea,
-			codeMapper,
-		});
+	// An area in a nation the dataset leaves out is read from that nation's
+	// own estimates, labelled with their year and publisher.
+	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+	const nationDensity = useNationDensity(nation, boundaryData);
+	const { density, areaSqKm, total, fallbackLadCode } = nation
+		? {
+				density: nationDensity?.density ?? null,
+				areaSqKm: nationDensity?.areaSqKm ?? null,
+				total: nationDensity?.total ?? null,
+				fallbackLadCode: undefined,
+			}
+		: resolvePopulationDensity({
+				dataset,
+				aggregatedData,
+				boundaryData,
+				selectedArea,
+				codeMapper,
+			});
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
 
 	return (
 		<ChartCard
-			coverage={formatDatasetCoverage(dataset)}
-			heading={`Population Density [${dataset.year}]`}
+			coverage={
+				nation
+					? formatNationCoverage(
+							nation,
+							formatDatasetCoverage(dataset),
+							dataset.year,
+						)
+					: formatDatasetCoverage(dataset)
+			}
+			heading={`Population Density [${nation ? (nation.population?.period ?? nation.nation) : dataset.year}]`}
 			accent={accentColor}
 			isActive={isActive}
-			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
+			title={
+				nation
+					? [nation.source, nationDensity?.areaSource]
+							.filter(Boolean)
+							.join(" ") || undefined
+					: "Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
+			}
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,
@@ -155,13 +256,17 @@ export default function PopulationDensityChart({
 		>
 			{!total || density === null || areaSqKm === null ? (
 				<div className="h-14 flex items-center justify-center">
-					{chartsLoading ? (
+					{chartsLoading || nationDensity?.loading ? (
 						<ChartContentPlaceholder className="size-full" />
 					) : (
 						<div
 							className={`text-xs text-center pb-2 ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
-							No data available
+							{nation
+								? nation.population
+									? `${nation.nation}'s area is not loaded for this boundary`
+									: nation.note
+								: "No data available"}
 						</div>
 					)}
 				</div>
@@ -188,6 +293,13 @@ export default function PopulationDensityChart({
 									{areaSqKm.toFixed(1)} km²
 								</div>
 							</div>
+							{nation?.population && (
+								<div
+									className={`ml-auto pr-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								>
+									{nation.note}
+								</div>
+							)}
 							{fallbackLadCode && (
 								<div
 									className={`ml-auto pr-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}
