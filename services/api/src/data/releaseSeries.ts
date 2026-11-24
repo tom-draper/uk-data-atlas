@@ -196,9 +196,13 @@ const publicValue = (value: ReleaseSeries["values"][number]) => ({
 	period: value.period,
 	value: value.value,
 	status: value.status,
+	// A converted value's bounds come from the conversion error model, not
+	// from the publisher, so they are not called a confidence interval.
 	...(value.lower === undefined
 		? {}
-		: { confidenceInterval: { lower: value.lower, upper: value.upper } }),
+		: value.method === "native"
+			? { confidenceInterval: { lower: value.lower, upper: value.upper } }
+			: { bounds: { lower: value.lower, upper: value.upper } }),
 	method: value.method,
 	...(value.method === "weighted" ? { exactShare: value.exactShare } : {}),
 	...(value.source ? { source: value.source } : {}),

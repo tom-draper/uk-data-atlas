@@ -57,7 +57,7 @@ database.exec(`
 		(1, 11, 1, 92000, 1, NULL, NULL), (1, 11, 2, 92500, 1, NULL, NULL),
 		(2, 12, 3, 93000, 1, NULL, NULL), (2, 22, 3, 5000, 1, NULL, NULL),
 		(10, 12, 1, 92000, 6, NULL, NULL), (10, 12, 2, 92500, 6, NULL, NULL),
-		(10, 22, 1, 4800, 2, NULL, NULL);
+		(10, 22, 1, 4800, 2, 4500, 5100);
 	INSERT INTO series_gap VALUES (10, 22, 2, 'missing-input');
 	INSERT INTO series_estimate VALUES (10, 22, 1, 1);
 	INSERT INTO series_input VALUES (10, 1, 'value');
@@ -152,6 +152,13 @@ test("warns of a weighted value, a new area and a gap", () => {
 	const [split] = body.series as Array<Record<string, unknown>>;
 	assert.equal(split!.method, "weighted");
 	assert.equal(split!.exactShare, 0);
+	// The split carries the bounds the conversion stored, under its own name.
+	assert.deepEqual(split!.bounds, { lower: 4500, upper: 5100 });
+	assert.equal(split!.confidenceInterval, undefined);
+	// The release's own value and the regrouped values carry none.
+	const native = (body.series as Array<Record<string, unknown>>).at(-1)!;
+	assert.equal(native.method, "native");
+	assert.equal(native.bounds, undefined);
 	assert.deepEqual(split!.flags, [
 		"area-not-on-source-release",
 		"low-exact-share",
