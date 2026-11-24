@@ -3,6 +3,12 @@ import { existsSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { test } from "vitest";
+import {
+	POPULATION_DATASETS,
+	POPULATION_GEOGRAPHIES,
+	STANDARD_RELEASES,
+	STANDARD_TOTAL_DATASETS,
+} from "../../src/conversion/standardPlan";
 
 /**
  * The converted series in the built atlas, checked against the contract the
@@ -115,7 +121,7 @@ test("a series that is wholly exact is scored 1 and one with a split is not", (c
 	);
 });
 
-test("the skips name an allowed reason, and no series is both converted and skipped", (context) => {
+test("conversion skips have valid reasons and published skips have a publisher on the target", (context) => {
 	const database = open();
 	if (!database) return context.skip();
 	context.onTestFinished(() => database.close());
@@ -129,19 +135,37 @@ test("the skips name an allowed reason, and no series is both converted and skip
 		),
 		0,
 	);
-	assert.equal(
-		count(
-			database,
-			`SELECT count(*) n FROM conversion_skip k
+	const placeholders = (values: readonly string[]) =>
+		values.map(() => "?").join(", ");
+	// An all-ages population total can be skipped if any dataset publishes
+	// the measure on the target. Other series need the same dataset there.
+	const unsupported = database
+		.prepare(
+			`SELECT d.slug AS dataset, m.slug AS measure,
+				t.geography || ':' || t.release AS target
+			FROM conversion_skip k
+			JOIN dataset d ON d.id = k.dataset_id
+			JOIN measure m ON m.id = k.measure_id
+			JOIN area_release t ON t.id = k.target_release_id
 			WHERE k.reason = 'published-on-target'
 				AND NOT EXISTS (
 					SELECT 1 FROM series s
-					WHERE s.method = 'published' AND s.dataset_id = k.dataset_id
-						AND s.measure_id = k.measure_id AND s.release_id = k.target_release_id)`,
-		),
-		0,
-		"a series is skipped as published on a release it is not published on",
-	);
+					WHERE s.method = 'published'
+						AND s.measure_id = k.measure_id AND s.release_id = k.target_release_id
+						AND (s.dataset_id = k.dataset_id OR (
+							m.slug = 'population' AND d.slug IN (${placeholders(POPULATION_DATASETS)})
+							AND t.geography IN (${placeholders(POPULATION_GEOGRAPHIES)})
+							AND k.source_release_id <> k.target_release_id
+							AND (t.geography || ':' || t.release NOT IN (${placeholders(STANDARD_RELEASES)})
+								OR d.slug IN (${placeholders(STANDARD_TOTAL_DATASETS)})))))`,
+		)
+		.all(
+			...POPULATION_DATASETS,
+			...POPULATION_GEOGRAPHIES,
+			...STANDARD_RELEASES,
+			...STANDARD_TOTAL_DATASETS,
+		);
+	assert.deepEqual(unsupported, []);
 });
 
 test("a summed series that scores full coverage keeps the total of its source", (context) => {
