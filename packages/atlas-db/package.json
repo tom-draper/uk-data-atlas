@@ -7,15 +7,16 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./search": "./src/search/index.ts",
+		"./search/node": "./src/search/node/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"dependencies": {
 		"@uk-data-atlas/artifacts": "workspace:*",
-		"@uk-data-atlas/geography": "workspace:*",
-		"@uk-data-atlas/search-index": "workspace:*"
+		"@uk-data-atlas/geography": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^26.6.6",

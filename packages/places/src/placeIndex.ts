@@ -1,4 +1,4 @@
-import type { Indexed } from "@uk-data-atlas/search-index";
+import type { Indexed } from "@uk-data-atlas/atlas-db/search";
 
 export type CompiledPlace = {
 	/**

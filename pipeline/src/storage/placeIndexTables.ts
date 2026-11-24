@@ -1,5 +1,8 @@
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
-import { compareCodeUnits, packPositions } from "@uk-data-atlas/search-index";
+import {
+	compareCodeUnits,
+	packPositions,
+} from "@uk-data-atlas/atlas-db/search";
 import {
 	placeReference,
 	type CompiledPlace,

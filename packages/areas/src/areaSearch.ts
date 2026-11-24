@@ -5,7 +5,7 @@ export {
 } from "./areaSearchCompiler.ts";
 import type { AreaLookup, AreaRecord } from "./index.ts";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { NAME_NORMALISATION } from "@uk-data-atlas/atlas-db/search/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 import {
 	atEach,
@@ -13,7 +13,7 @@ import {
 	findSorted,
 	lowerBound,
 	type Indexed,
-} from "@uk-data-atlas/search-index";
+} from "@uk-data-atlas/atlas-db/search";
 import { SqliteIndex, text, unpackPositions } from "@uk-data-atlas/atlas-db";
 
 /**

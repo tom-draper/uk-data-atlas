@@ -6,7 +6,7 @@ import {
 	readAreaSearchIndex,
 } from "@uk-data-atlas/atlas-loader";
 import { AreaSearch, compileAreaSearchIndex } from "@uk-data-atlas/areas";
-import { atEach, type Indexed } from "@uk-data-atlas/search-index";
+import { atEach, type Indexed } from "@uk-data-atlas/atlas-db/search";
 
 const root = resolve(import.meta.dirname, "..");
 const inventory = readAreaInventory(root);

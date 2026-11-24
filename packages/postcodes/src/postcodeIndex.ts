@@ -1,4 +1,4 @@
-import { compareCodeUnits, findSorted } from "@uk-data-atlas/search-index";
+import { compareCodeUnits, findSorted } from "@uk-data-atlas/atlas-db/search";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	COUNTRY_CODES,

@@ -6,7 +6,7 @@ import {
 	findSorted,
 	lowerBound,
 	packPositions,
-} from "@uk-data-atlas/search-index";
+} from "@uk-data-atlas/atlas-db/search";
 
 describe("compiled search indexes", () => {
 	it("searches strings in the order used by the compiler", () => {

@@ -15,7 +15,7 @@ import {
 	pointInBounds,
 	type Coordinate,
 } from "@uk-data-atlas/geography";
-import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import { compareCodeUnits } from "@uk-data-atlas/atlas-db/search";
 import { NONE, SEVERAL } from "@uk-data-atlas/geography";
 import type { Placement } from "./weigh.ts";
 

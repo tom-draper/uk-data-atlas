@@ -1,9 +1,9 @@
 import { DuckDBInstance } from "@duckdb/node-api";
-import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import { compareCodeUnits } from "@uk-data-atlas/atlas-db/search";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { AreaSearchIndexArtifact } from "@uk-data-atlas/areas";
-import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { NAME_NORMALISATION } from "@uk-data-atlas/atlas-db/search/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
 
 export async function compileDuckdbAreaSearchIndex(

@@ -2,9 +2,9 @@ import type { AreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import type { NamedLocationInventory } from "./index.ts";
 import { compareBoundaryReleases } from "@uk-data-atlas/catalogue";
-import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { NAME_NORMALISATION } from "@uk-data-atlas/atlas-db/search/node";
 import { normalisePlaceName, withoutTitle } from "@uk-data-atlas/geography";
-import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import { compareCodeUnits } from "@uk-data-atlas/atlas-db/search";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { SQLInputValue } from "@uk-data-atlas/atlas-db";
 import {

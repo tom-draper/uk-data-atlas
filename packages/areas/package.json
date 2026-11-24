@@ -21,7 +21,6 @@
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/geometry": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
-		"@uk-data-atlas/search-index": "workspace:*",
 		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {

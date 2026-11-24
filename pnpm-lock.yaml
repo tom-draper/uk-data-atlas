@@ -216,9 +216,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:packages/relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:packages/search-index
       fflate:
         specifier: 0.8.3
         version: 0.8.3
@@ -343,9 +340,6 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../map-tiles
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
@@ -374,9 +368,6 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -570,9 +561,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -607,9 +595,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
@@ -632,9 +617,6 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../geography
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../search-index
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -660,19 +642,6 @@ importers:
       '@uk-data-atlas/geometry':
         specifier: workspace:*
         version: link:../geometry
-    devDependencies:
-      '@types/node':
-        specifier: ^26.6.6
-        version: 26.6.6
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
-
-  packages/search-index:
-    dependencies:
-      '@uk-data-atlas/geography':
-        specifier: workspace:*
-        version: link:../geography
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -741,9 +710,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../packages/relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../packages/search-index
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../packages/terrain
@@ -835,9 +801,6 @@ importers:
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../../packages/relationships
-      '@uk-data-atlas/search-index':
-        specifier: workspace:*
-        version: link:../../packages/search-index
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../../packages/terrain

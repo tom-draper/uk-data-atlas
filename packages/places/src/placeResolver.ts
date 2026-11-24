@@ -1,6 +1,6 @@
 import { normalisePlaceName, type NameMatch } from "@uk-data-atlas/geography";
 import { memberCodesAt } from "./namedLocations.ts";
-import { atEach, findSorted, lowerBound } from "@uk-data-atlas/search-index";
+import { atEach, findSorted, lowerBound } from "@uk-data-atlas/atlas-db/search";
 import {
 	AREA_CODE,
 	placeReference,
