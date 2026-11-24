@@ -10,7 +10,7 @@ import {
 	type MeasureDimensionsConfig,
 } from "@uk-data-atlas/measures";
 import { resolveObservations } from "../src/observationResolution/observationPlan";
-import { seriesCompatibility } from "../src/seriesCompatibility";
+import { seriesCompatibility } from "../src/observationResolution/seriesCompatibility";
 import { identityDimensions } from "@uk-data-atlas/measures";
 import { readWeightedSource } from "../src/aggregation/weightedSource";
 

@@ -11,7 +11,7 @@ import type {
 import type { ProblemCode } from "../runtime/index.ts";
 import { problem, type ApiResponse } from "../runtime/index.ts";
 import type { MeasureDimensions } from "@uk-data-atlas/measures";
-import { seriesCompatibility } from "../seriesCompatibility";
+import { seriesCompatibility } from "./seriesCompatibility";
 
 /**
  * The first slice of the resolution layer described under
