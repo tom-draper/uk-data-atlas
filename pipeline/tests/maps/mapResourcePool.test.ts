@@ -56,6 +56,8 @@ test("sizes workers for a 7.6 GiB host and respects memory reservations", () => 
 	assert.equal(mapResourceConcurrency(5.9 * gib, 12, 0), 1);
 	assert.equal(mapResourceConcurrency(7.6 * gib, 12, 3), 3);
 	assert.equal(mapResourceMemoryBudget(7.6 * gib, 3), Infinity);
+	assert.equal(mapResourceMemoryBudget(7.6 * gib, 2, 5120), 4 * gib);
+	assert.equal(mapResourceMemoryBudget(7.6 * gib, 2, 8192), 7 * gib);
 });
 
 test("memory admission prevents a large and small job overlapping", async () => {

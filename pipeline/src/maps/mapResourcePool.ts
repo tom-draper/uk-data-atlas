@@ -37,7 +37,11 @@ export function mapResourceConcurrency(
 export function mapResourceMemoryBudget(
 	available = process.availableMemory(),
 	override = Number(process.env.ATLAS_MAP_RESOURCE_JOBS),
+	reservedMb = Number(process.env.ATLAS_MAP_RESOURCE_MEMORY_MB),
 ) {
+	// Leave 1 GiB of the stage reservation for its parent thread and overhead.
+	if (Number.isFinite(reservedMb) && reservedMb > 0)
+		return Math.max(4 * GIB, (reservedMb - 1024) * 1024 ** 2);
 	if (Number.isInteger(override) && override > 0) return Infinity;
 	return Math.max(4 * GIB, available - 2 * GIB);
 }

@@ -967,15 +967,15 @@ to compare every payload with its compiler intermediate byte for byte.
 
 Boundary tiles are built in `data/build/boundaries/` for the website and
 `data/build/map-resources/` for the API, alongside its feature downloads and
-resumable build state. The API reads these assets directly. The map-resource stage uses worker threads,
-reserving 2 GiB for the parent and budgeting 2 GiB per worker, up to four workers
-and one fewer than the available CPUs. Releases with at least 100,000 areas are
-budgeted at 4 GiB and run one at a time. The parent only starts jobs whose
-combined budgets fit the available memory, allowing one job to run even when
-memory is very low. `ATLAS_MAP_RESOURCE_JOBS` overrides the worker count and
-disables the automatic memory budget, but still runs large releases one at a
-time. Each worker has a 3 GiB old-generation heap limit. This override is independent of
-`ATLAS_PRECOMPILE_JOBS` and does not affect cache keys. The website hard-links
+resumable build state. The API reads these assets directly. The map-resource
+stage reads the compiled geometry store and the key for each release to reuse
+unchanged archives. Worker threads budget 2 GiB per release and 4 GiB for
+releases with at least 100,000 areas, with at most one of those large releases
+active. Under `pnpm data:build`, the scheduler assigns the pool's memory and
+counts each worker against `--jobs`. `ATLAS_MAP_RESOURCE_JOBS` requests a worker
+count within those slots. Each worker has a 3 GiB old-generation heap limit.
+The override is independent of `ATLAS_PRECOMPILE_JOBS` and does not affect
+cache keys. The website hard-links
 its archives into `public/data/boundaries/` during data and app builds, preserving
 static URLs with one stored copy. Both directories must share a filesystem.
 Every website release has an archive. Releases rejected by shared-arc
