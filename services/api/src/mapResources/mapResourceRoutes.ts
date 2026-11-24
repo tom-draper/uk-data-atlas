@@ -1,8 +1,8 @@
 import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
-import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
-import { untiledFeatures } from "@uk-data-atlas/map-tiles/node";
+import { featureIds } from "@uk-data-atlas/geometry/tiles/featureIds";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
+import { untiledFeatures } from "@uk-data-atlas/geometry/tiles/node";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { writeParquet } from "@uk-data-atlas/artifacts";

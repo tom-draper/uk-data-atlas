@@ -1,7 +1,7 @@
 import { availableParallelism } from "node:os";
 import { Worker } from "node:worker_threads";
 import type { BoundaryReleaseSummary } from "./compileMapResource.ts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 
 export type Unavailable = {
 	geography: string;

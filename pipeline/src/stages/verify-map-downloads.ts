@@ -4,12 +4,12 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 import {
 	AreaGeometryCache,
 	readGeometrySourceLookup,
 } from "@uk-data-atlas/geometry";
-import { buildSimplifiedDownload } from "@uk-data-atlas/map-tiles/node";
+import { buildSimplifiedDownload } from "@uk-data-atlas/geometry/tiles/node";
 import { readJsonSync } from "../lib/json.ts";
 
 const root = resolve(process.argv[2] ?? ".");

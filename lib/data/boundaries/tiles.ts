@@ -4,7 +4,7 @@ import {
 	parseBoundaryResources,
 	type BoundaryResources,
 } from "@uk-data-atlas/areas/boundary-resources";
-import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
+import { featureIds } from "@uk-data-atlas/geometry/tiles/featureIds";
 import type { BoundaryGeojson, PropertyKeys } from "@uk-data-atlas/datasets";
 import {
 	BOUNDARY_CATALOG,

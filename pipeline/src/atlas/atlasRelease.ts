@@ -6,7 +6,7 @@ import { existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { hashFile } from "../lib/fileHashCache.ts";
-import type { MapResources } from "@uk-data-atlas/map-tiles";
+import type { MapResources } from "@uk-data-atlas/geometry/tiles";
 
 import type {
 	AtlasRelease,

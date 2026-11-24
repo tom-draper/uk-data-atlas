@@ -7,9 +7,12 @@ import {
 	type GeoJsonGeometry,
 } from "@uk-data-atlas/geometry";
 import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { GEOMETRY_TIERS, simplifyGeometry } from "@uk-data-atlas/map-tiles";
-import { decomposeArcs, rebuildAreas } from "@uk-data-atlas/map-tiles";
-import { compileTiers } from "@uk-data-atlas/map-tiles";
+import {
+	GEOMETRY_TIERS,
+	simplifyGeometry,
+} from "@uk-data-atlas/geometry/tiles";
+import { decomposeArcs, rebuildAreas } from "@uk-data-atlas/geometry/tiles";
+import { compileTiers } from "@uk-data-atlas/geometry/tiles";
 
 /**
  * The release gate for a map resource: neighbours share edges at every tier.

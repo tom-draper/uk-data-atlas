@@ -38,8 +38,8 @@ const createRepository = async () => {
 		"pipeline/src/stages/compile-website-data.ts",
 		"pipeline/src/precompile/fingerprint.mjs",
 		"packages/geography/src/index.ts",
-		"packages/map-tiles/package.json",
-		"packages/map-tiles/src/compileTileset.ts",
+		"packages/geometry/package.json",
+		"packages/geometry/src/tiles/compileTileset.ts",
 		"data/build/atlas-assets/atlas-lookups/boundary-mappings.json.gz",
 		"data/build/atlas-assets/atlas-lookups/parish-lad-mappings.json.gz",
 	])

@@ -2,14 +2,14 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildSimplifiedDownload,
 	type SimplifiedDownload,
-} from "@uk-data-atlas/map-tiles/node";
+} from "./tiles/node/index.ts";
 import type { AreaGeometryCache } from "./areaGeometry.ts";
 import {
 	buildFullDetailParquet,
 	buildFullDetailParquetAsync,
 	type FullDetailDownload,
 	type FullDetailRelease,
-} from "@uk-data-atlas/map-tiles/node";
+} from "./tiles/node/index.ts";
 
 /**
  * What a download needs to know about a release: its publisher and licence for

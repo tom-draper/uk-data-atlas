@@ -16,10 +16,13 @@ import { basename, dirname, join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { parseDatasetMeta } from "@uk-data-atlas/datasets";
 import { decodeBoundaryData } from "@uk-data-atlas/datasets";
-import { compilePolygonArchive } from "@uk-data-atlas/map-tiles";
-import { compileTileset, NonCoverageError } from "@uk-data-atlas/map-tiles";
-import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles";
-import type { GeoJsonGeometry } from "@uk-data-atlas/map-tiles";
+import { compilePolygonArchive } from "@uk-data-atlas/geometry/tiles";
+import {
+	compileTileset,
+	NonCoverageError,
+} from "@uk-data-atlas/geometry/tiles";
+import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/geometry/tiles";
+import type { GeoJsonGeometry } from "@uk-data-atlas/geometry/tiles";
 import {
 	assertCompleteBoundaryResources,
 	parseBoundaryResources,
@@ -47,8 +50,8 @@ const TILER_SOURCES = [
 	join(import.meta.dirname, "boundaryTilePool.ts"),
 	join(import.meta.dirname, "boundaryTileWorker.ts"),
 	join(ROOT, "packages/areas/src/boundaryResources.ts"),
-	...readdirSync(join(ROOT, "packages/map-tiles/src")).map((name) =>
-		join(ROOT, "packages/map-tiles/src", name),
+	...readdirSync(join(ROOT, "packages/geometry/src/tiles")).map((name) =>
+		join(ROOT, "packages/geometry/src/tiles", name),
 	),
 ];
 

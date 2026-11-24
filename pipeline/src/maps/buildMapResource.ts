@@ -26,7 +26,7 @@ import {
 	type Result,
 	type Unavailable,
 } from "./mapResourcePool.ts";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 import {
 	artifactDirectory,
 	formatBytes,
@@ -60,9 +60,9 @@ const sourceFiles = (directory: string) =>
  * to any of it rebuilds every release.
  */
 const COMPILER_SOURCES = [
-	...sourceFiles("packages/map-tiles/src/node/mapResource"),
+	...sourceFiles("packages/geometry/src/tiles/node/mapResource"),
 	// The tiler, shared with the website's precompile.
-	...sourceFiles("packages/map-tiles/src"),
+	...sourceFiles("packages/geometry/src/tiles"),
 	"packages/artifacts/src/parquet.ts",
 	"pipeline/src/atlas/flatDownloads.ts",
 	"pipeline/src/maps/compileMapResource.ts",

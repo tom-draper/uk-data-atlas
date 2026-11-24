@@ -47,7 +47,6 @@
 		"@uk-data-atlas/datasets": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/geometry": "workspace:*",
-		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/measures": "workspace:*",
 		"@uk-data-atlas/places": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",

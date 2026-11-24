@@ -8,7 +8,7 @@ import {
 	toTileGrid,
 	toWorldRing,
 	worldTile,
-} from "@uk-data-atlas/map-tiles";
+} from "@uk-data-atlas/geometry/tiles";
 
 /**
  * clipWorldRing is clipRing made fast enough to tile a coastline, and is only

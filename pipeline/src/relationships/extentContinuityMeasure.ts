@@ -7,7 +7,10 @@ import {
 	roundedMultiPolygon,
 } from "@uk-data-atlas/geography";
 import { round } from "../geographies/areaOverlap.ts";
-import { multiPolygonAreaM2, polygonWidthM } from "@uk-data-atlas/map-tiles";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/geometry/tiles";
 
 // About a millimetre. Rounding only feeds a retry, when polygon-clipping's
 // sweep line fails on near-coincident edges.

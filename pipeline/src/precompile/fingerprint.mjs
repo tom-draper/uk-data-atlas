@@ -45,8 +45,8 @@ const pipelineInputs = [
 	"pipeline/src/stages/compile-website-data.ts",
 	"packages/geography/package.json",
 	"packages/geography/src",
-	"packages/map-tiles/package.json",
-	"packages/map-tiles/src",
+	"packages/geometry/package.json",
+	"packages/geometry/src/tiles",
 	"data/build/atlas-assets/atlas-lookups/boundary-mappings.json.gz",
 	"data/build/atlas-assets/atlas-lookups/parish-lad-mappings.json.gz",
 ];

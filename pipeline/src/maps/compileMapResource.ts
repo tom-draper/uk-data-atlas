@@ -1,16 +1,16 @@
 import { gzipSync } from "node:zlib";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
-import { buildGeoJson } from "@uk-data-atlas/map-tiles/node";
-import { buildGeoParquet } from "@uk-data-atlas/map-tiles/node";
-import { compileTileset, LAYER_NAME } from "@uk-data-atlas/map-tiles";
-import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/map-tiles";
-import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
+import { buildGeoJson } from "@uk-data-atlas/geometry/tiles/node";
+import { buildGeoParquet } from "@uk-data-atlas/geometry/tiles/node";
+import { compileTileset, LAYER_NAME } from "@uk-data-atlas/geometry/tiles";
+import { MAX_ZOOM, MIN_ZOOM } from "@uk-data-atlas/geometry/tiles";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/geometry/tiles";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	buildFullDetailParquet,
 	GEOJSON_TIERS,
-} from "@uk-data-atlas/map-tiles/node";
+} from "@uk-data-atlas/geometry/tiles/node";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of
@@ -25,7 +25,7 @@ import {
 
 export { LAYER_NAME };
 
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 
 export type BoundaryReleaseSummary = {
 	id: string;

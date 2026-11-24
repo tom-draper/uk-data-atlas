@@ -2,7 +2,7 @@ import { requireGeography } from "../runtime/index.ts";
 import {
 	GENERALISATION_METHOD,
 	simplifyGeometry,
-} from "@uk-data-atlas/map-tiles";
+} from "@uk-data-atlas/geometry/tiles";
 import { areaNotFound } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";

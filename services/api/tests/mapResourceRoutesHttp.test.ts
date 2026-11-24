@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { gzipSync } from "node:zlib";
 import { afterAll, expect, test } from "vitest";
 import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
-import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/geometry/tiles";
 import {
 	measureSeriesSourceKey,
 	registerSeriesObservations,

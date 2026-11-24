@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { unprojectEqualArea } from "@uk-data-atlas/map-tiles";
-import { vertexImportance } from "@uk-data-atlas/map-tiles";
+import { unprojectEqualArea } from "@uk-data-atlas/geometry/tiles";
+import { vertexImportance } from "@uk-data-atlas/geometry/tiles";
 
 const points = [
 	[0, 0],

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "vitest";
 import { gzipSync } from "node:zlib";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 import { readPostedRows } from "../src/http/requestRows";
 import { route, routeAsync } from "./boundRoute";
 import type { RequestBody, RouteContext } from "../src/runtime/index.ts";

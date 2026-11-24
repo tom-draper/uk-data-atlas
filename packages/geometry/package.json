@@ -9,7 +9,10 @@
 	"exports": {
 		".": "./src/index.ts",
 		"./shapefile": "./src/shapefile/index.ts",
-		"./terrain": "./src/terrain/index.ts"
+		"./terrain": "./src/terrain/index.ts",
+		"./tiles": "./src/tiles/index.ts",
+		"./tiles/node": "./src/tiles/node/index.ts",
+		"./tiles/featureIds": "./src/tiles/featureIds.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
@@ -18,7 +21,6 @@
 		"@uk-data-atlas/artifacts": "workspace:*",
 		"@uk-data-atlas/atlas-db": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
-		"@uk-data-atlas/map-tiles": "workspace:*",
 		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {
