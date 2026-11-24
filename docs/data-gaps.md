@@ -287,9 +287,6 @@ What is still out of reach:
 - The constituency estimates (2021 and 2022, on the 2024 constituencies) have
   no route back across the 2024 review, and every authority release they
   reach is already covered by the authority estimates, so none are converted.
-- The new source folders, and the Scotland and Northern Ireland census folders
-  moved out of `_staging`, must be in a published data release before other
-  checkouts can build them.
 
 ### 4. Other open roadmap items
 
@@ -305,12 +302,8 @@ What is still out of reach:
 
 ## Where to start
 
-1. Publish a data release holding the new source folders
-   (`population-council-scotland`, `population-district-ni`,
-   `income-history`, and the Scotland and Northern Ireland census folders): other checkouts cannot
-   build the atlas without it.
-2. Compile the rest of the staged Scotland and Northern Ireland census
+1. Compile the rest of the staged Scotland and Northern Ireland census
    tables (section 5), and the other staged census and population files.
-3. Police Scotland and PSNI recorded crime, once a direct download is found.
-4. Collect official predecessor lookups to link the Scottish data-zone and
+2. Police Scotland and PSNI recorded crime, once a direct download is found.
+3. Collect official predecessor lookups to link the Scottish data-zone and
    Senedd constituency events, and add the 2001 Scottish data-zone inventory.
