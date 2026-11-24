@@ -170,7 +170,20 @@ collection.
   areas created.
 - An event is a point in time. `area_version` validity is only known for the
   four recorded polling dates (task 3).
-- An event does not say how much land or how many residents moved (task 34).
+- How much each area changed between releases (`area_change_extent`, task 34) has gaps:
+    - Land is null on 49,365 of 679,310 rows. No pair with only an official
+      lookup has measured land: local authorities 2009 to 2011, 2022-12 to
+      2023-05 and 2024-12 to 2025-05, LSOA 2011 to 2021 (34,629 rows), Scottish
+      Parliament and Senedd constituencies 2022 to 2026. Most code-changing
+      splits and merges elsewhere also lack an `area` weight.
+    - 16 releases have a later vintage but no one-hop route to it, so have no
+      rows: constituency 2022-12-uk-bgc, county electoral division
+      2017-05-en-names and 2023-05-en-bgc, data zone 2011-12-sc-bfc and 2021-ni,
+      historical constituency 1918, 1945, 1950, 1955, 1974, 1983 and 1997,
+      integrated care board 2023-04-en-bgc, LSOA 2011-12-w-bgc, NHS England
+      region 2022-07-en-bgc, ward 2019-12-gb-bgc.
+    - LSOA 2001 to 2011 runs through extent continuity only, so splits there
+      have no successor row.
 
 ### 2. Conversion and rollup
 
