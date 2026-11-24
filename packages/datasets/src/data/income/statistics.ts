@@ -3,7 +3,10 @@ import type {
 	DeclaredDimension,
 	DeclaredField,
 } from "../../declaration/statistics.ts";
-import type { DeclaredStatistics } from "../../declaration/dataset.ts";
+import type {
+	DeclaredStatistics,
+	IndicatorDeclaration,
+} from "../../declaration/dataset.ts";
 
 /**
  * The Annual Survey of Hours and Earnings tables. Residence-based income and
@@ -130,6 +133,39 @@ const payFields = (place: "residence" | "workplace"): DeclaredField[] =>
 			},
 		];
 	});
+
+/**
+ * The mean pay indicators both pay datasets publish beside their medians,
+ * named with `infix` where the dataset's ids carry one. A mean, unlike a
+ * median, combines over areas when weighted by the jobs it averages.
+ */
+export const meanPayIndicators = (
+	place: "residence" | "workplace",
+	infix = "",
+): IndicatorDeclaration[] =>
+	(["annual", "hourly"] as const).map((period) => ({
+		id: `mean-${infix}${period}-pay`,
+		label: `Mean gross ${period} ${place === "workplace" ? "workplace " : ""}pay`,
+		field: `${period}.mean`,
+		valueKind: "currency",
+		unit: period === "annual" ? "£ per year" : "£ per hour",
+		aggregation: {
+			kind: "weighted-mean",
+			weight: {
+				description:
+					"Employee jobs in the earnings survey, which the mean is taken over.",
+				datasetField: `${period}.numberOfJobs`,
+			},
+		},
+		notes: [
+			period === "annual"
+				? "Annual pay is estimated only for employees who have been in the same job for at least a year."
+				: "Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+			"A mean is pulled up by the highest earners, so it sits above the median.",
+		],
+		measure: `gross-${period}-pay`,
+		members: { "earnings-place": place, "pay-statistic": "mean" },
+	}));
 
 /**
  * Pay tables cover England, Wales and Scotland with their nations, regions,
