@@ -354,3 +354,58 @@ export const compileParishLadContainment = (
 	}
 	return parishToLad;
 };
+
+/** The data zones of one release that sit in each local authority. */
+export type DataZoneMembers = {
+	/** The year the measures route names the release by. */
+	boundaryYear: number;
+	release: string;
+	ladToDataZones: Record<string, string[]>;
+};
+
+/**
+ * Each data zone release the resolver places in local authorities, listed by
+ * authority, so a council's figure can be summed from its data zones where
+ * a nation publishes a table on data zones alone. A published lookup decides
+ * before a containment, and a containment before a best fit; each authority
+ * is carried to the newest release under the resolver's lineage, keeping its
+ * own code where the lineage does not reach.
+ */
+export const compileDataZoneLadMembers = (
+	crosswalks: ContainmentCrosswalk[],
+	carryOn: (code: string, release: string) => string | undefined,
+): DataZoneMembers[] => {
+	const METHOD_RANK = ["official-lookup", "clean-containment", "best-fit"];
+	const candidates = crosswalks.filter(
+		(crosswalk) =>
+			crosswalk.from.geography === "dataZone" &&
+			crosswalk.to.geography === "localAuthority" &&
+			METHOD_RANK.includes(crosswalk.method),
+	);
+	const releases = [
+		...new Set(candidates.map(({ from }) => from.boundaryRelease)),
+	].sort();
+	return releases.map((release) => {
+		const [chosen] = candidates
+			.filter(({ from }) => from.boundaryRelease === release)
+			.sort(
+				(left, right) =>
+					METHOD_RANK.indexOf(left.method) -
+						METHOD_RANK.indexOf(right.method) ||
+					right.to.boundaryRelease.localeCompare(
+						left.to.boundaryRelease,
+					),
+			);
+		const parents = new Map(
+			[...singleTargets(chosen!)].map(([zone, lad]) => [
+				zone,
+				carryOn(lad, chosen!.to.boundaryRelease) ?? lad,
+			]),
+		);
+		return {
+			boundaryYear: Number(release.slice(0, 4)),
+			release,
+			ladToDataZones: invert(parents),
+		};
+	});
+};
