@@ -221,6 +221,31 @@ const recordKey = (
 		? code
 		: (dataset[via] as Record<string, string> | undefined)?.[code];
 
+/**
+ * The earlier releases of the card's own geography that the statistics are
+ * also stored on. Each holds the codes later releases dropped, so an area's
+ * periods from before its code changed are read from there. Only for the
+ * dataset's own statistics, newest first.
+ */
+const earlierReleases = (
+	declaration: Displayed,
+	datasetId: string,
+	geography: string,
+	boundaryYear: number,
+): number[] => {
+	if (datasetId !== declaration.id) return [];
+	const alsoIn = (declaration.statistics as { alsoIn?: unknown } | undefined)
+		?.alsoIn;
+	if (!Array.isArray(alsoIn)) return [];
+	return (alsoIn as Array<{ geography: string; year: number }>)
+		.filter(
+			(release) =>
+				release.geography === geography && release.year < boundaryYear,
+		)
+		.map((release) => release.year)
+		.sort((a, b) => b - a);
+};
+
 const seriesFor = (
 	declaration: Displayed,
 	series: NonNullable<DatasetDisplay["series"]>,
@@ -235,17 +260,27 @@ const seriesFor = (
 	);
 	const count = series.countOf?.[measure];
 	const counted = count === undefined ? undefined : read(count);
+	const datasetId = series.release?.datasetId ?? declaration.id;
+	const geography = series.release?.geography ?? declaration.boundary.type;
+	const boundaryYear =
+		series.release?.boundaryYear ?? declaration.boundary.year;
+	const earlier = earlierReleases(
+		declaration,
+		datasetId,
+		geography,
+		boundaryYear,
+	);
 	return {
 		request: {
 			measure,
-			datasetId: series.release?.datasetId ?? declaration.id,
-			geography: series.release?.geography ?? declaration.boundary.type,
-			boundaryYear:
-				series.release?.boundaryYear ?? declaration.boundary.year,
+			datasetId,
+			geography,
+			boundaryYear,
 			...(dimensions ? { dimensions } : {}),
 		},
 		...(counted ? { countMeasure: counted.measure } : {}),
 		...(counted?.dimensions ? { countDimensions: counted.dimensions } : {}),
+		...(earlier.length ? { earlier } : {}),
 		...(series.breaks ? { breaks: series.breaks } : {}),
 		...(series.combine ? { combine: series.combine } : {}),
 		heading: series.headings?.[measureId] ?? series.heading,
