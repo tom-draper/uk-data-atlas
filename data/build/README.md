@@ -6,6 +6,11 @@ with `pnpm data:build` (see "One data build" in `ARCHITECTURE.md`).
 The stage cache in `.cache/data-build/` records recent stage timings and the latest
 build summary. Run `pnpm data:build --plan` to see available timing estimates and
 which stages can run in parallel. A build where nothing changed runs no stage.
+Stages normally use the content digest of all outputs from each dependency.
+A stage that reads only specific files can list them in `dependencyOutputs`
+in the build graph. Its cache key then uses those files' recorded content
+hashes. A missing or changed file needs a valid record before the consumer
+can be skipped.
 Every file here is written by one stage, and no stage writes a file another
 owns. The `.stamps/` folder holds one small file for each parity check stage
 (`verify-dataset-payloads`, `verify-postcode-areas`), as the record that it

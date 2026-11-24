@@ -20,7 +20,7 @@ export async function findCurrentStages(selected) {
  *
  * @param {{
  *   stages: { name: string, dependencies: string[], cacheable?: boolean }[],
- *   selected: { name: string, dependencies: string[], cacheable?: boolean }[],
+ *   selected: { name: string, dependencies: string[], cacheable?: boolean, dependencyOutputs?: Record<string, string[]> }[],
  *   cache: { outputDigest: Function, lookup: Function } | null,
  *   reuse: boolean,
  *   current: Set<string>,
@@ -41,11 +41,14 @@ export function createDigestTracker({
 		);
 	const digests = alwaysRunning();
 	const dependencyDigests = (stage, known = digests) =>
-		stage.dependencies.map((name) =>
-			known.has(name)
-				? known.get(name)
-				: (cache?.outputDigest(name) ?? null),
-		);
+		stage.dependencies.map((name) => {
+			// A plan cannot use a previous file hash when its owner must run.
+			if (known.get(name) === null) return null;
+			const paths = stage.dependencyOutputs?.[name];
+			return paths
+				? (cache?.outputDigest(name, paths) ?? null)
+				: (known.get(name) ?? cache?.outputDigest(name) ?? null);
+		});
 	const reusableDigest = (stage, dependencies) =>
 		reuse && stage.cacheable !== false && !dependencies.includes(null)
 			? cache.lookup(stage, dependencies)

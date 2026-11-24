@@ -510,9 +510,19 @@ export function createStageCache({
 			return { digest, files: [...outputs.keys()] };
 		},
 
-		/** The recorded output digest of a stage, or null if never built. */
-		outputDigest(name) {
-			return state.stages[name]?.digest ?? null;
+		/** The recorded digest, optionally limited to verified, exact files. */
+		outputDigest(name, paths) {
+			const record = state.stages[name];
+			if (!record?.digest) return null;
+			if (!paths) return record.digest;
+			const outputs = new Map();
+			for (const path of paths) {
+				const entry = record.outputs[path];
+				if (!entry?.sha256 || !sameStamp(fileStamp(path), entry))
+					return null;
+				outputs.set(path, entry);
+			}
+			return `files:${hashOutputs(outputs)}`;
 		},
 
 		/**

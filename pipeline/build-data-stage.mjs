@@ -13,6 +13,7 @@ const stage = (
 		cacheable = true,
 		check = false,
 		exclusive = false,
+		dependencyOutputs,
 		isCurrent,
 		memoryMb,
 		compact,
@@ -25,6 +26,7 @@ const stage = (
 ) => ({
 	name,
 	dependencies,
+	dependencyOutputs,
 	args,
 	cacheable,
 	check,

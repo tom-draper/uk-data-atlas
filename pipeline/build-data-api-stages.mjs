@@ -33,6 +33,14 @@ const catalogueFiles = [
 const atlasCache = "data/build/atlas-cache.sqlite";
 const cachePart = (component) =>
 	`data/build/atlas-cache-parts/${component}.sqlite`;
+const atlasBase = "data/build/atlas-base.sqlite";
+const atlasBaseMetadata = "data/build/atlas-base-build.sqlite";
+const atlasBaseCacheParts = [cachePart("projections"), cachePart("datasets")];
+const crosswalkWeights =
+	"data/build/crosswalk-weights/crosswalk-weights.sqlite";
+const conversionBacktest =
+	"data/build/conversion-backtest/conversion-backtest.sqlite";
+const convertedSeries = "data/build/converted-series/converted-series.sqlite";
 
 const artifacts = "data/build/artifacts";
 const atlasAssets = "data/build/atlas-assets";
@@ -129,18 +137,12 @@ export const apiStages = [
 		],
 		{
 			memoryMb: 6400,
-			writes: [
-				"data/build/atlas-base.sqlite",
-				"data/build/atlas-base-build.sqlite",
-				cachePart("projections"),
-				cachePart("datasets"),
-			],
+			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
-				"data/build/atlas-base.sqlite",
-				"data/build/atlas-base-build.sqlite",
-				cachePart("projections"),
-				cachePart("datasets"),
+				atlasBase,
+				atlasBaseMetadata,
+				...atlasBaseCacheParts,
 			],
 		},
 	),
@@ -279,6 +281,7 @@ export const apiStages = [
 		["atlas-sqlite"],
 		["pipeline/src/stages/build-statistics-vocabulary.ts"],
 		{
+			dependencyOutputs: { "atlas-sqlite": [atlasBase] },
 			writes: ["data/build/statistics-vocabulary.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-vocabulary.json"],
@@ -309,9 +312,7 @@ export const apiStages = [
 			rawInputs: crosswalkWeightInputs,
 			writes: ["data/build/crosswalk-weights"],
 			outputs: ["data/build/crosswalk-weights"],
-			requiredOutputs: [
-				"data/build/crosswalk-weights/crosswalk-weights.sqlite",
-			],
+			requiredOutputs: [crosswalkWeights],
 		},
 	),
 	// Converts figures whose answer is published elsewhere and measures the
@@ -321,11 +322,15 @@ export const apiStages = [
 		["atlas-sqlite", "crosswalk-weights"],
 		["pipeline/src/stages/build-conversion-backtest.ts"],
 		{
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase],
+				"crosswalk-weights": [crosswalkWeights],
+			},
 			rawInputs: [],
 			writes: ["data/build/conversion-backtest"],
 			outputs: ["data/build/conversion-backtest"],
 			requiredOutputs: [
-				"data/build/conversion-backtest/conversion-backtest.sqlite",
+				conversionBacktest,
 				"data/build/conversion-backtest/backtest-tables.md",
 			],
 		},
@@ -337,12 +342,17 @@ export const apiStages = [
 		["atlas-sqlite", "crosswalk-weights", "conversion-backtest"],
 		["pipeline/src/stages/build-converted-series.ts"],
 		{
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase],
+				"crosswalk-weights": [crosswalkWeights],
+				"conversion-backtest": [conversionBacktest],
+			},
 			memoryMb: 2816,
 			rawInputs: [],
 			writes: ["data/build/converted-series"],
 			outputs: ["data/build/converted-series"],
 			requiredOutputs: [
-				"data/build/converted-series/converted-series.sqlite",
+				convertedSeries,
 				"data/build/converted-series/converted-series.md",
 			],
 		},
@@ -383,6 +393,11 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/assemble-atlas.ts"],
 		{
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase, atlasBaseMetadata],
+				"crosswalk-weights": [crosswalkWeights],
+				"converted-series": [convertedSeries],
+			},
 			memoryMb: 3712,
 			writes: [
 				"data/build/atlas.sqlite",
@@ -434,6 +449,7 @@ export const apiStages = [
 		["atlas-sqlite", "data-catalog", "statistics-vocabulary"],
 		["pipeline/src/stages/build-statistics-read-path.ts"],
 		{
+			dependencyOutputs: { "atlas-sqlite": [atlasBase] },
 			writes: ["data/build/statistics-read-path.json"],
 			rawInputs: [],
 			requiredOutputs: ["data/build/statistics-read-path.json"],
@@ -444,6 +460,7 @@ export const apiStages = [
 		["data-catalog", "atlas-sqlite", "statistics-read-path"],
 		["pipeline/src/stages/build-export-manifest.ts"],
 		{
+			dependencyOutputs: { "atlas-sqlite": [atlasBase] },
 			memoryMb: 2048,
 			compact: {
 				variable: "DATA_EXPORT_JOBS",
@@ -547,6 +564,7 @@ export const apiStages = [
 		["crosswalk-inventory", "atlas-sqlite"],
 		["pipeline/src/stages/build-relationship-paths.ts"],
 		{
+			dependencyOutputs: { "atlas-sqlite": [atlasBase] },
 			rawInputs: [],
 			writes: [`${geography}/relationship-paths.json`],
 		},
@@ -777,6 +795,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/assemble-cache.ts"],
 		{
+			dependencyOutputs: { "atlas-sqlite": atlasBaseCacheParts },
 			writes: [atlasCache],
 			rawInputs: [],
 			requiredOutputs: [atlasCache],
