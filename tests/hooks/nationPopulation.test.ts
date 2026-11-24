@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MeasureQueryError } from "@/lib/measures/client";
 import { loadNationPopulation } from "@/lib/measures/nationPopulation";
-import { loadLandArea } from "@/lib/measures/landArea";
+import { loadCouncilDensity } from "@/lib/measures/populationDensity";
 import type {
 	MeasureValuesPayload,
 	MeasureValuesRequest,
@@ -178,30 +178,37 @@ describe("loadNationPopulation", () => {
 	});
 });
 
-describe("loadLandArea", () => {
-	it("reads a council's land in square kilometres", async () => {
+describe("loadCouncilDensity", () => {
+	it("reads a council's published density in the population's year", async () => {
 		const asked: Array<Omit<MeasureValuesRequest, "areas">> = [];
-		const area = await loadLandArea("S12000049", async (request) => {
-			asked.push(request);
-			const answer = payload("land-area", "2024", {
-				S12000049: 17_500,
-			});
-			return {
-				...answer,
-				measure: { ...answer.measure, unit: "hectares" },
-			};
-		});
-		expect(area).toEqual({
-			sqKm: 175,
+		const density = await loadCouncilDensity(
+			"S12000049",
+			"2024",
+			async (request) => {
+				asked.push(request);
+				return payload("population-uk", "2024", { S12000049: 3724 });
+			},
+		);
+		expect(density).toEqual({
+			perSqKm: 3724,
 			period: "2024",
-			datasetId: "land-area",
+			datasetId: "population-uk",
 		});
-		expect(asked[0]?.dimensions).toEqual({ surface: ["land"] });
+		expect(asked[0]).toEqual({
+			measure: "population-density",
+			geography: "localAuthority",
+			periods: ["2024"],
+		});
 	});
 
-	it("has none where the route refuses", async () => {
-		expect(await loadLandArea("N09000003", async () => refuse())).toBe(
-			null,
-		);
+	it("has none for another year or where the route refuses", async () => {
+		expect(
+			await loadCouncilDensity("S12000049", "2025", async () =>
+				payload("population-uk", "2024", { S12000049: 3724 }),
+			),
+		).toBe(null);
+		expect(
+			await loadCouncilDensity("N09000003", "2024", async () => refuse()),
+		).toBe(null);
 	});
 });

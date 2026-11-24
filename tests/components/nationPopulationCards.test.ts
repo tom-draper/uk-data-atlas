@@ -139,7 +139,7 @@ describe("density card outside the dataset's nations", () => {
 		expect(html).toContain("Not published in this form for Scotland");
 	});
 
-	it("waits for a council's estimate and land area", () => {
+	it("waits for a council's estimate and density", () => {
 		const html = renderDensity(area("localAuthority", "N09000003", 2023));
 		expect(html).not.toContain("[2022]");
 		expect(html).not.toContain("No data available");
