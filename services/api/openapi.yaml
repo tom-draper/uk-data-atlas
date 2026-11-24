@@ -5326,8 +5326,10 @@ paths:
             them, otherwise the values converted onto it at build time (`exact` where whole source
             areas were regrouped, `weighted` where some were split by a weight). Each converted value
             names its source release, rule, basis and crosswalks, and `summary` gives the periods
-            covered, the share converted and warnings. Periods that cannot be converted, such as a
-            median or a release with no crosswalk, are listed in `gaps` with a reason. Not with `to`.
+            covered, the share converted and warnings. A value that cannot be combined, such as a
+            median, is carried only where the area is unchanged. Periods that cannot be converted,
+            such as a median for an area whose boundary changed or a release with no crosswalk, are
+            listed in `gaps` with a reason. Not with `to`.
         - name: datasetId
           in: query
           required: false
