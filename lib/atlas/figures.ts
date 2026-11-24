@@ -15,8 +15,8 @@ import {
 /**
  * A headline figure for each place on the most searched maps, written into
  * the page's search snippet. Figures are compiled from the committed
- * datasets by `pnpm data:build --only seo`, because the datasets are far too large
- * to load while rendering a page.
+ * datasets by `scripts/build-seo-data.mts` in `pnpm build`, because the
+ * datasets are far too large to load while rendering a page.
  *
  * Each figure is one the data supports for the whole place: a total, a rate
  * from totals, a value published for that exact place, or else the range

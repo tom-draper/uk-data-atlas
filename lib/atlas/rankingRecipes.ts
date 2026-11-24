@@ -15,7 +15,8 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
  * How a ranking page reads a map's data, where the map's own colouring is not
  * enough: a value of its own, areas rolled up into councils, or columns that
  * add context such as a change over time or a rate per resident. Compiled by
- * `pnpm data:build --only seo`; a page renders only the stored numbers.
+ * `scripts/build-seo-data.mts` in `pnpm build`; a page renders only the
+ * stored numbers.
  */
 
 export type RankingLevel =
