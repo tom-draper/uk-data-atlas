@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { MeasureQueryError } from "@/lib/measures/client";
-import { loadLandArea } from "@/lib/measures/landArea";
 import { loadNationPopulation } from "@/lib/measures/nationPopulation";
+import { loadLandArea } from "@/lib/measures/landArea";
 import type {
 	MeasureValuesPayload,
 	MeasureValuesRequest,
@@ -73,6 +73,8 @@ describe("loadNationPopulation", () => {
 		expect(result).toEqual({
 			period: "2025",
 			datasetId: "population-council-scotland",
+			kind: "estimate",
+			total: 26,
 			males: 12,
 			females: 14,
 			ages: [
@@ -99,10 +101,72 @@ describe("loadNationPopulation", () => {
 		);
 		expect(result).toMatchObject({
 			period: "2024",
+			kind: "estimate",
+			total: 820,
 			males: 400,
 			females: 420,
 			ages: null,
 		});
+	});
+
+	it("reads the council's total on any release where no sex is published", async () => {
+		const asked: Array<Omit<MeasureValuesRequest, "areas">> = [];
+		const result = await loadNationPopulation(
+			target,
+			["0"],
+			async (request) => {
+				asked.push(request);
+				return request.dimensions
+					? refuse()
+					: payload("population-uk", "2024", {
+							S12000049: 650_300,
+							N09000003: 352_390,
+						});
+			},
+		);
+		expect(result).toEqual({
+			period: "2024",
+			datasetId: "population-uk",
+			kind: "estimate",
+			total: 650_300,
+			males: null,
+			females: null,
+			ages: null,
+		});
+		expect(asked.at(-1)).toEqual({
+			measure: "population",
+			geography: "localAuthority",
+		});
+	});
+
+	it("falls back to the census count, marked as a census", async () => {
+		const result = await loadNationPopulation(
+			{ geography: "dataZone", boundaryYear: 2021, code: "N20000001" },
+			["0"],
+			async (request) =>
+				request.measure === "usual-residents"
+					? payload("census-2021-ni-a01", "2021", { N20000001: 738 })
+					: refuse(),
+		);
+		expect(result).toMatchObject({
+			period: "2021",
+			datasetId: "census-2021-ni-a01",
+			kind: "census",
+			total: 738,
+			males: null,
+		});
+	});
+
+	it("has no total where the code is not on the release", async () => {
+		const result = await loadNationPopulation(
+			target,
+			[],
+			async (request) =>
+				request.measure === "population"
+					? payload("population-uk", "2024", { S12000036: 1 })
+					: refuse(),
+		);
+		expect(result.total).toBeNull();
 	});
 
 	it("has nothing where the route publishes nothing", async () => {

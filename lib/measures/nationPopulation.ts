@@ -5,10 +5,14 @@ import type { MeasureValuesPayload, MeasureValuesRequest } from "./types";
 
 /** One area's population, by sex and, where published, single year of age. */
 export type NationPopulation = {
-	/** The estimate's year, such as `2025` for mid-2025. */
+	/** The figure's year: `2025` for a mid-2025 estimate, `2022` for a census. */
 	period: string | null;
 	/** The dataset that published it, for its source label. */
 	datasetId: string | null;
+	/** A mid-year estimate, or a census count where no estimate is published. */
+	kind: "estimate" | "census" | null;
+	/** Everyone in the area, as published or as the sexes add to. */
+	total: number | null;
 	males: number | null;
 	females: number | null;
 	/** Males and females at each age, oldest last; null where not published. */
@@ -33,15 +37,21 @@ const ask = async (
 	target: PopulationTarget,
 	dimensions: Record<string, string[]>,
 	datasetId?: string,
+): Promise<MeasureValuesPayload | null> =>
+	request(load, {
+		measure: "population",
+		geography: target.geography,
+		boundaryYear: target.boundaryYear,
+		dimensions,
+		...(datasetId ? { datasetId } : {}),
+	});
+
+const request = async (
+	load: Load,
+	query: Omit<MeasureValuesRequest, "areas">,
 ): Promise<MeasureValuesPayload | null> => {
 	try {
-		return await load({
-			measure: "population",
-			geography: target.geography,
-			boundaryYear: target.boundaryYear,
-			dimensions,
-			...(datasetId ? { datasetId } : {}),
-		});
+		return await load(query);
 	} catch (error) {
 		if (error instanceof MeasureQueryError && error.status < 500)
 			return null;
@@ -63,6 +73,8 @@ const valueAt = (
 const EMPTY: NationPopulation = {
 	period: null,
 	datasetId: null,
+	kind: null,
+	total: null,
 	males: null,
 	females: null,
 	ages: null,
@@ -74,7 +86,10 @@ const EMPTY: NationPopulation = {
  * youngest males is asked for every other age, so the ages all come from one
  * dataset and one period; their sum is the area's total, as the ages split
  * the whole population. Where no source publishes ages, the sexes are read
- * on their own. A figure the route refuses is left out, never filled in from
+ * on their own, and where none publishes the sexes, the area's total: a
+ * mid-year estimate on any release that holds the code, or else the census
+ * count of usual residents, marked as a census so it is labelled with its
+ * own year. A figure the route refuses is left out, never filled in from
  * others.
  */
 export async function loadNationPopulation(
@@ -106,26 +121,77 @@ export async function loadNationPopulation(
 			if (males == null || females == null) break;
 			ages.push({ age: index, males, females });
 		}
-		if (ages.length === ageCodes.length)
+		if (ages.length === ageCodes.length) {
+			const males = ages.reduce((sum, age) => sum + age.males, 0);
+			const females = ages.reduce((sum, age) => sum + age.females, 0);
 			return {
 				period: firstPeriod,
 				datasetId,
-				males: ages.reduce((sum, age) => sum + age.males, 0),
-				females: ages.reduce((sum, age) => sum + age.females, 0),
+				kind: "estimate",
+				total: males + females,
+				males,
+				females,
 				ages,
 			};
+		}
 	}
 
 	const males = await ask(load, target, { sex: ["male"] });
 	const period = males?.periods.at(-1);
-	if (!males || !period) return EMPTY;
-	const datasetId = males.source.datasetId;
-	const females = await ask(load, target, { sex: ["female"] }, datasetId);
-	return {
-		period,
-		datasetId,
-		males: valueAt(males, target.code, period),
-		females: valueAt(females, target.code, period),
-		ages: null,
-	};
+	if (males && period) {
+		const datasetId = males.source.datasetId;
+		const females = await ask(load, target, { sex: ["female"] }, datasetId);
+		const male = valueAt(males, target.code, period);
+		const female = valueAt(females, target.code, period);
+		return {
+			period,
+			datasetId,
+			kind: "estimate",
+			total: male != null && female != null ? male + female : null,
+			males: male,
+			females: female,
+			ages: null,
+		};
+	}
+	return (
+		(await totalOf(
+			load,
+			target,
+			// A council's code stays the same across releases, so the
+			// estimate is read on whichever release publishes it.
+			{ measure: "population", geography: target.geography },
+			"estimate",
+		)) ??
+		(await totalOf(
+			load,
+			target,
+			{
+				measure: "usual-residents",
+				geography: target.geography,
+				boundaryYear: target.boundaryYear,
+			},
+			"census",
+		)) ??
+		EMPTY
+	);
 }
+
+const totalOf = async (
+	load: Load,
+	target: PopulationTarget,
+	query: Omit<MeasureValuesRequest, "areas">,
+	kind: "estimate" | "census",
+): Promise<NationPopulation | null> => {
+	const payload = await request(load, query);
+	const period = payload?.periods.at(-1);
+	const total = period ? valueAt(payload, target.code, period) : null;
+	return payload && period && total != null
+		? {
+				...EMPTY,
+				period,
+				datasetId: payload.source.datasetId,
+				kind,
+				total,
+			}
+		: null;
+};
