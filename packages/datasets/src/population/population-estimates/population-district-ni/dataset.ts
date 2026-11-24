@@ -2,7 +2,11 @@ import type { PopulationNationDataset } from "../../../types/population.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
 import { populationDistrictNiStatisticsParts } from "../../../data/population/nationSource.ts";
-import { AGE, byAge } from "../../../data/population/statistics.ts";
+import {
+	AGE,
+	byAge,
+	POPULATION_TREND,
+} from "../../../data/population/statistics.ts";
 
 export const populationDistrictNi = defineDataset<
 	PopulationNationDataset<"population-district-ni">
@@ -40,6 +44,7 @@ export const populationDistrictNi = defineDataset<
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["total", "males", "females", "ladName"],
 	},
+	placeTrend: POPULATION_TREND,
 	statistics: {
 		direct: {
 			only: true,
