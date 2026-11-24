@@ -758,6 +758,21 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 			column("Area", "squareKm", field("area")),
 		],
 	},
+	// The map colours the gap between men and women; a table reads plainer
+	// as women's share.
+	"population-gender": {
+		level: "ward",
+		label: "Women's share",
+		format: percentOne,
+		value: (record) => {
+			const women = sumValues(record.females);
+			return share(women, women + sumValues(record.males));
+		},
+		columns: [
+			column("Women", "count", (record) => sumValues(record.females)),
+			column("Men", "count", (record) => sumValues(record.males)),
+		],
+	},
 	qualification: {
 		columns: [breakdownShare("No qualifications", "noQualifications")],
 	},
