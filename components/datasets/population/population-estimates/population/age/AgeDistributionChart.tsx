@@ -14,6 +14,9 @@ interface AgeDistributionChartProps {
 	total: number;
 	ageGroups: AgeGroups;
 	isActive: boolean;
+	/** Why there is nothing to draw, in place of "No data available". */
+	emptyMessage?: string;
+	loading?: boolean;
 }
 
 const AGE_GROUP_ORDER: Array<keyof AgeGroups> = [
@@ -33,8 +36,10 @@ function AgeDistributionChart({
 	total,
 	ageGroups,
 	isActive,
+	emptyMessage,
+	loading = false,
 }: AgeDistributionChartProps) {
-	const chartsLoading = useChartsLoading();
+	const chartsLoading = useChartsLoading() || loading;
 
 	if (!total || maxCount === 0) {
 		return (
@@ -43,7 +48,7 @@ function AgeDistributionChart({
 					<ChartContentPlaceholder className="size-full" />
 				) : (
 					<div className="h-full flex items-center justify-center">
-						No data available
+						{emptyMessage ?? "No data available"}
 					</div>
 				)}
 			</div>
