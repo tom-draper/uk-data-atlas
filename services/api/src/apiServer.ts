@@ -1,35 +1,10 @@
-import { collectOwners } from "./contract/fallbackRoutes";
-import { legacyPostRoute } from "./contract/legacyHandler";
-import { boundaryFastifyRoutes } from "./boundaries/boundaryFastifyRoutes";
-import { similarAreasFastifyRoutes } from "./areas/similarAreasFastifyRoutes";
-import { atlasAssetFastifyRoutes } from "./atlas/atlasAssetFastifyRoutes";
-import { coordinateFastifyRoutes } from "./coordinates/coordinateFastifyRoutes";
-import { translationFastifyRoutes } from "./crosswalks/translationFastifyRoutes";
-import { attributionFastifyRoutes } from "./attribution/attributionFastifyRoutes";
-import { analysisFastifyRoutes } from "./analysis/analysisFastifyRoutes";
-import { terrainFastifyRoutes } from "./terrain/terrainFastifyRoutes";
-import { bulkFastifyRoutes } from "./bulk/bulkFastifyRoutes";
-import { relationshipsFastifyRoutes } from "./relationships/relationshipsFastifyRoutes";
-import { releaseJoinFastifyRoutes } from "./boundaries/releaseJoinFastifyRoutes";
-import { documentFastifyRoutes } from "./documents/documentFastifyRoutes";
-import { crosswalkFastifyRoutes } from "./crosswalks/crosswalkFastifyRoutes";
-import { placeFastifyRoutes } from "./places/placeFastifyRoutes";
-import { locationFastifyRoutes } from "./places/locationFastifyRoutes";
-import { areaCollectionFastifyRoutes } from "./areas/areaCollectionFastifyRoutes";
-import { areaDetailFastifyRoutes } from "./areas/areaDetailFastifyRoutes";
-import { mapResourceFastifyRoutes } from "./mapResources/mapResourceFastifyRoutes";
-import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
-import { measureExportRoutes } from "./data/measureExportRoutes";
 import { routingUrl } from "./http/routingPath";
 import Fastify, {
 	type FastifyReply,
 	type FastifyRequest,
 	type FastifyServerFactory,
 } from "fastify";
-import { catalogueFastifyRoutes } from "./catalogue/catalogueFastifyRoutes";
-import { atlasReleaseRoutes } from "./contract/atlasReleaseRoutes";
-import { documentationRoutes } from "./contract/documentationRoutes";
-import { rootRoutes } from "./contract/rootRoutes";
+import { registerApiRoutes } from "./registerApiRoutes";
 import { sendFile } from "./http/sendFile";
 export { sendFile } from "./http/sendFile";
 import { randomUUID, timingSafeEqual } from "node:crypto";
@@ -892,133 +867,7 @@ export const createApiServer = (
 		await respond(pipeline, answered);
 	};
 
-	const ownerOf = collectOwners(fastify);
-	fastify.setNotFoundHandler((request, reply) => {
-		const owner = ownerOf(request.url.split("?")[0]!);
-		if (!owner) return dispatch(request, reply);
-		const answer = legacyPostRoute(catalogues, owner);
-		return dispatch(request, reply, (body) => answer(request, body));
-	});
-	void fastify.register(documentationRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(rootRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(atlasReleaseRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(catalogueFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(boundaryFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(similarAreasFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(documentFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(atlasAssetFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(coordinateFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(translationFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(attributionFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(analysisFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(relationshipsFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(releaseJoinFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(bulkFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(terrainFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(crosswalkFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(placeFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(locationFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(areaCollectionFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(areaDetailFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(dataFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(mapResourceFastifyRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
-	void fastify.register(measureExportRoutes, {
-		prefix: "/v1",
-		context: catalogues,
-		dispatch,
-	});
+	registerApiRoutes(fastify, catalogues, dispatch);
 	const ready = fastify.ready();
 	const server = fastify.server as ApiServer;
 	server.on("close", () => {
