@@ -443,11 +443,16 @@ export const apiStages = [
 		["data-catalog", "atlas-sqlite", "statistics-read-path"],
 		["pipeline/src/stages/build-export-manifest.ts"],
 		{
-			memoryMb: 1280,
-			writes: [
-				`${artifacts}/exports`,
-				`${artifacts}/export-manifest.json`,
-			],
+			memoryMb: 2048,
+			compact: {
+				variable: "DATA_EXPORT_JOBS",
+				workers: 1,
+				normalWorkers: 2,
+				normalBudgetMb: 5120,
+				memoryMb: 1280,
+			},
+			outputs: [`${artifacts}/exports`],
+			requiredOutputs: [`${artifacts}/export-manifest.json`],
 			rawInputs: [],
 		},
 	),

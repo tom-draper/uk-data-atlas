@@ -142,89 +142,94 @@ export const compileExportManifest = (
 	publicDirectory: string,
 	dataCatalog: DataCatalog,
 	readArtifact: (measureId: string, source: MeasureSource) => string,
+): ExportManifest =>
+	assembleExportManifest(
+		dataCatalog,
+		dataCatalog.measures.flatMap((measure) =>
+			compileMeasureSourceExports(
+				measure,
+				readArtifact,
+				(_content, ...args) =>
+					compileObservationDownloads(publicDirectory, ...args),
+			),
+		),
+	);
+
+export const compileMeasureSourceExports = (
+	measure: DataCatalog["measures"][number],
+	readArtifact: (measureId: string, source: MeasureSource) => string,
+	download: typeof compileObservationDownloads,
+) =>
+	measure.sources.map((source): BulkExport => {
+		const artifact = observationArtifactName(measure.id, source);
+		const content = readArtifact(measure.id, source);
+		const table = JSON.parse(content) as unknown;
+		// A table is several measures' artifact, so each of them
+		// exports the whole table under an id of its own.
+		if (isMeasureTable(table)) {
+			const entry = tableExport(
+				measure,
+				source,
+				table,
+				Buffer.byteLength(content),
+			);
+			entry.formats = download(
+				content,
+				entry,
+				table,
+				measure.unit,
+				measure.series ? measureSeriesKey(measure.series) : measure.id,
+			);
+			return entry;
+		}
+		const parsed = table as ArtifactRecords;
+		if (typeof parsed.contentHash !== "string") {
+			throw new Error(`${artifact}.json has no content hash.`);
+		}
+		const periods = parsed.periods
+			? parsed.periods
+			: parsed.period && parsed.records
+				? [{ period: parsed.period, records: parsed.records }]
+				: undefined;
+		if (!periods) {
+			throw new Error(`${artifact}.json has no observation records.`);
+		}
+		const records = periods.flatMap((period) => period.records);
+		const fields = recordFields(`${artifact}.json`, records);
+		const entry: BulkExport = {
+			id: artifact,
+			measureId: measure.id,
+			datasetId: source.datasetId,
+			periods: source.periods,
+			sourceGeography: source.sourceGeography,
+			format: "json",
+			artifact,
+			contentHash: parsed.contentHash,
+			bytes: Buffer.byteLength(content),
+			href: `/v1/exports/${artifact}`,
+			recordCount: records.length,
+			recordCountByPeriod: Object.fromEntries(
+				periods.map((period) => [period.period, period.records.length]),
+			),
+			schema: {
+				version: Number(parsed.schemaVersion),
+				layout: parsed.periods ? "periods" : "single-period",
+				recordType: fields.some((field) => field.name === "category")
+					? "categorical"
+					: "numeric",
+				fields,
+			},
+			provenance: provenanceOf(measure, source),
+		};
+		entry.formats = download(content, entry, { periods }, measure.unit);
+		return entry;
+	});
+
+export const assembleExportManifest = (
+	dataCatalog: DataCatalog,
+	exports: BulkExport[],
 ): ExportManifest => {
-	const exports = dataCatalog.measures
-		.flatMap((measure) =>
-			measure.sources.map((source): BulkExport => {
-				const artifact = observationArtifactName(measure.id, source);
-				const content = readArtifact(measure.id, source);
-				const table = JSON.parse(content) as unknown;
-				// A table is several measures' artifact, so each of them
-				// exports the whole table under an id of its own.
-				if (isMeasureTable(table)) {
-					const entry = tableExport(
-						measure,
-						source,
-						table,
-						Buffer.byteLength(content),
-					);
-					entry.formats = compileObservationDownloads(
-						publicDirectory,
-						entry,
-						table,
-						measure.unit,
-						measure.series
-							? measureSeriesKey(measure.series)
-							: measure.id,
-					);
-					return entry;
-				}
-				const parsed = table as ArtifactRecords;
-				if (typeof parsed.contentHash !== "string") {
-					throw new Error(`${artifact}.json has no content hash.`);
-				}
-				const periods = parsed.periods
-					? parsed.periods
-					: parsed.period && parsed.records
-						? [{ period: parsed.period, records: parsed.records }]
-						: undefined;
-				if (!periods) {
-					throw new Error(
-						`${artifact}.json has no observation records.`,
-					);
-				}
-				const records = periods.flatMap((period) => period.records);
-				const fields = recordFields(`${artifact}.json`, records);
-				const entry: BulkExport = {
-					id: artifact,
-					measureId: measure.id,
-					datasetId: source.datasetId,
-					periods: source.periods,
-					sourceGeography: source.sourceGeography,
-					format: "json",
-					artifact,
-					contentHash: parsed.contentHash,
-					bytes: Buffer.byteLength(content),
-					href: `/v1/exports/${artifact}`,
-					recordCount: records.length,
-					recordCountByPeriod: Object.fromEntries(
-						periods.map((period) => [
-							period.period,
-							period.records.length,
-						]),
-					),
-					schema: {
-						version: Number(parsed.schemaVersion),
-						layout: parsed.periods ? "periods" : "single-period",
-						recordType: fields.some(
-							(field) => field.name === "category",
-						)
-							? "categorical"
-							: "numeric",
-						fields,
-					},
-					provenance: provenanceOf(measure, source),
-				};
-				entry.formats = compileObservationDownloads(
-					publicDirectory,
-					entry,
-					{ periods },
-					measure.unit,
-				);
-				return entry;
-			}),
-		)
-		.sort((left, right) => left.id.localeCompare(right.id));
+	exports.sort((left, right) => left.id.localeCompare(right.id));
 	if (new Set(exports.map((item) => item.id)).size !== exports.length) {
 		throw new Error("Each bulk export must have a unique artifact name.");
 	}

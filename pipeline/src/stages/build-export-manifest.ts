@@ -8,6 +8,6 @@ if (isMainModule(import.meta.url)) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../../..");
 	const result = await buildExportManifest(repositoryRoot);
 	console.log(
-		`Wrote ${result.exportCount} bulk exports to ${result.outputPath}`,
+		`Wrote ${result.exportCount} bulk exports to ${result.outputPath}. Reused ${result.reused} of ${result.downloadCount} download pairs with ${result.workerCount} worker(s).`,
 	);
 }

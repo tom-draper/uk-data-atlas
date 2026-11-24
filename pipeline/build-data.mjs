@@ -69,9 +69,22 @@ export async function runBuild({
 		useCache,
 	} = parseBuildArgs({ argv, stages, limits });
 	const { selected, skippedChecks, checks, isCheck } = selectStages({
-		stages: stages.map((stage) =>
-			configureStageMemory(stage, limits.memoryMb, env),
-		),
+		stages: stages.map((stage) => {
+			const configured = configureStageMemory(
+				stage,
+				limits.memoryMb,
+				env,
+			);
+			return useCache
+				? configured
+				: {
+						...configured,
+						workerEnvironment: {
+							...configured.workerEnvironment,
+							DATA_BUILD_NO_CACHE: "1",
+						},
+					};
+		}),
 		from,
 		only,
 		checksOnly,
