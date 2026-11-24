@@ -2,17 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import { Breadcrumbs, Card, Sheet } from "@/components/docs/Page";
-import RankingRest from "@/components/maps/RankingRest";
-import {
-	rankingLinkClass,
-	RankingRowView,
-} from "@/components/maps/RankingRowView";
+import { rankingLinkClass } from "@/components/maps/RankingRowView";
+import RankingTable from "@/components/maps/RankingTable";
 import {
 	RankingSummary,
 	summaryPositions,
 } from "@/components/maps/RankingSummary";
 import { atlasMapTitle, locationLabel } from "@/lib/atlas/pages";
 import {
+	barScale,
 	isLongRanking,
 	rankingRow,
 	resolveRanking,
@@ -153,60 +151,22 @@ export default async function RankingPage({ params }: { params: Params }) {
 					)}
 
 					<Card
-						className={`mt-9 overflow-hidden ${columns.length > 1 ? "max-w-[1180px]" : "max-w-[900px]"}`}
+						className={`mt-9 ${columns.length > 1 ? "max-w-[1180px]" : "max-w-[900px]"}`}
 					>
-						<div className="overflow-x-auto">
-							<table className="w-full table-fixed text-left text-[14px]">
-								{/* Widths sit on the columns: the extra ones are hidden
-								    on a phone and must take no width there. */}
-								<colgroup>
-									<col className="w-16 sm:w-20" />
-									<col />
-									<col className="w-32 sm:w-36" />
-									{columns.map((column) => (
-										<col
-											key={column.label}
-											className="w-0 sm:w-32"
-										/>
-									))}
-								</colgroup>
-								<thead>
-									<tr className="border-b border-slate-900/[0.07] text-[12px] font-semibold tracking-wide text-slate-500">
-										<th className="px-4 py-3">Rank</th>
-										<th className="px-4 py-3">
-											{titleCase(nouns.one)}
-										</th>
-										<th className="px-4 py-3 text-right">
-											{rankedValueLabel(map)}
-										</th>
-										{columns.map((column) => (
-											<th
-												key={column.label}
-												className="hidden px-4 py-3 text-right font-medium sm:table-cell"
-											>
-												{column.label}
-											</th>
-										))}
-									</tr>
-								</thead>
-								<tbody className="divide-y divide-slate-900/[0.05]">
-									{rows.map((row) => (
-										<RankingRowView
-											key={row.code}
-											row={row}
-										/>
-									))}
-								</tbody>
-								{long && (
-									<RankingRest
-										url={`/data/rankings/${location.slug}/${map.slug}`}
-										remaining={areas.length - shown}
-										noun={plural}
-										columns={3 + columns.length}
-									/>
-								)}
-							</table>
-						</div>
+						<RankingTable
+							initial={rows}
+							total={areas.length}
+							url={
+								long
+									? `/data/rankings/${location.slug}/${map.slug}`
+									: null
+							}
+							noun={plural}
+							nameLabel={titleCase(nouns.one)}
+							valueLabel={rankedValueLabel(map)}
+							columns={columns.map((column) => column.label)}
+							scale={barScale(areas)}
+						/>
 					</Card>
 				</Sheet>
 			</main>

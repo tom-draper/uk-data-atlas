@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { summaryPositions } from "@/components/maps/RankingSummary";
+import { matchingRows, sortedRows } from "@/components/maps/RankingTable";
 import { findAtlasLocation, findAtlasMap } from "@/lib/atlas/pages";
-import { type RankingContext, rankingRow } from "@/lib/atlas/rankingRows";
+import {
+	barScale,
+	type RankingContext,
+	type RankingRow,
+	rankingRow,
+} from "@/lib/atlas/rankingRows";
 import { COUNCIL_PLACES, type MapRanking } from "@/lib/atlas/rankings";
 
 describe("ranking page summary", () => {
@@ -39,6 +45,7 @@ describe("ranking rows", () => {
 		expect(rankingRow(context("ward"), ward, 2)).toMatchObject({
 			rank: 3,
 			note: council.name,
+			keys: [1],
 		});
 		expect(
 			rankingRow(context("ward", council), ward, 0).note,
@@ -53,5 +60,55 @@ describe("ranking rows", () => {
 		expect(
 			rankingRow(context("localAuthority"), { ...ward, code }, 0).href,
 		).toBe(`/maps/${council.slug}`);
+	});
+
+	it("draws bars only for values from zero that spread out", () => {
+		const area = (value: number) => ({ ...ward, value });
+		expect(barScale([area(2), area(8)])).toBe(8);
+		expect(barScale([area(76), area(85)])).toBeNull();
+		expect(barScale([area(2), area(-1)])).toBeNull();
+		expect(barScale([area(0)])).toBeNull();
+	});
+});
+
+describe("ranking table", () => {
+	const row = (
+		rank: number,
+		name: string,
+		keys: RankingRow["keys"],
+		note?: string,
+	): RankingRow => ({
+		rank,
+		code: name,
+		name,
+		note,
+		value: "",
+		extra: [],
+		keys,
+	});
+	const rows = [
+		row(1, "Hart", [85, null], "Hampshire"),
+		row(2, "Richmond", [84.8, 3]),
+		row(3, "Blackpool", [76.4, 1]),
+	];
+	const names = (list: readonly RankingRow[]) => list.map((r) => r.name);
+
+	it("sorts by rank either way, and by a column with gaps last", () => {
+		expect(
+			names(sortedRows(rows, { column: "rank", descending: true })),
+		).toEqual(["Blackpool", "Richmond", "Hart"]);
+		expect(
+			names(sortedRows(rows, { column: 1, descending: true })),
+		).toEqual(["Richmond", "Blackpool", "Hart"]);
+		expect(
+			names(sortedRows(rows, { column: 1, descending: false })),
+		).toEqual(["Blackpool", "Richmond", "Hart"]);
+	});
+
+	it("finds rows by name or council, every word", () => {
+		expect(names(matchingRows(rows, "  "))).toEqual(names(rows));
+		expect(names(matchingRows(rows, "hamp"))).toEqual(["Hart"]);
+		expect(names(matchingRows(rows, "hart hamp"))).toEqual(["Hart"]);
+		expect(matchingRows(rows, "hart kent")).toEqual([]);
 	});
 });
