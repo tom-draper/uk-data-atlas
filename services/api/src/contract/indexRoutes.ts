@@ -1,4 +1,4 @@
-import { envelope, type ApiResponse } from "./runtime/index.ts";
+import { envelope, type ApiResponse } from "../runtime/index.ts";
 
 /** The API's entry point, linking every resource it serves. */
 export const indexResponse = (releaseId: string): ApiResponse => {

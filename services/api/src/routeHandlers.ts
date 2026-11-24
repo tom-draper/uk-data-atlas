@@ -1,7 +1,7 @@
 import { problem, type ApiResponse } from "./runtime/index.ts";
 import type { RouteRequest } from "./runtime/index.ts";
 import { validateContractResponse } from "./contract/validateResponse";
-import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
+import { handleOpenapiRoutes, isOpenapiRoute } from "./contract/openapiRoutes";
 import { handleDocumentRoutes } from "./documents/documentRoutes";
 import {
 	handleAtlasPageRoutes,

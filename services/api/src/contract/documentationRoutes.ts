@@ -2,7 +2,7 @@ import { bound } from "./routeBinding";
 import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
-import { handleOpenapiRoutes } from "../openapiRoutes";
+import { handleOpenapiRoutes } from "./openapiRoutes";
 import { documentation } from "./documentation";
 import { openapiDescription } from "./openapiDescription";
 import { registerGetRoute, type ContractDispatch } from "./registerGetRoute";

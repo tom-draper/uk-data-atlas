@@ -8,7 +8,7 @@ import {
 	breakingChanges,
 	extractSurface,
 	type ApiSurface,
-} from "../src/apiSurface";
+} from "../src/contract/apiSurface";
 
 /**
  * Locks the v1 surface after an additive change to `openapi.yaml`. It refuses

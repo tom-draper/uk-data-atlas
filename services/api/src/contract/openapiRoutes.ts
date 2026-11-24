@@ -1,8 +1,8 @@
-import { documentation } from "./contract/documentation";
-import { openapiDescription } from "./contract/openapiDescription";
+import { documentation } from "./documentation";
+import { openapiDescription } from "./openapiDescription";
 import { docsPage } from "./docsPage";
-import { envelope, problem, type ApiResponse } from "./runtime/index.ts";
-import type { RouteRequestFor } from "./runtime/index.ts";
+import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
+import type { RouteRequestFor } from "../runtime/index.ts";
 
 export const isOpenapiRoute = (segments: string[]) =>
 	segments.length === 2 &&
