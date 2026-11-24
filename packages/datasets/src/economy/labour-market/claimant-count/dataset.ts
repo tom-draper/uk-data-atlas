@@ -114,13 +114,29 @@ export const claimantCount = defineDataset<ClaimantCountDataset>({
 	display: {
 		label: "Claimant Count [2026]",
 		year: 2026,
-		card: {
+		component: "@/components/measures/MeasureSeriesChart",
+		series: {
 			heading: "Claimant Count",
-			source: "ONS/Nomis. Claimant Count (UC + JSA). nomisweb.co.uk",
-			coverage: "Great Britain",
-			secondary: {
-				field: "youthRate",
-				format: { kind: "decimal", digits: 1, suffix: "% youth" },
+			period: "2013-2026",
+			source: "ONS/Nomis. Claimant Count (UC + JSA), every month from January 2013, restated on the authorities of April 2023. nomisweb.co.uk",
+			accent: "#0ea5e9",
+			measures: {
+				rate: "claimant-rate",
+				count: {
+					measure: "claimants",
+					dimensions: { "age-group": ["16-plus"] },
+				},
+			},
+			countOf: {
+				"claimant-rate": {
+					measure: "claimants",
+					dimensions: { "age-group": ["16-plus"] },
+				},
+			},
+			// The monthly history is held apart from the single month the map shows.
+			release: {
+				datasetId: "claimant-count-history",
+				boundaryYear: 2023,
 			},
 		},
 		measures: [
