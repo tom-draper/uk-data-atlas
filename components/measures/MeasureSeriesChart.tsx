@@ -75,6 +75,7 @@ export default function MeasureSeriesChart({
 			scope={members ?? scope}
 			area={area}
 			countMeasure={series.countMeasure}
+			countDimensions={series.countDimensions}
 			combine={series.combine}
 			heading={`${series.heading} [${series.period}]`}
 			accent={series.accent}

@@ -190,6 +190,13 @@ export type DisplayRelease = {
 };
 
 /**
+ * A measure a history card reads: its id, or its id with the member of each
+ * dimension to read where the total or default member is not the one wanted.
+ */
+export type DisplaySeriesMeasure =
+	string | { measure: string; dimensions: Record<string, string[]> };
+
+/**
  * A history card: one area's latest value over a line of the periods before
  * it, read from the statistics of a measure. Drawn by the shared series card
  * so a dataset with a history needs no chart component of its own.
@@ -205,14 +212,15 @@ export type DisplaySeries = {
 	/** The line's colour; the accent when absent. */
 	line?: string;
 	/** The measure to draw for each of the dataset's measures, by id. */
-	measures: Record<string, string>;
+	measures: Record<string, DisplaySeriesMeasure>;
 	/**
 	 * For a measure that is a percentage rate, the measure of the people it
-	 * counts, so the card can combine areas: rates cannot be averaged, but
-	 * each area's count over its rate gives the base the rate is of. Without
-	 * it a rate shows nothing until an area is chosen.
+	 * counts, keyed by the rate's measure id, so the card can combine areas:
+	 * rates cannot be averaged, but each area's count over its rate gives the
+	 * base the rate is of. Without it a rate shows nothing until an area is
+	 * chosen.
 	 */
-	countOf?: Record<string, string>;
+	countOf?: Record<string, DisplaySeriesMeasure>;
 	/**
 	 * How the areas in scope combine before one is chosen. Absent, a measure
 	 * that adds up is summed; `mean` takes each area's value once, for a
