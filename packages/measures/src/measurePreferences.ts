@@ -152,6 +152,12 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 				),
 			},
 		},
+		"claimant-rate": {
+			datasets: {
+				order: ["claimant-count", "claimant-count-history"],
+				reason: "As for claimants: claimant-count is the month the website and API already serve, and claimant-count-history fills the months it does not hold.",
+			},
+		},
 		"gross-annual-pay": {
 			dimensions: {
 				"earnings-place": EARNINGS_PLACE,
@@ -191,7 +197,13 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 				),
 			},
 		},
-		"life-expectancy": { dimensions: { sex: SEX_QUALIFIER } },
+		"life-expectancy": {
+			dimensions: { sex: SEX_QUALIFIER },
+			datasets: {
+				order: ["life-expectancy", "life-expectancy-series"],
+				reason: "life-expectancy is the period the website and API already serve. life-expectancy-series publishes the same figure for it, and fills the earlier periods.",
+			},
+		},
 		"mobile-area-coverage": { dimensions: MOBILE_COVERAGE },
 		"mobile-premises-coverage": { dimensions: MOBILE_COVERAGE },
 		"party-vote-share": {
