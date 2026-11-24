@@ -166,7 +166,8 @@ export const getSeries = defineTool({
 		"from find_place. Use get_value instead for a single figure. Filter a measure's dimensions with " +
 		"`dimensions`, as in get_value. To read every period on today's boundaries, pass `on`, such as " +
 		"`localAuthority/2026-05-uk-bgc`: each value then says whether it is native, exactly regrouped or " +
-		"weighted, and `summary.warnings` and `gaps` say what to caveat.",
+		"weighted, a weighted value carries `bounds` to quote as its likely range, and " +
+		"`summary.warnings` and `gaps` say what to caveat.",
 	inputSchema: {
 		measure: z
 			.string()
