@@ -1367,8 +1367,10 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description:
 			"How much each area changed between a boundary release and the next one, one row for each area that persists. A release is paired with the nearest release of a later vintage that one crosswalk hop joins it to (area_change_extent_pair). An area persists into the area with the same code, or, where its code ended, into the area that takes most of its residents if it also gave that area more residents than any other area did (successor 'largest-share'). An area with neither ended and has no row. Residents come from the converter's population step over the pair's crosswalks, land from the extent-continuity crosswalk's measurements or an area weight. Read it through v_area_change_extent, which adds materially_changed.",
 		columns: {
-			from_version_id: "The area in the earlier release (area_version.id).",
-			to_version_id: "Its successor in the later release (area_version.id).",
+			from_version_id:
+				"The area in the earlier release (area_version.id).",
+			to_version_id:
+				"Its successor in the later release (area_version.id).",
 			successor:
 				"'same-code': the later area has the same code. 'largest-share': the code ended, and the later area took most of the earlier area's residents and was fed by no larger area.",
 			residents_lost:
@@ -1389,15 +1391,19 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			"The release pairs area_change_extent covers, with how many areas of the earlier release persist, ended or could not be measured. A release with a later vintage and no row here is not covered: no single crosswalk joins it to a later release.",
 		columns: {
 			from_release_id: "The earlier release (area_release.id).",
-			to_release_id: "The later release it is paired with (area_release.id).",
-			crosswalks: "The crosswalks of the hop, as comma-separated crosswalk.id values.",
-			reversed: "1 where the crosswalks are extent-continuity ones walked from their targets back to their sources.",
+			to_release_id:
+				"The later release it is paired with (area_release.id).",
+			crosswalks:
+				"The crosswalks of the hop, as comma-separated crosswalk.id values.",
+			reversed:
+				"1 where the crosswalks are extent-continuity ones walked from their targets back to their sources.",
 			sources: "Areas in the earlier release's inventory.",
 			persisting: "Rows in area_change_extent for the pair.",
 			ended: "Areas carried by the crosswalks that have no successor.",
 			blocked:
 				"Areas the population step cannot carry. They have a row, with no residents shares, only where their code persists.",
-			unlinked: "Inventory areas in no crosswalk of the hop, so not measured.",
+			unlinked:
+				"Inventory areas in no crosswalk of the hop, so not measured.",
 		},
 	},
 	v_area_change_extent: {

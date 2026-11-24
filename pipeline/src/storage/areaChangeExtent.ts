@@ -106,8 +106,11 @@ export type PairInput = {
 	/** The share of the target's residents that came from the source, where held. */
 	targetShare: (from: number, to: number) => number | undefined;
 	/** How the land of an edge changed, where known. */
-	land: (from: number, to: number, crosswalk: number | undefined) =>
-		LandChange | undefined;
+	land: (
+		from: number,
+		to: number,
+		crosswalk: number | undefined,
+	) => LandChange | undefined;
 };
 
 const clamp = (share: number) => Math.min(1, Math.max(0, share));
@@ -125,7 +128,9 @@ export const measurePair = ({ step, areaOf, targetShare, land }: PairInput) => {
 		((step.feeders.get(to) ?? []).length === 1 ? 1 : undefined);
 	for (const [from, edges] of step.edges) {
 		let successor: ExtentRow["successor"] = "same-code";
-		let edge = edges.find((made) => areaOf.get(made.to) === areaOf.get(from));
+		let edge = edges.find(
+			(made) => areaOf.get(made.to) === areaOf.get(from),
+		);
 		if (!edge) {
 			successor = "largest-share";
 			const best = edges.reduce((held, made) =>
@@ -244,10 +249,19 @@ export const writeAreaChangeExtent = (
 	const insertRow = database.prepare(
 		"INSERT INTO area_change_extent VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 	);
-	const summary: AreaChangeExtentSummary = { pairs: 0, rows: 0, unpaired: [] };
+	const summary: AreaChangeExtentSummary = {
+		pairs: 0,
+		rows: 0,
+		unpaired: [],
+	};
 
 	const measure = (from: Release, to: Release, hop: Hop) => {
-		type Version = { id: number; area_id: number; code: string; in_inventory: number };
+		type Version = {
+			id: number;
+			area_id: number;
+			code: string;
+			in_inventory: number;
+		};
 		const before = versionsOf.all(from.id) as Version[];
 		const after = versionsOf.all(to.id) as Version[];
 		const areaOf = new Map(
@@ -259,7 +273,10 @@ export const writeAreaChangeExtent = (
 		// Weights are held from the crosswalk's source to its target, so a
 		// reversed hop reads them the other way round.
 		const shares = (basis: string) => {
-			const held = new Map<string, { forward: number; back: number | null }>();
+			const held = new Map<
+				string,
+				{ forward: number; back: number | null }
+			>();
 			for (const crosswalk of hop.crosswalks)
 				for (const row of weightsOf.all(crosswalk, basis) as Array<{
 					f: number;
@@ -270,7 +287,10 @@ export const writeAreaChangeExtent = (
 					held.set(
 						hop.reversed ? key(row.t, row.f) : key(row.f, row.t),
 						hop.reversed
-							? { forward: row.target_share ?? Number.NaN, back: row.weight }
+							? {
+									forward: row.target_share ?? Number.NaN,
+									back: row.weight,
+								}
 							: { forward: row.weight, back: row.target_share },
 					);
 			return held;
@@ -284,7 +304,9 @@ export const writeAreaChangeExtent = (
 			to.id,
 		) as Array<{ fromRelease: number; validation: string | null }>) {
 			const continuity = (
-				JSON.parse(validation ?? "{}") as { continuity?: ContinuityValidation }
+				JSON.parse(validation ?? "{}") as {
+					continuity?: ContinuityValidation;
+				}
 			).continuity;
 			if (!continuity) continue;
 			const forward = fromRelease === from.id;
@@ -316,7 +338,9 @@ export const writeAreaChangeExtent = (
 			areaOf,
 			targetShare: (source, target) => {
 				const share = population.get(key(source, target))?.back;
-				return share === null || share === undefined || Number.isNaN(share)
+				return share === null ||
+					share === undefined ||
+					Number.isNaN(share)
 					? undefined
 					: share;
 			},
@@ -331,7 +355,9 @@ export const writeAreaChangeExtent = (
 				const weighed = area.get(key(source, target));
 				if (!weighed) return undefined;
 				const share = (value: number | null) =>
-					value === null || Number.isNaN(value) ? null : clamp(1 - value);
+					value === null || Number.isNaN(value)
+						? null
+						: clamp(1 - value);
 				return {
 					lost: share(weighed.forward),
 					gained: share(weighed.back),
@@ -351,7 +377,8 @@ export const writeAreaChangeExtent = (
 				row.land?.basis ?? null,
 			);
 		const sources = before.filter((row) => row.in_inventory === 1);
-		const linked = (id: number) => step.edges.has(id) || step.blocked.has(id);
+		const linked = (id: number) =>
+			step.edges.has(id) || step.blocked.has(id);
 		insertPair.run(
 			from.id,
 			to.id,
@@ -369,9 +396,9 @@ export const writeAreaChangeExtent = (
 
 	for (const [geography, releases] of releasesByGeography(database))
 		releases.forEach((from, index) => {
-			const later = releases.slice(index + 1).filter(
-				(to) => to.vintage > from.vintage,
-			);
+			const later = releases
+				.slice(index + 1)
+				.filter((to) => to.vintage > from.vintage);
 			if (later.length === 0) return;
 			for (const to of later) {
 				const [route] = router.routes(from.id, to.id, 1);

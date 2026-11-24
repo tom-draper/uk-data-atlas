@@ -370,10 +370,12 @@ const censusSmallAreaInputs = () => {
 				join(directory, `census2021-${table}-msoa.csv`),
 			];
 		}),
-		...Object.entries(CENSUS_NATION_ARCHIVES).flatMap(([name, archives]) => [
-			join(sourceDir(name), "meta.json"),
-			...archives.map((archive) => join(sourceDir(name), archive)),
-		]),
+		...Object.entries(CENSUS_NATION_ARCHIVES).flatMap(
+			([name, archives]) => [
+				join(sourceDir(name), "meta.json"),
+				...archives.map((archive) => join(sourceDir(name), archive)),
+			],
+		),
 	];
 };
 
