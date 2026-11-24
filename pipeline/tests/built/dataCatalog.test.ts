@@ -540,6 +540,37 @@ const electionContests = (): FixtureContest[] =>
 		),
 	);
 
+/**
+ * The monthly claimant history: two months on the April 2023 authorities,
+ * the rate suppressed for one authority in the first.
+ */
+const claimantHistorySeries = (): FixtureSeries[] => {
+	const base = {
+		dataset: "claimant-count-history",
+		geography: "localAuthority",
+		release: "2023-uk-bfc",
+	};
+	return [
+		{
+			...base,
+			measure: "claimants",
+			members: { "age-group": "16-plus" },
+			periods: {
+				"2013-01": { E06000001: 2000, S12000001: 3000 },
+				"2026-10": { E06000001: 1500, S12000001: 2500 },
+			},
+		},
+		{
+			...base,
+			measure: "claimant-rate",
+			periods: {
+				"2013-01": { E06000001: 4.1 },
+				"2026-10": { E06000001: 3.2, S12000001: 2.8 },
+			},
+		},
+	];
+};
+
 const migratedSeries = (): FixtureSeries[] => [
 	...electionRows(),
 	...populationRows(),
@@ -550,6 +581,7 @@ const migratedSeries = (): FixtureSeries[] => [
 	...regionalSeries(),
 	...energySeries(),
 	...unemploymentSeries(),
+	...claimantHistorySeries(),
 	...collisionRows(),
 	...crimeRows(),
 ];
@@ -717,7 +749,10 @@ const writeSources = (
 		E06000001: { code: "E06000001", name: "Hartlepool", value },
 	});
 	const income = simple(2025, "2025", {
-		E06000001: { annual: { median: 29000 }, hourly: { median: 15 } },
+		E06000001: {
+			annual: { median: 29000, mean: 33000 },
+			hourly: { median: 15, mean: 17 },
+		},
 	});
 	const declared: [string, SourceFile][] = [
 		[
@@ -903,6 +938,7 @@ const writeSources = (
 				dataset("ethnicity", 2, 1, 2024),
 				dataset("broadband", 4, 1, 2024),
 				dataset("claimant-count", 4, 1, 2024),
+				dataset("claimant-count-history", 2, 1, 2023),
 				dataset("council-tax", 1, 1, 2026),
 				dataset("net-additional-dwellings", 1, 1, 2025),
 				dataset("local-government-finance", 1, 1, 2026),
@@ -941,7 +977,7 @@ const writeSources = (
 test("publishes source-exact ward and UK local-authority population partitions", () => {
 	const sources = writeSources();
 	const result = compileDataCatalog(sources);
-	assert.equal(result.catalog.datasets.length, 40);
+	assert.equal(result.catalog.datasets.length, 41);
 	assert.deepEqual(result.catalog.measures[0]?.sources, [
 		{
 			datasetId: "population",
@@ -2031,4 +2067,29 @@ test("names what covers the nations a measure does not", () => {
 	const population = byId.get("population");
 	assert.equal(population?.elsewhere, undefined);
 	assert.equal(population?.concept, undefined);
+});
+
+test("publishes the claimant history's count and rate over every month on April 2023 authorities", () => {
+	const result = compileDataCatalog(writeSources());
+	const sourceOf = (id: string, datasetId: string) =>
+		result.catalog.measures
+			.find((measure) => measure.id === id)
+			?.sources.find((source) => source.datasetId === datasetId);
+	for (const id of ["claimant-count", "claimant-rate"])
+		assert.deepEqual(
+			{
+				periods: sourceOf(id, "claimant-count-history")?.periods,
+				geography: sourceOf(id, "claimant-count-history")
+					?.sourceGeography,
+			},
+			{
+				periods: ["2013-01", "2026-10"],
+				geography: { type: "localAuthority", boundaryYear: 2023 },
+			},
+		);
+	const rate = result.catalog.measures.find(
+		(measure) => measure.id === "claimant-rate",
+	);
+	assert.equal(rate?.aggregation.kind, "intensive");
+	assert.equal(rate?.availability.aggregation, false);
 });
