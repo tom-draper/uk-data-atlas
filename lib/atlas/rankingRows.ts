@@ -28,6 +28,8 @@ export type RankingRow = {
 	note?: string;
 	value: string;
 	extra: string[];
+	/** What each value column sorts by: the value, then the extra columns. */
+	keys: (number | string | null)[];
 };
 
 /** What a ranking's rows are built from. */
@@ -84,6 +86,12 @@ export function rankingRow(
 		extra: (ranking.columns ?? []).map((column, index) =>
 			formatColumnValue(column, area.extra?.[index]),
 		),
+		keys: [
+			area.value,
+			...(ranking.columns ?? []).map(
+				(_, index) => area.extra?.[index] ?? null,
+			),
+		],
 	};
 	// A council's own page need not name it against each of its wards.
 	if (ranking.level === "ward" && location.members.length !== 1) {
@@ -96,6 +104,21 @@ export function rankingRow(
 		row.href = `/maps/${council.slug}`;
 	return row;
 }
+
+/**
+ * The value that fills a row's bar: the largest. Bars start at zero, so a
+ * ranking with negative values has none, and nor does one whose values all
+ * sit close together (life expectancy, say), where every bar would look full.
+ */
+export const barScale = (areas: readonly RankedArea[]) => {
+	let [smallest, largest] = [Infinity, 0];
+	for (const { value } of areas) {
+		if (value < 0) return null;
+		smallest = Math.min(smallest, value);
+		largest = Math.max(largest, value);
+	}
+	return largest > 0 && smallest <= largest / 2 ? largest : null;
+};
 
 /** Whether a ranking's page renders only its first rows. */
 export const isLongRanking = (areas: readonly RankedArea[]) =>
