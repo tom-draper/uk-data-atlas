@@ -1,6 +1,9 @@
 import { useMemo } from "react";
+import { breakdownView, type BreakdownView } from "@/lib/measures/breakdown";
+import { areaCodesInScope, requestAreas } from "@/lib/measures/scope";
+import { useMeasureMembers } from "@/lib/measures/useMeasureMembers";
 import { PARTIES } from "@uk-data-atlas/datasets";
-import { categoryColor, declaredCategories } from "@/lib/datasets/categories";
+import { categoryBreakdown } from "@/lib/datasets/categories";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
@@ -17,9 +20,6 @@ import type {
 	LegendAggregates,
 	PartyDisplayData,
 } from "./types";
-
-/** A group's population in an area, keyed by the group. */
-type CategoryParent = Record<string, { population: number }>;
 
 const LEGEND_DEFINITIONS = CHART_DATASET_DEFINITIONS.filter(
 	(definition) => definition.legendAggregation,
@@ -86,32 +86,61 @@ export function partyLegendItems(
 		}));
 }
 
-/** The groups of a dataset mapped by its largest group, the biggest first. */
+/** The groups of a breakdown with something in them, the biggest first. */
 export function categoryLegendItems(
-	activeDataset: Dataset | null,
-	aggregates: LegendAggregates,
+	view: BreakdownView | null,
 ): CategoryDisplayData[] {
-	if (!activeDataset || !declaredCategories(activeDataset.type)) return [];
-	const yearData = (
-		aggregates[activeDataset.type] as
-			Record<number, Record<string, CategoryParent>> | null | undefined
-	)?.[activeDataset.year];
-	if (!yearData) return [];
-
-	const totals = new Map<string, number>();
-	for (const areaData of Object.values(yearData)) {
-		for (const [name, data] of Object.entries(areaData)) {
-			if (typeof data.population === "number")
-				totals.set(name, (totals.get(name) ?? 0) + data.population);
-		}
-	}
-
-	return [...totals]
-		.filter(([, population]) => population > 0)
-		.sort(([, a], [, b]) => b - a)
-		.map(([id]) => ({
-			id,
-			color: categoryColor(activeDataset.type, id),
-			name: id,
+	return (view?.shares ?? [])
+		.filter((share) => share.count > 0)
+		.map((share) => ({
+			id: share.label,
+			color: share.color,
+			name: share.label,
 		}));
+}
+
+/**
+ * The legend of a dataset mapped by its largest group: each group's total
+ * over the areas on the map, from the same measure queries as its chart.
+ * Empty for any other dataset, and until the totals are read.
+ */
+export function useCategoryLegendItems(
+	activeDataset: Dataset | null,
+	boundaryData: BoundaryData,
+): CategoryDisplayData[] {
+	const breakdown = activeDataset
+		? categoryBreakdown(activeDataset.type)
+		: undefined;
+	const geography = breakdown?.request.geography;
+	const boundaryYear = breakdown?.request.boundaryYear;
+	const scope = useMemo(
+		() =>
+			geography && boundaryYear !== undefined
+				? areaCodesInScope(boundaryData, geography, boundaryYear)
+				: null,
+		[boundaryData, geography, boundaryYear],
+	);
+	const state = useMeasureMembers(
+		breakdown && scope?.length
+			? { ...breakdown.request, areas: requestAreas(scope) }
+			: null,
+		breakdown?.dimension ?? "",
+		breakdown?.parts.map((part) => part.code) ?? [],
+	);
+	return useMemo(
+		() =>
+			breakdown && state.status === "ready"
+				? categoryLegendItems(
+						breakdownView(
+							state.payloads,
+							null,
+							breakdown.dimension,
+							breakdown.total,
+							breakdown.parts,
+							{ order: "largest" },
+						),
+					)
+				: [],
+		[breakdown, state],
+	);
 }

@@ -74,17 +74,19 @@ export default function ChartCards({
 			Object.fromEntries(
 				definitions.map(({ definition, chart }) => [
 					definition.type + chart.key,
-					aggregateDataset(
-						{
-							datasets: datasets[definition.type],
-							boundaryType: definition.boundaryType,
-							keyBy: chart.keyBy,
-							calculateStats: chart.calculateStats,
-						},
-						aggregator,
-						boundaryData,
-						location,
-					),
+					chart.calculateStats
+						? aggregateDataset(
+								{
+									datasets: datasets[definition.type],
+									boundaryType: definition.boundaryType,
+									keyBy: chart.keyBy,
+									calculateStats: chart.calculateStats,
+								},
+								aggregator,
+								boundaryData,
+								location,
+							)
+						: null,
 				]),
 			),
 		[definitions, datasets, aggregator, boundaryData, location],

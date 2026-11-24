@@ -17,8 +17,8 @@ import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import LegendContent from "./LegendContent";
 import {
-	categoryLegendItems,
 	partyLegendItems,
+	useCategoryLegendItems,
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
@@ -79,7 +79,7 @@ export default function LegendPanel({
 		location,
 	);
 	const parties = partyLegendItems(activeDataset, aggregates);
-	const categories = categoryLegendItems(activeDataset, aggregates);
+	const categories = useCategoryLegendItems(activeDataset, boundaryData);
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
 	const electionSupportsTurnout =
