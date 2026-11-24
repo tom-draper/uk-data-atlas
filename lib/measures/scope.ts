@@ -28,5 +28,7 @@ export function areaCodesInScope(
  * The areas to put in a request for `codes`. A scope too large to list is
  * read as the whole geography instead, which is what it is at that size.
  */
-export const requestAreas = (codes: readonly string[]): string[] | undefined =>
-	codes.length > MAX_AREAS ? undefined : [...codes];
+export const requestAreas = (
+	codes: readonly string[],
+): readonly string[] | undefined =>
+	codes.length > MAX_AREAS ? undefined : codes;

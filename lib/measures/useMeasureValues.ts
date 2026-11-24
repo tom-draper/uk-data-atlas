@@ -2,9 +2,10 @@
 
 import { useMemo } from "react";
 import { fetchMeasureValues, type MeasureQueryError } from "./client";
-import { loadMeasureValues, restrictToAreas } from "./cache";
+import { loadMeasureValues } from "./cache";
 import { measureValuesUrl } from "./request";
 import type { MeasureValuesPayload, MeasureValuesRequest } from "./types";
+import { useAreaFilter } from "./useAreaFilter";
 import { useLoaded } from "./useLoaded";
 
 export type MeasureValuesState =
@@ -25,30 +26,19 @@ export function useMeasureValues(
 	const combined = Boolean(request?.parents);
 	const { areas, ...whole } = request ?? { measure: "" };
 	const sent = combined ? request : request ? whole : null;
-	const key = sent ? measureValuesUrl(sent) : null;
-	const loaded = useLoaded(key, () =>
-		combined ? fetchMeasureValues(sent!) : loadMeasureValues(sent!),
+	const loaded = useLoaded(
+		sent && {
+			key: measureValuesUrl(sent),
+			load: () =>
+				combined ? fetchMeasureValues(sent) : loadMeasureValues(sent),
+		},
 	);
-	// Joining every code costs real time for a national scope, so it is done
-	// once per list rather than on every render.
-	const areasKey = useMemo(
-		() => (!combined && areas ? areas.join(",") : null),
-		[combined, areas],
-	);
-	const data = loaded.status === "ready" ? loaded.value : null;
-	const restricted = useMemo(
-		() =>
-			data && areasKey !== null ? restrictToAreas(data, areas!) : data,
-		// The areas are named by their key.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[data, areasKey],
-	);
-	// The same object while the data is, so callers' memoised work holds.
-	// The React Compiler skips this file, so it is kept by hand.
-	const ready = useMemo(
-		() => ({ status: "ready" as const, data: restricted! }),
-		[restricted],
-	);
-	if (loaded.status !== "ready") return loaded;
-	return ready;
+	const filter = useAreaFilter(combined ? undefined : areas);
+	return useMemo(() => {
+		if (loaded.status !== "ready") return loaded;
+		return {
+			status: "ready",
+			data: filter ? filter(loaded.value) : loaded.value,
+		};
+	}, [loaded, filter]);
 }
