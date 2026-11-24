@@ -42,9 +42,9 @@ test("the scheduler tells each stage how long it queued and how much of that was
 	const done = runSchedule({
 		// `large` does not fit beside `running`.
 		stages: [
-			stage("running", 2000),
+			stage("running", 3200),
 			stage("large", 3000),
-			stage("small", 500),
+			stage("small", 900),
 		],
 		jobs: 2,
 		memoryMb: 4000,

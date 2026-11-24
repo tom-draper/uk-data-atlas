@@ -28,6 +28,14 @@ export const websiteStages = [
 			"pipeline/src/stages/compile-boundary-tiles.ts",
 		],
 		{
+			memoryMb: 5120,
+			compact: {
+				memoryMb: 4096,
+				variable: "ATLAS_PRECOMPILE_JOBS",
+				workers: 1,
+				normalWorkers: 2,
+				normalBudgetMb: 5120,
+			},
 			writes: ["data/build/boundaries"],
 			outputs: ["data/build/boundaries"],
 			rawInputs: websiteBoundaryInputs,
