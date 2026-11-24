@@ -4,7 +4,7 @@ import {
 	formatBritishGridReference,
 	parseLookupCoordinate,
 	parseLookupCrs,
-} from "../src/pointLookup";
+} from "../src/coordinates/pointLookup";
 
 test("normalises British National Grid input while retaining its transformation", () => {
 	const point = parseLookupCoordinate(

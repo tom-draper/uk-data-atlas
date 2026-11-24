@@ -11,7 +11,7 @@ import {
 	parseStatedAccuracy,
 	type LookupPoint,
 	type LookupInputCrs,
-} from "../pointLookup";
+} from "../coordinates/pointLookup";
 import {
 	DEFAULT_POSTCODE_GEOGRAPHIES,
 	findPostcode,

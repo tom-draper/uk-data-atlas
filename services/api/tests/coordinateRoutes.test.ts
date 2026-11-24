@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { LookupPoint } from "../src/pointLookup";
+import type { LookupPoint } from "../src/coordinates/pointLookup";
 import { route as routeRequest } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 

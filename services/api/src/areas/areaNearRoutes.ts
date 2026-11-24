@@ -8,7 +8,7 @@ import {
 	parseLookupCrs,
 	parseLookupRequest,
 	parseStatedAccuracy,
-} from "../pointLookup";
+} from "../coordinates/pointLookup";
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { readWholeNumber } from "../runtime/index.ts";
