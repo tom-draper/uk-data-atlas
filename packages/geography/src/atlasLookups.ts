@@ -7,6 +7,7 @@
 import {
 	compileAreaContainment,
 	compileConstituencyLadOverlaps,
+	compileDataZoneLadMembers,
 	compileLsoaLadContainment,
 	compileParishLadContainment,
 	type ContainmentCrosswalk,
@@ -61,6 +62,7 @@ export const AREA_LINEAGE_FILE = "area-lineage.json";
 export const ATLAS_LOOKUP_FILES = [
 	"boundary-mappings.json",
 	"constituency-lad-overlaps.json",
+	"data-zone-lad-mappings.json",
 	"parish-lad-mappings.json",
 ] as const;
 
@@ -170,6 +172,24 @@ export const compileAtlasLookups = (
 		overlapCrosswalks,
 	);
 
+	// Data zones are listed under the newest authorities, so a council's
+	// figure can be summed from a table a nation publishes on data zones.
+	const dataZoneMembers = compileDataZoneLadMembers(
+		resolver
+			.crosswalkSummaries()
+			.filter(
+				({ from, to }) =>
+					from.geography === "dataZone" &&
+					to.geography === "localAuthority",
+			)
+			.map(({ id }) => artifact(id) as ContainmentCrosswalk),
+		(code, release) =>
+			resolver.sameArea(
+				{ geography: "localAuthority", boundaryRelease: release, code },
+				{ geography: "localAuthority", boundaryRelease: newestLad },
+			)?.code,
+	);
+
 	const parishToLad = compileParishLadContainment(
 		parishReleases,
 		from("parish"),
@@ -186,6 +206,14 @@ export const compileAtlasLookups = (
 				version: 1,
 				targetLocalAuthorityRelease: overlapLad,
 				...constituencyOverlaps,
+			}),
+		],
+		[
+			"data-zone-lad-mappings.json",
+			JSON.stringify({
+				version: 1,
+				targetLocalAuthorityRelease: newestLad,
+				releases: dataZoneMembers,
 			}),
 		],
 		[

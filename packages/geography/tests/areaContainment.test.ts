@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	compileAreaContainment,
 	compileConstituencyLadOverlaps,
+	compileDataZoneLadMembers,
 	compileLsoaLadContainment,
 	compileParishLadContainment,
 	type ContainmentCrosswalk,
@@ -356,5 +357,56 @@ describe("parish local authorities from the resolver", () => {
 				[],
 			),
 		).toThrow("places parish/2021-12-ew in no local authority");
+	});
+});
+
+describe("data zone local authorities from the resolver", () => {
+	const dataZones = (
+		method: string,
+		from: string,
+		to: string,
+		pairs: Array<[string, ...string[]]>,
+	): ContainmentCrosswalk => ({
+		...crosswalk(method, from, ["localAuthority", to], pairs),
+		from: { geography: "dataZone", boundaryRelease: from },
+	});
+
+	it("lists each release's data zones under the newest authorities", () => {
+		const members = compileDataZoneLadMembers(
+			[
+				dataZones("best-fit", "2022-sc", "2024-12", [
+					["S1", "WRONG"],
+					["S2", "WRONG"],
+				]),
+				dataZones("clean-containment", "2022-sc", "2024-12", [
+					["S2", "S12000049"],
+					["S1", "S12000049"],
+					["S3", "S12000036"],
+					["SPLIT", "S12000036", "S12000049"],
+				]),
+				dataZones("official-lookup", "2021-ni", "2025-12", [
+					["N1", "N09000003"],
+				]),
+			],
+			(code, release) =>
+				release === "2024-12" && code === "S12000036"
+					? "S12000036-NEW"
+					: undefined,
+		);
+		expect(members).toEqual([
+			{
+				boundaryYear: 2021,
+				release: "2021-ni",
+				ladToDataZones: { N09000003: ["N1"] },
+			},
+			{
+				boundaryYear: 2022,
+				release: "2022-sc",
+				ladToDataZones: {
+					"S12000036-NEW": ["S3"],
+					S12000049: ["S1", "S2"],
+				},
+			},
+		]);
 	});
 });
