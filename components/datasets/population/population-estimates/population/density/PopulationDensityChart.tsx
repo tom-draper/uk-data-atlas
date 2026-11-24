@@ -24,7 +24,7 @@ import {
 	useNationPopulation,
 	type NationPopulationState,
 } from "@/lib/hooks/useNationPopulation";
-import { loadLandArea } from "@/lib/measures/landArea";
+import { loadCouncilDensity } from "@/lib/measures/populationDensity";
 import { useLoaded } from "@/lib/measures/useLoaded";
 import type { BoundaryType } from "@/lib/types";
 
@@ -145,30 +145,36 @@ const boundaryAreaSqKm = (
 };
 
 /**
- * Density for an area in a nation the dataset leaves out: the nation's own
- * estimate over the council's measured land area, or a data zone's boundary.
+ * Density for an area in a nation the dataset leaves out. A council's is the
+ * published density for the year of its population, with the land area that
+ * density was calculated over; a data zone's is its population over its
+ * boundary's area.
  */
 function useNationDensity(
 	nation: NationPopulationState | null,
 	boundaryData: BoundaryData,
 ) {
 	const target = nation?.target;
+	const total = nation?.population?.total ?? null;
+	const period = nation?.population?.period;
 	const council =
-		target?.geography === "localAuthority" ? target.code : undefined;
-	const land = useLoaded(
-		council
-			? { key: `land-area|${council}`, load: () => loadLandArea(council) }
+		target?.geography === "localAuthority" && total != null && period
+			? target.code
+			: undefined;
+	const published = useLoaded(
+		council && period
+			? {
+					key: `population-density|${council}|${period}`,
+					load: () => loadCouncilDensity(council, period),
+				}
 			: null,
 	);
 	if (!nation || !target) return null;
-	const population = nation.population;
-	const total =
-		population?.males != null && population.females != null
-			? population.males + population.females
-			: null;
+	const councilDensity =
+		council && published.status === "ready" ? published.value : null;
 	const areaSqKm = council
-		? land.status === "ready"
-			? (land.value?.sqKm ?? null)
+		? councilDensity && total != null
+			? total / councilDensity.perSqKm
 			: null
 		: boundaryAreaSqKm(
 				boundaryData,
@@ -179,13 +185,18 @@ function useNationDensity(
 	return {
 		total,
 		areaSqKm,
-		density: total != null && areaSqKm ? total / areaSqKm : null,
+		density: council
+			? (councilDensity?.perSqKm ?? null)
+			: total != null && areaSqKm
+				? total / areaSqKm
+				: null,
 		loading:
 			nation.status === "loading" ||
 			(!!council &&
-				(land.status === "loading" || land.status === "idle")),
+				(published.status === "loading" ||
+					published.status === "idle")),
 		areaSource: council
-			? "Land area, without inland water: Office for National Statistics, Standard Area Measurements."
+			? "Density over land area, without inland water: Office for National Statistics, Standard Area Measurements."
 			: "Area of the data zone's boundary.",
 	};
 }
