@@ -7,7 +7,7 @@ import {
 	readChoice,
 } from "../runtime/index.ts";
 import { parseSelectionDate } from "@uk-data-atlas/areas";
-import { withReleaseHeaders } from "../releaseDeprecation";
+import { withReleaseHeaders } from "./releaseDeprecation";
 import { QUERY_RULES } from "../queryRules";
 
 const RESOLVE = QUERY_RULES["GET /boundary-releases:resolve"];
