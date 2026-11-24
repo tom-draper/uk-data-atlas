@@ -185,9 +185,9 @@ export const readErrorFactors = (backtest: DatabaseSync): ErrorFactors => {
 /** Why a published series was not converted onto the plan entry's target. */
 export type SkipReason =
 	/**
-	 * The target release already publishes the same measure and members for
-	 * every period the source holds. A source that holds other periods too is
-	 * converted for those alone.
+	 * The target release already publishes every period the source holds.
+	 * Ordinary series match by dataset, measure and members. Totals match by
+	 * measure across datasets. Any remaining periods are converted.
 	 */
 	| "published-on-target"
 	/** A rebuilt ratio or mean lacks a published numerator, denominator or weight to be rebuilt from. */
