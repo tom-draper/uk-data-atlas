@@ -252,7 +252,7 @@ export default function PlaceTimeline({
 	releases: string[];
 }) {
 	return (
-		<div>
+		<div id="history" className="scroll-mt-24">
 			<h2 className="text-[18px] font-semibold tracking-tight text-slate-900">
 				History
 			</h2>
