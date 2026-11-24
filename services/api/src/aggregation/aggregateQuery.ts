@@ -1,13 +1,13 @@
 import { isCountryCode } from "./aggregation";
-import { defaultSource } from "./dataDefaults";
+import { defaultSource } from "../dataDefaults";
 import type { Measure } from "@uk-data-atlas/measures";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { parsePlaceParameter, type PlaceParameter } from "./placeParameter";
+import { parsePlaceParameter, type PlaceParameter } from "../placeParameter";
 import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
 } from "@uk-data-atlas/areas";
-import { invalidQuery, problem, type ApiResponse } from "./runtime/index.ts";
+import { invalidQuery, problem, type ApiResponse } from "../runtime/index.ts";
 
 export type AggregateQuery = {
 	period: string | null;

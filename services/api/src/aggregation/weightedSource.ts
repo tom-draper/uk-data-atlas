@@ -11,9 +11,9 @@ import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
-import { resolveObservations } from "./observationResolution/observationPlan";
-import type { RouteContextFor } from "./runtime/index.ts";
-import { problem, type ApiResponse } from "./runtime/index.ts";
+import { resolveObservations } from "../observationResolution/observationPlan";
+import type { RouteContextFor } from "../runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 
 export type WeightedSource = {
 	measure: DataCatalog["measures"][number];

@@ -1,6 +1,6 @@
 import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { requireGeography } from "../runtime/index.ts";
-import { isCountryCode } from "../aggregation";
+import { isCountryCode } from "../aggregation/aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure, Series } from "@uk-data-atlas/measures";
 import { CONTAINMENT_NOTE, countryOfCode } from "../pointLookup";

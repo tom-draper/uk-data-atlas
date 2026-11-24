@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { assessCoverage, summariseCoverage } from "../src/aggregation";
+import {
+	assessCoverage,
+	summariseCoverage,
+} from "../src/aggregation/aggregation";
 
 test("counts the expected areas an aggregate did not include", () => {
 	assert.deepEqual(

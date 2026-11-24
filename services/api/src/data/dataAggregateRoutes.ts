@@ -1,21 +1,21 @@
 import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { problem, type ApiResponse, type Envelope } from "../runtime/index.ts";
-import { readWeightedSource } from "../weightedSource";
-import { calculateWeightedAggregate } from "../weightedAggregation";
+import { readWeightedSource } from "../aggregation/weightedSource";
+import { calculateWeightedAggregate } from "../aggregation/weightedAggregation";
 import {
 	buildAggregateResponse,
 	type AggregateWeighting,
-} from "../aggregateResponse";
-import { parseAggregateQuery } from "../aggregateQuery";
-import { readAggregateObservations } from "../aggregateObservations";
+} from "../aggregation/aggregateResponse";
+import { parseAggregateQuery } from "../aggregation/aggregateQuery";
+import { readAggregateObservations } from "../aggregation/aggregateObservations";
 import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,
-} from "../aggregationLocation";
-import { resolveAggregationMeasure } from "../aggregationMeasure";
-import { resolveAggregationPartition } from "../aggregationPartition";
-import { prepareAggregateTarget } from "../aggregatePreparation";
+} from "../aggregation/aggregationLocation";
+import { resolveAggregationMeasure } from "../aggregation/aggregationMeasure";
+import { resolveAggregationPartition } from "../aggregation/aggregationPartition";
+import { prepareAggregateTarget } from "../aggregation/aggregatePreparation";
 import { statedDefaults } from "../dataDefaults";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */

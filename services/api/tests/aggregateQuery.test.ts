@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { parseAggregateQuery } from "../src/aggregateQuery";
+import { parseAggregateQuery } from "../src/aggregation/aggregateQuery";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { dataCatalog } from "./routeFixtures";
 
