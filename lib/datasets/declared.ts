@@ -22,7 +22,11 @@ import type { DeprivationCardConfig } from "./deprivationCard.ts";
 import type { BreakdownCardConfig } from "../measures/breakdownConfig.ts";
 import type { SeriesCardConfig } from "../measures/seriesConfig.ts";
 import { CATEGORY_CHART_DEFINITIONS } from "./categories.ts";
-import { defineValueCard, type ValueCardConfig } from "./valueCard.ts";
+import {
+	defineValueCard,
+	type NationCensusCard,
+	type ValueCardConfig,
+} from "./valueCard.ts";
 
 /**
  * The website's reading of a dataset declaration: its chart card, map colours,
@@ -340,6 +344,61 @@ const barsFor = (
 	heading: bars.heading,
 });
 
+/** The initial of each nation's area codes. */
+const NATION_INITIALS: Readonly<Record<string, string>> = {
+	"GB-ENG": "E",
+	"GB-WLS": "W",
+	"GB-SCT": "S",
+	"GB-NIR": "N",
+};
+
+/**
+ * How a card reads the nations its dataset leaves out: where the dataset's
+ * records hold one census measure's members under `metrics`, the same members
+ * can be read from another nation's own census. Only the members the dataset
+ * declares are asked for, so a nation that splits a category differently has
+ * it not published in this form rather than summed to fit.
+ */
+const nationCensusOf = (
+	declaration: Displayed,
+	config: ValueCardConfig,
+): NationCensusCard | undefined => {
+	const covers = (declaration.coverageCountries ?? []).map(
+		(country) => NATION_INITIALS[country],
+	);
+	if (!covers.length || covers.length === 4 || covers.some((c) => !c))
+		return undefined;
+	const { fields, dimensions, computed } = declaration.statistics;
+	if (!Array.isArray(fields) || fields.length !== 1) return undefined;
+	const [field] = fields;
+	const slug = /^metrics\.\{([^}.]+)\}$/.exec(field!.path)?.[1];
+	const dimension = dimensions?.find((declared) => declared.slug === slug);
+	if (!dimension?.members?.length || field!.members) return undefined;
+	const rules = Object.entries(computed ?? {}).filter(([path]) =>
+		/^metrics\.[^.*{]+$/.test(path),
+	);
+	const context = { code: "", header: {}, dataset: () => ({}) };
+	return {
+		covers: covers as string[],
+		measure: field!.measure,
+		dimension: dimension.slug,
+		members: dimension.members!.map(({ key, code }) => ({
+			key,
+			code: code ?? key,
+		})),
+		fromMetrics: (summed) => {
+			const metrics: Record<string, number> = { ...summed };
+			const record = { metrics };
+			for (const [path, rule] of rules) {
+				const value = rule(record, path.split("."), context as never);
+				if (typeof value === "number" && Number.isFinite(value))
+					metrics[path.slice("metrics.".length)] = value;
+			}
+			return config.fromRecord({ data: { record } }, "record");
+		},
+	};
+};
+
 const cardFor = (
 	declaration: Displayed,
 	measure: DisplayMeasure,
@@ -351,7 +410,7 @@ const cardFor = (
 			`${declaration.id} draws a card but measure ${measure.id} declares none`,
 		);
 	const secondary = measure.card.secondary ?? card.secondary;
-	return defineValueCard<
+	const config = defineValueCard<
 		{ data: Record<string, Record<string, unknown>> },
 		Record<string, unknown>
 	>({
@@ -438,6 +497,10 @@ const cardFor = (
 					}
 				: {}),
 	});
+	const nations = recordsVia
+		? undefined
+		: nationCensusOf(declaration, config);
+	return nations ? { ...config, nations } : config;
 };
 
 const chartDefinitionOf = (declaration: Displayed): ChartDatasetDefinition => {
