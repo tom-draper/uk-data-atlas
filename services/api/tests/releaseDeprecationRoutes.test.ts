@@ -3,7 +3,10 @@ import { test } from "vitest";
 import type { BoundaryReleaseDeprecation } from "@uk-data-atlas/catalogue";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
-import { releaseInPath, withReleaseHeaders } from "../src/releaseDeprecation";
+import {
+	releaseInPath,
+	withReleaseHeaders,
+} from "../src/boundaries/releaseDeprecation";
 import { route as routeRequest } from "./boundRoute";
 import type { RouteContext } from "../src/runtime/index.ts";
 import { testContext } from "./routeFixtures";

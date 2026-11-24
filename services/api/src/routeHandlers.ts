@@ -59,7 +59,10 @@ import {
 import { handleBulkRoutes } from "./bulk/bulkRoutes";
 import { handleGovernanceRoutes } from "./runtime/index.ts";
 import { handleSyncRoutes } from "./runtime/index.ts";
-import { releaseInPath, withReleaseHeaders } from "./releaseDeprecation";
+import {
+	releaseInPath,
+	withReleaseHeaders,
+} from "./boundaries/releaseDeprecation";
 import {
 	handleReleaseJoinRoutes,
 	handleReleaseJoinRoutesAsync,
