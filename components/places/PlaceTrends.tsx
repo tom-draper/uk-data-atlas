@@ -5,7 +5,6 @@ import { linkClass, Section } from "@/components/places/PlaceUi";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/lib/atlas/structuredData";
 import {
-	formatTrendValue,
 	trendKind,
 	type PlaceTrendEvent,
 	type PlaceTrendKind,
@@ -158,7 +157,7 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 				<div
 					className="relative ml-10 h-44 sm:h-52"
 					role="img"
-					aria-label={`${view.label} of ${name}, ${view.periodName(points[0]![0])} to ${view.periodName(points.at(-1)![0])}. The figures are in the table below.`}
+					aria-label={`${view.label}, ${name}, ${view.periodName(points[0]![0])} to ${view.periodName(points.at(-1)![0])}. The figures are in the table below.`}
 				>
 					<svg
 						viewBox="0 0 100 100"
@@ -279,15 +278,13 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 											at > 70 ? "r" : at < 30 ? "l" : "c"
 										}
 									>
-										<strong>
-											{formatTrendValue(point[1])}
-										</strong>{" "}
+										<strong>{view.format(point[1])}</strong>{" "}
 										{view.periodName(point[0])}
 										{kind !== "published" && (
 											<small>
 												{KIND_NAMES[kind]}
 												{point[2] === 2 &&
-													`, ${formatTrendValue(point[3])} to ${formatTrendValue(point[4])}`}
+													`, ${view.format(point[3])} to ${view.format(point[4])}`}
 											</small>
 										)}
 									</span>
@@ -338,14 +335,31 @@ function eventSentence(event: PlaceTrendEvent, points: PlaceTrendPoint[]) {
 
 function Change({ view }: { view: PlaceTrendView }) {
 	const first = view.area.points[0]!;
-	if (first[0] === view.latest.period || first[1] === 0) return null;
+	if (first[0] === view.latest.period) return null;
+	const since = view.periodName(first[0]);
+	if (view.change === "difference") {
+		const change = view.latest.value - first[1];
+		// A rate's change is in percentage points, not per cent of the rate.
+		const written = view.format(Math.abs(change));
+		const size = written.endsWith("%")
+			? `${written.slice(0, -1)} points`
+			: written;
+		return (
+			<span className="block text-[13px] text-slate-500">
+				{written === view.format(0)
+					? `About the same as in ${since}`
+					: `${change > 0 ? "Up" : "Down"} ${size} since ${since}`}
+			</span>
+		);
+	}
+	if (first[1] === 0) return null;
 	const change = (view.latest.value - first[1]) / first[1];
 	const size = Math.abs(change * 100).toFixed(1);
 	return (
 		<span className="block text-[13px] text-slate-500">
 			{size === "0.0"
-				? `About the same as in ${view.periodName(first[0])}`
-				: `${change > 0 ? "Up" : "Down"} ${size}% since ${view.periodName(first[0])}`}
+				? `About the same as in ${since}`
+				: `${change > 0 ? "Up" : "Down"} ${size}% since ${since}`}
 		</span>
 	);
 }
@@ -361,7 +375,7 @@ function Standing({ view }: { view: PlaceTrendView }) {
 			<p className="mt-1">
 				{standing.phrase} of {standing.of.toLocaleString("en-GB")}{" "}
 				{standing.groupName} in {view.periodName(standing.period)}, and
-				the councils nearest it in size.
+				the councils nearest it.
 				{view.ranking && (
 					<>
 						{" "}
@@ -398,7 +412,7 @@ function Standing({ view }: { view: PlaceTrendView }) {
 							<span
 								className={`text-right tabular-nums ${peer.rank === standing.rank ? "font-semibold text-slate-900" : "text-slate-600"}`}
 							>
-								{formatTrendValue(peer.value)}
+								{view.format(peer.value)}
 							</span>
 						</div>
 					);
@@ -414,7 +428,7 @@ export const trendCitation = (
 	name: string,
 	code: string,
 ) =>
-	`${view.label} of ${name}, ${view.periodName(view.latest.period)}: ${formatTrendValue(view.latest.value)}. Source: ${view.source.publisher}, ${view.source.name} (${view.source.edition} release), ${view.source.licence}. Via ${SITE_NAME}, ${SITE_URL}/places/${code}`;
+	`${view.label}, ${name}, ${view.periodName(view.latest.period)}: ${view.format(view.latest.value)}. Source: ${view.source.publisher}, ${view.source.name} (${view.source.edition} release), ${view.source.licence}. Via ${SITE_NAME}, ${SITE_URL}/places/${code}`;
 
 function Cite({
 	view,
@@ -466,11 +480,11 @@ function TrendTable({ view }: { view: PlaceTrendView }) {
 						{view.area.points.toReversed().map((point) => (
 							<tr key={point[0]}>
 								<td>{view.periodName(point[0])}</td>
-								<td>{formatTrendValue(point[1])}</td>
+								<td>{view.format(point[1])}</td>
 								<td>
 									{KIND_NAMES[trendKind(point)]}
 									{point[2] === 2 &&
-										`, ${formatTrendValue(point[3])} to ${formatTrendValue(point[4])}`}
+										`, ${view.format(point[3])} to ${view.format(point[4])}`}
 								</td>
 							</tr>
 						))}
@@ -489,8 +503,8 @@ function trendJsonLd(view: PlaceTrendView, name: string, code: string) {
 	return {
 		"@context": "https://schema.org",
 		"@type": "Dataset",
-		name: `${view.label} of ${name}, ${view.periodName(first)} to ${view.periodName(last)}`,
-		description: `${view.label} of ${name} each year from ${view.periodName(first)} to ${view.periodName(last)}, on its current boundary: ${formatTrendValue(view.latest.value)} in ${view.periodName(last)}. From ${view.source.publisher}, ${view.source.name}.`,
+		name: `${view.label}, ${name}, ${view.periodName(first)} to ${view.periodName(last)}`,
+		description: `${view.label}, ${name}, each year from ${view.periodName(first)} to ${view.periodName(last)}, on its current boundary: ${view.format(view.latest.value)} in ${view.periodName(last)}. From ${view.source.publisher}, ${view.source.name}.`,
 		url: `${SITE_URL}/places/${code}#${view.key}`,
 		creator: { "@type": "Organization", name: view.source.publisher },
 		isBasedOn: view.source.url,
@@ -519,10 +533,10 @@ export function PlaceTrend({
 			<JsonLd data={trendJsonLd(view, name, code)} />
 			<p className="flex flex-wrap items-baseline gap-x-3">
 				<span className="text-[30px] leading-none font-semibold tracking-tight text-slate-900 tabular-nums">
-					{formatTrendValue(view.latest.value)}
+					{view.format(view.latest.value)}
 				</span>
 				<span className="text-[14px] text-slate-500">
-					{view.periodName(view.latest.period)} estimate,{" "}
+					{view.periodName(view.latest.period)},{" "}
 					<Link href={datasetHref} className={linkClass}>
 						{view.source.publisher}
 					</Link>

@@ -263,8 +263,8 @@ export type DatasetDeclaration<
 	ranking?: DisplayRanking;
 	/** The key figure place pages show for the dataset, if it has one. */
 	placeHeadline?: PlaceHeadlineDeclaration;
-	/** A series place pages chart on the place's current boundary, if any. */
-	placeTrend?: PlaceTrendDeclaration;
+	/** The series place pages chart on the place's current boundary. */
+	placeTrends?: readonly PlaceTrendDeclaration[];
 };
 
 /** The place pages that can show a dataset's headline. */
@@ -322,6 +322,25 @@ export type PlaceTrendDeclaration = {
 	measure: string;
 	dimensions: Readonly<Record<string, string>>;
 	sum?: readonly string[];
+	/**
+	 * A per-head or other ratio: the measure above divided by this one, from
+	 * the same dataset, then multiplied by `scale`. Both are converted onto
+	 * the place's boundary before dividing.
+	 */
+	per?: {
+		measure: string;
+		dimensions: Readonly<Record<string, string>>;
+		sum?: readonly string[];
+		scale?: number;
+	};
+	/** How a value is written, a whole number by default. */
+	format?: DisplayFormat;
+	/**
+	 * How the change since the first period reads: `percent` ("Up 4.1%") for
+	 * a count or sum of money, `difference` ("Up 1.2") for a rate, score or
+	 * age, written in `format`. `percent` by default.
+	 */
+	change?: "percent" | "difference";
 	/** Put before a period's label, as "mid-" makes "mid-2024". */
 	periodPrefix?: string;
 	/** Rounding for the headline figure, as 1000 makes "274,000". */

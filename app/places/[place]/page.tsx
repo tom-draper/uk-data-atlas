@@ -67,10 +67,10 @@ export async function generateMetadata({
 			description: `${profile.label}, a ${namedKindName(profile.kind).toLowerCase()} of ${profile.members.filter((member) => member.current).length} UK local authorities: its members, history, map and the API requests that return them.`,
 			path: `/places/${profile.id}`,
 		});
-	// A current council leads with its latest figures, such as its population.
+	// A current council leads with its first figure, its population.
 	const figures =
 		profile.current && profile.geography === "localAuthority"
-			? (await placeTrends(profile.code)).map(trendSentence)
+			? (await placeTrends(profile.code)).slice(0, 1).map(trendSentence)
 			: [];
 	return pageMetadata({
 		subject: `${profile.name} (${profile.code}), ${titleCase(areaKindName(profile))}`,

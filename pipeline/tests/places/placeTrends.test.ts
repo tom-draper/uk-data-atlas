@@ -82,6 +82,27 @@ test("population is declared once across its publishers", () => {
 	]);
 });
 
+test("a dataset can declare several trends, each shared by key", () => {
+	const trends = declaredTrends();
+	const female = trends.find(
+		(trend) => trend.declaration.key === "life-expectancy-female",
+	);
+	const male = trends.find(
+		(trend) => trend.declaration.key === "life-expectancy-male",
+	);
+	assert.deepEqual(female?.datasets.sort(), [
+		"life-expectancy",
+		"life-expectancy-series",
+	]);
+	assert.deepEqual(male?.datasets, female?.datasets);
+	const orders = trends.map((trend) => trend.declaration.order);
+	assert.deepEqual(
+		orders,
+		[...orders].sort((a, b) => a - b),
+	);
+	assert.equal(new Set(orders).size, orders.length);
+});
+
 const area = (
 	value: number,
 	dataset = "population-uk",
