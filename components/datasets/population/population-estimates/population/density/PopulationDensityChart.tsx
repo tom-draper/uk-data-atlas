@@ -243,7 +243,7 @@ export default function PopulationDensityChart({
 					? [nation.source, nationDensity?.areaSource]
 							.filter(Boolean)
 							.join(" ") || undefined
-					: "Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
+					: "Office for National Statistics. Ward population estimates, mid-2022, England and Wales. ons.gov.uk"
 			}
 			onClick={() =>
 				setActiveViz({
