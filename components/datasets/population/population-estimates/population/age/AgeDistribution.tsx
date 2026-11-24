@@ -17,6 +17,11 @@ import {
 	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
+import {
+	formatNationCoverage,
+	nationAgesMessage,
+	useNationPopulation,
+} from "@/lib/hooks/useNationPopulation";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -70,6 +75,33 @@ const EMPTY_AGE_GROUPS: AgeGroups = {
 	"65+": 0,
 };
 
+/**
+ * The card's figures from people at each single year of age, the last being
+ * 90 and over, spread over 90 to 99 as the dataset's own oldest band is.
+ */
+const statsFromAges = (byAge: readonly number[]) => {
+	const counts = new Uint32Array(100);
+	for (let i = 0; i < 90; i++) counts[i] = byAge[i] ?? 0;
+	const age90Plus = byAge[90] ?? 0;
+	for (let i = 90; i < 100; i++)
+		counts[i] = Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+	let total = 0;
+	let maxCount = 0;
+	for (let i = 0; i < 100; i++) {
+		total += counts[i];
+		if (counts[i] > maxCount) maxCount = counts[i];
+	}
+	const ageGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
+	let cumulative = 0;
+	let medianAge: number | null = null;
+	for (let i = 0; i < 100; i++) {
+		ageGroups[AGE_GROUP_KEYS[i]] += counts[i];
+		cumulative += counts[i];
+		if (medianAge === null && cumulative >= total / 2) medianAge = i;
+	}
+	return { medianAge: medianAge ?? 0, ageGroups, total, counts, maxCount };
+};
+
 function AgeDistribution({
 	dataset,
 	aggregatedData,
@@ -82,8 +114,18 @@ function AgeDistribution({
 		activeViz.datasetId === dataset.id && activeViz.view === "age";
 	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 
+	// An area in a nation the dataset leaves out is read from that nation's
+	// own estimates, labelled with their year and publisher.
+	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+	const nationAges = nation?.population?.ages;
+
 	const { medianAge, ageGroups, total, counts, maxCount } = (() => {
 		let max = 0;
+
+		if (nation)
+			return statsFromAges(
+				nationAges?.map(({ males, females }) => males + females) ?? [],
+			);
 
 		//  Handle Aggregated Data Case (no area selected)
 		if (selectedArea === null && aggregatedData) {
@@ -381,8 +423,16 @@ function AgeDistribution({
 
 	return (
 		<ChartCard
-			coverage={formatDatasetCoverage(dataset)}
-			heading={`Age Distribution [${dataset.year}]`}
+			coverage={
+				nation
+					? formatNationCoverage(
+							nation,
+							formatDatasetCoverage(dataset),
+							dataset.year,
+						)
+					: formatDatasetCoverage(dataset)
+			}
+			heading={`Age Distribution [${nation ? (nation.population?.period ?? nation.nation) : dataset.year}]`}
 			headerEnd={
 				medianAge > 0 && (
 					<span className="text-[10px] text-gray-500 mr-1">
@@ -392,7 +442,11 @@ function AgeDistribution({
 			}
 			accent={accentColor}
 			isActive={isActive}
-			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
+			title={
+				nation
+					? nation.source || undefined
+					: "Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
+			}
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,
@@ -409,7 +463,16 @@ function AgeDistribution({
 				total={total}
 				ageGroups={ageGroups}
 				isActive={isActive}
+				{...(nation
+					? {
+							emptyMessage: nationAgesMessage(nation),
+							loading: nation.status === "loading",
+						}
+					: {})}
 			/>
+			{nationAges && (
+				<p className="mt-1 text-[10px] text-gray-500">{nation?.note}</p>
+			)}
 		</ChartCard>
 	);
 }
