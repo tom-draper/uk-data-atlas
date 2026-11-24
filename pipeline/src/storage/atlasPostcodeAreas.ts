@@ -8,7 +8,7 @@ import {
 	POSTCODE_AREA_LAYOUT,
 	POSTCODE_AREA_LAYOUT_KEY,
 	postcodeAreaColumns,
-	readPostcodeAreaShard,
+	preparePostcodeAreaDistrictReader,
 	postcodeDistrictWhere,
 	postcodeFields,
 } from "@uk-data-atlas/places/postcodes";
@@ -149,6 +149,11 @@ export function writePostcodeAreas(
 	const readPostcodes = database.prepare(
 		`SELECT ${postcodeFields.join(",")} FROM postcode WHERE ${postcodeDistrictWhere} ORDER BY postcode`,
 	);
+	const readDistrict = preparePostcodeAreaDistrictReader(
+		database,
+		artifact,
+		"postcode_next",
+	);
 	for (const entry of artifact.shards) {
 		const text = readShard(entry.path);
 		if (sha256(text) !== entry.contentHash)
@@ -174,7 +179,7 @@ export function writePostcodeAreas(
 		)
 			throw new Error(`Invalid postcode area columns ${entry.path}`);
 		const coordinateValues: Array<number | null> = [];
-		const localIds = columns.map((column, releasePosition) => {
+		const releaseValues = columns.map((column) => {
 			const value = shard.releases[column.key];
 			if (
 				!value ||
@@ -182,8 +187,14 @@ export function writePostcodeAreas(
 				value.distanceCm.length !== rows.length
 			)
 				throw new Error(`Invalid postcode area column ${column.key}`);
+			return value;
+		});
+		const fallbackDistances = fallbacks.map((position) =>
+			position === null ? null : releaseValues[position]!.distanceCm,
+		);
+		const localIds = releaseValues.map((value, releasePosition) => {
+			const cache = ids[releasePosition]!;
 			return value.codes.map((code) => {
-				const cache = ids[releasePosition]!;
 				let id = cache.codes.get(code);
 				if (id === undefined) {
 					let area = findArea.get(cache.release, code);
@@ -197,39 +208,38 @@ export function writePostcodeAreas(
 				return id;
 			});
 		});
+		const areas = new Array<number | null>(columns.length);
+		const distances = new Array<number | null>(columns.length);
 		for (const [position, row] of rows.entries()) {
 			const values: SQLInputValue[] = postcodeFields.map(
 				(field) => row[field]!,
 			);
-			const areas: Array<number | null> = [];
-			const distances: Array<number | null> = [];
-			for (const [releasePosition, column] of columns.entries()) {
-				const value = shard.releases[column.key]!;
+			for (
+				let releasePosition = 0;
+				releasePosition < releaseValues.length;
+				releasePosition++
+			) {
+				const value = releaseValues[releasePosition]!;
 				const area = value.area[position]!;
+				const codes = localIds[releasePosition]!;
 				if (
 					area !== NONE &&
 					area !== SEVERAL &&
-					localIds[releasePosition]![area] === undefined
+					codes[area] === undefined
 				)
 					throw new Error(
 						`Invalid postcode area reference ${entry.path}`,
 					);
-				areas.push(
-					area >= 0 ? localIds[releasePosition]![area]! : null,
-				);
+				areas[releasePosition] = area >= 0 ? codes[area]! : null;
 				const distance = value.distanceCm[position]!;
-				const fallback = fallbacks[releasePosition]!;
+				const fallback = fallbackDistances[releasePosition]!;
 				// Null where an earlier release holds the same distance.
-				distances.push(
+				distances[releasePosition] =
+					distance !== 0 &&
 					fallback !== null &&
-						distance !== 0 &&
-						distance ===
-							shard.releases[columns[fallback]!.key]!.distanceCm[
-								position
-							]
+					distance === fallback[position]
 						? null
-						: distance,
-				);
+						: distance;
 				if (area === SEVERAL) {
 					const matches = value.several?.[position];
 					if (!matches?.length)
@@ -245,7 +255,7 @@ export function writePostcodeAreas(
 							releasePosition,
 							position,
 							at,
-							localIds[releasePosition]![code]!,
+							codes[code]!,
 							containment,
 							distance,
 						);
@@ -281,14 +291,7 @@ export function writePostcodeAreas(
 				...distances,
 			);
 		}
-		const derived = readPostcodeAreaShard(
-			database,
-			build,
-			artifact,
-			entry.path,
-			"postcode_next",
-			false,
-		);
+		const derived = readDistrict(entry.district, postcodeEntry.contentHash);
 		addShardHash.run(
 			entry.district,
 			sha256(derived),
