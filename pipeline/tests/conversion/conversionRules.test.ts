@@ -56,7 +56,7 @@ test("an additive measure is summed, and split only where a split was backtested
 	}
 });
 
-test("a ratio is rebuilt from an additive numerator and denominator, or refused", () => {
+test("a ratio is rebuilt from an additive numerator and denominator, or carried", () => {
 	const rules = rulesOf([
 		measure(1, "fuel-poor-households"),
 		measure(2, "households"),
@@ -95,12 +95,12 @@ test("a ratio is rebuilt from an additive numerator and denominator, or refused"
 		["per-thousand", /No ratio rebuild rule is supported/],
 	] as const) {
 		const rule = rules.get(slug)!;
-		assert.equal(rule.rule, "refuse");
+		assert.equal(rule.rule, "carry");
 		assert.match(rule.reason, said);
 	}
 });
 
-test("a weighted mean is rebuilt over an additive weight it names, or refused", () => {
+test("a weighted mean is rebuilt over an additive weight it names, or carried", () => {
 	const mean = { statistic: "mean", aggregation: "weighted_mean" };
 	const rules = rulesOf([
 		measure(1, "pupils"),
@@ -121,7 +121,7 @@ test("a weighted mean is rebuilt over an additive weight it names, or refused", 
 		["by-income", /median-income is not additive/],
 	] as const) {
 		const rule = rules.get(slug)!;
-		assert.equal(rule.rule, "refuse");
+		assert.equal(rule.rule, "carry");
 		assert.match(rule.reason, said);
 	}
 });
@@ -141,12 +141,9 @@ test("a refusal names what is not held where the measure has a specific reason",
 	);
 });
 
-test("everything that is not additive or a rebuildable ratio is refused with a reason", () => {
-	const refused = [
+test("what cannot be combined is carried where unchanged, with the reason it is not combined", () => {
+	const carried = [
 		measure(1, "median-age", { statistic: "median", aggregation: "none" }),
-		measure(2, "imd-rank", { statistic: "rank", aggregation: "none" }),
-		measure(3, "imd-score", { statistic: "index", aggregation: "none" }),
-		measure(4, "winner", { statistic: "category", aggregation: "none" }),
 		measure(5, "turnout", { statistic: "rate", aggregation: "none" }),
 		measure(6, "mean-price", { statistic: "mean", aggregation: "none" }),
 		measure(7, "attainment", {
@@ -155,6 +152,21 @@ test("everything that is not additive or a rebuildable ratio is refused with a r
 		}),
 		// A count declared as not additive is not summed.
 		measure(8, "distinct-count", { aggregation: "none" }),
+	];
+	const reasons = new Set<string>();
+	for (const { rule } of conversionRules(carried)) {
+		assert.equal(rule.rule, "carry");
+		assert.match(rule.reason, /carried unchanged where one area/);
+		reasons.add(rule.reason);
+	}
+	assert.equal(reasons.size, carried.length);
+});
+
+test("a value relative to the other areas of its release is refused", () => {
+	const refused = [
+		measure(2, "imd-rank", { statistic: "rank", aggregation: "none" }),
+		measure(3, "imd-score", { statistic: "index", aggregation: "none" }),
+		measure(4, "winner", { statistic: "category", aggregation: "none" }),
 	];
 	const reasons = new Set<string>();
 	for (const { rule } of conversionRules(refused)) {

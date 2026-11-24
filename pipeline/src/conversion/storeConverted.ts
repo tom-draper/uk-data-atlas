@@ -18,7 +18,7 @@ import { BACKTEST_SCHEMA, BACKTEST_TABLES } from "./storeBacktest.ts";
 const measureConversion = (measure = "", basis = "") => `
 CREATE TABLE measure_conversion (
 	measure_id INTEGER PRIMARY KEY${measure},
-	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild','refuse')),
+	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild','carry','refuse')),
 	-- The one weight basis a split of the measure may be estimated on.
 	split_basis_id TEXT${basis},
 	reason TEXT NOT NULL) STRICT;
@@ -103,7 +103,7 @@ CREATE TABLE series_input (
 	PRIMARY KEY (series_id, input_series_id)) WITHOUT ROWID, STRICT;
 CREATE TABLE series_conversion (
 	series_id INTEGER PRIMARY KEY REFERENCES series(id),
-	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild')),
+	rule TEXT NOT NULL CHECK (rule IN ('sum','rebuild','carry')),
 	basis_id TEXT NOT NULL REFERENCES weight_basis(id),
 	exact INTEGER NOT NULL CHECK (exact IN (0, 1)),
 	exact_share REAL NOT NULL CHECK (exact_share BETWEEN 0 AND 1),

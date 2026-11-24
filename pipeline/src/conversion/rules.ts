@@ -10,6 +10,9 @@ import type { ConversionBasis } from "./crosswalkSteps.ts";
  * - `rebuild`: a ratio, or a mean whose weight is named. The two parts are each
  *   converted and the ratio is taken again. For a mean the parts are the value
  *   times its weight, and the weight. Neither is ever averaged unweighted.
+ * - `carry`: the measure cannot be combined across areas, but a value
+ *   describes its area alone, so it is carried where one source area is the
+ *   whole of one target area and nothing else. Any other target is a gap.
  * - `refuse`: nothing defensible can be done with what is held. The reason is
  *   stored beside the measure.
  */
@@ -52,6 +55,7 @@ export type ConversionRule =
 			weight: string;
 			reason: string;
 	  }
+	| { rule: "carry"; reason: string }
 	| { rule: "refuse"; reason: string };
 
 /**
@@ -144,7 +148,31 @@ const summable = (measure: Pick<MeasureRow, "statistic" | "aggregation">) =>
 	measure.aggregation === "sum" &&
 	(measure.statistic === "count" || measure.statistic === "total");
 
+/**
+ * The kinds of value that say something about an area only against the other
+ * areas of its release, so they mean nothing on another release even where
+ * the area is unchanged.
+ */
+const RELATIVE_STATISTICS: ReadonlySet<string> = new Set([
+	"rank",
+	"index",
+	"category",
+]);
+
+const CARRIED =
+	"It is carried unchanged where one area of the source release is the whole of one target area, and is a gap anywhere else.";
+
 export const conversionRule = (
+	measure: MeasureRow,
+	bySlug: ReadonlyMap<string, MeasureRow>,
+): ConversionRule => {
+	const rule = combinationRule(measure, bySlug);
+	return rule.rule === "refuse" && !RELATIVE_STATISTICS.has(measure.statistic)
+		? { rule: "carry", reason: `${rule.reason} ${CARRIED}` }
+		: rule;
+};
+
+const combinationRule = (
 	measure: MeasureRow,
 	bySlug: ReadonlyMap<string, MeasureRow>,
 ): ConversionRule => {

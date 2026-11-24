@@ -74,7 +74,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "aggregating",
-		body: "measure.aggregation says how values combine across areas. 'sum' measures (counts, amounts) can be added. 'ratio' measures are rebuilt from their numerator_id and denominator_id measures, never averaged. 'weighted_mean' measures are averaged using weight_id as the weight. 'none' means the measure cannot be combined (medians, ranks, indices, model-based rates). measure_conversion gives the same rule for boundary conversion with the reason a measure is refused. To total a sum measure for a larger area, join its smaller areas through a membership crosswalk (crosswalk.purpose = 'membership', or method 'official-lookup') and add.",
+		body: "measure.aggregation says how values combine across areas. 'sum' measures (counts, amounts) can be added. 'ratio' measures are rebuilt from their numerator_id and denominator_id measures, never averaged. 'weighted_mean' measures are averaged using weight_id as the weight. 'none' means the measure cannot be combined (medians, ranks, indices, model-based rates). measure_conversion gives the same rule for boundary conversion with the reason a measure is not combined. A carry measure (a median, mean or rate whose parts are not held) is still carried onto an area that is the whole of one source area, so an unchanged area keeps its series; refuse (ranks, indices, categories) is never carried. To total a sum measure for a larger area, join its smaller areas through a membership crosswalk (crosswalk.purpose = 'membership', or method 'official-lookup') and add.",
 	},
 	{
 		topic: "crosswalks",
@@ -870,7 +870,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 		description: "How a converted series was made and how far to trust it.",
 		columns: {
 			series_id: "The converted series (series.id).",
-			rule: "sum (parts added) or rebuild (a ratio or weighted mean recomputed from converted parts).",
+			rule: "sum (parts added), rebuild (a ratio or weighted mean recomputed from converted parts) or carry (a value that cannot be combined, carried unchanged where one source area is the whole of one target area).",
 			basis_id: "The weight basis used to split areas (weight_basis.id).",
 			exact: "1 if every value came from regrouping whole areas with no estimated split.",
 			exact_share:
@@ -900,7 +900,7 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			series_id: "The converted series (series.id).",
 			area_version_id: "The area with no value (area_version.id).",
 			period_id: "The period (period.id).",
-			reason: "missing-input (a source area had no observed value), no-weight (the crosswalk has no weight on the basis), unmeasured-split (the value would be split in a way the backtest has not measured for this measure), not-carried (no crosswalk on the route reaches this area), no-denominator (a rebuilt ratio's denominator is not above zero), better-route (a better source holds this area and period for the same measure and members, so this series' own value was dropped).",
+			reason: "missing-input (a source area had no observed value), no-weight (the crosswalk has no weight on the basis), unmeasured-split (the value would be split in a way the backtest has not measured for this measure), not-carried (no crosswalk on the route reaches this area), no-denominator (a rebuilt ratio's denominator is not above zero), better-route (a better source holds this area and period for the same measure and members, so this series' own value was dropped), not-combinable (a carried measure, and the area is not the whole of one source area).",
 		},
 	},
 	model: {
@@ -941,10 +941,10 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			"Whether each measure can be moved onto other boundaries, and if not, why.",
 		columns: {
 			measure_id: "The measure (measure.id).",
-			rule: "sum, rebuild or refuse.",
+			rule: "sum, rebuild, carry or refuse.",
 			split_basis_id:
 				"The weight basis used when an area must be split (weight_basis.id).",
-			reason: "Why the rule applies, and for refuse what is missing.",
+			reason: "Why the rule applies, and for carry or refuse why the measure cannot be combined.",
 		},
 	},
 	conversion_skip: {
@@ -2031,7 +2031,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 		question:
 			"Why is the unemployment rate not available on the latest boundaries?",
 		sql: "SELECT mc.rule, mc.reason FROM measure_conversion mc JOIN measure m ON m.id = mc.measure_id WHERE m.slug = 'unemployment-rate'",
-		expect: "refuse: a model-based rate whose denominator is not held.",
+		expect: "carry: a model-based rate whose denominator is not held, so it is carried only onto areas that are unchanged.",
 	},
 	{
 		id: "election-result",
