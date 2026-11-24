@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import AgeDistribution from "@/components/datasets/population/population-estimates/population/age/AgeDistribution";
 import Gender from "@/components/datasets/population/population-estimates/population/gender/Gender";
 import type { SelectedArea } from "@/lib/types/areas";
 
@@ -63,5 +64,42 @@ describe("gender card outside the dataset's nations", () => {
 		expect(html).toContain(
 			"Not published in this form for Northern Ireland",
 		);
+	});
+});
+
+const renderAge = (selectedArea: SelectedArea | null) =>
+	renderToStaticMarkup(
+		createElement(AgeDistribution, {
+			dataset,
+			aggregatedData: null,
+			selectedArea,
+			activeViz: {
+				datasetId: "",
+				datasetType: "population",
+				datasetYear: 0,
+			} as never,
+			setActiveViz: () => {},
+		}),
+	);
+
+describe("age card outside the dataset's nations", () => {
+	it("keeps the dataset's year for an English area", () => {
+		expect(renderAge(area("ward", "E05000026"))).toContain(
+			"Age Distribution [2022]",
+		);
+	});
+
+	it("says a Northern Irish ward is not published", () => {
+		const html = renderAge(area("ward", "N08000101"));
+		expect(html).toContain("Age Distribution [Northern Ireland]");
+		expect(html).toContain(
+			"Not published in this form for Northern Ireland",
+		);
+	});
+
+	it("waits for a data zone's own estimate", () => {
+		const html = renderAge(area("dataZone", "S01006506", 2022));
+		expect(html).not.toContain("[2022]");
+		expect(html).not.toContain("No data available");
 	});
 });
