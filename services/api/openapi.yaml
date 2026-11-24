@@ -5325,11 +5325,14 @@ paths:
             `place` names there: the release's own published values (`method: native`) where it has
             them, otherwise the values converted onto it at build time (`exact` where whole source
             areas were regrouped, `weighted` where some were split by a weight). Each converted value
-            names its source release, rule, basis and crosswalks, and `summary` gives the periods
-            covered, the share converted and warnings. A value that cannot be combined, such as a
-            median, is carried only where the area is unchanged. Periods that cannot be converted,
-            such as a median for an area whose boundary changed or a release with no crosswalk, are
-            listed in `gaps` with a reason. Not with `to`.
+            names its source release, rule, basis and crosswalks. A `weighted` value split on a
+            backtested basis carries `bounds` (`lower`, `upper`): the range the conversion error model
+            measured for that split, not a confidence interval. `exact` values and the release's own
+            values carry none, though a native value keeps any `confidenceInterval` its publisher
+            gives. `summary` gives the periods covered, the share converted and warnings. A value that
+            cannot be combined, such as a median, is carried only where the area is unchanged. Periods
+            that cannot be converted, such as a median for an area whose boundary changed or a release
+            with no crosswalk, are listed in `gaps` with a reason. Not with `to`.
         - name: datasetId
           in: query
           required: false
