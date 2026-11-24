@@ -7,6 +7,10 @@ import {
 	rankingLinkClass,
 	RankingRowView,
 } from "@/components/maps/RankingRowView";
+import {
+	RankingSummary,
+	summaryPositions,
+} from "@/components/maps/RankingSummary";
 import { atlasMapTitle, locationLabel } from "@/lib/atlas/pages";
 import {
 	isLongRanking,
@@ -74,6 +78,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 	const row = (index: number) =>
 		rankingRow(location, map, ranking, areas[index]!, index);
 	const rows = areas.slice(0, shown).map((_, index) => row(index));
+	const positions = summaryPositions(areas.length);
 
 	return (
 		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
@@ -97,6 +102,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 						<h1 className="text-[32px] leading-[1.15] font-semibold tracking-tight text-slate-900 sm:text-[38px]">
 							{heading[0]}
 							<span className="block text-slate-500">
+								All {areas.length.toLocaleString("en-GB")}{" "}
 								{heading[1]}
 							</span>
 						</h1>
@@ -135,6 +141,17 @@ export default async function RankingPage({ params }: { params: Params }) {
 							Open the interactive map
 						</Link>
 					</div>
+
+					{positions && (
+						<RankingSummary
+							one={nouns.one}
+							rows={{
+								top: positions.top.map(row),
+								bottom: positions.bottom.map(row),
+								middle: row(positions.middle),
+							}}
+						/>
+					)}
 
 					<Card
 						className={`mt-9 overflow-hidden ${columns.length > 1 ? "max-w-[1180px]" : "max-w-[900px]"}`}
