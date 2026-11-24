@@ -70,10 +70,13 @@ export default function MeasureSeriesChart({
 				codeMapper as (CodeYearResolver & LadResolver) | undefined,
 			) ?? null);
 
+	// A page of one area shows it as its scope; its history is that area's own,
+	// so it reads the area, earlier codes and all.
+	const shown = area ?? (!members && scope?.length === 1 ? scope[0]! : null);
 	const earlier =
-		area !== null && series.earlier
+		shown !== null && series.earlier
 			? earlierAreas(
-					area,
+					shown,
 					series.request.geography,
 					series.request.boundaryYear,
 					series.earlier,
@@ -85,7 +88,7 @@ export default function MeasureSeriesChart({
 		<MeasureSeriesCard
 			request={series.request}
 			scope={members ?? scope}
-			area={area}
+			area={shown}
 			earlier={earlier}
 			countMeasure={series.countMeasure}
 			countDimensions={series.countDimensions}
