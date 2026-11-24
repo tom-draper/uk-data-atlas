@@ -12,6 +12,7 @@ import { createReadStream } from "node:fs";
 import {
 	cp,
 	mkdir,
+	mkdtemp,
 	readFile,
 	readdir,
 	rename,
@@ -19,7 +20,7 @@ import {
 	stat,
 	writeFile,
 } from "node:fs/promises";
-import { dirname, join, relative } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 import {
@@ -29,6 +30,7 @@ import {
 import { migrateSourceMeta } from "./migrate-source-meta.mjs";
 import {
 	buildLog,
+	elapsedSince,
 	formatBytes,
 	formatCount,
 } from "../packages/atlas-db/src/buildTiming.ts";
@@ -153,7 +155,15 @@ async function readConfig(path = CONFIG) {
 			typeof config.commit !== "string" ||
 			!/^[0-9a-f]{40}$/.test(config.commit) ||
 			typeof config.repository !== "string" ||
-			!Array.isArray(config.assets)
+			!Array.isArray(config.assets) ||
+			config.assets.some(
+				(asset) =>
+					typeof asset?.name !== "string" ||
+					!Number.isSafeInteger(asset.bytes) ||
+					asset.bytes <= 0 ||
+					typeof asset.sha256 !== "string" ||
+					!/^[0-9a-f]{64}$/.test(asset.sha256),
+			)
 		)
 			fail("data-release.json has an unsupported shape.");
 		return config;
@@ -336,28 +346,117 @@ async function publish(tag, targetRef = "HEAD") {
 	);
 }
 
-async function downloadFile(url, destination) {
+async function runAsync(command, args) {
 	await new Promise((resolvePromise, reject) => {
-		const child = spawn(
-			"curl",
-			[
-				"--fail",
-				"--location",
-				"--retry",
-				"3",
-				"--output",
-				destination,
-				url,
-			],
-			{ stdio: "inherit" },
-		);
+		const child = spawn(command, args, { cwd: ROOT, stdio: "inherit" });
 		child.on("error", reject);
-		child.on("exit", (code) =>
+		child.on("close", (code, signal) =>
 			code === 0
 				? resolvePromise()
-				: reject(new Error(`curl exited with ${code}`)),
+				: reject(new Error(`${command} exited with ${code ?? signal}`)),
 		);
 	});
+}
+
+async function archiveMatches(path, asset) {
+	try {
+		return (
+			(await fileSize(path)) === asset.bytes &&
+			(await sha256(path)) === asset.sha256
+		);
+	} catch (error) {
+		if (error?.code === "ENOENT") return false;
+		throw error;
+	}
+}
+
+async function acquireArchive(config, asset, cache, temporary, refetch) {
+	const path = join(cache, `${asset.sha256}.tar.gz`);
+	let started = performance.now();
+	if (!refetch && (await archiveMatches(path, asset))) {
+		buildLog.info(
+			`Verified cached ${asset.name} in ${elapsedSince(started)}`,
+		);
+		return path;
+	}
+	const url = `https://github.com/${config.repository}/releases/download/${encodeURIComponent(config.tag)}/${encodeURIComponent(asset.name)}`;
+	buildLog.info(`Downloading ${asset.name} (${formatBytes(asset.bytes)})`);
+	started = performance.now();
+	await runAsync("curl", [
+		"--fail",
+		"--location",
+		"--silent",
+		"--show-error",
+		"--retry",
+		"3",
+		"--output",
+		temporary,
+		url,
+	]);
+	buildLog.info(`Downloaded ${asset.name} in ${elapsedSince(started)}`);
+	started = performance.now();
+	if (!(await archiveMatches(temporary, asset)))
+		fail(`Checksum verification failed for ${asset.name}.`);
+	await rename(temporary, path);
+	buildLog.info(`Verified ${asset.name} in ${elapsedSince(started)}`);
+	return path;
+}
+
+async function extractArchives(config, workspace, refetch) {
+	const jobs = Number(process.env.DATA_DOWNLOAD_JOBS ?? 2);
+	if (!Number.isSafeInteger(jobs) || jobs < 1)
+		fail("DATA_DOWNLOAD_JOBS must be a positive integer.");
+	const cache = resolve(
+		ROOT,
+		process.env.DATA_SOURCE_ARCHIVE_CACHE_DIR ??
+			".cache/data-source-archives",
+	);
+	await mkdir(cache, { recursive: true });
+	// A private directory on the cache filesystem makes publication atomic.
+	const incoming = await mkdtemp(join(cache, ".incoming-"));
+	const pending = [];
+	const request = (position) => {
+		pending[position] = acquireArchive(
+			config,
+			config.assets[position],
+			cache,
+			join(incoming, String(position)),
+			refetch,
+		).then(
+			(path) => ({ path }),
+			(error) => ({ error }),
+		);
+	};
+	try {
+		for (
+			let position = 0;
+			position < Math.min(jobs, config.assets.length);
+			position++
+		)
+			request(position);
+		for (const [position, asset] of config.assets.entries()) {
+			const result = await pending[position];
+			if ("error" in result) throw result.error;
+			const next = position + jobs;
+			if (next < config.assets.length) request(next);
+			// Downloads may finish out of order. Tar still sees release order.
+			const started = performance.now();
+			await runAsync("tar", [
+				"--extract",
+				"--gzip",
+				"--file",
+				result.path,
+				"--directory",
+				workspace,
+			]);
+			buildLog.info(
+				`Extracted ${asset.name} in ${elapsedSince(started)}`,
+			);
+		}
+	} finally {
+		await Promise.all(pending);
+		await rm(incoming, { recursive: true, force: true });
+	}
 }
 
 export async function replaceSources(
@@ -608,32 +707,11 @@ async function download(mode) {
 	}
 	buildLog.info(`Synchronizing raw data from ${config.tag}`);
 
-	const workspace = join(STAGING, `download-${config.tag}`);
-	await rm(workspace, { recursive: true, force: true });
-	await mkdir(workspace, { recursive: true });
+	await mkdir(STAGING, { recursive: true });
+	const workspace = await mkdtemp(join(STAGING, "download-"));
 	try {
-		for (const asset of config.assets) {
-			const path = join(workspace, asset.name);
-			const url = `https://github.com/${config.repository}/releases/download/${encodeURIComponent(config.tag)}/${encodeURIComponent(asset.name)}`;
-			buildLog.info(
-				`Downloading ${asset.name} (${formatBytes(asset.bytes)})`,
-			);
-			await downloadFile(url, path);
-			if (
-				(await fileSize(path)) !== asset.bytes ||
-				(await sha256(path)) !== asset.sha256
-			)
-				fail(`Checksum verification failed for ${asset.name}.`);
-			run("tar", [
-				"--extract",
-				"--gzip",
-				"--file",
-				path,
-				"--directory",
-				workspace,
-			]);
-			await rm(path, { force: true });
-		}
+		await extractArchives(config, workspace, mode === "--force");
+		const started = performance.now();
 		// A release published before the move has the old layout.
 		await migrateSourceLayout(workspace);
 		// And one before meta.json named its dataset.
@@ -655,7 +733,7 @@ async function download(mode) {
 		}
 		await writeMarker(config.tag, config.repository, files);
 		buildLog.info(
-			`${mode === "--replace" ? "Restored" : "Merged"} raw data release ${config.tag}`,
+			`${mode === "--replace" ? "Restored" : "Merged"} raw data release ${config.tag} in ${elapsedSince(started)}`,
 		);
 	} finally {
 		await rm(workspace, { recursive: true, force: true });

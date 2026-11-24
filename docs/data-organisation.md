@@ -346,6 +346,13 @@ same place.
   leaves them alone.
 - `pnpm data:download` runs the same migration first, and again on a freshly
   extracted old-layout release, so a checkout on either layout ends up correct.
+- Verified archives are kept by SHA-256 in `.cache/data-source-archives`.
+  A restore checks the size and hash again before extracting each archive.
+  Set `DATA_SOURCE_ARCHIVE_CACHE_DIR` to share the archives between checkouts
+  or store them on another disk. The cache can be deleted to reclaim space.
+  Downloads overlap by default with `DATA_DOWNLOAD_JOBS=2`. Set it to `1`
+  for one download at a time. `--force` fetches the archives again, while
+  `--replace` can restore the pinned sources from verified cached archives.
 - On another machine or the server: pull this branch, then run
   `node scripts/migrate-source-layout.mjs --dry-run` and, if it lists only
   moves, run it again without `--dry-run`. Run `pnpm data:download` afterwards
