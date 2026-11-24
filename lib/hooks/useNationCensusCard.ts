@@ -56,8 +56,10 @@ export function useNationCensusCard(
 		? undefined
 		: CENSUS_NATIONS[initial];
 	const isZone = selectedArea?.type === "dataZone";
+	// Only a council is summed from its data zones: a ward's council total
+	// would be read as the ward's own figure.
 	const ladCode =
-		nation && !isZone
+		nation && selectedArea?.type === "localAuthority"
 			? selectedAreaLadCode(selectedArea, codeMapper)
 			: undefined;
 	const council = useCouncilDataZones(
