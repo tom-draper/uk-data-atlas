@@ -81,7 +81,10 @@ export default function MeasureSeriesChart({
 			heading={`${series.heading} [${series.period}]`}
 			accent={series.accent}
 			color={series.line}
-			title={series.source}
+			title={[
+				series.source,
+				...(series.breaks ?? []).map((b) => b.label),
+			].join(" ")}
 			coverage={series.coverage ?? formatDatasetCoverage(dataset)}
 			estimateNote={(hasData) =>
 				isLocalAuthorityEstimate(selectedArea, hasData)
