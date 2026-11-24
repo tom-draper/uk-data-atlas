@@ -96,89 +96,15 @@ export function readPostcodeAreaShard(
 				.get()!.payload,
 		)!,
 	);
-	const rows = database
-		.prepare(
-			`SELECT p.*, s.* FROM ${table} p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE ${postcodeDistrictWhere} ORDER BY p.postcode`,
-		)
-		.all(
-			entry.district,
-			`${entry.district}\x7f`,
-			entry.district.length + 3,
-		);
-	const columns = postcodeAreaColumns(artifact);
-	const fallbacks = distanceFallbacks(database);
-	const resolved = new Map<number, number[]>();
-	const distancesOf = (position: number): number[] => {
-		let distances = resolved.get(position);
-		if (distances) return distances;
-		const column = columns[position]!;
-		const fallback = fallbacks.get(position) ?? null;
-		const base = fallback === null ? undefined : distancesOf(fallback);
-		distances = rows.map((row, at) => {
-			const value = row[column.distance];
-			if (value !== null) return Number(value);
-			if (!base)
-				throw new Error(`Missing postcode distance ${column.key}`);
-			return base[at]!;
-		});
-		resolved.set(position, distances);
-		return distances;
-	};
-	const releases: PostcodeAreasShard["releases"] = {};
-	const findCode = database.prepare(
-		"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.id = ?",
+	const postcodeShard = index.shards.find(
+		(e) => e.district === entry.district,
+	)!.contentHash;
+	const readDistrict = preparePostcodeAreaDistrictReader(
+		database,
+		artifact,
+		table,
 	);
-	for (const [position, column] of columns.entries()) {
-		const matches = database
-			.prepare(
-				"SELECT * FROM postcode_area_match WHERE district = ? AND release_position = ? ORDER BY postcode_position, position",
-			)
-			.all(entry.district, position);
-		const ids = new Set<number>();
-		for (const row of rows)
-			if (row[column.area] !== null) ids.add(Number(row[column.area]));
-		for (const match of matches) ids.add(Number(match.area_id));
-		const areaCodes = new Map<number, string>();
-		for (const id of ids) {
-			const code = findCode.get(id)?.code;
-			if (typeof code !== "string")
-				throw new Error(`Missing postcode area ${id}`);
-			areaCodes.set(id, code);
-		}
-		const sorted = [...areaCodes].sort((a, b) =>
-			a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0,
-		);
-		const codePositions = new Map(sorted.map(([id], at) => [id, at]));
-		const several: NonNullable<PostcodeAreaColumn["several"]> = {};
-		for (const match of matches) {
-			const at = String(match.postcode_position);
-			(several[at] ??= []).push([
-				codePositions.get(Number(match.area_id))!,
-				match.containment as "boundary" | "interior",
-				Number(match.distance_cm),
-			]);
-		}
-		releases[column.key] = {
-			codes: sorted.map(([, code]) => code),
-			area: rows.map((row, at) =>
-				row[column.area] === null
-					? several[at]
-						? SEVERAL
-						: NONE
-					: codePositions.get(Number(row[column.area]))!,
-			),
-			distanceCm: distancesOf(position),
-			...(matches.length ? { several } : {}),
-		};
-	}
-	const shard: PostcodeAreasShard = {
-		schemaVersion: 1,
-		district: entry.district,
-		postcodeShard: index.shards.find((e) => e.district === entry.district)!
-			.contentHash,
-		releases,
-	};
-	const text = `${JSON.stringify(shard)}\n`;
+	const text = readDistrict(entry.district, postcodeShard);
 	if (verify) {
 		const expected = build
 			.prepare(
@@ -189,4 +115,96 @@ export function readPostcodeAreaShard(
 			throw new Error(`Invalid SQLite postcode area shard ${path}`);
 	}
 	return text;
+}
+
+/** Reconstruct districts against one postcode area layout. The caller supplies
+ * each district's index hash from the postcode index manifest. */
+export function preparePostcodeAreaDistrictReader(
+	database: SqlReader,
+	artifact: PostcodeAreasArtifact,
+	table: string,
+) {
+	const columns = postcodeAreaColumns(artifact);
+	const fallbacks = distanceFallbacks(database);
+	const readRows = database.prepare(
+		`SELECT p.*, s.* FROM ${table} p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE ${postcodeDistrictWhere} ORDER BY p.postcode`,
+	);
+	const findCode = database.prepare(
+		"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.id = ?",
+	);
+	const readMatches = database.prepare(
+		"SELECT * FROM postcode_area_match WHERE district = ? AND release_position = ? ORDER BY postcode_position, position",
+	);
+	return (district: string, postcodeShard: string): string => {
+		const rows = readRows.all(
+			district,
+			`${district}\x7f`,
+			district.length + 3,
+		);
+		const resolved = new Map<number, number[]>();
+		const distancesOf = (position: number): number[] => {
+			let distances = resolved.get(position);
+			if (distances) return distances;
+			const column = columns[position]!;
+			const fallback = fallbacks.get(position) ?? null;
+			const base = fallback === null ? undefined : distancesOf(fallback);
+			distances = rows.map((row, at) => {
+				const value = row[column.distance];
+				if (value !== null) return Number(value);
+				if (!base)
+					throw new Error(`Missing postcode distance ${column.key}`);
+				return base[at]!;
+			});
+			resolved.set(position, distances);
+			return distances;
+		};
+		const releases: PostcodeAreasShard["releases"] = {};
+		for (const [position, column] of columns.entries()) {
+			const matches = readMatches.all(district, position);
+			const ids = new Set<number>();
+			for (const row of rows)
+				if (row[column.area] !== null)
+					ids.add(Number(row[column.area]));
+			for (const match of matches) ids.add(Number(match.area_id));
+			const areaCodes = new Map<number, string>();
+			for (const id of ids) {
+				const code = findCode.get(id)?.code;
+				if (typeof code !== "string")
+					throw new Error(`Missing postcode area ${id}`);
+				areaCodes.set(id, code);
+			}
+			const sorted = [...areaCodes].sort((a, b) =>
+				a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0,
+			);
+			const codePositions = new Map(sorted.map(([id], at) => [id, at]));
+			const several: NonNullable<PostcodeAreaColumn["several"]> = {};
+			for (const match of matches) {
+				const at = String(match.postcode_position);
+				(several[at] ??= []).push([
+					codePositions.get(Number(match.area_id))!,
+					match.containment as "boundary" | "interior",
+					Number(match.distance_cm),
+				]);
+			}
+			releases[column.key] = {
+				codes: sorted.map(([, code]) => code),
+				area: rows.map((row, at) =>
+					row[column.area] === null
+						? several[at]
+							? SEVERAL
+							: NONE
+						: codePositions.get(Number(row[column.area]))!,
+				),
+				distanceCm: distancesOf(position),
+				...(matches.length ? { several } : {}),
+			};
+		}
+		const shard: PostcodeAreasShard = {
+			schemaVersion: 1,
+			district,
+			postcodeShard,
+			releases,
+		};
+		return `${JSON.stringify(shard)}\n`;
+	};
 }
