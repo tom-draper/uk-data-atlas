@@ -23,6 +23,11 @@ export interface GenderBalanceByAgeChartProps {
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: PopulationCodeResolver;
+	/** Males and females at each age, read elsewhere; replaces the dataset. */
+	ages?: Array<{ males: number; females: number }> | null;
+	/** Why there is nothing to draw, in place of "No data available". */
+	emptyMessage?: string;
+	loading?: boolean;
 }
 
 // Pre-create age indices and string keys (constants)
@@ -36,14 +41,29 @@ function GenderBalanceByAgeChart({
 	aggregatedData,
 	selectedArea,
 	codeMapper,
+	ages,
+	emptyMessage,
+	loading = false,
 }: GenderBalanceByAgeChartProps) {
-	const chartsLoading = useChartsLoading();
+	const chartsLoading = useChartsLoading() || loading;
 	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 	// Refs for direct DOM manipulation (avoids re-renders on hover)
 	const tooltipRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const { ageData, percentages } = (() => {
+		if (ages !== undefined) {
+			const data = ages ?? [];
+			return {
+				ageData: data,
+				percentages: data.map(({ males, females }) =>
+					males + females > 0
+						? (males / (males + females)) * 100
+						: 50,
+				),
+			};
+		}
+
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const yearlyData = aggregatedData[dataset.year];
@@ -267,7 +287,7 @@ function GenderBalanceByAgeChart({
 					<ChartContentPlaceholder className="size-full" />
 				) : (
 					<div className="h-full flex items-center justify-center">
-						No data available
+						{emptyMessage ?? "No data available"}
 					</div>
 				)}
 			</div>
