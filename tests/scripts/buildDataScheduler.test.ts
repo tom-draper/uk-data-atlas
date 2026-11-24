@@ -472,6 +472,33 @@ test("boundary tiling uses two workers when the 8 GiB profile has its full budge
 	assert.equal(override.workerEnvironment, undefined);
 });
 
+test("map workers use the build's job slots and memory reservation", () => {
+	const maps = buildDataStages.find(({ name }) => name === "map-resource")!;
+	const compact = configureStageMemory(maps, 5120, {}, 8);
+	assert.equal(compact.cpuSlots, 1);
+	assert.equal(stageMemoryMb(compact), 5120);
+	assert.deepEqual(compact.workerEnvironment, {
+		ATLAS_MAP_RESOURCE_JOBS: "1",
+		ATLAS_MAP_RESOURCE_MEMORY_MB: "5120",
+	});
+	const normal = configureStageMemory(maps, 8192, {}, 8);
+	assert.equal(normal.cpuSlots, 2);
+	assert.equal(stageMemoryMb(normal), 8192);
+	const serial = configureStageMemory(maps, 8192, {}, 1);
+	assert.equal(serial.cpuSlots, 1);
+	assert.equal(stageMemoryMb(serial), 5120);
+	const override = configureStageMemory(
+		maps,
+		12288,
+		{
+			ATLAS_MAP_RESOURCE_JOBS: "4",
+		},
+		8,
+	);
+	assert.equal(override.cpuSlots, 4);
+	assert.ok(stageMemoryMb(override) > 12288);
+});
+
 test("--jobs needs a positive whole number", async () => {
 	for (const argv of [["--jobs"], ["--jobs", "0"], ["--jobs", "two"]])
 		await assert.rejects(

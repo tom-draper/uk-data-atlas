@@ -14,6 +14,7 @@ type Stage = {
 	dependencies: string[];
 	args: string[];
 	writes?: string[];
+	cpuSlots?: number;
 };
 
 const stage = (
@@ -93,7 +94,11 @@ async function replay({
 					);
 				running.set(name, stageMemoryMb(entry));
 				assert.ok(
-					running.size <= jobs,
+					[...running.keys()].reduce(
+						(slots, name) =>
+							slots + (byName.get(name)?.cpuSlots ?? 1),
+						0,
+					) <= jobs,
 					`${name} exceeded the job limit`,
 				);
 				const used = [...running.values()].reduce((a, b) => a + b, 0);
@@ -204,6 +209,23 @@ test("successive backfills share the reservation and cannot consume it twice", a
 	assert.equal(result.started.get("fits"), 0);
 	assert.equal(result.started.get("waiting"), 100);
 	assert.ok(result.started.get("overcommits")! >= 100);
+});
+
+test("CPU backfill fits alongside the waiting worker pool when current work finishes", async () => {
+	const stages = [
+		{ ...stage("running", 2), cpuSlots: 2 },
+		{ ...stage("pool", 2), cpuSlots: 2 },
+		stage("backfill", 1),
+	];
+	const { started, waits } = await replay({
+		stages,
+		jobs: 3,
+		memoryMb: 5,
+		took: { running: 10, pool: 5, backfill: 30 },
+	});
+	assert.equal(started.get("backfill"), 0);
+	assert.equal(started.get("pool"), 10);
+	assert.deepEqual(waits.get("pool"), { queuedMs: 10, memoryWaitMs: 0 });
 });
 
 test("a stage larger than the whole budget still runs, alone, and cannot stall the rest", async () => {

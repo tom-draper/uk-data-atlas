@@ -205,8 +205,9 @@ pnpm data:build --from datasets
 ```
 
 Independent stages run in parallel. A stage starts once its dependencies have
-finished, with at most `--jobs <n>` running (default `DATA_BUILD_JOBS`, else the
-CPU count). The default memory budget leaves 1 GiB of currently available
+finished and it has a slot within `--jobs <n>` (default `DATA_BUILD_JOBS`, else the
+CPU count). The map-resource pool reserves one slot per worker. The default
+memory budget leaves 1 GiB of currently available
 memory free and leaves at least 3 GiB or a quarter of installed RAM for
 the rest of the system, whichever is greater.
 An 8 GiB machine therefore reserves at most 5 GiB for concurrent stages
@@ -214,17 +215,18 @@ by default. `DATA_BUILD_MEMORY_MB` sets an explicit budget in MiB.
 Measured stages reserve an estimate of peak process-tree RSS. Other stages
 use their `--max-old-space-size` value or 1 GiB. A stage whose estimate
 exceeds the budget runs alone and may use more than the budget.
-At budgets of 5 GiB or less, dataset compilation and map resources default
-to one worker. Boundary tiling and export generation use two workers at
+At budgets of 5 GiB or less, dataset compilation defaults to one worker.
+Map resources default to two workers from 8 GiB of build memory and one
+worker below that. Boundary tiling and export generation use two workers at
 5 GiB and above, and one worker below that. Set `DATA_EXPORT_JOBS=1` to
 generate exports with one worker at any budget. An explicit worker count
 can select an unmeasured configuration, which the scheduler runs alone.
 `--jobs 1` runs one stage at a time in plan order.
 
 Stages start in order of the work still ahead of them. The scheduler excludes
-previous queue time from that estimate. When the next stage waits for memory,
+previous queue time from that estimate. When the next stage waits for resources,
 a smaller stage can start if it fits now and leaves enough room for the
-waiting stage to start as soon as existing jobs free the memory it needs.
+waiting stage to start as soon as existing jobs free the memory and slots it needs.
 Dependencies, `--jobs`, memory reservations and the stages that run alone
 hold at every start.
 

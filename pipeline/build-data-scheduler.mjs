@@ -67,15 +67,45 @@ export function stageMemoryMb(stage) {
 }
 
 /** Apply calibrated worker limits only where the build needs a smaller profile. */
-export function configureStageMemory(stage, memoryMb, env) {
+export function configureStageMemory(stage, memoryMb, env, jobs = Infinity) {
 	const compact = stage.compact;
 	if (!compact) return stage;
 	const {
 		variable,
 		workers,
 		normalWorkers,
+		memoryVariable,
 		normalBudgetMb = COMPACT_BUILD_MEMORY_MB + 1,
 	} = compact;
+	if (memoryVariable) {
+		const override = Number(env[variable]);
+		const requested =
+			Number.isInteger(override) && override > 0
+				? override
+				: memoryMb >= normalBudgetMb
+					? (normalWorkers ?? workers)
+					: workers;
+		const cpuSlots = Math.min(jobs, requested);
+		const reservedMb =
+			cpuSlots <= workers
+				? compact.memoryMb
+				: cpuSlots === normalWorkers
+					? stageMemoryMb(stage)
+					: // Unmeasured worker counts run alone within the build budget.
+						Math.max(memoryMb + 1, stageMemoryMb(stage));
+		return {
+			...stage,
+			cpuSlots,
+			memoryMb: reservedMb,
+			workerEnvironment: {
+				...stage.workerEnvironment,
+				[variable]: String(cpuSlots),
+				[memoryVariable]: String(
+					Math.max(compact.memoryMb, Math.min(memoryMb, reservedMb)),
+				),
+			},
+		};
+	}
 	if (env[variable] !== undefined) {
 		const requested = Number(env[variable]);
 		if (
@@ -108,24 +138,35 @@ export function configureStageMemory(stage, memoryMb, env) {
 }
 
 /**
- * Memory a backfill can keep using even when the blocked stage becomes ready.
- * Any subset of the current jobs might still be running then. Reserve for
- * the subset with the most memory that could coexist with the blocked stage.
+ * Budgets a backfill can keep using when the blocked stage becomes ready.
+ * Reserve for any subset of current jobs that can coexist with that stage.
  */
-function backfillCapacity(capacity, running) {
-	if (capacity <= 0) return 0;
-	const reachable = new Set([0]);
-	let highest = 0;
-	for (const { cost } of running.values()) {
-		for (const used of [...reachable]) {
-			const total = used + cost;
-			if (total === capacity) return 0;
-			if (total > capacity) continue;
-			reachable.add(total);
-			highest = Math.max(highest, total);
+function backfillCapacity(memoryMb, cpuSlots, running) {
+	if (memoryMb <= 0 || cpuSlots <= 0) return { memoryMb: 0, cpuSlots: 0 };
+	const reachable = new Map([[0, new Set([0])]]);
+	let peakMb = 0;
+	let peakCpu = 0;
+	for (const entry of running.values()) {
+		const additions = [];
+		for (const [usedCpu, memoryCosts] of reachable) {
+			const cpu = usedCpu + entry.cpuSlots;
+			if (cpu > cpuSlots) continue;
+			for (const usedMb of memoryCosts) {
+				const mb = usedMb + entry.cost;
+				if (mb > memoryMb) continue;
+				if (mb === memoryMb || cpu === cpuSlots)
+					return { memoryMb: 0, cpuSlots: 0 };
+				additions.push([cpu, mb]);
+				peakMb = Math.max(peakMb, mb);
+				peakCpu = Math.max(peakCpu, cpu);
+			}
+		}
+		for (const [cpu, mb] of additions) {
+			if (!reachable.has(cpu)) reachable.set(cpu, new Set());
+			reachable.get(cpu).add(mb);
 		}
 	}
-	return capacity - highest;
+	return { memoryMb: memoryMb - peakMb, cpuSlots: cpuSlots - peakCpu };
 }
 
 /**
@@ -234,17 +275,16 @@ export function planWaves(stages, { runs, weightOf }) {
 
 /**
  * Runs the planned stages, starting each one once everything that blocks it
- * has finished, with at most `jobs` running and their memory within
- * `memoryMb`. `settle(stage)` handles a stage that needs no command and
+ * has finished, within the `jobs` CPU slots and `memoryMb` memory budget.
+ * `settle(stage)` handles a stage that needs no command and
  * returns true when the stage has to run. `run(stage, waited)` runs it and
  * resolves to false when it failed. `waited` says how long the stage queued
  * after it was settled: `queuedMs` in all, of which `memoryWaitMs` was spent
- * with a free job slot, held back by memory.
+ * with its CPU slots available, held back by memory.
  *
  * The first stage in `order` that is ready but cannot fit reserves its place.
  * Smaller stages can backfill only if they fit now and would still leave room
- * whenever enough running stages finish to admit the blocked stage. At least
- * one running stage must finish to free that memory, which also frees a slot.
+ * whenever enough running stages finish to admit the blocked stage.
  *
  * On a failure no new stage starts, but stages already running finish and are
  * recorded. Killing them could leave half-written files, and their results
@@ -254,7 +294,7 @@ export function planWaves(stages, { runs, weightOf }) {
  * With one job this is the plan order, one stage at a time.
  *
  * @param {{
- *   stages: Array<{ name: string, dependencies: string[], args?: string[], memoryMb?: number }>,
+ *   stages: Array<{ name: string, dependencies: string[], args?: string[], memoryMb?: number, cpuSlots?: number }>,
  *   settle: (stage: any) => boolean,
  *   run: (stage: any, waited: { queuedMs: number, memoryWaitMs: number }) => Promise<boolean>,
  *   jobs?: number,
@@ -278,6 +318,7 @@ export async function runSchedule({
 	const decisions = new Map();
 	const queued = new Map();
 	let usedMb = 0;
+	let usedCpu = 0;
 	let lastTick = clock();
 	let stopped = false;
 	let error = null;
@@ -289,13 +330,13 @@ export async function runSchedule({
 		lastTick = now;
 		for (const entry of queued.values()) {
 			entry.queuedMs += elapsed;
-			if (running.size < jobs) entry.memoryWaitMs += elapsed;
+			if (usedCpu + entry.cpuSlots <= jobs) entry.memoryWaitMs += elapsed;
 		}
 		return now;
 	};
 	const next = () => {
 		tick();
-		let backfillMb;
+		let backfill;
 		for (const stage of order) {
 			const { name } = stage;
 			if (finished.has(name) || running.has(name)) continue;
@@ -309,19 +350,35 @@ export async function runSchedule({
 					finished.add(name);
 					return next();
 				}
-				queued.set(name, { queuedMs: 0, memoryWaitMs: 0 });
+				queued.set(name, {
+					queuedMs: 0,
+					memoryWaitMs: 0,
+					cpuSlots: stage.cpuSlots ?? 1,
+				});
 			}
 			const cost = stageMemoryMb(stage);
-			const fits = running.size === 0 || usedMb + cost <= memoryMb;
-			if (fits && (backfillMb === undefined || cost <= backfillMb))
+			const cpuSlots = stage.cpuSlots ?? 1;
+			const fitsMemory = running.size === 0 || usedMb + cost <= memoryMb;
+			if (
+				fitsMemory &&
+				usedCpu + cpuSlots <= jobs &&
+				(!backfill ||
+					(cost <= backfill.memoryMb &&
+						cpuSlots <= backfill.cpuSlots))
+			)
 				return stage;
-			backfillMb ??= backfillCapacity(memoryMb - cost, running);
-			if (backfillMb === 0) return null;
+			backfill ??= backfillCapacity(
+				memoryMb - cost,
+				jobs - cpuSlots,
+				running,
+			);
+			if (!backfill.memoryMb || !backfill.cpuSlots) return null;
 		}
 		return null;
 	};
 	const start = (stage) => {
 		const cost = stageMemoryMb(stage);
+		const cpuSlots = stage.cpuSlots ?? 1;
 		tick();
 		const waited = queued.get(stage.name) ?? {
 			queuedMs: 0,
@@ -329,10 +386,14 @@ export async function runSchedule({
 		};
 		queued.delete(stage.name);
 		usedMb += cost;
-		running.set(stage.name, { cost });
+		usedCpu += cpuSlots;
+		running.set(stage.name, { cost, cpuSlots });
 		running.get(stage.name).promise = (async () => {
 			try {
-				return await run(stage, { ...waited });
+				return await run(stage, {
+					queuedMs: waited.queuedMs,
+					memoryWaitMs: waited.memoryWaitMs,
+				});
 			} catch (thrown) {
 				error ??= thrown;
 				return false;
@@ -341,13 +402,14 @@ export async function runSchedule({
 			tick();
 			running.delete(stage.name);
 			usedMb -= cost;
+			usedCpu -= cpuSlots;
 			finished.add(stage.name);
 			if (!succeeded) stopped = true;
 		});
 	};
 	for (;;) {
 		try {
-			while (!stopped && running.size < jobs) {
+			while (!stopped && usedCpu < jobs) {
 				const stage = next();
 				if (!stage) break;
 				start(stage);

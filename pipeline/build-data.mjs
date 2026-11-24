@@ -34,7 +34,7 @@ export { formatAssetTree } from "./build-data-report.mjs";
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, memoryMb?: number, compact?: { memoryMb: number, variable: string, workers: number, normalWorkers?: number, normalBudgetMb?: number }, workerEnvironment?: Record<string, string>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, memoryMb?: number, cpuSlots?: number, compact?: { memoryMb: number, variable: string, workers: number, normalWorkers?: number, normalBudgetMb?: number, memoryVariable?: string }, workerEnvironment?: Record<string, string>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
@@ -74,6 +74,7 @@ export async function runBuild({
 				stage,
 				limits.memoryMb,
 				env,
+				jobs,
 			);
 			return useCache
 				? configured

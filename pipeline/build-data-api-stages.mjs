@@ -649,6 +649,8 @@ export const apiStages = [
 				variable: "ATLAS_MAP_RESOURCE_JOBS",
 				workers: 1,
 				normalWorkers: 2,
+				memoryVariable: "ATLAS_MAP_RESOURCE_MEMORY_MB",
+				normalBudgetMb: 8192,
 			},
 			writes: [
 				"data/build/map-resources",
