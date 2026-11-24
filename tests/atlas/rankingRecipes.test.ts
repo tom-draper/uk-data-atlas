@@ -143,4 +143,65 @@ describe("ranking recipes", () => {
 		expect(columns).toEqual(["Change since 2024"]);
 		expect(rows).toEqual([["Hartlepool", "£31,234", "+2.5%"]]);
 	});
+
+	it("adds census neighbourhoods up into their councils", () => {
+		const neighbourhood = (
+			code: string,
+			name: string,
+			owned: number,
+			social: number,
+		) => ({
+			code,
+			name,
+			metrics: { owned, social, private: 0, total: owned + social },
+		});
+		// England's neighbourhoods are filed by the deprivation file; Wales's
+		// by name.
+		const imd = {
+			"2025": {
+				year: 2025,
+				data: {
+					E01000001: { ladCode: "E06000001" },
+					E01000002: { ladCode: "E06000001" },
+				},
+			},
+		};
+		expect(
+			table(
+				"housing-tenure",
+				{
+					"2021": {
+						year: 2021,
+						data: {
+							E01000001: neighbourhood(
+								"E01000001",
+								"Hartlepool 001A",
+								60,
+								40,
+							),
+							E01000002: neighbourhood(
+								"E01000002",
+								"Hartlepool 001B",
+								90,
+								10,
+							),
+							W01000001: neighbourhood(
+								"W01000001",
+								"Cardiff 001A",
+								58,
+								42,
+							),
+						},
+					},
+				},
+				{ imd },
+			),
+		).toEqual({
+			columns: ["Social rent", "Private rent", "Households"],
+			rows: [
+				["Hartlepool", "75.0%", "25.0%", "0.0%", "200"],
+				["Cardiff", "58.0%", "42.0%", "0.0%", "100"],
+			],
+		});
+	});
 });
