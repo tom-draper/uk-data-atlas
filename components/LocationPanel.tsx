@@ -8,8 +8,9 @@ import { PopulationDataset } from "@lib/types";
 const LOCATION_NAMES = gazetteer.places();
 import {
 	useState,
-	useTransition,
 	useDeferredValue,
+	useEffect,
+	useId,
 	useRef,
 	useMemo,
 } from "react";
@@ -33,8 +34,13 @@ export default function LocationPanel({
 }: LocationPanelProps) {
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [, startTransition] = useTransition();
+	const searchId = useId();
 	const inputRef = useRef<HTMLInputElement>(null);
+	const searchToggleRef = useRef<HTMLButtonElement>(null);
+
+	useEffect(() => {
+		if (searchOpen) inputRef.current?.focus();
+	}, [searchOpen]);
 
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
@@ -61,15 +67,11 @@ export default function LocationPanel({
 	};
 
 	const handleSearchToggle = () => {
-		startTransition(() => {
-			const newSearchOpen = !searchOpen;
-			setSearchOpen(newSearchOpen);
-			if (!newSearchOpen) {
-				setSearchQuery("");
-			} else {
-				setTimeout(() => inputRef.current?.focus(), 0);
-			}
-		});
+		if (searchOpen) {
+			searchToggleRef.current?.focus();
+			setSearchQuery("");
+		}
+		setSearchOpen(!searchOpen);
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -105,8 +107,9 @@ export default function LocationPanel({
 						Places
 					</h2>
 					<div className="flex items-center transition-all duration-200">
-						<div className="grow">
+						<div className="grow" inert={!searchOpen}>
 							<input
+								id={searchId}
 								ref={inputRef}
 								type="text"
 								aria-label="Search places"
@@ -118,7 +121,15 @@ export default function LocationPanel({
 							/>
 						</div>
 						<button
+							ref={searchToggleRef}
 							type="button"
+							aria-label={
+								searchOpen
+									? "Close place search"
+									: "Open place search"
+							}
+							aria-expanded={searchOpen}
+							aria-controls={searchId}
 							onClick={handleSearchToggle}
 							className={`mr-3 ml-2 transition-colors cursor-pointer ${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}
 						>

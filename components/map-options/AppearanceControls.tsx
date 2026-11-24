@@ -110,6 +110,7 @@ export function AppearanceControls({
 			>
 				<button
 					type="button"
+					aria-label="Zoom in"
 					onClick={onZoomIn}
 					className={`px-2 py-1 text-sm transition-all duration-200 font-semibold leading-none border-b cursor-pointer ${theme.border} ${theme.text} ${theme.hover}`}
 				>
@@ -117,6 +118,7 @@ export function AppearanceControls({
 				</button>
 				<button
 					type="button"
+					aria-label="Zoom out"
 					onClick={onZoomOut}
 					className={`px-2 py-1 text-sm transition-all duration-200 font-semibold leading-none cursor-pointer ${theme.text} ${theme.hover}`}
 				>
