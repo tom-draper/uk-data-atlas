@@ -53,6 +53,21 @@ export const income = defineDataset<IncomeDataset>({
 		label: "Median pay",
 		about: "Annual pay of residents in full-time work",
 	},
+	placeTrends: [
+		{
+			key: "median-pay",
+			places: ["localAuthority"],
+			order: 10,
+			label: "Median pay",
+			measure: "gross-annual-pay",
+			dimensions: {
+				"pay-statistic": "median",
+				"earnings-place": "residence",
+			},
+			format: { kind: "count", prefix: "£", round: true },
+			roundTo: 100,
+		},
+	],
 	statistics: {
 		name: "ladName",
 		payload: {

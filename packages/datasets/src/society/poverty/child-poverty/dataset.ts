@@ -39,6 +39,18 @@ export const childPoverty = defineDataset<ChildPovertyDataset>({
 		label: "Child poverty",
 		about: "Children under 16 in relative low-income families",
 	},
+	placeTrends: [
+		{
+			key: "child-low-income",
+			places: ["localAuthority"],
+			order: 30,
+			label: "Children in low income families",
+			measure: "children-in-relative-low-income-rate",
+			dimensions: {},
+			format: { kind: "decimal", digits: 1, suffix: "%" },
+			change: "difference",
+		},
+	],
 	statistics: {
 		payload: {
 			parts: yearParts(

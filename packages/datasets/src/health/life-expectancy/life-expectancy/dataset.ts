@@ -9,6 +9,7 @@ import { periods } from "../../../declaration/statistics.ts";
 import { APRIL_2023_LAD_MERGERS } from "../../../data/localAuthority/reorganisations.ts";
 import { aggregateLifeExpectancy } from "./aggregate.ts";
 import { lifeExpectancyStatisticsParts } from "../../../data/life-expectancy/source.ts";
+import { LIFE_EXPECTANCY_TRENDS } from "../../../data/life-expectancy/trends.ts";
 
 const HEALTHY_LIFE_EXPECTANCY = measure(
 	"healthy-life-expectancy",
@@ -149,6 +150,7 @@ export const lifeExpectancy = defineDataset<LifeExpectancyDataset>({
 		about: "At birth, the average of men and women",
 		format: { kind: "decimal", digits: 1, suffix: " years" },
 	},
+	placeTrends: LIFE_EXPECTANCY_TRENDS,
 	display: {
 		label: "Life Expectancy [2022-2024]",
 		year: 2024,

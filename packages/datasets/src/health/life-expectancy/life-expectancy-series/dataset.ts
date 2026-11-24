@@ -6,6 +6,7 @@ import {
 	type DeclaredHeader,
 } from "../../../declaration/statistics.ts";
 import { lifeExpectancySeriesStatisticsParts } from "../../../data/life-expectancy/seriesSource.ts";
+import { LIFE_EXPECTANCY_TRENDS } from "../../../data/life-expectancy/trends.ts";
 
 export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 	id: "life-expectancy-series",
@@ -42,6 +43,7 @@ export const lifeExpectancySeries = defineDataset<LifeExpectancySeriesDataset>({
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["male", "female"],
 	},
+	placeTrends: LIFE_EXPECTANCY_TRENDS,
 	statistics: {
 		payload: {
 			parts: (labels) =>

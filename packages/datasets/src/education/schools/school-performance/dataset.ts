@@ -61,6 +61,28 @@ export const schoolPerformance = defineDataset<SchoolPerformanceDataset>({
 	},
 	additionalBoundaryTypes: ["constituency"],
 	ingestion: { minimumDatasets: 2 },
+	placeTrends: [
+		{
+			key: "attainment-8",
+			places: ["localAuthority"],
+			order: 50,
+			label: "Attainment 8",
+			measure: "attainment-8",
+			dimensions: {},
+			format: { kind: "decimal", digits: 1 },
+			change: "difference",
+		},
+		{
+			key: "gcse-english-maths",
+			places: ["localAuthority"],
+			order: 51,
+			label: "English and maths at grade 4 or above",
+			measure: "gcse-english-maths-grade-4",
+			dimensions: {},
+			format: { kind: "decimal", digits: 1, suffix: "%" },
+			change: "difference",
+		},
+	],
 	statistics: {
 		direct: {
 			only: true,
