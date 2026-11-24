@@ -3,7 +3,7 @@ import { areaNotFound } from "../runtime/index.ts";
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
-import { selectAreaChildren } from "../areaChildren";
+import { selectAreaChildren } from "./areaChildren";
 import { readWholeNumber } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { test } from "vitest";
 import type { Polygon } from "polygon-clipping";
 import { compileAreaOverlapCrosswalk } from "./pipelineFixtures";
-import { measurePairOverlap } from "../src/pairOverlap";
+import { measurePairOverlap } from "../src/areas/pairOverlap";
 import {
 	polygonAreaM2,
 	polygonWidthM,
