@@ -70,11 +70,23 @@ export default function MeasureSeriesChart({
 				codeMapper as (CodeYearResolver & LadResolver) | undefined,
 			) ?? null);
 
+	const earlier =
+		area !== null && series.earlier
+			? earlierAreas(
+					area,
+					series.request.geography,
+					series.request.boundaryYear,
+					series.earlier,
+					codeMapper as CodeYearResolver | undefined,
+				)
+			: undefined;
+
 	return (
 		<MeasureSeriesCard
 			request={series.request}
 			scope={members ?? scope}
 			area={area}
+			earlier={earlier}
 			countMeasure={series.countMeasure}
 			countDimensions={series.countDimensions}
 			breaks={series.breaks}
