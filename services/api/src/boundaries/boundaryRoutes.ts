@@ -4,7 +4,7 @@ import type {
 	ApiResponse,
 } from "../runtime/index.ts";
 import { areaNotFound, envelope } from "../runtime/index.ts";
-import { releaseDownloads } from "@uk-data-atlas/map-tiles/node";
+import { releaseDownloads } from "@uk-data-atlas/geometry/tiles/node";
 import { resolveBoundaryRelease } from "./resolveBoundaryRelease";
 import { compareBoundaryReleases } from "./compareBoundaryReleases";
 

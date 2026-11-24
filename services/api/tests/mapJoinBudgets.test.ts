@@ -6,8 +6,8 @@ import {
 	registerSeriesObservations,
 } from "@uk-data-atlas/measures";
 import type { PopulationObservation } from "@uk-data-atlas/catalogue/node";
-import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
-import { TOPOLOGY_METHOD } from "@uk-data-atlas/map-tiles";
+import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
+import { TOPOLOGY_METHOD } from "@uk-data-atlas/geometry/tiles";
 import {
 	MAX_MAP_JOIN_ROWS,
 	MAX_MAP_JOIN_COLUMN_BYTES,

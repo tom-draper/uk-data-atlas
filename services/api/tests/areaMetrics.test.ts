@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { projectEqualArea, unprojectEqualArea } from "@uk-data-atlas/map-tiles";
+import {
+	projectEqualArea,
+	unprojectEqualArea,
+} from "@uk-data-atlas/geometry/tiles";
 import { areaMetrics } from "../src/areas/areaMetrics";
 import type { GeoJsonGeometry } from "@uk-data-atlas/geometry";
 import { containPoint } from "@uk-data-atlas/geography";

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { encodeTile, TILE_EXTENT } from "@uk-data-atlas/map-tiles";
-import { clipRing, signedArea, wind } from "@uk-data-atlas/map-tiles";
+import { encodeTile, TILE_EXTENT } from "@uk-data-atlas/geometry/tiles";
+import { clipRing, signedArea, wind } from "@uk-data-atlas/geometry/tiles";
 import { decodeTile, packedVarints, readFields } from "./vectorTileFixtures";
 
 /**

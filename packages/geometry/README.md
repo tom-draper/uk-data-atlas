@@ -15,3 +15,7 @@ Read polygon Shapefiles and dBase records in Node.js via `@uk-data-atlas/geometr
 ## Terrain
 
 Terrain catalogue types and providers for validated local rasters and remote elevation previews. Import from `@uk-data-atlas/geometry/terrain`.
+
+## Tiles
+
+Builds and reads boundary vector tiles. Import from `@uk-data-atlas/geometry/tiles`. `./tiles/node` holds the Node-only map resource loaders, and `./tiles/featureIds` the feature id encoding. The `./tiles` entry imports no Node built-in.

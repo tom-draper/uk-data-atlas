@@ -621,7 +621,7 @@ export const apiStages = [
 			// A worker is started by path, not imported, so what it imports
 			// beyond the stage's own imports is listed here.
 			codeInputs: [
-				"packages/map-tiles/src/node/mapResource",
+				"packages/geometry/src/tiles/node/mapResource",
 				"pipeline/src/atlas/flatDownloads.ts",
 				"pipeline/src/maps/compileGeometryValidity.ts",
 				"pipeline/src/maps/compileMapResource.ts",

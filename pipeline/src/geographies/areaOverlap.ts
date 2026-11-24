@@ -14,7 +14,10 @@ import type {
 	AreaOverlapTarget,
 } from "@uk-data-atlas/relationships";
 import { validateEndpoint } from "@uk-data-atlas/relationships";
-import { multiPolygonAreaM2, polygonWidthM } from "@uk-data-atlas/map-tiles";
+import {
+	multiPolygonAreaM2,
+	polygonWidthM,
+} from "@uk-data-atlas/geometry/tiles";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { CLIPPING_VERSION, intersectWithin } from "@uk-data-atlas/geography";
 import { readGeometries } from "@uk-data-atlas/areas";

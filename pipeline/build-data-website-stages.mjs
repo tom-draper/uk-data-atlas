@@ -75,7 +75,8 @@ export const websiteStages = [
 			codeInputs: [
 				"package.json",
 				"packages/geography",
-				"packages/map-tiles",
+				"packages/geometry/package.json",
+				"packages/geometry/src/tiles",
 				"pipeline/src/precompile",
 				"pipeline/src/stages/compile-boundaries.ts",
 				"pipeline/src/geographies/boundaryReleaseSources.ts",

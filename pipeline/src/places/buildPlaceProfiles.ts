@@ -1,4 +1,4 @@
-import { simplifyGeometry } from "@uk-data-atlas/map-tiles";
+import { simplifyGeometry } from "@uk-data-atlas/geometry/tiles";
 import { inBox, pointInGeom } from "@uk-data-atlas/datasets";
 import { readdirSync } from "node:fs";
 import { readBaseDatasetInput } from "../catalog/baseDatasetInput.ts";

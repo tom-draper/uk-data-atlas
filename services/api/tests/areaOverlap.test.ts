@@ -10,7 +10,7 @@ import {
 	polygonAreaM2,
 	polygonWidthM,
 	projectEqualArea,
-} from "@uk-data-atlas/map-tiles";
+} from "@uk-data-atlas/geometry/tiles";
 import type { GeometrySourceLookup } from "@uk-data-atlas/geometry";
 import { createAreaLookup } from "@uk-data-atlas/areas";
 import type { AreaOverlapCrosswalkAdapter } from "@uk-data-atlas/relationships";

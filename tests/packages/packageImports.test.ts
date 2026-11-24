@@ -59,7 +59,7 @@ const NODE_PACKAGES = [
  */
 const BROWSER_FOLDERS: Record<string, string[]> = {
 	"atlas-db": ["src/search"],
-	geometry: ["src/terrain"],
+	geometry: ["src/terrain", "src/tiles"],
 };
 
 const allowsNodeBuiltins = (
@@ -76,8 +76,7 @@ const allowsNodeBuiltins = (
 	if (browser) return false;
 	return (
 		NODE_PACKAGES.includes(name) ||
-		(["catalogue", "map-tiles"].includes(name) &&
-			inside(join(packageRoot, "src/node"), file))
+		(name === "catalogue" && inside(join(packageRoot, "src/node"), file))
 	);
 };
 
@@ -139,7 +138,17 @@ describe("shared packages", () => {
 
 	it.each([
 		["geography", ["."]],
-		["map-tiles", [".", "./node", "./featureIds"]],
+		[
+			"geometry",
+			[
+				".",
+				"./shapefile",
+				"./terrain",
+				"./tiles",
+				"./tiles/node",
+				"./tiles/featureIds",
+			],
+		],
 		["datasets", [".", "./types", "./registry"]],
 		[
 			"catalogue",
@@ -197,7 +206,7 @@ describe("shared packages", () => {
 		"geography/src/index.ts",
 		"catalogue/src/index.ts",
 		"datasets/src/index.ts",
-		"map-tiles/src/index.ts",
+		"geometry/src/tiles/index.ts",
 		"atlas-db/src/search/index.ts",
 	])("keeps the %s entry browser safe", (entry) => {
 		const pending = [join(PACKAGES, entry)];
@@ -338,7 +347,6 @@ describe("extracted domain packages", () => {
 			"areas",
 			"catalogue",
 			"geometry",
-			"map-tiles",
 			"measures",
 			"places",
 			"relationships",
@@ -391,32 +399,28 @@ describe("extracted domain packages", () => {
 		}
 	});
 
-	it.each([
-		"areas",
-		"relationships",
-		"geometry",
-		"places",
-		"measures",
-		"map-tiles",
-	])("%s has no atlas-loader or direct SQLite dependency", (name) => {
-		const manifest = JSON.parse(
-			readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
-		);
-		const dependencies = Object.keys(manifest.dependencies ?? {});
-		expect(dependencies).not.toContain("@uk-data-atlas/atlas-loader");
-		const files = sourceFiles(join(PACKAGES, name, "src"));
-		expect(files.length).toBeGreaterThan(0);
-		const imports = files.flatMap((file) =>
-			specifiers(readFileSync(file, "utf8")),
-		);
-		expect(
-			imports.filter(
-				(specifier) =>
-					specifier.startsWith("node:sqlite") ||
-					specifier.startsWith("@uk-data-atlas/atlas-loader"),
-			),
-		).toEqual([]);
-	});
+	it.each(["areas", "relationships", "geometry", "places", "measures"])(
+		"%s has no atlas-loader or direct SQLite dependency",
+		(name) => {
+			const manifest = JSON.parse(
+				readFileSync(join(PACKAGES, name, "package.json"), "utf8"),
+			);
+			const dependencies = Object.keys(manifest.dependencies ?? {});
+			expect(dependencies).not.toContain("@uk-data-atlas/atlas-loader");
+			const files = sourceFiles(join(PACKAGES, name, "src"));
+			expect(files.length).toBeGreaterThan(0);
+			const imports = files.flatMap((file) =>
+				specifiers(readFileSync(file, "utf8")),
+			);
+			expect(
+				imports.filter(
+					(specifier) =>
+						specifier.startsWith("node:sqlite") ||
+						specifier.startsWith("@uk-data-atlas/atlas-loader"),
+				),
+			).toEqual([]);
+		},
+	);
 });
 
 describe("loader domain boundaries", () => {
@@ -441,7 +445,6 @@ describe("atlas domain boundaries", () => {
 		const files = [
 			...sourceFiles(atlas),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
-			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
@@ -609,7 +612,6 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PIPELINE, "src")),
 			...sourceFiles(join(PACKAGES, "atlas-loader/src")),
 			...sourceFiles(join(PACKAGES, "catalogue/src")),
-			...sourceFiles(join(PACKAGES, "map-tiles/src")),
 			...sourceFiles(join(PACKAGES, "measures/src")),
 			...sourceFiles(join(PACKAGES, "atlas-db/src")),
 			...sourceFiles(join(PACKAGES, "geometry/src")),
