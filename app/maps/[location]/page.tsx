@@ -11,9 +11,10 @@ import {
 	findAtlasLocation,
 	locationLabel,
 } from "@/lib/atlas/pages";
+import { mapCardSentence, rankingExtremes } from "@/lib/atlas/mapCards";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
-import { hasRankingFor } from "@/lib/atlas/rankingPages";
-import { rankedAreaNoun } from "@/lib/atlas/rankings";
+import type { RankingRow } from "@/lib/atlas/rankingRows";
+import { rankedAreaNoun, rankedValueLabel } from "@/lib/atlas/rankings";
 import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
 import { pageMetadata } from "@/lib/site";
 
@@ -55,9 +56,42 @@ export async function generateMetadata({
 const linkClass =
 	"underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700";
 
+function Extreme({ label, row }: { label: string; row: RankingRow }) {
+	return (
+		<div className="flex items-baseline gap-3">
+			<dt className="w-16 shrink-0 text-slate-500">{label}</dt>
+			<dd className="flex min-w-0 flex-1 items-baseline justify-between gap-3">
+				<span className="min-w-0 break-words text-slate-900">
+					{row.href ? (
+						<Link href={row.href} className={linkClass}>
+							{row.name}
+						</Link>
+					) : (
+						row.name
+					)}
+					{row.note && (
+						<span className="text-slate-500">, {row.note}</span>
+					)}
+				</span>
+				<span className="shrink-0 tabular-nums text-slate-900">
+					{row.value}
+				</span>
+			</dd>
+		</div>
+	);
+}
+
 export default async function LocationMapsPage({ params }: { params: Params }) {
 	const location = await resolveLocation(params);
 	const maps = atlasMapsFor(location);
+	const extremes = new Map(
+		await Promise.all(
+			maps.map(
+				async (map) =>
+					[map.slug, await rankingExtremes(location, map)] as const,
+			),
+		),
+	);
 	// The curated places in the same nations; /maps lists every council.
 	const neighbours = ATLAS_LOCATIONS.filter(
 		(other) =>
@@ -121,19 +155,46 @@ export default async function LocationMapsPage({ params }: { params: Params }) {
 											{map.areaNoun}
 										</p>
 										<p className="mt-3 text-[14px] leading-relaxed text-slate-600">
-											{map.source.description}
+											{mapCardSentence(
+												location,
+												map,
+												extremes.get(map.slug) != null,
+											)}
 										</p>
-										{hasRankingFor(
-											location.slug,
-											map.slug,
-										) && (
-											<Link
-												href={`/maps/${location.slug}/${map.slug}`}
-												className={`mt-3 inline-block text-[13px] text-slate-600 ${linkClass}`}
-											>
-												Every {rankedAreaNoun(map)}{" "}
-												ranked
-											</Link>
+										{extremes.get(map.slug) && (
+											<>
+												{rankedValueLabel(map) !==
+													map.name && (
+													<p className="mt-4 -mb-1.5 text-[12px] font-semibold tracking-wide text-slate-500">
+														{rankedValueLabel(map)}
+													</p>
+												)}
+												<dl className="mt-3 space-y-1 text-[14px]">
+													<Extreme
+														label="Highest"
+														row={
+															extremes.get(
+																map.slug,
+															)!.highest
+														}
+													/>
+													<Extreme
+														label="Lowest"
+														row={
+															extremes.get(
+																map.slug,
+															)!.lowest
+														}
+													/>
+												</dl>
+												<Link
+													href={`/maps/${location.slug}/${map.slug}`}
+													className={`mt-3 inline-block text-[13px] text-slate-600 ${linkClass}`}
+												>
+													Every {rankedAreaNoun(map)}{" "}
+													ranked
+												</Link>
+											</>
 										)}
 									</Card>
 								))}

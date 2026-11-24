@@ -42,7 +42,7 @@ export type RankingContext = {
 };
 
 let placeCodes: Promise<ReadonlySet<string>> | undefined;
-const loadPlaceCodes = () =>
+export const loadPlaceCodes = () =>
 	(placeCodes ??= loadPlaceIndex().then(
 		(index) => new Set(index.areas.map(([code]) => code)),
 	));
