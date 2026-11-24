@@ -64,6 +64,15 @@ describe("value card outside the dataset's nations", () => {
 		expect(html).toContain("not summed to a ward");
 	});
 
+	it("never reads a ward's council as the ward's own figure", () => {
+		const html = render({
+			...area("ward", "S13002967"),
+			data: { ladCode: "S12000049" },
+		} as SelectedArea);
+		expect(html).toContain("Not published in this form for Scotland");
+		expect(html).toContain("not summed to a ward");
+	});
+
 	it("waits for a data zone's own census without claiming England's year", () => {
 		const html = render(area("dataZone", "S01006506", 2022));
 		expect(html).not.toContain("[2021]");
