@@ -180,6 +180,15 @@ export default async function RankingPage({ params }: { params: Params }) {
 					</Card>
 
 					<RankingLinks location={location} map={map} />
+
+					<section className="mt-9 max-w-[760px]">
+						<h2 className="text-[13px] font-semibold tracking-wide text-slate-500">
+							About the data
+						</h2>
+						<p className="mt-2 text-[15px] leading-[1.7] text-slate-600">
+							{map.source.description}
+						</p>
+					</section>
 				</Sheet>
 			</main>
 		</div>
