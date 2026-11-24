@@ -326,6 +326,13 @@ export type PlaceTrendDeclaration = {
 	periodPrefix?: string;
 	/** Rounding for the headline figure, as 1000 makes "274,000". */
 	roundTo?: number;
+	/**
+	 * A ranked map of the council's wards to link to, by its slug, where a
+	 * page ranks them.
+	 */
+	wardMap?: string;
+	/** How a ranking's two ends read, "highest" and "lowest" by default. */
+	ends?: readonly [string, string];
 };
 
 const KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
