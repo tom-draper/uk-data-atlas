@@ -39,6 +39,25 @@ export function formatDatasetCoverage(
 }
 
 /**
+ * The nation an area code belongs to when a dataset's coverage leaves that
+ * nation out, so a card can say the figure is not published there rather than
+ * that it is missing. Undefined where the dataset covers the area, or names no
+ * coverage.
+ */
+export function nationOutsideCoverage(
+	coverageCountries: readonly DatasetCountry[] | undefined,
+	code: string | null | undefined,
+): string | undefined {
+	if (!coverageCountries?.length || !code) return undefined;
+	const country = (Object.keys(COUNTRY_PREFIXES) as DatasetCountry[]).find(
+		(candidate) => COUNTRY_PREFIXES[candidate] === code.charAt(0),
+	);
+	return country && !coverageCountries.includes(country)
+		? COUNTRY_NAMES[country]
+		: undefined;
+}
+
+/**
  * Remove boundaries outside a dataset's published geographic scope.
  *
  * Record keys are deliberately not used: an in-scope ward can have no election

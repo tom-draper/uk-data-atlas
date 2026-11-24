@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	formatDatasetCoverage,
 	filterGeometryToDatasetCoverage,
+	nationOutsideCoverage,
 } from "@/lib/helpers/datasetCoverage";
 
 const geometry = {
@@ -139,5 +140,25 @@ describe("formatDatasetCoverage", () => {
 		expect(
 			formatDatasetCoverage({ type: "example", coverageCountries: [] }),
 		).toBeUndefined();
+	});
+});
+
+describe("nationOutsideCoverage", () => {
+	const englandAndWales = ["GB-ENG", "GB-WLS"] as const;
+
+	it.each([
+		["S12000049", "Scotland"],
+		["S01006506", "Scotland"],
+		["N09000003", "Northern Ireland"],
+		["E08000025", undefined],
+		["W06000015", undefined],
+	] as const)("names the nation %s is left out of", (code, nation) => {
+		expect(nationOutsideCoverage(englandAndWales, code)).toBe(nation);
+	});
+
+	it("names nothing where coverage or the area is unknown", () => {
+		expect(nationOutsideCoverage(undefined, "S12000049")).toBeUndefined();
+		expect(nationOutsideCoverage([], "S12000049")).toBeUndefined();
+		expect(nationOutsideCoverage(englandAndWales, null)).toBeUndefined();
 	});
 });
