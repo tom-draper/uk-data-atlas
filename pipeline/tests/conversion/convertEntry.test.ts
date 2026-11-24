@@ -15,8 +15,9 @@ import {
 } from "../../src/conversion/rules.ts";
 
 /**
- * Source areas 1, 2 and 3 are on release 10. Areas 1 and 2 merge into 20 and
- * area 3 becomes 21, on release 11. Every edge is exact.
+ * Source areas 1 to 4 are on release 10. Areas 1 and 2 merge into 20 and
+ * area 3 becomes 21, on release 11, by exact edges. Area 4 is split in half
+ * between 22 and 23.
  */
 const edge = (to: number): StepEdge => ({
 	to,
@@ -43,11 +44,20 @@ const step: Step = {
 		[1, [edge(20)]],
 		[2, [edge(20)]],
 		[3, [edge(21)]],
+		[
+			4,
+			[
+				{ ...edge(22), weight: 0.5, risk: 0.1 },
+				{ ...edge(23), weight: 0.5, risk: 0.1 },
+			],
+		],
 	]),
 	blocked: new Map(),
 	feeders: new Map([
 		[20, [1, 2]],
 		[21, [3]],
+		[22, [4]],
+		[23, [4]],
 	]),
 };
 
@@ -97,6 +107,11 @@ const measures = [
 		statistic: "mean",
 		aggregation: "weighted_mean",
 		weight: "people",
+	}),
+	measure(5, "median-pay", {
+		unit: "gbp",
+		statistic: "median",
+		aggregation: "none",
 	}),
 ];
 
@@ -148,6 +163,13 @@ publish(4, "score", 10, [
 	[1, 10],
 	[2, 20],
 	[3, 7],
+]);
+
+publish(5, "median-pay", 10, [
+	[1, 30000],
+	[2, 32000],
+	[3, 28000],
+	[4, 31000],
 ]);
 
 const entry = (measureSlug: string): PlanEntry => ({
@@ -215,6 +237,18 @@ test("a mean is rebuilt over the weight it names", () => {
 		series!.inputs.map((input) => input.role),
 		["value", "weight"],
 	);
+});
+
+test("a value that cannot be combined is carried only onto the whole of one area", () => {
+	const [series] = converted("median-pay");
+	assert.equal(series!.rule, "carry");
+	assert.deepEqual([...byArea(series!)], [[21, 28000]]);
+	assert.deepEqual(series!.gaps.map((gap) => [gap.area, gap.reason]).sort(), [
+		[20, "not-combinable"],
+		[22, "not-combinable"],
+		[23, "not-combinable"],
+	]);
+	assert.deepEqual(series!.quality, { exactShare: 1, coverage: 0.25 });
 });
 
 test("a period the target already publishes stays native, the others convert", () => {

@@ -38,6 +38,8 @@ export const STATUS_DERIVED = 6;
 /** `status.id` of a value that passed through a split. */
 export const STATUS_ESTIMATED = 2;
 const STATUS_OBSERVED = 1;
+/** How far from 1 a share carried through exact edges may be from rounding. */
+const WHOLE_TOLERANCE = 1e-9;
 
 export type SeriesGapReason =
 	| GapReason
@@ -48,7 +50,12 @@ export type SeriesGapReason =
 	/** A rebuilt ratio or mean whose converted denominator or weight is not above zero. */
 	| "no-denominator"
 	/** The area and period hold a value from a better route, so this series' own is not stored. */
-	| "better-route";
+	| "better-route"
+	/**
+	 * A carried measure, where the target is not the whole of one source area:
+	 * it takes more than one, or part of one, and the measure cannot be combined.
+	 */
+	| "not-combinable";
 
 export type ConvertedObservation = {
 	area: number;
@@ -120,7 +127,7 @@ export type ConvertedSeries = {
 	datasetId: number;
 	measureId: number;
 	releaseId: number;
-	rule: "sum" | "rebuild";
+	rule: "sum" | "rebuild" | "carry";
 	basis: ConversionBasis;
 	/** The first is the series the converted one derives from. */
 	inputs: { role: InputRole; series: SeriesRow }[];
@@ -574,6 +581,50 @@ function* convertSources(
 				...base,
 				quality: qualityOf(observations, gaps),
 				rule: "sum",
+				inputs: [{ role: "value", series: source }],
+			};
+			continue;
+		}
+
+		if (rule.rule === "carry") {
+			for (const period of periods) {
+				const values = observedValues(database, source.id, period.id);
+				const converted = convertThroughSteps(steps, values);
+				// The share of a source area that reaches the target: 1 only
+				// where every edge on the way takes the whole of it.
+				const reached = convertThroughSteps(
+					steps,
+					startValues([...values.keys()].map((area) => [area, 1])),
+				);
+				const seen = collectGaps(converted, period.id, gaps);
+				for (const [area, carried] of converted.values) {
+					const whole = reached.values.get(area);
+					if (
+						carried.inputs === 1 &&
+						isRegrouped(carried) &&
+						whole !== undefined &&
+						Math.abs(whole.value - 1) < WHOLE_TOLERANCE
+					)
+						observations.push({
+							area,
+							period: period.id,
+							value: carried.value,
+							status: STATUS_DERIVED,
+							lower: null,
+							upper: null,
+						});
+					else if (!seen.has(area))
+						gaps.push({
+							area,
+							period: period.id,
+							reason: "not-combinable",
+						});
+				}
+			}
+			yield {
+				...base,
+				quality: qualityOf(observations, gaps),
+				rule: "carry",
 				inputs: [{ role: "value", series: source }],
 			};
 			continue;

@@ -150,7 +150,9 @@ export const convertedMarkdown = (
 	const estimated = summaries.filter((summary) => summary.estimated > 0);
 	const notCarried = summaries.filter((summary) => summary.notCarried.size);
 	const checked = summaries.filter((summary) => summary.sourceCheck);
-	const refused = rules.filter(({ rule }) => rule.rule === "refuse");
+	const refused = rules.filter(
+		({ rule }) => rule.rule === "refuse" || rule.rule === "carry",
+	);
 	const reasons = new Map<string, string[]>();
 	for (const { measure, rule } of refused)
 		reasons.set(rule.reason, [
@@ -266,14 +268,14 @@ export const convertedMarkdown = (
 		"",
 		table(
 			["Rule", "Measures"],
-			["sum", "rebuild", "refuse"].map((name) => [
+			["sum", "rebuild", "carry", "refuse"].map((name) => [
 				name,
 				number(rules.filter(({ rule }) => rule.rule === name).length),
 			]),
 		),
 		"",
 		table(
-			["Refused because", "Measures"],
+			["Not combined because", "Measures"],
 			[...reasons].map(([reason, measures]) => [
 				reason,
 				`${number(measures.length)}: ${measures.join(", ")}`,

@@ -55,12 +55,19 @@ export type ReleaseSeriesSpec = {
 
 export type ReleaseValueMethod = "native" | "exact" | "weighted";
 
+export type ConversionRuleName = "sum" | "rebuild" | "carry";
+
 /** Where a converted value came from. Absent on a native one. */
 export type ReleaseValueSource = {
 	/** The release it was published on, such as `ward:2023-12-uk-bgc`. */
 	release: string;
-	/** `sum` where counts were added or split, `rebuild` where a ratio or mean was taken again from its converted parts. */
-	rule: "sum" | "rebuild";
+	/**
+	 * `sum` where counts were added or split, `rebuild` where a ratio or mean
+	 * was taken again from its converted parts, `carry` where a value that
+	 * cannot be combined was carried from the one source area that is the
+	 * whole of this one.
+	 */
+	rule: ConversionRuleName;
 	/** The weight basis a split would use, such as `population`. */
 	basis: string;
 	/** The crosswalks of the route, in order. */
@@ -100,8 +107,10 @@ export type ReleaseValueFlag =
 
 /** Why a period with a published source has no value on the target. */
 export type ReleaseGapReason =
-	/** The measure's conversion rule is `refuse`: a median, rank, index, category or a rate with no published parts. */
+	/** The measure's conversion rule is `refuse`: a rank, index or category. */
 	| "refused-measure"
+	/** A carried measure, and the area is not the whole of one source area. */
+	| "not-combinable"
 	/** No chain of crosswalks reaches the target from the source release. */
 	| "no-route"
 	/** A ratio or mean has no published numerator, denominator or weight to be rebuilt from. */
@@ -584,7 +593,7 @@ const combine = (parts: Map<string, Cell>): Combined => {
 
 type ConversionRow = {
 	release: string;
-	rule: "sum" | "rebuild";
+	rule: ConversionRuleName;
 	basis: string;
 	coverage: number;
 	crosswalks: string[];
@@ -612,7 +621,7 @@ const conversionOf = (database: SqlReader, series: number): ConversionRow => {
 		.map((r) => String(r.slug));
 	return {
 		release: String(row.release),
-		rule: row.rule === "rebuild" ? "rebuild" : "sum",
+		rule: row.rule === "rebuild" || row.rule === "carry" ? row.rule : "sum",
 		basis: String(row.basis),
 		coverage: Number(row.coverage),
 		crosswalks,
@@ -829,7 +838,9 @@ export const readReleaseSeries = (
 				release: first.release,
 				rule: sources.some((s) => s.rule === "rebuild")
 					? "rebuild"
-					: "sum",
+					: sources.every((s) => s.rule === "carry")
+						? "carry"
+						: "sum",
 				basis: first.basis,
 				crosswalks: [...new Set(sources.flatMap((s) => s.crosswalks))],
 				seriesCoverage: Math.min(...sources.map((s) => s.coverage)),
