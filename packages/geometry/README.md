@@ -11,3 +11,7 @@ Read polygon Shapefiles and dBase records in Node.js via `@uk-data-atlas/geometr
 `readShapefileFeatures(path)` reads the `.shp` and its matching `.dbf`, returning polygon features with their record properties. Deleted dBase rows and null shapes are skipped without shifting the remaining records. The reader accepts Polygon, PolygonZ and PolygonM shapes; it reads their two-dimensional coordinates.
 
 `readDbfRecords(path)` reads the non-deleted records of a dBase file when geometry is not needed. Both functions read files synchronously and throw for file errors or invalid input that they detect.
+
+## Terrain
+
+Terrain catalogue types and providers for validated local rasters and remote elevation previews. Import from `@uk-data-atlas/geometry/terrain`.

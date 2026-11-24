@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 import {
 	createRemoteTerrainProvider,
 	createSyntheticTerrainProvider,
-} from "@uk-data-atlas/terrain";
+} from "@uk-data-atlas/geometry/terrain";
 import {
 	characterize,
 	startCharacterization,

@@ -44,7 +44,7 @@ import { buildTerrainCatalogue } from "./pipelineFixtures";
 import { readTerrainCatalogue } from "@uk-data-atlas/atlas-loader";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
 import { route } from "./boundRoute";
-import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
+import type { TerrainCatalogue } from "@uk-data-atlas/geometry/terrain";
 import { testContext } from "./routeFixtures";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
 

@@ -32,7 +32,6 @@
 		"@uk-data-atlas/places": "workspace:*",
 		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
-		"@uk-data-atlas/terrain": "workspace:*",
 		"esbuild": "^0.28.2",
 		"jsts": "2.12.1",
 		"papaparse": "^5.7.0",
