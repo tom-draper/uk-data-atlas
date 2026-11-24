@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { compareObservations } from "../src/comparison";
+import { compareObservations } from "../src/data/comparison";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
 
 const ratioMeasure: Measure = {

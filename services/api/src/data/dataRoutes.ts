@@ -15,21 +15,21 @@ import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
 	type TabularFormat,
-} from "../tabularExport";
+} from "./tabularExport";
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
-} from "../sourceExactProvenance.ts";
+} from "./sourceExactProvenance.ts";
 import { nextPageHref, paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { parsePlaceParameter, requestedGeography } from "../placeParameter";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,
 	defaultSource,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "../dataDefaults";
+} from "./dataDefaults";
 import {
 	envelope,
 	invalidQuery,

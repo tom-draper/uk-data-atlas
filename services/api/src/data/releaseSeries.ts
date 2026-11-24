@@ -16,7 +16,7 @@ import {
 	type StatisticsSelector,
 	type StatisticsTableSelector,
 } from "@uk-data-atlas/measures";
-import { statedDefaults } from "../dataDefaults";
+import { statedDefaults } from "./dataDefaults";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import type { RouteContext } from "../runtime/routing.ts";
 

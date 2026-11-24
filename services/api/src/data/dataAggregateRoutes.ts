@@ -16,7 +16,7 @@ import {
 import { resolveAggregationMeasure } from "../aggregation/aggregationMeasure";
 import { resolveAggregationPartition } from "../aggregation/aggregationPartition";
 import { prepareAggregateTarget } from "../aggregation/aggregatePreparation";
-import { statedDefaults } from "../dataDefaults";
+import { statedDefaults } from "./dataDefaults";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const aggregateValue = ({

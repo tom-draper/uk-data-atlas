@@ -1,8 +1,11 @@
 import { isCountryCode } from "./aggregation";
-import { defaultSource } from "../dataDefaults";
+import { defaultSource } from "../data/dataDefaults";
 import type { Measure } from "@uk-data-atlas/measures";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { parsePlaceParameter, type PlaceParameter } from "../placeParameter";
+import {
+	parsePlaceParameter,
+	type PlaceParameter,
+} from "../data/placeParameter";
 import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,

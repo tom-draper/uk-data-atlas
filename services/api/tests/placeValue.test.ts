@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
-import { valueForPlace, type Dispatch } from "../src/placeValue";
+import { valueForPlace, type Dispatch } from "../src/data/placeValue";
 
 const measure = {
 	id: "population",

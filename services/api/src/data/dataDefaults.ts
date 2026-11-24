@@ -3,7 +3,7 @@ import type { Series } from "@uk-data-atlas/measures";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 import { describeCandidate } from "./placeResponses";
-import { problem, type ApiResponse } from "./runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 import { periodsOverlap } from "./change";
 
 export {

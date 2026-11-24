@@ -7,7 +7,7 @@ import {
 	periodSpan,
 	periodsOverlap,
 	relativeChangeRefusal,
-} from "../src/change";
+} from "../src/data/change";
 import type {
 	Measure,
 	PopulationObservation,

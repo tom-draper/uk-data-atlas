@@ -4,8 +4,8 @@ import {
 	resolveObservations,
 	type ObservationPlan,
 	type Resolution,
-} from "./observationResolution/observationPlan";
-import type { RouteContextFor } from "./runtime/index.ts";
+} from "../observationResolution/observationPlan";
+import type { RouteContextFor } from "../runtime/index.ts";
 
 type SourceQuery = {
 	period?: string | null;

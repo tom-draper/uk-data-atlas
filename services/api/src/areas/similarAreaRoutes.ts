@@ -13,9 +13,9 @@ import {
 	type RouteRequestFor,
 } from "../runtime/index.ts";
 import { refused } from "../observationResolution/observationPlan";
-import { publishedPartitions } from "../dataDefaults";
+import { publishedPartitions } from "../data/dataDefaults";
 import { QUERY_RULES } from "../queryRules";
-import { selectSourcePartition } from "../sourcePartition";
+import { selectSourcePartition } from "../data/sourcePartition";
 import { similarAreas } from "../similarAreas";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 

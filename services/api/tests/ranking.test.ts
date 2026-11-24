@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { rankingOf, rankObservations } from "../src/ranking";
+import { rankingOf, rankObservations } from "../src/data/ranking";
 
 test("uses competition ranking and orders ties by area code", () => {
 	const records = [
