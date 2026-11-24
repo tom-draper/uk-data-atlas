@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { MeasureQueryError } from "@/lib/measures/client";
+import { loadLandArea } from "@/lib/measures/landArea";
 import { loadNationPopulation } from "@/lib/measures/nationPopulation";
 import type {
 	MeasureValuesPayload,
@@ -110,5 +111,33 @@ describe("loadNationPopulation", () => {
 		);
 		expect(result.period).toBeNull();
 		expect(result.males).toBeNull();
+	});
+});
+
+describe("loadLandArea", () => {
+	it("reads a council's land in square kilometres", async () => {
+		const asked: Array<Omit<MeasureValuesRequest, "areas">> = [];
+		const area = await loadLandArea("S12000049", async (request) => {
+			asked.push(request);
+			const answer = payload("land-area", "2024", {
+				S12000049: 17_500,
+			});
+			return {
+				...answer,
+				measure: { ...answer.measure, unit: "hectares" },
+			};
+		});
+		expect(area).toEqual({
+			sqKm: 175,
+			period: "2024",
+			datasetId: "land-area",
+		});
+		expect(asked[0]?.dimensions).toEqual({ surface: ["land"] });
+	});
+
+	it("has none where the route refuses", async () => {
+		expect(await loadLandArea("N09000003", async () => refuse())).toBe(
+			null,
+		);
 	});
 });
