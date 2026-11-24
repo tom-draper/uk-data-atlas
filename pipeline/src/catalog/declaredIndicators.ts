@@ -6,6 +6,7 @@ import type {
 	Measure,
 	MeasureAggregation,
 	MeasureObservationArtifact,
+	MeasureSource,
 	SourceGeography,
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
@@ -105,8 +106,24 @@ export const compileYearlyIndicators = (
 	const geography = declaration.boundary.type as SourceGeography["type"];
 	// A dataset may also hold editions published on other boundary years (IMD
 	// 2015 is on the 2011 LSOAs). The catalogue lists the declared boundary
-	// only, and the manifest counts cover every boundary the dataset holds.
+	// and the earlier releases below, and the manifest counts cover every
+	// boundary the dataset holds.
 	const editions = rows.editions(id, geography);
+	// Earlier releases of the same geography the statistics are also stored
+	// on, newest first. Each holds every area under the codes of its year, so
+	// an area's periods from before its code changed are served from there.
+	const alsoIn = (declaration.statistics as { alsoIn?: unknown } | undefined)
+		?.alsoIn;
+	const earlierYears = (
+		Array.isArray(alsoIn)
+			? (alsoIn as Array<{ geography: string; year: number }>)
+			: []
+	)
+		.filter(
+			(release) => release.geography === geography && release.year < year,
+		)
+		.map((release) => release.year)
+		.sort((a, b) => b - a);
 	const periodsOn = (
 		indicator: (typeof catalogue.indicators)[number],
 		boundaryYear: number,
@@ -216,56 +233,103 @@ export const compileYearlyIndicators = (
 			sourceGeography,
 			periods,
 		};
-		return { indicator, series, artifact };
+		const earlier = earlierYears.flatMap((boundaryYear) => {
+			const held = rows
+				.periods({ series, datasetId: id, geography, boundaryYear })
+				.filter((period) => period.records.length > 0);
+			if (held.length === 0) return [];
+			const earlierGeography = { type: geography, boundaryYear };
+			const earlierArtifact: MeasureObservationArtifact = {
+				schemaVersion: 1,
+				contentHash: sha256(
+					JSON.stringify({
+						schemaVersion: 1,
+						measureId: seriesKey,
+						sourceGeography: earlierGeography,
+						periods: held,
+					}),
+				),
+				measureId: seriesKey,
+				sourceGeography: earlierGeography,
+				periods: held,
+			};
+			return [earlierArtifact];
+		});
+		return { indicator, series, artifact, earlier };
 	});
 	return {
-		measures: published.map(({ indicator, series, artifact }): Measure => {
-			const aggregation = aggregationOf(indicator.aggregation);
-			return {
-				id: indicator.id,
-				series,
-				label: indicator.label,
-				valueKind: indicator.valueKind,
-				unit: indicator.unit.includes("{areas}")
-					? indicator.unit.replace(
-							"{areas}",
-							(
-								artifact.periods[0]?.records.length ?? 0
-							).toLocaleString("en-GB"),
-						)
-					: indicator.unit,
-				aggregation,
-				sources: [
-					{
-						datasetId: id,
-						periods: artifact.periods.map(({ period }) => period),
-						sourceGeography: {
-							type: geography,
-							boundaryYear: year,
-						},
-						coverage: {
-							kind: catalogue.partial
-								? "partial"
-								: "source-reported",
-							countries: countriesFor(
-								artifact.periods[0]?.records ?? [],
+		measures: published.map(
+			({ indicator, series, artifact, earlier }): Measure => {
+				const aggregation = aggregationOf(indicator.aggregation);
+				return {
+					id: indicator.id,
+					series,
+					label: indicator.label,
+					valueKind: indicator.valueKind,
+					unit: indicator.unit.includes("{areas}")
+						? indicator.unit.replace(
+								"{areas}",
+								(
+									artifact.periods[0]?.records.length ?? 0
+								).toLocaleString("en-GB"),
+							)
+						: indicator.unit,
+					aggregation,
+					sources: [
+						{
+							datasetId: id,
+							periods: artifact.periods.map(
+								({ period }) => period,
 							),
-							// The latest period, since coverage can vary by period.
-							recordCount:
-								artifact.periods.at(-1)?.records.length ?? 0,
-							note: catalogue.coverageNote,
+							sourceGeography: {
+								type: geography,
+								boundaryYear: year,
+							},
+							coverage: {
+								kind: catalogue.partial
+									? "partial"
+									: "source-reported",
+								countries: countriesFor(
+									artifact.periods[0]?.records ?? [],
+								),
+								// The latest period, since coverage can vary by period.
+								recordCount:
+									artifact.periods.at(-1)?.records.length ??
+									0,
+								note: catalogue.coverageNote,
+							},
 						},
+						...earlier.map((held): MeasureSource => ({
+							datasetId: id,
+							observationArtifact: `${indicator.id}-${geography}-${held.sourceGeography.boundaryYear}-observations`,
+							periods: held.periods.map(({ period }) => period),
+							sourceGeography: held.sourceGeography,
+							coverage: {
+								kind: "partial",
+								countries: countriesFor(
+									held.periods.flatMap(
+										({ records }) => records,
+									),
+								),
+								recordCount:
+									held.periods.at(-1)?.records.length ?? 0,
+								note: `Every year under the authority codes in force in ${held.sourceGeography.boundaryYear}, so an authority merged or recoded since keeps the years before its change. An authority that did not yet exist has no value.`,
+							},
+						})),
+					],
+					availability: {
+						sourceExact: true,
+						conversion: false,
+						aggregation: aggregation.available,
 					},
-				],
-				availability: {
-					sourceExact: true,
-					conversion: false,
-					aggregation: aggregation.available,
-				},
-				links: { data: `/v1/data/${indicator.id}` },
-				notes: [...indicator.notes, ...declaration.source.notes],
-			};
-		}),
-		artifacts: published.map(({ artifact }) => artifact),
+					links: { data: `/v1/data/${indicator.id}` },
+					notes: [...indicator.notes, ...declaration.source.notes],
+				};
+			},
+		),
+		artifacts: published.flatMap(({ artifact, earlier }) => [
+			artifact,
+			...earlier,
+		]),
 	};
 };

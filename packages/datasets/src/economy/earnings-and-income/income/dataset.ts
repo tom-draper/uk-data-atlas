@@ -47,7 +47,7 @@ export const income = defineDataset<IncomeDataset>({
 			"Gross pay, before tax and other deductions. The percentiles the table also publishes are not served.",
 			"Provisional results are revised when the following year's survey is published.",
 			"From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with 2012 to 2020. Estimates for 2020 and 2021 come from a smaller sample, include furloughed employees and carry more uncertainty than usual.",
-			"Each year is held on the authorities in force for that survey, but the API serves only those of 2025, so authorities merged or retired since are not served. The six English counties that became unitary authorities in 2023 are published as counties in earlier years and are not served; their districts are.",
+			"Each year is held on the authorities in force for that survey. The API serves every year on the authorities of 2025, and again on those of 2020, 2019 and 2016, so an authority merged or recoded since keeps the years before its change under its earlier code. The six English counties that became unitary authorities in 2023 are published as counties in earlier years and are not served; their districts are.",
 		],
 	},
 	placeHeadline: {
@@ -104,7 +104,7 @@ export const income = defineDataset<IncomeDataset>({
 		partial: true,
 		checks: ["manifest-periods"],
 		coverageNote:
-			"England, Wales and Scotland, from 2012, on the authorities in force in 2025. An authority that has since been merged or retired is not served, and the tables hold no authority of Northern Ireland. An authority whose estimate the publisher suppressed as unreliable has no value in that year.",
+			"England, Wales and Scotland, from 2012, on the authorities in force in 2025, and on those of 2020, 2019 and 2016 for an authority merged or recoded since. The tables hold no authority of Northern Ireland. An authority whose estimate the publisher suppressed as unreliable has no value in that year.",
 		indicators: [
 			{
 				id: "median-annual-pay",
