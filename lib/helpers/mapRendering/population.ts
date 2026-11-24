@@ -3,7 +3,7 @@ import type {
 	Features,
 	PopulationAgeSexRecord,
 } from "@lib/types";
-import type { BoundaryCodeScope } from "@/lib/helpers/datasetAggregation/ports";
+import type { BoundaryCodeScope } from "../mapManager/propertyDetector";
 import type { MapOptions } from "@lib/types/mapOptions";
 import type { DisplayMapView } from "@uk-data-atlas/datasets";
 import {
