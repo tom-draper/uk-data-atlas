@@ -12,6 +12,7 @@ import {
 } from "./manifest.ts";
 import { RECODED_2025 } from "./authorityChanges.ts";
 import { compileElections } from "./elections.ts";
+import { compileClaimantCountHistory } from "./claimantCountHistory.ts";
 import { compileHousePrice } from "./housePrice.ts";
 import { compileLifeExpectancy } from "./lifeExpectancy.ts";
 import type { CatalogueRows } from "./rows.ts";
@@ -147,6 +148,7 @@ export const compileDataCatalog = ({
 				england2025,
 			}),
 		),
+		...compileClaimantCountHistory(catalogManifest, rows),
 		...compileRoadCollisions(catalogManifest, rows, populationCodes),
 		...compileCrime(catalogManifest, rows),
 	];
