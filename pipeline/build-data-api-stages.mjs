@@ -749,13 +749,15 @@ export const apiStages = [
 			writes: [`${artifacts}/atlas-release.json`],
 		},
 	),
-	// Place pages read areas, crosswalks, geometry and named locations; the
-	// docs catalogue reads the API's catalogue and map resource manifests.
+	// Place pages read areas, crosswalks, geometry and named locations, and
+	// their charted series the assembled atlas's converted series; the docs
+	// catalogue reads the API's catalogue and map resource manifests.
 	stage(
 		"atlas-pages",
 		[
 			"geography-catalogues",
 			"atlas-sqlite",
+			"assemble-atlas",
 			"api-datasets",
 			"boundary-registry",
 			"geometry-store",

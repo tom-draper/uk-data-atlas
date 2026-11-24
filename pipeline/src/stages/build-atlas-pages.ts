@@ -9,6 +9,10 @@ import { resolve } from "node:path";
 import { buildDocsCatalogue } from "../atlas/buildDocsCatalogue.ts";
 import { writeAtlasPages } from "../atlas/writeAtlasPages.ts";
 import { buildPlaceProfiles } from "../places/buildPlaceProfiles.ts";
+import {
+	buildPlaceTrends,
+	type TrendPlace,
+} from "../places/buildPlaceTrends.ts";
 import type {
 	AreaProfile,
 	PlaceIndex,
@@ -49,18 +53,35 @@ pages.set(
 	JSON.stringify(compilePlaceFacts(AGE_DATASETS.map(readEditions))),
 );
 const wardAreas: Record<string, number> = {};
+const councils: TrendPlace[] = [];
 for (const [name, json] of outputs) {
 	if (!name.startsWith("areas/")) continue;
 	for (const [code, profile] of Object.entries(
 		JSON.parse(json) as Record<string, AreaProfile>,
-	))
+	)) {
+		if (profile.geography === "localAuthority" && profile.current)
+			councils.push({
+				code,
+				release:
+					index.releases.localAuthority[profile.releases.at(-1)!]!,
+			});
 		if (
 			/^[EW]05/.test(code) &&
 			profile.geography === "ward" &&
 			profile.areaKm2
 		)
 			wardAreas[code] = profile.areaKm2;
+	}
 }
 pages.set("ward-areas", JSON.stringify(wardAreas));
+pages.set(
+	"place-trends",
+	JSON.stringify(
+		buildPlaceTrends(
+			ROOT,
+			councils.sort((a, b) => a.code.localeCompare(b.code)),
+		),
+	),
+);
 await writeAtlasPages(ROOT, pages);
 buildLog.info(`Wrote ${formatCount(pages.size)} atlas page artifacts`);
