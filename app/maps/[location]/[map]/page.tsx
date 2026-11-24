@@ -67,16 +67,15 @@ export async function generateMetadata({
 }
 
 export default async function RankingPage({ params }: { params: Params }) {
-	const { location, map, ranking, areas, plural, subject } =
-		await resolvePage(params);
+	const resolved = await resolvePage(params);
+	const { location, map, ranking, areas, plural, subject } = resolved;
 	const figure = atlasMapFigure(location, map);
 	const nouns = LEVEL_NOUNS[ranking.level];
 	const columns = ranking.columns ?? [];
 	const heading = subject.split(": ");
 	const long = isLongRanking(areas);
 	const shown = long ? SERVER_ROWS : areas.length;
-	const row = (index: number) =>
-		rankingRow(location, map, ranking, areas[index]!, index);
+	const row = (index: number) => rankingRow(resolved, areas[index]!, index);
 	const rows = areas.slice(0, shown).map((_, index) => row(index));
 	const positions = summaryPositions(areas.length);
 

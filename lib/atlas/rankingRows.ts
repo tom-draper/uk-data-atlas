@@ -15,6 +15,7 @@ import {
 	type RankedArea,
 } from "@/lib/atlas/rankings";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import { loadPlaceIndex } from "@/lib/places/load";
 
 /** A ranked area as its table row reads, formatted on the server. */
 export type RankingRow = {
@@ -28,6 +29,21 @@ export type RankingRow = {
 	value: string;
 	extra: string[];
 };
+
+/** What a ranking's rows are built from. */
+export type RankingContext = {
+	location: AtlasLocation;
+	map: AtlasMap;
+	ranking: MapRanking;
+	/** The areas with a place page of their own. */
+	places: ReadonlySet<string>;
+};
+
+let placeCodes: Promise<ReadonlySet<string>> | undefined;
+const loadPlaceCodes = () =>
+	(placeCodes ??= loadPlaceIndex().then(
+		(index) => new Set(index.areas.map(([code]) => code)),
+	));
 
 /**
  * The rows a long ranking renders with its page. The rest load when asked
@@ -46,15 +62,16 @@ export async function resolveRanking(params: {
 	const map = findAtlasMap(params.map);
 	if (!location || !map || !hasRankingFor(location.slug, map.slug))
 		notFound();
-	const ranking = await loadRanking(map.slug);
+	const [ranking, places] = await Promise.all([
+		loadRanking(map.slug),
+		loadPlaceCodes(),
+	]);
 	const areas = areasWithin(ranking, location);
-	return { location, map, ranking, areas };
+	return { location, map, ranking, places, areas };
 }
 
 export function rankingRow(
-	location: AtlasLocation,
-	map: AtlasMap,
-	ranking: MapRanking,
+	{ location, map, ranking, places }: RankingContext,
 	area: RankedArea,
 	index: number,
 ): RankingRow {
@@ -72,14 +89,11 @@ export function rankingRow(
 	if (ranking.level === "ward" && location.members.length !== 1) {
 		const note = council?.name ?? gazetteer.get(area.district)?.name;
 		if (note) row.note = note;
-	} else if (ranking.level === "constituency") {
-		// Constituencies have place pages of their own.
-		row.href = `/places/${area.code}`;
-	} else if (council && area.code === area.district) {
-		// A council links to its maps; a former council's row names it, not
-		// its successor.
-		row.href = `/maps/${council.slug}`;
 	}
+	if (places.has(area.code)) row.href = `/places/${area.code}`;
+	else if (council && area.code === area.district)
+		// A council with no place page of its own links to its maps.
+		row.href = `/maps/${council.slug}`;
 	return row;
 }
 
