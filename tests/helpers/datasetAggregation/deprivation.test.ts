@@ -9,9 +9,8 @@ import { CODE_KEY, features } from "./fixtures";
 
 /** A declared index's aggregate over the areas of the given boundary codes. */
 const aggregate = (type: string, codes: string[], data: unknown): any =>
-	CHART_DATASET_DEFINITIONS.find(
-		(definition) => definition.type === type,
-	)!.chart.calculateStats(
+	CHART_DATASET_DEFINITIONS.find((definition) => definition.type === type)!
+		.chart.calculateStats!(
 		{
 			aggregate: (spec: { aggregate: (...args: unknown[]) => unknown }) =>
 				spec.aggregate(features(codes), CODE_KEY, data),

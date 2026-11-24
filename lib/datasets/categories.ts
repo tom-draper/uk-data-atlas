@@ -4,8 +4,6 @@ import type {
 	DatasetDeclaration,
 	DisplayCategories,
 } from "@uk-data-atlas/datasets";
-import { aggregateCategories } from "@/lib/helpers/datasetAggregation/demographics";
-import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
 import { renderCategories } from "@/lib/helpers/mapRendering";
 import type { CategoryRecords } from "@/lib/helpers/mapManager/featureBuilder";
 import type {
@@ -13,6 +11,7 @@ import type {
 	CategoryOptions,
 	ColorRangeOption,
 } from "@/lib/types/mapOptions";
+import type { BreakdownCardConfig } from "@/lib/measures/breakdownConfig";
 import type { ChartDatasetDefinition } from "./types";
 
 /**
@@ -68,25 +67,6 @@ const chartDefinitionOf = (
 ): ChartDatasetDefinition => {
 	const { categories, boundary } = declaration;
 	const { breakdown } = categories;
-	const aggregation = createBoundaryAggregationSpec(
-		declaration.id,
-		boundary.type,
-		aggregateCategories,
-	);
-	const calculateStats: ChartDatasetDefinition["chart"]["calculateStats"] = (
-		aggregator,
-		geojson,
-		data,
-		location,
-		datasetId,
-	) =>
-		aggregator.aggregate(
-			aggregation,
-			geojson,
-			data as never,
-			location,
-			datasetId,
-		);
 	return {
 		...definitionOf(declaration),
 		chart: {
@@ -112,10 +92,8 @@ const chartDefinitionOf = (
 				source: breakdown.source,
 				coverage: breakdown.coverage,
 			},
-			calculateStats,
 			year: categories.year,
 		},
-		legendAggregation: { calculateStats },
 		legendKind: "category",
 		mapRenderer: {
 			getOptions: (_activeViz, mapOptions) =>
@@ -141,3 +119,10 @@ export const CATEGORY_CHART_DEFINITIONS: readonly ChartDatasetDefinition<Catalog
 				declaration,
 			) as unknown as ChartDatasetDefinition<CatalogueDataset>,
 	);
+
+/** The measure query behind a categorical dataset's chart and legend, or undefined for any other. */
+export const categoryBreakdown = (
+	type: string,
+): BreakdownCardConfig | undefined =>
+	CATEGORY_CHART_DEFINITIONS.find((definition) => definition.type === type)
+		?.chart.breakdown;

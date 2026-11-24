@@ -75,7 +75,8 @@ export interface ChartDefinition<
 	key: string;
 	label: string;
 	componentPath: string;
-	calculateStats(
+	/** A chart drawn from measure queries needs no aggregate of its own. */
+	calculateStats?(
 		aggregator: DatasetAggregator,
 		geojson: BoundaryGeojson,
 		data: T["data"],
@@ -110,7 +111,8 @@ export interface ChartDefinition<
 
 export type ChartDatasetLegendAggregation<
 	T extends { type: string; data: unknown },
-> = Pick<ChartDefinition<T>, "calculateStats" | "keyBy">;
+> = Required<Pick<ChartDefinition<T>, "calculateStats">> &
+	Pick<ChartDefinition<T>, "keyBy">;
 
 export type ChartDatasetLegendKind = "party" | "category" | "brexit";
 
