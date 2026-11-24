@@ -1,0 +1,158 @@
+"use client";
+
+import { AGE, DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { getChartDatasetDefinition } from "@/lib/datasets";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
+import {
+	loadNationPopulation,
+	type NationPopulation,
+	type PopulationTarget,
+} from "@/lib/measures/nationPopulation";
+import { useLoaded } from "@/lib/measures/useLoaded";
+import type { SelectedArea } from "@/lib/types/areas";
+import { CENSUS_NATIONS } from "./useNationCensusCard";
+
+/** The population cards' figures for an area in Scotland or Northern Ireland. */
+export type NationPopulationState = {
+	nation: string;
+	status: "loading" | "ready";
+	/** The figures, or null where the nation publishes none for this area. */
+	population: NationPopulation | null;
+	/** Where the figures come from, or why there are none. */
+	source: string;
+	/** A short line naming the publisher and year, or what is missing. */
+	note: string;
+};
+
+const AGE_CODES = (AGE.members ?? []).map(
+	(member) => member.code ?? member.key,
+);
+
+/** The country each nation's codes belong to, by their initial. */
+const NATION_COUNTRIES: Readonly<Record<string, string>> = {
+	S: "GB-SCT",
+	N: "GB-NIR",
+};
+
+const notPublished = (
+	nation: string,
+	source: string,
+): NationPopulationState => ({
+	nation,
+	status: "ready",
+	population: null,
+	source,
+	note: `Not published in this form for ${nation}`,
+});
+
+/** The council or data zone the nation publishes for, if any. */
+const targetOf = (
+	selectedArea: SelectedArea,
+	initial: string,
+	codeMapper: LadResolver | undefined,
+): PopulationTarget | undefined => {
+	if (selectedArea.type === "dataZone")
+		return selectedArea.boundaryYear
+			? {
+					geography: "dataZone",
+					boundaryYear: selectedArea.boundaryYear,
+					code: selectedArea.code,
+				}
+			: undefined;
+	if (selectedArea.type !== "localAuthority") return undefined;
+	const code = selectedAreaLadCode(selectedArea, codeMapper);
+	return code?.startsWith(initial) && selectedArea.boundaryYear
+		? {
+				geography: "localAuthority",
+				boundaryYear: selectedArea.boundaryYear,
+				code,
+			}
+		: undefined;
+};
+
+/**
+ * The population of a Scottish or Northern Irish council or data zone, for
+ * cards whose dataset covers England and Wales only. Each nation publishes
+ * its own mid-year estimates for councils and data zones; the measures route
+ * chooses the source, and the card names it. Null where the dataset covers
+ * the area itself.
+ */
+export function useNationPopulation(
+	dataset: { type: string; coverageCountries?: readonly string[] },
+	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
+): NationPopulationState | null {
+	const coverageCountries =
+		dataset.coverageCountries ??
+		getChartDatasetDefinition(dataset.type)?.coverageCountries;
+	const initial = selectedArea?.code.charAt(0) ?? "";
+	const country = NATION_COUNTRIES[initial];
+	const nation =
+		country &&
+		coverageCountries?.length &&
+		!coverageCountries.includes(country)
+			? CENSUS_NATIONS[initial]
+			: undefined;
+	const target =
+		nation && selectedArea
+			? targetOf(selectedArea, initial, codeMapper)
+			: undefined;
+	const loaded = useLoaded(
+		target
+			? {
+					key: `population|${target.geography}|${target.boundaryYear}|${target.code}`,
+					load: () => loadNationPopulation(target, AGE_CODES),
+				}
+			: null,
+	);
+
+	if (!nation || !selectedArea) return null;
+	if (!target)
+		return notPublished(
+			nation,
+			`${nation} publishes population estimates for councils and data zones, not for a ${selectedArea.type === "ward" ? "ward" : "this kind of area"}.`,
+		);
+	if (loaded.status === "error")
+		return notPublished(nation, loaded.error.message);
+	if (loaded.status !== "ready")
+		return { ...notPublished(nation, ""), status: "loading" };
+
+	const population = loaded.value;
+	if (!population.period || !population.datasetId)
+		return notPublished(
+			nation,
+			`${nation}'s population estimates are not published for this area.`,
+		);
+	const declaration = DATASET_DECLARATIONS.find(
+		({ id }) => id === population.datasetId,
+	);
+	const publisher = declaration?.source.publisher ?? nation;
+	const name = declaration?.source.name ?? population.datasetId;
+	return {
+		nation,
+		status: "ready",
+		population,
+		source: `${publisher}. ${name}, mid-${population.period}.${declaration?.guide?.summary ? ` ${declaration.guide.summary}` : ""}`,
+		note: `${nation}, ${publisher} mid-${population.period} estimate`,
+	};
+}
+
+/**
+ * A population card's coverage line where the area's nation differs from the
+ * dataset's, so a figure is never read against the other nations' year.
+ */
+export const formatNationCoverage = (
+	state: NationPopulationState,
+	elsewhere: string | undefined,
+	year: number,
+): string =>
+	`Here: ${state.nation}${state.population?.period ? `, mid-${state.population.period}` : ""}. Elsewhere: ${elsewhere ?? "England & Wales"}, mid-${year}.`;
+
+/** Why a population card's age chart is empty for a nation's area. */
+export const nationAgesMessage = (state: NationPopulationState): string =>
+	state.population && !state.population.ages
+		? `${state.nation} does not publish single years of age for this kind of area`
+		: state.note;

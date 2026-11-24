@@ -11,6 +11,11 @@ import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
 import { areaInYear } from "@/lib/helpers/areaInYear";
 import { formatCount } from "@/lib/helpers/formatCount";
+import {
+	formatNationCoverage,
+	nationAgesMessage,
+	useNationPopulation,
+} from "@/lib/hooks/useNationPopulation";
 
 const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
 const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
@@ -39,7 +44,12 @@ function Gender({
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "gender";
 
-	const { totalMales, totalFemales } = (() => {
+	// An area in a nation the dataset leaves out is read from that nation's
+	// own estimates, labelled with their year and publisher.
+	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+
+	const datasetTotals = (() => {
+		if (nation) return { totalMales: null, totalFemales: null };
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
@@ -199,6 +209,12 @@ function Gender({
 		// Unsupported area type or missing data
 		return { totalMales: 0, totalFemales: 0 };
 	})();
+	const { totalMales, totalFemales } = nation
+		? {
+				totalMales: nation.population?.males ?? null,
+				totalFemales: nation.population?.females ?? null,
+			}
+		: datasetTotals;
 
 	const total = (totalMales ?? 0) + (totalFemales ?? 0);
 	const hasData = total > 0;
@@ -210,8 +226,16 @@ function Gender({
 			: FEMALE_COLOR;
 	return (
 		<ChartCard
-			coverage={formatDatasetCoverage(dataset)}
-			heading={`Gender [${dataset.year}]`}
+			coverage={
+				nation
+					? formatNationCoverage(
+							nation,
+							formatDatasetCoverage(dataset),
+							dataset.year,
+						)
+					: formatDatasetCoverage(dataset)
+			}
+			heading={`Gender [${nation ? (nation.population?.period ?? nation.nation) : dataset.year}]`}
 			headerEnd={
 				hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
@@ -232,7 +256,11 @@ function Gender({
 			}
 			accent={accentColor}
 			isActive={isActive}
-			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
+			title={
+				nation
+					? nation.source || undefined
+					: "Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
+			}
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,
@@ -247,7 +275,17 @@ function Gender({
 				aggregatedData={aggregatedData}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
+				{...(nation
+					? {
+							ages: nation.population?.ages ?? null,
+							emptyMessage: nationAgesMessage(nation),
+							loading: nation.status === "loading",
+						}
+					: {})}
 			/>
+			{nation?.population && (
+				<p className="mt-1 text-[10px] text-gray-500">{nation.note}</p>
+			)}
 		</ChartCard>
 	);
 }
