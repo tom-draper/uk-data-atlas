@@ -16,6 +16,10 @@ interface ChartCardValueBarProps {
 	valueColor?: string;
 	secondary?: ReactNode;
 	secondaryColor?: string;
+	/** What to say in place of a value, where there is none. */
+	emptyMessage?: string;
+	/** Whether the value is still being read. */
+	loading?: boolean;
 }
 
 export function ChartCardValueBar({
@@ -27,6 +31,8 @@ export function ChartCardValueBar({
 	valueColor,
 	secondary,
 	secondaryColor,
+	emptyMessage,
+	loading = false,
 }: ChartCardValueBarProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
@@ -34,13 +40,13 @@ export function ChartCardValueBar({
 	if (!hasData) {
 		return (
 			<div className="flex-1 mt-1">
-				{chartsLoading ? (
+				{loading || (chartsLoading && !emptyMessage) ? (
 					<ChartContentPlaceholder className="h-full" />
 				) : (
 					<div
 						className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 					>
-						No data available
+						{emptyMessage ?? "No data available"}
 					</div>
 				)}
 			</div>
