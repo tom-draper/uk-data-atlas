@@ -1,6 +1,8 @@
-import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import type { BoundaryReleaseSummary } from "../maps/compileMapResource.ts";
+import type {
+	BoundaryReleaseSummary,
+	MapGeometryCache,
+} from "../maps/compileMapResource.ts";
 import type { MapResourceDescriptor } from "@uk-data-atlas/geometry/tiles";
 import { buildFullDetailParquet } from "@uk-data-atlas/geometry/tiles/node";
 
@@ -21,7 +23,7 @@ export type FlatDownloads = {
  * asked for, so nothing is stored for it.
  */
 export const compileFlatDownloads = (
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: BoundaryReleaseSummary,
 	names: Map<string, string>,
 	reason: string,

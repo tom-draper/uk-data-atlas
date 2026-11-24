@@ -915,7 +915,7 @@ test("dataset updates leave boundary tiles and postcodes cached", async () => {
 	assert.deepEqual(await run(), ["postcode-index"]);
 });
 
-test("area, map and atlas stages track their own raw sources", async () => {
+test("area, geometry and atlas stages track raw sources for their consumers", async () => {
 	const { root, write } = fixture();
 	write(
 		"data/source/boundaries/ward/current/meta.json",
@@ -933,6 +933,7 @@ test("area, map and atlas stages track their own raw sources", async () => {
 		.filter((entry) =>
 			[
 				"area-inventory",
+				"geometry-store",
 				"map-resource",
 				"atlas-sqlite",
 				"api-datasets",
@@ -945,6 +946,11 @@ test("area, map and atlas stages track their own raw sources", async () => {
 			codeFiles: () => ["code.ts"],
 			environment: {},
 		});
+	assert.ok(
+		stages
+			.find(({ name }) => name === "map-resource")
+			?.dependencies.includes("geometry-store"),
+	);
 	let current = cache();
 	for (const entry of stages) {
 		current.begin(entry.name);
@@ -976,7 +982,7 @@ test("area, map and atlas stages track their own raw sources", async () => {
 		"atlas-sqlite",
 		"api-datasets",
 		"area-inventory",
-		"map-resource",
+		"geometry-store",
 	]);
 });
 
