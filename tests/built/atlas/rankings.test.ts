@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { findAtlasLocation, findAtlasMap } from "@/lib/atlas/pages";
+import { ATLAS_MAPS, findAtlasLocation, findAtlasMap } from "@/lib/atlas/pages";
 import { hasRankingFor, loadRanking } from "@/lib/atlas/rankingPages";
+import RANKING_PAGES_BY_MAP from "@/public/data/datasets/ranking-pages.json";
 import {
 	areasWithin,
 	formatColumnValue,
@@ -49,6 +50,30 @@ describe("ranking pages", () => {
 		expect(formatRankedValue(findAtlasMap("crime")!, 74_649)).toBe(
 			"74,649 offences",
 		);
+	});
+
+	it("writes two areas alike only when their values are close", async () => {
+		// Rounding for a legend writes far apart values alike, such as every
+		// council from 1,000 to 1,499 GWh as "1k GWh".
+		for (const map of ATLAS_MAPS.filter(
+			(map) => map.slug in RANKING_PAGES_BY_MAP,
+		)) {
+			const slug = map.slug;
+			const values = (await loadRanking(slug)).areas.map(
+				(area) => area.value,
+			);
+			const range = Math.max(...values) - Math.min(...values);
+			const alike = new Map<string, number[]>();
+			for (const value of values) {
+				const written = formatRankedValue(map, value);
+				alike.set(written, [...(alike.get(written) ?? []), value]);
+			}
+			for (const [written, group] of alike)
+				expect(
+					Math.max(...group) - Math.min(...group),
+					`${slug} writes ${Math.min(...group)} to ${Math.max(...group)} as ${written}`,
+				).toBeLessThanOrEqual(range * 0.02);
+		}
 	});
 
 	it("files a former council under the council that replaced it", () => {
