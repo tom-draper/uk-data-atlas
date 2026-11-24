@@ -17,7 +17,7 @@ import {
 	readGridOffset,
 	type GridOffset,
 } from "./gridOffset.ts";
-import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
+import { readShapefileFeatures } from "./shapefile/index.ts";
 import {
 	packedBounds,
 	packGeometry,

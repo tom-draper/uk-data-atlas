@@ -81,8 +81,8 @@ const COMPILER_SOURCES = [
 	"packages/geography/src/geometryPositions.ts",
 	"packages/geography/src/geometryTypes.ts",
 	"packages/geography/src/geometryProvenance.ts",
-	"packages/shapefile/src/shapefile.ts",
-	"packages/shapefile/src/dbf.ts",
+	"packages/geometry/src/shapefile/shapefile.ts",
+	"packages/geometry/src/shapefile/dbf.ts",
 ];
 
 export const buildMapResources = async (

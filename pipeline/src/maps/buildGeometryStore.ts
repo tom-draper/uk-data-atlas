@@ -60,9 +60,9 @@ const COMPILER_SOURCES = [
 	"packages/geography/src/areaDistance.ts",
 	"packages/geometry/src/borders.ts",
 	"packages/geometry/src/spatialQueries.ts",
-	"packages/shapefile/src/dbf.ts",
+	"packages/geometry/src/shapefile/dbf.ts",
 	"packages/geography/src/geometryProvenance.ts",
-	"packages/shapefile/src/shapefile.ts",
+	"packages/geometry/src/shapefile/shapefile.ts",
 	"packages/geography/src/geometrySubstitutions.ts",
 ];
 

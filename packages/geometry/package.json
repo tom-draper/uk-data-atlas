@@ -7,7 +7,8 @@
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts"
+		".": "./src/index.ts",
+		"./shapefile": "./src/shapefile/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"
@@ -17,7 +18,6 @@
 		"@uk-data-atlas/atlas-db": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*",
 		"@uk-data-atlas/map-tiles": "workspace:*",
-		"@uk-data-atlas/shapefile": "workspace:*",
 		"polygon-clipping": "0.15.7"
 	},
 	"devDependencies": {

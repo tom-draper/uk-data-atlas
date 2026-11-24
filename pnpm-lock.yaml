@@ -346,9 +346,6 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../search-index
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:../shapefile
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
@@ -520,9 +517,6 @@ importers:
       '@uk-data-atlas/map-tiles':
         specifier: workspace:*
         version: link:../map-tiles
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:../shapefile
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
@@ -687,15 +681,6 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/shapefile:
-    devDependencies:
-      '@types/node':
-        specifier: ^26.6.6
-        version: 26.6.6
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
-
   packages/terrain:
     dependencies:
       '@uk-data-atlas/artifacts':
@@ -759,9 +744,6 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../packages/search-index
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:../packages/shapefile
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../packages/terrain
@@ -856,9 +838,6 @@ importers:
       '@uk-data-atlas/search-index':
         specifier: workspace:*
         version: link:../../packages/search-index
-      '@uk-data-atlas/shapefile':
-        specifier: workspace:*
-        version: link:../../packages/shapefile
       '@uk-data-atlas/terrain':
         specifier: workspace:*
         version: link:../../packages/terrain

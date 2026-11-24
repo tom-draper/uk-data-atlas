@@ -1,7 +1,7 @@
 import { closeSync, existsSync, openSync, readSync } from "node:fs";
 import { join } from "node:path";
 import { readGeoJsonProperties } from "@uk-data-atlas/geometry";
-import { readDbfRecords } from "@uk-data-atlas/shapefile";
+import { readDbfRecords } from "@uk-data-atlas/geometry/shapefile";
 import type { AreaReleaseArtifact } from "@uk-data-atlas/areas";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { PropertyCrosswalkAdapter } from "@uk-data-atlas/relationships";
