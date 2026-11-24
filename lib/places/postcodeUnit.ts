@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { postcodeGridLngLat } from "@uk-data-atlas/geography";
 import { openReadOnlyDatabase } from "@uk-data-atlas/atlas-db";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
-import { requirePostcodeAreaLayout } from "@uk-data-atlas/postcodes";
+import { requirePostcodeAreaLayout } from "@uk-data-atlas/places/postcodes";
 import {
 	DEPRIVATION_INDICES,
 	POSTCODE_GEOGRAPHIES,

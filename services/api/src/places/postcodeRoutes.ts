@@ -11,7 +11,7 @@ import { compactPostcode, parsePostcode } from "@uk-data-atlas/geography";
 import {
 	postcodeLookupPoint,
 	type PostcodeRecord,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import type { PostcodeSource } from "@uk-data-atlas/geography";
 import {
 	envelope,

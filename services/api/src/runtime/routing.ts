@@ -12,7 +12,7 @@ import type { GeographyInventory } from "@uk-data-atlas/relationships";
 import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { FullDetailSource } from "@uk-data-atlas/geometry";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
-import type { PostcodeResolver } from "@uk-data-atlas/postcodes";
+import type { PostcodeResolver } from "@uk-data-atlas/places/postcodes";
 import type { ResolvedContainingArea } from "@uk-data-atlas/areas";
 import type { AreaValidation } from "@uk-data-atlas/relationships";
 import type { AreaGeometryCache } from "@uk-data-atlas/geometry";

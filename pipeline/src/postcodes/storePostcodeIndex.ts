@@ -6,7 +6,7 @@ import {
 	postcodeTables,
 	writeBuildMetadata,
 } from "../storage/index.ts";
-import { postcodeIndexMismatch } from "@uk-data-atlas/postcodes";
+import { postcodeIndexMismatch } from "@uk-data-atlas/places/postcodes";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
 import { writeSqliteTables } from "@uk-data-atlas/artifacts";
 

@@ -28,7 +28,7 @@ import {
 import { IdRegistries, idDirectory } from "../../src/ids/idRegistries";
 import { seedIdRegistries } from "../../src/ids/seedIds";
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { PostcodeAreasShard } from "@uk-data-atlas/postcodes";
+import type { PostcodeAreasShard } from "@uk-data-atlas/places/postcodes";
 import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { storePostcodeIndex } from "../../src/postcodes/storePostcodeIndex";
 import { assembleAtlas } from "../../src/atlas/assembleAtlas";
@@ -40,13 +40,17 @@ import {
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
 	readSqlitePostcodeCounts,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import {
 	readPostcodeCounts,
 	readPostcodeAreaIndex,
 	readPostcodeIndex,
 } from "@uk-data-atlas/atlas-loader";
-import { PostcodeAreaIndex, NONE, SEVERAL } from "@uk-data-atlas/postcodes";
+import {
+	PostcodeAreaIndex,
+	NONE,
+	SEVERAL,
+} from "@uk-data-atlas/places/postcodes";
 import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
 import { parseLookupCoordinate } from "@uk-data-atlas/geography";
 

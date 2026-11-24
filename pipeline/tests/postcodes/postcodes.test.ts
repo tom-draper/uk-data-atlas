@@ -10,7 +10,7 @@ import {
 	PostcodeIndex,
 	postcodeIndexMismatch,
 	postcodeLookupPoint,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import {
 	postcodeIndexFor,
 	postcodeRow,

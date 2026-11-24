@@ -1,11 +1,11 @@
 import {
 	readSqlitePostcodeShard,
 	readSqlitePostcodeIndex as readPostcodeIndex,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 
 import { parsePostcode } from "@uk-data-atlas/geography";
 import type { PostcodeShard } from "@uk-data-atlas/geography";
-import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
+import { postcodeLookupPoint } from "@uk-data-atlas/places/postcodes";
 import { join } from "node:path";
 
 /**
