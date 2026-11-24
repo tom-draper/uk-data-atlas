@@ -1,43 +1,38 @@
 {
 	"version": 2,
-	"tag": "data-2026-11-23",
-	"commit": "e5bcb8d7dbcdcea6e5d3b0bb9f238e01237ce09e",
+	"tag": "data-2026-11-24",
+	"commit": "ec3dad7de2722b07c954ae35acf1024e1021e67a",
 	"repository": "tom-draper/uk-data-atlas",
 	"assets": [
 		{
-			"name": "data-2026-11-23.1.tar.gz",
-			"bytes": 956944700,
-			"sha256": "8f03443ea7b365181e9940efe82916707a47dca072ec4eedabcea47112a74850"
+			"name": "data-2026-11-24.1.tar.gz",
+			"bytes": 1777348095,
+			"sha256": "7679eec8e9087494ac5823fb744e8429e52ea591b3bcc236e6371552e1276486"
 		},
 		{
-			"name": "data-2026-11-23.2.tar.gz",
-			"bytes": 975451942,
-			"sha256": "40ce305f7a9d9e3c87f864f85ad80f8e5feab6fb45d17edaa0150f09f08ad5ce"
-		},
-		{
-			"name": "data-2026-11-23.3.tar.gz",
+			"name": "data-2026-11-24.2.tar.gz",
 			"bytes": 653116197,
-			"sha256": "c5b3de934d95f2ca32facf30f84b8a191d66bca487696940d246edc9d91a432c"
+			"sha256": "d2bfcac0ca6b7cd80904587045a251c98a677f4c2a26ed9c1dc21765e78c1483"
 		},
 		{
-			"name": "data-2026-11-23.4.tar.gz",
+			"name": "data-2026-11-24.3.tar.gz",
 			"bytes": 446465548,
-			"sha256": "f2ad33ffcbc77ad8022830cf874aafbb0ca765fdb358acba3d684af5032764c0"
+			"sha256": "35424870f3c43b9d81dd51637f47eb0e5d25d7b73e89064fa8d96366f67c0860"
 		},
 		{
-			"name": "data-2026-11-23.5.tar.gz",
+			"name": "data-2026-11-24.4.tar.gz",
 			"bytes": 586644676,
-			"sha256": "5ace0cea8dc25734651c5b7b64efaecb72aa11467679d28afcaf9a89a533427b"
+			"sha256": "7ab374562fbbd6f8f1fae61ad1d2e9b5e9bb4bd4c88ed791c645eb7175b411ea"
 		},
 		{
-			"name": "data-2026-11-23.6.tar.gz",
-			"bytes": 1016967946,
-			"sha256": "69d6a7a2abdb670d1101489821f5117a1cde0aaccbcc4bcc42f94df9a1999fec"
+			"name": "data-2026-11-24.5.tar.gz",
+			"bytes": 1016039997,
+			"sha256": "b018153d74422d5221ddee6ce28ec94906d7f5459347dbb7de1fa8876f6a785f"
 		},
 		{
-			"name": "data-2026-11-23.7.tar.gz",
-			"bytes": 475462306,
-			"sha256": "e9dc741d01af48201ed804f4c2edc5a1b2ae001e869c1d763068aecd2d192027"
+			"name": "data-2026-11-24.6.tar.gz",
+			"bytes": 655089826,
+			"sha256": "7a841ba970493ffe4654a7429cf6f7a7ed60342c57ea07b879988cacc45d2407"
 		}
 	]
 }
