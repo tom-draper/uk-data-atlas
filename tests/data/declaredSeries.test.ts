@@ -52,3 +52,44 @@ describe("a declared history card", () => {
 		expect(series?.line).toBe("#3b82f6");
 	});
 });
+
+const seriesOf = (type: string, measure: string) =>
+	CHART_DATASET_DEFINITIONS.find(
+		(candidate) => candidate.type === type,
+	)!.chart?.seriesForOptions?.({
+		...DEFAULT_MAP_OPTIONS,
+		[type]: {
+			...(DEFAULT_MAP_OPTIONS as Record<string, object>)[type],
+			measure,
+		},
+	} as MapOptions);
+
+describe("the claimant count history card", () => {
+	it("reads the monthly history, not the single month the map shows", () => {
+		expect(seriesOf("claimant-count", "rate")?.request).toEqual({
+			measure: "claimant-rate",
+			datasetId: "claimant-count-history",
+			geography: "localAuthority",
+			boundaryYear: 2023,
+		});
+		expect(seriesOf("claimant-count", "count")?.request).toEqual({
+			measure: "claimants",
+			datasetId: "claimant-count-history",
+			geography: "localAuthority",
+			boundaryYear: 2023,
+			dimensions: { "age-group": ["16-plus"] },
+		});
+	});
+
+	it("combines the rate over areas by the claimants it counts", () => {
+		const rate = seriesOf("claimant-count", "rate");
+		expect(rate?.countMeasure).toBe("claimants");
+		expect(rate?.countDimensions).toEqual({ "age-group": ["16-plus"] });
+		expect(
+			seriesOf("claimant-count", "count")?.countMeasure,
+		).toBeUndefined();
+		expect(rate?.period).toBe("2013-2026");
+		// The history is a dataset of its own, on one release.
+		expect(rate?.earlier).toBeUndefined();
+	});
+});

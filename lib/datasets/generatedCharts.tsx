@@ -114,7 +114,7 @@ export const CHART_PRESENTATIONS = {
 	"economy-business-activity": Chart7Presentation,
 	"transport-car-availability": Chart8Presentation,
 	"society-child-poverty": Chart7Presentation,
-	"economy-claimant-count": Chart7Presentation,
+	"economy-claimant-count": Chart9Presentation,
 	"housing-council-tax": Chart7Presentation,
 	"society-crime": Chart7Presentation,
 	"transport-electric-vehicle-chargers": Chart7Presentation,
