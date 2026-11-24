@@ -23,6 +23,9 @@ describe("formatRankedValue", () => {
 		expect(value("broadband", 77)).toBe("77.0%");
 		expect(value("mobile-coverage", 31.3)).toBe("31.3%");
 		expect(value("school-performance", 65.4)).toBe("65.4%");
+		expect(value("school-performance-disadvantage", 22.73)).toBe(
+			"22.7 pts behind",
+		);
 		expect(value("jobs", 1000)).toBe("1,000");
 	});
 

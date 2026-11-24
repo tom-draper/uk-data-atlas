@@ -793,6 +793,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		],
 	},
 	"school-performance-disadvantage": {
+		format: { kind: "decimal", digits: 1, suffix: " pts behind" },
 		columns: [
 			changeOnYearBefore("points", (record, year) =>
 				field("series", String(year), "att8Gap")(record),
