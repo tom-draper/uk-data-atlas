@@ -140,6 +140,17 @@ const ALL_BASES: ConversionBasis[] = [
 	"postcodes",
 ];
 
+/**
+ * The England and Wales census tables, published on LSOAs and on MSOAs. The
+ * Scotland tables (UV101b, UV102b, UV113, UV302, UV404) and the Northern
+ * Ireland tables (A01, E01) are published on data zones alone, so no census
+ * figure on a coarser release exists to test against, and they have no case
+ * here. A mid-year estimate on councils is a different count (census day, not
+ * mid-year) and is held under another period, so it would measure the
+ * difference between the two counts and not the conversion. A data zone nests
+ * in its council, so that route is exact; `builtNationCensus.test.ts` checks
+ * that it keeps every count.
+ */
 const CENSUS_TABLES: Array<[string, string]> = [
 	["census-2021-ts001", "usual-residents"],
 	["census-2021-ts003", "households"],
