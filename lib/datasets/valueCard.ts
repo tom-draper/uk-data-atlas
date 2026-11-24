@@ -16,6 +16,27 @@ export interface ValueCardPill {
 }
 
 /**
+ * How a card reads a nation its dataset does not cover, where that nation
+ * publishes the same census measure on its own small areas. Each member is
+ * requested on the nation's data zones and summed to the council, then read
+ * by the card as if it were one of the dataset's records.
+ */
+export interface NationCensusCard {
+	/** The initials of the area codes the dataset itself covers, such as `E`. */
+	covers: readonly string[];
+	/** The measure the dataset's members are counts of. */
+	measure: string;
+	/** The dimension the members belong to. */
+	dimension: string;
+	/** Each record key with the member code it is requested as. */
+	members: ReadonlyArray<{ key: string; code: string }>;
+	/** The card's figures from summed members, or null where one it reads is absent. */
+	fromMetrics(
+		metrics: Readonly<Record<string, number>>,
+	): ValueCardStats | null;
+}
+
+/**
  * A declarative chart card: one headline value with a proportional bar and an
  * optional secondary note. Datasets that fit this shape describe it here
  * rather than shipping their own component, so area resolution (including a
@@ -58,11 +79,13 @@ export interface ValueCardConfig {
 	fromLsoas?(records: unknown[]): ValueCardStats | null;
 	/** Figures read from the map's own hover record, for the active dataset. */
 	fromHover?(data: unknown): ValueCardStats | null;
+	/** How the card reads a nation outside the dataset's coverage. */
+	nations?: NationCensusCard;
 }
 
 type Display = Omit<
 	ValueCardConfig,
-	"fromRecord" | "fromAggregate" | "fromHover" | "fromLsoas"
+	"fromRecord" | "fromAggregate" | "fromHover" | "fromLsoas" | "nations"
 >;
 
 type ValueCardSpec<T, S, A> = Display & {
