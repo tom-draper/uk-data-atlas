@@ -15,7 +15,7 @@ import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import {
 	convertSuppliedCounts,
 	readSuppliedCounts,
-} from "../suppliedConversion";
+} from "./suppliedConversion";
 
 const RULES = QUERY_RULES["POST /crosswalks/{crosswalk-id}:convert"];
 
