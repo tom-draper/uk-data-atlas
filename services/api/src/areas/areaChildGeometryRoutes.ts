@@ -3,7 +3,7 @@ import {
 	GeometryBudget,
 	MAX_GEOMETRY_FEATURES,
 	geometryBudgetProblem,
-} from "../geometryBudget";
+} from "./geometryBudget";
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,
@@ -13,7 +13,7 @@ import { areaNotFound } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
-import { selectAreaChildren } from "../areaChildren";
+import { selectAreaChildren } from "./areaChildren";
 import { readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
 

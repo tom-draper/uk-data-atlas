@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { areaMetrics } from "../areaMetrics";
+import { areaMetrics } from "./areaMetrics";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import type { AreaIdentity } from "@uk-data-atlas/geography";
 import type { GeometryProvenance } from "@uk-data-atlas/geography";

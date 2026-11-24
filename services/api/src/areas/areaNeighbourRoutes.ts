@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { areaMetrics } from "../areaMetrics";
+import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {

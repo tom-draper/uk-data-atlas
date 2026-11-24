@@ -1,4 +1,4 @@
-import { GeometryBudget, geometryBudgetProblem } from "../geometryBudget";
+import { GeometryBudget, geometryBudgetProblem } from "./geometryBudget";
 import {
 	GENERALISATION_METHOD,
 	GEOMETRY_TIERS,

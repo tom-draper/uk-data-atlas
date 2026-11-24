@@ -16,7 +16,7 @@ import { refused } from "../observationResolution/observationPlan";
 import { publishedPartitions } from "../data/dataDefaults";
 import { QUERY_RULES } from "../queryRules";
 import { selectSourcePartition } from "../data/sourcePartition";
-import { similarAreas } from "../similarAreas";
+import { similarAreas } from "./similarAreas";
 import { measureSeriesKey } from "@uk-data-atlas/measures";
 
 const MAX_MEASURES = 10;

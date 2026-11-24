@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { similarAreas } from "../src/similarAreas";
+import { similarAreas } from "../src/areas/similarAreas";
 
 test("finds z-score Euclidean neighbours from hand-computed values", () => {
 	const result = similarAreas({
