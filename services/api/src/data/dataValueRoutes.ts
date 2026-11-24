@@ -3,7 +3,7 @@ import { requireGeography } from "../runtime/index.ts";
 import { isCountryCode } from "../aggregation/aggregation";
 import { aggregateValue } from "./dataAggregateRoutes";
 import type { Measure, Series } from "@uk-data-atlas/measures";
-import { CONTAINMENT_NOTE, countryOfCode } from "../pointLookup";
+import { CONTAINMENT_NOTE, countryOfCode } from "../coordinates/pointLookup";
 import {
 	findPostcode,
 	POSTCODE_NOTE,

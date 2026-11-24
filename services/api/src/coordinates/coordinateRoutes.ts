@@ -6,7 +6,7 @@ import {
 	parseLookupCoordinate,
 	parseLookupCrs,
 	parseStatedAccuracy,
-} from "../pointLookup";
+} from "./pointLookup";
 import { fromWgs84Point } from "@uk-data-atlas/geography";
 import {
 	envelope,

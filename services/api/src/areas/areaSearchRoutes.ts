@@ -3,7 +3,7 @@ import { paginate } from "../http/pagination";
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaNotFound } from "../runtime/index.ts";
-import { latestPublishedBoundaryRelease } from "../pointLookup";
+import { latestPublishedBoundaryRelease } from "../coordinates/pointLookup";
 
 /**
  * List compiled area identities with stable cursor pagination. Finding an

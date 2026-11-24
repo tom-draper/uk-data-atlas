@@ -9,7 +9,7 @@ import {
 	type LookupPoint,
 	type PointMatch,
 	type PointResult,
-} from "../pointLookup";
+} from "../coordinates/pointLookup";
 import { compactPostcode } from "@uk-data-atlas/geography";
 import type { RouteContext, RouteContextFor } from "../runtime/index.ts";
 

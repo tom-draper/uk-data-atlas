@@ -1,7 +1,7 @@
 import { requireGeography } from "../runtime/index.ts";
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "../pairOverlap";
 import { areaNotFound } from "../runtime/index.ts";
-import { latestPublishedBoundaryRelease } from "../pointLookup";
+import { latestPublishedBoundaryRelease } from "../coordinates/pointLookup";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,

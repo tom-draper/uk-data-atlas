@@ -6,7 +6,7 @@ import {
 	parseLookupRequest,
 	type LookupPoint,
 	type PointResult,
-} from "../pointLookup";
+} from "../coordinates/pointLookup";
 import { compactPostcode, parsePostcode } from "@uk-data-atlas/geography";
 import {
 	postcodeLookupPoint,

@@ -5,7 +5,7 @@ import {
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles";
 import { cursorFor, nextPageHref, readCursor } from "../http/pagination";
-import { latestPublishedBoundaryRelease } from "../pointLookup";
+import { latestPublishedBoundaryRelease } from "../coordinates/pointLookup";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
