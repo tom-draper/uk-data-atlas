@@ -5,7 +5,7 @@ import {
 	datasetAliasOf,
 	REGISTERED_DATASETS,
 } from "@uk-data-atlas/datasets/registry";
-import { resolveDatasetAliases } from "../src/datasetAliasRequests";
+import { resolveDatasetAliases } from "../src/catalogue/datasetAliasRequests";
 import { route } from "./boundRoute";
 import { dataCatalog, registry, testContext } from "./routeFixtures";
 

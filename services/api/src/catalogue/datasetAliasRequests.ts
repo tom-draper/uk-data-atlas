@@ -1,5 +1,5 @@
 import { datasetAliasOf } from "@uk-data-atlas/datasets/registry";
-import { envelope, type ApiResponse } from "./runtime/index.ts";
+import { envelope, type ApiResponse } from "../runtime/index.ts";
 
 /** What to do with a request that names a retired dataset id. */
 export type AliasedRequest =
