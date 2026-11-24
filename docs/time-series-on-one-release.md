@@ -50,7 +50,7 @@ Each entry in `series` carries:
     - `weighted`: at least part of the value was split from a source area the
       target cuts across, in proportion to a weight. Its `exactShare` is the
       share that did not pass through a split, read from `series_estimate`.
-- `source` (converted values only): `release`, `rule` (`sum` or `rebuild`),
+- `source` (converted values only): `release`, `rule` (`sum`, `rebuild` or `carry`),
   `basis` (the weight basis, such as `population`), `crosswalks` (the chain,
   in order), and `seriesCoverage` (the share of the areas the converted series
   reaches that hold a value).
@@ -86,9 +86,13 @@ decides from the measure's declaration:
   never averaged. A rebuilt ratio is kept only where both parts regrouped
   exactly. A part that was split gives a `split-ratio` gap, because the error
   of a split numerator over a split denominator has not been backtested.
-- **refuse** (medians, indices, shares with no stated parts): no converted
-  value exists, and each period is a gap with reason `refused-measure`. The
-  gap also carries the stored reason.
+- **carry** (medians, means and rates whose parts are not held): the value is
+  carried unchanged onto an area that is the whole of one source area, so an
+  unchanged area keeps its series. An area made from more than one source
+  area, or part of one, is a `not-combinable` gap.
+- **refuse** (ranks, indices, categories): no converted value exists, and each
+  period is a gap with reason `refused-measure`. The gap also carries the
+  stored reason.
 
 Some selectors are refused with a 422 before any read: contest winners (a
 category, not a value), sums across measures (`plus`), half-width intervals,
