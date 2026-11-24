@@ -15,7 +15,7 @@ import { createApiServer } from "../src/apiServer";
 import { createOperationMatcher } from "../src/runtime/index.ts";
 import { compileOperations } from "./pipelineFixtures";
 import type { ServerOptions } from "../src/serverOptions";
-import { UsageStore } from "../src/usageStore";
+import { UsageStore } from "../src/usage/usageStore";
 import {
 	atlasRelease,
 	compatibleWardAreaLookup,

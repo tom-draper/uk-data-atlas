@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
-import { usageReport } from "../src/usageReport";
-import { USAGE_FILE, UsageStore } from "../src/usageStore";
+import { usageReport } from "../src/usage/usageReport";
+import { USAGE_FILE, UsageStore } from "../src/usage/usageStore";
 
 /**
  * Prints what the API was asked for, from the daily counts a server keeps

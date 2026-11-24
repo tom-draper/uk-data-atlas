@@ -4,7 +4,7 @@ import {
 	classifyUsage,
 	usageVocabulary,
 	type UsageRequest,
-} from "../src/usageLabels";
+} from "../src/usage/usageLabels";
 import { dataCatalog, registry } from "./routeFixtures";
 
 const vocabulary = usageVocabulary(dataCatalog, registry);
