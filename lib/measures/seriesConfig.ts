@@ -20,6 +20,11 @@ export interface SeriesCardConfig {
 	countMeasure?: string;
 	/** The member of each dimension of `countMeasure` to read, where not the default. */
 	countDimensions?: Record<string, string[]>;
+	/**
+	 * Earlier boundary years whose releases hold an area's periods from
+	 * before its code changed, under the code it had then.
+	 */
+	earlier?: number[];
 	/** Where the series breaks: the first period after each break, and what changed. */
 	breaks?: Array<{ period: string; label: string }>;
 	/** How areas combine before one is chosen; added up where absent. */

@@ -8,6 +8,12 @@ import {
 import { SparklineBackground } from "@/components/measures/SparklineBackground";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ratioSeries, readSeries } from "@/lib/measures/combine";
+import {
+	type EarlierArea,
+	type EarlierPayload,
+	useEarlierSeries,
+	withEarlierPeriods,
+} from "@/lib/measures/earlier";
 import { formatMeasureValue } from "@/lib/measures/presentation";
 import { requestAreas } from "@/lib/measures/scope";
 import { latestPoint, numericPoints, sparkline } from "@/lib/measures/series";
@@ -45,7 +51,8 @@ export function breakPositions(
 /**
  * What a card shows of one area's history, or, with no area, of every area
  * in the response together. A rate with the counts it is of combines by their
- * implied base; a measure that adds up is summed. Null if there are no values.
+ * implied base; a measure that adds up is summed. An area's periods under
+ * earlier codes fill those before its own. Null if there are no values.
  */
 export function seriesView(
 	payload: MeasureValuesPayload,
@@ -53,11 +60,19 @@ export function seriesView(
 	counts?: MeasureValuesPayload | null,
 	combine?: "mean",
 	breaks: ReadonlyArray<{ period: string }> = [],
+	earlier: readonly EarlierPayload[] = [],
 ): SeriesView | null {
 	const points =
 		area === null && counts
 			? ratioSeries(payload, counts)
-			: readSeries(payload, area, combine);
+			: area !== null && earlier.length
+				? withEarlierPeriods(
+						readSeries(payload, area, combine),
+						earlier.map((e) =>
+							readSeries(e.payload, e.area, combine),
+						),
+					)
+				: readSeries(payload, area, combine);
 	const latest = latestPoint(points);
 	if (!latest) return null;
 	const drawn = numericPoints(points);
@@ -82,6 +97,8 @@ export function seriesView(
 	};
 }
 
+const NONE: readonly EarlierArea[] = [];
+
 type Props = {
 	/** The measure and the geography it is read at. */
 	request: Omit<MeasureValuesRequest, "periods" | "areas">;
@@ -93,6 +110,8 @@ type Props = {
 	countMeasure?: string;
 	/** The member of each dimension of `countMeasure` to read, where not the default. */
 	countDimensions?: Record<string, string[]>;
+	/** The selected area's earlier codes and the releases that hold them. */
+	earlier?: readonly EarlierArea[];
 	/** Where the series breaks, marked on the line. */
 	breaks?: ReadonlyArray<{ period: string }>;
 	/** How areas combine before one is chosen; added up where absent. */
@@ -122,6 +141,7 @@ export function MeasureSeriesCard({
 	area,
 	countMeasure,
 	countDimensions,
+	earlier = NONE,
 	breaks,
 	combine,
 	heading,
@@ -148,21 +168,25 @@ export function MeasureSeriesCard({
 				}
 			: null,
 	);
+	const before = useEarlierSeries(request, area === null ? NONE : earlier);
 	// A rate shown for every area needs the counts it is of, so waits for them.
 	const waitingOnCounts = !area && countMeasure && counts.status !== "ready";
+	const waitingOnEarlier = before.status === "loading";
 	const view =
-		state.status === "ready" && !waitingOnCounts
+		state.status === "ready" && !waitingOnCounts && !waitingOnEarlier
 			? seriesView(
 					state.data,
 					area,
 					counts.status === "ready" ? counts.data : null,
 					combine,
 					breaks,
+					before.status === "ready" ? before.value : [],
 				)
 			: null;
 	const loading =
 		state.status === "loading" ||
 		counts.status === "loading" ||
+		waitingOnEarlier ||
 		chartsLoading ||
 		scope === null;
 

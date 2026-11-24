@@ -10,6 +10,7 @@ import { MeasureSeriesCard } from "@/components/measures/MeasureSeriesCard";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { areaForMeasure, wardsWithin } from "@/lib/measures/area";
+import { earlierAreas } from "@/lib/measures/earlier";
 import { areaCodesInScope } from "@/lib/measures/scope";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
