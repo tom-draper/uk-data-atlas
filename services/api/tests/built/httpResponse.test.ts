@@ -9,7 +9,7 @@ import {
 	httpResponse,
 	matchesEntityTag,
 	preflightResponse,
-} from "../../src/httpResponse";
+} from "../../src/http/httpResponse";
 import type { ApiResponse } from "../../src/runtime/index.ts";
 import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";

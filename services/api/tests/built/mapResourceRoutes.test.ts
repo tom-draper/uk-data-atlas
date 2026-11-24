@@ -5,7 +5,7 @@ import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
-import { httpResponse } from "../../src/httpResponse";
+import { httpResponse } from "../../src/http/httpResponse";
 import { isStoredFile } from "../../src/runtime/index.ts";
 import { route } from "../boundRoute";
 import { readApiCatalogues } from "../../src/server";

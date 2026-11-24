@@ -2,8 +2,8 @@ import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { indexResponse } from "./indexRoutes";
 import { getOnlyMethodNotAllowed } from "../routeHandlers";
-import { httpResponse } from "../httpResponse";
-import { sendFastifyResponse } from "../fastifyResponse";
+import { httpResponse } from "../http/httpResponse";
+import { sendFastifyResponse } from "../http/fastifyResponse";
 import { registerGetRoute, type ContractDispatch } from "./registerGetRoute";
 import { rootContract } from "./rootContract";
 

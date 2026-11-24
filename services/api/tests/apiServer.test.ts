@@ -16,7 +16,7 @@ import { observationArtifactName } from "@uk-data-atlas/catalogue/node";
 import { readParquet } from "./parquetFixtures";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
-import { httpResponse } from "../src/httpResponse";
+import { httpResponse } from "../src/http/httpResponse";
 import { route } from "./boundRoute";
 import { indexResponse } from "../src/contract/indexRoutes";
 import { getOnlyMethodNotAllowed } from "../src/routeHandlers";

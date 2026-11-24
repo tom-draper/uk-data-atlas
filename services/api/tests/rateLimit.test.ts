@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { clientAddress, clientKey, RateLimiter } from "../src/rateLimit";
+import { clientAddress, clientKey, RateLimiter } from "../src/http/rateLimit";
 
 test("spends a burst and earns requests back at the refill rate", () => {
 	let now = 0;

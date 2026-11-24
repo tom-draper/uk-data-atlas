@@ -19,7 +19,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "../runtime/index.ts";
-import { readBatchInput } from "../batchInput";
+import { readBatchInput } from "../http/batchInput";
 import type {
 	RouteRequestFor,
 	RouteContextFor,

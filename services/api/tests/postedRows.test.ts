@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "vitest";
 import { gzipSync } from "node:zlib";
 import type { MapResourceDescriptor } from "@uk-data-atlas/map-tiles";
-import { readPostedRows } from "../src/requestRows";
+import { readPostedRows } from "../src/http/requestRows";
 import { route, routeAsync } from "./boundRoute";
 import type { RequestBody, RouteContext } from "../src/runtime/index.ts";
 import { areaLookup, registry, testContext } from "./routeFixtures";

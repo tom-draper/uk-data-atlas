@@ -20,7 +20,7 @@ import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
 } from "../sourceExactProvenance.ts";
-import { nextPageHref, paginate } from "../pagination";
+import { nextPageHref, paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {

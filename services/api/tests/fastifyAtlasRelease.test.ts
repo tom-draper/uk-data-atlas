@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import Fastify from "fastify";
 import { atlasReleaseEnvelope } from "../src/contract/atlasRelease";
 import { atlasReleaseRoutes } from "../src/contract/atlasReleaseRoutes";
-import { httpResponse } from "../src/httpResponse";
+import { httpResponse } from "../src/http/httpResponse";
 import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 

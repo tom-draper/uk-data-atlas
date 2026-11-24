@@ -5,7 +5,7 @@ import {
 	type ConversionStep,
 } from "@uk-data-atlas/measures";
 import type { PopulationObservation } from "@uk-data-atlas/measures";
-import type { PostedRows } from "./requestRows";
+import type { PostedRows } from "./http/requestRows";
 
 type Count = Pick<PopulationObservation, "areaCode" | "value">;
 type RejectedRow = {

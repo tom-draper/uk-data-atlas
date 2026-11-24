@@ -1,7 +1,7 @@
 import { monitorEventLoopDelay } from "node:perf_hooks";
 import type { AreaGeometryCacheStats } from "@uk-data-atlas/geometry";
 import type { LocationProjectionCacheStats } from "@uk-data-atlas/places";
-import type { ResponseCacheStats } from "./responseCache";
+import type { ResponseCacheStats } from "./http/responseCache";
 import type { UsageEvent } from "./usageLabels";
 
 /**

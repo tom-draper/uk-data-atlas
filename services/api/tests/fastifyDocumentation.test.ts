@@ -4,7 +4,7 @@ import { test } from "vitest";
 import { gunzipSync } from "node:zlib";
 import Fastify from "fastify";
 import { documentationRoutes } from "../src/contract/documentationRoutes";
-import { httpResponse } from "../src/httpResponse";
+import { httpResponse } from "../src/http/httpResponse";
 import { route } from "./boundRoute";
 import { testContext } from "./routeFixtures";
 import { createContractApp } from "../src/contract/generatedRoutes";

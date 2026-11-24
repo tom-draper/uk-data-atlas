@@ -4,7 +4,7 @@ import {
 	MAX_CACHED_BODY_BYTES,
 	ResponseCache,
 	type CachedAnswer,
-} from "../src/responseCache";
+} from "../src/http/responseCache";
 
 const answer = (body: string | Buffer): CachedAnswer => ({
 	status: 200,

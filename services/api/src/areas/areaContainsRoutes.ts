@@ -26,7 +26,7 @@ import {
 	problem,
 	type ApiResponse,
 } from "../runtime/index.ts";
-import { readBatchInput } from "../batchInput";
+import { readBatchInput } from "../http/batchInput";
 import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
