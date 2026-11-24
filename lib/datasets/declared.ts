@@ -246,6 +246,7 @@ const seriesFor = (
 		},
 		...(counted ? { countMeasure: counted.measure } : {}),
 		...(counted?.dimensions ? { countDimensions: counted.dimensions } : {}),
+		...(series.breaks ? { breaks: series.breaks } : {}),
 		...(series.combine ? { combine: series.combine } : {}),
 		heading: series.headings?.[measureId] ?? series.heading,
 		period: series.period,

@@ -22,7 +22,25 @@ type SeriesView = {
 	value: string;
 	period: string;
 	line: ReturnType<typeof sparkline>;
+	/** Where each break falls across the line, from 0 to 100. */
+	breaks: number[];
 };
+
+/**
+ * Where each break falls across a line through these periods, from 0 to 100:
+ * halfway between the last period before it and the first from it. A break
+ * outside the line, or at its first point, is not drawn.
+ */
+export function breakPositions(
+	periods: readonly string[],
+	breaks: ReadonlyArray<{ period: string }>,
+): number[] {
+	if (periods.length < 2) return [];
+	return breaks.flatMap(({ period }) => {
+		const at = periods.findIndex((p) => p >= period);
+		return at > 0 ? [((at - 0.5) / (periods.length - 1)) * 100] : [];
+	});
+}
 
 /**
  * What a card shows of one area's history, or, with no area, of every area
@@ -34,6 +52,7 @@ export function seriesView(
 	area: string | null,
 	counts?: MeasureValuesPayload | null,
 	combine?: "mean",
+	breaks: ReadonlyArray<{ period: string }> = [],
 ): SeriesView | null {
 	const points =
 		area === null && counts
@@ -41,6 +60,7 @@ export function seriesView(
 			: readSeries(payload, area, combine);
 	const latest = latestPoint(points);
 	if (!latest) return null;
+	const drawn = numericPoints(points);
 	return {
 		value: formatMeasureValue(
 			payload.measure.valueKind,
@@ -49,11 +69,15 @@ export function seriesView(
 		),
 		period: latest.period,
 		line: sparkline(
-			numericPoints(points).map((point) => point.value),
+			drawn.map((point) => point.value),
 			{
 				margin: 0,
 				padY: 12,
 			},
+		),
+		breaks: breakPositions(
+			drawn.map((point) => point.period),
+			breaks,
 		),
 	};
 }
@@ -69,6 +93,8 @@ type Props = {
 	countMeasure?: string;
 	/** The member of each dimension of `countMeasure` to read, where not the default. */
 	countDimensions?: Record<string, string[]>;
+	/** Where the series breaks, marked on the line. */
+	breaks?: ReadonlyArray<{ period: string }>;
 	/** How areas combine before one is chosen; added up where absent. */
 	combine?: "mean";
 	heading: string;
@@ -96,6 +122,7 @@ export function MeasureSeriesCard({
 	area,
 	countMeasure,
 	countDimensions,
+	breaks,
 	combine,
 	heading,
 	accent,
@@ -130,6 +157,7 @@ export function MeasureSeriesCard({
 					area,
 					counts.status === "ready" ? counts.data : null,
 					combine,
+					breaks,
 				)
 			: null;
 	const loading =
@@ -159,6 +187,7 @@ export function MeasureSeriesCard({
 						]}
 						strokeWidth={1.5}
 						marker
+						breaks={view.breaks}
 					/>
 				)
 			}

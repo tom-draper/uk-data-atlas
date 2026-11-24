@@ -2,9 +2,11 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
+	breakPositions,
 	MeasureSeriesCard,
 	seriesView,
 } from "@/components/measures/MeasureSeriesCard";
+import { SparklineBackground } from "@/components/measures/SparklineBackground";
 import type { MeasureValuesPayload } from "@/lib/measures/types";
 
 const payload = (
@@ -87,6 +89,59 @@ describe("seriesView", () => {
 				"E9",
 			),
 		).toBeNull();
+	});
+});
+
+describe("series breaks", () => {
+	it("falls halfway between the last period before a break and the first from it", () => {
+		expect(
+			breakPositions(
+				["2019", "2020", "2021", "2022", "2023"],
+				[{ period: "2021" }],
+			),
+		).toEqual([37.5]);
+	});
+
+	it("is not drawn before the line starts, after it ends or on one point", () => {
+		const years = ["2019", "2020", "2021"];
+		expect(breakPositions(years, [{ period: "2010" }])).toEqual([]);
+		expect(breakPositions(years, [{ period: "2030" }])).toEqual([]);
+		expect(breakPositions(["2021"], [{ period: "2021" }])).toEqual([]);
+	});
+
+	it("falls among the periods that have values, as the line is drawn", () => {
+		const view = seriesView(
+			payload("currency", "gbp", [
+				{ period: "2019", values: [null] },
+				{ period: "2020", values: [100] },
+				{ period: "2021", values: [110] },
+				{ period: "2022", values: [120] },
+			]),
+			"E1",
+			null,
+			undefined,
+			[{ period: "2021" }],
+		)!;
+		expect(view.breaks).toEqual([25]);
+	});
+
+	it("draws each break as a dashed line across the card", () => {
+		const html = renderToStaticMarkup(
+			createElement(SparklineBackground, {
+				sparkline: {
+					linePath: "M 0,0 L 100,100",
+					areaPath: "",
+					last: { x: 100, y: 100 },
+				},
+				color: "#000",
+				gradientId: "g",
+				fade: [],
+				strokeWidth: 1,
+				breaks: [40],
+			}),
+		);
+		expect(html).toContain('x1="40"');
+		expect(html).toContain("stroke-dasharray");
 	});
 });
 

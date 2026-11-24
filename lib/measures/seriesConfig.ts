@@ -20,6 +20,8 @@ export interface SeriesCardConfig {
 	countMeasure?: string;
 	/** The member of each dimension of `countMeasure` to read, where not the default. */
 	countDimensions?: Record<string, string[]>;
+	/** Where the series breaks: the first period after each break, and what changed. */
+	breaks?: Array<{ period: string; label: string }>;
 	/** How areas combine before one is chosen; added up where absent. */
 	combine?: "mean";
 	heading: string;
