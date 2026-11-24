@@ -19,6 +19,7 @@ import {
 	resolveValueCardStats,
 } from "@/lib/helpers/valueCardStats";
 import { useLsoaToLad } from "@/lib/hooks/useLsoaToLad";
+import { useNationCensusCard } from "@/lib/hooks/useNationCensusCard";
 import { useMemo } from "react";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import type { ActiveViz } from "@/lib/types";
@@ -87,8 +88,14 @@ export default function ValueCard({
 				: null,
 		[dataset, lsoaToLad],
 	);
-	const resolved =
-		card && dataset
+	// An area in a nation the dataset leaves out is read from that nation's
+	// own census, labelled with its year and publisher.
+	const nation = useNationCensusCard(card, selectedArea, codeMapper);
+	const resolved = nation
+		? nation.stats
+			? { stats: nation.stats, viaLocalAuthority: false }
+			: null
+		: card && dataset
 			? resolveValueCardStats(
 					card,
 					dataset,
@@ -105,12 +112,20 @@ export default function ValueCard({
 	);
 	if (!card || !dataset) return null;
 
-	const heading = `${card.heading} [${card.period ?? dataset.year}]`;
+	const period = nation
+		? (nation.period ?? nation.nation)
+		: (card.period ?? dataset.year);
+	const heading = `${card.heading} [${period}]`;
+	const emptyMessage = nation?.status === "ready" ? nation.note : undefined;
 	const value = resolved?.stats.value;
 
 	return (
 		<ChartCard
-			coverage={formatDatasetCoverage(dataset) ?? card.coverage}
+			coverage={
+				nation
+					? `Here: ${nation.nation}. Elsewhere: ${formatDatasetCoverage(dataset) ?? card.coverage ?? "England & Wales"}, counted in ${card.period ?? dataset.year}.`
+					: (formatDatasetCoverage(dataset) ?? card.coverage)
+			}
 			heading={heading}
 			headingClassName="min-w-0 truncate"
 			headingTitle={card.headingTitle ?? heading}
@@ -129,7 +144,7 @@ export default function ValueCard({
 				) : undefined
 			}
 			isActive={isActive}
-			title={card.source}
+			title={nation ? nation.source || undefined : card.source}
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,
@@ -199,7 +214,15 @@ export default function ValueCard({
 					hasData={value !== undefined}
 					value={value !== undefined ? formatValue(card, value) : "—"}
 					unit={card.unit}
-					secondary={resolved?.stats.secondary}
+					secondary={
+						nation?.stats
+							? [resolved?.stats.secondary, nation.note]
+									.filter(Boolean)
+									.join(". ")
+							: resolved?.stats.secondary
+					}
+					emptyMessage={emptyMessage}
+					loading={nation?.status === "loading"}
 					barWidth={
 						value !== undefined
 							? Math.max(
