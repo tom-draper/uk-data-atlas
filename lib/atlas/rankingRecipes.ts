@@ -191,26 +191,48 @@ const per100k = column("Per 100,000 residents", "count", (record) =>
 	field("metrics", "per100kPopulation")(record),
 );
 
-/** Residents of each council in the newest population year up to `year`. */
-function residents(context: RankingContext, code: string) {
+/** The people of `fromAge` and over in a record's counts by single year of age. */
+const peopleFrom = (ages: unknown, fromAge: number) =>
+	ages && typeof ages === "object"
+		? Object.entries(ages).reduce<number>(
+				(sum, [age, count]) =>
+					Number(age) >= fromAge ? sum + (num(count) ?? 0) : sum,
+				0,
+			)
+		: 0;
+
+/**
+ * Residents of each council, of `fromAge` and over, in the newest population
+ * year up to `year`.
+ */
+function residents(context: RankingContext, code: string, fromAge = 0) {
 	const editions = context.inputs["population-uk"] as Editions;
 	let best: { year: number; total: number } | null = null;
 	for (const edition of Object.values(editions)) {
 		const year = edition.year ?? 0;
 		if (year > context.year || (best && year <= best.year)) continue;
 		const record = edition.data[code];
-		if (record) best = { year, total: sumValues(record.total) };
+		if (record) best = { year, total: peopleFrom(record.total, fromAge) };
 	}
 	return best?.total || null;
 }
 
-const perThousandResidents: RankingColumn = {
-	label: "Per 1,000 residents",
+const perThousand = (label: string, fromAge = 0): RankingColumn => ({
+	label,
 	format: "count",
 	value: (row, context) => {
-		const people = residents(context, row.district);
+		const people = residents(context, row.district, fromAge);
 		return people ? (row.value / people) * 1000 : null;
 	},
+});
+
+const perThousandResidents = perThousand("Per 1,000 residents");
+
+/** Median annual pay's change on the year before, as published. */
+const payChange: RankingColumn = {
+	label: (context) => `Change since ${context.year - 1}`,
+	format: "signedPercent",
+	value: (row) => field("annual", "medianPercentageChange")(row.record),
 };
 
 const breakdownShare = (label: string, ...keys: string[]) =>
@@ -610,16 +632,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		],
 	},
 	imd: deprivationRecipe("ladCode", decileField("imdDecile")),
-	income: {
-		columns: [
-			{
-				label: (context) => `Change since ${context.year - 1}`,
-				format: "signedPercent",
-				value: (row) =>
-					field("annual", "medianPercentageChange")(row.record),
-			},
-		],
-	},
+	income: { columns: [payChange] },
 	jobs: {
 		// Published to the nearest thousand: "1,000", not "1k" like its legend.
 		format: { kind: "count", locale: "en-GB", round: true },
