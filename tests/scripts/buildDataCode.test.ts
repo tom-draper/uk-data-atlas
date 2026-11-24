@@ -359,18 +359,19 @@ test("production builders resolve without UI code and include declared workers a
 			.get("datasets")!
 			.includes("pipeline/src/precompile/datasetWorker.ts"),
 	);
-	assert.ok(
-		inputs
-			.get("map-resource")!
-			.includes("pipeline/src/maps/compileGeometryValidity.ts"),
-	);
 	for (const path of [
 		"pipeline/src/maps/buildMapResource.ts",
 		"pipeline/src/maps/compileMapResource.ts",
+		"pipeline/src/maps/mapResourceWorker.ts",
 		"pipeline/src/atlas/flatDownloads.ts",
 	]) {
 		assert.ok(inputs.get("map-resource")!.includes(path), path);
 	}
+	assert.ok(
+		inputs
+			.get("geometry-store")!
+			.includes("pipeline/src/maps/compileGeometryValidity.ts"),
+	);
 	assert.ok(
 		inputs
 			.get("crosswalk-inventory")!
