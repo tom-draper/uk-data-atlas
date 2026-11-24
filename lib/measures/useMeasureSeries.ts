@@ -1,17 +1,34 @@
 "use client";
 
-import { ALL_PERIODS } from "./request";
+import { useMemo } from "react";
+import { loadMeasureHistory } from "./history";
+import { ALL_PERIODS, measureValuesUrl } from "./request";
 import type { MeasureValuesRequest } from "./types";
-import { useMeasureValues, type MeasureValuesState } from "./useMeasureValues";
+import { useAreaFilter } from "./useAreaFilter";
+import { useLoaded } from "./useLoaded";
+import type { MeasureValuesState } from "./useMeasureValues";
 
 /**
- * A measure's values in every period it has, newest MAX_PERIODS, in one
- * request. `request` must not name periods. Pass null to read nothing.
+ * A measure's values in every period its source publishes, however many,
+ * cut down to `request.areas`. `request` must not name periods. Pass null to
+ * read nothing.
  */
 export function useMeasureSeries(
-	request: Omit<MeasureValuesRequest, "periods"> | null,
+	request: Omit<MeasureValuesRequest, "periods" | "parents"> | null,
 ): MeasureValuesState {
-	return useMeasureValues(
-		request ? { ...request, periods: [ALL_PERIODS] } : null,
+	const { areas, ...whole } = request ?? { measure: "" };
+	const loaded = useLoaded(
+		request && {
+			key: measureValuesUrl({ ...whole, periods: [ALL_PERIODS] }),
+			load: () => loadMeasureHistory(whole),
+		},
 	);
+	const filter = useAreaFilter(areas);
+	return useMemo(() => {
+		if (loaded.status !== "ready") return loaded;
+		return {
+			status: "ready",
+			data: filter ? filter(loaded.value) : loaded.value,
+		};
+	}, [loaded, filter]);
 }
