@@ -36,6 +36,8 @@ type Props = {
 	coverage?: string;
 	/** A note for the card once it has data, such as that a ward shows its authority's figure. */
 	estimateNote?: (hasData: boolean) => string | undefined;
+	/** What to say when there is nothing to draw, such as that a nation does not publish it. */
+	emptyMessage?: string;
 	isActive: boolean;
 	onClick: () => void;
 };
@@ -59,6 +61,7 @@ export function MeasureBreakdownCard({
 	title,
 	coverage,
 	estimateNote,
+	emptyMessage,
 	isActive,
 	onClick,
 }: Props) {
@@ -112,7 +115,7 @@ export function MeasureBreakdownCard({
 						<div
 							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
-							No data available
+							{emptyMessage ?? "No data available"}
 						</div>
 					)}
 				</div>

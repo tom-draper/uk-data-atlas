@@ -7,7 +7,10 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { MeasureBreakdownCard } from "@/components/measures/MeasureBreakdownCard";
-import { formatDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import {
+	formatDatasetCoverage,
+	nationOutsideCoverage,
+} from "@/lib/helpers/datasetCoverage";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { areaForMeasure } from "@/lib/measures/area";
 import { areaCodesInScope } from "@/lib/measures/scope";
@@ -50,19 +53,28 @@ export default function MeasureBreakdownChart({
 	)?.[year];
 	if (!breakdown || !dataset) return null;
 
-	const area =
-		areaForMeasure(
-			selectedArea,
-			breakdown.request.geography,
-			breakdown.request.boundaryYear,
-			codeMapper as (CodeYearResolver & LadResolver) | undefined,
-		) ?? null;
-
 	const isActive =
 		activeDataset?.type === dataset.type && activeDataset.id === dataset.id;
 	// The legend filter only applies while this dataset is on the map.
 	const filtered = isActive && breakdown.legendFilter === true;
 	const legend = categories[dataset.type];
+	// An area in a nation the dataset leaves out has no figure to read, so the
+	// card says the nation does not publish it rather than that it is missing.
+	const nation = nationOutsideCoverage(
+		dataset.coverageCountries,
+		selectedArea?.code,
+	);
+	const coverage = breakdown.coverage ?? formatDatasetCoverage(dataset);
+	// Such an area keeps its own code, so the card never falls back to the
+	// other nations' total while it is selected.
+	const area = nation
+		? (selectedArea?.code ?? null)
+		: (areaForMeasure(
+				selectedArea,
+				breakdown.request.geography,
+				breakdown.request.boundaryYear,
+				codeMapper as (CodeYearResolver & LadResolver) | undefined,
+			) ?? null);
 
 	return (
 		<MeasureBreakdownCard
@@ -81,9 +93,16 @@ export default function MeasureBreakdownChart({
 							(!legend?.selected || label === legend.selected)
 					: undefined,
 			}}
-			heading={`${breakdown.heading} [${breakdown.period}]`}
+			heading={`${breakdown.heading} [${nation ?? breakdown.period}]`}
 			title={breakdown.source}
-			coverage={breakdown.coverage ?? formatDatasetCoverage(dataset)}
+			coverage={
+				nation
+					? `Here: ${nation}, not published. Elsewhere: ${coverage ?? "England & Wales"}, ${breakdown.period}.`
+					: coverage
+			}
+			emptyMessage={
+				nation ? `Not published in this form for ${nation}` : undefined
+			}
 			estimateNote={(hasData) =>
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
