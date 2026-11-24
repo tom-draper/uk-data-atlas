@@ -71,13 +71,9 @@ export function MeasureMap({ tiles, colors, selected, onSelect }: Props) {
 				);
 		};
 		void (async () => {
-			const [maplibre, { Protocol }] = await Promise.all([
-				import("maplibre-gl"),
-				import("pmtiles"),
-			]);
+			const { Map } = await import("@/lib/map/maplibre");
 			if (cancelled || !container.current) return;
-			maplibre.addProtocol("pmtiles", new Protocol().tile);
-			const engine = new maplibre.Map({
+			const engine = new Map({
 				container: container.current,
 				style: STYLE,
 				center: [-2.5, 54.5],
