@@ -3,6 +3,8 @@ import { stageScope } from "./build-data-cache.mjs";
 const overlaps = (a, b) =>
 	a === b || a.startsWith(`${b}/`) || b.startsWith(`${a}/`);
 
+/** @typedef {{ name: string, cacheable?: boolean, writes?: string[], outputs?: string[], requiredOutputs?: string[], dependencies?: string[], dependencyOutputs?: Record<string, string[]> }} StageOwnership */
+
 /**
  * A stage owns the paths it declares, and no other stage may declare a path
  * inside them. The one stage that owns none is a download that is never
@@ -11,11 +13,12 @@ const overlaps = (a, b) =>
  *
  * Returns what breaks that rule, one line per problem.
  *
- * @param {Array<{ name: string, cacheable?: boolean, writes?: string[], outputs?: string[], requiredOutputs?: string[] }>} stages
+ * @param {StageOwnership[]} stages
  */
 export function ownershipProblems(stages) {
 	const problems = [];
 	const scoped = [];
+	const byName = new Map(stages.map((stage) => [stage.name, stage]));
 	for (const stage of stages) {
 		const scope = stageScope(stage);
 		if (scope) scoped.push({ name: stage.name, scope });
@@ -23,6 +26,36 @@ export function ownershipProblems(stages) {
 			problems.push(
 				`${stage.name} declares no paths. Every stage must declare the files and folders it writes.`,
 			);
+		for (const [name, paths] of Object.entries(
+			stage.dependencyOutputs ?? {},
+		)) {
+			const producer = byName.get(name);
+			if (
+				!stage.dependencies?.includes(name) ||
+				!producer ||
+				producer.cacheable === false
+			) {
+				problems.push(
+					`${stage.name} scopes ${name}, which must be a direct, cacheable dependency.`,
+				);
+				continue;
+			}
+			if (paths.length === 0)
+				problems.push(
+					`${stage.name} scopes ${name} without listing any output files.`,
+				);
+			const owned = stageScope(producer) ?? [];
+			for (const path of paths)
+				if (
+					!owned.some(
+						(owner) =>
+							path === owner || path.startsWith(`${owner}/`),
+					)
+				)
+					problems.push(
+						`${stage.name} scopes ${name} to ${path}, which ${name} does not own.`,
+					);
+		}
 	}
 	for (const [index, first] of scoped.entries())
 		for (const second of scoped.slice(index + 1))
@@ -39,7 +72,7 @@ export function ownershipProblems(stages) {
  * Throws unless every path in the graph has one owning stage, and returns the
  * stages as they were given.
  *
- * @template {{ name: string, cacheable?: boolean, writes?: string[], outputs?: string[], requiredOutputs?: string[] }} T
+ * @template {StageOwnership} T
  * @param {T[]} stages
  * @returns {T[]}
  */

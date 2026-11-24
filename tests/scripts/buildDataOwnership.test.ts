@@ -68,3 +68,41 @@ test("no two stages in the build graph declare the same path", () => {
 		/new-stage and assemble-atlas|assemble-atlas and new-stage/,
 	);
 });
+
+test("scoped outputs must belong to a direct cacheable dependency", () => {
+	const producer = { name: "producer", writes: ["data/build/parts"] };
+	const consumer = { name: "consumer", writes: ["data/build/summary.json"] };
+	assert.deepEqual(
+		ownershipProblems([
+			producer,
+			{
+				...consumer,
+				dependencies: ["producer"],
+				dependencyOutputs: {
+					producer: ["data/build/parts/main.sqlite"],
+				},
+			},
+		]),
+		[],
+	);
+	assert.deepEqual(
+		ownershipProblems([
+			producer,
+			{ name: "sources", cacheable: false },
+			{
+				...consumer,
+				dependencies: ["producer", "sources"],
+				dependencyOutputs: {
+					producer: ["data/build/parts-other/main.sqlite"],
+					sources: ["data/build/parts/main.sqlite"],
+					missing: ["whatever"],
+				},
+			},
+		]),
+		[
+			"consumer scopes producer to data/build/parts-other/main.sqlite, which producer does not own.",
+			"consumer scopes sources, which must be a direct, cacheable dependency.",
+			"consumer scopes missing, which must be a direct, cacheable dependency.",
+		],
+	);
+});

@@ -24,6 +24,7 @@ const sha256 = (path: string) =>
 type Stage = {
 	name: string;
 	dependencies: string[];
+	dependencyOutputs?: Record<string, string[]>;
 	args: string[];
 	cacheable?: boolean;
 	outputs?: string[];
@@ -46,7 +47,7 @@ const stages = [
 
 let writes = 0;
 
-function fixture() {
+function fixture(buildStages = stages) {
 	const root = mkdtempSync(join(tmpdir(), "atlas-build-cache-"));
 	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
 	const write = (path: string, content: string) => {
@@ -70,7 +71,7 @@ function fixture() {
 		const errors: string[] = [];
 		const status = await runBuild({
 			argv,
-			stages,
+			stages: buildStages,
 			log: (line: string) => log.push(line),
 			logError: (message: string) => errors.push(message),
 			createCache: () =>
@@ -1478,6 +1479,70 @@ test("a stage that writes different bytes reruns its dependants", async () => {
 	touch(root, outputs.compile);
 	assert.deepEqual(await runs(), ["download", "compile", "report"]);
 	assert.deepEqual(await runs(), ["download"]);
+});
+
+test("a scoped dependency skips its consumer when a sibling output changes", async () => {
+	const primary = "data/build/datasets/compiled.json";
+	const sibling = "data/build/datasets/other.json";
+	const { runs, build, root, write, fixed } = fixture(
+		stages.map((entry) =>
+			entry.name === "report"
+				? { ...entry, dependencyOutputs: { compile: [primary] } }
+				: entry.name === "summary"
+					? { ...entry, dependencies: ["compile"] }
+					: entry,
+		),
+	);
+	fixed.compile = "stable\n";
+	write(sibling, "before\n");
+	assert.deepEqual(await runs(), [
+		"download",
+		"compile",
+		"summary",
+		"report",
+	]);
+	assert.deepEqual(await runs(), ["download"]);
+
+	write(sibling, "changed sibling\n");
+	const { log } = await build(["--plan"]);
+	assert.ok(log.some((line) => line.startsWith("report: would run")));
+	assert.deepEqual(await runs(), ["download", "compile", "summary"]);
+
+	fixed.compile = "changed primary\n";
+	touch(root, primary);
+	assert.deepEqual(await runs(), [
+		"download",
+		"compile",
+		"summary",
+		"report",
+	]);
+	assert.deepEqual(await runs(), ["download"]);
+});
+
+test("scoped digests use recorded hashes and require every selected file", async () => {
+	const { root, outputs, write, runs } = fixture();
+	const primary = outputs.compile;
+	const sibling = "data/build/datasets/other.json";
+	write(sibling, "other\n");
+	await runs();
+	const cache = createStageCache({
+		root,
+		stateFile: join(root, ".cache/stages.json"),
+		hashFile: () => assert.fail("scoped lookup must not hash files"),
+	});
+	const scoped = cache.outputDigest("compile", [primary]);
+	assert.ok(scoped);
+	assert.notEqual(scoped, cache.outputDigest("compile"));
+	assert.equal(cache.outputDigest("compile", [primary, "missing"]), null);
+	assert.equal(
+		cache.outputDigest("compile", [primary, sibling]),
+		cache.outputDigest("compile", [sibling, primary]),
+	);
+	unlinkSync(join(root, sibling));
+	assert.equal(cache.outputDigest("compile", [primary]), scoped);
+	assert.equal(cache.outputDigest("compile", [primary, sibling]), null);
+	touch(root, primary);
+	assert.equal(cache.outputDigest("compile", [primary]), null);
 });
 
 test("files with unchanged size and mtime are not hashed again", async () => {
