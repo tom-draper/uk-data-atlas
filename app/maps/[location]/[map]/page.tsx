@@ -1,26 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import { Breadcrumbs, Card, Sheet } from "@/components/docs/Page";
+import RankingRest from "@/components/maps/RankingRest";
 import {
-	atlasMapTitle,
-	findAtlasLocation,
-	findAtlasMap,
-	locationLabel,
-} from "@/lib/atlas/pages";
-import { hasRankingFor, loadRanking } from "@/lib/atlas/rankingPages";
+	rankingLinkClass,
+	RankingRowView,
+} from "@/components/maps/RankingRowView";
+import { atlasMapTitle, locationLabel } from "@/lib/atlas/pages";
 import {
-	areasWithin,
-	COUNCIL_PLACES,
-	formatColumnValue,
-	formatRankedValue,
-	LEVEL_NOUNS,
-	rankedValueLabel,
-} from "@/lib/atlas/rankings";
+	isLongRanking,
+	rankingRow,
+	resolveRanking,
+	SERVER_ROWS,
+} from "@/lib/atlas/rankingRows";
+import { LEVEL_NOUNS, rankedValueLabel } from "@/lib/atlas/rankings";
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 import { JsonLd, rankingJsonLd } from "@/lib/atlas/structuredData";
-import { gazetteer } from "@/lib/data/gazetteer/static";
 import { pageMetadata, titleCase } from "@/lib/site";
 
 type Params = Promise<{ location: string; map: string }>;
@@ -40,17 +36,12 @@ const midSentence = (label: string) =>
 		: label;
 
 async function resolvePage(params: Params) {
-	const slugs = await params;
-	const location = findAtlasLocation(slugs.location);
-	const map = findAtlasMap(slugs.map);
-	if (!location || !map || !hasRankingFor(location.slug, map.slug))
-		notFound();
-	const ranking = await loadRanking(map.slug);
-	const areas = areasWithin(ranking, location);
+	const resolved = await resolveRanking(await params);
+	const { location, map, ranking } = resolved;
 	const plural = LEVEL_NOUNS[ranking.level].many;
 	const place = `${atlasMapTitle(map)} in ${locationLabel(location)}`;
 	const subject = `${place}: ${titleCase(plural)} Ranked`;
-	return { location, map, ranking, areas, plural, subject, place };
+	return { ...resolved, plural, subject, place };
 }
 
 export async function generateMetadata({
@@ -71,18 +62,18 @@ export async function generateMetadata({
 	});
 }
 
-const linkClass =
-	"underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700";
-
 export default async function RankingPage({ params }: { params: Params }) {
 	const { location, map, ranking, areas, plural, subject } =
 		await resolvePage(params);
 	const figure = atlasMapFigure(location, map);
-	const wards = ranking.level === "ward";
-	// Constituencies have place pages of their own; councils link to their maps.
-	const placePages = ranking.level === "constituency";
+	const nouns = LEVEL_NOUNS[ranking.level];
 	const columns = ranking.columns ?? [];
 	const heading = subject.split(": ");
+	const long = isLongRanking(areas);
+	const shown = long ? SERVER_ROWS : areas.length;
+	const row = (index: number) =>
+		rankingRow(location, map, ranking, areas[index]!, index);
+	const rows = areas.slice(0, shown).map((_, index) => row(index));
 
 	return (
 		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
@@ -115,14 +106,14 @@ export default async function RankingPage({ params }: { params: Params }) {
 							</p>
 						)}
 						<p className="mt-3 text-[15px] leading-[1.7] text-slate-600">
-							All {areas.length} {plural} in{" "}
-							{locationLabel(location)}, ranked by{" "}
+							All {areas.length.toLocaleString("en-GB")} {plural}{" "}
+							in {locationLabel(location)}, ranked by{" "}
 							{midSentence(rankedValueLabel(map))}. Data:{" "}
 							<a
 								href={map.source.sourceUrl}
 								target="_blank"
 								rel="noopener noreferrer"
-								className={linkClass}
+								className={rankingLinkClass}
 							>
 								{map.source.source}
 							</a>{" "}
@@ -131,7 +122,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 								href={map.source.licenceUrl}
 								target="_blank"
 								rel="noopener noreferrer"
-								className={linkClass}
+								className={rankingLinkClass}
 							>
 								{map.source.licence}
 							</a>
@@ -149,14 +140,25 @@ export default async function RankingPage({ params }: { params: Params }) {
 						className={`mt-9 overflow-hidden ${columns.length > 1 ? "max-w-[1180px]" : "max-w-[900px]"}`}
 					>
 						<div className="overflow-x-auto">
-							<table className="w-full text-left text-[14px]">
+							<table className="w-full table-fixed text-left text-[14px]">
+								{/* Widths sit on the columns: the extra ones are hidden
+								    on a phone and must take no width there. */}
+								<colgroup>
+									<col className="w-16 sm:w-20" />
+									<col />
+									<col className="w-32 sm:w-36" />
+									{columns.map((column) => (
+										<col
+											key={column.label}
+											className="w-0 sm:w-32"
+										/>
+									))}
+								</colgroup>
 								<thead>
 									<tr className="border-b border-slate-900/[0.07] text-[12px] font-semibold tracking-wide text-slate-500">
-										<th className="w-16 px-4 py-3">Rank</th>
+										<th className="px-4 py-3">Rank</th>
 										<th className="px-4 py-3">
-											{titleCase(
-												LEVEL_NOUNS[ranking.level].one,
-											)}
+											{titleCase(nouns.one)}
 										</th>
 										<th className="px-4 py-3 text-right">
 											{rankedValueLabel(map)}
@@ -164,7 +166,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 										{columns.map((column) => (
 											<th
 												key={column.label}
-												className="px-4 py-3 text-right font-medium"
+												className="hidden px-4 py-3 text-right font-medium sm:table-cell"
 											>
 												{column.label}
 											</th>
@@ -172,81 +174,21 @@ export default async function RankingPage({ params }: { params: Params }) {
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-slate-900/[0.05]">
-									{areas.map((area, index) => {
-										const council = COUNCIL_PLACES.get(
-											area.district,
-										);
-										// A former council's row names it, not its successor.
-										const ownPage =
-											area.code === area.district
-												? council
-												: undefined;
-										return (
-											<tr
-												key={area.code}
-												className="hover:bg-white/60"
-											>
-												<td className="px-4 py-2 tabular-nums text-slate-500">
-													{index + 1}
-												</td>
-												<td className="px-4 py-2 font-medium text-slate-900">
-													{wards ? (
-														<>
-															{area.name}
-															<span className="ml-2 font-normal text-slate-500">
-																{council?.name ??
-																	gazetteer.get(
-																		area.district,
-																	)?.name}
-															</span>
-														</>
-													) : placePages ? (
-														<Link
-															href={`/places/${area.code}`}
-															className={
-																linkClass
-															}
-														>
-															{area.name}
-														</Link>
-													) : ownPage ? (
-														<Link
-															href={`/maps/${ownPage.slug}`}
-															className={
-																linkClass
-															}
-														>
-															{area.name}
-														</Link>
-													) : (
-														area.name
-													)}
-												</td>
-												<td className="px-4 py-2 text-right tabular-nums">
-													{formatRankedValue(
-														map,
-														area.value,
-													)}
-												</td>
-												{columns.map(
-													(column, index) => (
-														<td
-															key={column.label}
-															className="px-4 py-2 text-right tabular-nums text-slate-600"
-														>
-															{formatColumnValue(
-																column,
-																area.extra?.[
-																	index
-																],
-															)}
-														</td>
-													),
-												)}
-											</tr>
-										);
-									})}
+									{rows.map((row) => (
+										<RankingRowView
+											key={row.code}
+											row={row}
+										/>
+									))}
 								</tbody>
+								{long && (
+									<RankingRest
+										url={`/data/rankings/${location.slug}/${map.slug}`}
+										remaining={areas.length - shown}
+										noun={plural}
+										columns={3 + columns.length}
+									/>
+								)}
 							</table>
 						</div>
 					</Card>
