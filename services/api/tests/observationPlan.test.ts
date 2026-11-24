@@ -12,7 +12,7 @@ import {
 import { resolveObservations } from "../src/observationResolution/observationPlan";
 import { seriesCompatibility } from "../src/seriesCompatibility";
 import { identityDimensions } from "@uk-data-atlas/measures";
-import { readWeightedSource } from "../src/weightedSource";
+import { readWeightedSource } from "../src/aggregation/weightedSource";
 
 test("plans the selected series without looking it up by catalogue id", () => {
 	const source = {

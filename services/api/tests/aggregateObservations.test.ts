@@ -4,7 +4,7 @@ import type {
 	AnyMeasureObservationArtifact,
 	MeasureSource,
 } from "@uk-data-atlas/catalogue/node";
-import { readAggregateObservations } from "../src/aggregateObservations";
+import { readAggregateObservations } from "../src/aggregation/aggregateObservations";
 import {
 	measureSeriesKey,
 	measureSeriesSourceKey,

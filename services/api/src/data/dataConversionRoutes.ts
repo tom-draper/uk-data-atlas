@@ -9,7 +9,7 @@ import {
 	refused,
 	resolveObservations,
 } from "../observationResolution/observationPlan";
-import { statisticPhrase } from "../aggregation";
+import { statisticPhrase } from "../aggregation/aggregation";
 import {
 	convertThroughSteps,
 	type ConversionStep,

@@ -1,8 +1,8 @@
-import { requireGeography } from "./runtime/index.ts";
+import { requireGeography } from "../runtime/index.ts";
 import type { MeasureSource } from "@uk-data-atlas/measures";
 import type { NamedLocation } from "@uk-data-atlas/places";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
-import { problem, type ApiResponse } from "./runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 
 /** Resolve a curated location query and its catalogue failure responses. */
 export const resolveAggregationLocation = ({

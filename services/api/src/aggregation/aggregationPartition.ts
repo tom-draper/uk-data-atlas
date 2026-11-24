@@ -1,14 +1,14 @@
 import {
 	refused,
 	resolveObservations,
-} from "./observationResolution/observationPlan";
+} from "../observationResolution/observationPlan";
 import type { AggregationTarget } from "./aggregationTarget";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import type { CompatibilityCandidate } from "@uk-data-atlas/measures";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
 import type { Measure, MeasureSource } from "@uk-data-atlas/measures";
-import type { RouteContextFor } from "./runtime/index.ts";
-import { type ApiResponse } from "./runtime/index.ts";
+import type { RouteContextFor } from "../runtime/index.ts";
+import { type ApiResponse } from "../runtime/index.ts";
 
 export type AggregationPartition = {
 	source: MeasureSource;

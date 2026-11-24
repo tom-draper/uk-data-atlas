@@ -5,7 +5,7 @@ import type { MeasureSource } from "@uk-data-atlas/catalogue/node";
 import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,
-} from "../src/aggregationLocation";
+} from "../src/aggregation/aggregationLocation";
 
 const location = {
 	id: "example",

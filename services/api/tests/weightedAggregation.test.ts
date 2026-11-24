@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { calculateWeightedAggregate } from "../src/weightedAggregation";
+import { calculateWeightedAggregate } from "../src/aggregation/weightedAggregation";
 
 const records = [
 	{ areaCode: "E1", value: 10, status: "observed" as const },

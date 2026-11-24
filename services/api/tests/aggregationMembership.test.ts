@@ -4,7 +4,7 @@ import {
 	fullMembership,
 	membershipThroughSteps,
 	pathMembershipClaims,
-} from "../src/aggregationMembership";
+} from "../src/aggregation/aggregationMembership";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 
 /** Membership reads only the method, purpose and records of a crosswalk. */

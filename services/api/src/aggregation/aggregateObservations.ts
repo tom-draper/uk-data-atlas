@@ -4,7 +4,7 @@ import {
 	type NumericObservationSuccess,
 } from "./numericObservations";
 import type { ObservationArtifacts } from "@uk-data-atlas/measures";
-import { problem, type ApiResponse } from "./runtime/index.ts";
+import { problem, type ApiResponse } from "../runtime/index.ts";
 
 /** Read the numeric, source-exact records required by an aggregate. */
 export const readAggregateObservations = ({

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
-import type { AggregationTarget } from "../src/aggregationTarget";
+import type { AggregationTarget } from "../src/aggregation/aggregationTarget";
 import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
-import { buildAggregateResponse } from "../src/aggregateResponse";
+import { buildAggregateResponse } from "../src/aggregation/aggregateResponse";
 import { containmentCrosswalk } from "./geographyFixtures";
 
 // These cases need no compiled areas, so the resolver is empty.

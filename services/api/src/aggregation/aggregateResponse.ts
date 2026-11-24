@@ -4,9 +4,9 @@ import type { AggregationTarget } from "./aggregationTarget";
 import type { Measure, MeasureSource } from "@uk-data-atlas/catalogue/node";
 import type { LocationCoverage } from "./locationAggregation";
 import type { NamedLocation } from "@uk-data-atlas/places";
-import type { ObservationArtifactReference } from "./sourceExactProvenance.ts";
-import { envelope, type ApiResponse } from "./runtime/index.ts";
-import { sourceExactProvenance } from "./sourceExactProvenance.ts";
+import type { ObservationArtifactReference } from "../sourceExactProvenance.ts";
+import { envelope, type ApiResponse } from "../runtime/index.ts";
+import { sourceExactProvenance } from "../sourceExactProvenance.ts";
 
 export type AggregateWeighting = {
 	measure: Measure;

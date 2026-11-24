@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import type { AggregationTarget } from "../src/aggregationTarget";
+import type { AggregationTarget } from "../src/aggregation/aggregationTarget";
 import {
 	aggregateTargetMembers,
 	requireAggregateMembers,
-} from "../src/aggregateTargetMembers";
+} from "../src/aggregation/aggregateTargetMembers";
 
 const regional = {
 	claim: "published-membership-lookup",

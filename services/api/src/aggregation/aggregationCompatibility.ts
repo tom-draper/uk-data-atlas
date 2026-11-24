@@ -3,7 +3,7 @@ import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
 } from "@uk-data-atlas/catalogue/node";
-import { seriesCompatibility } from "./seriesCompatibility";
+import { seriesCompatibility } from "../seriesCompatibility";
 
 /** Return boundary releases whose codes are safe for aggregate coverage checks. */
 export const compatibleReleasesForAggregation = ({
