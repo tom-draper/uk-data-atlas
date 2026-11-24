@@ -493,6 +493,11 @@ const gigawattHours: DisplayFormat = {
 };
 
 export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
+	"adult-social-care-activity": {
+		label: "Clients in long-term support",
+		inputs: ["population-uk"],
+		columns: [perThousand("Per 1,000 adults", 18)],
+	},
 	"air-quality": {
 		format: { kind: "decimal", digits: 1, suffix: " µg/m³" },
 		columns: [column("PM2.5", "micrograms", field("pm25Mean"))],
@@ -715,6 +720,14 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		const rank = num(record.nimdmRank);
 		return rank === null ? null : Math.ceil((rank / count) * 10);
 	}),
+	"planning-applications": {
+		label: "Applications received",
+		inputs: ["population-uk"],
+		columns: [
+			column("Decided", "count", field("metrics", "decided")),
+			perThousandResidents,
+		],
+	},
 	"population-age": {
 		level: "ward",
 		value: (record) => medianAge(record.total),
@@ -859,4 +872,9 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		],
 	},
 	wimd: deprivationRecipe("ladCode", decileField("wimdDecile")),
+	"workplace-income": {
+		label: "Median annual pay of jobs based here",
+		format: { kind: "count", locale: "en-GB", prefix: "£", round: true },
+		columns: [payChange],
+	},
 };
