@@ -238,7 +238,7 @@ as published data.
 | 54  | P0       | Shrink the v1 API surface before launch (#714).                                                                                                                                                                                                                                                                                            | Early access is the last cheap time to remove routes.                                                   |
 | 55  | P1       | A size budget: record each table's size per build (`dbstat`) and fail on unexpected growth. Then shrink `area_location` (89 MB) and stop shipping `crosswalk_edge_check` in the serving file once the API can read it from its module.                                                                                                     | `atlas.sqlite` grew from 742 to 942 MB in two weeks.                                                    |
 | 56  | P1       | Close the weight gaps: Northern Ireland small-area counts (NISRA data zones or postcodes), Scottish dwellings, and at least one backtest case with its truth in Scotland and one in Northern Ireland.                                                                                                                                      | Nothing in Northern Ireland can be split, and the error factors are untested outside England and Wales. |
-| 57  | P1       | Done: uncertainty on converted series (#411). One series carries bounds (572 values), 88,827 split values wait on task 58, and the bounds are wide (median half width 23.69% against a median error of 0.165%).                                                                                                                            | Customers need to know which converted values to trust.                                                 |
+| 57  | P1       | Done: uncertainty on converted series (#411). Every estimated converted value has `lower` and `upper` from the error model (81,515 values, 116 series, 1.3 MB), served as `bounds` by the release series route. Bounds are wide (median half width 23.69%, median error 0.165%).                                                           | Customers need to know which converted values to trust.                                                 |
 | 58  | P2       | Partly done: population by single year of age, ward to constituency, is backtested and shipped as 27,027 estimated values with bounds. Jobs, emissions, energy use and pupils need no truth, as they convert by exact regrouping. Left: 1,638 ward to authority values on a route that mixes two methods, and 58 Welsh deprivation values. | Each passing backtest unlocks a measure. Population and its age groups are split today.                 |
 | 59  | P1       | Archive downloaded source files (#634), keyed by the release that used them.                                                                                                                                                                                                                                                               | Versioned bundles (task 53) are only reproducible if their inputs are kept.                             |
 | 60  | P1       | Host the MCP server with validate, convert and join tools (#635), after tasks 28 and 31.                                                                                                                                                                                                                                                   | The way agents reach the database.                                                                      |
@@ -466,6 +466,15 @@ as published data.
   a converted value is `derived` or `estimated`, a regrouped value has no
   bounds, a split value has bounds that hold it and one `series_estimate` row, and a
   withheld split holds no value.
+- **Task 57** (2026-11-24), shipped wider. Every estimated converted value
+  in the built atlas has both bounds (81,515 values, 116 series) and no derived
+  one has either. The release series route now names them `bounds`, not
+  `confidenceInterval`, since they are the error model's range and not a
+  confidence interval; a native value keeps its publisher's interval. A
+  hand-checked unit test pins one split's bounds to `boundsOf`. The bounds
+  add about 1.27 MB (0.1%) to `atlas.sqlite`. No download carries a converted
+  value. Left: the bounds are still wide, and the amount at risk is not stored,
+  so a client cannot narrow them.
 - **Task 58** (2026-11-20), scoped to population by single year of age, ward to
   constituency. The row's premise was partly wrong: jobs, emissions, energy use
   and pupils already convert, by exact regrouping of authorities, and an exact
