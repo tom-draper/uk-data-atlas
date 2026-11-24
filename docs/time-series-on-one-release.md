@@ -110,13 +110,16 @@ another dataset or period.
   stable ids.
 - A sum with an absent member was reported as a gap (see above).
 
-### Hook for #411
+### Bounds (#411)
 
-`series_estimate.estimated_share` is the per-value input that #411's
-uncertainty model needs. The response already exposes it as `exactShare`
-and flags low values. #411 can add a measured interval per value from the
-backtest error for that share, without changing the shape. That is not
-built here.
+Every `weighted` value carries `bounds` (`lower`, `upper`) from the
+conversion error model, beside its `exactShare`. They are the stored
+`observation.lower` and `upper`, the range the backtest measured for that
+split, and are not a confidence interval, so they are not called
+`confidenceInterval`. `exact` values have no bounds, and a `native` value
+keeps only the interval its publisher gives. A split with no measured factor
+is a gap, not a value. See "How a bound is represented" in
+`docs/conversion-accuracy.md`.
 
 ## Gaps and breaks
 
