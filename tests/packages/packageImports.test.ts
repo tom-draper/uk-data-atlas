@@ -74,7 +74,6 @@ const problems = (packageRoot: string) => {
 						"postcodes",
 						"relationships",
 						"measures",
-						"shapefile",
 					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
 					([
 						"@uk-data-atlas/search-index",

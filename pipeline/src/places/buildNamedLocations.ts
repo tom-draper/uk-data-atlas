@@ -12,7 +12,7 @@ import {
 import { compileNamedLocations, membersAt } from "@uk-data-atlas/places";
 import { releaseMonth } from "@uk-data-atlas/catalogue";
 import { toWgs84Geometry } from "@uk-data-atlas/geography";
-import { readShapefileFeatures } from "@uk-data-atlas/shapefile";
+import { readShapefileFeatures } from "@uk-data-atlas/geometry/shapefile";
 import { sourceDir, type SourceName } from "@uk-data-atlas/datasets";
 import { createAreaGeometryCache } from "@uk-data-atlas/geometry";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";

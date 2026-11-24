@@ -1,6 +1,6 @@
 import { isMainModule } from "../lib/entrypoint.ts";
 import { buildLog, repoPath } from "@uk-data-atlas/atlas-db";
-import { readDbfRecords } from "@uk-data-atlas/shapefile";
+import { readDbfRecords } from "@uk-data-atlas/geometry/shapefile";
 import { toWgs84Point } from "@uk-data-atlas/geography";
 import { sha256Hex } from "../lib/hash.ts";
 import { execFileSync } from "node:child_process";

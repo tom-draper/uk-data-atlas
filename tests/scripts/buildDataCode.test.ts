@@ -478,7 +478,7 @@ test("production builders resolve without UI code and include declared workers a
 			assert.ok(inputs.get(stage)!.includes(path), `${stage}: ${path}`);
 	}
 	for (const path of [
-		"packages/shapefile/src/dbf.ts",
+		"packages/geometry/src/shapefile/dbf.ts",
 		"packages/geometry/src/geoJsonProperties.ts",
 		"pipeline/src/geographies/boundarySourcePaths.ts",
 		"packages/areas/src/areaAdapters.ts",
