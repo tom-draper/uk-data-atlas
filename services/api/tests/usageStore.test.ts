@@ -3,10 +3,10 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, type TestContext } from "vitest";
-import type { UsageEvent } from "../src/usageLabels";
-import { UsageRecorder } from "../src/usageRecorder";
-import { usageReport } from "../src/usageReport";
-import { UsageStore, type UsageRow } from "../src/usageStore";
+import type { UsageEvent } from "../src/usage/usageLabels";
+import { UsageRecorder } from "../src/usage/usageRecorder";
+import { usageReport } from "../src/usage/usageReport";
+import { UsageStore, type UsageRow } from "../src/usage/usageStore";
 
 const directory = (t: TestContext) => {
 	const path = mkdtempSync(join(tmpdir(), "usage-"));

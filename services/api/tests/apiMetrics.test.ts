@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { ApiMetrics } from "../src/apiMetrics";
+import { ApiMetrics } from "../src/usage/apiMetrics";
 
 test("exports the location projection cache's shards and events", (t) => {
 	const metrics = new ApiMetrics(

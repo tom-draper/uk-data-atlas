@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
 	createWorkerMetrics,
 	installPrimaryMetrics,
-} from "../src/clusterMetrics";
+} from "../src/usage/clusterMetrics";
 import { createApiServer, readApiCatalogues } from "../src/server";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/places/postcodeRoutes";
 import { validateCacheRelease } from "../src/cacheRelease";

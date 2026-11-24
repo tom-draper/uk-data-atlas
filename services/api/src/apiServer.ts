@@ -41,10 +41,10 @@ import {
 	type Server,
 	type ServerResponse,
 } from "node:http";
-import { ApiMetrics } from "./apiMetrics";
-import { classifyUsage, usageVocabulary } from "./usageLabels";
-import { UsageRecorder } from "./usageRecorder";
-import { UsageStore, utcDay } from "./usageStore";
+import { ApiMetrics } from "./usage/apiMetrics";
+import { classifyUsage, usageVocabulary } from "./usage/usageLabels";
+import { UsageRecorder } from "./usage/usageRecorder";
+import { UsageStore, utcDay } from "./usage/usageStore";
 import {
 	acceptsGzip,
 	bodyBytes,
