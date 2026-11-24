@@ -142,7 +142,9 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 		const years = [first];
 		for (
 			let year = Math.ceil((first + every / 2) / every) * every;
-			year <= last - every / 2;
+			// Clear of the last label, which on a long series at phone width
+			// needs more than half a step.
+			year <= last - Math.max(every / 2, (last - first) * 0.15);
 			year += every
 		)
 			years.push(year);
