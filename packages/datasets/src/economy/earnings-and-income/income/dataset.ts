@@ -2,7 +2,10 @@ import type { IncomeDataset } from "../../../types/income.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { yearParts } from "../../../declaration/yearParts.ts";
 import { averagePay } from "../../../data/income/aggregate.ts";
-import { payStatistics } from "../../../data/income/statistics.ts";
+import {
+	meanPayIndicators,
+	payStatistics,
+} from "../../../data/income/statistics.ts";
 import { payStatisticsParts } from "../../../data/income/source.ts";
 
 export const income = defineDataset<IncomeDataset>({
@@ -41,7 +44,7 @@ export const income = defineDataset<IncomeDataset>({
 		cadence: "annual",
 		notes: [
 			"Annual Survey of Hours and Earnings, 2012 to 2024 revised and 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives. Every employee job counts, full and part time; the self-employed are not included.",
-			"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+			"Gross pay, before tax and other deductions. The percentiles the table also publishes are not served.",
 			"Provisional results are revised when the following year's survey is published.",
 			"From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with 2012 to 2020. Estimates for 2020 and 2021 come from a smaller sample, include furloughed employees and carry more uncertainty than usual.",
 			"Each year is held on the authorities in force for that survey, but the API serves only those of 2025, so authorities merged or retired since are not served. The six English counties that became unitary authorities in 2023 are published as counties in earlier years and are not served; their districts are.",
@@ -143,6 +146,7 @@ export const income = defineDataset<IncomeDataset>({
 					"pay-statistic": "median",
 				},
 			},
+			...meanPayIndicators("residence"),
 		],
 	},
 	display: {
