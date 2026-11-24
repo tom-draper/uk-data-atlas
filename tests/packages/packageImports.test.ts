@@ -122,6 +122,7 @@ describe("shared packages", () => {
 				"./place-facts",
 				"./compactPayload",
 				"./place-profile",
+				"./place-trends",
 				"./node",
 			],
 		],
