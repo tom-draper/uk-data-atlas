@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import { Breadcrumbs, Card, Sheet } from "@/components/docs/Page";
 import { rankingLinkClass } from "@/components/maps/RankingRowView";
+import { RankingLinks } from "@/components/maps/RankingLinks";
 import RankingTable from "@/components/maps/RankingTable";
 import {
 	RankingSummary,
@@ -177,6 +178,8 @@ export default async function RankingPage({ params }: { params: Params }) {
 							scale={barScale(areas)}
 						/>
 					</Card>
+
+					<RankingLinks location={location} map={map} />
 				</Sheet>
 			</main>
 		</div>
