@@ -500,7 +500,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Download website place data",
 		intro: "Download the API-built place profiles, directory, facts or docs catalogue used by the website.",
 		tips: [
-			"Use `places-index`, `places-area-{shard}`, `places-named-{id}`, `place-facts`, `ward-areas` or `docs-catalogue` as the page id. These shapes follow the website; use the area and catalogue routes for stable domain responses.",
+			"Use `places-index`, `places-area-{shard}`, `places-named-{id}`, `place-facts`, `place-trends`, `ward-areas` or `docs-catalogue` as the page id. These shapes follow the website; use the area and catalogue routes for stable domain responses.",
 		],
 	},
 	getAtlasLookup: {

@@ -9473,8 +9473,9 @@ paths:
         - Geography
       description: >
         API-built website artifacts. Available ids include `places-index`, `places-area-{shard}`,
-        `places-named-{id}`, `place-facts`, `ward-areas` and `docs-catalogue`. These shapes follow the
-        website and may change with it. Use the area and catalogue routes for stable domain responses.
+        `places-named-{id}`, `place-facts`, `place-trends`, `ward-areas` and `docs-catalogue`. These
+        shapes follow the website and may change with it. Use the area and catalogue routes for stable
+        domain responses.
       x-likely-refusal:
         status: 404
         when: The page id is not published.
