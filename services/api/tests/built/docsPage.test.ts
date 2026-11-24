@@ -5,9 +5,9 @@ import { dirname, resolve } from "node:path";
 import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { renderDocsPage, type OpenApiGuide } from "../../src/docsPage";
+import { renderDocsPage, type OpenApiGuide } from "../../src/contract/docsPage";
 import { route } from "../boundRoute";
-import { indexResponse } from "../../src/indexRoutes";
+import { indexResponse } from "../../src/contract/indexRoutes";
 import { readApiCatalogues } from "../../src/server";
 
 /**
