@@ -56,6 +56,9 @@ export const SERVER_ROWS = 100;
 /** Rankings this long render only their first rows with the page. */
 export const LONG_RANKING = 400;
 
+/** The share of a ranking's lowest values that may be outliers. */
+const BAR_OUTLIERS = 0.1;
+
 export async function resolveRanking(params: {
 	location: string;
 	map: string;
@@ -107,17 +110,20 @@ export function rankingRow(
 
 /**
  * The value that fills a row's bar: the largest. Bars start at zero, so a
- * ranking with negative values has none, and nor does one whose values all
- * sit close together (life expectancy, say), where every bar would look full.
+ * ranking with negative values has none, and nor does one whose values sit
+ * close together (life expectancy, say), where every bar would look full.
+ * Nor does one where a few outliers, such as a ward holding a prison, are all
+ * that keep the rest from looking full.
  */
 export const barScale = (areas: readonly RankedArea[]) => {
-	let [smallest, largest] = [Infinity, 0];
-	for (const { value } of areas) {
-		if (value < 0) return null;
-		smallest = Math.min(smallest, value);
-		largest = Math.max(largest, value);
-	}
-	return largest > 0 && smallest <= largest / 2 ? largest : null;
+	if (areas.some(({ value }) => value < 0)) return null;
+	const values = areas.map(({ value }) => value).sort((a, b) => a - b);
+	const largest = values.at(-1) ?? 0;
+	const smallest = values[0] ?? 0;
+	const mostly = values[Math.floor(values.length * BAR_OUTLIERS)] ?? 0;
+	return largest > 0 && smallest <= largest / 2 && mostly <= largest * (3 / 4)
+		? largest
+		: null;
 };
 
 /** Whether a ranking's page renders only its first rows. */
