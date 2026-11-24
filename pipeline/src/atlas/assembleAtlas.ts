@@ -24,6 +24,7 @@ import {
 	legalDateRates,
 	publishVacuumed,
 	writeAreaChangeEvents,
+	writeAreaChangeExtent,
 	writeDefaultObservation,
 	writePostcodeAreas,
 	writeSchemaDocs,
@@ -250,6 +251,9 @@ export function assembleAtlas(
 			// Every basis is in main now, and so are the error factors: each old
 			// release gets one edge to the current one.
 			if (crosswalkWeights) writeCrosswalkChains(database, ids);
+			// The population step of each pair of releases, which needs the
+			// same weights, says how much each persisting area changed.
+			if (crosswalkWeights) writeAreaChangeExtent(database);
 			if (notionalElections) {
 				copyNotionalSeries(database, ids);
 				copyNotionalMetrics(database, ids);
