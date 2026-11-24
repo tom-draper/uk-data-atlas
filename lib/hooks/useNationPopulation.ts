@@ -1,6 +1,11 @@
 "use client";
 
-import { AGE, DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import {
+	AGE,
+	DATASET_DECLARATIONS,
+	DATASET_GUIDES,
+} from "@uk-data-atlas/datasets";
+import { formatCount } from "@/lib/helpers/formatCount";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import {
 	selectedAreaLadCode,
@@ -132,6 +137,18 @@ export function useNationPopulation(
 			),
 			target,
 		};
+	if (population.kind === "census") {
+		const guide =
+			DATASET_GUIDES[population.datasetId as keyof typeof DATASET_GUIDES];
+		return {
+			nation,
+			status: "ready",
+			target,
+			population,
+			source: `${guide?.title ?? population.datasetId}. ${nation} publishes no mid-year estimate for this area, so this is its census count of usual residents.${guide?.summary ? ` ${guide.summary}` : ""}`,
+			note: `${nation}, Census ${population.period}`,
+		};
+	}
 	const declaration = DATASET_DECLARATIONS.find(
 		({ id }) => id === population.datasetId,
 	);
@@ -147,6 +164,14 @@ export function useNationPopulation(
 	};
 }
 
+/** When a nation's figure is from, as a card's coverage line names it. */
+const whenOf = (population: NationPopulation | null): string =>
+	!population?.period
+		? ""
+		: population.kind === "census"
+			? `, Census ${population.period}`
+			: `, mid-${population.period}`;
+
 /**
  * A population card's coverage line where the area's nation differs from the
  * dataset's, so a figure is never read against the other nations' year.
@@ -156,10 +181,13 @@ export const formatNationCoverage = (
 	elsewhere: string | undefined,
 	year: number,
 ): string =>
-	`Here: ${state.nation}${state.population?.period ? `, mid-${state.population.period}` : ""}. Elsewhere: ${elsewhere ?? "England & Wales"}, mid-${year}.`;
+	`Here: ${state.nation}${whenOf(state.population)}. Elsewhere: ${elsewhere ?? "England & Wales"}, mid-${year}.`;
 
 /** Why a population card's age chart is empty for a nation's area. */
-export const nationAgesMessage = (state: NationPopulationState): string =>
-	state.population && !state.population.ages
-		? `${state.nation} does not publish single years of age for this kind of area`
-		: state.note;
+export const nationAgesMessage = (state: NationPopulationState): string => {
+	const population = state.population;
+	if (!population || population.ages) return state.note;
+	if (population.males == null && population.total != null)
+		return `Not split by sex or age here. Total ${formatCount(population.total)} (${state.note})`;
+	return `${state.nation} does not publish single years of age for this kind of area`;
+};

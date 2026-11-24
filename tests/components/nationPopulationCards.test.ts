@@ -4,6 +4,11 @@ import { describe, expect, it } from "vitest";
 import AgeDistribution from "@/components/datasets/population/population-estimates/population/age/AgeDistribution";
 import PopulationDensityChart from "@/components/datasets/population/population-estimates/population/density/PopulationDensityChart";
 import Gender from "@/components/datasets/population/population-estimates/population/gender/Gender";
+import {
+	formatNationCoverage,
+	nationAgesMessage,
+	type NationPopulationState,
+} from "@/lib/hooks/useNationPopulation";
 import type { SelectedArea } from "@/lib/types/areas";
 
 const dataset = {
@@ -138,5 +143,52 @@ describe("density card outside the dataset's nations", () => {
 		const html = renderDensity(area("localAuthority", "N09000003", 2023));
 		expect(html).not.toContain("[2022]");
 		expect(html).not.toContain("No data available");
+	});
+});
+
+describe("labels for a nation's population figure", () => {
+	const state = (
+		population: Partial<NonNullable<NationPopulationState["population"]>>,
+		note: string,
+	): NationPopulationState => ({
+		nation: "Scotland",
+		status: "ready",
+		target: null,
+		source: "",
+		note,
+		population: {
+			period: null,
+			datasetId: null,
+			kind: null,
+			total: null,
+			males: null,
+			females: null,
+			ages: null,
+			...population,
+		},
+	});
+
+	it("names a census count by its census year, not as an estimate", () => {
+		const census = state(
+			{ period: "2022", kind: "census", total: 812 },
+			"Scotland, Census 2022",
+		);
+		expect(formatNationCoverage(census, undefined, 2022)).toBe(
+			"Here: Scotland, Census 2022. Elsewhere: England & Wales, mid-2022.",
+		);
+		expect(nationAgesMessage(census)).toBe(
+			"Not split by sex or age here. Total 812 (Scotland, Census 2022)",
+		);
+	});
+
+	it("names an estimate by its mid-year", () => {
+		const estimate = state(
+			{ period: "2024", kind: "estimate", total: 650_300 },
+			"Scotland, Office for National Statistics mid-2024 estimate",
+		);
+		expect(formatNationCoverage(estimate, undefined, 2022)).toBe(
+			"Here: Scotland, mid-2024. Elsewhere: England & Wales, mid-2022.",
+		);
+		expect(nationAgesMessage(estimate)).toContain("Total 650,300");
 	});
 });
