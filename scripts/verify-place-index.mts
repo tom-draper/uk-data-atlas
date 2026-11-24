@@ -6,7 +6,7 @@ import { readBoundaryRegistry } from "@uk-data-atlas/catalogue/node";
 import { readNamedLocationInventory } from "@uk-data-atlas/places";
 import { compilePlaceIndex } from "@uk-data-atlas/places";
 import { resolvePlaces } from "@uk-data-atlas/places";
-import { atEach, type Indexed } from "@uk-data-atlas/search-index";
+import { atEach, type Indexed } from "@uk-data-atlas/atlas-db/search";
 
 const root = resolve(import.meta.dirname, "..");
 const areas = readAreaInventory(root);

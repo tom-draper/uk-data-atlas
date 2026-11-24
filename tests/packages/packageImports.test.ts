@@ -41,6 +41,46 @@ const packageName = (specifier: string) =>
 
 const builtins = new Set(builtinModules);
 
+/** Packages whose code runs on Node, unless a folder below says otherwise. */
+const NODE_PACKAGES = [
+	"areas",
+	"artifacts",
+	"atlas-db",
+	"atlas-loader",
+	"geometry",
+	"places",
+	"postcodes",
+	"relationships",
+	"measures",
+];
+
+/**
+ * Folders inside a Node package that the browser may load. They import no Node
+ * built-in, except from their own `node/` folder.
+ */
+const BROWSER_FOLDERS: Record<string, string[]> = {
+	"atlas-db": ["src/search"],
+};
+
+const allowsNodeBuiltins = (
+	packageRoot: string,
+	packageFullName: string,
+	file: string,
+) => {
+	const name = packageFullName.replace("@uk-data-atlas/", "");
+	const browser = (BROWSER_FOLDERS[name] ?? []).some(
+		(folder) =>
+			inside(join(packageRoot, folder), file) &&
+			!inside(join(packageRoot, folder, "node"), file),
+	);
+	if (browser) return false;
+	return (
+		NODE_PACKAGES.includes(name) ||
+		(["catalogue", "map-tiles"].includes(name) &&
+			inside(join(packageRoot, "src/node"), file))
+	);
+};
+
 const problems = (packageRoot: string) => {
 	const manifest = JSON.parse(
 		readFileSync(join(packageRoot, "package.json"), "utf8"),
@@ -63,24 +103,11 @@ const problems = (packageRoot: string) => {
 				continue;
 			}
 			if (specifier.startsWith("node:") || builtins.has(specifier)) {
-				const nodeOnly =
-					[
-						"areas",
-						"artifacts",
-						"atlas-db",
-						"atlas-loader",
-						"geometry",
-						"places",
-						"postcodes",
-						"relationships",
-						"measures",
-					].includes(manifest.name.replace("@uk-data-atlas/", "")) ||
-					([
-						"@uk-data-atlas/search-index",
-						"@uk-data-atlas/catalogue",
-						"@uk-data-atlas/map-tiles",
-					].includes(manifest.name) &&
-						inside(join(packageRoot, "src/node"), file));
+				const nodeOnly = allowsNodeBuiltins(
+					packageRoot,
+					manifest.name,
+					file,
+				);
 				if (!nodeOnly)
 					found.push(
 						`${where} imports a Node built-in: ${specifier}`,
@@ -166,49 +193,50 @@ describe("shared packages", () => {
 		expect(description).not.toContain("\n");
 	});
 
-	it.each(["geography", "catalogue", "datasets", "map-tiles"])(
-		"keeps the %s main entry browser safe",
-		(name) => {
-			const pending = [join(PACKAGES, name, "src/index.ts")];
-			const seen = new Set<string>();
-			const invalid: string[] = [];
-			while (pending.length) {
-				const file = pending.pop()!;
-				if (seen.has(file)) continue;
-				seen.add(file);
-				for (const specifier of specifiers(
-					readFileSync(file, "utf8"),
-				)) {
-					if (specifier.startsWith("."))
-						pending.push(
-							resolve(
-								dirname(file),
-								specifier.endsWith(".ts")
-									? specifier
-									: `${specifier}.ts`,
-							),
-						);
-					else if (
-						specifier.startsWith("node:") ||
-						builtins.has(specifier) ||
-						![
-							"@uk-data-atlas/geography",
-							"@noble/hashes",
-							"polygon-clipping",
-							"papaparse",
-							"topojson-client",
-							"topojson-specification",
-							"proj4",
-							"geojson",
-							"zod",
-						].includes(packageName(specifier))
-					)
-						invalid.push(`${relative(ROOT, file)}: ${specifier}`);
-				}
+	it.each([
+		"geography/src/index.ts",
+		"catalogue/src/index.ts",
+		"datasets/src/index.ts",
+		"map-tiles/src/index.ts",
+		"atlas-db/src/search/index.ts",
+	])("keeps the %s entry browser safe", (entry) => {
+		const pending = [join(PACKAGES, entry)];
+		const seen = new Set<string>();
+		const invalid: string[] = [];
+		while (pending.length) {
+			const file = pending.pop()!;
+			if (seen.has(file)) continue;
+			seen.add(file);
+			for (const specifier of specifiers(readFileSync(file, "utf8"))) {
+				if (specifier.startsWith("."))
+					pending.push(
+						resolve(
+							dirname(file),
+							specifier.endsWith(".ts")
+								? specifier
+								: `${specifier}.ts`,
+						),
+					);
+				else if (
+					specifier.startsWith("node:") ||
+					builtins.has(specifier) ||
+					![
+						"@uk-data-atlas/geography",
+						"@noble/hashes",
+						"polygon-clipping",
+						"papaparse",
+						"topojson-client",
+						"topojson-specification",
+						"proj4",
+						"geojson",
+						"zod",
+					].includes(packageName(specifier))
+				)
+					invalid.push(`${relative(ROOT, file)}: ${specifier}`);
 			}
-			expect(invalid).toEqual([]);
-		},
-	);
+		}
+		expect(invalid).toEqual([]);
+	});
 
 	it("do not depend on each other in a cycle", () => {
 		const graph = new Map(

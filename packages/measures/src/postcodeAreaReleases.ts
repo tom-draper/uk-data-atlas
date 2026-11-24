@@ -4,7 +4,7 @@ import {
 	releaseKey,
 	type PostcodeAreaPurpose,
 } from "@uk-data-atlas/geography";
-import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import { compareCodeUnits } from "@uk-data-atlas/atlas-db/search";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility.ts";
 import { rankReleases } from "./rankCompatibilityReleases.ts";
 

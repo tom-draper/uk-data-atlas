@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { NAME_NORMALISATION } from "@uk-data-atlas/atlas-db/search/node";
 
 it("preserves the fingerprint for existing search indexes", () => {
 	expect(NAME_NORMALISATION).toBe(

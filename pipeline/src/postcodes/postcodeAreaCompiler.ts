@@ -8,7 +8,7 @@ import {
 } from "@uk-data-atlas/geography";
 import { boundaryDistanceFinder } from "@uk-data-atlas/geography";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
-import { compareCodeUnits } from "@uk-data-atlas/search-index";
+import { compareCodeUnits } from "@uk-data-atlas/atlas-db/search";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import {
 	NONE,

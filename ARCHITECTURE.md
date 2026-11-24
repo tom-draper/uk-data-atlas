@@ -27,7 +27,7 @@ export TypeScript source and are imported by their `@uk-data-atlas/` names.
 | --------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `areas`         | Looks up, resolves, searches and loads boundaries for areas.           | `.`, `./inventory`, `./boundary-resources`                            |
 | `artifacts`     | Content hashing and CSV, Parquet and SQLite file formats.              | `.`                                                                   |
-| `atlas-db`      | Opens atlas.sqlite and resolves data file locations.                   | `.`                                                                   |
+| `atlas-db`      | Opens atlas.sqlite and resolves data file locations.                   | `.`, `./search`, `./search/node`                                      |
 | `atlas-loader`  | Loads a complete atlas release by wiring the domain packages together. | `.`                                                                   |
 | `catalogue`     | The catalogue of boundaries, units, corrections and place facts.       | `.`, `./place-facts`, `./compactPayload`, `./place-profile`, `./node` |
 | `datasets`      | Declares datasets and compiles their contents.                         | `.`, `./types`                                                        |
@@ -38,7 +38,6 @@ export TypeScript source and are imported by their `@uk-data-atlas/` names.
 | `places`        | Named places, the gazetteer and place membership.                      | `.`, `./gazetteer`                                                    |
 | `postcodes`     | Postcode indexes, areas and counts.                                    | `.`                                                                   |
 | `relationships` | Crosswalks between areas and translation of values across them.        | `.`                                                                   |
-| `search-index`  | Sorted, packed indexes and the lookups that search them.               | `.`, `./node`                                                         |
 | `terrain`       | Terrain height sources and providers.                                  | `.`                                                                   |
 
 `services/api/` contains the API, `services/mcp/` its HTTP client,
@@ -148,11 +147,11 @@ parameters and what they return.
 
 The package manifests define this dependency order, from lower layers upwards:
 
-- `artifacts`, `geography` and `datasets` have no workspace dependencies. `search-index` uses `geography`, and `terrain` uses `artifacts`.
-- `atlas-db` uses `artifacts`, `geography` and `search-index`. `map-tiles` uses `atlas-db`, `artifacts` and `geography`.
-- `geometry` builds on `map-tiles`, `atlas-db`, `artifacts` and `geography`. `areas` also uses `datasets` and `search-index`.
-- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets` and `search-index`, and `catalogue` builds on `measures` and `relationships`.
-- `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers. `postcodes` depends on `atlas-db`, `artifacts`, `geography` and `search-index`.
+- `artifacts`, `geography` and `datasets` have no workspace dependencies. `terrain` uses `artifacts`.
+- `atlas-db` uses `artifacts` and `geography`. `map-tiles` uses `atlas-db`, `artifacts` and `geography`.
+- `geometry` builds on `map-tiles`, `atlas-db`, `artifacts` and `geography`. `areas` also uses `datasets`.
+- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets`, and `catalogue` builds on `measures` and `relationships`.
+- `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers. `postcodes` depends on `atlas-db`, `artifacts`, `geography`.
 - `atlas-loader` composes the domains, including `places`, `postcodes` and `terrain`. It holds only the loaders and the resolvers that need several domains at once (`GeographyResolver`, the areas and catalogue resolvers). Each domain defines the narrow interface it needs from them (for example `AreaReleaseSource`, `PlacedAreaResolver`, `CrosswalkSummarySource`), which the loader's resolvers satisfy structurally. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
 
 `tests/packages/packageImports.test.ts` enforces acyclic package dependencies,

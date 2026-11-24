@@ -1,5 +1,5 @@
 import type { SqliteTable } from "@uk-data-atlas/artifacts";
-import { packPositions } from "@uk-data-atlas/search-index";
+import { packPositions } from "@uk-data-atlas/atlas-db/search";
 import type { AreaSearchIndexArtifact } from "@uk-data-atlas/areas";
 
 /** Codes in position order and term postings packed as u32s. */

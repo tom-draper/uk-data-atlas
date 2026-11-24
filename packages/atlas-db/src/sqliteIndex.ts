@@ -4,7 +4,7 @@ import {
 	openReadOnlyDatabase,
 	type ReadOnlyDatabase,
 } from "./readOnlyDatabase.ts";
-import type { Indexed } from "@uk-data-atlas/search-index";
+import type { Indexed } from "./search/index.ts";
 
 /**
  * Compiled search indexes stored as SQLite tables, read a row at a time.

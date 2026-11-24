@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { NAME_NORMALISATION } from "@uk-data-atlas/search-index/node";
+import { NAME_NORMALISATION } from "./search/node/index.ts";
 import { openReadOnlyDatabase } from "./readOnlyDatabase.ts";
 import { openBuildMetadata, readBuildPayload } from "./buildMetadata.ts";
 
