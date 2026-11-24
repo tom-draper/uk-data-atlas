@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
+import { defineValueCard } from "@/lib/datasets/valueCard";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
 
@@ -14,9 +15,21 @@ const cardOf = (type: string) =>
 	CHART_DATASET_DEFINITIONS.find((definition) => definition.type === type)!
 		.chart.card!;
 
-const claimantCard = CHART_DATASET_DEFINITIONS.find(
-	({ type }) => type === "claimant-count",
-)!.chart.card!;
+type Claimants = { totalRate: number; youthRate: number };
+
+// A rate card with a secondary figure, as the claimant card was before it
+// became a history card.
+const claimantCard = defineValueCard<
+	{ data: Record<string, Claimants> },
+	Claimants,
+	Claimants
+>({
+	heading: "Claimant Count",
+	source: "ONS/Nomis",
+	maximum: 10,
+	value: (stats) => stats.totalRate,
+	secondary: (stats) => `${stats.youthRate.toFixed(1)}% youth`,
+});
 const claimants = {
 	boundaryType: "localAuthority",
 	boundaryYear: 2023,
