@@ -143,7 +143,10 @@ test("publishes a category only the nation counts as a measure of its own", () =
 	try {
 		const compiled = compileCensusNation(root, rows, measures, [own]);
 		const [created] = measures;
-		assert.equal(created?.id, `${own.joins.measurePrefix}-one-or-more-people`);
+		assert.equal(
+			created?.id,
+			`${own.joins.measurePrefix}-one-or-more-people`,
+		);
 		assert.equal(created?.label, "Fixture own");
 		assert.deepEqual(created?.series, {
 			measure: own.joins.measure,

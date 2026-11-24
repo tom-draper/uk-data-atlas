@@ -108,7 +108,8 @@ export const createRouter = (database: DatabaseSync): Router => {
 			exact: rows.every((row) => isExactMethod(row.method)),
 			bestFit: rows.every(
 				(row) =>
-					row.method === "official-lookup" && row.purpose === "membership",
+					row.method === "official-lookup" &&
+					row.purpose === "membership",
 			),
 		};
 	};

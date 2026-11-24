@@ -136,7 +136,9 @@ test("every category joins a category of the England and Wales table or is the n
 		for (const [index, member] of members.entries()) {
 			expect(Object.keys(member)).toEqual([each.joins.dimension]);
 			const [suffix, , label] = each.categories[index]!;
-			const joined = each.joins.categories.some(([name]) => name === suffix);
+			const joined = each.joins.categories.some(
+				([name]) => name === suffix,
+			);
 			// A label marks a category England and Wales do not publish, and
 			// only those, so no category is approximated to one that differs.
 			expect(joined).toBe(label === undefined);
@@ -145,9 +147,9 @@ test("every category joins a category of the England and Wales table or is the n
 });
 
 test("a category only the nation publishes is the member of its own suffix", () => {
-	const members = censusNationMembers(table("census-2022-scotland-uv102b")).map(
-		(each) => each["age-band"],
-	);
+	const members = censusNationMembers(
+		table("census-2022-scotland-uv102b"),
+	).map((each) => each["age-band"]);
 	expect(members).toContain("16-to-17");
 	expect(members).toContain("10-to-14");
 	expect(members).not.toContain("15-to-19");
