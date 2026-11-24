@@ -263,6 +263,8 @@ export type DatasetDeclaration<
 	ranking?: DisplayRanking;
 	/** The key figure place pages show for the dataset, if it has one. */
 	placeHeadline?: PlaceHeadlineDeclaration;
+	/** A series place pages chart on the place's current boundary, if any. */
+	placeTrend?: PlaceTrendDeclaration;
 };
 
 /** The place pages that can show a dataset's headline. */
@@ -294,6 +296,36 @@ export type PlaceHeadlineDeclaration = {
 	format?: DisplayFormat;
 	/** How the two ends of the ranking read, "highest" and "lowest" by default. */
 	ends?: readonly [string, string];
+};
+
+/** The place pages that can chart a dataset's trend. */
+export const PLACE_TREND_GEOGRAPHIES = ["localAuthority"] as const;
+export type PlaceTrendGeography = (typeof PLACE_TREND_GEOGRAPHIES)[number];
+
+/**
+ * A series place pages chart on the place's current boundary: its published
+ * values, and values the build converted onto that boundary from earlier
+ * ones. Datasets that declare the same `key` publish the same quantity, and
+ * each place charts whichever of them holds the most periods for it, so the
+ * series is never stitched from two publishers.
+ */
+export type PlaceTrendDeclaration = {
+	/** The quantity, shared by every dataset that publishes it. */
+	key: string;
+	/** The kinds of place whose page charts it. */
+	places: readonly PlaceTrendGeography[];
+	/** Where it sits on the page, lowest first. */
+	order: number;
+	/** A short name, as "Population". */
+	label: string;
+	/** The stored measure, its fixed members, and the dimensions added up. */
+	measure: string;
+	dimensions: Readonly<Record<string, string>>;
+	sum?: readonly string[];
+	/** Put before a period's label, as "mid-" makes "mid-2024". */
+	periodPrefix?: string;
+	/** Rounding for the headline figure, as 1000 makes "274,000". */
+	roundTo?: number;
 };
 
 const KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;

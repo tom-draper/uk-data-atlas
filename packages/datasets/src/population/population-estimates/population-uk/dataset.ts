@@ -1,7 +1,11 @@
 import type { PopulationUkDataset } from "../../../types/population.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { POPULATION, SEX } from "../../../declaration/measures.ts";
-import { AGE, byAge } from "../../../data/population/statistics.ts";
+import {
+	AGE,
+	byAge,
+	POPULATION_TREND,
+} from "../../../data/population/statistics.ts";
 import { populationUkStatisticsParts } from "../../../data/population/ukSource.ts";
 
 export const populationUk = defineDataset<PopulationUkDataset>({
@@ -37,6 +41,7 @@ export const populationUk = defineDataset<PopulationUkDataset>({
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["total", "males", "females", "ladName"],
 	},
+	placeTrend: POPULATION_TREND,
 	statistics: {
 		direct: {
 			only: true,

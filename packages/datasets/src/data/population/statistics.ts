@@ -1,3 +1,4 @@
+import type { PlaceTrendDeclaration } from "../../declaration/dataset.ts";
 import type { DeclaredDimension } from "../../declaration/statistics.ts";
 /** Single years of age, with 90 meaning 90 and over. */
 export const AGE: DeclaredDimension = {
@@ -19,3 +20,20 @@ export const byAge = [
 		members: { sex: "female" },
 	},
 ];
+
+/**
+ * Residents of all ages, charted on council pages. The UK-wide series and the
+ * nations' own longer ones declare it alike, so a Scottish or Northern Irish
+ * council charts its own nation's series.
+ */
+export const POPULATION_TREND: PlaceTrendDeclaration = {
+	key: "population",
+	places: ["localAuthority"],
+	order: 0,
+	label: "Population",
+	measure: "population",
+	dimensions: { sex: "all" },
+	sum: ["age"],
+	periodPrefix: "mid-",
+	roundTo: 1000,
+};

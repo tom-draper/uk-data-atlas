@@ -235,5 +235,14 @@ export function declarationProblems(declaration: DatasetDeclaration): string[] {
 			if (blank(headline[key])) problem(`placeHeadline.${key} is empty`);
 	}
 
+	const trend = declaration.placeTrend;
+	if (trend) {
+		if (trend.places.length === 0) problem("placeTrend.places is empty");
+		for (const key of ["key", "label", "measure"] as const)
+			if (blank(trend[key])) problem(`placeTrend.${key} is empty`);
+		if (trend.roundTo !== undefined && !(trend.roundTo > 0))
+			problem("placeTrend.roundTo is not above zero");
+	}
+
 	return problems;
 }
