@@ -44,7 +44,7 @@ export const populationDistrictNi = defineDataset<
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["total", "males", "females", "ladName"],
 	},
-	placeTrend: POPULATION_TREND,
+	placeTrends: [POPULATION_TREND],
 	statistics: {
 		direct: {
 			only: true,

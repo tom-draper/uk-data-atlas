@@ -32,17 +32,30 @@ const MAKING_KINDS = ["merged", "split", "redistributed", "redrawn"];
 const specOf = (
 	dataset: string,
 	trend: PlaceTrendDeclaration,
-): ReleaseSeriesSpec => ({
-	parts: [
-		{
-			datasetId: dataset,
-			measure: trend.measure,
-			dimensions: { ...trend.dimensions },
-			geography: "localAuthority",
-			...(trend.sum ? { sum: [...trend.sum] } : {}),
-		},
-	],
-});
+): ReleaseSeriesSpec => {
+	const part = (quantity: {
+		measure: string;
+		dimensions: Readonly<Record<string, string>>;
+		sum?: readonly string[];
+	}) => ({
+		datasetId: dataset,
+		measure: quantity.measure,
+		dimensions: { ...quantity.dimensions },
+		geography: "localAuthority",
+		...(quantity.sum ? { sum: [...quantity.sum] } : {}),
+	});
+	return {
+		parts: [part(trend)],
+		...(trend.per
+			? {
+					ratio: {
+						parts: [part(trend.per)],
+						scale: trend.per.scale ?? 1,
+					},
+				}
+			: {}),
+	};
+};
 
 /** The declared trends, each with the datasets that publish it. */
 export function declaredTrends() {
@@ -51,15 +64,15 @@ export function declaredTrends() {
 		{ declaration: PlaceTrendDeclaration; datasets: string[] }
 	>();
 	for (const declaration of DATASET_DECLARATIONS) {
-		const trend = declaration.placeTrend;
-		if (!trend) continue;
-		const held = trends.get(trend.key);
-		if (held) held.datasets.push(declaration.id);
-		else
-			trends.set(trend.key, {
-				declaration: trend,
-				datasets: [declaration.id],
-			});
+		for (const trend of declaration.placeTrends ?? []) {
+			const held = trends.get(trend.key);
+			if (held) held.datasets.push(declaration.id);
+			else
+				trends.set(trend.key, {
+					declaration: trend,
+					datasets: [declaration.id],
+				});
+		}
 	}
 	return [...trends.values()].sort(
 		(a, b) => a.declaration.order - b.declaration.order,

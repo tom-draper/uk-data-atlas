@@ -13,6 +13,7 @@ import {
 	type TrendStanding,
 } from "@uk-data-atlas/catalogue/place-trends";
 import { DATASET_DECLARATIONS } from "@uk-data-atlas/datasets";
+import { formatDisplay } from "@/lib/datasets/declared";
 
 export * from "@uk-data-atlas/catalogue/place-trends";
 
@@ -28,6 +29,10 @@ export type PlaceTrendView = {
 	area: PlaceTrendArea;
 	/** "mid-2024" for the period "2024". */
 	periodName: (period: string) => string;
+	/** A value as the page writes it, such as "£34,500" or "81.2 years". */
+	format: (value: number) => string;
+	/** How the change since the first period reads. */
+	change: "percent" | "difference";
 	/** The latest value, as published. */
 	latest: { period: string; value: number; kind: PlaceTrendKind };
 	/** The latest value rounded for prose, such as "275,000". */
@@ -63,7 +68,13 @@ export async function placeTrends(code: string): Promise<PlaceTrendView[]> {
 		const declaration = DATASET_DECLARATIONS.find(
 			(dataset) => dataset.id === area?.dataset,
 		);
-		if (!area || !last || !declaration) continue;
+		const declared = declaration?.placeTrends?.find(
+			(trend) => trend.key === key,
+		);
+		if (!area || !last || !declaration || !declared) continue;
+		const format = declared.format
+			? (value: number) => formatDisplay(declared.format!, value)
+			: formatted;
 		const periodName = (period: string) =>
 			`${trend.periodPrefix ?? ""}${period}`;
 		const roundTo =
@@ -81,15 +92,17 @@ export async function placeTrends(code: string): Promise<PlaceTrendView[]> {
 				)
 			: {};
 		const council = COUNCIL_PLACES.get(code);
-		const wardSlug = declaration.placeTrend?.wardMap;
+		const wardSlug = declared.wardMap;
 		const wardMap = wardSlug ? findAtlasMap(wardSlug) : undefined;
 		views.push({
 			key,
 			label: trend.label,
 			area,
 			periodName,
+			format,
+			change: declared.change ?? "percent",
 			latest: { period: last[0], value: last[1], kind: trendKind(last) },
-			rounded: formatted(Math.round(last[1] / roundTo) * roundTo),
+			rounded: format(Math.round(last[1] / roundTo) * roundTo),
 			source: {
 				name: declaration.source.name,
 				publisher: declaration.source.publisher,
@@ -105,7 +118,7 @@ export async function placeTrends(code: string): Promise<PlaceTrendView[]> {
 							phrase: rankPhrase(
 								standing.rank,
 								standing.of,
-								declaration.placeTrend?.ends,
+								declared.ends,
 							),
 							names,
 						},
@@ -127,5 +140,3 @@ export async function placeTrends(code: string): Promise<PlaceTrendView[]> {
 /** "Population about 275,000 (mid-2024).", for a page description. */
 export const trendSentence = (view: PlaceTrendView) =>
 	`${view.label} about ${view.rounded} (${view.periodName(view.latest.period)}).`;
-
-export { formatted as formatTrendValue };
