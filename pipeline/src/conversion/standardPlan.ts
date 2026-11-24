@@ -228,6 +228,20 @@ const SMALL_AREA_POPULATION: ReadonlySet<string> = new Set([
 	"population-data-zone-ni",
 ]);
 
+/**
+ * The datasets that publish single years of age by sex and no total, and no
+ * finer figure beside them for the whole of their nation. Each standard
+ * release holds them as converted series by age and sex, which the default
+ * view does not rank (it takes the series with no age member), so their total
+ * is also planned there. They come after every finer dataset in
+ * `POPULATION_DATASETS`, so the total only fills the years and areas that none
+ * of those reaches.
+ */
+export const STANDARD_TOTAL_DATASETS = [
+	"population-council-scotland",
+	"population-district-ni",
+] as const;
+
 /** The geographies a population total is converted onto, on every release. */
 export const POPULATION_GEOGRAPHIES = [
 	"localAuthority",
@@ -240,8 +254,9 @@ export const POPULATION_GEOGRAPHIES = [
  * above, as a total of persons of all ages.
  *
  * Each standard release already gets the population by age and sex from
- * `planStandardReleases`, so it is left out. Every other release gets the
- * total alone: the breakdown on every release would multiply the atlas by
+ * `planStandardReleases`, so it is left out, except for the datasets in
+ * `standardTotals`, which also get their total there. Every other release gets
+ * the total alone: the breakdown on every release would multiply the atlas by
  * the 91 ages for little use. A route may chain as many crosswalks as a chain
  * of the oldest release does (`MAX_CHAIN_HOPS`), and the total is split on
  * population, the one basis a population split is backtested on.
@@ -258,10 +273,11 @@ export const planPopulationReleases = (
 	resolver: Resolver,
 	datasets: readonly string[] = POPULATION_DATASETS,
 	exclude: readonly string[] = STANDARD_RELEASES,
+	standardTotals: readonly string[] = STANDARD_TOTAL_DATASETS,
 ): StandardPlan => {
 	const entries: PlanEntry[] = [];
 	const skips: PlanSkip[] = [];
-	const targets = (
+	const allTargets = (
 		database
 			.prepare(
 				`SELECT geography || ':' || release AS name FROM area_release
@@ -269,9 +285,8 @@ export const planPopulationReleases = (
 				ORDER BY geography, release`,
 			)
 			.all(...POPULATION_GEOGRAPHIES) as { name: string }[]
-	)
-		.map((row) => row.name)
-		.filter((name) => !exclude.includes(name));
+	).map((row) => row.name);
+	const targets = allTargets.filter((name) => !exclude.includes(name));
 	const groups = publishedGroups(database)
 		.filter(
 			(group) =>
@@ -286,7 +301,9 @@ export const planPopulationReleases = (
 	for (const group of groups) {
 		const { geography, release } = resolver.router.release(group.releaseId);
 		const source = `${geography}:${release}`;
-		for (const target of targets) {
+		for (const target of standardTotals.includes(group.dataset)
+			? allTargets
+			: targets) {
 			if (target === source) continue;
 			const skip = (reason: PlanSkipReason) =>
 				skips.push({
