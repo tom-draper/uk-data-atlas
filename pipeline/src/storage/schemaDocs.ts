@@ -584,8 +584,8 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			period_id: "The period (period.id).",
 			value: "The number, in the measure's unit. Null when suppressed or when the value is a category.",
 			status_id: "How to read the value (status.id). 1 is observed.",
-			lower: "Lower bound of a confidence interval or estimate, where published or computed. Null otherwise.",
-			upper: "Upper bound, as lower.",
+			lower: "Lower bound, in the value's unit. On a published series it is the publisher's confidence interval, where one is given. On a converted or modelled series it is set exactly when status is 'estimated'. For a converted value it is the value less the error model's factor times the amount a split put at risk, less any pruned amount, floored at zero (see conversion_error); for a modelled one it is drawn with its model's factor. It is not a confidence interval. Null on every 'derived' or 'observed' value without a published interval.",
+			upper: "Upper bound, as lower: on an 'estimated' converted value, the value plus the factor times the amount at risk.",
 			category_id:
 				"For a category measure (such as the winning party), the member it takes (dimension_member.id).",
 		},
