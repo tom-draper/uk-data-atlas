@@ -6,7 +6,7 @@ import type { FullDetailSource } from "@uk-data-atlas/geometry";
 import type { ValidatedValue } from "@uk-data-atlas/relationships";
 import { releaseKey } from "@uk-data-atlas/geography";
 import { featureIds } from "@uk-data-atlas/map-tiles/featureIds";
-import { readPostedRows, type RowValue } from "../requestRows";
+import { readPostedRows, type RowValue } from "../http/requestRows";
 import {
 	envelope,
 	invalidQuery,

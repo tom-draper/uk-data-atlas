@@ -2,7 +2,7 @@ import { requireGeography } from "../runtime/index.ts";
 import { areaNotFound } from "../runtime/index.ts";
 import { MAX_BATCH_VALUES } from "@uk-data-atlas/relationships";
 import { matchManifest, matchReportResponse } from "../matchReport";
-import { readPostedRows } from "../requestRows";
+import { readPostedRows } from "../http/requestRows";
 import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";

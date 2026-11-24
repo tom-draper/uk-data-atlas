@@ -6,8 +6,8 @@ import type {
 	RequestBody,
 	RouteContextFor,
 } from "../runtime/index.ts";
-import { httpResponse } from "../httpResponse";
-import { sendFastifyResponse } from "../fastifyResponse";
+import { httpResponse } from "../http/httpResponse";
+import { sendFastifyResponse } from "../http/fastifyResponse";
 import { boundTo } from "./routeBinding";
 import { validateResponse } from "./validateResponse";
 

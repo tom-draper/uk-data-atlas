@@ -1,6 +1,6 @@
 import { DEFAULT_OBSERVATION_CACHE_BYTES } from "@uk-data-atlas/measures";
 import { DEFAULT_CROSSWALK_CACHE_BYTES } from "@uk-data-atlas/relationships";
-import type { RateLimitPolicy } from "./rateLimit";
+import type { RateLimitPolicy } from "./http/rateLimit";
 
 /** One structured log line. Written as JSON, one object per line. */
 export type LogEntry = {

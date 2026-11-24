@@ -11,7 +11,7 @@ import {
 	type ChangeBasis,
 } from "../change";
 import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
-import { paginate } from "../pagination";
+import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "../placeParameter";
 import {

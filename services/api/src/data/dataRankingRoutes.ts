@@ -6,7 +6,7 @@ import { rankingOf } from "../ranking";
 import { sourceExactProvenance } from "../sourceExactProvenance.ts";
 import { publishedPartitions, statedDefaults } from "../dataDefaults";
 import { selectSourcePartition } from "../sourcePartition";
-import { paginate } from "../pagination";
+import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,

@@ -6,7 +6,7 @@ import { test } from "vitest";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 
-import { httpResponse } from "../../src/httpResponse";
+import { httpResponse } from "../../src/http/httpResponse";
 import { CAPABILITY_STATUSES } from "@uk-data-atlas/areas";
 import { CONVERSION_METHODS } from "@uk-data-atlas/measures";
 import {

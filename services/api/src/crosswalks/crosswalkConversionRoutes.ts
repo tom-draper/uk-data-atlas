@@ -4,7 +4,7 @@ import { directRelationshipPath } from "@uk-data-atlas/relationships";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { readChoice } from "../runtime/index.ts";
 import { QUERY_RULES } from "../queryRules";
-import { readPostedRows } from "../requestRows";
+import { readPostedRows } from "../http/requestRows";
 import {
 	envelope,
 	invalidQuery,

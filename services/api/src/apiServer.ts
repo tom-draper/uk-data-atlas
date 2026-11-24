@@ -20,7 +20,7 @@ import { areaDetailFastifyRoutes } from "./areas/areaDetailFastifyRoutes";
 import { mapResourceFastifyRoutes } from "./mapResources/mapResourceFastifyRoutes";
 import { dataFastifyRoutes } from "./data/dataFastifyRoutes";
 import { measureExportRoutes } from "./data/measureExportRoutes";
-import { routingUrl } from "./routingPath";
+import { routingUrl } from "./http/routingPath";
 import Fastify, {
 	type FastifyReply,
 	type FastifyRequest,
@@ -30,8 +30,8 @@ import { catalogueFastifyRoutes } from "./catalogue/catalogueFastifyRoutes";
 import { atlasReleaseRoutes } from "./contract/atlasReleaseRoutes";
 import { documentationRoutes } from "./contract/documentationRoutes";
 import { rootRoutes } from "./contract/rootRoutes";
-import { sendFile } from "./sendFile";
-export { sendFile } from "./sendFile";
+import { sendFile } from "./http/sendFile";
+export { sendFile } from "./http/sendFile";
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { gzip } from "node:zlib";
@@ -52,15 +52,15 @@ import {
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
-} from "./httpResponse";
+} from "./http/httpResponse";
 import {
 	deprecationHeaders,
 	type MatchedOperation,
 	unexpectedQueryParameter,
 } from "./runtime/index.ts";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./places/postcodeRoutes";
-import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
-import { ResponseCache } from "./responseCache";
+import { clientAddress, clientKey, RateLimiter } from "./http/rateLimit";
+import { ResponseCache } from "./http/responseCache";
 import { isStoredFile, problem, type ApiResponse } from "./runtime/index.ts";
 import { routeAsync } from "./routes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";

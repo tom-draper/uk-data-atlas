@@ -6,8 +6,8 @@ import { test } from "vitest";
 import { gzipSync, gunzipSync } from "node:zlib";
 import Fastify from "fastify";
 import { envelope } from "../src/runtime/index.ts";
-import { sendFastifyResponse } from "../src/fastifyResponse";
-import { httpResponse } from "../src/httpResponse";
+import { sendFastifyResponse } from "../src/http/fastifyResponse";
+import { httpResponse } from "../src/http/httpResponse";
 
 test("Fastify streams stored files, ranges and stored gzip representations", async (t) => {
 	const dir = mkdtempSync(join(tmpdir(), "atlas-fastify-response-"));

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { acceptsGzip, httpResponse } from "../src/httpResponse";
+import { acceptsGzip, httpResponse } from "../src/http/httpResponse";
 import { envelope } from "../src/runtime/index.ts";
 
 test("uses an explicit gzip preference before the wildcard", () => {

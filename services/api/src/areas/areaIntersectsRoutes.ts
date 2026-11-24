@@ -4,7 +4,7 @@ import {
 	GEOMETRY_TIERS,
 	simplifyGeometry,
 } from "@uk-data-atlas/map-tiles";
-import { cursorFor, nextPageHref, readCursor } from "../pagination";
+import { cursorFor, nextPageHref, readCursor } from "../http/pagination";
 import { latestPublishedBoundaryRelease } from "../pointLookup";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {

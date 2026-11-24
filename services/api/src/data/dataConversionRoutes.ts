@@ -15,7 +15,7 @@ import {
 	type ConversionStep,
 } from "@uk-data-atlas/measures";
 import { sourceExactProvenance } from "../sourceExactProvenance.ts";
-import { paginate } from "../pagination";
+import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
