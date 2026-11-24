@@ -36,4 +36,6 @@ export const POPULATION_TREND: PlaceTrendDeclaration = {
 	sum: ["age"],
 	periodPrefix: "mid-",
 	roundTo: 1000,
+	wardMap: "population-density",
+	ends: ["largest", "smallest"],
 };
