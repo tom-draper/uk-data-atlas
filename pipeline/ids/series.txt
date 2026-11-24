@@ -5182,3 +5182,5 @@ workplace-income/gross-hourly-pay/localAuthority:2025-05-uk-bgc-v2/earnings-plac
 workplace-income/gross-hourly-pay/localAuthority:2025-05-uk-bgc-v2/earnings-place=workplace/pay-statistic=p90~converted:localAuthority:2026-05-uk-bgc
 workplace-income/gross-hourly-pay-change/localAuthority:2025-05-uk-bgc-v2/earnings-place=workplace/pay-statistic=median~converted:localAuthority:2026-05-uk-bgc
 workplace-income/gross-hourly-pay-change/localAuthority:2025-05-uk-bgc-v2/earnings-place=workplace/pay-statistic=mean~converted:localAuthority:2026-05-uk-bgc
+population-council-scotland/population/localAuthority:2023-12-uk-bgc/sex=all~converted:localAuthority:2026-05-uk-bgc
+population-district-ni/population/localAuthority:2023-12-uk-bgc/sex=all~converted:localAuthority:2026-05-uk-bgc
