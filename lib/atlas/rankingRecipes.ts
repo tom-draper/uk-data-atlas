@@ -349,6 +349,74 @@ function councilNamed(name: string) {
 
 const decileField = (key: string) => (record: DataRecord) => num(record[key]);
 
+/**
+ * A 2021 neighbourhood's council: in England, from the newest deprivation
+ * file, which lists every one; in Wales, from its name, as "Cardiff 001A".
+ */
+function neighbourhoodCouncil(
+	context: RankingContext,
+	code: string,
+	name: unknown,
+) {
+	const imd = Object.entries(context.inputs.imd as Editions).sort(
+		([a], [b]) => Number(b) - Number(a),
+	)[0]?.[1];
+	const listed = imd?.data[code]?.ladCode;
+	if (typeof listed === "string") return successorCouncil(listed) ?? listed;
+	return councilNamed(String(name ?? "").replace(/ \d+[A-Z]$/, ""));
+}
+
+/**
+ * Census counts by neighbourhood added up into councils, ranked by the share
+ * of the total that `part` counts. Columns are shares of the same total.
+ */
+const censusRecipe = (
+	part: (counts: DataRecord) => number | null,
+	columns: readonly RankingColumn[],
+): RankingRecipe => ({
+	level: "localAuthority",
+	inputs: ["imd"],
+	format: percentOne,
+	rows: (context) => {
+		const councils = new Map<string, Record<string, number>>();
+		for (const [code, record] of Object.entries(context.edition.data)) {
+			const council = neighbourhoodCouncil(context, code, record.name);
+			const metrics = record.metrics as DataRecord | undefined;
+			if (!council || !metrics) continue;
+			const counts = councils.get(council) ?? {};
+			for (const [key, value] of Object.entries(metrics))
+				counts[key] = (counts[key] ?? 0) + (num(value) ?? 0);
+			councils.set(council, counts);
+		}
+		return [...councils].flatMap(([code, counts]) => {
+			const value = share(part(counts), num(counts.total));
+			return value === null
+				? []
+				: [
+						{
+							code,
+							name: councilName(
+								gazetteer.get(code)?.name ?? code,
+							),
+							district: code,
+							value,
+							record: counts,
+						},
+					];
+		});
+	},
+	columns,
+});
+
+/** A column of the share of a census total that some of its counts make up. */
+const censusShare = (label: string, ...keys: string[]) =>
+	column(label, "percent", (record) =>
+		share(
+			keys.reduce((sum, key) => sum + (num(record[key]) ?? 0), 0),
+			num(record.total),
+		),
+	);
+
 // Population -----------------------------------------------------------------
 
 const ethnicShare = (
@@ -609,6 +677,13 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	"ghg-emissions": {
 		columns: [changeSince("percent"), changeSince("percent", "first")],
 	},
+	"general-health": {
+		...censusRecipe(field("goodHealth"), [
+			censusShare("Bad or very bad health", "bad", "veryBad"),
+			column("Residents", "count", field("total")),
+		]),
+		label: "In good or very good health",
+	},
 	"healthy-life-expectancy": {
 		columns: [
 			column("Male", "years", field("maleBirthLE")),
@@ -651,6 +726,14 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 			}),
 			changeSince("percent"),
 		],
+	},
+	"housing-tenure": {
+		...censusRecipe(field("owned"), [
+			censusShare("Social rent", "social"),
+			censusShare("Private rent", "private"),
+			column("Households", "count", field("total")),
+		]),
+		label: "Homes owned",
 	},
 	"housing-affordability": {
 		label: "House prices to earnings",
