@@ -7,6 +7,38 @@ aggregates data today, what the API already provides, the target, and the
 order of the migration. Phase 1 (this change) adds the query layer, a website
 data path and one proof. Nothing existing is switched over yet.
 
+## Plan: remove the per-dataset aggregation
+
+Thirteen website files still aggregate through `lib/helpers/datasetAggregation/`
+or `lib/helpers/aggregateDataset.ts`. This section lists what each caller
+needs and what the generic path (`queryMeasureValues`, `lib/measures/`) lacks
+for it. It is replaced by the current state when the work is done.
+
+### What the callers need
+
+| Caller                                                                                      | Needs                                                                                                  | Generic path today                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/datasets/population.ts`, `mapRendering/population.ts`                                  | Density, age bands and gender over the wards in view                                                   | The `population` measure has no age or sex dimension at ward level; age bands and sex are catalogue ids (`age-0-to-4`, ...) of other series. Density divides by a feature's area, which is geometry, not a catalogue value (`population-density` exists as a computed measure). `mapRendering/population.ts` only needs the `BoundaryCodeScope` type. |
+| `lib/datasets/declared.ts`, `valueCard.ts`                                                  | The card figure for the whole map when no area is selected; deprivation summaries                      | Some 30 declarations name a bespoke `display.aggregation.aggregate` over records. Measures with a single declared rule can use `parents`/`combine.ts`; the rest read several fields of one record and need those fields to be measures first.                                                                                                         |
+| `lib/datasets/categories.ts`, `legendData.ts` (`categoryLegendItems`)                       | Population per category over the areas in view, sorted                                                 | The breakdown card already queries these. The legend needs the same per-member totals over the scope.                                                                                                                                                                                                                                                 |
+| `lib/datasets/brexit.ts`, `brexitConstituency.ts`                                           | Leave and remain votes, totals and shares over the areas in view                                       | `referendum-votes`, `referendum-vote-share` and `electorate` are not served measures yet. Constituency estimates are a mean of shares.                                                                                                                                                                                                                |
+| `lib/datasets/localElection.ts`, `generalElection.ts`, `legendData.ts` (`partyLegendItems`) | Party votes summed, seats won per party (the winner of each area), electorate, valid and invalid votes | `party-votes` is served per party member, one request each. `seats`, `electorate` and `invalid-votes` are not served. Seats need the winner of each area, which is a per-area fold over the party columns.                                                                                                                                            |
+| `components/custom/CustomDatasetCard.tsx`, `useAggregatedDataset`                           | Count and mean of a visitor's own uploaded values over the areas in view                               | Uploads are not catalogue measures. Only the scope (`areaCodesInScope`) is generic; the reduction runs over the upload's own values.                                                                                                                                                                                                                  |
+| `components/ChartCards.tsx`, `mapManager.ts`, `aggregateDataset.ts`, `types.ts`             | Hold and pass the aggregate                                                                            | Go when the above no longer produce one.                                                                                                                                                                                                                                                                                                              |
+
+### Order
+
+1. Population type import, then the declared and categories families.
+2. Brexit, then elections (adding the measures they lack to the catalogue).
+3. The custom card.
+4. Delete `datasetAggregation/`, `aggregateDataset.ts`, `useAggregatedDataset`,
+   `calculateStats`, `legendAggregation` and the types nothing uses.
+5. Rewrite this document and `ARCHITECTURE.md` to describe only the code as it
+   then is.
+
+Values on the map, legend, charts and figures are compared before and after
+each step, by value.
+
 ## Current state
 
 ### How the website loads data
