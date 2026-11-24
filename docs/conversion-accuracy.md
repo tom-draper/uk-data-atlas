@@ -136,10 +136,47 @@ misses the age groups by far more. A class with no factor is not split.
 
 A regrouped value has status `derived` and no bounds. A split value has status
 `estimated` and both bounds. No converted value has status `observed`: the copy
-into the atlas fails if one does. In the built atlas, the 1,023 converted series
-hold 1,414,818 derived values with no bounds, 27,599 estimated values with
-bounds (92 series, below), and no observed value. The 1,643 published series
-are unchanged.
+into the atlas fails if one does. In the atlas built on 2026-11-24, the 2,079
+converted series hold 4,287,147 derived values with no bounds, 81,515 estimated
+values with bounds (116 series), and no observed value. Every estimated
+converted value has both bounds and every derived one has neither. The 2,714
+published series are unchanged: their only bounds are the 15,796 confidence
+intervals their publishers give.
+
+### How a bound is represented
+
+The bounds are two absolute values in the value's own unit, in
+`observation.lower` and `observation.upper`, beside `value`. They are not a
+relative error and not a confidence interval: they are `boundsOf` in
+`pipeline/src/conversion/errorModel.ts`, the value plus and minus the factor
+times its amount at risk, with the lower bound widened by any pruned amount and
+floored at zero. The status says which kind of range a row holds: `estimated`
+on a converted series is a conversion bound, `observed` on a published series is
+the publisher's interval. No new column or table was added for them.
+
+The amount at risk itself is not stored, only `series_estimate.estimated_share`,
+so a bound cannot be recomputed from the stored columns. The hand-checked case
+in `pipeline/tests/conversion/convertEntry.test.ts` checks it end to end: 80
+split in half with risk 0.1 on each edge and a factor of 1.5 gives 40 within 28
+to 52, and the regrouped areas beside it keep no bounds.
+
+They cost about 1.27 MB of the 1,195 MB atlas (0.1%): 15.5 bytes a row over the
+81,515 bounded rows, against NULLs.
+
+### Where the bounds are served
+
+- **API.** `GET /v1/data/{measure}/series?on=geography/release` gives a
+  `weighted` value its `bounds` (`lower`, `upper`). A `native` value keeps any
+  publisher `confidenceInterval` and an `exact` value has neither. The rename
+  from `confidenceInterval` is in the API changelog for 2026-11-24, as a
+  breaking change under early access.
+- **App.** Council trend charts draw a weighted point's bounds as a band
+  (`pipeline/src/places/buildPlaceTrends.ts`, `components/places/PlaceTrends.tsx`).
+- **MCP.** `get_series` tells agents to quote the bounds of a weighted value.
+- **Downloads.** No download carries a converted value, so none carries a
+  conversion bound. The observation exports' `lowerBound` and `upperBound` are
+  publisher intervals. `to=` serves only reviewed exact conversions, which have
+  no bounds.
 
 Every query in the codebase that reads `series` names the method it wants, and a
 test fails on one that does not
