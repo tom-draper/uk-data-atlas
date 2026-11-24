@@ -113,6 +113,7 @@ const measures = [
 		statistic: "median",
 		aggregation: "none",
 	}),
+	measure(6, "population"),
 ];
 
 const database = new DatabaseSync(":memory:");
@@ -172,6 +173,13 @@ publish(5, "median-pay", 10, [
 	[4, 31000],
 ]);
 
+publish(6, "population", 10, [
+	[1, 100],
+	[2, 300],
+	[3, 50],
+	[4, 80],
+]);
+
 const entry = (measureSlug: string): PlanEntry => ({
 	id: `labour/${measureSlug}`,
 	source: { dataset: "labour", measure: measureSlug, release: "area:from" },
@@ -195,6 +203,16 @@ const context = (): ConversionContext => ({
 });
 
 const converted = (slug: string) => [...convertEntry(context(), entry(slug))];
+/** The one factor the backtest fitted here, for the split's method and basis. */
+const FACTOR = 1.5;
+const measuredContext = (): ConversionContext => ({
+	...context(),
+	factors: (method, basis, measureClass) =>
+		`${method}|${basis}|${measureClass}` ===
+		"extent-continuity|population|total population"
+			? FACTOR
+			: undefined,
+});
 const byArea = (series: ReturnType<typeof converted>[number]) =>
 	new Map(series.observations.map((o) => [o.area, o.value]));
 
@@ -249,6 +267,48 @@ test("a value that cannot be combined is carried only onto the whole of one area
 		[23, "not-combinable"],
 	]);
 	assert.deepEqual(series!.quality, { exactShare: 1, coverage: 0.25 });
+});
+
+test("a measured split carries the error model's bounds, a regrouped value none", () => {
+	const [series] = [
+		...convertEntry(measuredContext(), {
+			...entry("population"),
+			estimates: true,
+		}),
+	];
+	const byCode = new Map(series!.observations.map((o) => [o.area, o]));
+	// Area 4 holds 80 and is split in half with risk 0.1 on each edge, so each
+	// half is 40 with 80 * 0.1 = 8 at risk. The error model's half width is
+	// the factor times that, 1.5 * 8 = 12, giving 28 to 52.
+	for (const area of [22, 23])
+		assert.deepEqual(
+			{
+				status: byCode.get(area)!.status,
+				value: byCode.get(area)!.value,
+				lower: byCode.get(area)!.lower,
+				upper: byCode.get(area)!.upper,
+			},
+			{ status: 2, value: 40, lower: 28, upper: 52 },
+		);
+	// Exact regroupings keep the official total and carry no bounds.
+	for (const area of [20, 21]) {
+		assert.equal(byCode.get(area)!.status, 6);
+		assert.equal(byCode.get(area)!.lower, null);
+		assert.equal(byCode.get(area)!.upper, null);
+	}
+	assert.equal(byCode.get(20)!.value, 400);
+});
+
+test("a split with no measured factor is a gap, never a value without bounds", () => {
+	const [series] = converted("population");
+	assert.deepEqual(
+		series!.observations.map((o) => o.area),
+		[20, 21],
+	);
+	assert.deepEqual(series!.gaps.map((gap) => [gap.area, gap.reason]).sort(), [
+		[22, "unmeasured-split"],
+		[23, "unmeasured-split"],
+	]);
 });
 
 test("a period the target already publishes stays native, the others convert", () => {
