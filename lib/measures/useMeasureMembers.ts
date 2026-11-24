@@ -2,9 +2,10 @@
 
 import { useMemo } from "react";
 import { MeasureQueryError } from "./client";
-import { loadMeasureValues, restrictToAreas } from "./cache";
+import { loadMeasureValues } from "./cache";
 import { measureValuesUrl } from "./request";
 import type { MeasureValuesPayload, MeasureValuesRequest } from "./types";
+import { useAreaFilter } from "./useAreaFilter";
 import { useLoaded } from "./useLoaded";
 
 export type MeasureMembersState =
@@ -28,55 +29,53 @@ export function useMeasureMembers(
 	const { areas, ...whole } = request ?? { measure: "" };
 	const requests = request
 		? members.map((member) => ({
-				...whole,
-				dimensions: { [dimension]: [member] },
+				member,
+				query: { ...whole, dimensions: { [dimension]: [member] } },
 			}))
 		: [];
-	const key = requests.length
-		? requests.map(measureValuesUrl).join(" ")
-		: null;
-	const loaded = useLoaded(key, async () => {
+	const load = async () => {
 		const settled = await Promise.allSettled(
-			requests.map(loadMeasureValues),
+			requests.map(
+				async ({ member, query }) =>
+					[member, await loadMeasureValues(query)] as const,
+			),
 		);
-		const payloads: Record<string, MeasureValuesPayload> = {};
-		let failure: unknown;
-		settled.forEach((one, index) => {
-			if (one.status === "fulfilled")
-				payloads[members[index]!] = one.value;
+		const entries: Array<readonly [string, MeasureValuesPayload]> = [];
+		let missing: MeasureQueryError | undefined;
+		for (const one of settled) {
+			if (one.status === "fulfilled") entries.push(one.value);
 			else if (
-				!(one.reason instanceof MeasureQueryError) ||
-				one.reason.status !== 404
+				one.reason instanceof MeasureQueryError &&
+				one.reason.status === 404
 			)
-				failure ??= one.reason;
-		});
-		if (failure) throw failure;
-		if (Object.keys(payloads).length === 0)
-			throw (settled[0] as PromiseRejectedResult).reason;
-		return payloads;
-	});
-	const areasKey = useMemo(() => (areas ? areas.join(",") : null), [areas]);
-	const all = loaded.status === "ready" ? loaded.value : null;
-	const payloads = useMemo(
-		() =>
-			all && areasKey !== null
+				missing ??= one.reason;
+			else throw one.reason;
+		}
+		if (entries.length === 0 && missing) throw missing;
+		return Object.fromEntries(entries);
+	};
+	const loaded = useLoaded(
+		requests.length
+			? {
+					key: JSON.stringify(
+						requests.map(({ query }) => measureValuesUrl(query)),
+					),
+					load,
+				}
+			: null,
+	);
+	const filter = useAreaFilter(areas);
+	return useMemo(() => {
+		if (loaded.status !== "ready") return loaded;
+		return {
+			status: "ready",
+			payloads: filter
 				? Object.fromEntries(
-						Object.entries(all).map(([member, payload]) => [
-							member,
-							restrictToAreas(payload, areas!),
-						]),
+						Object.entries(loaded.value).map(
+							([member, payload]) => [member, filter(payload)],
+						),
 					)
-				: all,
-		// The areas are named by their key.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[all, areasKey],
-	);
-	// The same object while the payloads are, so callers' memoised work
-	// holds. The React Compiler skips this file, so it is kept by hand.
-	const ready = useMemo(
-		() => ({ status: "ready" as const, payloads: payloads! }),
-		[payloads],
-	);
-	if (loaded.status !== "ready") return loaded;
-	return ready;
+				: loaded.value,
+		};
+	}, [loaded, filter]);
 }

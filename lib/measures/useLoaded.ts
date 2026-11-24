@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 export type Loaded<T> =
 	| { status: "idle" }
@@ -8,26 +8,25 @@ export type Loaded<T> =
 	| { status: "ready"; value: T }
 	| { status: "error"; error: Error };
 
-// Shared, so a caller sees the same object on every render while nothing has
-// changed and its memoised work holds. This file is not compiled by the React
-// Compiler (see the eslint comment below), so nothing else would keep it.
+// Keep the result stable while idle or waiting for an answer.
 const IDLE = { status: "idle" } as const;
 const LOADING = { status: "loading" } as const;
 
 /**
- * The result of `load`, read again when `key` changes. Null reads nothing.
+ * Read once per request key. Null reads nothing.
  * Nothing is cancelled: the loads are shared, so another card may still want
  * an answer this one has stopped waiting for.
  */
 export function useLoaded<T>(
-	key: string | null,
-	load: () => Promise<T>,
+	request: { key: string; load: () => Promise<T> } | null,
 ): Loaded<T> {
+	const key = request?.key;
+	const load = useEffectEvent(() => request?.load());
 	const [result, setResult] = useState<{ key: string; state: Loaded<T> }>();
 	useEffect(() => {
 		if (!key) return;
 		let current = true;
-		load().then(
+		load()?.then(
 			(value) => {
 				if (current)
 					setResult({ key, state: { status: "ready", value } });
@@ -51,8 +50,6 @@ export function useLoaded<T>(
 		return () => {
 			current = false;
 		};
-		// The key names what is loaded.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [key]);
 	if (!key) return IDLE;
 	return result?.key === key ? result.state : LOADING;
