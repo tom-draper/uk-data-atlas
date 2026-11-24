@@ -50,6 +50,7 @@ export const unitDefinitionFor = (unit: string): UnitDefinition => {
 		case "percent":
 		case "% of premises":
 		case "% of economically active residents aged 16 and over":
+		case "% of residents aged 16 to 64":
 			return definition(
 				"proportion",
 				0.01,
