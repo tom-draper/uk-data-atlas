@@ -142,14 +142,22 @@ parameters and what they return.
 
 ## Which way code may depend
 
-The package manifests define this dependency order, from lower layers upwards:
+Each package has a layer, listed in [packages/README.md](packages/README.md),
+and may import only packages in a lower layer. From the bottom:
 
-- `artifacts`, `geography` and `datasets` have no workspace dependencies.
-- `atlas-db` uses `artifacts` and `geography`.
-- `geometry` builds on `atlas-db`, `artifacts` and `geography`. `areas` also uses `datasets`.
-- `relationships` builds on `areas` and `geometry`. `measures` adds `datasets`, and `catalogue` builds on `measures` and `relationships`.
-- `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers.
-- `atlas-loader` composes the domains, including `places` and the terrain providers. It holds only the loaders and the resolvers that need several domains at once (`GeographyResolver`, the areas and catalogue resolvers). Each domain defines the narrow interface it needs from them (for example `AreaReleaseSource`, `PlacedAreaResolver`, `CrosswalkSummarySource`), which the loader's resolvers satisfy structurally. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
+- L0: `artifacts`, `geography` and `datasets` have no workspace dependencies.
+- L1: `atlas-db` uses `artifacts` and `geography`.
+- L2: `geometry` builds on `atlas-db`, `artifacts` and `geography`.
+- L3: `areas` also uses `datasets`.
+- L4: `relationships` builds on `areas` and `geometry`.
+- L5: `measures` adds `datasets`.
+- L6: `catalogue` builds on `measures` and `relationships`.
+- L7: `places` uses `catalogue`, `relationships`, `areas` and `geometry` as well as lower layers.
+- L8: `atlas-loader` composes the domains. It holds only the loaders and the resolvers that need several domains at once (`GeographyResolver`, the areas and catalogue resolvers). Each domain defines the narrow interface it needs from them (for example `AreaReleaseSource`, `PlacedAreaResolver`, `CrosswalkSummarySource`), which the loader's resolvers satisfy structurally. The pipeline, website and API import the packages they need. `services/mcp` accesses the API over HTTP.
+
+`tests/packages/packageLayers.test.ts` enforces the layer order against each
+manifest and each source import, and keeps `geography` and `datasets` free of
+Node built-ins and Node-only packages.
 
 `tests/packages/packageImports.test.ts` enforces acyclic package dependencies,
 one-line manifest descriptions, explicit exports without `./*`, and the
