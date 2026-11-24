@@ -44,6 +44,18 @@ const MONTHS = [
 	"December",
 ];
 
+/** The chart's points: hover targets, crosshairs, dots and tooltips. */
+const POINT_STYLES = [
+	"absolute inset-0",
+	"[&>div]:absolute [&>div]:inset-y-0 [&>div]:min-w-2 [&>div]:-translate-x-1/2",
+	"[&_i]:absolute [&_i]:inset-y-0 [&_i]:left-1/2 [&_i]:hidden [&_i]:w-px [&_i]:bg-slate-400/60 [&>div:hover>i]:block",
+	"[&_b]:absolute [&_b]:left-1/2 [&_b]:size-2 [&_b]:-translate-x-1/2 [&_b]:-translate-y-1/2 [&_b]:rounded-full [&_b]:bg-slate-800 [&_b]:ring-2 [&_b]:ring-white",
+	"[&_b[data-c]]:border-2 [&_b[data-c]]:border-slate-800 [&_b[data-c]]:bg-white [&_b[data-h]]:hidden [&>div:hover>b]:block",
+	"[&_span]:pointer-events-none [&_span]:absolute [&_span]:bottom-full [&_span]:z-10 [&_span]:mb-1 [&_span]:hidden [&_span]:rounded-md [&_span]:bg-slate-900 [&_span]:px-2 [&_span]:py-1 [&_span]:text-[11.5px] [&_span]:whitespace-nowrap [&_span]:text-white [&_span]:shadow [&>div:hover>span]:block",
+	"[&_span[data-a=l]]:left-1/2 [&_span[data-a=c]]:left-1/2 [&_span[data-a=c]]:-translate-x-1/2 [&_span[data-a=r]]:right-1/2",
+	"[&_strong]:font-semibold [&_strong]:tabular-nums [&_small]:block [&_small]:text-[11.5px] [&_small]:text-slate-300",
+].join(" ");
+
 /** A period's position in years, a yearly estimate sitting at mid-year. */
 const periodAt = (period: string) => Number(period.slice(0, 4)) + 0.5;
 
@@ -103,19 +115,26 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 		const at = dateAt(event.date);
 		return at > x0 && at < x1;
 	});
-	// A segment is drawn dashed where either end was converted.
-	const segments = points.slice(1).map((point, index) => {
+	// A segment is drawn dashed where either end was converted, and each run
+	// of one style is a single path.
+	const runs: { converted: boolean; d: string }[] = [];
+	points.slice(1).forEach((point, index) => {
 		const before = points[index]!;
-		return {
-			from: before,
-			to: point,
-			converted: before[2] !== 0 || point[2] !== 0,
-		};
+		const converted = before[2] !== 0 || point[2] !== 0;
+		const to = `${x(periodAt(point[0]))},${y(point[1])}`;
+		const run = runs.at(-1);
+		if (run?.converted === converted) run.d += `L${to}`;
+		else
+			runs.push({
+				converted,
+				d: `M${x(periodAt(before[0]))},${y(before[1])}L${to}`,
+			});
 	});
 	const band = points.filter(
 		(point): point is [string, number, 2, number, number] => point[2] === 2,
 	);
 	const markAll = points.length <= 20;
+	const width = 100 / Math.max(points.length - 1, 1);
 	const labelYears = (() => {
 		const first = Number(points[0]![0].slice(0, 4));
 		const last = Number(points.at(-1)![0].slice(0, 4));
@@ -187,16 +206,15 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 								vectorEffect="non-scaling-stroke"
 							/>
 						))}
-						{segments.map(({ from, to, converted }) => (
-							<line
-								key={to[0]}
-								x1={x(periodAt(from[0]))}
-								x2={x(periodAt(to[0]))}
-								y1={y(from[1])}
-								y2={y(to[1])}
+						{runs.map(({ converted, d }) => (
+							<path
+								key={d}
+								d={d}
+								fill="none"
 								className="stroke-slate-800"
 								strokeWidth={2}
 								strokeLinecap="round"
+								strokeLinejoin="round"
 								strokeDasharray={converted ? "4 4" : undefined}
 								vectorEffect="non-scaling-stroke"
 							/>
@@ -226,49 +244,55 @@ function TrendChart({ view, name }: { view: PlaceTrendView; name: string }) {
 							</a>
 						);
 					})}
-					{points.map((point, index) => {
-						const at = x(periodAt(point[0]));
-						const kind = trendKind(point);
-						const last = index === points.length - 1;
-						const marked = markAll || last || kind !== "published";
-						const width = 100 / Math.max(points.length - 1, 1);
-						return (
-							<div
-								key={point[0]}
-								className="group absolute inset-y-0 -translate-x-1/2"
-								style={{
-									left: `${at}%`,
-									width: `${width}%`,
-									minWidth: 8,
-								}}
-							>
-								<span
-									aria-hidden
-									className="absolute inset-y-0 left-1/2 hidden w-px bg-slate-400/60 group-hover:block"
-								/>
-								<span
-									aria-hidden
-									className={`absolute left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-white ${kind === "published" ? "bg-slate-800" : "border-2 border-slate-800 bg-white"} ${marked ? "" : "hidden group-hover:block"}`}
-									style={{ top: `${y(point[1])}%` }}
-								/>
-								<span
-									className={`pointer-events-none absolute bottom-full z-10 mb-1 hidden rounded-md bg-slate-900 px-2 py-1 text-[11.5px] whitespace-nowrap text-white shadow group-hover:block ${at > 70 ? "right-1/2" : at < 30 ? "left-1/2" : "left-1/2 -translate-x-1/2"}`}
+					{/* Each point's hover target holds a crosshair (i), a dot (b) and a
+					tooltip (span), styled once here so the markup per point stays small. */}
+					<div className={POINT_STYLES}>
+						{points.map((point, index) => {
+							const at = x(periodAt(point[0]));
+							const kind = trendKind(point);
+							const last = index === points.length - 1;
+							const marked =
+								markAll || last || kind !== "published";
+							return (
+								<div
+									key={point[0]}
+									style={{
+										left: `${at}%`,
+										width: `${width}%`,
+									}}
 								>
-									<span className="font-semibold tabular-nums">
-										{formatTrendValue(point[1])}
-									</span>{" "}
-									{view.periodName(point[0])}
-									{kind !== "published" && (
-										<span className="block text-slate-300">
-											{KIND_NAMES[kind]}
-											{point[2] === 2 &&
-												`, ${formatTrendValue(point[3])} to ${formatTrendValue(point[4])}`}
-										</span>
-									)}
-								</span>
-							</div>
-						);
-					})}
+									<i aria-hidden />
+									<b
+										aria-hidden
+										data-c={
+											kind === "published"
+												? undefined
+												: ""
+										}
+										data-h={marked ? undefined : ""}
+										style={{ top: `${y(point[1])}%` }}
+									/>
+									<span
+										data-a={
+											at > 70 ? "r" : at < 30 ? "l" : "c"
+										}
+									>
+										<strong>
+											{formatTrendValue(point[1])}
+										</strong>{" "}
+										{view.periodName(point[0])}
+										{kind !== "published" && (
+											<small>
+												{KIND_NAMES[kind]}
+												{point[2] === 2 &&
+													`, ${formatTrendValue(point[3])} to ${formatTrendValue(point[4])}`}
+											</small>
+										)}
+									</span>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 				<div
 					aria-hidden
@@ -426,7 +450,7 @@ function TrendTable({ view }: { view: PlaceTrendView }) {
 				Every figure in the chart
 			</summary>
 			<Card className="mt-2 overflow-hidden">
-				<table className="w-full text-left">
+				<table className="w-full text-left [&_td]:px-4 [&_td]:py-1.5 [&_td]:text-slate-500 [&_td]:tabular-nums [&_td:nth-child(2)]:text-right [&_td:nth-child(2)]:text-slate-900">
 					<thead>
 						<tr className="border-b border-slate-900/[0.07] text-[12px] font-semibold text-slate-500">
 							<th className="px-4 py-2">Period</th>
@@ -439,13 +463,9 @@ function TrendTable({ view }: { view: PlaceTrendView }) {
 					<tbody className="divide-y divide-slate-900/[0.05]">
 						{view.area.points.toReversed().map((point) => (
 							<tr key={point[0]}>
-								<td className="px-4 py-1.5 text-slate-500 tabular-nums">
-									{view.periodName(point[0])}
-								</td>
-								<td className="px-4 py-1.5 text-right text-slate-900 tabular-nums">
-									{formatTrendValue(point[1])}
-								</td>
-								<td className="px-4 py-1.5 text-slate-500">
+								<td>{view.periodName(point[0])}</td>
+								<td>{formatTrendValue(point[1])}</td>
+								<td>
 									{KIND_NAMES[trendKind(point)]}
 									{point[2] === 2 &&
 										`, ${formatTrendValue(point[3])} to ${formatTrendValue(point[4])}`}
