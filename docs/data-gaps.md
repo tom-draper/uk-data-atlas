@@ -140,8 +140,13 @@ to `data/source/population/population-estimates`, because five Scottish tables
   zero. UV101b supports this, with households equal to all people in 5,818 of
   5,844 data zones and higher in the rest, but NRS does not state it. Neither
   nation's tables add to their totals, so the sums are not checked.
-- Conversion backtests for the nation tables (`CENSUS_TABLES` in
-  `backtestCases.ts`).
+- Conversion backtests for the nation tables cannot be built. The Scotland
+  and Northern Ireland census tables are published on data zones alone, so
+  no census figure on a coarser release exists to test against, and a
+  mid-year estimate on councils is a different count under another period.
+  A data zone nests in its council, so the route is exact, and
+  `builtNationCensus.test.ts` checks that every table keeps every count on the
+  2026-05 authorities (`CENSUS_TABLES` in `backtestCases.ts` explains why).
 
 The `commuting` and `vehicles` folders under `data/source/transport` also have
 no measures in default coverage. Compiling the staged files needs no new
@@ -260,10 +265,27 @@ What is still out of reach:
   Scotland with a default value rise from 224 to 379, and of Northern
   Ireland from 74 to 129. NI values for 2011 to 2024 are the same as the
   ones `population-uk` held, and Scotland's 2023 and 2024 values are NRS's
-  revised ones, which are higher than the unrevised 5,506,000 and 5,546,900
-  `population-uk` holds for the whole country (it was compiled before NRS
-  revised them). The totals agree with the data zones: the sum of the
-  council areas equals the sum of the data zones for every year 2011 to 2024.
+  revised ones, 5,511,800 and 5,543,300 for the whole country. They replace
+  the unrevised 5,506,000 and 5,546,900 that `population-uk` holds (it was
+  compiled before NRS revised them), a rise of 5,800 for 2023 and a fall of
+  3,600 for 2024 (by council, from -990 to +2,520). The totals agree with the
+  data zones: the sum of the council areas equals the sum of the data zones
+  for every year 2011 to 2024.
+- The revised figures already win everywhere the default view takes a value.
+  `population-uk` is ranked after both nation files and after the data
+  zones, and no default population value of any Scottish or Northern Irish
+  area comes from it on any release (`populationNationRank.test.ts`). No
+  default cell changes, so there is no before and after to report. The dataset
+  itself is kept as published, with the unrevised Scottish 2023 and 2024
+  figures. The outputs that read it by name as the population (the
+  per-100,000 measures, population density, the `residents` ranking recipe,
+  place facts and age arrays) still use those two years for the 32 Scottish
+  councils. Using the nation files there would change the `population-uk`
+  payload, its content hashes and the direct-payload goldens, so it is left
+  as a separate decision. The ONS file `myebtablesuk20112024.xlsx` is the one
+  held, and it carries the unrevised figures. Whether ONS has re-issued it
+  with the revised ones is not checked, as nothing beyond the pinned release
+  is downloaded.
 - The NRS time series files each year under the code the council area had
   then. Sixteen old codes are mapped to the current ones (the 1995 codes to
   2001, the 2011 codes to 2002, Fife and Perth and Kinross from 2018, Glasgow
@@ -277,12 +299,15 @@ What is still out of reach:
   before 2023-05 get none either, as for every authority-level source. NI
   has no ward or constituency population at all, as before.
 - The standard releases (the 2026-05 authorities, wards, constituencies and
-  the 2021 LSOAs) hold the new datasets only as converted series by age and
-  sex, which `v_observation_default` does not rank. The default total of a
-  standard release is still built from the small-area and mid-year totals, so
-  Scotland and Northern Ireland on the 2026-05 authorities keep 2011 to 2024
-  and 2021 to 2024 as before. The 1981 to 2010 and 2025 years show on the
-  five authority releases above.
+  the 2021 LSOAs) hold the new datasets as converted series by age and sex,
+  which `v_observation_default` does not rank, and also as a converted total
+  of persons of all ages (`STANDARD_TOTAL_DATASETS`), ranked after every
+  finer source. England and Wales defaults are unchanged and no existing
+  Scottish or Northern Irish value changes. On the 2026-05 authorities this
+  adds 992 Scottish cells (32 councils, 1981 to 2010 and 2025) and 231
+  Northern Irish ones (11 districts, 2001 to 2020 and 2025). The 2026-05
+  wards, the 2024 constituencies and the 2021 LSOAs gain nothing, because no
+  route reaches them from an authority release.
 - Data zones are not updated. No data-zone release newer than 2011 to 2024
   (Scotland) and 2021 to 2024 (NI) is held, and the council files are on
   authorities.
