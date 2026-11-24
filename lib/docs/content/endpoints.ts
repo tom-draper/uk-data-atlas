@@ -178,7 +178,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"If a measure has more than one source for that geography, add `datasetId` to choose between them.",
 			"Add `analysisGeography=geography/release` only after checking [reviewed conversions](/docs/v1/reference/trend/list-analysis-geographies). Derived entries name their source and conversion; an unsupported frame returns `not-comparable` rather than a guessed substitute.",
-			"Add `on=localAuthority/2026-05-uk-bgc` (or a ward, constituency or LSOA standard release) to read the whole series on today's boundaries. Each value says whether it is `native`, `exact` or `weighted`, and where it came from; `summary.warnings` and `gaps` say what to treat with care and what could not be converted.",
+			"Add `on=localAuthority/2026-05-uk-bgc` (or a ward, constituency or LSOA standard release) to read the whole series on today's boundaries. Each value says whether it is `native`, `exact` or `weighted`, and where it came from, and a `weighted` value carries the `bounds` its conversion was measured to; `summary.warnings` and `gaps` say what to treat with care and what could not be converted.",
 		],
 	},
 	getSourceExactMeasureRankings: {

@@ -29,6 +29,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
 	{
+		date: "2026-11-24",
+		title: "Bounds on converted series values",
+		breaking: true,
+		changes: [
+			"In `GET /v1/data/{measure}/series?on=...`, a `weighted` value now gives its range as `bounds` (`lower`, `upper`) instead of `confidenceInterval`. The range comes from the conversion error model, which backtests each split against published figures, so it is not a confidence interval. A client that read `confidenceInterval` on a converted value should read `bounds`.",
+			"`exact` values and the release's own (`native`) values carry no `bounds`. A native value keeps any `confidenceInterval` its publisher gives. A split that the error model has not measured is still a gap, never a value without a range.",
+		],
+	},
+	{
 		date: "2026-11-21",
 		title: "Splits and merges for more geographies",
 		changes: [
