@@ -49,6 +49,18 @@ export const ghgEmissions = defineDataset<GhgEmissionsDataset>({
 		label: "Emissions",
 		about: "Greenhouse gases per resident, in CO2e",
 	},
+	placeTrends: [
+		{
+			key: "emissions-per-person",
+			places: ["localAuthority"],
+			order: 60,
+			label: "Greenhouse gas emissions per person",
+			measure: "ghg-emissions",
+			dimensions: { "emissions-sector": "total" },
+			per: { measure: "ghg-population", dimensions: {} },
+			format: { kind: "decimal", digits: 1, suffix: " tonnes" },
+		},
+	],
 	statistics: {
 		direct: {
 			only: true,

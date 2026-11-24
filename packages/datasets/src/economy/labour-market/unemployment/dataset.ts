@@ -49,6 +49,18 @@ export const unemployment = defineDataset<UnemploymentDataset>({
 		cadence: "discontinued",
 		notes: [],
 	},
+	placeTrends: [
+		{
+			key: "unemployment-rate",
+			places: ["localAuthority"],
+			order: 20,
+			label: "Unemployment rate",
+			measure: "unemployment-rate",
+			dimensions: {},
+			format: { kind: "decimal", digits: 1, suffix: "%" },
+			change: "difference",
+		},
+	],
 	statistics: {
 		payload: {
 			parts: () => [
