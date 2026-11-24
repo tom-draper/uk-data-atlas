@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_crosswalk_chain_edge for old code to current code in one join, v_area_change for areas that were renamed, recoded, redrawn, split, merged, ended or created, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_crosswalk_chain_edge for old code to current code in one join, v_area_change for areas that were renamed, recoded, redrawn, split, merged, ended or created, v_area_change_extent for how much of each area's land and residents changed between releases, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -82,7 +82,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "boundary-changes",
-		body: "Start with v_area_change, which lists what happened to each area whose code, name or extent changed between two releases of one geography. Each event (area_change_event) has a kind (renamed, recoded, redrawn, split, merged, redistributed, ended or created), the two releases and an effective_date, and its areas are the members on the from side (the earlier release) and the to side. What replaced Allerdale: SELECT * FROM v_area_change WHERE event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E07000026' AND side = 'from'). An event's effective_date is its legal date where the ONS Code History Database has one (date_basis 'legal'), and otherwise the later release's edition date (date_basis 'edition'), by which the change had happened but not necessarily on which day. The legal date is the operative date of a predecessor and successor pair the event links or, for a created or ended area, the day its code came into or went out of use. It counts only if it lies between the earlier release's edition date and the end of the later edition's month, and the earliest such date is used. Renamed and redrawn events, and areas the database does not cover (ITL areas, Scottish Parliamentary constituencies), keep the edition date, which stays available as edition_date. Compare the two to see how far an edition lags the law. Events come from the identity crosswalks, which link releases of one geography. Official lookups show splits, merges and redistributions: local authorities 2022 to 2023 and 2024 to 2025, LSOA 2011 to 2021, the 2010 to 2024 constituency lookup, and the ONS Code History Database for wards, parishes, local authorities, output areas, LSOAs and MSOAs (every consecutive pair of the releases that has a change: wards 2011 to 2026, parishes 2019 to 2026, local authorities 2008 to 2009 and 2018 to 2021, output areas, LSOAs and MSOAs across the 2001, 2011 and 2021 censuses). Each event's basis says how it was found: 'official-lookup' for a publisher's lookup, 'extent-continuity' for the geometric comparison, which only links areas whose extent did not change. Where there is no lookup (Scottish and Northern Irish areas, constituencies before 2010, ITL areas, and any release pair the Code History Database does not cover), a split or merge shows as ended and its successors as created: filter on basis before treating a missing split as no split. Where the Code History Database does not name an area's successors either, the area stays ended or created: 130 ended and 180 created areas remain, of which 88 and 87 are wards and 30 and 38 are ITL areas. An area that kept its code but whose extent moved has a 'redrawn' event, and where the extent-continuity crosswalk finds the area's successor across a small realignment, the event has realigned = 1: a ward moved by a street is recoded or redrawn with realigned 1, not ended and created. Official lookups with no declared purpose between two releases of one geography (constituencies 2019 to 2024) count as identity crosswalks too. Publisher statements (area_relationship, relation 'predecessor') add events only where no crosswalk event already holds them. Documented edition replacements without a compiled predecessor lookup add ended and created events for codes present on only one side. Both use source 'publisher'. The crosswalk_edge.change flag (unchanged, split, merged or complex) exists on the LSOA 2011 to 2021 lookup only. area_relationship also holds a publisher's statements that an area sits inside another ('parent'), was published under another's code ('published-as') or has the same extent ('coterminous'); for example Cumberland E06000063 has predecessors Allerdale E07000026 and Carlisle E07000028.",
+		body: "Start with v_area_change, which lists what happened to each area whose code, name or extent changed between two releases of one geography. Each event (area_change_event) has a kind (renamed, recoded, redrawn, split, merged, redistributed, ended or created), the two releases and an effective_date, and its areas are the members on the from side (the earlier release) and the to side. What replaced Allerdale: SELECT * FROM v_area_change WHERE event_id IN (SELECT event_id FROM v_area_change WHERE code = 'E07000026' AND side = 'from'). An event's effective_date is its legal date where the ONS Code History Database has one (date_basis 'legal'), and otherwise the later release's edition date (date_basis 'edition'), by which the change had happened but not necessarily on which day. The legal date is the operative date of a predecessor and successor pair the event links or, for a created or ended area, the day its code came into or went out of use. It counts only if it lies between the earlier release's edition date and the end of the later edition's month, and the earliest such date is used. Renamed and redrawn events, and areas the database does not cover (ITL areas, Scottish Parliamentary constituencies), keep the edition date, which stays available as edition_date. Compare the two to see how far an edition lags the law. Events come from the identity crosswalks, which link releases of one geography. Official lookups show splits, merges and redistributions: local authorities 2022 to 2023 and 2024 to 2025, LSOA 2011 to 2021, the 2010 to 2024 constituency lookup, and the ONS Code History Database for wards, parishes, local authorities, output areas, LSOAs and MSOAs (every consecutive pair of the releases that has a change: wards 2011 to 2026, parishes 2019 to 2026, local authorities 2008 to 2009 and 2018 to 2021, output areas, LSOAs and MSOAs across the 2001, 2011 and 2021 censuses). Each event's basis says how it was found: 'official-lookup' for a publisher's lookup, 'extent-continuity' for the geometric comparison, which only links areas whose extent did not change. Where there is no lookup (Scottish and Northern Irish areas, constituencies before 2010, ITL areas, and any release pair the Code History Database does not cover), a split or merge shows as ended and its successors as created: filter on basis before treating a missing split as no split. Where the Code History Database does not name an area's successors either, the area stays ended or created: 130 ended and 180 created areas remain, of which 88 and 87 are wards and 30 and 38 are ITL areas. An area that kept its code but whose extent moved has a 'redrawn' event, and where the extent-continuity crosswalk finds the area's successor across a small realignment, the event has realigned = 1: a ward moved by a street is recoded or redrawn with realigned 1, not ended and created. Official lookups with no declared purpose between two releases of one geography (constituencies 2019 to 2024) count as identity crosswalks too. Publisher statements (area_relationship, relation 'predecessor') add events only where no crosswalk event already holds them. Documented edition replacements without a compiled predecessor lookup add ended and created events for codes present on only one side. Both use source 'publisher'. The crosswalk_edge.change flag (unchanged, split, merged or complex) exists on the LSOA 2011 to 2021 lookup only. For how much an area changed, read v_area_change_extent: the share of its residents and land that moved between a release and the next, and materially_changed where a share reaches 5%. area_relationship also holds a publisher's statements that an area sits inside another ('parent'), was published under another's code ('published-as') or has the same extent ('coterminous'); for example Cumberland E06000063 has predecessors Allerdale E07000026 and Carlisle E07000028.",
 	},
 	{
 		topic: "licences",
@@ -1360,6 +1360,70 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			name: "Area name in that release.",
 			share: "As area_change_member.share.",
 			area_version_id: "The area in that release (area_version.id).",
+		},
+	},
+	area_change_extent: {
+		audience: "core",
+		description:
+			"How much each area changed between a boundary release and the next one, one row for each area that persists. A release is paired with the nearest release of a later vintage that one crosswalk hop joins it to (area_change_extent_pair). An area persists into the area with the same code, or, where its code ended, into the area that takes most of its residents if it also gave that area more residents than any other area did (successor 'largest-share'). An area with neither ended and has no row. Residents come from the converter's population step over the pair's crosswalks, land from the extent-continuity crosswalk's measurements or an area weight. Read it through v_area_change_extent, which adds materially_changed.",
+		columns: {
+			from_version_id: "The area in the earlier release (area_version.id).",
+			to_version_id: "Its successor in the later release (area_version.id).",
+			successor:
+				"'same-code': the later area has the same code. 'largest-share': the code ended, and the later area took most of the earlier area's residents and was fed by no larger area.",
+			residents_lost:
+				"Share of the earlier area's residents that are not in the successor (0 to 1): 1 minus the population weight of the edge between them. Null where the crosswalk cannot carry the area's residents (no population weight, or a straddling best fit).",
+			residents_gained:
+				"Share of the successor's residents that were not in the earlier area (0 to 1): 1 minus the population target share of the edge. Null as residents_lost.",
+			land_lost:
+				"Share of the earlier area's land that is not in the successor (0 to 1). 0 where land_basis is 'continuous'. Null where no crosswalk measures land for the pair.",
+			land_gained:
+				"Share of the successor's land that was not in the earlier area (0 to 1). Null as land_lost.",
+			land_basis:
+				"Where the land shares come from. 'continuous': the extent-continuity crosswalk links the two as the same extent within generalisation noise (a boundary moved by under 100 metres at its widest), so no land changed. 'measured': the extent-continuity crosswalk measured the pair as redrawn or realigned, and the shares are its overlap shares. 'area-weight': an area basis weight in crosswalk_weight. Null where none of these exists, which is most splits and merges, and every pair with no extent-continuity crosswalk.",
+		},
+	},
+	area_change_extent_pair: {
+		audience: "core",
+		description:
+			"The release pairs area_change_extent covers, with how many areas of the earlier release persist, ended or could not be measured. A release with a later vintage and no row here is not covered: no single crosswalk joins it to a later release.",
+		columns: {
+			from_release_id: "The earlier release (area_release.id).",
+			to_release_id: "The later release it is paired with (area_release.id).",
+			crosswalks: "The crosswalks of the hop, as comma-separated crosswalk.id values.",
+			reversed: "1 where the crosswalks are extent-continuity ones walked from their targets back to their sources.",
+			sources: "Areas in the earlier release's inventory.",
+			persisting: "Rows in area_change_extent for the pair.",
+			ended: "Areas carried by the crosswalks that have no successor.",
+			blocked:
+				"Areas the population step cannot carry. They have a row, with no residents shares, only where their code persists.",
+			unlinked: "Inventory areas in no crosswalk of the hop, so not measured.",
+		},
+	},
+	v_area_change_extent: {
+		audience: "core",
+		description:
+			"View: area_change_extent with the geography, releases, codes and names, and materially_changed. Filter on geography and from_release or to_release. Use it to say whether an area's figures on two releases describe the same place: SELECT * FROM v_area_change_extent WHERE geography = 'ward' AND to_code = 'E05016327'.",
+		columns: {
+			geography: "Geography slug.",
+			from_release: "The earlier release.",
+			to_release: "The later release.",
+			from_code: "Area code in the earlier release.",
+			from_name: "Area name in the earlier release.",
+			to_code: "Successor's code.",
+			to_name: "Successor's name.",
+			successor: "As area_change_extent.successor.",
+			residents_lost: "As area_change_extent.residents_lost.",
+			residents_gained: "As area_change_extent.residents_gained.",
+			land_lost: "As area_change_extent.land_lost.",
+			land_gained: "As area_change_extent.land_gained.",
+			land_basis: "As area_change_extent.land_basis.",
+			materially_changed:
+				"1 where any known share is 0.05 or more, 0 where the residents shares are known and every known share is under 0.05, null where the residents shares are unknown and no land share reaches 0.05. No official numeric threshold exists (ONS lookups flag a change as unchanged, split, merged or complex, and GSS issues a new code for any statutory change), so 5% is chosen: it is above rounding and boundary generalisation noise, and below it a count read across the change is off by less than 5%. Apply another threshold to the shares where it suits.",
+			from_version_id: "As area_change_extent.from_version_id.",
+			to_version_id: "As area_change_extent.to_version_id.",
+			from_release_id: "The earlier release (area_release.id).",
+			to_release_id: "The later release (area_release.id).",
 		},
 	},
 	crosswalk_weight_input: {
