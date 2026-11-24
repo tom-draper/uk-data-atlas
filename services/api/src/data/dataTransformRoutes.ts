@@ -1,5 +1,5 @@
 import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
-import { compareObservations } from "../comparison";
+import { compareObservations } from "./comparison";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import {
@@ -13,7 +13,7 @@ import {
 	type ApiResponse,
 } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { sourceExactProvenance } from "../sourceExactProvenance.ts";
+import { sourceExactProvenance } from "./sourceExactProvenance.ts";
 import {
 	areaNamedBy,
 	defaultSource,
@@ -21,7 +21,7 @@ import {
 	publishedPartitions,
 	statedDefaults,
 	type NamedArea,
-} from "../dataDefaults";
+} from "./dataDefaults";
 
 /** Operations that compare or transform source-exact observations. */
 export const handleDataTransformRoutes = ({

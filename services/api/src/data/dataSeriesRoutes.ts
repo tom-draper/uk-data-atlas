@@ -13,12 +13,12 @@ import {
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "../dataDefaults";
-import { selectSourcePartition } from "../sourcePartition";
+} from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import { releaseSeriesResponse } from "./releaseSeries.ts";
-import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
+import { sourceSeriesProvenance } from "./sourceExactProvenance.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { parsePlaceParameter, requestedGeography } from "../placeParameter";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	envelope,
 	invalidQuery,

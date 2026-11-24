@@ -2,10 +2,10 @@ import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
 import { refused } from "../observationResolution/observationPlan";
-import { rankingOf } from "../ranking";
-import { sourceExactProvenance } from "../sourceExactProvenance.ts";
-import { publishedPartitions, statedDefaults } from "../dataDefaults";
-import { selectSourcePartition } from "../sourcePartition";
+import { rankingOf } from "./ranking";
+import { sourceExactProvenance } from "./sourceExactProvenance.ts";
+import { publishedPartitions, statedDefaults } from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {

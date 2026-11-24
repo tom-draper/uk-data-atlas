@@ -7,7 +7,7 @@ import {
 	defaultChangePeriods,
 	defaultSource,
 	namedAreaRefusal,
-} from "../src/dataDefaults";
+} from "../src/data/dataDefaults";
 import type { GeographyResolver } from "@uk-data-atlas/atlas-loader";
 import type { PlaceCandidate } from "@uk-data-atlas/places";
 

@@ -1,4 +1,4 @@
-import { invalidQuery, type ApiResponse } from "./runtime/index.ts";
+import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
 
 /**
  * The one parameter every data route takes for where: `place`.

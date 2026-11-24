@@ -16,9 +16,9 @@ import {
 	postcodeSources,
 	sourceReleases,
 	type SourceAttempt,
-} from "../postcodeValue";
-import { valueForPlace } from "../placeValue";
-import { describeAttempt, describeCandidate } from "../placeResponses";
+} from "./postcodeValue";
+import { valueForPlace } from "./placeValue";
+import { describeAttempt, describeCandidate } from "./placeResponses";
 import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,

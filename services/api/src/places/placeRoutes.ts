@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { describeCandidate } from "../placeResponses";
+import { describeCandidate } from "../data/placeResponses";
 import { resolveAreaQuery } from "../areas/areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";

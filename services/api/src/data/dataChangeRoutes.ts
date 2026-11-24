@@ -1,7 +1,7 @@
 import { publicSeriesMeasure } from "../dimensions/publicSeriesMeasure.ts";
 import { isNumericObservation } from "@uk-data-atlas/catalogue/node";
 import { observationsFor } from "@uk-data-atlas/catalogue/node";
-import { rankObservations } from "../ranking";
+import { rankObservations } from "./ranking";
 import {
 	changeRefusal,
 	changeValue,
@@ -9,19 +9,19 @@ import {
 	periodsOverlap,
 	relativeChangeRefusal,
 	type ChangeBasis,
-} from "../change";
-import { sourceSeriesProvenance } from "../sourceExactProvenance.ts";
+} from "./change";
+import { sourceSeriesProvenance } from "./sourceExactProvenance.ts";
 import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
-import { parsePlaceParameter, requestedGeography } from "../placeParameter";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,
 	defaultChangePeriods,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
-} from "../dataDefaults";
-import { selectSourcePartition } from "../sourcePartition";
+} from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import {
 	envelope,
 	invalidQuery,
