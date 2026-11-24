@@ -44,6 +44,8 @@ import {
 	type AreaProfile,
 } from "@uk-data-atlas/catalogue/place-profile";
 import { areaSummary } from "@/lib/places/summary";
+import { placeTrends } from "@/lib/places/trends";
+import { PlaceTrend } from "@/components/places/PlaceTrends";
 
 type Council = AreaProfile["parents"][number];
 
@@ -533,12 +535,16 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 		headlines,
 		elections,
 		postcodeDistricts,
+		trends,
 	] = await Promise.all([
 		loadAreaContext(profile),
 		placeFacts(profile.code),
 		placeHeadlines(profile.code, profile.geography),
 		loadElections(profile),
 		profile.current ? areaPostcodeDistricts(profile.code) : [],
+		profile.current && profile.geography === "localAuthority"
+			? placeTrends(profile.code)
+			: [],
 	]);
 
 	return (
@@ -577,6 +583,15 @@ export async function AreaPlacePage({ profile }: { profile: AreaProfile }) {
 					releases={releases}
 					facts={facts}
 				/>
+				{trends.map((view) => (
+					<PlaceTrend
+						key={view.key}
+						view={view}
+						name={profile.name}
+						code={profile.code}
+						datasetHref={`/datasets#${view.area.dataset}`}
+					/>
+				))}
 				{headlines.length > 0 && (
 					<AreaFigures profile={profile} headlines={headlines} />
 				)}
