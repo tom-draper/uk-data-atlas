@@ -4,7 +4,7 @@ import { test } from "vitest";
 import { parse } from "yaml";
 import { choices, readChoice, readWholeNumber } from "../src/runtime/index.ts";
 import { compileQueryRules } from "../src/runtime/index.ts";
-import { QUERY_RULES } from "../src/queryRules";
+import { QUERY_RULES } from "../src/runtime/queryRules";
 
 const openapiDocument = readFileSync(
 	new URL("../openapi.yaml", import.meta.url),

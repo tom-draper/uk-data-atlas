@@ -1,7 +1,7 @@
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { choices, readChoice, readFiniteNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,

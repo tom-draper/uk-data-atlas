@@ -6,7 +6,7 @@ import { readPostedRows } from "../http/requestRows";
 import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteContext, RouteRequestFor } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const VALIDATE = QUERY_RULES["GET /areas:validate"];
 

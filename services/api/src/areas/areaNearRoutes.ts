@@ -12,7 +12,7 @@ import {
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { readWholeNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const NEAR = QUERY_RULES["GET /areas:near"];
 

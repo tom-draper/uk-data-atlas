@@ -10,7 +10,7 @@ import {
 } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const NEIGHBOURS =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/neighbours"];

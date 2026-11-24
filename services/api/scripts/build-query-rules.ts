@@ -7,7 +7,7 @@ import { parse } from "yaml";
 import { compileQueryRules } from "../src/runtime/index.ts";
 
 /**
- * Writes `src/queryRules.ts` from `openapi.yaml`. The file is committed, so
+ * Writes `src/runtime/queryRules.ts` from `openapi.yaml`. The file is committed, so
  * handlers get each rule's values as types; a test fails when it no longer
  * matches the document, and running this brings it back in step.
  */
@@ -15,7 +15,7 @@ const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const rules = compileQueryRules(
 	parse(readFileSync(join(apiRoot, "openapi.yaml"), "utf8")),
 );
-const outputPath = join(apiRoot, "src", "queryRules.ts");
+const outputPath = join(apiRoot, "src", "runtime", "queryRules.ts");
 writeFileSync(
 	outputPath,
 	[

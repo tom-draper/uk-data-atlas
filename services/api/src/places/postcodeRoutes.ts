@@ -26,7 +26,7 @@ import type {
 	RouteContext,
 } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 export { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "@uk-data-atlas/geography";

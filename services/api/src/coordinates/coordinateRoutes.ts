@@ -16,7 +16,7 @@ import {
 } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { readWholeNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const CONVERT = QUERY_RULES["GET /coordinates:convert"];
 

@@ -10,7 +10,7 @@ import { type GeometryProvenance } from "@uk-data-atlas/geography";
 import { invalidQuery, problem, type ApiResponse } from "../runtime/index.ts";
 import type { RouteContext, RouteContextFor } from "../runtime/index.ts";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 /** A lookup reads one release per geography, and each is held in memory. */
 export const MAX_LOOKUP_GEOGRAPHIES = 4;

@@ -3,7 +3,7 @@ import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
 import { readWholeNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const DEPTH =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/history"].depth;
