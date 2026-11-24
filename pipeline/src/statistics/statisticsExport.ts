@@ -163,10 +163,9 @@ export function hashStatisticsSelection(
 	return { recordCount, recordHash: hash.digest("hex") };
 }
 
-export function exportStatisticsMeasure(
+export function readStatisticsExport(
 	database: DatabaseSync,
 	measure: string,
-	paths: { csv: string; parquet: string },
 	selection?: readonly StatisticsSelection[],
 ) {
 	const source = selection
@@ -276,6 +275,41 @@ export function exportStatisticsMeasure(
 		ORDER BY 4, 5, 7, 6, 1${aggregatePopulation ? "" : ", s.key"}`,
 	);
 	statement.setReturnArrays(true);
+	const parameters = election
+		? [measure]
+		: [
+				measure,
+				...dimensions.map((dimension) => dimension.id as number),
+				parameter,
+			];
+	return {
+		columns,
+		rows: () =>
+			statement.iterate(...parameters) as unknown as Iterable<
+				SQLOutputValue[]
+			>,
+	};
+}
+
+export function exportStatisticsMeasure(
+	database: DatabaseSync,
+	measure: string,
+	paths: { csv: string; parquet: string },
+	selection?: readonly StatisticsSelection[],
+) {
+	const { columns, rows } = readStatisticsExport(
+		database,
+		measure,
+		selection,
+	);
+	return writeStatisticsExport(paths, columns, rows());
+}
+
+export function writeStatisticsExport(
+	paths: { csv: string; parquet: string },
+	columns: ParquetColumn[],
+	rows: Iterable<SQLOutputValue[]>,
+) {
 	const csv = openSync(paths.csv, "w");
 	const parquet = new ParquetFileWriter(paths.parquet, { columns });
 	const cell = (value: SQLOutputValue) =>
@@ -299,16 +333,7 @@ export function exportStatisticsMeasure(
 			csv,
 			`${columns.map((column) => cell(column.name)).join(",")}\r\n`,
 		);
-		const parameters = election
-			? [measure]
-			: [
-					measure,
-					...dimensions.map((dimension) => dimension.id as number),
-					parameter,
-				];
-		for (const row of statement.iterate(
-			...parameters,
-		) as unknown as Iterable<SQLOutputValue[]>) {
+		for (const row of rows) {
 			csvRows.push(`${row.map(cell).join(",")}\r\n`);
 			row.forEach((value, index) =>
 				batch[index]!.push(value as string | number | null),

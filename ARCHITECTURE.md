@@ -215,9 +215,10 @@ Measured stages reserve an estimate of peak process-tree RSS. Other stages
 use their `--max-old-space-size` value or 1 GiB. A stage whose estimate
 exceeds the budget runs alone and may use more than the budget.
 At budgets of 5 GiB or less, dataset compilation and map resources default
-to one worker. Boundary tiling uses two workers at 5 GiB and above, and one
-worker below that. An explicit worker count can select an unmeasured
-configuration, which the scheduler runs alone.
+to one worker. Boundary tiling and export generation use two workers at
+5 GiB and above, and one worker below that. Set `DATA_EXPORT_JOBS=1` to
+generate exports with one worker at any budget. An explicit worker count
+can select an unmeasured configuration, which the scheduler runs alone.
 `--jobs 1` runs one stage at a time in plan order.
 
 Stages start in order of the work still ahead of them. The scheduler excludes
@@ -229,6 +230,12 @@ hold at every start.
 
 With several jobs, each output line is prefixed with `[stage]`, and `--plan`
 ends with the waves of stages that can run together and the critical path.
+
+When the export stage runs, it reuses CSV and Parquet pairs whose measure
+inputs and writer settings match, after checking the stored file hashes.
+Reuse records live in `measure-exports.json` alongside the stage cache in
+`.cache/data-build`. Deleting the file clears reuse for the next run of the
+export stage. Running with `--no-cache` also regenerates its downloads.
 
 ### Why a custom build core
 

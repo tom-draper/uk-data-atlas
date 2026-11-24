@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -670,12 +670,21 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				periods: ["2021"],
 			},
 		];
-		const downloads = await compileMeasureDownloads(
-			db,
-			directory,
-			"rented-homes",
-			chosen,
-		);
+		const buildDownloads = (
+			previous?: Awaited<ReturnType<typeof compileMeasureDownloads>>,
+			writerKey = "test-writer",
+		) =>
+			compileMeasureDownloads(
+				db,
+				directory,
+				"rented-homes",
+				chosen,
+				directory,
+				writerKey,
+				previous,
+			);
+		const cached = await buildDownloads();
+		const downloads = cached.formats;
 		const csvDownload = downloads.find((item) => item.format === "csv")!;
 		const parquetDownload = downloads.find(
 			(item) => item.format === "parquet",
@@ -701,15 +710,15 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				.rows,
 		);
 		const firstGzip = readFileSync(join(directory, csvDownload.artifact));
-		assert.deepEqual(
-			await compileMeasureDownloads(
-				db,
-				directory,
-				"rented-homes",
-				chosen,
-			),
-			downloads,
-		);
+		assert.equal(await buildDownloads(cached), cached);
+		const updatedWriter = await buildDownloads(cached, "updated-writer");
+		assert.notEqual(updatedWriter.key, cached.key);
+		assert.deepEqual(updatedWriter.formats, downloads);
+		const csvPath = join(directory, csvDownload.artifact);
+		writeFileSync(csvPath, Buffer.alloc(firstGzip.length));
+		assert.notEqual(await buildDownloads(cached), cached);
+		rmSync(join(directory, parquetDownload.artifact));
+		assert.notEqual(await buildDownloads(cached), cached);
 		assert.deepEqual(
 			readFileSync(join(directory, csvDownload.artifact)),
 			firstGzip,
@@ -721,6 +730,14 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 			INSERT INTO series_member VALUES (3, 1, 1), (3, 2, 3);
 			INSERT INTO observation VALUES (3, 1, 2, 11, NULL, NULL, NULL, 1);
 		`);
+		// Changing just an interval leaves the ordinary selection hash unchanged.
+		db.exec(
+			"UPDATE observation SET lower = -1 WHERE series_id = 1 AND period_id = 1",
+		);
+		const changed = await buildDownloads(cached);
+		assert.notEqual(changed.key, cached.key);
+		assert.notDeepEqual(changed.formats, cached.formats);
+		assert.equal(await buildDownloads(changed), changed);
 		const expanded = expandStatisticsSelection(db, chosen);
 		assert.equal(
 			exportStatisticsMeasure(db, "rented-homes", paths, expanded),
