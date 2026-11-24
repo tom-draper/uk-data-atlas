@@ -68,6 +68,10 @@ describe("ranking rows", () => {
 		expect(barScale([area(76), area(85)])).toBeNull();
 		expect(barScale([area(2), area(-1)])).toBeNull();
 		expect(barScale([area(0)])).toBeNull();
+		// One ward in ten far below the rest leaves the rest looking full.
+		const even = [28, ...Array.from({ length: 9 }, (_, i) => 48 + i)];
+		expect(barScale(even.map(area))).toBeNull();
+		expect(barScale([10, 20, 30, 40, 50, 60].map(area))).toBe(60);
 	});
 });
 
