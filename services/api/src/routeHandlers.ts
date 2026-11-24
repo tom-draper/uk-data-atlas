@@ -69,7 +69,7 @@ import {
 	canonicalGeographyRequest,
 	canonicalMeasureRequest,
 	canonicalReleaseRequest,
-} from "./canonicalRequests";
+} from "./catalogue/canonicalRequests";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 

@@ -5,7 +5,7 @@ import type { RouteContextFor } from "../runtime/index.ts";
 import { handleMeasureExport } from "../bulk/bulkRoutes";
 import { resolveDimensionRequest } from "../dimensions/dimensionRequests";
 import { seriesResponse } from "../dimensions/dimensionResponses";
-import { canonicalMeasureRequest } from "../canonicalRequests";
+import { canonicalMeasureRequest } from "../catalogue/canonicalRequests";
 import {
 	registerGetRoute,
 	type ContractDispatch,

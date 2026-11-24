@@ -3,7 +3,7 @@ import { bindings } from "../routeHandlers";
 import type { FastifyPluginAsync } from "fastify";
 import type { RouteContextFor } from "../runtime/index.ts";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
-import { canonicalMeasureRequest } from "../canonicalRequests";
+import { canonicalMeasureRequest } from "./canonicalRequests";
 import {
 	registerGetRoute,
 	type ContractDispatch,
