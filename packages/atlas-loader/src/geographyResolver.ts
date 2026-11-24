@@ -17,9 +17,9 @@ import type {
 } from "@uk-data-atlas/places";
 import type { AreaSearchIndex } from "@uk-data-atlas/areas";
 import type { PlaceIndex } from "@uk-data-atlas/places";
-import type { PostcodeAreaIndex } from "@uk-data-atlas/postcodes";
-import type { PostcodeCountsIndex } from "@uk-data-atlas/postcodes";
-import type { PostcodeIndex } from "@uk-data-atlas/postcodes";
+import type { PostcodeAreaIndex } from "@uk-data-atlas/places/postcodes";
+import type { PostcodeCountsIndex } from "@uk-data-atlas/places/postcodes";
+import type { PostcodeIndex } from "@uk-data-atlas/places/postcodes";
 import type { RelationshipPath } from "@uk-data-atlas/relationships";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import { AreasResolver } from "./resolver/areas.ts";
@@ -33,7 +33,7 @@ import {
 	type BoundaryReleaseComparison,
 } from "@uk-data-atlas/relationships";
 import { LocationsResolver } from "@uk-data-atlas/places";
-import { PostcodeResolver } from "@uk-data-atlas/postcodes";
+import { PostcodeResolver } from "@uk-data-atlas/places/postcodes";
 import {
 	SpatialResolver,
 	type ResolvedContainingArea,

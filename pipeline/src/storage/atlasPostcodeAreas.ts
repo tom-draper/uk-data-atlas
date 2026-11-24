@@ -11,7 +11,7 @@ import {
 	readPostcodeAreaShard,
 	postcodeDistrictWhere,
 	postcodeFields,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import {
 	NONE,
 	parseLookupCoordinate,

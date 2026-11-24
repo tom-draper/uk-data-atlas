@@ -30,7 +30,6 @@
 		"@uk-data-atlas/map-tiles": "workspace:*",
 		"@uk-data-atlas/measures": "workspace:*",
 		"@uk-data-atlas/places": "workspace:*",
-		"@uk-data-atlas/postcodes": "workspace:*",
 		"@uk-data-atlas/relationships": "workspace:*",
 		"esbuild": "^0.28.2",
 		"jsts": "2.12.1",

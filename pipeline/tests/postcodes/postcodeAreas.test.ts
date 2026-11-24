@@ -17,7 +17,7 @@ import {
 	postcodeAreasMismatch,
 	SEVERAL,
 	type PostcodeAreasShard,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import { postcodeIndexFor, postcodeRow } from "../fixtures/postcodeFixtures";
 
 const square = (

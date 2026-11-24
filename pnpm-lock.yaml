@@ -210,9 +210,6 @@ importers:
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:packages/places
-      '@uk-data-atlas/postcodes':
-        specifier: workspace:*
-        version: link:packages/postcodes
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:packages/relationships
@@ -405,9 +402,6 @@ importers:
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../places
-      '@uk-data-atlas/postcodes':
-        specifier: workspace:*
-        version: link:../postcodes
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../relationships
@@ -603,25 +597,6 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/postcodes:
-    dependencies:
-      '@uk-data-atlas/artifacts':
-        specifier: workspace:*
-        version: link:../artifacts
-      '@uk-data-atlas/atlas-db':
-        specifier: workspace:*
-        version: link:../atlas-db
-      '@uk-data-atlas/geography':
-        specifier: workspace:*
-        version: link:../geography
-    devDependencies:
-      '@types/node':
-        specifier: ^26.6.6
-        version: 26.6.6
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
-
   packages/relationships:
     dependencies:
       '@uk-data-atlas/areas':
@@ -688,9 +663,6 @@ importers:
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../packages/places
-      '@uk-data-atlas/postcodes':
-        specifier: workspace:*
-        version: link:../packages/postcodes
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../packages/relationships
@@ -776,9 +748,6 @@ importers:
       '@uk-data-atlas/places':
         specifier: workspace:*
         version: link:../../packages/places
-      '@uk-data-atlas/postcodes':
-        specifier: workspace:*
-        version: link:../../packages/postcodes
       '@uk-data-atlas/relationships':
         specifier: workspace:*
         version: link:../../packages/relationships

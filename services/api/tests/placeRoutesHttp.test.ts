@@ -14,7 +14,10 @@ import {
 	toWgs84Point,
 	type PostcodeShard,
 } from "@uk-data-atlas/geography";
-import { PostcodeIndex, postcodeLookupPoint } from "@uk-data-atlas/postcodes";
+import {
+	PostcodeIndex,
+	postcodeLookupPoint,
+} from "@uk-data-atlas/places/postcodes";
 import type { RouteContext } from "../src/runtime/index.ts";
 import {
 	characterize,

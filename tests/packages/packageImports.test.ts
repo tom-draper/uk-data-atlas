@@ -49,7 +49,6 @@ const NODE_PACKAGES = [
 	"atlas-loader",
 	"geometry",
 	"places",
-	"postcodes",
 	"relationships",
 	"measures",
 ];
@@ -342,7 +341,6 @@ describe("extracted domain packages", () => {
 			"map-tiles",
 			"measures",
 			"places",
-			"postcodes",
 			"relationships",
 		];
 		const packages = readdirSync(PACKAGES).filter((name) =>
@@ -398,7 +396,6 @@ describe("extracted domain packages", () => {
 		"relationships",
 		"geometry",
 		"places",
-		"postcodes",
 		"measures",
 		"map-tiles",
 	])("%s has no atlas-loader or direct SQLite dependency", (name) => {
@@ -451,7 +448,6 @@ describe("atlas domain boundaries", () => {
 			...sourceFiles(join(PACKAGES, "areas/src")),
 			...sourceFiles(join(PACKAGES, "relationships/src")),
 			...sourceFiles(join(PACKAGES, "places/src")),
-			...sourceFiles(join(PACKAGES, "postcodes/src")),
 			...sourceFiles(join(PIPELINE, "src/evidence")),
 			join(PIPELINE, "src/stages/build-evidence-documents.ts"),
 		];
@@ -620,7 +616,6 @@ describe("pipeline boundaries", () => {
 			...sourceFiles(join(PACKAGES, "areas/src")),
 			...sourceFiles(join(PACKAGES, "relationships/src")),
 			...sourceFiles(join(PACKAGES, "places/src")),
-			...sourceFiles(join(PACKAGES, "postcodes/src")),
 		].filter(
 			(file) =>
 				![

@@ -27,7 +27,7 @@ import { readPostcodeIndex } from "@uk-data-atlas/atlas-loader";
 import {
 	readSqlitePostcodeShard,
 	storedPostcodePoints,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 import { createGeographyResolver } from "@uk-data-atlas/atlas-loader";
 import { route } from "./boundRoute";
 import { parsePostcode } from "@uk-data-atlas/geography";

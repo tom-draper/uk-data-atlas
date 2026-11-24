@@ -10,7 +10,7 @@ import {
 	postcodeInPlace,
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "../places/postcodeRoutes";
-import { postcodeLookupPoint } from "@uk-data-atlas/postcodes";
+import { postcodeLookupPoint } from "@uk-data-atlas/places/postcodes";
 import {
 	attemptSource,
 	postcodeSources,

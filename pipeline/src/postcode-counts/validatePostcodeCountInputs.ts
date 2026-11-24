@@ -3,7 +3,7 @@ import {
 	readSqlitePostcodeShard,
 	readSqlitePostcodeAreas,
 	readSqlitePostcodeAreaShard,
-} from "@uk-data-atlas/postcodes";
+} from "@uk-data-atlas/places/postcodes";
 
 import { releaseKey, type PostcodeAreasShard } from "@uk-data-atlas/geography";
 import type { PostcodeShard } from "@uk-data-atlas/geography";
