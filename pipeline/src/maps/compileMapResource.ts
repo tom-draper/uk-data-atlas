@@ -1,5 +1,4 @@
 import { gzipSync } from "node:zlib";
-import type { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { buildGeoJson } from "@uk-data-atlas/geometry/tiles/node";
 import { buildGeoParquet } from "@uk-data-atlas/geometry/tiles/node";
 import { compileTileset, LAYER_NAME } from "@uk-data-atlas/geometry/tiles";
@@ -11,6 +10,8 @@ import {
 	buildFullDetailParquet,
 	GEOJSON_TIERS,
 } from "@uk-data-atlas/geometry/tiles/node";
+
+export type MapGeometryCache = Parameters<typeof buildFullDetailParquet>[0];
 
 /**
  * One boundary release compiled into everything a map needs: the archive of
@@ -39,7 +40,7 @@ export type BoundaryReleaseSummary = {
 };
 
 export const compileMapResource = (
-	cache: AreaGeometryCache,
+	cache: MapGeometryCache,
 	release: BoundaryReleaseSummary,
 	/** Each area's name in this release, for the label a renderer draws. */
 	names: Map<string, string>,

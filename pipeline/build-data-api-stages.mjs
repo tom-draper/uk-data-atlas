@@ -210,7 +210,8 @@ export const apiStages = [
 		{
 			memoryMb: 4096,
 			rawInputs: geometryStoreInputs,
-			writes: [`${artifacts}/geometry-store`],
+			outputs: [`${artifacts}/geometry-store`],
+			requiredOutputs: [`${artifacts}/geometry-store/build-state.json`],
 		},
 	),
 	stage(
@@ -636,7 +637,7 @@ export const apiStages = [
 	),
 	stage(
 		"map-resource",
-		["boundary-registry", "area-inventory", "geometry-source-registry"],
+		["boundary-registry", "area-inventory", "geometry-store"],
 		[
 			"--max-old-space-size=3072",
 			"pipeline/src/stages/build-map-resource.ts",
@@ -654,13 +655,12 @@ export const apiStages = [
 				`${artifacts}/map-resources.json`,
 			],
 			outputs: ["data/build/map-resources"],
-			rawInputs: geometryStoreInputs,
+			rawInputs: [],
 			// A worker is started by path, not imported, so what it imports
 			// beyond the stage's own imports is listed here.
 			codeInputs: [
 				"packages/geometry/src/tiles/node/mapResource",
 				"pipeline/src/atlas/flatDownloads.ts",
-				"pipeline/src/maps/compileGeometryValidity.ts",
 				"pipeline/src/maps/compileMapResource.ts",
 				"pipeline/src/maps/mapResourcePool.ts",
 				"pipeline/src/maps/mapResourceWorker.ts",

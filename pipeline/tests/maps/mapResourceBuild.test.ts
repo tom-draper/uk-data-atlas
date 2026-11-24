@@ -12,6 +12,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "vitest";
 import { buildMapResources } from "../../src/maps/buildMapResource";
+import { buildGeometryStore } from "../../src/maps/buildGeometryStore";
 
 test("map builds retain tiles, remove obsolete variants and reuse completed releases", async (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-map-build-"));
@@ -23,12 +24,13 @@ test("map builds retain tiles, remove obsolete variants and reuse completed rele
 		writeFileSync(join(root, path), JSON.stringify(value));
 	for (const path of [
 		"services/api",
-		"data/source",
+		"data/source/boundaries",
 		"data/build/geography",
 		"data/build/artifacts/areas/ward",
 		"data/build/map-resources",
 	])
 		mkdirSync(join(root, path), { recursive: true });
+	json("services/api/package.json", {});
 	json("data/source/areas.geojson", {
 		type: "FeatureCollection",
 		features: [
@@ -123,6 +125,9 @@ test("map builds retain tiles, remove obsolete variants and reuse completed rele
 		input: "bad.geojson",
 	});
 	json(sourcesPath, sources);
+	buildGeometryStore(root);
+	rmSync(join(root, "data/source/areas.geojson"));
+	rmSync(join(root, "data/source/bad.geojson"));
 	const previousJobs = process.env.ATLAS_MAP_RESOURCE_JOBS;
 	t.onTestFinished(() => {
 		if (previousJobs === undefined)
@@ -138,6 +143,9 @@ test("map builds retain tiles, remove obsolete variants and reuse completed rele
 		writeFileSync(join(root, "data/build/map-resources", name), "obsolete");
 	const first = await buildMapResources(root);
 	assert.equal(first.resources.length, 1);
+	assert.deepEqual(first.resources[0]!.geometrySource, {
+		sourceCrs: "EPSG:4326",
+	});
 	assert.equal(first.unavailable.length, 1);
 	assert.match(first.unavailable[0]!.reason, /not a coverage/);
 	assert.equal(first.unavailable[0]!.features?.length, 1);

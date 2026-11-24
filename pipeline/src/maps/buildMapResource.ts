@@ -13,10 +13,7 @@ import {
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache } from "@uk-data-atlas/geometry";
 import { releaseKey } from "@uk-data-atlas/geography";
-import { readGeometrySourceLookup } from "@uk-data-atlas/geometry";
-import { roundKeepingValidity } from "./compileGeometryValidity.ts";
 import type { BoundaryReleaseSummary } from "./compileMapResource.ts";
 import {
 	mapResourceConcurrency,
@@ -40,7 +37,7 @@ import { readJsonSync } from "../lib/json.ts";
  *
  * A release takes from seconds to minutes, so one whose inputs have not changed
  * since it was last compiled is kept rather than rebuilt. Its inputs are the
- * geometry source file, the names the tiles carry, the release's title and
+ * compiled geometry, the names the tiles carry, the release's title and
  * attribution, and the compiler's own code; `map-resources/build-state.json`
  * records the hash of all four, and the descriptor, for each release.
  */
@@ -68,21 +65,13 @@ const COMPILER_SOURCES = [
 	"pipeline/src/maps/compileMapResource.ts",
 	"pipeline/src/maps/mapResourceWorker.ts",
 	"pipeline/src/maps/buildMapResource.ts",
-	// How areas are read, corrected and rounded, which the geometry store
-	// shares: the full tier is built from the store and must match.
-	"pipeline/src/maps/compileGeometryValidity.ts",
 	"packages/geometry/src/areaGeometry.ts",
-	"packages/geometry/src/geoJsonProperties.ts",
-	"packages/geometry/src/geometrySubstitution.ts",
-	"packages/geometry/src/gridOffset.ts",
+	"packages/geometry/src/geometryStore.ts",
 	"packages/geography/src/packedGeometry.ts",
 	"packages/geography/src/coordinates/reprojection.ts",
 	"packages/geography/src/geometryPointContainment.ts",
 	"packages/geography/src/geometryPositions.ts",
 	"packages/geography/src/geometryTypes.ts",
-	"packages/geography/src/geometryProvenance.ts",
-	"packages/geometry/src/shapefile/shapefile.ts",
-	"packages/geometry/src/shapefile/dbf.ts",
 ];
 
 export const buildMapResources = async (
@@ -107,17 +96,9 @@ export const buildMapResources = async (
 			recordCount?: number;
 		}>;
 	};
-	const geometrySources = readGeometrySourceLookup(root);
-	// The parent only uses this cache for provenance. Each worker has its own
-	// one-release cache for geometry and compilation.
-	const cache = new AreaGeometryCache(
-		root,
-		geometrySources,
-		1,
-		undefined,
-		undefined,
-		roundKeepingValidity,
-	);
+	const geometryKeys = readJsonSync(
+		join(out, "geometry-store", "build-state.json"),
+	) as Record<string, string>;
 	const assets = join(root, "data/build");
 	const directory = join(assets, "map-resources");
 	mkdirSync(directory, { recursive: true });
@@ -187,8 +168,7 @@ export const buildMapResources = async (
 			const key = sha256(
 				JSON.stringify({
 					compiler,
-					geometry: cache.provenance(geography, boundaryRelease)
-						.inputHash,
+					geometry: geometryKeys[id] ?? null,
 					names: [...names].sort(([a], [b]) => a.localeCompare(b)),
 					release,
 				}),
