@@ -14,6 +14,7 @@ import {
 import { isAreaCode } from "@uk-data-atlas/catalogue/place-profile";
 import { areaSummary } from "@/lib/places/summary";
 import { pageMetadata, titleCase } from "@/lib/site";
+import { placeTrends, trendSentence } from "@/lib/places/trends";
 
 type Params = Promise<{ place: string }>;
 
@@ -66,9 +67,14 @@ export async function generateMetadata({
 			description: `${profile.label}, a ${namedKindName(profile.kind).toLowerCase()} of ${profile.members.filter((member) => member.current).length} UK local authorities: its members, history, map and the API requests that return them.`,
 			path: `/places/${profile.id}`,
 		});
+	// A current council leads with its latest figures, such as its population.
+	const figures =
+		profile.current && profile.geography === "localAuthority"
+			? (await placeTrends(profile.code)).map(trendSentence)
+			: [];
 	return pageMetadata({
 		subject: `${profile.name} (${profile.code}), ${titleCase(areaKindName(profile))}`,
-		description: `${await areaSummary(profile)} Its boundary history, the areas it sits within and borders, and the datasets published for it.`,
+		description: `${[...figures, await areaSummary(profile)].join(" ")} Its boundary history, the areas it sits within and borders, and the datasets published for it.`,
 		path: `/places/${profile.code}`,
 	});
 }
