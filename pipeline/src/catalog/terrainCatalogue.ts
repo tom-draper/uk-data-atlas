@@ -1,5 +1,8 @@
 import { sha256 } from "@uk-data-atlas/artifacts";
-import type { TerrainCatalogue, TerrainProduct } from "@uk-data-atlas/terrain";
+import type {
+	TerrainCatalogue,
+	TerrainProduct,
+} from "@uk-data-atlas/geometry/terrain";
 
 /**
  * The metadata that makes a terrain value reproducible instead of merely

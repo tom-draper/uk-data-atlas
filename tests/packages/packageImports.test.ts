@@ -60,6 +60,7 @@ const NODE_PACKAGES = [
  */
 const BROWSER_FOLDERS: Record<string, string[]> = {
 	"atlas-db": ["src/search"],
+	geometry: ["src/terrain"],
 };
 
 const allowsNodeBuiltins = (

@@ -5,7 +5,7 @@ import { QUERY_RULES } from "../runtime/queryRules";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,
-} from "@uk-data-atlas/terrain";
+} from "@uk-data-atlas/geometry/terrain";
 
 const POINT = QUERY_RULES["GET /terrain/elevation/point"];
 

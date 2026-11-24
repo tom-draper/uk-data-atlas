@@ -36,11 +36,11 @@ import type { StoredFile } from "@uk-data-atlas/artifacts";
 import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
 import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/catalogue/node";
-import type { TerrainCatalogue } from "@uk-data-atlas/terrain";
+import type { TerrainCatalogue } from "@uk-data-atlas/geometry/terrain";
 import type {
 	AsyncTerrainProvider,
 	TerrainProvider,
-} from "@uk-data-atlas/terrain";
+} from "@uk-data-atlas/geometry/terrain";
 import type { OperationMatcher } from "./operationTemplates.ts";
 
 /** The independently-built resources available to API route handlers. */

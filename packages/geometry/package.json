@@ -8,7 +8,8 @@
 	"sideEffects": false,
 	"exports": {
 		".": "./src/index.ts",
-		"./shapefile": "./src/shapefile/index.ts"
+		"./shapefile": "./src/shapefile/index.ts",
+		"./terrain": "./src/terrain/index.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit -p tsconfig.json"

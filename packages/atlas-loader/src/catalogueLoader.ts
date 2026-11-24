@@ -54,7 +54,7 @@ import {
 	createAreaGeometryCache,
 	readGeometrySources,
 } from "@uk-data-atlas/geometry";
-import { createTerrainAsyncProvider } from "@uk-data-atlas/terrain";
+import { createTerrainAsyncProvider } from "@uk-data-atlas/geometry/terrain";
 import { readRelationshipCandidateInventory } from "@uk-data-atlas/catalogue/node";
 import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { artifactDirectory } from "@uk-data-atlas/atlas-db";
