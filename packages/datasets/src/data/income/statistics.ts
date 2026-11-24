@@ -55,7 +55,7 @@ const EARNINGS_PLACE: DeclaredDimension = {
  * tables are the revised edition of each year from 2012 to 2024 and the
  * provisional edition for 2025.
  */
-const SERIES_NOTE =
+export const SERIES_NOTE =
 	" From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with earlier years. Estimates for 2020 and 2021 come from a smaller sample and include furloughed employees, and the publisher advises caution with them. The 2025 figures are provisional.";
 
 const PAY_MEASURES = [
