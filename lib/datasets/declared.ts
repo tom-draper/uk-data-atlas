@@ -59,12 +59,25 @@ function formatCountValue(
 		: formatCount(whole);
 }
 
+/**
+ * A number with its prefix: a negative sum reads "-£2,584,000", its sign
+ * before the currency rather than after it.
+ */
+const prefixed = (
+	prefix: string | undefined,
+	value: number,
+	write: (value: number) => string,
+) =>
+	prefix && value < 0
+		? `-${prefix}${write(-value)}`
+		: `${prefix ?? ""}${write(value)}`;
+
 export function formatDisplay(format: DisplayFormat, value: number): string {
 	switch (format.kind) {
 		case "decimal":
-			return `${format.prefix ?? ""}${value.toFixed(format.digits)}${format.suffix ?? ""}`;
+			return `${prefixed(format.prefix, value, (number) => number.toFixed(format.digits))}${format.suffix ?? ""}`;
 		case "count":
-			return `${format.prefix ?? ""}${formatCountValue(format, value)}${format.suffix ?? ""}`;
+			return `${prefixed(format.prefix, value, (number) => formatCountValue(format, number))}${format.suffix ?? ""}`;
 		case "compact":
 			return `${formatCompactCount(value)}${format.suffix ?? ""}`;
 		case "rank": {
