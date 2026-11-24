@@ -196,6 +196,14 @@ export type DisplayRelease = {
 export type DisplaySeriesMeasure =
 	string | { measure: string; dimensions: Record<string, string[]> };
 
+/** A period from which the series is not directly comparable with the periods before it. */
+export type DisplaySeriesBreak = {
+	/** The first period after the break. */
+	period: string;
+	/** What changed, for the card's note. */
+	label: string;
+};
+
 /**
  * A history card: one area's latest value over a line of the periods before
  * it, read from the statistics of a measure. Drawn by the shared series card
@@ -221,6 +229,8 @@ export type DisplaySeries = {
 	 * chosen.
 	 */
 	countOf?: Record<string, DisplaySeriesMeasure>;
+	/** Where the series breaks, marked on the line. */
+	breaks?: DisplaySeriesBreak[];
 	/**
 	 * How the areas in scope combine before one is chosen. Absent, a measure
 	 * that adds up is summed; `mean` takes each area's value once, for a

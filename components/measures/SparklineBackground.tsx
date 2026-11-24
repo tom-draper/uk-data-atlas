@@ -12,6 +12,8 @@ type Props = {
 	strokeWidth: number;
 	/** Mark where the latest value sits. */
 	marker?: boolean;
+	/** Where the series breaks, from 0 to 100 across, each drawn as a dashed line. */
+	breaks?: readonly number[];
 };
 
 /** A line and soft fill that fill a chart card's background. */
@@ -22,6 +24,7 @@ export function SparklineBackground({
 	fade,
 	strokeWidth,
 	marker = false,
+	breaks = [],
 }: Props) {
 	return (
 		<svg
@@ -57,6 +60,21 @@ export function SparklineBackground({
 				strokeLinejoin="round"
 				vectorEffect="non-scaling-stroke"
 			/>
+			{breaks.map((x) => (
+				<line
+					key={x}
+					x1={x}
+					x2={x}
+					y1="0"
+					y2="100"
+					stroke={color}
+					strokeOpacity={0.6}
+					strokeWidth={1}
+					strokeDasharray="2 2"
+					vectorEffect="non-scaling-stroke"
+					data-series-break=""
+				/>
+			))}
 			{marker && (
 				<circle
 					cx={sparkline.last.x}
