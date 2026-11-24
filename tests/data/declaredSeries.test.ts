@@ -93,3 +93,37 @@ describe("the claimant count history card", () => {
 		expect(rate?.earlier).toBeUndefined();
 	});
 });
+
+describe("the pay history cards", () => {
+	it.each([
+		["income", "residence"],
+		["workplace-income", "workplace"],
+	])("read %s pay by the statistic and period chosen", (type, place) => {
+		expect(seriesOf(type, "hourlyMean")?.request).toEqual({
+			measure: "gross-hourly-pay",
+			datasetId: type,
+			geography: "localAuthority",
+			boundaryYear: 2025,
+			dimensions: {
+				"pay-statistic": ["mean"],
+				"earnings-place": [place],
+			},
+		});
+		expect(seriesOf(type, "annualMedian")?.request).toMatchObject({
+			measure: "gross-annual-pay",
+			dimensions: { "pay-statistic": ["median"] },
+		});
+	});
+
+	it("averages authorities, marks the SOC 2020 break and keeps the survey's caveats", () => {
+		const series = seriesOf("income", "annualMedian");
+		expect(series?.combine).toBe("mean");
+		expect(series?.countMeasure).toBeUndefined();
+		// Codes changed before 2025 are held on the earlier releases.
+		expect(series?.earlier).toEqual([2020, 2019, 2016]);
+		expect(series?.breaks?.map((at) => at.period)).toEqual(["2021"]);
+		expect(series?.source).toContain("SOC 2020");
+		expect(series?.source).toContain("furloughed");
+		expect(series?.source).toContain("provisional");
+	});
+});

@@ -128,7 +128,7 @@ export const CHART_PRESENTATIONS = {
 	"housing-housing-affordability": Chart7Presentation,
 	"housing-housing-tenure": Chart7Presentation,
 	"society-imd": Chart10Presentation,
-	"economy-income": Chart7Presentation,
+	"economy-income": Chart9Presentation,
 	"economy-jobs": Chart7Presentation,
 	"health-life-expectancy": Chart11Presentation,
 	"economy-local-government-finance": Chart7Presentation,
@@ -148,7 +148,7 @@ export const CHART_PRESENTATIONS = {
 	"economy-unemployment": Chart9Presentation,
 	"environment-waste": Chart7Presentation,
 	"society-wimd": Chart10Presentation,
-	"economy-workplace-income": Chart7Presentation,
+	"economy-workplace-income": Chart9Presentation,
 	"population-ethnicity": Chart8Presentation,
 } satisfies ChartPresentationRegistry;
 

@@ -85,28 +85,16 @@ describe("workplace-income", () => {
 			min: 0,
 			max: 60,
 		});
-		expect(
-			definition.chart.cardForOptions!(annual).fromRecord(dataset, "E1"),
-		).toEqual({
-			value: 31_250.4,
-			secondary: "Regional values average available authority estimates",
-		});
 	});
 
-	it("keeps the chart card as the centred income card", () => {
-		const card = definition.chart.cardForOptions!(DEFAULT_MAP_OPTIONS);
-		expect(card).toMatchObject({
-			background: "income",
-			layout: "centered",
+	it("draws the chart card as the pay history card", () => {
+		const series = definition.chart.seriesForOptions!(DEFAULT_MAP_OPTIONS);
+		expect(series).toMatchObject({
+			heading: expect.any(String),
 			accent: "#10b981",
-			unit: "per year",
+			combine: "mean",
 		});
-		expect(card.format!(32_499.6)).toBe("£32,500");
-		expect(
-			definition.chart.cardForOptions!(
-				withMeasure("workplace-income", "hourlyMean"),
-			).format!(17),
-		).toBe("£17.00/hour");
+		expect(definition.chart.card).toBeUndefined();
 	});
 });
 

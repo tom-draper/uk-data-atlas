@@ -72,8 +72,11 @@ England, Wales and Scotland. 2012 to 2024 are the revised editions and 2025 is
 provisional. From 2021 the survey codes occupations to SOC 2020, so 2021 onward
 is not directly comparable with earlier years, and 2020 and 2021 come from a
 smaller sample that includes furloughed employees. The measure notes say so.
-The catalogue and API serve the authorities of the latest code year only; the
-rows for retired authorities stay in the database on their own releases.
+The catalogue and API serve every year on the authorities of 2025, and again on
+those of 2020, 2019 and 2016, so an authority merged or recoded since keeps its
+earlier years under its earlier code. The Pay and Workplace Pay cards draw that
+whole history, and the Claimant Count card draws the monthly history from
+January 2013.
 
 ### 3. ITL history
 

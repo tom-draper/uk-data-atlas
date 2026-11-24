@@ -6,6 +6,7 @@ import {
 	meanPayIndicators,
 	payStatistics,
 } from "../../../data/income/statistics.ts";
+import { paySeries } from "../../../data/income/series.ts";
 import { payStatisticsParts } from "../../../data/income/source.ts";
 
 export const income = defineDataset<IncomeDataset>({
@@ -152,18 +153,12 @@ export const income = defineDataset<IncomeDataset>({
 	display: {
 		label: "Income [2025]",
 		year: 2025,
-		card: {
-			heading: "Income",
-			coverage: "England, Wales and Scotland",
-			source: "ONS. ASHE Table 8, residence-based pay, 2012-2025.",
-			secondaryText:
-				"Regional values average available authority estimates",
-			appearance: {
-				background: "income",
-				layout: "centered",
-				accent: "#10b981",
-			},
-		},
+		component: "@/components/measures/MeasureSeriesChart",
+		series: paySeries(
+			"residence",
+			"Income",
+			"ONS. ASHE Table 8, residence-based pay, 2012-2025.",
+		),
 		measures: [
 			{
 				id: "annualMedian",
