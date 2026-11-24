@@ -22,6 +22,7 @@ export * from "./crosswalkArtifacts.ts";
 export * from "./searchTable.ts";
 export * from "./schemaTables.ts";
 export * from "./areaChangeEvents.ts";
+export * from "./areaChangeExtent.ts";
 export * from "./defaultObservation.ts";
 export * from "./seriesAttribution.ts";
 export * from "./seriesCoverage.ts";
