@@ -43,7 +43,8 @@ const candidate = ({
 }: Options): RouteCandidate => ({
 	series: {
 		planId: key,
-		key,
+		// The members are the fourth part of a key, as in a converted series.
+		key: `${key}/y/${geography}:${release}/${members}`,
 		datasetId: 1,
 		measureId: 2,
 		releaseId: 9,
@@ -75,7 +76,7 @@ const candidate = ({
 });
 
 const kept = (choice: ReturnType<typeof chooseRoutes>) =>
-	choice.kept.map((series) => series.key);
+	choice.kept.map((series) => series.planId);
 
 test("two sources that cover different periods both stay whole", () => {
 	const old = candidate({
@@ -111,7 +112,7 @@ test("where two sources hold the same area and period, one value is kept", () =>
 	// Equal quality, so the newer source release wins and the other is dropped.
 	assert.deepEqual(kept(choice), ["b"]);
 	assert.deepEqual(
-		choice.dropped.map((series) => series.key),
+		choice.dropped.map((series) => series.planId),
 		["a"],
 	);
 });
@@ -158,7 +159,7 @@ test("sources rank by geography, exact share, coverage, release, then key", () =
 	const winner = (...rest: RouteCandidate[]) => {
 		const choice = chooseRoutes(rest);
 		assert.equal(choice.kept.length, 1);
-		return choice.kept[0]!.key;
+		return choice.kept[0]!.planId;
 	};
 	const cells = [value(1, 2020)];
 	const base = { observations: cells };
@@ -212,6 +213,23 @@ test("sources rank by geography, exact share, coverage, release, then key", () =
 		),
 		"a",
 	);
+});
+
+test("a total does not compete with the series it adds up", () => {
+	const observations = [value(1, 2020, 10), value(2, 2020, 20)];
+	const byAge = candidate({
+		key: "age",
+		members: "age=1/sex=all",
+		observations,
+	});
+	// The total of several ages holds the members its parts share, and its
+	// first input is the part that is also converted on its own.
+	const total = candidate({ key: "total", members: "sex=all", observations });
+	total.series.inputs = [...byAge.series.inputs];
+	const choice = chooseRoutes([byAge, total]);
+	assert.deepEqual(kept(choice), ["age", "total"]);
+	assert.deepEqual(choice.dropped, []);
+	assert.equal(choice.clipped, 0);
 });
 
 test("series with different members do not compete", () => {

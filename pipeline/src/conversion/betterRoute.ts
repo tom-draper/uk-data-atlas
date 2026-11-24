@@ -4,6 +4,7 @@ import {
 	type ConvertedSeries,
 	type SeriesGap,
 } from "./convertSeries.ts";
+import { membersOfKey } from "./seriesValues.ts";
 
 /**
  * One converted value for each target area and period.
@@ -66,9 +67,13 @@ export type RouteChoice = {
 
 const cell = (o: { area: number; period: number }) => `${o.area}:${o.period}`;
 
-/** What a series holds as the same series: dataset, measure, target and members. */
+/**
+ * What a series holds as the same series: dataset, measure, target and
+ * members. The members come from the converted key, not from the first input,
+ * because a total of several series holds only the members its parts share.
+ */
 const seriesGroup = (series: ConvertedSeries) =>
-	`${series.datasetId}|${series.measureId}|${series.releaseId}|${series.inputs[0]!.series.members}`;
+	`${series.datasetId}|${series.measureId}|${series.releaseId}|${membersOfKey(series.key)}`;
 
 /**
  * The series without the values whose area and period are already in
@@ -132,7 +137,8 @@ export const chooseRoutes = (
 		for (const { series } of ranked) {
 			const left = keepUnclaimed(series, claimed);
 			if (left !== null && left !== series)
-				clipped += series.observations.length - left.observations.length;
+				clipped +=
+					series.observations.length - left.observations.length;
 			result.set(series, left);
 		}
 	}
