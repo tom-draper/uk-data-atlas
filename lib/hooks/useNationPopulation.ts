@@ -19,6 +19,8 @@ import { CENSUS_NATIONS } from "./useNationCensusCard";
 export type NationPopulationState = {
 	nation: string;
 	status: "loading" | "ready";
+	/** The council or data zone read, or null where the nation has none. */
+	target: PopulationTarget | null;
 	/** The figures, or null where the nation publishes none for this area. */
 	population: NationPopulation | null;
 	/** Where the figures come from, or why there are none. */
@@ -43,6 +45,7 @@ const notPublished = (
 ): NationPopulationState => ({
 	nation,
 	status: "ready",
+	target: null,
 	population: null,
 	source,
 	note: `Not published in this form for ${nation}`,
@@ -116,16 +119,19 @@ export function useNationPopulation(
 			`${nation} publishes population estimates for councils and data zones, not for a ${selectedArea.type === "ward" ? "ward" : "this kind of area"}.`,
 		);
 	if (loaded.status === "error")
-		return notPublished(nation, loaded.error.message);
+		return { ...notPublished(nation, loaded.error.message), target };
 	if (loaded.status !== "ready")
-		return { ...notPublished(nation, ""), status: "loading" };
+		return { ...notPublished(nation, ""), status: "loading", target };
 
 	const population = loaded.value;
 	if (!population.period || !population.datasetId)
-		return notPublished(
-			nation,
-			`${nation}'s population estimates are not published for this area.`,
-		);
+		return {
+			...notPublished(
+				nation,
+				`${nation}'s population estimates are not published for this area.`,
+			),
+			target,
+		};
 	const declaration = DATASET_DECLARATIONS.find(
 		({ id }) => id === population.datasetId,
 	);
@@ -134,6 +140,7 @@ export function useNationPopulation(
 	return {
 		nation,
 		status: "ready",
+		target,
 		population,
 		source: `${publisher}. ${name}, mid-${population.period}.${declaration?.guide?.summary ? ` ${declaration.guide.summary}` : ""}`,
 		note: `${nation}, ${publisher} mid-${population.period} estimate`,

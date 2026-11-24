@@ -2,6 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import AgeDistribution from "@/components/datasets/population/population-estimates/population/age/AgeDistribution";
+import PopulationDensityChart from "@/components/datasets/population/population-estimates/population/density/PopulationDensityChart";
 import Gender from "@/components/datasets/population/population-estimates/population/gender/Gender";
 import type { SelectedArea } from "@/lib/types/areas";
 
@@ -99,6 +100,42 @@ describe("age card outside the dataset's nations", () => {
 
 	it("waits for a data zone's own estimate", () => {
 		const html = renderAge(area("dataZone", "S01006506", 2022));
+		expect(html).not.toContain("[2022]");
+		expect(html).not.toContain("No data available");
+	});
+});
+
+const renderDensity = (selectedArea: SelectedArea | null) =>
+	renderToStaticMarkup(
+		createElement(PopulationDensityChart, {
+			dataset,
+			aggregatedData: null,
+			boundaryData: { ward: {} } as never,
+			selectedArea,
+			activeViz: {
+				datasetId: "",
+				datasetType: "population",
+				datasetYear: 0,
+			} as never,
+			setActiveViz: () => {},
+		}),
+	);
+
+describe("density card outside the dataset's nations", () => {
+	it("keeps the dataset's year for an English area", () => {
+		expect(renderDensity(area("ward", "E05000026"))).toContain(
+			"Population Density [2022]",
+		);
+	});
+
+	it("says a Scottish ward is not published", () => {
+		const html = renderDensity(area("ward", "S13002781"));
+		expect(html).toContain("Population Density [Scotland]");
+		expect(html).toContain("Not published in this form for Scotland");
+	});
+
+	it("waits for a council's estimate and land area", () => {
+		const html = renderDensity(area("localAuthority", "N09000003", 2023));
 		expect(html).not.toContain("[2022]");
 		expect(html).not.toContain("No data available");
 	});
