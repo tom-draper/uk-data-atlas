@@ -8,6 +8,7 @@ import type {
 	DisplayMapView,
 	DisplayRanking,
 	DisplayMeasure,
+	DisplaySeriesMeasure,
 } from "@uk-data-atlas/datasets";
 import { getFeatureProp } from "@/lib/types";
 import { createBoundaryAggregationSpec } from "@/lib/helpers/datasetAggregation/ports";
@@ -225,9 +226,15 @@ const seriesFor = (
 	series: NonNullable<DatasetDisplay["series"]>,
 	measureId: string,
 ): SeriesCardConfig => {
-	const measure =
-		series.measures[measureId] ?? Object.values(series.measures)[0]!;
-	const countMeasure = series.countOf?.[measure];
+	const read = (declared: DisplaySeriesMeasure) =>
+		typeof declared === "string"
+			? { measure: declared }
+			: { measure: declared.measure, dimensions: declared.dimensions };
+	const { measure, dimensions } = read(
+		series.measures[measureId] ?? Object.values(series.measures)[0]!,
+	);
+	const count = series.countOf?.[measure];
+	const counted = count === undefined ? undefined : read(count);
 	return {
 		request: {
 			measure,
@@ -235,8 +242,10 @@ const seriesFor = (
 			geography: series.release?.geography ?? declaration.boundary.type,
 			boundaryYear:
 				series.release?.boundaryYear ?? declaration.boundary.year,
+			...(dimensions ? { dimensions } : {}),
 		},
-		...(countMeasure ? { countMeasure } : {}),
+		...(counted ? { countMeasure: counted.measure } : {}),
+		...(counted?.dimensions ? { countDimensions: counted.dimensions } : {}),
 		...(series.combine ? { combine: series.combine } : {}),
 		heading: series.headings?.[measureId] ?? series.heading,
 		period: series.period,

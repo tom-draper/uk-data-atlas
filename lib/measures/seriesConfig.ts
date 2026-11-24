@@ -9,6 +9,8 @@ export interface SeriesCardConfig {
 		datasetId: string;
 		geography: string;
 		boundaryYear: number;
+		/** The member of each dimension to read, where not the default. */
+		dimensions?: Record<string, string[]>;
 	};
 	/**
 	 * The measure of the people a rate counts, which lets the card combine
@@ -16,6 +18,8 @@ export interface SeriesCardConfig {
 	 * that cannot be combined.
 	 */
 	countMeasure?: string;
+	/** The member of each dimension of `countMeasure` to read, where not the default. */
+	countDimensions?: Record<string, string[]>;
 	/** How areas combine before one is chosen; added up where absent. */
 	combine?: "mean";
 	heading: string;

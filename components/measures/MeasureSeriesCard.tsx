@@ -67,6 +67,8 @@ type Props = {
 	area: string | null;
 	/** For a rate, the measure of the people it counts, to combine areas. */
 	countMeasure?: string;
+	/** The member of each dimension of `countMeasure` to read, where not the default. */
+	countDimensions?: Record<string, string[]>;
 	/** How areas combine before one is chosen; added up where absent. */
 	combine?: "mean";
 	heading: string;
@@ -93,6 +95,7 @@ export function MeasureSeriesCard({
 	scope,
 	area,
 	countMeasure,
+	countDimensions,
 	combine,
 	heading,
 	accent,
@@ -110,7 +113,13 @@ export function MeasureSeriesCard({
 		: null;
 	const state = useMeasureSeries(scoped);
 	const counts = useMeasureSeries(
-		scoped && countMeasure ? { ...scoped, measure: countMeasure } : null,
+		scoped && countMeasure
+			? {
+					...scoped,
+					measure: countMeasure,
+					dimensions: countDimensions,
+				}
+			: null,
 	);
 	// A rate shown for every area needs the counts it is of, so waits for them.
 	const waitingOnCounts = !area && countMeasure && counts.status !== "ready";
