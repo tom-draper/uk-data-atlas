@@ -153,6 +153,8 @@ export function rankingJsonLd(
 	map: AtlasMap,
 	name: string,
 	areas: number,
+	/** The areas at the top of the ranking, highest first. */
+	leaders: readonly { name: string; href?: string }[] = [],
 ) {
 	const path = `/maps/${location.slug}/${map.slug}`;
 	return {
@@ -167,6 +169,23 @@ export function rankingJsonLd(
 				isPartOf: { "@id": WEBSITE["@id"] },
 				about: { "@id": datasetId(map) },
 				spatialCoverage: { "@type": "Place", name: location.name },
+				...(leaders.length > 0 && {
+					mainEntity: {
+						"@type": "ItemList",
+						name,
+						numberOfItems: areas,
+						itemListOrder:
+							"https://schema.org/ItemListOrderDescending",
+						itemListElement: leaders.map((leader, index) => ({
+							"@type": "ListItem",
+							position: index + 1,
+							name: leader.name,
+							...(leader.href && {
+								url: `${SITE_URL}${leader.href}`,
+							}),
+						})),
+					},
+				}),
 				breadcrumb: breadcrumbList([
 					{ name: "Maps", path: "/maps" },
 					{ name: location.name, path: `/maps/${location.slug}` },
