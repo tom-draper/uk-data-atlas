@@ -206,15 +206,26 @@ pnpm data:build --from datasets
 
 Independent stages run in parallel. A stage starts once its dependencies have
 finished, with at most `--jobs <n>` running (default `DATA_BUILD_JOBS`, else the
-CPU count) and their memory within a budget (`DATA_BUILD_MEMORY_MB`, else the
-free memory, capped at three quarters of the total). A stage costs its
-`--max-old-space-size` value, or 1 GB without one. A stage larger than the whole
-budget runs alone. `--jobs 1` runs one stage at a time in plan order.
+CPU count). The default memory budget leaves 1 GiB of currently available
+memory free and leaves at least 3 GiB or a quarter of installed RAM for
+the rest of the system, whichever is greater.
+An 8 GiB machine therefore reserves at most 5 GiB for concurrent stages
+by default. `DATA_BUILD_MEMORY_MB` sets an explicit budget in MiB.
+Measured stages reserve an estimate of peak process-tree RSS. Other stages
+use their `--max-old-space-size` value or 1 GiB. A stage whose estimate
+exceeds the budget runs alone and may use more than the budget.
+At budgets of 5 GiB or less, dataset compilation and map resources default
+to one worker. Boundary tiling uses two workers at 5 GiB and above, and one
+worker below that. An explicit worker count can select an unmeasured
+configuration, which the scheduler runs alone.
+`--jobs 1` runs one stage at a time in plan order.
 
-Stages start in order of the work still ahead of them. When the next stage does
-not fit in the memory left, it waits, and no stage starts behind it, so smaller
-stages cannot keep taking the memory it needs. Dependencies, `--jobs`, the
-memory budget and the stages that run alone hold at every start.
+Stages start in order of the work still ahead of them. The scheduler excludes
+previous queue time from that estimate. When the next stage waits for memory,
+a smaller stage can start if it fits now and leaves enough room for the
+waiting stage to start as soon as existing jobs free the memory it needs.
+Dependencies, `--jobs`, memory reservations and the stages that run alone
+hold at every start.
 
 With several jobs, each output line is prefixed with `[stage]`, and `--plan`
 ends with the waves of stages that can run together and the critical path.

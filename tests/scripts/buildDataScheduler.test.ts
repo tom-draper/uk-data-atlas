@@ -15,6 +15,7 @@ import { planBuild, runBuild } from "@/pipeline/build-data.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
 import {
 	blockersOf,
+	configureStageMemory,
 	conflicts,
 	planWaves,
 	priorityOrder,
@@ -389,17 +390,31 @@ test("jobs and the memory budget come from the machine unless overridden", () =>
 	const machine = {
 		cpus: 8,
 		totalMemory: 16 * 1024 ** 3,
-		freeMemory: 6 * 1024 ** 3,
+		availableMemory: 7 * 1024 ** 3,
 	};
 	assert.deepEqual(resolveLimits({ env: {}, ...machine }), {
 		jobs: 8,
 		memoryMb: 6144,
 	});
-	// Free memory above three quarters of the total is capped.
+	// Leave room for other processes even when the machine is idle.
 	assert.equal(
-		resolveLimits({ env: {}, ...machine, freeMemory: 15 * 1024 ** 3 })
+		resolveLimits({ env: {}, ...machine, availableMemory: 15 * 1024 ** 3 })
 			.memoryMb,
 		12288,
+	);
+	assert.equal(
+		resolveLimits({
+			env: {},
+			...machine,
+			totalMemory: 8 * 1024 ** 3,
+			availableMemory: 7 * 1024 ** 3,
+		}).memoryMb,
+		5120,
+	);
+	assert.equal(
+		resolveLimits({ env: {}, ...machine, availableMemory: 512 * 1024 ** 2 })
+			.memoryMb,
+		1,
 	);
 	assert.deepEqual(
 		resolveLimits({
@@ -412,6 +427,49 @@ test("jobs and the memory budget come from the machine unless overridden", () =>
 		() => resolveLimits({ env: { DATA_BUILD_JOBS: "0" }, ...machine }),
 		/DATA_BUILD_JOBS must be a positive whole number/,
 	);
+});
+
+test("worker profiles reserve the memory for the actual worker count", () => {
+	const tiles = {
+		...stage("tiles"),
+		memoryMb: 6912,
+		compact: {
+			memoryMb: 4096,
+			variable: "ATLAS_PRECOMPILE_JOBS",
+			workers: 1,
+			normalWorkers: 2,
+		},
+	};
+	const compact = configureStageMemory(tiles, 5120, {});
+	assert.equal(stageMemoryMb(compact), 4096);
+	assert.deepEqual(compact.workerEnvironment, { ATLAS_PRECOMPILE_JOBS: "1" });
+	const normal = configureStageMemory(tiles, 8192, {});
+	assert.equal(stageMemoryMb(normal), 6912);
+	assert.deepEqual(normal.workerEnvironment, { ATLAS_PRECOMPILE_JOBS: "2" });
+	const override = configureStageMemory(tiles, 8192, {
+		ATLAS_PRECOMPILE_JOBS: "4",
+	});
+	assert.ok(stageMemoryMb(override) > 8192);
+	assert.equal(override.workerEnvironment, undefined);
+});
+
+test("boundary tiling uses two workers when the 8 GiB profile has its full budget", () => {
+	const tiles = buildDataStages.find(
+		({ name }) => name === "boundary-tiles",
+	)!;
+	const full = configureStageMemory(tiles, 5120, {});
+	assert.equal(stageMemoryMb(full), 5120);
+	assert.deepEqual(full.workerEnvironment, { ATLAS_PRECOMPILE_JOBS: "2" });
+
+	const reduced = configureStageMemory(tiles, 5119, {});
+	assert.equal(stageMemoryMb(reduced), 4096);
+	assert.deepEqual(reduced.workerEnvironment, { ATLAS_PRECOMPILE_JOBS: "1" });
+
+	const override = configureStageMemory(tiles, 4096, {
+		ATLAS_PRECOMPILE_JOBS: "2",
+	});
+	assert.equal(stageMemoryMb(override), 5120);
+	assert.equal(override.workerEnvironment, undefined);
 });
 
 test("--jobs needs a positive whole number", async () => {

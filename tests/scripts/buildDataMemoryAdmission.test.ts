@@ -138,7 +138,7 @@ async function replay({
 	return { started, ended, waits, peakMb, finished };
 }
 
-test("a stage that waits for memory is not passed by smaller stages that would fit", async () => {
+test("a smaller stage backfills without delaying the waiting stage even when it takes longer", async () => {
 	const stages = [
 		stage("running", 2000),
 		stage("large", 3000),
@@ -147,12 +147,63 @@ test("a stage that waits for memory is not passed by smaller stages that would f
 	const result = await replay({
 		stages,
 		memoryMb: 4000,
-		took: { running: 100, large: 100, small: 10 },
+		jobs: 2,
+		took: { running: 100, large: 100, small: 150 },
 	});
 	assert.equal(result.started.get("running"), 0);
 	assert.equal(result.started.get("large"), 100);
-	// `small` fits beside `running`, but it queues behind `large`.
-	assert.equal(result.started.get("small"), 100);
+	assert.equal(result.started.get("small"), 0);
+	assert.equal(result.ended.get("small"), 150);
+});
+
+test("backfill reserves memory for the waiting stage and any earlier jobs that could still be running", async () => {
+	const result = await replay({
+		stages: [
+			stage("ends-first", 2100),
+			stage("still-running", 1400),
+			stage("waiting", 2400),
+			stage("too-large", 900),
+			stage("fits", 500),
+			stage("overcommits", 400),
+		],
+		memoryMb: 4500,
+		took: {
+			"ends-first": 100,
+			"still-running": 200,
+			waiting: 100,
+			"too-large": 200,
+			fits: 200,
+			overcommits: 200,
+		},
+	});
+	// Even "ends-first" might be left running when memory becomes available.
+	// In this budget it fits exactly alongside "waiting", so there is no slack.
+	assert.equal(result.started.get("waiting"), 100);
+	for (const name of ["too-large", "fits", "overcommits"])
+		assert.ok(result.started.get(name)! >= 100);
+});
+
+test("successive backfills share the reservation and cannot consume it twice", async () => {
+	const result = await replay({
+		stages: [
+			stage("ends-first", 2200),
+			stage("still-running", 1400),
+			stage("waiting", 2400),
+			stage("fits", 500),
+			stage("overcommits", 400),
+		],
+		memoryMb: 4500,
+		took: {
+			"ends-first": 100,
+			"still-running": 200,
+			waiting: 100,
+			fits: 200,
+			overcommits: 200,
+		},
+	});
+	assert.equal(result.started.get("fits"), 0);
+	assert.equal(result.started.get("waiting"), 100);
+	assert.ok(result.started.get("overcommits")! >= 100);
 });
 
 test("a stage larger than the whole budget still runs, alone, and cannot stall the rest", async () => {

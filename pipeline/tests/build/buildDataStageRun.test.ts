@@ -75,14 +75,14 @@ function setup({
 	return { ...runner, ...tracker, state, lines, errors, report };
 }
 
-test("weightOf is the last run's time for a stage that runs, else 0", () => {
-	const cache = { lastTiming: () => ({ totalMs: 1234 }) };
+test("weightOf excludes the last run's queue time for a stage that runs, else 0", () => {
+	const cache = { lastTiming: () => ({ totalMs: 1234, queueMs: 1000 }) };
 	const { weightOf } = setup({
 		stages: [stage("a"), stage("b")],
 		cache,
 		toRun: new Set(["a"]),
 	});
-	assert.equal(weightOf(stage("a")), 1234);
+	assert.equal(weightOf(stage("a")), 234);
 	assert.equal(weightOf(stage("b")), 0);
 });
 

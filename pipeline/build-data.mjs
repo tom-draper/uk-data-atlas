@@ -21,6 +21,7 @@ import {
 import { createStageCache } from "./build-data-cache.mjs";
 import { buildDataStages } from "./build-data-graph.mjs";
 import {
+	configureStageMemory,
 	priorityOrder,
 	resolveLimits,
 	runSchedule,
@@ -33,7 +34,7 @@ export { formatAssetTree } from "./build-data-report.mjs";
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 /**
- * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
+ * @typedef {{ name: string, dependencies: string[], args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, memoryMb?: number, compact?: { memoryMb: number, variable: string, workers: number, normalWorkers?: number, normalBudgetMb?: number }, workerEnvironment?: Record<string, string>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
@@ -68,7 +69,9 @@ export async function runBuild({
 		useCache,
 	} = parseBuildArgs({ argv, stages, limits });
 	const { selected, skippedChecks, checks, isCheck } = selectStages({
-		stages,
+		stages: stages.map((stage) =>
+			configureStageMemory(stage, limits.memoryMb, env),
+		),
 		from,
 		only,
 		checksOnly,
@@ -186,7 +189,7 @@ const relayScript = fileURLToPath(
  * relay prefixes each line of stdout and stderr as it arrives.
  */
 function executeStage(stage, { verbose = false, prefixed = false } = {}) {
-	const env = { ...process.env };
+	const env = { ...process.env, ...stage.workerEnvironment };
 	delete env.DATA_BUILD_RELAY_PREFIX;
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
 	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;

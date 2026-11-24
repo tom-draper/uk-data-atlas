@@ -49,12 +49,13 @@ export function createStageRunner({
 		log(`  Depends on: ${stage.dependencies.join(", ") || "none"}`);
 	};
 	const startedAtOf = new Map();
-	// A stage's expected duration: its last run, if it has to run at all.
-	const weightOf = (stage) =>
-		toRun.has(stage.name)
-			? (cache?.lastTiming(stage.name)?.totalMs ??
-				DEFAULT_STAGE_WEIGHT_MS)
-			: 0;
+	// Queue time comes from the previous schedule, not the stage's own work.
+	const weightOf = (stage) => {
+		if (!toRun.has(stage.name)) return 0;
+		const last = cache?.lastTiming(stage.name);
+		if (!last || last.failed) return DEFAULT_STAGE_WEIGHT_MS;
+		return last.totalMs - (last.queueMs ?? 0);
+	};
 	// Handles a stage that needs no command: adopted, unchanged or only
 	// planned. Returns true when the stage has to run.
 	const settle = (stage) => {
