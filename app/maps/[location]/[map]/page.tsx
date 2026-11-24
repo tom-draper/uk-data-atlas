@@ -37,6 +37,9 @@ const midSentence = (label: string) =>
 		? label[0]!.toLowerCase() + label.slice(1)
 		: label;
 
+/** The areas a ranking's structured data lists, from the top. */
+const LEADERS = 10;
+
 async function resolvePage(params: Params) {
 	const resolved = await resolveRanking(await params);
 	const { location, map, ranking } = resolved;
@@ -80,7 +83,13 @@ export default async function RankingPage({ params }: { params: Params }) {
 	return (
 		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
 			<JsonLd
-				data={rankingJsonLd(location, map, subject, areas.length)}
+				data={rankingJsonLd(
+					location,
+					map,
+					subject,
+					areas.length,
+					rows.slice(0, LEADERS),
+				)}
 			/>
 			<Navigation />
 			<main className="mx-auto max-w-[1480px] px-3 sm:px-4">
