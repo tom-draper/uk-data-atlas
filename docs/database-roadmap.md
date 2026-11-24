@@ -37,11 +37,11 @@ Measured on the local build of 2026-11-19 unless stated.
 
 | Status      | Tasks                                                             |
 | ----------- | ----------------------------------------------------------------- |
-| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 46, 57, 62        |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 34, 46, 57, 62    |
 | Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                              |
 | Partly done | 7, 8, 9, 17, 35, 39, 58                                           |
 | Kept as is  | 12 (measured, keep the wide table), 13 (measured, keep the edges) |
-| Not started | 18, 24, 26–29, 31, 32, 34, 36–38, 40–45, 48–51, 52–56, 59–61      |
+| Not started | 18, 24, 26–29, 31, 32, 36–38, 40–45, 48–51, 52–56, 59–61          |
 
 ## Core data quality
 
@@ -200,7 +200,7 @@ as published data.
 | #   | Priority | Status      | Task                                                                                                                                                                                                                                   | Data                          |
 | --- | -------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | 33  | P0       | Done        | Old code → current code in one step: store chained crosswalks as direct lookups (any ward code since 2011 → 2026 wards), combining weights and recording the accumulated error (#639). The conversion routes already chain internally. | Held                          |
-| 34  | P0       |             | How much each area changed between releases: share of land and of residents that moved, and a "materially changed" flag (#414).                                                                                                        | Held                          |
+| 34  | P0       | Done        | How much each area changed between releases: share of land and of residents that moved, and a "materially changed" flag (#414). `area_change_extent` and `v_area_change_extent`; land is unmeasured for most splits and merges.        | Held                          |
 | 35  | P1       | Partly done | Direct parent and child links are in `area_hierarchy`. Left: one flat hierarchy table, one row per small area with its parent at every level, each marked exact or best-fit (#427).                                                    | Held                          |
 | 36  | P1       |             | Postcode district and sector → official areas, weighted by residential postcodes or population.                                                                                                                                        | Held (ONSPD, postcode counts) |
 | 37  | P1       |             | GP practice → LSOA, weighted by registered patients. NHS ODS codes are now stored as area identifiers.                                                                                                                                 | New source (OGL)              |
@@ -492,19 +492,34 @@ as published data.
   onto authorities, giving 273 series with 156,156 gaps, so that plan entry is
   restricted to the total. Still withheld: 1,638 ward to authority 2026-05 values
   on a route that mixes methods, 58 Welsh deprivation values, and the elections.
-- **Tasks 34 and 41** reuse the chain columns. Task 41 step 1 has shipped
-  through the converted-series stage (see the table above); task 34 has no
-  code yet. Task 34 (how
-  much an area changed): the largest `crosswalk_chain_edge.weight` out of an old
-  area is the share of it that stayed together, `1 - sum(weight)` is what did
-  not arrive (the old areas in `v_crosswalk_chain_gap` with `has_edge = 0`
-  lost all of it), and a "materially changed" flag also reads `at_risk` and
-  `complete`, with the threshold set in the task. Task 41 (population for every
-  release): a rebuilt estimate for an old area is the current value times
-  `weight` over the chain, with `weight_lower` and `weight_upper` as its bounds
-  where they are non-null and `complete = 0` marking an area to leave out, so
-  widening what a conversion can split starts with measuring the missing error
-  factors, not with new bounds.
+- **Task 41** reuses the chain columns. Step 1 has shipped through the
+  converted-series stage (see the table above). A rebuilt estimate for an old
+  area is the current value times `weight` over the chain, with `weight_lower`
+  and `weight_upper` as its bounds where they are non-null and `complete = 0`
+  marking an area to leave out, so widening what a conversion can split starts
+  with measuring the missing error factors, not with new bounds.
+- **Task 34** (2026-11-24): `area_change_extent` holds one row for each area
+  that persists from a release to the next, written by
+  `pipeline/src/storage/areaChangeExtent.ts` from the converter's own
+  population step (`createRouter` and `step`), so no weight is recomputed. Each
+  release is paired with the nearest later vintage one hop reaches, skipping
+  same-vintage editions. An area persists into the same code, or else into the
+  target that takes most of its residents where it is also that target's
+  largest feeder (`successor = 'largest-share'`). Residents: `residents_lost`
+  is 1 minus the population weight, `residents_gained` 1 minus the population
+  target share. Land: 0 on an extent-continuity edge (same extent within the
+  100 m sliver test), the measured overlap shares for areas the continuity
+  check found redrawn or realigned, an `area` basis weight where one exists,
+  otherwise null. `v_area_change_extent` adds `materially_changed` at 5%: no
+  ONS, GSS or boundary commission numeric threshold exists (the ONS 2011 to
+  2021 exact-fit lookups use categorical U, S, M and X flags, and GSS recodes
+  on any statutory change), 5% clears rounding and generalisation noise, and
+  the stored shares let a caller choose another. 65 pairs, 679,310 rows
+  (660,232 same code, 19,078 largest share), 16,073 materially changed.
+  16 releases with a later vintage have no one-hop route
+  (`docs/data-gaps.md`). Adds 27.7 MB (+2.3%) to `atlas.sqlite` measured with
+  `dbstat` on a copy of the 2026-11-24 build; the write takes about 33 s.
+  Task 44 can join on `from_version_id` or `to_version_id`.
 
 ## Licence table coverage
 
