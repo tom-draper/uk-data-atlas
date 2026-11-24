@@ -10,7 +10,7 @@ import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const RELATIONSHIPS = QUERY_RULES["GET /relationships"];
 

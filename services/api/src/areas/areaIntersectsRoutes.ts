@@ -14,7 +14,7 @@ import {
 	type ApiResponse,
 } from "../runtime/index.ts";
 import { readChoice, readWholeNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 /**
  * A box query answers with identities by default, so the cost of a wide box is

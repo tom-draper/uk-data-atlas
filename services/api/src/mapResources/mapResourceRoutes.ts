@@ -18,7 +18,7 @@ import {
 } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 /**
  * The map resources: what is published, what each one is, and the tiles

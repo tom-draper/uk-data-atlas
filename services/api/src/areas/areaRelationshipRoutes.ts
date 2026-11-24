@@ -5,7 +5,7 @@ import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "./areaChildren";
 import { readWholeNumber } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 // Parents and children state the same depth, and neither defaults it.
 const DEPTH =

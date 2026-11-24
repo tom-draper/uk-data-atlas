@@ -15,7 +15,7 @@ import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import { areaKey, releaseKey } from "@uk-data-atlas/geography";
 import { selectAreaChildren } from "./areaChildren";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const TIER =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/children/geometry"]

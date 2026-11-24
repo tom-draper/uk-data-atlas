@@ -14,7 +14,7 @@ import {
 } from "../runtime/index.ts";
 import { refused } from "../observationResolution/observationPlan";
 import { publishedPartitions } from "../data/dataDefaults";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 import { selectSourcePartition } from "../data/sourcePartition";
 import { similarAreas } from "./similarAreas";
 import { measureSeriesKey } from "@uk-data-atlas/measures";

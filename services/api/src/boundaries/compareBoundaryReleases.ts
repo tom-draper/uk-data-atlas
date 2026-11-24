@@ -7,7 +7,7 @@ import {
 	areaNotFound,
 	readWholeNumber,
 } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const COMPARE = QUERY_RULES["GET /boundary-releases:compare"];
 

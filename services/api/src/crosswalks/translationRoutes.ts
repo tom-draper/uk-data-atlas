@@ -7,7 +7,7 @@ import {
 	type ApiResponse,
 } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const TRANSLATIONS = QUERY_RULES["GET /translations"];
 

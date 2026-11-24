@@ -2273,7 +2273,7 @@ Two things can change under a client, and each is pinned separately.
   `pnpm --dir ../.. data:build --only operations`, and refuses to start with one compiled from an
   older document. What a parameter's schema states outright, an enum's
   values or a whole number's range and default, handlers read from
-  `src/queryRules.ts`, generated from the same document by API builds and
+  `src/runtime/queryRules.ts`, generated from the same document by API builds and
   typechecks. Run `pnpm generate:query-rules` from `services/api` to refresh it
   explicitly. A test checks it against the document.
   The `GET /v1/openapi.yaml`, `GET /v1/docs`, `GET /v1/atlas-release`,

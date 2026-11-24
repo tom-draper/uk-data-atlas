@@ -15,7 +15,7 @@ import {
 } from "../runtime/index.ts";
 import type { RouteRequest } from "../runtime/index.ts";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 /**
  * Join a caller's own rows to a boundary release: send a column of codes or

@@ -20,7 +20,7 @@ import {
 	seriesObservationFor,
 } from "@uk-data-atlas/measures";
 import { choices, readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const EXPORT = QUERY_RULES["GET /exports/{export-id}"];
 

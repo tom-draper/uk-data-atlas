@@ -3,7 +3,7 @@ import { sha256 } from "@uk-data-atlas/artifacts";
 import { directRelationshipPath } from "@uk-data-atlas/relationships";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 import { readPostedRows } from "../http/requestRows";
 import {
 	envelope,

@@ -7,7 +7,7 @@ import { areaNotFound } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import { readChoice } from "../runtime/index.ts";
-import { QUERY_RULES } from "../queryRules";
+import { QUERY_RULES } from "../runtime/queryRules";
 
 const TIER =
 	QUERY_RULES["GET /areas/{geography}/{release}/{code}/geometry"].tier;
