@@ -12,6 +12,7 @@ export * from "./measureReconciliation.ts";
 export * from "./measureDimensions.ts";
 export * from "./computedMeasures.ts";
 export * from "./measurePreferences.ts";
+export * from "./seriesBreaks.ts";
 export * from "./atlasStatisticsReadPath.ts";
 
 export * from "./atlasStatisticsObservations.ts";
