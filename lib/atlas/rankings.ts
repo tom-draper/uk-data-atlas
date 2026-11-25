@@ -188,6 +188,7 @@ export function compileRanking(
 		edition,
 		previous: earlier.at(-1),
 		first: earlier[0],
+		editions: datedEditions(editions),
 		inputs,
 		valueIn,
 	};

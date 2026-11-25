@@ -193,6 +193,103 @@ describe("ranking recipes", () => {
 		});
 	});
 
+	it("ranks each council's wards from its latest election", () => {
+		const ward = (
+			name: string,
+			ladCode: string,
+			partyVotes: Record<string, number>,
+			turnoutPercent?: number,
+		) => ({ wardName: name, ladCode, partyVotes, turnoutPercent });
+		const editions: Editions = {
+			"2019": {
+				year: 2019,
+				data: {
+					// Too long before the latest election to fill a gap.
+					E05011390: ward("Old Cycle", "E08000003", {
+						LAB: 900,
+						CON: 100,
+					}),
+				},
+			},
+			"2022": {
+				year: 2022,
+				data: {
+					// A code below the latest election's: a ward since redrawn.
+					E05000100: ward("Redrawn", "E08000003", {
+						LAB: 500,
+						CON: 100,
+					}),
+				},
+			},
+			"2023": {
+				year: 2023,
+				data: {
+					// No council in the source, so the ward lookup's.
+					E05011400: ward(
+						"Not Up In 2024",
+						"Unknown",
+						{ LD: 450, LAB: 50 },
+						30,
+					),
+					E05011366: ward("Harpurhey", "E08000003", {
+						LAB: 900,
+						CON: 100,
+					}),
+					// A council since merged away.
+					E05009000: ward("Abolished", "E07000004", {
+						CON: 900,
+						LAB: 100,
+					}),
+				},
+			},
+			"2024": {
+				year: 2024,
+				data: {
+					E05011359: ward(
+						"Clayton",
+						"E08000003",
+						{ LAB: 1000, CON: 400 },
+						25,
+					),
+					E05011366: ward("Harpurhey", "E08000003", {
+						CON: 300,
+						LAB: 200,
+					}),
+					E05011370: ward("Uncontested", "E08000003", { LAB: 800 }),
+				},
+			},
+			"2025": {
+				year: 2025,
+				data: {
+					// A county division, another tier of council.
+					E58000050: ward("Abbey", "Unknown", {
+						GREEN: 900,
+						LAB: 100,
+					}),
+				},
+			},
+		};
+		expect(
+			table("local-election", editions, {
+				"ward-lad": { E05011400: "E08000003" },
+			}),
+		).toEqual({
+			columns: ["Winner", "Majority", "Turnout", "Election"],
+			rows: [
+				[
+					"Not Up In 2024",
+					"80.0%",
+					"Liberal Democrat",
+					"400",
+					"30.0%",
+					"2023",
+				],
+				["Clayton", "42.9%", "Labour", "600", "25.0%", "2024"],
+				["Harpurhey", "20.0%", "Conservative", "100", "–", "2024"],
+			],
+		});
+	});
+
 	it("adds census neighbourhoods up into their councils", () => {
 		const neighbourhood = (
 			code: string,

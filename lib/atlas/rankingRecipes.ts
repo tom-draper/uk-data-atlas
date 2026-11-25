@@ -61,6 +61,8 @@ export type RankingContext = {
 	previous?: DatedEdition;
 	/** The oldest edition the file holds, when it is not this one. */
 	first?: DatedEdition;
+	/** Every dated edition the file holds, oldest first. */
+	editions: readonly DatedEdition[];
 	/** Other compiled datasets the recipe reads, by name. */
 	inputs: Readonly<Record<string, unknown>>;
 	/** A code's ranked value in another edition, worked out as for this one. */
@@ -559,6 +561,88 @@ export function boardName(name: string) {
 		.replace(/\b(And|Of|The|Upon|On)\b/g, (word) => word.toLowerCase());
 }
 
+/** The parties as the local election results key them. */
+const LOCAL_PARTY_NAMES: Readonly<Record<string, string>> = {
+	LAB: "Labour",
+	CON: "Conservative",
+	LD: "Liberal Democrat",
+	GREEN: "Green",
+	REF: "Reform UK",
+	RUK: "Reform UK",
+	PC: "Plaid Cymru",
+	IND: "Independent",
+	BRX: "Brexit Party",
+	UKIP: "UKIP",
+	OTHER: "Other",
+};
+
+/** Years before a council's latest election whose wards fill its table. */
+const LOCAL_ELECTION_CYCLE = 3;
+
+/**
+ * Each council's wards from its latest election, highest majority first.
+ * A council electing by thirds or halves may not contest every ward in a
+ * year, so wards contested in the years just before fill the gaps, unless
+ * the latest election was on new boundaries: new ward codes follow the old,
+ * so an earlier code below all of the latest ones names a ward since gone.
+ * County council divisions are left out, as their elections are another
+ * tier over the same places.
+ */
+function localElectionRows(context: RankingContext): RankingRow[] {
+	const wardToLad = context.inputs["ward-lad"] as Record<string, string>;
+	const current = new Set(gazetteer.currentCouncilCodes());
+	const councils = new Map<string, { year: number; lowest: string }>();
+	const rows = new Map<string, RankingRow>();
+	for (const edition of [...context.editions].reverse()) {
+		const results = (edition as DataRecord).results as
+			Record<string, string> | undefined;
+		for (const [code, record] of Object.entries(edition.data)) {
+			if (!/^[EW]05/.test(code) || rows.has(code)) continue;
+			const ladCode = String(record.ladCode ?? "");
+			const council = /^[EW]\d{8}$/.test(ladCode)
+				? ladCode
+				: wardToLad[code];
+			// A council since merged away is the predecessor's, not today's.
+			if (!council || !current.has(council)) continue;
+			let latest = councils.get(council);
+			if (!latest) {
+				latest = { year: edition.year, lowest: code };
+				councils.set(council, latest);
+			}
+			if (edition.year === latest.year) {
+				if (code < latest.lowest) latest.lowest = code;
+			} else if (
+				edition.year < latest.year - LOCAL_ELECTION_CYCLE ||
+				code < latest.lowest
+			)
+				continue;
+			const votes = Object.entries(
+				(record.partyVotes ?? {}) as Record<string, number>,
+			)
+				.filter(([, count]) => Number.isFinite(count) && count > 0)
+				.sort((a, b) => b[1] - a[1]);
+			// An uncontested ward has no majority to rank.
+			if (votes.length < 2) continue;
+			const total = votes.reduce((sum, [, count]) => sum + count, 0);
+			const winner = results?.[code] ?? votes[0]![0];
+			const majority = votes[0]![1] - votes[1]![1];
+			rows.set(code, {
+				code,
+				name: String(record.wardName ?? code),
+				district: council,
+				value: (majority / total) * 100,
+				record: {
+					winner: LOCAL_PARTY_NAMES[winner] ?? winner,
+					majority,
+					turnout: num(record.turnoutPercent) || null,
+					year: String(edition.year),
+				},
+			});
+		}
+	}
+	return [...rows.values()];
+}
+
 // Recipes ------------------------------------------------------------------
 
 const percentOne: DisplayFormat = { kind: "decimal", digits: 1, suffix: "%" };
@@ -755,6 +839,20 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		columns: [
 			column("Male", "years", field("maleBirthLE")),
 			column("Female", "years", field("femaleBirthLE")),
+		],
+	},
+	"local-election": {
+		level: "ward",
+		inputs: ["ward-lad"],
+		title: "Latest Local Election Results",
+		label: "Majority as a share of votes",
+		format: percentOne,
+		rows: localElectionRows,
+		columns: [
+			column("Winner", "text", (record) => String(record.winner)),
+			column("Majority", "count", field("majority")),
+			column("Turnout", "percent", field("turnout")),
+			column("Election", "text", (record) => String(record.year)),
 		],
 	},
 	"nhs-waiting": {
