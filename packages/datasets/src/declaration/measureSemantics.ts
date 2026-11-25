@@ -87,6 +87,8 @@ const UNIVERSE_MEASURES: Readonly<Record<string, readonly string[]>> = {
 		"pm25-population-weighted-anthropogenic",
 		"life-expectancy",
 		"healthy-life-expectancy",
+		"recorded-crimes-per-1000-residents",
+		"public-ev-chargers-per-10000-residents",
 	],
 	"usual-residents": ["usual-residents"],
 	"usual-residents-16-plus": [

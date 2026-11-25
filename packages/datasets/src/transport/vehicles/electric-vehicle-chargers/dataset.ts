@@ -2,6 +2,7 @@ import type { IndicatorDataset } from "../../../types/indicator.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure, per100k } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
+import { PUBLIC_EV_CHARGERS_PER_10000_RESIDENTS } from "../../../declaration/countDenominators.ts";
 import { aggregateIndicator } from "../../../data/new-datasets/aggregate.ts";
 import { electricVehicleChargerStatisticsPart } from "../../../data/electric-vehicle-chargers/source.ts";
 
@@ -61,6 +62,7 @@ export const electricVehicleChargers = defineDataset<
 				"sum",
 				"Publicly available electric vehicle charging devices.",
 			),
+			PUBLIC_EV_CHARGERS_PER_10000_RESIDENTS,
 		],
 		fields: [{ path: "value", measure: "public-ev-chargers" }],
 		...per100k((record) => record.value, 2024),

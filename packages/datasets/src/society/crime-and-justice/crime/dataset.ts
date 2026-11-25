@@ -2,6 +2,7 @@ import type { CrimeDataset } from "../../../types/crime.ts";
 import { defineDataset } from "../../../declaration/dataset.ts";
 import { measure } from "../../../declaration/measures.ts";
 import { periods } from "../../../declaration/statistics.ts";
+import { RECORDED_CRIMES_PER_1000_RESIDENTS } from "../../../declaration/countDenominators.ts";
 import { aggregateCrime } from "../../../data/crime/aggregate.ts";
 import { crimeStatisticsParts } from "../../../data/crime/source.ts";
 
@@ -150,6 +151,7 @@ export const crime = defineDataset<CrimeDataset>({
 				"sum",
 				"Offences recorded by the police.",
 			),
+			RECORDED_CRIMES_PER_1000_RESIDENTS,
 		],
 		dimensions: [
 			{

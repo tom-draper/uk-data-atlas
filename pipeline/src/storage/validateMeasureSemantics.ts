@@ -1,6 +1,8 @@
 import {
+	COUNT_DENOMINATORS,
 	MEASURE_UNITS,
 	NOT_APPLICABLE_REASONS,
+	REBUILT_RATES,
 	measureSemantics,
 } from "@uk-data-atlas/datasets";
 import type { StatisticsMeasure } from "@uk-data-atlas/measures";
@@ -75,4 +77,21 @@ export function validateMeasureSemantics(measure: StatisticsMeasure): void {
 		!NOT_APPLICABLE_REASONS[measure.slug]
 	)
 		fail("not applicable needs a reason in NOT_APPLICABLE_REASONS");
+	if (
+		measure.aggregation === "sum" &&
+		(statistic === "count" || statistic === "total") &&
+		!COUNT_DENOMINATORS[measure.slug]
+	)
+		fail(
+			"a count must name its denominator, or say why it has none, in COUNT_DENOMINATORS (packages/datasets/src/declaration/countDenominators.ts)",
+		);
+	const rebuilt = REBUILT_RATES.get(measure.slug);
+	if (rebuilt) {
+		if (unit.kind !== "percent" && unit.kind !== "per_n")
+			fail("a rebuilt rate needs a percent or per_n unit");
+		if (unit.scale !== rebuilt.per)
+			fail(
+				`a rebuilt rate per ${rebuilt.per} needs a unit of that scale, not ${unit.label}`,
+			);
+	}
 }
