@@ -59,7 +59,7 @@ export const analysisPlanMetadata = {
 			"/v1/analysis:plan?measure=road-collisions&period=2025&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa",
 	},
 	description:
-		"Returns a plan only: the selected source partition, the published crosswalk and whether the requested period is comparable on the named analysis frame. It also states the measure's aggregation rule, country-by-country coverage and expected output size, and carries the ranked conversion-plan evidence where that catalogue is available. `saferAlternatives` always includes the source-exact route, so a caller can keep the publisher's partition when conversion is unnecessary. It does not fetch or transform observations.\n",
+		"Returns the selected source partition, the reviewed crosswalk or path, and whether the requested period is comparable on the named analysis frame. For comparable periods, country-by-country coverage and expected output size describe the selected source, period and conversion. The plan can also include the aggregation rule, ranked conversion evidence and a source-exact alternative. The result link serves the converted observations.\n",
 	responses: {
 		"200": {
 			description: "An available or not-comparable analysis plan.",

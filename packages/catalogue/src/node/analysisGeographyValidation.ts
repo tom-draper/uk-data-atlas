@@ -50,6 +50,8 @@ export type AnalysisGeographyValidationInventory = {
 			method: "exact";
 			inputRecordCount: number;
 			outputRecordCount: number;
+			/** Absent in receipts built before period-specific coverage. */
+			targetCodes?: string[];
 			inputTotal: number;
 			outputTotal: number;
 		}>;
@@ -163,6 +165,7 @@ export const validateAnalysisGeographies = (
 				method: "exact" as const,
 				inputRecordCount: sourcePeriod.records.length,
 				outputRecordCount: converted.records.length,
+				targetCodes: converted.records.map(({ areaCode }) => areaCode),
 				inputTotal,
 				outputTotal,
 			};

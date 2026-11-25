@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { AnalysisGeographyInventory } from "@uk-data-atlas/relationships";
-import type { AnalysisGeographyValidationInventory } from "@uk-data-atlas/catalogue/node";
+import {
+	validateAnalysisGeographies,
+	type AnalysisGeographyValidationInventory,
+} from "@uk-data-atlas/catalogue/node";
 import { createAreaLookup } from "@uk-data-atlas/areas";
+import {
+	measureSeriesSourceKey,
+	registerSeriesObservations,
+} from "@uk-data-atlas/measures";
 import type { CrosswalkArtifact } from "@uk-data-atlas/relationships";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
 import {
@@ -11,8 +18,7 @@ import {
 	crosswalkLookup,
 	dataCatalog,
 	measureCompatibilityInventory,
-	measureObservations,
-	combineObservations,
+	populationObservations,
 	registry,
 	testContext,
 } from "./routeFixtures";
@@ -142,6 +148,9 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 			(unavailable.body.data as { status: string }).status,
 		"not-comparable",
 	);
+	assert.ok("data" in unavailable.body);
+	assert.equal("coverage" in (unavailable.body.data as object), false);
+	assert.equal("expectedSize" in (unavailable.body.data as object), false);
 
 	const ambiguous = route(
 		"/v1/analysis:plan?measure=road-collisions&period=2025&to=localAuthority/2023-05-uk-bgc-v2",
@@ -149,7 +158,7 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 	assert.equal(ambiguous.status, 400);
 });
 
-test("plans aggregation, coverage, expected size and a safer source-exact alternative", () => {
+test("preflights only the selected conversion and period, including with older receipts", () => {
 	const planAreaLookup = createAreaLookup([
 		{
 			schemaVersion: 1,
@@ -172,17 +181,20 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 			nameProperty: "LAD25NM",
 			areas: [
 				{ code: "E08000001", name: "Greater Manchester" },
-				{ code: "E08000099", name: "Uncovered authority" },
+				{ code: "E08000099", name: "Second authority" },
 			],
 		},
 	]);
 	const analysisCrosswalk = {
 		...containmentCrosswalk,
 		id: "population-wards-to-authority",
-		records: ["E05000001", "W05000001"].map((code) => ({
-			source: { code, labels: [code] },
-			targets: [{ code: "E08000001", labels: ["Greater Manchester"] }],
-		})),
+		records: [
+			...containmentCrosswalk.records,
+			{
+				source: { code: "W05000001", labels: ["Welsh ward"] },
+				targets: [{ code: "E08000099", labels: ["Second authority"] }],
+			},
+		],
 	};
 	const planInventory: AnalysisGeographyInventory = {
 		...inventory,
@@ -197,7 +209,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 					datasetId: "population",
 					geography: "ward",
 					boundaryYear: 2023,
-					periods: ["2022"],
+					periods: ["2022", "2023"],
 				},
 				crosswalk: {
 					id: analysisCrosswalk.id,
@@ -208,66 +220,157 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 			},
 		],
 	};
-	const response = routeRequest(
-		"GET",
-		"/v1/analysis:plan?measure=population&period=2022&to=localAuthority/2025-01-uk-lad&geography=ward&codeYear=2023",
-		testContext({
-			analysisGeographyInventory: planInventory,
-			areaLookup: planAreaLookup,
-			crosswalkLookup: new Map<string, CrosswalkArtifact>([
-				...crosswalkLookup,
-				[analysisCrosswalk.id, analysisCrosswalk],
-			]),
-			crosswalkInventory: {
-				...crosswalkInventory,
-				crosswalks: [
-					...crosswalkInventory.crosswalks,
-					{
-						id: analysisCrosswalk.id,
-						from: analysisCrosswalk.from,
-						to: analysisCrosswalk.to,
-						method: analysisCrosswalk.method,
-						quality: analysisCrosswalk.quality,
-						weighting: analysisCrosswalk.weighting,
-						recordCount: analysisCrosswalk.records.length,
-						artifact: `crosswalks/${analysisCrosswalk.id}.json`,
-						contentHash: analysisCrosswalk.contentHash,
-					},
-				],
+	const population = dataCatalog.measures.find(
+		({ id }) => id === "population",
+	)!;
+	const source = { ...population.sources[0]!, periods: ["2022", "2023"] };
+	const planCatalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure === population
+				? {
+						...measure,
+						sources: [source, ...population.sources.slice(1)],
+					}
+				: measure,
+		),
+	};
+	const records = populationObservations.periods[0]!.records;
+	const observations = {
+		...populationObservations,
+		periods: [
+			{ period: "2022", records: records.slice(0, 1) },
+			{ period: "2023", records },
+		],
+	};
+	const observationArtifacts = [observations];
+	registerSeriesObservations(
+		observationArtifacts,
+		new Map([
+			[measureSeriesSourceKey(population.series!, source), observations],
+		]),
+	);
+	const crosswalks = new Map<string, CrosswalkArtifact>([
+		...crosswalkLookup,
+		[analysisCrosswalk.id, analysisCrosswalk],
+	]);
+	const compiled = validateAnalysisGeographies(
+		planInventory,
+		planCatalog,
+		crosswalks,
+		new Map([["population-observations", observations]]),
+	);
+	const receipt = compiled.supports[0]!;
+	const legacy = {
+		...compiled,
+		supports: [
+			{
+				...receipt,
+				periods: receipt.periods.map(
+					({ targetCodes: _targetCodes, ...period }) => period,
+				),
 			},
-			dataCatalog,
-			measureCompatibilityInventory,
-			measureObservations: combineObservations(
-				dataCatalog,
-				measureObservations,
-			),
-			relationshipPathInventory: {
-				schemaVersion: 1,
-				contentHash: "sha256:paths",
-				crosswalkInventoryHash: "sha256:crosswalk-inventory",
-				paths: [
-					{
-						id: `${analysisCrosswalk.id}/forward/membership`,
-						purpose: "membership",
-						from: analysisCrosswalk.from,
-						to: analysisCrosswalk.to,
-						quality: "publisher-supplied",
-						origin: "crosswalk",
-						steps: [
-							{
-								crosswalkId: analysisCrosswalk.id,
-								direction: "forward",
-								method: analysisCrosswalk.method,
-								purpose: "membership",
-							},
-						],
-					},
-				],
-			},
+		],
+	};
+	const context = testContext({
+		analysisGeographyInventory: planInventory,
+		areaLookup: planAreaLookup,
+		crosswalkLookup: crosswalks,
+		crosswalkInventory: {
+			...crosswalkInventory,
+			crosswalks: [
+				...crosswalkInventory.crosswalks,
+				{
+					id: analysisCrosswalk.id,
+					from: analysisCrosswalk.from,
+					to: analysisCrosswalk.to,
+					method: analysisCrosswalk.method,
+					quality: analysisCrosswalk.quality,
+					weighting: analysisCrosswalk.weighting,
+					recordCount: analysisCrosswalk.records.length,
+					artifact: `crosswalks/${analysisCrosswalk.id}.json`,
+					contentHash: analysisCrosswalk.contentHash,
+				},
+			],
+		},
+		dataCatalog: planCatalog,
+		measureCompatibilityInventory,
+		measureObservations: observationArtifacts,
+		relationshipPathInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:paths",
+			crosswalkInventoryHash: "sha256:crosswalk-inventory",
+			paths: [
+				{
+					id: `${analysisCrosswalk.id}/forward/membership`,
+					purpose: "membership",
+					from: analysisCrosswalk.from,
+					to: analysisCrosswalk.to,
+					quality: "publisher-supplied",
+					origin: "crosswalk",
+					steps: [
+						{
+							crosswalkId: analysisCrosswalk.id,
+							direction: "forward",
+							method: analysisCrosswalk.method,
+							purpose: "membership",
+						},
+					],
+				},
+			],
+		},
+	});
+	const plan = (
+		period: string,
+		context: Parameters<typeof routeRequest>[2],
+	) => {
+		const response = routeRequest(
+			"GET",
+			`/v1/analysis:plan?measure=population&period=${period}&to=localAuthority/2025-01-uk-lad&geography=ward&codeYear=2023`,
+			context,
+		);
+		assert.equal(response.status, 200);
+		const { data } = response.body as { data: Record<string, any> };
+		return data;
+	};
+	const compiledContext = {
+		...context,
+		measureObservations: undefined,
+		analysisGeographyValidationInventory: {
+			...compiled,
+			supports: [
+				{
+					...receipt,
+					crosswalk: { ...receipt.crosswalk!, id: "other-crosswalk" },
+					periods: [],
+				},
+				receipt,
+			],
+		},
+	};
+	const data = plan("2022", compiledContext);
+	assert.deepEqual(
+		data,
+		plan("2022", {
+			...context,
+			analysisGeographyValidationInventory: legacy,
 		}),
 	);
-	assert.equal(response.status, 200);
-	const data = (response.body as { data: Record<string, any> }).data;
+	const later = plan("2023", compiledContext);
+	assert.deepEqual(later.expectedSize, {
+		targetAreaCount: 2,
+		coveredAreaCount: 2,
+		outputRecordCount: 2,
+	});
+	assert.equal(later.coverage.countries[0].status, "converted");
+	assert.equal(later.coverage.countries[0].conversion.source.period, "2023");
+	for (const planned of [data, later]) {
+		const result = routeRequest("GET", planned.result, context);
+		assert.equal(result.status, 200);
+		const { records } = (result.body as { data: { records: unknown[] } })
+			.data;
+		assert.equal(records.length, planned.expectedSize.outputRecordCount);
+	}
 	assert.deepEqual(data.aggregation, {
 		kind: "extensive",
 		operation: "sum",
@@ -279,6 +382,11 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 		outputRecordCount: 1,
 	});
 	assert.equal(data.coverage.summary.coveredAreaCount, 1);
+	assert.equal(data.coverage.countries[0].status, "partial");
+	assert.equal(
+		data.coverage.countries[0].conversion.crosswalk.id,
+		analysisCrosswalk.id,
+	);
 	assert.equal(data.conversionPlan.status, "available");
 	assert.equal(
 		data.conversionPlan.selectedPath.id,
@@ -287,7 +395,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	assert.deepEqual(data.saferAlternatives, [
 		{
 			kind: "source-exact",
-			href: "/v1/data/population?period=2022&geography=ward&codeYear=2023",
+			href: "/v1/data/population?period=2022&geography=ward&codeYear=2023&datasetId=population",
 			reason: "Keep the publisher's source partition when a conversion is not needed.",
 		},
 		{

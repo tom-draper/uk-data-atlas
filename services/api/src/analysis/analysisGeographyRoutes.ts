@@ -1,6 +1,17 @@
-import { analysisConversion } from "@uk-data-atlas/relationships";
+import {
+	analysisConversion,
+	buildTranslationSteps,
+	type AnalysisGeographySupport,
+} from "@uk-data-atlas/relationships";
 import { unsupported } from "@uk-data-atlas/areas";
-import { coveragePlan } from "@uk-data-atlas/catalogue/node";
+import { reviewedCoveragePlan } from "@uk-data-atlas/catalogue/node";
+import {
+	convertThroughSteps,
+	isNumericObservation,
+	measureSeriesKey,
+	observationsFor,
+	type Measure,
+} from "@uk-data-atlas/measures";
 import { relationshipPurposeFor } from "@uk-data-atlas/relationships";
 import { parseExactReleaseReference } from "@uk-data-atlas/areas";
 import {
@@ -17,7 +28,11 @@ const supportFor = (
 	>,
 	measureId: string,
 	analysisGeography: { geography: string; boundaryRelease: string },
-	source?: { geography: string; boundaryYear: string | null },
+	source?: {
+		geography: string;
+		boundaryYear: string | null;
+		datasetId: string | null;
+	},
 ) =>
 	inventory.supports.filter(
 		(support) =>
@@ -29,7 +44,9 @@ const supportFor = (
 			(source === undefined ||
 				(support.source.geography === source.geography &&
 					String(support.source.boundaryYear) ===
-						source.boundaryYear)),
+						source.boundaryYear &&
+					(source.datasetId === null ||
+						support.source.datasetId === source.datasetId))),
 	);
 
 const operationFor = (purpose: "identity" | "membership" | "apportion") =>
@@ -73,48 +90,124 @@ const conversionPlanFor = (
 		: undefined;
 };
 
-/** The evidence around a plan, without reading or transforming observations. */
+/** Older receipts lack target codes. Reproduce the reviewed conversion for that period. */
+const reviewedTargetCodes = (
+	context: RouteRequest["context"],
+	measure: Measure,
+	support: AnalysisGeographySupport,
+	period: string,
+) => {
+	const source = measure.sources.find(
+		(candidate) =>
+			candidate.datasetId === support.source.datasetId &&
+			candidate.sourceGeography.type === support.source.geography &&
+			candidate.sourceGeography.boundaryYear ===
+				support.source.boundaryYear,
+	);
+	if (!source) return undefined;
+	const records = observationsFor(measure.id, source, period, {
+		measureObservations: context.measureObservations,
+		seriesKey: measure.series && measureSeriesKey(measure.series),
+	})?.records;
+	if (!records?.every(isNumericObservation)) return undefined;
+	const route = support.path?.steps ?? [
+		{ crosswalk: support.crosswalk!, direction: "forward" as const },
+	];
+	const steps = [];
+	for (const { crosswalk, direction } of route) {
+		const artifact = context.geographyResolver.crosswalk(crosswalk.id);
+		if (!artifact) return undefined;
+		steps.push({
+			artifact,
+			direction,
+			steps: buildTranslationSteps(artifact, direction),
+		});
+	}
+	const converted = convertThroughSteps(steps, records);
+	return converted.status === "converted" && converted.method === "exact"
+		? converted.records.map(({ areaCode }) => areaCode)
+		: undefined;
+};
+
 const planEvidence = (
 	context: RouteRequest["context"],
-	measureId: string,
+	support: AnalysisGeographySupport,
 	period: string,
-	analysisGeography: { geography: string; boundaryRelease: string },
-	support: NonNullable<
-		RouteRequest["context"]["analysisGeographyInventory"]
-	>["supports"][number],
-	validation: RouteRequest["context"]["analysisGeographyValidationInventory"],
+	result?: string,
 ) => {
+	const { measureId, analysisGeography } = support;
 	const measure = context.dataCatalog?.measures.find(
 		(candidate) => candidate.id === measureId,
 	);
-	const coverage = measure
-		? coveragePlan(context, measure, analysisGeography)
+	const receipt = result
+		? context.analysisGeographyValidationInventory?.supports
+				.find(
+					(candidate) =>
+						candidate.measureId === measureId &&
+						candidate.analysisGeography.geography ===
+							analysisGeography.geography &&
+						candidate.analysisGeography.boundaryRelease ===
+							analysisGeography.boundaryRelease &&
+						candidate.source.datasetId ===
+							support.source.datasetId &&
+						candidate.source.geography ===
+							support.source.geography &&
+						candidate.source.boundaryYear ===
+							support.source.boundaryYear &&
+						candidate.path?.id === support.path?.id &&
+						candidate.crosswalk?.id === support.crosswalk?.id,
+				)
+				?.periods.find((candidate) => candidate.period === period)
 		: undefined;
-	const receipt = validation?.supports
-		.find(
-			(candidate) =>
-				candidate.measureId === measureId &&
-				candidate.analysisGeography.geography ===
-					analysisGeography.geography &&
-				candidate.analysisGeography.boundaryRelease ===
-					analysisGeography.boundaryRelease &&
-				candidate.source.datasetId === support.source.datasetId &&
-				candidate.source.geography === support.source.geography &&
-				candidate.source.boundaryYear === support.source.boundaryYear,
-		)
-		?.periods.find((candidate) => candidate.period === period);
+	const areas = result
+		? context.geographyResolver.releaseAreas(
+				analysisGeography.geography,
+				analysisGeography.boundaryRelease,
+			)
+		: undefined;
+	const targetCodes =
+		receipt?.targetCodes ??
+		(measure && areas
+			? reviewedTargetCodes(context, measure, support, period)
+			: undefined);
+	const coverage =
+		measure && areas && targetCodes && result
+			? reviewedCoveragePlan(
+					measure,
+					analysisGeography,
+					areas,
+					targetCodes,
+					{
+						...(support.path
+							? {
+									path: {
+										id: support.path.id,
+										purpose: support.path.purpose,
+										quality: support.path.quality,
+									},
+								}
+							: { crosswalk: support.crosswalk! }),
+						source: {
+							datasetId: support.source.datasetId,
+							geography: support.source.geography,
+							boundaryYear: support.source.boundaryYear,
+							period,
+						},
+						method: "exact",
+						href: result,
+					},
+				)
+			: undefined;
 	const conversionPlan = conversionPlanFor(context, support);
 	return {
 		...(measure ? { aggregation: measure.aggregation } : {}),
 		...(coverage ? { coverage } : {}),
-		...(coverage
+		...(coverage && targetCodes
 			? {
 					expectedSize: {
 						targetAreaCount: coverage.target.areaCount,
 						coveredAreaCount: coverage.summary.coveredAreaCount,
-						outputRecordCount:
-							receipt?.outputRecordCount ??
-							coverage.summary.coveredAreaCount,
+						outputRecordCount: targetCodes.length,
 					},
 				}
 			: {}),
@@ -122,7 +215,7 @@ const planEvidence = (
 		saferAlternatives: [
 			{
 				kind: "source-exact" as const,
-				href: `/v1/data/${measureId}?period=${encodeURIComponent(period)}&geography=${support.source.geography}&codeYear=${support.source.boundaryYear}`,
+				href: `/v1/data/${measureId}?${sourceQuery(support, result ? period : undefined)}`,
 				reason: "Keep the publisher's source partition when a conversion is not needed.",
 			},
 			...(coverage &&
@@ -139,6 +232,14 @@ const planEvidence = (
 	};
 };
 
+const sourceQuery = (support: AnalysisGeographySupport, period?: string) =>
+	new URLSearchParams({
+		...(period === undefined ? {} : { period }),
+		geography: support.source.geography,
+		codeYear: String(support.source.boundaryYear),
+		datasetId: support.source.datasetId,
+	});
+
 /**
  * Advertise and preflight only reviewed source-to-analysis conversions. This
  * is intentionally a plan: it reads no values and never selects a crosswalk
@@ -151,7 +252,6 @@ export const handleAnalysisGeographyRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const inventory = context.analysisGeographyInventory;
-	const validation = context.analysisGeographyValidationInventory;
 	if (!inventory)
 		return problem(
 			503,
@@ -208,7 +308,13 @@ export const handleAnalysisGeographyRoutes = ({
 		inventory,
 		requestedMeasure,
 		to,
-		geography ? { geography, boundaryYear } : undefined,
+		geography
+			? {
+					geography,
+					boundaryYear,
+					datasetId: parsedUrl.searchParams.get("datasetId"),
+				}
+			: undefined,
 	);
 	if (!isPlan)
 		return {
@@ -229,16 +335,6 @@ export const handleAnalysisGeographyRoutes = ({
 	const support = supports.find((candidate) =>
 		candidate.source.periods.includes(period),
 	);
-	const unavailableEvidence = supports[0]
-		? planEvidence(
-				context,
-				requestedMeasure,
-				period,
-				to,
-				supports[0],
-				validation,
-			)
-		: {};
 	if (!support)
 		return {
 			status: 200,
@@ -251,17 +347,16 @@ export const handleAnalysisGeographyRoutes = ({
 					supports.length > 0
 						? `${period} is not published by the requested source partition; supported periods are ${supports.flatMap((candidate) => candidate.source.periods).join(", ")}.`
 						: `No reviewed conversion is published from ${geography}/${boundaryYear} to ${to.geography}/${to.boundaryRelease} for ${requestedMeasure}.`,
-				...unavailableEvidence,
+				...(supports[0]
+					? planEvidence(context, supports[0], period)
+					: {}),
 			}),
 		};
-	const evidence = planEvidence(
-		context,
-		requestedMeasure,
-		period,
-		to,
-		support,
-		validation,
-	);
+	const conversion = analysisConversion(support);
+	const query = sourceQuery(support, period);
+	query.set(support.path ? "path" : "crosswalk", conversion.id);
+	const result = `/v1/data/${requestedMeasure}/convert?${query}`;
+	const evidence = planEvidence(context, support, period, result);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -271,10 +366,10 @@ export const handleAnalysisGeographyRoutes = ({
 			status: "available" as const,
 			basis: "derived" as const,
 			source: support.source,
-			conversion: analysisConversion(support),
+			conversion,
 			note: support.note,
 			...evidence,
-			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&codeYear=${support.source.boundaryYear}&${support.path ? "path" : "crosswalk"}=${encodeURIComponent(analysisConversion(support).id)}`,
+			result,
 		}),
 	};
 };
