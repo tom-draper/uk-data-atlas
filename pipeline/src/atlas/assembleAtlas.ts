@@ -25,12 +25,14 @@ import {
 	publishVacuumed,
 	writeAreaChangeEvents,
 	writeAreaChangeExtent,
+	dropDefaultObservation,
 	writeDefaultObservation,
 	writePostcodeAreas,
 	writeSchemaDocs,
 	writeSeriesAttribution,
 	writeCrosswalkChains,
 	writeAreaPeriodChange,
+	writeCountRates,
 	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
@@ -270,6 +272,20 @@ export function assembleAtlas(
 					.get()
 			) {
 				writeDefaultObservation(database);
+				// Reads the winning counts and population of the ranking, so
+				// after it, and the ranking is written again to place the
+				// rebuilt rates among the published and converted ones.
+				const rateStart = performance.now();
+				const rates = writeCountRates(database, ids);
+				dropDefaultObservation(database);
+				writeDefaultObservation(database);
+				for (const rate of rates)
+					buildLog.info(
+						`Rebuilt ${rate.rate}: ${formatCount(rate.values)} values in ${formatCount(rate.series)} series, ${formatCount(rate.earlier)} on an earlier year's denominator, ${formatCount(rate.unmatched)} counts with none`,
+					);
+				buildLog.info(
+					`Rebuilt rates in ${((performance.now() - rateStart) / 1000).toFixed(1)}s`,
+				);
 				// Reads the ranking and every observation: what the release can
 				// answer, before ANALYZE.
 				writeSeriesCoverage(database);
