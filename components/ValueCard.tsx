@@ -67,6 +67,7 @@ export default function ValueCard({
 	year,
 	codeMapper,
 	setActiveViz,
+	location,
 }: ChartComponentProps) {
 	const isDark = useIsDark();
 	const options = useCurrentMapOptions();
@@ -90,7 +91,12 @@ export default function ValueCard({
 	);
 	// An area in a nation the dataset leaves out is read from that nation's
 	// own census, labelled with its year and publisher.
-	const nation = useNationCensusCard(card, selectedArea, codeMapper);
+	const nation = useNationCensusCard(
+		card,
+		selectedArea,
+		codeMapper,
+		location,
+	);
 	const resolved = nation
 		? nation.stats
 			? { stats: nation.stats, viaLocalAuthority: false }

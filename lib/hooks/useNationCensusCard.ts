@@ -6,6 +6,7 @@ import {
 	selectedAreaLadCode,
 	type LadResolver,
 } from "@/lib/helpers/selectedAreaLad";
+import { locationCouncils } from "@/lib/helpers/locationCouncils";
 import { loadNationCensus } from "@/lib/measures/nationCensus";
 import { useLoaded } from "@/lib/measures/useLoaded";
 import type { SelectedArea } from "@/lib/types/areas";
@@ -43,15 +44,21 @@ const notPublished = (nation: string, reason: string): NationCardState => ({
 /**
  * A card's figures for an area in Scotland or Northern Ireland, where the
  * dataset covers England and Wales only: the nation's own census, summed
- * from its data zones. Null where the card reads the area itself.
+ * from its data zones. With no area selected, a place made of one council,
+ * such as Glasgow, is read as that council. Null where the card reads the
+ * area itself.
  */
 export function useNationCensusCard(
 	card: ValueCardConfig | undefined,
-	selectedArea: SelectedArea | null,
+	picked: SelectedArea | null,
 	codeMapper: LadResolver | undefined,
+	location?: string | null,
 ): NationCardState | null {
 	const nations = card?.nations;
-	const initial = selectedArea?.code.charAt(0) ?? "";
+	const place = picked ? null : locationCouncils(location);
+	const selectedArea =
+		picked ?? (place?.councils.length === 1 ? place.councils[0]! : null);
+	const initial = selectedArea?.code.charAt(0) ?? place?.initial ?? "";
 	const nation = nations?.covers.includes(initial)
 		? undefined
 		: CENSUS_NATIONS[initial];
@@ -89,7 +96,15 @@ export function useNationCensusCard(
 			: null,
 	);
 
-	if (!nation || !nations || !selectedArea) return null;
+	if (!nation || !nations || (!selectedArea && !place)) return null;
+	if (!selectedArea)
+		return {
+			...notPublished(
+				nation,
+				`${nation} publishes its census on data zones, which are summed to each council, and this place spans ${place!.councils.length} councils. Select a council to see its figures.`,
+			),
+			note: `Published for each council in ${nation}. Select one`,
+		};
 	if (!target) {
 		if (
 			!isZone &&
