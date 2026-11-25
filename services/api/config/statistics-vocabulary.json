@@ -463,6 +463,13 @@
 			"valueKind": "count",
 			"aggregation": "sum"
 		},
+		"public-ev-chargers-per-10000-residents": {
+			"label": "Public EV chargers per 10,000 residents",
+			"description": "Publicly available electric vehicle charging devices per 10,000 residents of all ages. Computed by the atlas as the devices in the area over its mid-year population. The Department for Transport publishes devices per 100,000 people on its own population figures.",
+			"unit": "per 10,000 residents",
+			"valueKind": "rate",
+			"aggregation": "none"
+		},
 		"pupil-enrolments": {
 			"label": "Pupil enrolments",
 			"description": "Pupil enrolments in state-funded schools.",
@@ -483,6 +490,13 @@
 			"unit": "offences",
 			"valueKind": "count",
 			"aggregation": "sum"
+		},
+		"recorded-crimes-per-1000-residents": {
+			"label": "Recorded crime per 1,000 residents",
+			"description": "Offences recorded by the police per 1,000 residents of all ages. Computed by the atlas as the offences of the area over its mid-year population, each summed on the area, never as an average of rates.",
+			"unit": "per 1,000 residents",
+			"valueKind": "rate",
+			"aggregation": "none"
 		},
 		"referendum-vote-share": {
 			"label": "Referendum vote share",
