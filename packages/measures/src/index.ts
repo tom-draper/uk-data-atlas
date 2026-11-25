@@ -41,4 +41,5 @@ export * from "./measureCapability.ts";
 export * from "./dataCatalogLoader.ts";
 export * from "./measureValuesContext.ts";
 export * from "./postcodeAreaReleases.ts";
+export * from "./areaPeriodChange.ts";
 export * from "./releaseSeries.ts";
