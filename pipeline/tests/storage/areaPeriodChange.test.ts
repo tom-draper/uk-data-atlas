@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { describe, test } from "vitest";
 import { writeAreaPeriodChange } from "../../src/storage/areaPeriodChange.ts";
+import { ensureRateTables } from "../../src/storage/countRates.ts";
 
 /**
  * Two local authority releases, the earlier one an old edition and the later
@@ -9,7 +10,7 @@ import { writeAreaPeriodChange } from "../../src/storage/areaPeriodChange.ts";
  * own boundaries. E06000001 is on both local authority releases and moved
  * between them; E06000060 is only on the later one.
  */
-const fixture = () => {
+const fixture = (extra = "") => {
 	const database = new DatabaseSync(":memory:");
 	database.exec(`
 		CREATE TABLE unit (id INTEGER PRIMARY KEY, kind TEXT);
@@ -85,6 +86,8 @@ const fixture = () => {
 		INSERT INTO series_preference VALUES (10, 5, 1), (11, 7, 1);
 		INSERT INTO observation VALUES (10, 30, 1, 70), (10, 30, 2, 72.5), (11, 10, 1, 1), (11, 10, 2, 2);
 	`);
+	ensureRateTables(database);
+	database.exec(extra);
 	const summary = writeAreaPeriodChange(database);
 	return { database, summary };
 };
@@ -244,5 +247,25 @@ describe("writeAreaPeriodChange", () => {
 			spans: 1,
 			breaks: 3,
 		});
+	});
+
+	test("a rebuilt rate's end takes the accuracy of its worse input", () => {
+		const { database } = fixture(`
+			INSERT INTO measure VALUES (7, 'claimant-rate', 'rate', 3);
+			INSERT INTO series VALUES (13, 1, 7, 2, 'derived', 3);
+			INSERT INTO quantity VALUES (8, 7, 2, 'claimant-rate');
+			INSERT INTO series_preference VALUES (13, 8, 1);
+			INSERT INTO observation VALUES (13, 20, 1, 2.5), (13, 20, 2, 3);
+			INSERT INTO rate_input VALUES
+			  (13, 20, 1, 5, 200, 1, 1, 0, 'published', 'estimated', 'estimated'),
+			  (13, 20, 2, 6, 200, 1, 1, 1, 'published', 'regrouped', 'regrouped');
+		`);
+		const [row] = rows(
+			database,
+			"measure = 'claimant-rate' AND area_code = 'E06000001'",
+		);
+		assert.equal(row!.from_accuracy, "estimated");
+		assert.equal(row!.to_accuracy, "regrouped");
+		assert.equal(row!.accuracy, "estimated");
 	});
 });
