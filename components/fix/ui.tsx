@@ -1,5 +1,6 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import {
+	ChevronDown,
 	CircleAlert,
 	CircleCheck,
 	CircleX,
@@ -92,6 +93,41 @@ export function StepHeading({
 				<span className="text-[13px] text-slate-500">{aside}</span>
 			)}
 		</div>
+	);
+}
+
+export function OptionalPanel({
+	id,
+	label,
+	children,
+}: {
+	id: string;
+	label: string;
+	children: ReactNode;
+}) {
+	const [opened, setOpened] = useState(false);
+
+	return (
+		<section aria-labelledby={id}>
+			<details
+				className="group rounded-md border border-slate-900/10 bg-white/60"
+				onToggle={(event) => {
+					if (event.currentTarget.open) setOpened(true);
+				}}
+			>
+				<summary
+					id={id}
+					className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-md px-4 py-2 text-[15px] font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 [&::-webkit-details-marker]:hidden"
+				>
+					{label}
+					<ChevronDown
+						aria-hidden="true"
+						className="h-4 w-4 group-open:rotate-180"
+					/>
+				</summary>
+				{opened && <div className="px-4 pb-4">{children}</div>}
+			</details>
+		</section>
 	);
 }
 

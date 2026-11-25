@@ -94,7 +94,26 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 
 	await expect(page.getByLabel("Area column")).toHaveValue("0");
 	const diagnosis = page.getByRole("region", { name: /What we found/ });
+	await expect(diagnosis).toContainText(
+		"21 matched, 4 updated, 2 need review",
+	);
 	await expect(diagnosis).toContainText("Wards, December 2024");
+	const issues = diagnosis.getByRole("button", { name: "Review issues" });
+	await expect(issues).toHaveAttribute("aria-expanded", "false");
+	await expect(diagnosis.getByText("Show 5 rows")).toBeHidden();
+
+	const correctedDownload = page.waitForEvent("download");
+	await diagnosis
+		.getByRole("button", { name: "Download corrected file" })
+		.click();
+	expect((await correctedDownload).suggestedFilename()).toBe(
+		"sample-wards-corrected.csv",
+	);
+
+	await issues.click();
+	await expect(
+		diagnosis.getByRole("button", { name: "Hide issues" }),
+	).toHaveAttribute("aria-expanded", "true");
 	await expect(diagnosis).toContainText("26 of 27 matched");
 	await expect(diagnosis).toContainText(
 		"5 codes retired since December 2024 → successors found for 5",
@@ -107,6 +126,10 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 	await diagnosis.getByText("Show 5 rows").click();
 	await expect(diagnosis).toContainText("Became Brinkworth (E05016249)");
 
+	await expect(
+		page.getByRole("button", { name: "Match report" }),
+	).toBeHidden();
+	await page.getByText("Reports", { exact: true }).click();
 	const download = page.waitForEvent("download");
 	await page.getByRole("button", { name: "Match report" }).click();
 	expect((await download).suggestedFilename()).toBe(
@@ -138,6 +161,7 @@ test("the sample's codes move to the latest release, with their local authority"
 	await page.getByRole("button", { name: "Try a sample" }).click();
 
 	const update = page.getByRole("region", { name: /Update and add columns/ });
+	await update.getByText("Update and add columns", { exact: true }).click();
 	await expect(update).toContainText("21 rows already in Wards, May 2026");
 	await expect(update).toContainText("4 rows move to their successor");
 	await expect(update).toContainText("1 row split into several areas");
@@ -157,7 +181,9 @@ test("the sample's codes move to the latest release, with their local authority"
 		"ward_cd,area_name,local_authority_code,local_authority_name,area_update,ward_name,households",
 	);
 	expect(lines).toHaveLength(29);
-	expect(text).toContain("E05016249,Brinkworth,E06000054,Wiltshire,updated,");
+	expect(text).toContain(
+		"E05016249,Brinkworth,E06000054,Wiltshire,updated (was E05013408),",
+	);
 	expect(text).toContain("E0513457,,,,not a valid code,");
 	await expect(update.getByRole("status")).toHaveText(
 		"Your updated file is downloading.",
@@ -174,6 +200,10 @@ test("the sample's households add up to their local authority", async ({
 	const convert = page.getByRole("region", {
 		name: /Convert to another geography/,
 	});
+	await expect(convert.getByLabel("Convert to")).toBeHidden();
+	await convert
+		.getByText("Convert to another geography", { exact: true })
+		.click();
 	await expect(convert.getByLabel("Convert to")).toHaveValue(
 		"ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
 	);
@@ -212,6 +242,8 @@ test("the sample's wards are mapped by status, or shaded by households", async (
 	await page.getByRole("button", { name: "Try a sample" }).click();
 
 	const map = page.locator('section[aria-labelledby="fix-map"]');
+	await expect(map.getByRole("img")).toBeHidden();
+	await map.getByText("Map preview", { exact: true }).click();
 	await expect(
 		map.getByRole("img", {
 			name: "26 areas from your file on a map of Wards, December 2024",

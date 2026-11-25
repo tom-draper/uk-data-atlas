@@ -21,12 +21,11 @@ import type { ReleaseRef } from "@/lib/fix/types";
 import { withSheet, type Upload } from "@/lib/fix/upload";
 import ColumnsPanel, { type ColumnChoice } from "./ColumnsPanel";
 import ConvertPanel from "./ConvertPanel";
-import CorrectedDownload from "./CorrectedDownload";
-import DiagnosisPanel from "./DiagnosisPanel";
 import InputPanel from "./InputPanel";
 import MapPanel from "./MapPanel";
+import ResultSummary from "./ResultSummary";
 import UpdatePanel from "./UpdatePanel";
-import { Button, DownloadButtons, StepHeading } from "./ui";
+import { Button, DownloadButtons, OptionalPanel, StepHeading } from "./ui";
 
 /**
  * The fix-your-data tool. A file goes in, its columns are detected, and the
@@ -245,9 +244,12 @@ export default function FixTool() {
 
 				{source && (busy || diagnosis) && (
 					<section aria-labelledby="fix-diagnosis" aria-busy={busy}>
-						<StepHeading step={3} id="fix-diagnosis">
+						<h2
+							id="fix-diagnosis"
+							className="mb-3 text-[19px] font-semibold tracking-tight text-slate-900"
+						>
 							What we found
-						</StepHeading>
+						</h2>
 						{busy ? (
 							<Card className="p-5">
 								<p className="text-[15px] text-slate-600">
@@ -255,19 +257,16 @@ export default function FixTool() {
 								</p>
 							</Card>
 						) : (
-							diagnosis && (
-								<>
-									<DiagnosisPanel diagnosis={diagnosis} />
-									{file && table && area !== null && (
-										<CorrectedDownload
-											key={`${source.name}/${source.sheet}/${area}/${diagnosis.release?.boundaryRelease}`}
-											source={file}
-											table={table}
-											diagnosis={diagnosis}
-											area={area}
-										/>
-									)}
-								</>
+							diagnosis &&
+							file &&
+							table &&
+							area !== null && (
+								<ResultSummary
+									source={file}
+									table={table}
+									diagnosis={diagnosis}
+									area={area}
+								/>
 							)
 						)}
 					</section>
@@ -276,146 +275,120 @@ export default function FixTool() {
 				{source &&
 					file &&
 					table &&
-					diagnosis &&
-					!busy &&
-					area !== null &&
-					diagnosis.release &&
-					diagnosis.matched > 0 && (
-						<section aria-labelledby="fix-map">
-							<StepHeading step={4} id="fix-map">
-								Map preview
-							</StepHeading>
-							<MapPanel
-								key={`${source.name}/${source.sheet}/${area}/${diagnosis.release.boundaryRelease}`}
-								table={table}
-								diagnosis={diagnosis}
-								values={choice.values}
-							/>
-						</section>
-					)}
-
-				{source &&
-					file &&
-					table &&
-					result &&
-					diagnosis &&
-					!busy &&
-					area !== null &&
-					diagnosis.latest &&
-					diagnosis.matched > 0 && (
-						<section aria-labelledby="fix-update">
-							<StepHeading step={5} id="fix-update">
-								Update and add columns
-							</StepHeading>
-							<UpdatePanel
-								key={`${source.name}/${source.sheet}/${area}/${diagnosis.release?.boundaryRelease}`}
-								table={table}
-								diagnosis={diagnosis}
-								area={area}
-								source={file}
-							/>
-						</section>
-					)}
-
-				{source &&
-					file &&
-					table &&
-					diagnosis &&
-					!busy &&
-					area !== null &&
-					diagnosis.release &&
-					diagnosis.matched > 0 && (
-						<section aria-labelledby="fix-convert">
-							<StepHeading step={6} id="fix-convert">
-								Convert to another geography
-							</StepHeading>
-							<ConvertPanel
-								key={`${source.name}/${source.sheet}/${area}/${diagnosis.release.boundaryRelease}/${choice.values.join(",")}`}
-								table={table}
-								diagnosis={diagnosis}
-								values={choice.values}
-								source={file}
-							/>
-						</section>
-					)}
-
-				{source &&
-					file &&
-					table &&
 					result &&
 					diagnosis &&
 					!busy &&
 					area !== null && (
-						<section aria-labelledby="fix-output">
-							<StepHeading step={7} id="fix-output">
-								Reports
-							</StepHeading>
-							<div className="flex flex-wrap gap-2">
-								<DownloadButtons
-									format={source.format}
-									label="Your file, with each area's status"
-									onDownload={downloadChecked}
-								/>
-								<Button
-									onClick={() =>
-										downloadText(
-											matchReportCsv(diagnosis),
-											derivedName(
-												source.name,
-												"match-report",
-											),
-										)
-									}
-								>
-									<Download
-										aria-hidden="true"
-										className="h-4 w-4"
+						<div className="space-y-2">
+							{diagnosis.release && diagnosis.matched > 0 && (
+								<OptionalPanel id="fix-map" label="Map preview">
+									<MapPanel
+										key={`${source.name}/${source.sheet}/${area}/${diagnosis.release.boundaryRelease}`}
+										table={table}
+										diagnosis={diagnosis}
+										values={choice.values}
 									/>
-									Match report (.csv)
-								</Button>
-							</div>
+								</OptionalPanel>
+							)}
 
-							<h3 className="mt-8 mb-2 text-[15px] font-semibold text-slate-900">
-								Do this from code
-							</h3>
-							<p className="mb-3 max-w-[680px] text-[14px] text-slate-600">
-								The same check is one request to the API. Send
-								the area column as a CSV headed{" "}
-								<code className="font-mono text-[13px]">
-									area
-								</code>
-								{result.body.parents ? (
-									<>
-										, with a{" "}
-										<code className="font-mono text-[13px]">
-											parent
-										</code>{" "}
-										column
-									</>
-								) : null}
-								.{" "}
-								<button
-									type="button"
-									className="cursor-pointer font-medium text-slate-800 underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700"
-									onClick={() =>
-										downloadText(
-											codesCsv(
-												result.body.values,
-												result.body.parents,
-											),
-											"areas.csv",
-										)
-									}
+							{diagnosis.latest && diagnosis.matched > 0 && (
+								<OptionalPanel
+									id="fix-update"
+									label="Update and add columns"
 								>
-									Download areas.csv
-								</button>
-							</p>
-							<CodePanel
-								title="Check the column"
-								language="curl"
-								code={validateCurl(release)}
-							/>
-						</section>
+									<UpdatePanel
+										key={`${source.name}/${source.sheet}/${area}/${diagnosis.release?.boundaryRelease}`}
+										table={table}
+										diagnosis={diagnosis}
+										area={area}
+										source={file}
+									/>
+								</OptionalPanel>
+							)}
+
+							{diagnosis.release && diagnosis.matched > 0 && (
+								<OptionalPanel
+									id="fix-convert"
+									label="Convert to another geography"
+								>
+									<ConvertPanel
+										key={`${source.name}/${source.sheet}/${area}/${diagnosis.release.boundaryRelease}/${choice.values.join(",")}`}
+										table={table}
+										diagnosis={diagnosis}
+										values={choice.values}
+										source={file}
+									/>
+								</OptionalPanel>
+							)}
+
+							<OptionalPanel id="fix-output" label="Reports">
+								<div className="flex flex-wrap gap-2">
+									<DownloadButtons
+										format={source.format}
+										label="Your file, with each area's status"
+										onDownload={downloadChecked}
+									/>
+									<Button
+										onClick={() =>
+											downloadText(
+												matchReportCsv(diagnosis),
+												derivedName(
+													source.name,
+													"match-report",
+												),
+											)
+										}
+									>
+										<Download
+											aria-hidden="true"
+											className="h-4 w-4"
+										/>
+										Match report (.csv)
+									</Button>
+								</div>
+
+								<h3 className="mt-8 mb-2 text-[15px] font-semibold text-slate-900">
+									Do this from code
+								</h3>
+								<p className="mb-3 max-w-[680px] text-[14px] text-slate-600">
+									The same check is one request to the API.
+									Send the area column as a CSV headed{" "}
+									<code className="font-mono text-[13px]">
+										area
+									</code>
+									{result.body.parents ? (
+										<>
+											, with a{" "}
+											<code className="font-mono text-[13px]">
+												parent
+											</code>{" "}
+											column
+										</>
+									) : null}
+									.{" "}
+									<button
+										type="button"
+										className="cursor-pointer font-medium text-slate-800 underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700"
+										onClick={() =>
+											downloadText(
+												codesCsv(
+													result.body.values,
+													result.body.parents,
+												),
+												"areas.csv",
+											)
+										}
+									>
+										Download areas.csv
+									</button>
+								</p>
+								<CodePanel
+									title="Check the column"
+									language="curl"
+									code={validateCurl(release)}
+								/>
+							</OptionalPanel>
+						</div>
 					)}
 			</div>
 		</div>
