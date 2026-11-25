@@ -35,13 +35,13 @@ Measured on the local build of 2026-11-19 unless stated.
 
 ## Status at a glance
 
-| Status      | Tasks                                                             |
-| ----------- | ----------------------------------------------------------------- |
-| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 34, 46, 57, 62    |
-| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                              |
-| Partly done | 7, 8, 9, 17, 35, 39, 58                                           |
-| Kept as is  | 12 (measured, keep the wide table), 13 (measured, keep the edges) |
-| Not started | 18, 24, 26–29, 31, 32, 36–38, 40–45, 48–51, 52–56, 59–61          |
+| Status      | Tasks                                                              |
+| ----------- | ------------------------------------------------------------------ |
+| Done        | 1, 4, 5, 6, 11, 14, 15, 25, 28, 30, 31, 32, 33, 34, 44, 46, 57, 62 |
+| Mostly done | 2, 3, 10, 16, 19, 20, 21, 22, 23, 47                               |
+| Partly done | 7, 8, 9, 17, 35, 39, 58                                            |
+| Kept as is  | 12 (measured, keep the wide table), 13 (measured, keep the edges)  |
+| Not started | 18, 24, 26–29, 31, 32, 36–38, 40–43, 45, 48–51, 52–56, 59–61       |
 
 ## Core data quality
 
@@ -215,7 +215,7 @@ as published data.
 | 41  | P1       | Steps 1 to 3 done | Population for every area, every year, every release, by rebuilding mid-year estimates onto each release. Also widens what conversions can split, since only total population is backtested on a split. Step 1 converts the estimates already held, as a total of persons of all ages, onto every ward, authority and constituency release (`planPopulationReleases`): 43 series, 112,996 values (3,346 split, with bounds), atlas +4,059,136 bytes (0.39%). Authorities from 2023-05 hold 2011 to 2024; every other release holds 2022 only, from the ward estimates, with 52,902 `not-carried` gaps on old releases. Step 2 adds official small-area totals and feeds them into the same conversion, finest source per nation first: `population-lsoa` (ONS, England and Wales, 2011 to 2024), `population-data-zone-scotland` (NRS, 2011 to 2024) and `population-data-zone-ni` (NISRA, 2021 to 2024), 618,016 values in `population-detail`, atlas +15,491,072 bytes (1.50%). LSOA estimates reach authorities from 2023-05, and through the ONS LSOA to ward and constituency lookups the 2024 to 2026 wards and the 2024 constituencies, every year; Scottish data zones reach Scottish wards, constituencies and authorities; NI data zones reach the 2025 and 2026 authority releases. Step 3 adds the nations' own mid-year estimates by single year of age and sex for council areas and districts: `population-council-scotland` (NRS, 1981 to 2025, 393,120 published values) and `population-district-ni` (NISRA, 2001 to 2025, 75,075 published values), ranked after the data zones and `population` and before `population-uk`, so they fill the years the finer sources lack; England and Wales defaults unchanged, atlas +20.6 MB (1.8%). Their total of persons of all ages is also converted onto the standard releases, ranked last, adding 992 Scottish and 231 Northern Irish cells on the 2026-05 authorities and changing no existing value. They need a new data release before other checkouts can build. Left: the rest of [data-gaps.md](data-gaps.md#3-population-on-every-release). | Held |
 | 42  | P1       |                   | A per-person version of every count measure, naming its denominator.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Held |
 | 43  | P1       |                   | Summaries of small-area measures for larger areas: population-weighted mean, share of residents in each national decile, spread.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Held |
-| 44  | P1       |                   | Change between periods on fixed boundaries, with changes caused by boundary moves flagged (#414). Now unblocked by task 25.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Held |
+| 44  | P1       | Done              | Change between periods on fixed boundaries, with changes caused by boundary moves flagged (#414). `v_area_period_change`, served with the `on=` series route as `changes`. Left: the website control.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Held |
 
 ### Analytical products
 
@@ -252,7 +252,7 @@ as published data.
 4. Settle the public shape while early access allows change: task 54.
 5. Trust in converted values: tasks 34, 57 and 56, then 41 (which feeds 27 and 42).
 6. Size: task 55.
-7. Remaining precomputations: tasks 26, 27, 35, 43 and 44.
+7. Remaining precomputations: tasks 26, 27, 35 and 43.
 8. New derived products: 36 with 37, 45, 38, then the rest of 39–51.
 9. Refactoring alongside: tasks 8–10.
 
@@ -528,6 +528,35 @@ as published data.
   16 releases with a later vintage have no one-hop route
   (`docs/data-gaps.md`). Adds 27.7 MB (+2.3%) to `atlas.sqlite` measured with
   `dbstat` on a copy of the 2026-11-24 build; the write takes about 33 s.
+- **Task 44** (2026-11-25): `area_period_change` holds, for each quantity,
+  area and pair of periods (each period with the next, and the first with the
+  latest), the default value at both ends and the series each came from, on
+  the latest release of each standard geography, or on the only release of a
+  geography with none. The view `v_area_period_change` adds the change, the
+  percentage change (null from zero and for measures that are percentages),
+  the accuracy of each end and the worse of the two, and `boundary_effect`:
+  the change between the values published for the same code on the releases
+  each end was published on, minus the fixed-boundary change. It is given only
+  where the code was published at both ends; `boundary_check` says why not
+  otherwise (`code-not-published`, `value-not-published`, `modelled`,
+  `not-traced`), and no published value is guessed. `series_published_counterpart`
+  names what each converted series was converted from as published, and
+  `area_change_span` carries task 34's residents and land shares and
+  `materially_changed` for the two published versions of the code. Method
+  breaks are declared in `packages/measures/src/seriesBreaks.ts` and written
+  to `measure_break`; a change that crosses or touches one names it in
+  `breaks`. A break is flagged, not estimated. Ranks, categories, indexes,
+  intervals and measures that are already a change are left out. On a copy of
+  the 2026-11-24 build: 1,454,005 rows over 389 quantities, 1,296,005 with a
+  published comparison (1,029 with a non-zero boundary effect), 152,256 whose
+  code was not published at one end, 5,744 modelled, 85,454 crossing a
+  declared break. Adds 50.1 MB (+3.9%) to `atlas.sqlite` by `dbstat`
+  (`area_period_change` 50.0 MB, the other three tables 0.13 MB); the write
+  takes about 8 s, and one area and quantity reads in 3 ms. The API serves
+  the rows as `changes` with `GET /v1/data/{measure}/series?on=` where the
+  spec reads one quantity at its total
+  (`docs/time-series-on-one-release.md`). Left: a website control on the
+  history cards.
   Task 44 can join on `from_version_id` or `to_version_id`.
 
 ## Licence table coverage

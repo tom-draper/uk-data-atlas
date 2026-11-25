@@ -343,6 +343,10 @@ What is still out of reach:
   above), and there are no per-person measures (task 42).
 - No release manifest or diff between releases (task 24).
 - Crosswalk weights lack Northern Ireland and Scottish dwellings (task 1).
+- A fixed-boundary change has no published comparison where the area's code
+  was not published at one end (152,256 of 1,454,005 rows in
+  `v_area_period_change`, `boundary_check = 'code-not-published'`), and method
+  breaks are flagged, not estimated (task 44).
 
 ## Where to start
 
