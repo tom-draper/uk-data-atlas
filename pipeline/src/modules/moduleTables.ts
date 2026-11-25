@@ -78,6 +78,10 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "rate_input",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
 		table: "series_conversion",
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},

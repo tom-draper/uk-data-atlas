@@ -67,6 +67,10 @@ const accuracyCheck = (column: string) =>
  * Creates `rate_input` when it is missing, so the change table can read it
  * on an atlas with no rebuilt rates. A function, not a constant: the change
  * table imports it and this module imports `ACCURACIES` from there.
+ *
+ * `denominator_dataset_id` has no foreign key: the population dataset may be
+ * in another module than the rate, as with `core_denominator`. For the same
+ * reason `series_input` names only the numerator.
  */
 export const ensureRateTables = (database: DatabaseSync) =>
 	database.exec(`
@@ -76,7 +80,7 @@ CREATE TABLE IF NOT EXISTS rate_input (
 	period_id INTEGER NOT NULL REFERENCES period(id),
 	numerator REAL NOT NULL,
 	denominator REAL NOT NULL CHECK (denominator > 0),
-	denominator_dataset_id INTEGER NOT NULL REFERENCES dataset(id),
+	denominator_dataset_id INTEGER NOT NULL,
 	denominator_period_id INTEGER NOT NULL REFERENCES period(id),
 	earlier_year INTEGER NOT NULL CHECK (earlier_year IN (0, 1)),
 	${accuracyCheck("numerator_accuracy")},
@@ -131,8 +135,6 @@ type Denominator = {
 	datasetId: number;
 	periodId: number;
 	accuracy: Accuracy;
-	/** The series summed, for `series_input`. */
-	series: number[];
 };
 
 /** By area version, then year: the denominator held for that year. */
@@ -199,7 +201,6 @@ const allAges = (database: DatabaseSync, releases: number[]): Denominators => {
 				datasetId: row.dataset_id,
 				periodId: row.period_id,
 				accuracy: row.accuracy,
-				series: [row.series_id],
 			},
 		);
 	return result;
@@ -245,8 +246,7 @@ const ageRange = (
     AND CAST(am.code AS INTEGER) BETWEEN ${age.from} AND ${to})
 SELECT g.dataset_id, g.method, g.source_release_id, o.area_version_id, o.period_id,
   p.start_date, p.end_date, sum(o.value) AS value,
-  max(CASE ${ACCURACIES.map((a, rank) => `WHEN ${accuracySql("s", "o")} = '${a}' THEN ${rank}`).join(" ")} END) AS accuracy,
-  group_concat(g.series_id) AS series
+  max(CASE ${ACCURACIES.map((a, rank) => `WHEN ${accuracySql("s", "o")} = '${a}' THEN ${rank}`).join(" ")} END) AS accuracy
 FROM single g
 JOIN series s ON s.id = g.series_id
 JOIN observation o ON o.series_id = g.series_id
@@ -267,7 +267,6 @@ ORDER BY CASE g.method WHEN 'published' THEN 0 ELSE 1 END,
 		end_date: string;
 		value: number;
 		accuracy: number;
-		series: string;
 	}>;
 	const result: Denominators = new Map();
 	for (const row of rows)
@@ -280,7 +279,6 @@ ORDER BY CASE g.method WHEN 'published' THEN 0 ELSE 1 END,
 				datasetId: row.dataset_id,
 				periodId: row.period_id,
 				accuracy: ACCURACIES[row.accuracy]!,
-				series: row.series.split(",").map(Number),
 			},
 		);
 	return result;
@@ -375,8 +373,6 @@ export const writeCountRates = (
 				summary.series++;
 			}
 			const { denominator: d } = found;
-			for (const input of d.series)
-				insertInput.run(id, input, "denominator");
 			const earlier = found.year < year ? 1 : 0;
 			insertObservation.run(
 				id,

@@ -238,7 +238,7 @@ describe("writeCountRates", () => {
 		assert.notEqual(merged.value, (10 / 100 + 50 / 300) * 50);
 	});
 
-	test("each rate series is derived from its numerator and names its inputs", () => {
+	test("each rate series is derived from its numerator and names it as its input", () => {
 		const database = fixture();
 		writeCountRates(database, ids(), rates);
 		const series = database
@@ -263,15 +263,9 @@ describe("writeCountRates", () => {
 			)
 			.all(series[0]!.id)
 			.map((row) => `${row.input} ${row.role}`);
-		assert.deepEqual(inputs, [
-			"1 numerator",
-			"20 denominator",
-			"21 denominator",
-			"24 denominator",
-			"25 denominator",
-			"26 denominator",
-			"27 denominator",
-		]);
+		// The population may be in another module, so only the numerator is
+		// an input; rate_input names the denominator's dataset.
+		assert.deepEqual(inputs, ["1 numerator"]);
 	});
 
 	test("a count with no denominator has no rate", () => {
