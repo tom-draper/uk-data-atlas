@@ -38,7 +38,10 @@ writeFileSync(archivePath, archiveBytes);
 writeFileSync(parquetPath, parquetBytes);
 writeFileSync(geojsonPath, geojsonBytes);
 
+// The gzip header's OS byte differs by platform; pin it so the snapshot's
+// ETag is the same on macOS and Linux.
 const tile = gzipSync(Buffer.from("vector tile 1/0/0"));
+tile[9] = 3;
 
 const attribution = {
 	text: "Fixture",
