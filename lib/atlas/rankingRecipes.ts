@@ -808,6 +808,45 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		const rank = num(record.nimdmRank);
 		return rank === null ? null : Math.ceil((rank / count) * 10);
 	}),
+	"public-health": {
+		label: "Adults who smoke",
+		format: percentOne,
+		columns: [
+			column(
+				"Adults overweight",
+				"percent",
+				field("metrics", "adultExcessWeight"),
+			),
+			column(
+				"Physically active adults",
+				"percent",
+				field("metrics", "activity"),
+			),
+			column(
+				"Preventable deaths per 100,000",
+				"count",
+				field("metrics", "preventableMortality"),
+			),
+		],
+	},
+	"pupil-absence": {
+		label: "Sessions missed",
+		format: percentOne,
+		columns: [
+			column("Persistently absent", "percent", (record) =>
+				share(
+					field("metrics", "persistent")(record),
+					field("metrics", "enrolments")(record),
+				),
+			),
+			column("Unauthorised absence", "percent", (record) =>
+				share(
+					field("metrics", "unauthorised")(record),
+					field("metrics", "sessions")(record),
+				),
+			),
+		],
+	},
 	"planning-applications": {
 		label: "Applications received",
 		inputs: ["population-uk"],
