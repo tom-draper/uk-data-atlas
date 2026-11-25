@@ -6,8 +6,6 @@ export type CachedAnswer = {
 	status: 200;
 	headers: Record<string, string>;
 	body: string | Buffer;
-	/** The validator in `headers`, kept to answer a conditional request. */
-	etag: string;
 };
 
 export type ResponseCacheStats = {
@@ -16,6 +14,7 @@ export type ResponseCacheStats = {
 	maxBytes: number;
 	hits: number;
 	misses: number;
+	coalesced: number;
 	evictions: number;
 };
 
@@ -38,11 +37,46 @@ export class ResponseCache {
 		{ answer: CachedAnswer; bytes: number }
 	>();
 	private bytes = 0;
-	private readonly counts = { hits: 0, misses: 0, evictions: 0 };
+	private readonly counts = {
+		hits: 0,
+		misses: 0,
+		coalesced: 0,
+		evictions: 0,
+	};
+	private readonly pending = new Map<
+		string,
+		Promise<CachedAnswer | undefined>
+	>();
 
-	constructor(readonly maxBytes: number) {
+	constructor(
+		readonly maxBytes: number,
+		private readonly maxPending = 16,
+	) {
 		if (!Number.isInteger(maxBytes) || maxBytes < 1)
 			throw new Error("A response cache must hold at least one byte.");
+	}
+
+	/** Share an in-progress fill. An unusable result is left to each caller. */
+	async getOrFill(
+		key: string,
+		fill: () => Promise<CachedAnswer | undefined>,
+	) {
+		const held = this.get(key);
+		if (held) return held;
+		const pending = this.pending.get(key);
+		if (pending) {
+			const shared = await pending.catch(() => undefined);
+			if (shared) this.counts.coalesced += 1;
+			return shared;
+		}
+		const work = fill().then((answer) => answer && this.set(key, answer));
+		if (this.pending.size >= this.maxPending) return work;
+		this.pending.set(key, work);
+		try {
+			return await work;
+		} finally {
+			this.pending.delete(key);
+		}
 	}
 
 	get(key: string): CachedAnswer | undefined {
@@ -81,6 +115,7 @@ export class ResponseCache {
 			this.bytes -= entry.bytes;
 			this.counts.evictions += 1;
 		}
+		return answer;
 	}
 
 	stats(): ResponseCacheStats {

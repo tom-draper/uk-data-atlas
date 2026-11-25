@@ -2423,14 +2423,16 @@ of that id. Server-generated ids appear verbatim.
   used first. A repeat of the same request target, from a client that takes
   the same encoding, is answered without running its handler, encoding it,
   hashing it or compressing it again, and a conditional request whose
-  `ETag` still matches is answered `304` the same way. Rate limiting, query
-  validation and the per-request headers still apply to every request.
-  Errors, `POST`, `HEAD`, stored files and `/v1/terrain/` are never kept.
+  `ETag` still matches is answered `304` the same way. Concurrent misses for
+  the same target and encoding share a cacheable response as it is produced
+  within a worker. Each caller's validator is applied after the fill. Rate
+  limiting, query validation and the per-request headers apply to every request.
+  Errors, `POST`, `HEAD`, range requests, stored files and `/v1/terrain/`
+  bypass cache reuse.
   An answer depends only on the release the process loaded, so entries
-  never go stale; a new release is a new process. A conditional request
-  for an answer not yet held is computed as before, since a `304` carries
-  no body to keep. `/metrics` reports the cache's size, hits, misses and
-  evictions.
+  never go stale; a new release is a new process. `/metrics` reports the
+  cache's size, hits, misses, the subset of misses served by a shared fill,
+  and evictions.
 - **Observation cache:** `ATLAS_OBSERVATION_CACHE_MB`, 64 MiB per worker by
   default, budgets rebuilt text at two bytes per code unit plus the source
   UTF-8 JSON byte allowance for parsed data. Shared tables, ordinary measure

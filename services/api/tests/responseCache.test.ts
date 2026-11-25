@@ -10,7 +10,6 @@ const answer = (body: string | Buffer): CachedAnswer => ({
 	status: 200,
 	headers: { etag: '"a"' },
 	body,
-	etag: '"a"',
 });
 
 test("returns what it was given and counts hits and misses", () => {
@@ -27,6 +26,7 @@ test("returns what it was given and counts hits and misses", () => {
 			maxBytes: 1_000_000,
 			hits: 1,
 			misses: 1,
+			coalesced: 0,
 			evictions: 0,
 		},
 	);
@@ -72,4 +72,58 @@ test("does not keep an answer too big for it or too big to be worth it", () => {
 
 test("refuses a size that can hold nothing", () => {
 	assert.throws(() => new ResponseCache(0));
+});
+
+test("shares concurrent fills by key and counts the waits as coalesced misses", async () => {
+	const cache = new ResponseCache(1_000_000);
+	let resolve!: (value: CachedAnswer) => void;
+	const promise = new Promise<CachedAnswer>((complete) => {
+		resolve = complete;
+	});
+	const build = () => promise;
+	const other = answer("other");
+	const leader = cache.getOrFill("/one", build);
+	const follower = cache.getOrFill("/one", async () =>
+		assert.fail("duplicate fill"),
+	);
+	assert.equal(await cache.getOrFill("/two", async () => other), other);
+	const held = answer("one");
+	resolve(held);
+	assert.deepEqual(await Promise.all([leader, follower]), [held, held]);
+	assert.equal(cache.stats().misses, 3);
+	assert.equal(cache.stats().coalesced, 1);
+});
+
+test("releases waiters after a failed or oversized fill and lets the next request retry", async () => {
+	const cache = new ResponseCache(1000 * 1024);
+	let reject!: (error: Error) => void;
+	const promise = new Promise<CachedAnswer>((_, fail) => {
+		reject = fail;
+	});
+	const leader = cache.getOrFill("/one", () => promise);
+	const follower = cache.getOrFill("/one", async () =>
+		assert.fail("duplicate fill"),
+	);
+	const checked = assert.rejects(leader, /unavailable/);
+	reject(new Error("unavailable"));
+	await checked;
+	assert.equal(await follower, undefined);
+
+	const tooLarge = answer(Buffer.alloc(MAX_CACHED_BODY_BYTES));
+	const oversized = cache.getOrFill("/one", async () => tooLarge);
+	const waiting = cache.getOrFill("/one", async () =>
+		assert.fail("duplicate fill"),
+	);
+	assert.deepEqual(await Promise.all([oversized, waiting]), [
+		undefined,
+		undefined,
+	]);
+	assert.equal(cache.stats().coalesced, 0);
+
+	const recovered = answer("recovered");
+	assert.equal(
+		await cache.getOrFill("/one", async () => recovered),
+		recovered,
+	);
+	assert.equal(cache.get("/one"), recovered);
 });
