@@ -114,6 +114,11 @@ export type RankingRecipe = {
 	 */
 	title?: string;
 	/**
+	 * The map whose data this ranks, where a map holds more than one ranking:
+	 * the recipe's key is then the ranking's slug and its title the name.
+	 */
+	of?: string;
+	/**
 	 * What the value column measures, where neither the dataset's declaration
 	 * nor the map's name says.
 	 */

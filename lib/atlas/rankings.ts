@@ -122,9 +122,27 @@ export const LEVEL_NOUNS: Readonly<
 export const rankedAreaNoun = (map: AtlasMap) =>
 	LEVEL_NOUNS[rankingSource(map)?.level ?? "localAuthority"].one;
 
-export const RANKED_MAPS: readonly AtlasMap[] = ATLAS_MAPS.filter(
-	(map) => rankingSource(map) !== null,
+/**
+ * The rankings a map's data holds besides its own, such as county council
+ * divisions in the local election results: the map under the recipe's slug.
+ */
+const DERIVED_MAPS: ReadonlyMap<string, AtlasMap> = new Map(
+	Object.entries(RANKING_RECIPES).flatMap(([slug, recipe]) => {
+		const of = recipe.of ? findAtlasMap(recipe.of) : undefined;
+		return of
+			? [[slug, { ...of, slug, name: recipe.title ?? of.name }]]
+			: [];
+	}),
 );
+
+/** A ranked map by its slug, an atlas map's or one a recipe derives. */
+const findRankedMap = (slug: string) =>
+	findAtlasMap(slug) ?? DERIVED_MAPS.get(slug);
+
+export const RANKED_MAPS: readonly AtlasMap[] = [
+	...ATLAS_MAPS,
+	...DERIVED_MAPS.values(),
+].filter((map) => rankingSource(map) !== null);
 
 /** The periods of a map that are ranked, latest first. */
 export function rankedPeriods(map: AtlasMap): readonly number[] {
@@ -147,10 +165,10 @@ export const rankingKey = (map: AtlasMap, period?: number) =>
 export function findRanking(
 	key: string,
 ): { map: AtlasMap; period: number } | null {
-	const latest = findAtlasMap(key);
+	const latest = findRankedMap(key);
 	if (latest) return { map: latest, period: latest.periods[0]! };
 	const [, slug, year] = /^(.+)-(\d{4})$/.exec(key) ?? [];
-	const map = slug ? findAtlasMap(slug) : undefined;
+	const map = slug ? findRankedMap(slug) : undefined;
 	const period = Number(year);
 	return map && rankedPeriods(map).includes(period) && !isLatest(map, period)
 		? { map, period }
