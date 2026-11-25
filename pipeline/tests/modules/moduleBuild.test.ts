@@ -69,6 +69,10 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				series_gap: 1,
 				series_input: 1,
 				conversion_skip: 1,
+				series_published_counterpart: 1,
+				measure_break: 1,
+				// The change between two modules' series is only in atlas.sqlite.
+				area_period_change: 0,
 			},
 		],
 		[
@@ -80,6 +84,7 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				series_coverage: 3,
 				series_gap: 1,
 				conversion_skip: 1,
+				area_period_change: 1,
 			},
 		],
 		[
@@ -99,6 +104,8 @@ test("a module file holds only the rows of its datasets", async (t) => {
 				election: 2,
 				contest: 3,
 				candidacy: 4,
+				// The change from a licensed period is the add-on's.
+				area_period_change: 0,
 			},
 		],
 	] as const) {
@@ -561,6 +568,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			.map((row) => row.name)
 			.sort();
 		assert.deepEqual(tables, [
+			"area_period_change",
 			"area_relationship",
 			"candidacy",
 			"contest",
@@ -576,6 +584,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["contest", 1],
 			["candidacy", 1],
 			["observation", 4],
+			["area_period_change", 1],
 			["series_coverage", 2],
 			["series_gap", 1],
 			["area_relationship", 1],
@@ -594,6 +603,7 @@ test("an add-on and its parent split the licensed rows, none shared or lost", as
 			["series_coverage", " WHERE series_id IN (6, 7, 8, 9)"],
 			["series_gap", " WHERE series_id = 7"],
 			["series_estimate", " WHERE series_id = 7"],
+			["area_period_change", " WHERE from_series_id = 7"],
 			["area_relationship", " WHERE dataset_id = 5"],
 		] as const)
 			assert.equal(
