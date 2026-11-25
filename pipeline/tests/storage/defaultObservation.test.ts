@@ -205,17 +205,18 @@ describe("rankSeries", () => {
 		);
 	});
 
-	test("published beats aggregated, modelled and converted", () => {
+	test("published beats aggregated, derived, modelled and converted", () => {
 		const { quantities, problems } = rank([
 			series(1, { method: "converted" }),
 			series(2, { method: "modelled" }),
+			series(5, { method: "derived" }),
 			series(3, { method: "aggregated" }),
 			series(4, { method: "published" }),
 		]);
 		assert.deepEqual(problems, []);
 		assert.deepEqual(
 			quantities[0]!.series.map((entry) => entry.seriesId),
-			[4, 3, 2, 1],
+			[4, 3, 5, 2, 1],
 		);
 	});
 

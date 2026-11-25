@@ -25,6 +25,10 @@ const READS_EVERY_SERIES: Readonly<
 		queries: 5,
 		reason: "A change pairs the default values whatever their method, a converted series finds its published counterpart by reading every series, and the view returns the method and accuracy of each end.",
 	},
+	"pipeline/src/storage/countRates.ts": {
+		queries: 5,
+		reason: "A rate is rebuilt from the default view's winning counts and population whatever their method, and each value's accuracy is read from the method of the series it came from.",
+	},
 	"pipeline/src/storage/defaultObservation.ts": {
 		queries: 5,
 		reason: "The default view ranks every series by method itself, and reads them all to load their facts and to check that none is without a role or a rank.",
