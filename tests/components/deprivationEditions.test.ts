@@ -54,8 +54,7 @@ const area = (type: SelectedArea["type"], code: string) =>
 const rowsFor = (
 	selectedArea: SelectedArea | null,
 	sets: EditionDatasets = datasets,
-) =>
-	earlierEditionRows({ config, latest, datasets: sets, selectedArea });
+) => earlierEditionRows({ config, latest, datasets: sets, selectedArea });
 
 describe("earlier deprivation editions", () => {
 	it("lists an unchanged small area's own 2015 decile and rank", () => {
