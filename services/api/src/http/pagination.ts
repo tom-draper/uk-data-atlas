@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { invalidQuery, type ApiResponse } from "../runtime/index.ts";
 
 /** Limits and cursors shared by every paginated resource. */
@@ -15,15 +16,27 @@ export const readPageSize = (
 	return size <= MAX_PAGE_SIZE ? size : undefined;
 };
 
-/** An opaque cursor naming the last item of a page. */
-export const cursorFor = (key: string) =>
-	Buffer.from(key).toString("base64url");
+/** Identifies the release, resource and resolved selection of a paginated query. */
+export const cursorScope = (
+	releaseId: string,
+	resource: readonly string[],
+	...selection: (string | number | null | undefined)[]
+) =>
+	createHash("sha256")
+		.update(JSON.stringify([releaseId, resource, selection]))
+		.digest("base64url");
 
-/** The key a cursor names, or undefined when it is not one this API issued. */
-export const keyFromCursor = (cursor: string): string | undefined => {
+const encodeCursor = (value: string) =>
+	Buffer.from(value).toString("base64url");
+
+/** An opaque cursor naming the last item of a page within its query. */
+export const cursorFor = (scope: string, key: string) =>
+	encodeCursor(JSON.stringify([1, scope, key]));
+
+const decodeCursor = (cursor: string): string | undefined => {
 	try {
 		const key = Buffer.from(cursor, "base64url").toString("utf8");
-		return key.length > 0 && cursorFor(key) === cursor ? key : undefined;
+		return key.length > 0 && encodeCursor(key) === cursor ? key : undefined;
 	} catch {
 		return undefined;
 	}
@@ -39,19 +52,37 @@ export const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
 const invalidCursor = (detail: string) =>
 	invalidQuery(detail, { code: "invalid_cursor" });
 
+export const mismatchedCursor = () =>
+	invalidCursor(
+		"cursor does not belong to this query or Atlas release. Restart pagination without a cursor.",
+	);
+
 /**
  * The key named by the request's `cursor`, none when it has no cursor, or the
  * refusal of a cursor this API did not issue.
  */
 export const readCursor = (
 	parsedUrl: URL,
+	scope: string,
 ): { key?: string } | { problem: ApiResponse } => {
 	const cursor = parsedUrl.searchParams.get("cursor");
 	if (!cursor) return {};
-	const key = keyFromCursor(cursor);
-	return key === undefined
-		? { problem: invalidCursor("cursor is invalid.") }
-		: { key };
+	const payload = decodeCursor(cursor);
+	if (payload === undefined)
+		return { problem: invalidCursor("cursor is invalid.") };
+	try {
+		const decoded: unknown = JSON.parse(payload);
+		if (
+			Array.isArray(decoded) &&
+			decoded.length === 3 &&
+			decoded[0] === 1 &&
+			decoded[1] === scope &&
+			typeof decoded[2] === "string" &&
+			decoded[2].length > 0
+		)
+			return { key: decoded[2] };
+	} catch {}
+	return { problem: mismatchedCursor() };
 };
 
 /**
@@ -81,7 +112,7 @@ export const paginate = <T>(
 		keyOf: (item: T) => string;
 		/** What is paged, such as `ranking`, for a cursor that names none of it. */
 		subject: string;
-		scope?: string;
+		scope: string;
 	},
 ): Page<T> | { problem: ApiResponse } => {
 	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
@@ -91,32 +122,9 @@ export const paginate = <T>(
 				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 			),
 		};
-	const cursor = readCursor(parsedUrl);
+	const cursor = readCursor(parsedUrl, options.scope);
 	if ("problem" in cursor) return cursor;
-	let { key } = cursor;
-	if (key !== undefined && options.scope !== undefined) {
-		try {
-			const decoded: unknown = JSON.parse(key);
-			if (
-				!Array.isArray(decoded) ||
-				decoded.length !== 2 ||
-				decoded[0] !== options.scope ||
-				typeof decoded[1] !== "string"
-			)
-				return {
-					problem: invalidCursor(
-						`cursor is not valid for this ${options.subject}.`,
-					),
-				};
-			key = decoded[1];
-		} catch {
-			return {
-				problem: invalidCursor(
-					`cursor is not valid for this ${options.subject}.`,
-				),
-			};
-		}
-	}
+	const { key } = cursor;
 	const offset =
 		key === undefined
 			? 0
@@ -136,14 +144,7 @@ export const paginate = <T>(
 		items: page,
 		nextCursor:
 			offset + page.length < items.length && last !== undefined
-				? cursorFor(
-						options.scope === undefined
-							? options.keyOf(last)
-							: JSON.stringify([
-									options.scope,
-									options.keyOf(last),
-								]),
-					)
+				? cursorFor(options.scope, options.keyOf(last))
 				: null,
 	};
 };

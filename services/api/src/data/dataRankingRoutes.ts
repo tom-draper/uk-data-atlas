@@ -5,7 +5,7 @@ import { refused } from "../observationResolution/observationPlan";
 import { rankingOf } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance.ts";
 import { publishedPartitions, statedDefaults } from "./dataDefaults";
-import { selectSourcePartition } from "./sourcePartition";
+import { selectSourcePartition, sourceCursorScope } from "./sourcePartition";
 import { paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
@@ -127,7 +127,14 @@ export const handleDataRankingRoutes = ({
 	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
 		keyOf: (record) => record.areaCode,
 		subject: `${segments[2]} ranking`,
-		scope: selectedSeries?.id,
+		scope: sourceCursorScope(
+			releaseId,
+			segments,
+			selectedSeries?.id ?? measureId,
+			source,
+			period,
+			order,
+		),
 	});
 	if ("problem" in page) return page.problem;
 	const publicMeasure = publicSeriesMeasure(

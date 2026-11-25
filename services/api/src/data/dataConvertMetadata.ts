@@ -193,7 +193,7 @@ export const dataConvertMetadata = {
 							],
 						},
 						meta: {
-							nextCursor: "RTA2MDAwMDAx",
+							nextCursor: "<opaque cursor>",
 						},
 					},
 				},

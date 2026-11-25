@@ -79,14 +79,14 @@ exports[`area listing keeps its HTTP responses 1`] = `
     "status": 400,
   },
   "GET /v1/areas?geography=ward&release=2025-01-en-ward&limit=1": {
-    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]}],"meta":{"nextCursor":"d2FyZC8yMDI1LTAxLWVuLXdhcmQvRTA1MDAwMDAx"}}
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"ward/2025-01-en-ward/E05000001","geography":"ward","boundaryRelease":"2025-01-en-ward","code":"E05000001","name":"Example ward","aliases":["Enghraifft ward"]}],"meta":{"nextCursor":"WzEsIklSTXUtZHlwVzF5THNzR09mWUlmRjdYN2p6Z2VaSmNMamRqMTlBSElJN0EiLCJ3YXJkLzIwMjUtMDEtZW4td2FyZC9FMDUwMDAwMDEiXQ"}}
 ",
-    "bytes": 293,
+    "bytes": 363,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/json",
-      "etag: "sha256-IhcNUKNrOuvjBnX4rESGlzzcTjZKiLaW9vlHEumADMs"",
+      "etag: "sha256-c4POlJlur2YK77XiCpvYwY7k1AuPk9q_VRL7T4wyhqo"",
       "vary: accept-encoding",
     ],
     "status": 200,
@@ -702,15 +702,15 @@ exports[`area lookups keep their HTTP responses 1`] = `
     "status": 200,
   },
   "GET /v1/areas:intersects?bbox=0,0,0.02,0.02&geography=ward&release=2024-12-uk-bgc&limit=1": {
-    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":3,"returned":1,"limit":1,"truncated":true,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":"RTA1MDAwMDAx"}}
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":{"bbox":[0,0,0.02,0.02],"geography":"ward","boundaryRelease":"2024-12-uk-bgc","matched":3,"returned":1,"limit":1,"truncated":true,"relationRule":"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.","geometry":"Not included. Pass tier to receive it, at the cost of the coordinates.","matches":[{"id":"ward/2024-12-uk-bgc/E05000001","code":"E05000001","name":"West ward","relation":"within","boundingBox":[0,0,0.01,0.01],"geometrySource":{"sourceCrs":"EPSG:4326"}}]},"meta":{"nextCursor":"WzEsIkF5eHlwVlB6a0ZhYTk4Y013OFNFSDV2T3pyd1RIOEVnQWFXVXItcHUxSWciLCJFMDUwMDAwMDEiXQ"}}
 ",
-    "bytes": 712,
+    "bytes": 782,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/json",
-      "etag: "sha256-IzQdoVH2uCsJQjX_RFFPI8AGkbpHuqIvA01H_iWyafk"",
-      "link: </v1/areas:intersects?bbox=0%2C0%2C0.02%2C0.02&geography=ward&release=2024-12-uk-bgc&limit=1&cursor=RTA1MDAwMDAx>; rel="next"",
+      "etag: "sha256-M8ZY9D70eiDm4xvFNmP5fD9kb6akVLQK4OpQFGNHq1Y"",
+      "link: </v1/areas:intersects?bbox=0%2C0%2C0.02%2C0.02&geography=ward&release=2024-12-uk-bgc&limit=1&cursor=WzEsIkF5eHlwVlB6a0ZhYTk4Y013OFNFSDV2T3pyd1RIOEVnQWFXVXItcHUxSWciLCJFMDUwMDAwMDEiXQ>; rel="next"",
       "vary: accept-encoding",
     ],
     "status": 200,

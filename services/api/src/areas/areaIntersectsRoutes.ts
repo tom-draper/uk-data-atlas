@@ -4,7 +4,12 @@ import {
 	GEOMETRY_TIERS,
 	simplifyGeometry,
 } from "@uk-data-atlas/geometry/tiles";
-import { cursorFor, nextPageHref, readCursor } from "../http/pagination";
+import {
+	cursorFor,
+	cursorScope,
+	nextPageHref,
+	readCursor,
+} from "../http/pagination";
 import { latestPublishedBoundaryRelease } from "../coordinates/pointLookup";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
@@ -86,15 +91,23 @@ export const handleAreaIntersectsRoutes = ({
 			`limit must be a whole number from ${INTERSECTS.limit.minimum} to ${INTERSECTS.limit.maximum}.`,
 		);
 	}
-	const cursor = readCursor(parsedUrl);
-	if ("problem" in cursor) return cursor.problem;
-	const after = cursor.key;
 	const current =
 		requestedRelease === "latest"
 			? latestPublishedBoundaryRelease(context, geography)
 			: undefined;
 	if (current && "status" in current) return current;
 	const boundaryRelease = current?.id ?? requestedRelease;
+	const scope = cursorScope(
+		releaseId,
+		segments,
+		geography,
+		boundaryRelease,
+		...parts,
+		requestedTier,
+	);
+	const cursor = readCursor(parsedUrl, scope);
+	if ("problem" in cursor) return cursor.problem;
+	const after = cursor.key;
 	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease)) {
 		return problem(
 			404,
@@ -153,7 +166,8 @@ export const handleAreaIntersectsRoutes = ({
 			);
 		}
 		const last = found.matches.at(-1);
-		const nextCursor = found.more && last ? cursorFor(last.code) : null;
+		const nextCursor =
+			found.more && last ? cursorFor(scope, last.code) : null;
 		return {
 			status: 200,
 			...(nextCursor

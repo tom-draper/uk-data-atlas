@@ -79,9 +79,9 @@ export default function PaginationPage() {
 				]}
 			/>
 			<Callout tone="warning">
-				A cursor only works with the query that issued it. Change
-				another parameter and it's refused with `invalid_cursor`, so
-				start again from the first page instead.
+				A cursor belongs to the resolved query and Atlas release that
+				issued it. You can change the page size while paging. If the API
+				returns `invalid_cursor`, start again without a cursor.
 			</Callout>
 
 			<H2 id="loop">Fetching every page</H2>

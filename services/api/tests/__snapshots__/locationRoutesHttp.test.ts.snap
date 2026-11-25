@@ -1443,14 +1443,14 @@ exports[`named location reads keep their HTTP responses 1`] = `
     "status": 400,
   },
   "GET /v1/locations?limit=1": {
-    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":"Z3JlYXRlci1tYW5jaGVzdGVy"}}
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"id":"greater-manchester","label":"Greater Manchester","kind":"editorial-grouping","definitionRevision":1,"memberGeography":"localAuthority","memberCodes":["E08000000","E08000001","E08000998","E08000999"],"validity":{"from":null,"to":null},"bbox":[-2.5,53.3,-2,53.7]}],"meta":{"nextCursor":"WzEsIkd0YVJvaGhSd2V1MU9UOXp6ZnRTVnZrYjRITGMtUDdabWwzbG02X1Rpc1EiLCJncmVhdGVyLW1hbmNoZXN0ZXIiXQ"}}
 ",
-    "bytes": 380,
+    "bytes": 450,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/json",
-      "etag: "sha256-Y5xTEaywMeMnYXSLdeXIx9sGGXKM24vzBWHIxdd-15U"",
+      "etag: "sha256-RFIR-Kp6-9ymj-LSasJrpfKOdmkoyCTbXi5YYdfeHo0"",
       "vary: accept-encoding",
     ],
     "status": 200,

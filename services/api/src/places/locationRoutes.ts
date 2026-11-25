@@ -11,7 +11,7 @@ import { COVERS_MINIMUM_SHARE } from "@uk-data-atlas/places";
 import { notBuilt, unsupported } from "@uk-data-atlas/areas";
 import { areaKey } from "@uk-data-atlas/geography";
 import type { NamedLocation } from "@uk-data-atlas/places";
-import { paginate } from "../http/pagination";
+import { cursorScope, paginate } from "../http/pagination";
 
 export const selectedAsOf = (
 	parsedUrl: URL,
@@ -72,6 +72,7 @@ export const handleLocationRoutes = ({
 		const page = paginate(parsedUrl, locations, {
 			keyOf: (location) => location.id,
 			subject: "location query",
+			scope: cursorScope(releaseId, segments, asOf, query || null),
 		});
 		if ("problem" in page) return page.problem;
 		return {
