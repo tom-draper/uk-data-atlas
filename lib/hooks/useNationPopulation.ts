@@ -6,6 +6,7 @@ import {
 	DATASET_GUIDES,
 } from "@uk-data-atlas/datasets";
 import { formatCount } from "@/lib/helpers/formatCount";
+import { locationCouncils } from "@/lib/helpers/locationCouncils";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import {
 	selectedAreaLadCode,
@@ -85,18 +86,23 @@ const targetOf = (
  * The population of a Scottish or Northern Irish council or data zone, for
  * cards whose dataset covers England and Wales only. Each nation publishes
  * its own mid-year estimates for councils and data zones; the measures route
- * chooses the source, and the card names it. Null where the dataset covers
- * the area itself.
+ * chooses the source, and the card names it. With no area selected, a
+ * place made of one council, such as Glasgow, is read as that council. Null
+ * where the dataset covers the area itself.
  */
 export function useNationPopulation(
 	dataset: { type: string; coverageCountries?: readonly string[] },
-	selectedArea: SelectedArea | null,
+	picked: SelectedArea | null,
 	codeMapper: LadResolver | undefined,
+	location?: string | null,
 ): NationPopulationState | null {
 	const coverageCountries =
 		dataset.coverageCountries ??
 		getChartDatasetDefinition(dataset.type)?.coverageCountries;
-	const initial = selectedArea?.code.charAt(0) ?? "";
+	const place = picked ? null : locationCouncils(location);
+	const selectedArea =
+		picked ?? (place?.councils.length === 1 ? place.councils[0]! : null);
+	const initial = selectedArea?.code.charAt(0) ?? place?.initial ?? "";
 	const country = NATION_COUNTRIES[initial];
 	const nation =
 		country &&
@@ -117,7 +123,15 @@ export function useNationPopulation(
 			: null,
 	);
 
-	if (!nation || !selectedArea) return null;
+	if (!nation || (!selectedArea && !place)) return null;
+	if (!selectedArea)
+		return {
+			...notPublished(
+				nation,
+				`${nation} publishes population estimates for each council, and this place spans ${place!.councils.length} of them. Select a council to see its figures.`,
+			),
+			note: `Published for each council in ${nation}. Select one`,
+		};
 	if (!target)
 		return notPublished(
 			nation,

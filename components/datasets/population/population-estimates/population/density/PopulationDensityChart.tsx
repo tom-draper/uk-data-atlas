@@ -34,6 +34,8 @@ interface PopulationDensityChartProps {
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: PopulationCodeResolver & LadResolver;
+	/** The place picked from Places, read where no area is selected. */
+	location?: string | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -207,6 +209,7 @@ export default function PopulationDensityChart({
 	boundaryData,
 	selectedArea,
 	codeMapper,
+	location,
 	activeViz,
 	setActiveViz,
 }: PopulationDensityChartProps) {
@@ -216,7 +219,12 @@ export default function PopulationDensityChart({
 		activeViz.datasetId === dataset.id && activeViz.view === "density";
 	// An area in a nation the dataset leaves out is read from that nation's
 	// own estimates, labelled with their year and publisher.
-	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+	const nation = useNationPopulation(
+		dataset,
+		selectedArea,
+		codeMapper,
+		location,
+	);
 	const nationDensity = useNationDensity(nation, boundaryData);
 	const { density, areaSqKm, total, fallbackLadCode } = nation
 		? {

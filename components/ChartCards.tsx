@@ -110,6 +110,7 @@ export default function ChartCards({
 			activeViz,
 			setActiveViz,
 			boundaryData,
+			location,
 			card: chart.card,
 			cardForOptions: chart.cardForOptions,
 			seriesForOptions: chart.seriesForOptions,

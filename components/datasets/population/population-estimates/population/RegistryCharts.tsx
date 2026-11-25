@@ -18,6 +18,7 @@ export function PopulationDensityRegistryChart(props: ChartComponentProps) {
 			boundaryData={props.boundaryData}
 			selectedArea={props.selectedArea}
 			codeMapper={props.codeMapper}
+			location={props.location}
 			activeViz={props.activeViz}
 			setActiveViz={props.setActiveViz}
 		/>
@@ -31,6 +32,7 @@ export function PopulationAgeRegistryChart(props: ChartComponentProps) {
 			aggregatedData={populationAggregation(props)}
 			selectedArea={props.selectedArea}
 			codeMapper={props.codeMapper}
+			location={props.location}
 			activeViz={props.activeViz}
 			setActiveViz={props.setActiveViz}
 		/>
@@ -44,6 +46,7 @@ export function PopulationGenderRegistryChart(props: ChartComponentProps) {
 			aggregatedData={populationAggregation(props)}
 			selectedArea={props.selectedArea}
 			codeMapper={props.codeMapper}
+			location={props.location}
 			activeViz={props.activeViz}
 			setActiveViz={props.setActiveViz}
 		/>

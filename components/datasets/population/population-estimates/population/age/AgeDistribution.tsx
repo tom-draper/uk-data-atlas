@@ -30,6 +30,8 @@ interface AgeDistributionProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: PopulationCodeResolver;
+	/** The place picked from Places, read where no area is selected. */
+	location?: string | null;
 }
 
 // Pre-calculate age group boundaries (constant)
@@ -109,6 +111,7 @@ function AgeDistribution({
 	activeViz,
 	setActiveViz,
 	codeMapper,
+	location,
 }: AgeDistributionProps) {
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "age";
@@ -116,7 +119,12 @@ function AgeDistribution({
 
 	// An area in a nation the dataset leaves out is read from that nation's
 	// own estimates, labelled with their year and publisher.
-	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+	const nation = useNationPopulation(
+		dataset,
+		selectedArea,
+		codeMapper,
+		location,
+	);
 	const nationAges = nation?.population?.ages;
 
 	const { medianAge, ageGroups, total, counts, maxCount } = (() => {

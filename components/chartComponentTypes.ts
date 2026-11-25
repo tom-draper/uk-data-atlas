@@ -20,6 +20,8 @@ export interface ChartComponentProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	boundaryData: BoundaryData;
+	/** The place picked from Places, read by cards where no area is selected. */
+	location?: string | null;
 	/** The declarative card, for charts rendered by the shared value card. */
 	card?: ValueCardConfig;
 	cardForOptions?(options: MapOptions): ValueCardConfig;
