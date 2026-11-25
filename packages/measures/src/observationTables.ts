@@ -4,7 +4,12 @@ import type {
 	StatisticsSelector,
 	StatisticsTableSelector,
 } from "./atlasStatisticsObservations.ts";
-import { readStatisticsObservationText } from "./atlasStatisticsObservations.ts";
+import {
+	readStatisticsObservationText,
+	readStatisticsPage,
+	rebuildStatisticsPeriods,
+	statisticsTableColumn,
+} from "./atlasStatisticsObservations.ts";
 import {
 	databaseGeneration,
 	openReadOnlyDatabase,
@@ -14,6 +19,7 @@ import type {
 	DataCatalog,
 	AnyMeasureObservationArtifact,
 	MeasureObservationArtifact,
+	MeasureObservation,
 	PopulationObservation,
 	SourceGeography,
 } from "./index.ts";
@@ -32,6 +38,7 @@ export const observationTextOf = (artifact: object): string | undefined =>
 	textOfView.get(artifact)?.();
 
 import { registerPeriodRecordLookup } from "./index.ts";
+import { registerIndexedPeriods } from "./observationArtifacts.ts";
 
 /** Each table's rows by area code, built the first time any measure asks. */
 const rowsByCode = new WeakMap<
@@ -125,6 +132,7 @@ export class ObservationCache {
 	private bytes = 0;
 	/** The generation of each database the entries were read from. */
 	private readonly generations = new Map<string, number>();
+	private readonly indexedGenerations = new Map<string, number>();
 
 	/** Artifacts read from the statistics tables, with what the catalogue says of each. */
 	private readonly statistics = new Map<
@@ -163,6 +171,14 @@ export class ObservationCache {
 				.all();
 			if (tables.length !== 2)
 				throw new Error("Missing statistics tables in atlas database.");
+			if (
+				database
+					.prepare(
+						"SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'series_coverage'",
+					)
+					.get()
+			)
+				this.indexedGenerations.set(databasePath, database.generation);
 		} finally {
 			database.release();
 		}
@@ -203,6 +219,116 @@ export class ObservationCache {
 	/** Whether an artifact is read from the statistics tables. */
 	readsStatistics(databasePath: string, artifactName: string) {
 		return this.statistics.has(`${databasePath}:${artifactName}`);
+	}
+
+	/** Bind a compiled export's provenance to the database generation it describes. */
+	registerIndexedRead(
+		view: object,
+		databasePath: string,
+		key: string,
+		contentHash: string,
+	) {
+		const { selector, artifact } = this.statistics.get(
+			`${databasePath}:${key}`,
+		)!;
+		const table = "kind" in selector;
+		const column = table
+			? statisticsTableColumn(selector, artifact.measureId)
+			: selector;
+		if (!column || column.contest || column.absentAsZero) return;
+		const generation = this.indexedGenerations.get(databasePath);
+		if (generation === undefined) return;
+		// A series request asks about the same area in each available period.
+		let lastArea: string | undefined;
+		let lastRecords: Map<string, MeasureObservation>;
+		const fullRecord = (period: string, areaCode: string) =>
+			this.read(databasePath, key, artifact.measureId)
+				.periods.find((held) => held.period === period)
+				?.records.find((record) => record.areaCode === areaCode);
+		const storedCodes = new Map<string, string[]>();
+		for (const [stored, served] of Object.entries(
+			column.servedCodes ?? {},
+		)) {
+			const codes = storedCodes.get(served.areaCode) ?? [];
+			codes.push(stored);
+			storedCodes.set(served.areaCode, codes);
+		}
+		registerIndexedPeriods(view, (period) => {
+			if (
+				!artifact.periods.includes(period) ||
+				databaseGeneration(databasePath) !== generation
+			)
+				return undefined;
+			return {
+				contentHash,
+				numeric: true,
+				recordFor(areaCode) {
+					if (lastArea !== areaCode) {
+						const codes = [...(storedCodes.get(areaCode) ?? [])];
+						if (!Object.hasOwn(column.servedCodes ?? {}, areaCode))
+							codes.push(areaCode);
+						const connection = openReadOnlyDatabase(databasePath);
+						try {
+							const records = new Map<
+								string,
+								MeasureObservation
+							>();
+							const periods = codes.length
+								? rebuildStatisticsPeriods(
+										connection,
+										column,
+										artifact,
+										codes,
+									)
+								: [];
+							for (const result of periods) {
+								// A remap can collide with another stored code. Use the
+								// artifact's first record in that case, as before.
+								const record =
+									result.records.length > 1
+										? fullRecord(result.period, areaCode)
+										: result.records[0];
+								if (!record) continue;
+								if (!table)
+									records.set(
+										result.period,
+										record as MeasureObservation,
+									);
+								else if (
+									"value" in record &&
+									typeof record.value === "number"
+								)
+									records.set(result.period, {
+										areaCode,
+										value: record.value,
+										status: "observed",
+									});
+							}
+							lastRecords = records;
+							lastArea = areaCode;
+						} finally {
+							connection.release();
+						}
+					}
+					return lastRecords.get(period);
+				},
+				pageFrom(areaCode, limit) {
+					const connection = openReadOnlyDatabase(databasePath);
+					try {
+						return readStatisticsPage(
+							connection,
+							column,
+							period,
+							areaCode,
+							limit,
+							table,
+						) as MeasureObservation[] | undefined;
+					} finally {
+						connection.release();
+					}
+				},
+			};
+		});
 	}
 
 	has(databasePath: string, artifactName: string): boolean {
