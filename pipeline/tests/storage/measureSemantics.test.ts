@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import type { StatisticsMeasure } from "@uk-data-atlas/measures";
 import {
+	COUNT_DENOMINATORS,
 	MEASURE_UNITS,
+	REBUILT_RATES,
 	legacyValueKind,
 	NOT_APPLICABLE_REASONS,
 	measureSemantics,
@@ -137,5 +139,32 @@ test("unit scales distinguish percent and per-thousand values", () => {
 	assert.equal(
 		MEASURE_UNITS.find((unit) => unit.label === "gbp million")?.scale,
 		1_000_000,
+	);
+});
+
+test("every count names its denominator or says why it has none", () => {
+	assert.throws(
+		() => validateMeasureSemantics({ ...base, slug: "claimant-rate" }),
+		/must name its denominator/,
+	);
+	for (const [slug, entry] of Object.entries(COUNT_DENOMINATORS)) {
+		if (entry.kind === "none") assert.ok(entry.reason.length > 20, slug);
+		else assert.ok(entry.denominator.measure in COUNT_DENOMINATORS, slug);
+	}
+	assert.equal(REBUILT_RATES.get("claimant-rate")?.numerator, "claimants");
+	assert.deepEqual(
+		REBUILT_RATES.get("claimant-rate")?.denominator.filter.age,
+		{ from: 16, to: 64 },
+	);
+	assert.throws(
+		() =>
+			validateMeasureSemantics({
+				...base,
+				slug: "recorded-crimes-per-1000-residents",
+				unit: "per 100,000",
+				statistic: "rate",
+				aggregation: "none",
+			}),
+		/needs a unit of that scale/,
 	);
 });

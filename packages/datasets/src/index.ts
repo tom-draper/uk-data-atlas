@@ -154,6 +154,7 @@ export * from "./declaration/guides.ts";
 export * from "./declaration/measures.ts";
 export * from "./declaration/measureUnits.ts";
 export * from "./declaration/measureSemantics.ts";
+export * from "./declaration/countDenominators.ts";
 export * from "./declaration/sources.ts";
 export * from "./declaration/statistics.ts";
 export * from "./declaration/taxonomy.ts";

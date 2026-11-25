@@ -479,4 +479,22 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		currency: null,
 		symbol: null,
 	},
+	{
+		id: 52,
+		slug: "per-1-000-residents",
+		label: "per 1,000 residents",
+		kind: "per_n",
+		scale: 1000,
+		currency: null,
+		symbol: null,
+	},
+	{
+		id: 53,
+		slug: "per-10-000-residents",
+		label: "per 10,000 residents",
+		kind: "per_n",
+		scale: 10000,
+		currency: null,
+		symbol: null,
+	},
 ];
