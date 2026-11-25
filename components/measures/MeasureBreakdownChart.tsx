@@ -11,6 +11,7 @@ import {
 	formatDatasetCoverage,
 	nationOutsideCoverage,
 } from "@/lib/helpers/datasetCoverage";
+import { locationCouncils } from "@/lib/helpers/locationCouncils";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { areaForMeasure } from "@/lib/measures/area";
 import { areaCodesInScope } from "@/lib/measures/scope";
@@ -34,6 +35,7 @@ export default function MeasureBreakdownChart({
 	activeDataset,
 	availableDatasets,
 	selectedArea,
+	location,
 	year,
 	codeMapper,
 	setActiveViz,
@@ -60,15 +62,16 @@ export default function MeasureBreakdownChart({
 	const legend = categories[dataset.type];
 	// An area in a nation the dataset leaves out has no figure to read, so the
 	// card says the nation does not publish it rather than that it is missing.
-	const nation = nationOutsideCoverage(
-		dataset.coverageCountries,
-		selectedArea?.code,
-	);
+	// A place picked with no area selected is read through its councils.
+	const code = selectedArea
+		? selectedArea.code
+		: locationCouncils(location)?.councils[0]?.code;
+	const nation = nationOutsideCoverage(dataset.coverageCountries, code);
 	const coverage = breakdown.coverage ?? formatDatasetCoverage(dataset);
 	// Such an area keeps its own code, so the card never falls back to the
 	// other nations' total while it is selected.
 	const area = nation
-		? (selectedArea?.code ?? null)
+		? (code ?? null)
 		: (areaForMeasure(
 				selectedArea,
 				breakdown.request.geography,
