@@ -271,3 +271,13 @@ wrexham
 york
 yorkshire
 yorkshire-historic-county
+cambridgeshire-and-peterborough
+devon-and-torbay
+east-midlands-combined-county-authority
+hull-and-east-yorkshire
+liverpool-city-region
+north-east-combined-authority
+tees-valley
+west-midlands-combined-authority
+west-of-england
+york-and-north-yorkshire
