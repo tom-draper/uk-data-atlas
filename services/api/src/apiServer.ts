@@ -23,7 +23,7 @@ import { UsageStore, utcDay } from "./usage/usageStore";
 import {
 	acceptsGzip,
 	bodyBytes,
-	cachedHttpResponse,
+	conditionalHttpResponse,
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
@@ -35,7 +35,7 @@ import {
 } from "./runtime/index.ts";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./places/postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./http/rateLimit";
-import { ResponseCache } from "./http/responseCache";
+import { ResponseCache, type CachedAnswer } from "./http/responseCache";
 import { isStoredFile, problem, type ApiResponse } from "./runtime/index.ts";
 import { routeAsync } from "./routes";
 import { dimensionCatalogue } from "@uk-data-atlas/measures";
@@ -86,6 +86,20 @@ const GZIP_LEVEL = 4;
 
 const gzipAsync = (body: string | Buffer) =>
 	promisify(gzip)(body, { level: GZIP_LEVEL });
+
+/** Encode off the event loop, before sharing or writing the response. */
+const encodeGzip = async (
+	result: HttpResponse,
+	uncompressed: string | Buffer,
+) => {
+	const body = await gzipAsync(uncompressed);
+	return {
+		...result,
+		body,
+		gzip: false,
+		headers: { ...result.headers, "content-length": String(body.length) },
+	};
+};
 
 type BodyRead =
 	{ text: string } | { tooLarge: true; bytes: number } | { aborted: true };
@@ -240,7 +254,7 @@ export const createApiServer = (
 				).dimensionIds
 			: undefined;
 	const responseCache = options.responseCacheBytes
-		? new ResponseCache(options.responseCacheBytes)
+		? new ResponseCache(options.responseCacheBytes, maxConcurrentRequests)
 		: undefined;
 	const metrics = new ApiMetrics(
 		releaseId,
@@ -343,8 +357,8 @@ export const createApiServer = (
 		answered?: ApiResponse;
 		failure?: unknown;
 		limitHeaders: Record<string, string>;
-		/** Set when this request's answer should be kept once it is finished. */
-		storeAs?: string;
+		/** Set for a GET that can use the shared response cache. */
+		cacheKey?: string;
 		/** The body of a POST, read once its request passed the limits. */
 		posted?: RequestBody;
 	};
@@ -387,19 +401,11 @@ export const createApiServer = (
 			return pipeline.answered;
 		});
 
-	const answerAsync = async (
-		pipeline: Pipeline,
-		produce: () => Promise<ApiResponse>,
-	) => {
-		pipeline.answered = await produce();
-		return httpResponse(pipeline.request, () => pipeline.answered!);
-	};
-
 	/**
 	 * Everything that can refuse a request before its handler runs: the
 	 * operator's paths, a worker at its limit, a query the operation does not
 	 * accept, a URL that is too long, an exhausted allowance, a preflight, a
-	 * POST whose body is too large, and an answer already kept. Returns the
+	 * POST whose body is too large. Returns the
 	 * answer when there is one, and leaves the handler to give it otherwise.
 	 */
 	const intake = async (
@@ -498,41 +504,76 @@ export const createApiServer = (
 		}
 		// An answer is a function of the release and the request, except a remote
 		// terrain sample, which is the provider's to change.
-		const cacheKey =
+		pipeline.cacheKey =
 			responseCache &&
 			method === "GET" &&
+			request.headers.range === undefined &&
 			!pathname.startsWith("/v1/terrain/")
 				? `${acceptsGzip(request.headers["accept-encoding"]) ? "gzip" : "identity"} ${target}`
 				: undefined;
-		const kept = cacheKey ? responseCache!.get(cacheKey) : undefined;
-		if (kept) return cachedHttpResponse(request, kept);
-		pipeline.storeAs = cacheKey;
 		return undefined;
 	};
 
+	type ContractHandler = (
+		body?: RequestBody,
+	) => ApiResponse | Promise<ApiResponse>;
+
 	/** The answer a handler gives, as the pipeline has read the request. */
-	const produce = (
+	const produce = async (
 		pipeline: Pipeline,
-		contractHandler?: (
-			body?: RequestBody,
-		) => ApiResponse | Promise<ApiResponse>,
+		contractHandler?: ContractHandler,
+		prepareForCache = false,
 	) => {
-		const { method, target } = pipeline;
-		if (method === "POST")
-			return answerAsync(pipeline, async () =>
-				contractHandler
-					? contractHandler(pipeline.posted)
-					: routeAsync("POST", target, catalogues, pipeline.posted),
-			);
-		return answerAsync(pipeline, () =>
-			contractHandler
-				? Promise.resolve(contractHandler())
-				: routeAsync(
-						method === "HEAD" ? "GET" : method,
-						target,
-						catalogues,
-					),
-		);
+		const { method, target, request, posted } = pipeline;
+		const answered = await (contractHandler
+			? contractHandler(posted)
+			: routeAsync(
+					method === "HEAD" ? "GET" : method,
+					target,
+					catalogues,
+					posted,
+				));
+		pipeline.answered = answered;
+		return httpResponse(request, () => answered, prepareForCache);
+	};
+
+	const answerFromCache = async (
+		pipeline: Pipeline,
+		key: string,
+		contractHandler?: ContractHandler,
+	) => {
+		let rendered: HttpResponse | undefined;
+		const fill = async (): Promise<CachedAnswer | undefined> => {
+			rendered = await produce(pipeline, contractHandler, true);
+			const { body } = rendered;
+			if (
+				rendered.status !== 200 ||
+				body === undefined ||
+				isStoredFile(body) ||
+				!rendered.headers.etag
+			)
+				return undefined;
+			if (rendered.gzip) {
+				const encoded = await encodeGzip(rendered, body);
+				rendered = encoded;
+				return {
+					status: 200,
+					headers: encoded.headers,
+					body: encoded.body,
+				};
+			}
+			return { status: 200, headers: rendered.headers, body };
+		};
+		const kept = await responseCache!.getOrFill(key, fill);
+		if (pipeline.response.destroyed) return undefined;
+		if (kept) return conditionalHttpResponse(pipeline.request, kept);
+		if (!rendered) {
+			// A failed or uncacheable fill is specific to the request that ran
+			// it. Each waiting caller can still run its own handler.
+			const answer = await fill();
+			if (answer) responseCache!.set(key, answer);
+		}
+		return conditionalHttpResponse(pipeline.request, rendered!);
 	};
 
 	const failed = (pipeline: Pipeline, error: unknown) => {
@@ -548,10 +589,7 @@ export const createApiServer = (
 		});
 	};
 
-	/**
-	 * Write the answer: the headers every response carries, gzip, the answer
-	 * kept for the next caller, then the metrics, usage and log of the request.
-	 */
+	/** Finish encoding if needed, then write and record this request's response. */
 	const respond = async (pipeline: Pipeline, answered: HttpResponse) => {
 		const {
 			request,
@@ -611,6 +649,12 @@ export const createApiServer = (
 			} catch {}
 		};
 		try {
+			if (
+				result.gzip &&
+				result.body !== undefined &&
+				!isStoredFile(result.body)
+			)
+				result = await encodeGzip(result, result.body);
 			const headers: Record<string, string> = {
 				...result.headers,
 				...pipeline.limitHeaders,
@@ -619,34 +663,6 @@ export const createApiServer = (
 				"atlas-release": releaseId,
 				...(draining ? { connection: "close" } : {}),
 			};
-			// Compressed on the libuv thread pool, so a large body does not hold up
-			// every other request while it is encoded.
-			if (
-				result.gzip &&
-				result.body !== undefined &&
-				!isStoredFile(result.body)
-			) {
-				const encoded = await gzipAsync(result.body);
-				result = { ...result, body: encoded };
-				headers["content-length"] = String(encoded.length);
-			}
-			if (
-				pipeline.storeAs &&
-				pipeline.failure === undefined &&
-				result.status === 200 &&
-				result.body !== undefined &&
-				!isStoredFile(result.body) &&
-				result.headers.etag
-			)
-				responseCache!.set(pipeline.storeAs, {
-					status: 200,
-					headers: {
-						...result.headers,
-						"content-length": String(bodyBytes(result.body)),
-					},
-					body: result.body,
-					etag: result.headers.etag,
-				});
 			response.writeHead(result.status, headers);
 			let status = result.status;
 			let bytes = result.body ? bodyBytes(result.body) : 0;
@@ -851,20 +867,24 @@ export const createApiServer = (
 	const dispatch = async (
 		request: FastifyRequest,
 		reply: FastifyReply,
-		contractHandler?: (
-			body?: RequestBody,
-		) => ApiResponse | Promise<ApiResponse>,
+		contractHandler?: ContractHandler,
 	) => {
 		const pipeline = pipelines.get(request.raw);
 		if (!pipeline) throw new Error("Missing production request");
 		reply.hijack();
-		let answered: HttpResponse;
+		let answered: HttpResponse | undefined;
 		try {
-			answered = await produce(pipeline, contractHandler);
+			answered = pipeline.cacheKey
+				? await answerFromCache(
+						pipeline,
+						pipeline.cacheKey,
+						contractHandler,
+					)
+				: await produce(pipeline, contractHandler);
 		} catch (error) {
 			answered = failed(pipeline, error);
 		}
-		await respond(pipeline, answered);
+		if (answered) await respond(pipeline, answered);
 	};
 
 	registerApiRoutes(fastify, catalogues, dispatch);

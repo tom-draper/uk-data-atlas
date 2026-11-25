@@ -352,10 +352,11 @@ export class ApiMetrics {
 						...sampled(
 							"counter",
 							"atlas_api_response_cache_events_total",
-							"Requests answered from a held answer, requests that were not, and answers pushed out for room since the server started.",
+							"Response cache hits, misses, misses served by a shared fill, and evictions since the server started.",
 							[
 								[{ event: "hit" }, answers.hits],
 								[{ event: "miss" }, answers.misses],
+								[{ event: "coalesced" }, answers.coalesced],
 								[{ event: "eviction" }, answers.evictions],
 							],
 						),

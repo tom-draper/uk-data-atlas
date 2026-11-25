@@ -4,6 +4,7 @@ import {
 	writeObservationFixture,
 } from "./observationFixtures";
 import assert from "node:assert/strict";
+import { randomBytes } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, request as httpRequest } from "node:http";
 import { tmpdir } from "node:os";
@@ -700,6 +701,74 @@ test("keeps the plain and the gzipped form of an answer apart", async (t) => {
 	});
 	assert.equal(revalidated.status, 304);
 	assert.equal(revalidated.headers.get("vary"), "accept-encoding");
+});
+
+test("shares a cold gzip fill while applying each request's own validator and id", async (t) => {
+	const document = randomBytes(512 * 1024).toString("base64");
+	let handled = 0;
+	const context = Object.defineProperty(
+		testContext({ atlasRelease, openapiDocument, operationMatcher }),
+		"openapiDocument",
+		{
+			get() {
+				handled += 1;
+				return document;
+			},
+		},
+	);
+	const { get } = await serve(
+		t,
+		{ responseCacheBytes: 4 * 1024 * 1024 },
+		context,
+	);
+	const afterStart = handled;
+	const responses = await Promise.all(
+		Array.from({ length: 12 }, (_, index) =>
+			get("/v1/openapi.yaml", {
+				headers: {
+					"accept-encoding": "gzip",
+					"x-request-id": `concurrent-${index}`,
+					...(index % 2 === 0 ? { "if-none-match": "*" } : {}),
+				},
+			}),
+		),
+	);
+	const etag = responses[0]!.headers.get("etag");
+	assert.ok(etag);
+	for (const [index, response] of responses.entries()) {
+		assert.equal(response.headers.get("etag"), etag);
+		assert.equal(
+			response.headers.get("x-request-id"),
+			`concurrent-${index}`,
+		);
+		if (index % 2 === 0) {
+			assert.equal(response.status, 304);
+			assert.equal(await response.text(), "");
+		} else {
+			assert.equal(response.status, 200);
+			assert.equal(response.headers.get("content-encoding"), "gzip");
+			assert.equal(await response.text(), document);
+		}
+	}
+	assert.equal(handled, afterStart + 1);
+});
+
+test("a cold conditional GET fills the cache even when it returns 304", async (t) => {
+	const { get } = await serve(t, {
+		responseCacheBytes: 1024 * 1024,
+		metrics: "open",
+	});
+	assert.equal(
+		(await get("/v1/boundaries", { headers: { "if-none-match": "*" } }))
+			.status,
+		304,
+	);
+	assert.equal((await get("/v1/boundaries")).status, 200);
+	const metrics = await (await get("/metrics")).text();
+	assert.match(
+		metrics,
+		/atlas_api_response_cache_events_total\{event="hit"\} 1/,
+	);
 });
 
 test("honours an explicit gzip refusal before and after caching", async (t) => {

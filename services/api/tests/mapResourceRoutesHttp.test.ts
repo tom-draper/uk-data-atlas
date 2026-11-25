@@ -198,6 +198,21 @@ const labelled = (requests: CharacterizedRequest[]) =>
 const base = "/v1/map-resources/ward/2023-05-uk-bgc";
 const join_ = `${base}/join/population?period=2022&geography=ward&codeYear=2023`;
 
+test("serves a range of a generated download after caching the full response", async (t) => {
+	const send = await startCharacterization(t, context(), {
+		responseCacheBytes: 1024 * 1024,
+	});
+	const path = `${base}/features?tier=low`;
+	const whole = await send({ path });
+	expect(whole.status).toBe(200);
+	expect(whole.body).toBe("PAR1 built PAR1");
+	const partial = await send({ path, headers: { range: "bytes=5-9" } });
+	expect(partial.status).toBe(206);
+	expect(partial.headers).toContain("content-range: bytes 5-9/15");
+	expect(partial.body).toBe("built");
+	expect(await send({ path })).toEqual(whole);
+});
+
 test("map resources keep their HTTP responses", async (t) => {
 	const send = await startCharacterization(t, context());
 	const requests: CharacterizedRequest[] = [

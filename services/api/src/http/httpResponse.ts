@@ -2,7 +2,6 @@ import type { StoredFile } from "@uk-data-atlas/artifacts";
 import { publicJson } from "@uk-data-atlas/atlas-db";
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
-import type { CachedAnswer } from "./responseCache";
 import { isStoredFile, type ApiResponse } from "../runtime/index.ts";
 
 export type HttpResponse = {
@@ -180,30 +179,32 @@ const notModified = (
 });
 
 /**
- * The wire response for a GET answered earlier: the stored answer, or `304`
- * when the client already holds it. Never a stored file or a ranged read,
- * which are streamed from disk and not kept.
+ * Apply each caller's validator to a shareable GET response. Range requests
+ * go through the regular response path.
  */
-export const cachedHttpResponse = (
+export const conditionalHttpResponse = (
 	request: { headers: IncomingHttpHeaders },
-	answer: CachedAnswer,
-): HttpResponse =>
-	matchesEntityTag(request.headers["if-none-match"], answer.etag)
-		? notModified(
-				answer.etag,
-				answer.headers.vary,
-				answer.headers["cache-control"],
-			)
-		: { status: answer.status, headers: answer.headers, body: answer.body };
+	answer: HttpResponse,
+): HttpResponse => {
+	const { etag, vary } = answer.headers;
+	return answer.status < 400 &&
+		answer.status !== 204 &&
+		etag &&
+		matchesEntityTag(request.headers["if-none-match"], etag)
+		? notModified(etag, vary, answer.headers["cache-control"])
+		: answer;
+};
 
 /**
  * Turns a route result into what goes on the wire. The route itself stays
  * independent of HTTP: HEAD is answered as GET without a body, and a
  * conditional GET or HEAD whose validator still matches gets 304.
+ * A cache fill defers that decision until the shared response is ready.
  */
 export const httpResponse = (
 	request: { method?: string; headers: IncomingHttpHeaders },
 	route: (method: string | undefined) => ApiResponse,
+	deferValidation = false,
 ): HttpResponse => {
 	const isHead = request.method === "HEAD";
 	const result = route(isHead ? "GET" : request.method);
@@ -256,10 +257,7 @@ export const httpResponse = (
 	if (compressible) headers.vary = "accept-encoding";
 	if (compress) headers["content-encoding"] = "gzip";
 
-	// A tile that covers no area answers 204, which is an ordinary answer and
-	// is cached like any other; only a failure is left unstored. An answer to
-	// a POST is a function of its body, which no cache keys on, so it is
-	// never stored either.
+	// Errors and POST results must not be cached by clients or intermediaries.
 	if (result.status >= 400 || request.method === "POST") {
 		headers["cache-control"] = ERROR_CACHE_CONTROL;
 		return withBody(result.status, headers, body, isHead, compress);
@@ -281,7 +279,10 @@ export const httpResponse = (
 				: entityTag(body as string | Buffer);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
-	if (matchesEntityTag(request.headers["if-none-match"], etag))
+	if (
+		!deferValidation &&
+		matchesEntityTag(request.headers["if-none-match"], etag)
+	)
 		return notModified(etag, headers.vary, freshness);
 	// A file sent as it is stored, or a body with a known hash, can be read
 	// in pieces. That is how a PMTiles client reads an archive (the header,
