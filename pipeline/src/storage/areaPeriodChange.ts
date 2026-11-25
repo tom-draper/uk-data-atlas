@@ -200,8 +200,10 @@ SELECT m.slug AS measure, q.key AS quantity, r.geography, r.release,
   x.from_dataset_id <> x.to_dataset_id AS source_changed,
   fp.kind <> tp.kind AS period_kind_changed,
   fp.end_date >= tp.start_date AS periods_overlap,
-  (SELECT group_concat(b.kind || ' ' || bp.label, '; ' ORDER BY bp.start_date, b.kind) FROM measure_break b
-    JOIN period bp ON bp.id = b.period_id WHERE ${breakMatch}) AS breaks,
+  (SELECT group_concat(item, '; ') FROM (
+    SELECT b.kind || ' ' || bp.label AS item FROM measure_break b
+    JOIN period bp ON bp.id = b.period_id WHERE ${breakMatch}
+    ORDER BY bp.start_date, b.kind)) AS breaks,
   (SELECT group_concat(note, ' ') FROM (SELECT DISTINCT b.note FROM measure_break b
     JOIN period bp ON bp.id = b.period_id WHERE ${breakMatch} ORDER BY b.note)) AS break_notes,
   x.quantity_id, x.area_version_id, x.from_period_id, x.to_period_id,
