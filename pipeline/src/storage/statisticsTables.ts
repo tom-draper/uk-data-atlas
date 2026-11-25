@@ -393,7 +393,7 @@ export function statisticsTables(
 				"dataset_id INTEGER NOT NULL REFERENCES dataset(id)",
 				"measure_id INTEGER NOT NULL REFERENCES measure(id)",
 				"release_id INTEGER NOT NULL REFERENCES area_release(id)",
-				"method TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','modelled'))",
+				"method TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','derived','modelled'))",
 				"derived_from_id INTEGER REFERENCES series(id)",
 				"key TEXT NOT NULL UNIQUE",
 			],

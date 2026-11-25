@@ -26,7 +26,7 @@ const ATLAS = `
 CREATE TABLE series (
 	id INTEGER PRIMARY KEY, dataset_id INTEGER NOT NULL, measure_id INTEGER NOT NULL,
 	release_id INTEGER NOT NULL,
-	method TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','modelled')),
+	method TEXT NOT NULL CHECK (method IN ('published','converted','aggregated','derived','modelled')),
 	derived_from_id INTEGER REFERENCES series(id), key TEXT NOT NULL UNIQUE,
 	CHECK ((method = 'published') = (derived_from_id IS NULL)));
 CREATE TABLE series_member (series_id INTEGER, dimension_id INTEGER, member_id INTEGER);

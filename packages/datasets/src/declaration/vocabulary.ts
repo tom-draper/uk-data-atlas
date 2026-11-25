@@ -33,7 +33,7 @@ export type PeriodKind =
 	| "date"
 	| "range";
 export type SeriesMethod =
-	"published" | "converted" | "aggregated" | "modelled";
+	"published" | "converted" | "aggregated" | "derived" | "modelled";
 
 export const STATUSES = [
 	["observed", "Observed"],
