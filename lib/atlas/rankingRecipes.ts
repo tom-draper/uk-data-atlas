@@ -362,12 +362,18 @@ const deprivationRecipe = (
 const COUNCIL_ALIASES: Readonly<Record<string, string>> = {
 	// The Scottish Government's name for the Western Isles, used by SIMD.
 	"Na h-Eileanan an Iar": "Na h-Eileanan Siar",
+	// The 2025 local election results' spelling.
+	"Stratford On Avon": "Stratford-on-Avon",
 };
 
-/** A current council's code from its name, for rows that leave the code out. */
+/**
+ * A current council's code from its name, for rows that leave the code out.
+ * A source may write "and" as "&", as in "Folkestone & Hythe".
+ */
 function councilNamed(name: string) {
+	const spelt = (COUNCIL_ALIASES[name] ?? name).replace(/ & /g, " and ");
 	const matches = gazetteer
-		.resolveName(COUNCIL_ALIASES[name] ?? name, "localAuthority")
+		.resolveName(spelt, "localAuthority")
 		.filter((entry) => successorCouncil(entry.code) === entry.code);
 	return matches.length === 1 ? matches[0]!.code : "";
 }
