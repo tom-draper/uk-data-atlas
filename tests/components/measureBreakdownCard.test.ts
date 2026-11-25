@@ -58,7 +58,7 @@ describe("breakdown card outside the dataset's nations", () => {
 		expect(html).not.toContain("No data available");
 	});
 
-	const renderChart = (code: string) =>
+	const renderChart = (code: string | null, location?: string) =>
 		renderToStaticMarkup(
 			createElement(MeasureBreakdownChart, {
 				breakdown: {
@@ -82,13 +82,16 @@ describe("breakdown card outside the dataset's nations", () => {
 						coverageCountries: ["GB-ENG", "GB-WLS"],
 					},
 				},
-				selectedArea: {
-					type: "localAuthority",
-					code,
-					name: code,
-					data: null,
-					boundaryYear: 2023,
-				} as SelectedArea,
+				selectedArea: code
+					? ({
+							type: "localAuthority",
+							code,
+							name: code,
+							data: null,
+							boundaryYear: 2023,
+						} as SelectedArea)
+					: null,
+				location,
 				year: 2021,
 				setActiveViz: () => {},
 			} as never),
@@ -110,5 +113,19 @@ describe("breakdown card outside the dataset's nations", () => {
 		const html = renderChart("E08000025");
 		expect(html).toContain("Ethnicity [2021]");
 		expect(html).not.toContain("not published");
+	});
+
+	it.each([
+		["Glasgow", "Scotland"],
+		["Central Belt", "Scotland"],
+		["Belfast", "Northern Ireland"],
+	])("reads %s picked from Places as %s", (location, nation) => {
+		const html = renderChart(null, location);
+		expect(html).toContain(`Ethnicity [${nation}]`);
+		expect(html).not.toContain("No data available");
+	});
+
+	it("keeps the census year for an English place picked from Places", () => {
+		expect(renderChart(null, "Birmingham")).toContain("Ethnicity [2021]");
 	});
 });
