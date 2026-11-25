@@ -27,6 +27,8 @@ interface GenderProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: PopulationCodeResolver;
+	/** The place picked from Places, read where no area is selected. */
+	location?: string | null;
 }
 
 // Cache for LAD gender aggregations (bounded to prevent unbounded memory growth)
@@ -40,13 +42,19 @@ function Gender({
 	activeViz,
 	setActiveViz,
 	codeMapper,
+	location,
 }: GenderProps) {
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "gender";
 
 	// An area in a nation the dataset leaves out is read from that nation's
 	// own estimates, labelled with their year and publisher.
-	const nation = useNationPopulation(dataset, selectedArea, codeMapper);
+	const nation = useNationPopulation(
+		dataset,
+		selectedArea,
+		codeMapper,
+		location,
+	);
 
 	const datasetTotals = (() => {
 		if (nation) return { totalMales: null, totalFemales: null };

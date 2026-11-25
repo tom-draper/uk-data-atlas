@@ -27,12 +27,13 @@ const area = (
 	boundaryYear?: number,
 ) => ({ type, code, name: code, data: null, boundaryYear }) as SelectedArea;
 
-const renderGender = (selectedArea: SelectedArea | null) =>
+const renderGender = (selectedArea: SelectedArea | null, location?: string) =>
 	renderToStaticMarkup(
 		createElement(Gender, {
 			dataset,
 			aggregatedData: null,
 			selectedArea,
+			location,
 			activeViz: {
 				datasetId: "",
 				datasetType: "population",
@@ -110,13 +111,14 @@ describe("age card outside the dataset's nations", () => {
 	});
 });
 
-const renderDensity = (selectedArea: SelectedArea | null) =>
+const renderDensity = (selectedArea: SelectedArea | null, location?: string) =>
 	renderToStaticMarkup(
 		createElement(PopulationDensityChart, {
 			dataset,
 			aggregatedData: null,
 			boundaryData: { ward: {} } as never,
 			selectedArea,
+			location,
 			activeViz: {
 				datasetId: "",
 				datasetType: "population",
@@ -190,5 +192,32 @@ describe("labels for a nation's population figure", () => {
 			"Here: Scotland, mid-2024. Elsewhere: England & Wales, mid-2022.",
 		);
 		expect(nationAgesMessage(estimate)).toContain("Total 650,300");
+	});
+});
+
+describe("population cards on a place picked from Places", () => {
+	it("reads a Scottish city's council rather than saying there is no data", () => {
+		const html = renderGender(null, "Glasgow");
+		expect(html).not.toContain("No data available");
+		expect(html).not.toContain("[2022]");
+		expect(html).toContain("Here: Scotland");
+	});
+
+	it("reads a Northern Irish council place", () => {
+		const html = renderDensity(null, "Belfast");
+		expect(html).not.toContain("No data available");
+		expect(html).toContain("Here: Northern Ireland");
+	});
+
+	it("asks for a council where a place spans several", () => {
+		const html = renderDensity(null, "Central Belt");
+		expect(html).toContain("Published for each council in Scotland");
+		expect(html).toContain("spans 12 of them");
+	});
+
+	it("leaves an English place to the dataset", () => {
+		const html = renderGender(null, "Birmingham");
+		expect(html).toContain("Gender [2022]");
+		expect(html).not.toContain("Scotland");
 	});
 });
