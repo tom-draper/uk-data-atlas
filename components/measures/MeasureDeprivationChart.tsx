@@ -11,6 +11,7 @@ import { resolveDeprivation } from "@/components/datasets/society/deprivation/de
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { declaredMeasure } from "@/lib/datasets/declared";
 import type { DeprivationCardConfig } from "@/lib/datasets/deprivationCard";
+import { earlierEditionRows } from "@/lib/datasets/deprivationEditions";
 import type { ActiveViz } from "@/lib/types";
 import type {
 	DeprivationSummary,
@@ -100,12 +101,24 @@ export default function MeasureDeprivationChart({
 		};
 	}
 
+	const earlierEditions = earlierEditionRows({
+		config: deprivation,
+		latest: dataset,
+		datasets:
+			(availableDatasets as unknown as {
+				[year: string]: DeprivationDataset | undefined;
+			}) ?? {},
+		selectedArea,
+		codeMapper,
+	});
+
 	return (
 		<DeprivationChart
 			index={deprivation}
 			dataset={dataset}
 			activeDataset={activeDataset}
 			view={view}
+			earlierEditions={earlierEditions}
 			setActiveViz={setActiveViz}
 		/>
 	);

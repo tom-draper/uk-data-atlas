@@ -5,6 +5,8 @@ import type {
 	ScoredDeprivationSummary,
 } from "@uk-data-atlas/datasets";
 import DecileChart from "./DecileChart";
+import { EarlierEditions } from "./EarlierEditions";
+import type { EarlierEditionRow } from "@/lib/datasets/deprivationEditions";
 import { formatCount } from "@/lib/helpers/formatCount";
 import type {
 	DeprivationDetail,
@@ -111,12 +113,15 @@ export function DeprivationChart({
 	dataset,
 	activeDataset,
 	view,
+	earlierEditions = [],
 	setActiveViz,
 }: {
 	index: DeprivationIndex;
 	dataset: { id: string; type: Dataset["type"]; year: number };
 	activeDataset: Dataset | null;
 	view: DeprivationView | null;
+	/** Earlier editions for the same area, listed beneath and never compared. */
+	earlierEditions?: EarlierEditionRow[];
 	setActiveViz: (value: ActiveViz) => void;
 }) {
 	const display =
@@ -155,6 +160,12 @@ export function DeprivationChart({
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})
+			}
+			footer={
+				<EarlierEditions
+					rows={earlierEditions}
+					areaNoun={index.areaNoun}
+				/>
 			}
 		/>
 	);
