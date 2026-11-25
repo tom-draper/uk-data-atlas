@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import CodePanel from "@/components/docs/CodePanel";
 import { Card } from "@/components/docs/Page";
+import { boundaryReleases } from "@/lib/fix/api";
 import { runCheck, type CheckResult } from "@/lib/fix/check";
 import { columnKind, detectColumns } from "@/lib/fix/detect";
 import { saveTable, type SourceFile } from "@/lib/fix/download";
@@ -17,8 +18,8 @@ import {
 } from "@/lib/fix/report";
 import type { FileFormat } from "@/lib/fix/spreadsheet";
 import { ROW_LIMIT } from "@/lib/fix/table";
-import type { ReleaseRef } from "@/lib/fix/types";
-import { withSheet, type Upload } from "@/lib/fix/upload";
+import type { BoundaryRelease, ReleaseRef } from "@/lib/fix/types";
+import { withHeader, withSheet, type Upload } from "@/lib/fix/upload";
 import ColumnsPanel, { type ColumnChoice } from "./ColumnsPanel";
 import ConvertPanel from "./ConvertPanel";
 import InputPanel from "./InputPanel";
@@ -27,11 +28,6 @@ import ResultSummary from "./ResultSummary";
 import UpdatePanel from "./UpdatePanel";
 import { Button, DownloadButtons, OptionalPanel, StepHeading } from "./ui";
 
-/**
- * The fix-your-data tool. A file goes in, its columns are detected, and the
- * area column is checked against the API as soon as it is known, and again
- * whenever the user changes what was detected.
- */
 export default function FixTool() {
 	const [source, setSource] = useState<Upload | null>(null);
 	const [choice, setChoice] = useState<ColumnChoice>({
@@ -40,78 +36,109 @@ export default function FixTool() {
 		values: [],
 	});
 	const [release, setRelease] = useState<ReleaseRef | null>(null);
+	const [releases, setReleases] = useState<BoundaryRelease[]>([]);
 	const [result, setResult] = useState<CheckResult | null>(null);
 	const [progress, setProgress] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [inputError, setInputError] = useState<string | null>(null);
 	const [busy, setBusy] = useState(false);
-	const results = useRef<HTMLDivElement>(null);
+	const columns = useRef<HTMLElement>(null);
+	const resultHeading = useRef<HTMLHeadingElement>(null);
+	const activeCheck = useRef<AbortController | null>(null);
+	const hasSource = source !== null;
+
+	useEffect(() => () => activeCheck.current?.abort(), []);
+
+	useEffect(() => {
+		if (!hasSource) return;
+		let active = true;
+		void boundaryReleases()
+			.then((available) => {
+				if (active) setReleases(available);
+			})
+			.catch(() => {
+				// Checking areas will retry the request and show any error.
+			});
+		return () => {
+			active = false;
+		};
+	}, [hasSource]);
+
+	useEffect(() => {
+		if (result) resultHeading.current?.focus();
+	}, [result]);
+
+	function resetResult() {
+		activeCheck.current?.abort();
+		activeCheck.current = null;
+		setResult(null);
+		setError(null);
+		setProgress("");
+		setBusy(false);
+	}
+
+	function selectSource(upload: Upload) {
+		resetResult();
+		setRelease(null);
+		const { area, parent, values } = detectColumns(upload.table);
+		setSource(upload);
+		setChoice({ area, parent, values });
+	}
 
 	function load(upload: Upload) {
-		const { table } = upload;
-		setResult(null);
-		setRelease(null);
-		if (table.rows.length === 0) {
-			setSource(null);
-			setError(
-				"No rows found. Check the file has a header row and at least one row of data.",
-			);
-			return;
-		}
-		const detection = detectColumns(table);
-		setError(
-			detection.area === null
-				? "No column of area codes or names was found. Choose the area column below."
-				: null,
-		);
-		setSource(upload);
-		setChoice({
-			area: detection.area ?? null,
-			parent: detection.parent,
-			values: detection.values,
+		setInputError(null);
+		selectSource(upload);
+		requestAnimationFrame(() => {
+			columns.current?.focus({ preventScroll: true });
+			columns.current?.scrollIntoView({ block: "start" });
 		});
-		requestAnimationFrame(() =>
-			results.current?.scrollIntoView({
-				behavior: "smooth",
-				block: "start",
-			}),
-		);
 	}
 
 	const area = choice.area;
-	const parent = choice.parent;
-	useEffect(() => {
-		if (!source || area === null) return;
+	async function checkAreas() {
+		if (
+			!source ||
+			area === null ||
+			source.table.rows.length === 0 ||
+			activeCheck.current
+		)
+			return;
 		const controller = new AbortController();
+		activeCheck.current = controller;
+		setResult(null);
 		setBusy(true);
 		setError(null);
-		runCheck(
-			{
-				table: source.table,
-				area,
-				kind: columnKind(source.table, area),
-				parent,
-				release,
-			},
-			controller.signal,
-			setProgress,
-		)
-			.then((checked) => {
-				setResult(checked);
-				setProgress(
-					`Checked ${checked.diagnosis.total.toLocaleString("en-GB")} rows.`,
-				);
-			})
-			.catch((caught: Error) => {
-				if (caught.name === "AbortError") return;
-				setResult(null);
-				setProgress("");
-				setError(caught.message);
-			})
-			.finally(() => {
-				if (!controller.signal.aborted) setBusy(false);
-			});
-		return () => controller.abort();
-	}, [source, area, parent, release]);
+		try {
+			const checked = await runCheck(
+				{
+					table: source.table,
+					area,
+					kind: columnKind(source.table, area),
+					parent: choice.parent,
+					release,
+				},
+				controller.signal,
+				(message) => {
+					if (!controller.signal.aborted) setProgress(message);
+				},
+			);
+			if (controller.signal.aborted) return;
+			setResult(checked);
+			setReleases(checked.releases);
+			setProgress(
+				`Checked ${checked.diagnosis.total.toLocaleString("en-GB")} rows.`,
+			);
+		} catch (caught) {
+			if (controller.signal.aborted) return;
+			setProgress("");
+			setError((caught as Error).message);
+		} finally {
+			if (!controller.signal.aborted) {
+				activeCheck.current = null;
+				setBusy(false);
+			}
+		}
+	}
 
 	const table = source?.table;
 	const diagnosis = result?.diagnosis;
@@ -120,27 +147,6 @@ export default function FixTool() {
 		format: source.format,
 		sheetName: source.sheets[source.sheet]?.name ?? "Sheet1",
 	};
-
-	function chooseSheet(sheet: number) {
-		if (!source) return;
-		const next = withSheet(source, sheet);
-		const detection = detectColumns(next.table);
-		setResult(null);
-		setRelease(null);
-		setError(
-			next.table.rows.length === 0
-				? "That sheet has no rows. Choose another sheet."
-				: detection.area === null
-					? "No column of area codes or names was found. Choose the area column below."
-					: null,
-		);
-		setSource(next);
-		setChoice({
-			area: detection.area ?? null,
-			parent: detection.parent,
-			values: detection.values,
-		});
-	}
 
 	async function downloadChecked(format: FileFormat) {
 		if (!file || !table || !diagnosis || area === null) return;
@@ -162,91 +168,126 @@ export default function FixTool() {
 				<StepHeading step={1} id="fix-input">
 					Add your data
 				</StepHeading>
-				<InputPanel onUpload={load} onError={setError} busy={busy} />
+				<InputPanel
+					onUpload={load}
+					onError={setInputError}
+					busy={busy}
+				/>
 			</section>
 
 			<div aria-live="polite" className="sr-only">
 				{progress}
 			</div>
-			{error && (
+			{inputError && (
 				<div
 					role="alert"
 					className="rounded-md border border-rose-600/20 bg-rose-50 px-4 py-3 text-[14px] text-rose-800"
 				>
 					<strong className="font-semibold">Problem: </strong>
-					{error}
+					{inputError}
 				</div>
 			)}
 
-			<div ref={results} className="scroll-mt-6 space-y-10">
+			<div className="space-y-10">
 				{source && table && (
-					<section aria-labelledby="fix-columns">
+					<section
+						ref={columns}
+						tabIndex={-1}
+						aria-labelledby="fix-columns"
+						className="scroll-mt-6 focus:outline-none"
+					>
 						<StepHeading
 							step={2}
 							id="fix-columns"
 							aside={`${source.name}, ${table.rows.length.toLocaleString("en-GB")} rows`}
 						>
-							Columns we found
+							Review your data
 						</StepHeading>
-						{source.sheets.length > 1 && (
-							<div className="mb-3 flex flex-wrap items-center gap-2 text-[14px] text-slate-700">
-								<label
-									htmlFor="fix-sheet"
-									className="font-medium"
-								>
-									Sheet
-								</label>
-								<select
-									id="fix-sheet"
-									value={source.sheet}
-									disabled={busy}
-									onChange={(event) =>
-										chooseSheet(Number(event.target.value))
-									}
-									className="min-h-10 rounded-md border border-slate-900/15 bg-white px-2 text-[14px] text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-slate-900"
-								>
-									{source.sheets.map((sheet, index) => (
-										<option key={index} value={index}>
-											{sheet.name}
-											{sheet.hidden ? " (hidden)" : ""}
-											{sheet.empty ? " (empty)" : ""}
-										</option>
-									))}
-								</select>
-								<span className="text-slate-500">
-									Your file has {source.sheets.length} sheets.
-									A download keeps the sheet you choose.
-								</span>
-							</div>
-						)}
-						{(table.droppedRows > 0 || table.skippedLines > 0) && (
-							<p className="mb-3 text-[14px] text-slate-600">
-								{table.skippedLines > 0 &&
-									`Skipped ${table.skippedLines} line${table.skippedLines === 1 ? "" : "s"} above the header. `}
-								{table.droppedRows > 0 &&
-									`Only the first ${ROW_LIMIT.toLocaleString("en-GB")} rows are checked; ${table.droppedRows.toLocaleString("en-GB")} more were left out.`}
-							</p>
-						)}
 						<ColumnsPanel
-							table={table}
+							source={source}
 							choice={choice}
-							onChoice={setChoice}
+							onChoice={(next) => {
+								if (
+									next.area !== area ||
+									next.parent !== choice.parent
+								)
+									resetResult();
+								setChoice(next);
+							}}
 							release={release}
-							onRelease={setRelease}
-							releases={result?.releases ?? []}
+							onRelease={(next) => {
+								resetResult();
+								setRelease(next);
+							}}
+							releases={releases}
 							detectedGeography={
 								diagnosis?.release?.geography ?? null
 							}
 							disabled={busy}
+							onSheet={(sheet) =>
+								selectSource(withSheet(source, sheet))
+							}
+							onHeader={(headerRow) =>
+								selectSource(withHeader(source, headerRow))
+							}
 						/>
+						{table.droppedRows > 0 && (
+							<p className="mt-3 text-[14px] text-slate-600">
+								Only the first{" "}
+								{ROW_LIMIT.toLocaleString("en-GB")} rows will be
+								checked.{" "}
+								{table.droppedRows.toLocaleString("en-GB")} more
+								were left out.
+							</p>
+						)}
+						{error && (
+							<p
+								role="alert"
+								className="mt-3 text-[14px] text-rose-800"
+							>
+								{error}
+							</p>
+						)}
+						<div className="mt-4 flex flex-wrap items-center gap-3">
+							<Button
+								variant="primary"
+								onClick={checkAreas}
+								disabled={
+									busy ||
+									area === null ||
+									table.rows.length === 0
+								}
+							>
+								{busy
+									? "Checking areas…"
+									: result
+										? "Check again"
+										: "Check areas"}
+							</Button>
+							{table.rows.length === 0 ? (
+								<p className="text-[14px] text-slate-600">
+									{table.headerOptions.length > 0
+										? "No data below this header. Choose a different header or use the first row as data."
+										: "No data in this selection."}
+								</p>
+							) : (
+								area === null && (
+									<p className="text-[14px] text-slate-600">
+										Choose the area column to check.
+									</p>
+								)
+							)}
+						</div>
 					</section>
 				)}
 
 				{source && (busy || diagnosis) && (
 					<section aria-labelledby="fix-diagnosis" aria-busy={busy}>
 						<h2
+							ref={resultHeading}
 							id="fix-diagnosis"
-							className="mb-3 text-[19px] font-semibold tracking-tight text-slate-900"
+							tabIndex={-1}
+							className="mb-3 scroll-mt-6 text-[19px] font-semibold tracking-tight text-slate-900 focus:outline-none"
 						>
 							What we found
 						</h2>

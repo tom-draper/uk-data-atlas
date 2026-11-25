@@ -267,8 +267,11 @@ describe("files from other writers survive a read and write", () => {
 			table.rows,
 		);
 		const again = readSpreadsheet(file, "xlsx", 1000).sheets[0];
-		expect(tableFromLines(again.rows)).toEqual({
-			...table,
+		expect(tableFromLines(again.rows)).toMatchObject({
+			headers: table.headers,
+			rows: table.rows,
+			droppedRows: table.droppedRows,
+			headerRow: 0,
 			skippedLines: 0,
 		});
 	});

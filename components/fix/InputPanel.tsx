@@ -53,6 +53,7 @@ export default function InputPanel({
 	function onDrop(event: DragEvent) {
 		event.preventDefault();
 		setDragging(false);
+		if (busy || reading) return;
 		void readFile(event.dataTransfer.files[0]);
 	}
 
@@ -133,12 +134,12 @@ export default function InputPanel({
 					/>
 					<Button
 						className="mt-2"
-						disabled={busy || !pasted.trim()}
+						disabled={busy || reading || !pasted.trim()}
 						onClick={() =>
 							onUpload(csvUpload(pasted, "pasted.csv"))
 						}
 					>
-						Check pasted data
+						Preview pasted data
 					</Button>
 				</div>
 			</details>

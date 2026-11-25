@@ -6,7 +6,12 @@ import {
 	type FileFormat,
 	type Workbook,
 } from "./spreadsheet";
-import { readTable, ROW_LIMIT, tableFromLines, type Table } from "./table";
+import {
+	parseTableLines,
+	ROW_LIMIT,
+	tableFromLines,
+	type ParsedTable,
+} from "./table";
 
 /** Largest file read, whatever its type. */
 export const MAX_BYTES = 50 * 1024 * 1024;
@@ -18,7 +23,9 @@ export interface Upload {
 	/** The sheets of a workbook, with the one the table was read from. */
 	sheets: { name: string; hidden: boolean; empty: boolean }[];
 	sheet: number;
-	table: Table;
+	table: ParsedTable;
+	/** Parsed text kept so the header can be changed without reading the file again. */
+	textRows?: string[][];
 	/** The workbook, kept so another sheet can be chosen without reading again. */
 	workbook?: Workbook;
 }
@@ -27,25 +34,37 @@ export class UploadError extends Error {}
 
 /** Reads a CSV, or pasted text, as an upload. */
 export function csvUpload(text: string, name: string): Upload {
+	const textRows = parseTableLines(text);
 	return {
 		name,
 		format: "csv",
 		sheets: [],
 		sheet: 0,
-		table: readTable(text),
+		table: tableFromLines(textRows),
+		textRows,
 	};
 }
 
 /** The same upload, read from another sheet of its workbook. */
-export function withSheet(upload: Upload, sheet: number): Upload {
+export function withSheet(
+	upload: Upload,
+	sheet: number,
+	headerRow?: number | null,
+): Upload {
 	const workbook = upload.workbook;
 	if (!workbook || !workbook.sheets[sheet]) return upload;
 	const chosen = workbook.sheets[sheet];
 	return {
 		...upload,
 		sheet,
-		table: tableFromLines(chosen.rows, chosen.extraRows),
+		table: tableFromLines(chosen.rows, chosen.extraRows, headerRow),
 	};
+}
+
+export function withHeader(upload: Upload, headerRow: number | null): Upload {
+	return upload.textRows
+		? { ...upload, table: tableFromLines(upload.textRows, 0, headerRow) }
+		: withSheet(upload, upload.sheet, headerRow);
 }
 
 function workbookUpload(name: string, workbook: Workbook): Upload {
@@ -58,7 +77,7 @@ function workbookUpload(name: string, workbook: Workbook): Upload {
 			empty: !hasCells(sheet),
 		})),
 		sheet: 0,
-		table: { headers: [], rows: [], droppedRows: 0, skippedLines: 0 },
+		table: tableFromLines([]),
 		workbook,
 	};
 	return withSheet(upload, defaultSheet(workbook));
