@@ -161,9 +161,8 @@ export type StatisticsArtifact = {
 	periods: string[];
 };
 
-type Row = {
+type ObservationFields = {
 	code: string;
-	period: string;
 	/** Set where the record is a category rather than a value. */
 	category?: string;
 	value: number | null;
@@ -171,6 +170,8 @@ type Row = {
 	upper: number | null;
 	status: string;
 };
+
+type Row = ObservationFields & { period: string };
 
 /** The ids of the series a selector names. */
 export const selectedStatisticsSeries = (
@@ -206,19 +207,36 @@ export const selectedStatisticsSeries = (
 };
 
 const rowsOf = (database: SqlReader, seriesId: number): Row[] =>
+	decodeRows(
+		database
+			.prepare(
+				"SELECT a.code, p.label AS period, o.value, o.lower, o.upper, st.slug AS status FROM observation o JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id WHERE o.series_id = ?",
+			)
+			.all(seriesId),
+	);
+
+const decodeRows = (rows: Record<string, SQLOutputValue>[]): Row[] =>
+	rows.map((row) => ({
+		...decodeObservation(row),
+		period: String(row.period),
+	}));
+
+const decodeObservation = (
+	row: Record<string, SQLOutputValue>,
+): ObservationFields => ({
+	code: String(row.code),
+	value: row.value === null ? null : Number(row.value),
+	lower: row.lower === null ? null : Number(row.lower),
+	upper: row.upper === null ? null : Number(row.upper),
+	status: String(row.status),
+});
+
+const storedPeriods = (database: SqlReader, id: number) =>
 	database
 		.prepare(
-			"SELECT a.code, p.label AS period, o.value, o.lower, o.upper, st.slug AS status FROM observation o JOIN area_version v ON v.id = o.area_version_id JOIN area a ON a.id = v.area_id JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id WHERE o.series_id = ?",
+			"SELECT p.id, p.label, c.areas FROM series_coverage c JOIN period p ON p.id = c.period_id WHERE c.series_id = ?",
 		)
-		.all(seriesId)
-		.map((row: Record<string, SQLOutputValue>) => ({
-			code: String(row.code),
-			period: String(row.period),
-			value: row.value === null ? null : Number(row.value),
-			lower: row.lower === null ? null : Number(row.lower),
-			upper: row.upper === null ? null : Number(row.upper),
-			status: String(row.status),
-		}));
+		.all(id);
 
 /**
  * The statistics period a catalogue period is stored as: the same label, or
@@ -274,6 +292,7 @@ const periodRows = (
 	>,
 	artifact: StatisticsArtifact,
 	any = false,
+	areaCodes?: readonly string[],
 ) => {
 	const series = any
 		? database
@@ -288,8 +307,30 @@ const periodRows = (
 			`No statistics series matches ${artifact.measureId} on ${selector.geography}.`,
 		);
 	const byPeriod = new Map<string, Map<string, Row>>();
-	for (const id of series)
-		for (const row of rowsOf(database, id)) {
+	for (const id of series) {
+		if (areaCodes !== undefined) {
+			// Resolve a catalogue period against the whole series, even
+			// when this area has no row in the exact or extended period.
+			for (const row of storedPeriods(database, id)) {
+				const label = String(row.label);
+				if (!byPeriod.has(label)) byPeriod.set(label, new Map());
+			}
+		}
+		const rows =
+			areaCodes === undefined
+				? rowsOf(database, id)
+				: decodeRows(
+						database
+							.prepare(
+								`SELECT a.code, p.label AS period, o.value, o.lower, o.upper, st.slug AS status
+			FROM area a CROSS JOIN area_version v ON v.area_id = a.id
+			CROSS JOIN observation o ON o.area_version_id = v.id AND o.series_id = ?
+			JOIN period p ON p.id = o.period_id JOIN status st ON st.id = o.status_id
+			WHERE a.code IN (${areaCodes.map(() => "?").join(", ")})`,
+							)
+							.all(id, ...areaCodes),
+					);
+		for (const row of rows) {
 			let records = byPeriod.get(row.period);
 			if (!records) byPeriod.set(row.period, (records = new Map()));
 			const held = records.get(row.code);
@@ -308,6 +349,7 @@ const periodRows = (
 				);
 			held.value += row.value;
 		}
+	}
 	return byPeriod;
 };
 
@@ -352,15 +394,18 @@ export function rebuildStatisticsPeriods(
 	database: SqlReader,
 	selector: StatisticsSelector,
 	artifact: StatisticsArtifact,
+	areaCodes?: readonly string[],
 ) {
 	const byPeriod = selector.contest
 		? contestRows(database, selector, selector.contest)
-		: periodRows(database, selector, artifact);
+		: periodRows(database, selector, artifact, false, areaCodes);
 	for (const measure of selector.plus ?? []) {
 		const added = periodRows(
 			database,
 			{ ...selector, measure, dimensions: {}, sum: undefined },
 			artifact,
+			false,
+			areaCodes,
 		);
 		for (const [period, records] of byPeriod)
 			for (const row of records.values()) {
@@ -378,6 +423,7 @@ export function rebuildStatisticsPeriods(
 			{ ...selector, dimensions: {}, sum: undefined },
 			artifact,
 			true,
+			areaCodes,
 		);
 		for (const [period, held] of contests) {
 			let records = byPeriod.get(period);
@@ -404,6 +450,8 @@ export function rebuildStatisticsPeriods(
 				geography: selector.geography,
 			},
 			artifact,
+			false,
+			areaCodes,
 		);
 		const {
 			scale,
@@ -436,6 +484,8 @@ export function rebuildStatisticsPeriods(
 			database,
 			{ ...selector, measure, dimensions: {}, sum: undefined },
 			artifact,
+			false,
+			areaCodes,
 		);
 		const round = (value: number) => Number(value.toFixed(digits));
 		for (const [period, records] of byPeriod)
@@ -452,12 +502,12 @@ export function rebuildStatisticsPeriods(
 			for (const row of records.values()) row.status = selector.status;
 	if (selector.areasIn) {
 		const statement = database.prepare(
-			"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id WHERE r.geography = ? AND r.release = ?",
+			`SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id JOIN area_release r ON r.id = v.release_id WHERE r.geography = ? AND r.release = ?${areaCodes === undefined ? "" : ` AND a.code IN (${areaCodes.map(() => "?").join(", ")})`}`,
 		);
 		const listed = new Set(
 			selector.areasIn.flatMap((release) =>
 				statement
-					.all(selector.geography, release)
+					.all(selector.geography, release, ...(areaCodes ?? []))
 					.map((row) => String(row.code)),
 			),
 		);
@@ -484,25 +534,100 @@ export function rebuildStatisticsPeriods(
 						? 1
 						: 0,
 			)
-			.map(({ row, served, source }) => ({
-				areaCode: served,
-				...(source === undefined ? {} : { sourceAreaCode: source }),
-				...(row.category === undefined
-					? { value: row.value }
-					: { category: row.category }),
-				status: row.status,
-				...(row.lower === null || row.upper === null
-					? {}
-					: {
-							confidenceInterval: {
-								lower: row.lower,
-								upper: row.upper,
-							},
-						}),
-			}));
+			.map(({ row, served, source }) =>
+				servedRecord(row, served, source),
+			);
 		return { period, records };
 	});
 	return periods;
+}
+
+const servedRecord = (
+	row: ObservationFields,
+	areaCode: string,
+	sourceAreaCode?: string,
+) => ({
+	areaCode,
+	...(sourceAreaCode === undefined ? {} : { sourceAreaCode }),
+	...(row.category === undefined
+		? { value: row.value }
+		: { category: row.category }),
+	status: row.status,
+	...(row.lower === null || row.upper === null
+		? {}
+		: {
+				confidenceInterval: { lower: row.lower, upper: row.upper },
+			}),
+});
+
+/** The column's values are the table view's observed numeric records. */
+export const statisticsTableColumn = (
+	table: StatisticsTableSelector,
+	measureId: string,
+): StatisticsSelector | undefined => {
+	const column = table.columns[table.measures.indexOf(measureId)];
+	return (
+		column && {
+			...column,
+			datasetId: table.datasetId,
+			geography: table.geography,
+		}
+	);
+};
+
+/** A binary-ordered range of one published series, read through the area index. */
+export function readStatisticsPage(
+	database: SqlReader,
+	selector: StatisticsSelector,
+	period: string,
+	from: string | undefined,
+	limit: number,
+	tableColumn: boolean,
+) {
+	if (
+		selector.sum?.length ||
+		selector.areasIn ||
+		selector.ratio ||
+		selector.plus?.length ||
+		selector.halfWidth ||
+		selector.contest ||
+		selector.servedCodes ||
+		selector.absentAsZero
+	)
+		return undefined;
+	const ids = selectedStatisticsSeries(database, selector);
+	if (ids.length !== 1) return undefined;
+	const id = ids[0]!;
+	const periods = storedPeriods(database, id);
+	const label = statisticsPeriod(
+		period,
+		new Set(periods.map((row) => String(row.label))),
+	);
+	if (label === undefined) return [];
+	const stored = periods.find((row) => row.label === label)!;
+	// For small partitions an area-code scan can visit far more unrelated
+	// areas than it returns. Let those requests use the cached artifact.
+	if (Number(stored.areas) < 1_000) return undefined;
+	const rows = database
+		.prepare(
+			`SELECT a.code, o.value, o.lower, o.upper, st.slug AS status
+		FROM area a CROSS JOIN area_version v ON v.area_id = a.id
+		CROSS JOIN observation o ON o.area_version_id = v.id AND o.series_id = ? AND o.period_id = ?
+		JOIN status st ON st.id = o.status_id
+		WHERE a.code >= ?${tableColumn ? " AND o.value IS NOT NULL" : ""}
+		ORDER BY a.code LIMIT ?`,
+		)
+		.all(id, Number(stored.id), from ?? "", limit);
+	return rows
+		.map(decodeObservation)
+		.map((row) =>
+			tableColumn
+				? { areaCode: row.code, value: row.value, status: "observed" }
+				: servedRecord(
+						{ ...row, status: selector.status ?? row.status },
+						row.code,
+					),
+		);
 }
 
 /**

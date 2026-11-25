@@ -184,6 +184,7 @@ export const handleDataSeriesRoutes = ({
 		const observations = observationsFor(measureId, source, period, {
 			measureObservations,
 			seriesKey: selectedSeries?.id,
+			indexed: true,
 		});
 		if (!observations)
 			return problem(

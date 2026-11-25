@@ -3,12 +3,13 @@ import { readAtlasPayload } from "@uk-data-atlas/catalogue/node";
 import { sha256 } from "@uk-data-atlas/artifacts";
 import { FullDetailDownloads } from "@uk-data-atlas/geometry";
 import type { EvidenceManifest } from "@uk-data-atlas/catalogue/node";
-import { lazyValue } from "@uk-data-atlas/atlas-db";
+import { atlasDatabasePath, lazyValue } from "@uk-data-atlas/atlas-db";
 import { readAtlasPages } from "@uk-data-atlas/atlas-db";
 import { readAtlasLookups } from "@uk-data-atlas/atlas-db";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
+	readAtlasStatisticsReadPath,
 	readDataCatalog,
 	readMeasureObservations,
 } from "@uk-data-atlas/measures";
@@ -160,8 +161,7 @@ export type CatalogueOptions = {
 	crosswalkCacheBytes?: number;
 	observationCacheBytes?: number;
 	/**
-	 * Which observation artifacts are read from the statistics tables. The
-	 * API passes its reviewed read path; without one, the build output is read.
+	 * Override the compiled selectors for reading observation artifacts.
 	 */
 	statisticsReadPath?: StatisticsReadPath;
 	/**
@@ -236,9 +236,10 @@ const readCatalogues = (
 	const atlasLookups = stage("atlas-lookups", () =>
 		readAtlasLookups(repositoryRoot),
 	);
-	const exportManifest = stage("export-manifest", () =>
-		readExportManifest(repositoryRoot),
-	);
+	const { manifest: exportManifest, matchesRelease: exportsMatchRelease } =
+		stage("export-manifest", () =>
+			readExportManifest(repositoryRoot, atlasRelease),
+		);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
 			"Export manifest was not built from the current data catalogue.",
@@ -384,12 +385,21 @@ const readCatalogues = (
 	const lookupManifest = stage("lookup-manifest", () =>
 		readLookupManifest(repositoryRoot),
 	);
+	const databasePath = atlasDatabasePath(repositoryRoot);
+	const readPath =
+		options.statisticsReadPath ??
+		stage("statistics-read-path", () =>
+			readAtlasStatisticsReadPath(databasePath),
+		);
 	const measureObservations = stage("measure-observations", () =>
 		readMeasureObservations(
 			repositoryRoot,
 			dataCatalog,
 			options.observationCacheBytes,
-			options.statisticsReadPath,
+			readPath,
+			!options.statisticsReadPath && exportsMatchRelease
+				? exportManifest.exports
+				: undefined,
 		),
 	);
 	const measureCompatibilityInventory = stage("measure-compatibility", () =>
@@ -451,6 +461,7 @@ const readCatalogues = (
 			geographyResolver,
 		),
 		measureObservations,
+		atlasStatistics: { databasePath, readPath },
 		measureCompatibilityInventory,
 		analysisGeographyInventory,
 		analysisGeographyValidationInventory,

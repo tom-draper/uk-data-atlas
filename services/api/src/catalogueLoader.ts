@@ -3,7 +3,6 @@ import { assertMeasureDimensions } from "@uk-data-atlas/catalogue/node";
 import {
 	readStatisticsVocabulary,
 	MEASURE_DIMENSIONS_CONFIG,
-	readAtlasStatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import { type CatalogueOptions } from "@uk-data-atlas/atlas-loader";
 import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
@@ -11,9 +10,7 @@ import { atlasDatabasePath } from "@uk-data-atlas/atlas-db";
 export * from "@uk-data-atlas/catalogue/node";
 
 /**
- * The catalogues the API serves: the runtime's, read with the API's
- * statistics read path, and the measure vocabulary, refused unless it holds
- * every catalogue series.
+ * The runtime catalogues and the API's vocabulary for every catalogue series.
  */
 export const readApiCatalogues = (
 	repositoryRoot: string,
@@ -23,12 +20,7 @@ export const readApiCatalogues = (
 		config: MEASURE_DIMENSIONS_CONFIG,
 		vocabulary: readStatisticsVocabulary(atlasDatabasePath(repositoryRoot)),
 	};
-	const databasePath = atlasDatabasePath(repositoryRoot);
-	const readPath = readAtlasStatisticsReadPath(databasePath);
-	const catalogues = readRuntimeApiCatalogues(repositoryRoot, {
-		statisticsReadPath: readPath,
-		...options,
-	});
+	const catalogues = readRuntimeApiCatalogues(repositoryRoot, options);
 	assertMeasureDimensions(
 		catalogues.dataCatalog,
 		dimensions.config,
@@ -37,10 +29,6 @@ export const readApiCatalogues = (
 	return {
 		...catalogues,
 		measureDimensions: dimensions,
-		atlasStatistics: {
-			databasePath,
-			readPath: options.statisticsReadPath ?? readPath,
-		},
 	};
 };
 

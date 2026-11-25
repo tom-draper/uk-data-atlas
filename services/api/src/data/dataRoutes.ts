@@ -207,6 +207,7 @@ export const handleDataRoutes = ({
 	const observations = observationsFor(measureId, source, period as string, {
 		measureObservations,
 		seriesKey: selectedSeries?.id,
+		indexed: true,
 	});
 	if (!observations) {
 		return problem(
@@ -215,10 +216,10 @@ export const handleDataRoutes = ({
 			`The observation artifact for ${publicId} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	}
-	const sourceRecords = observations.records;
 	if (
 		unitMode === "canonical" &&
-		!sourceRecords.every(isNumericObservation)
+		!observations.numeric &&
+		!observations.records.every(isNumericObservation)
 	) {
 		return problem(
 			422,
@@ -243,25 +244,32 @@ export const handleDataRoutes = ({
 		observations,
 		geometry,
 	});
-	const matches = areaCode
-		? sourceRecords.filter((record) => record.areaCode === areaCode)
-		: sourceRecords;
-	const page = paginate(parsedUrl, matches, {
-		keyOf: (record) => record.areaCode,
-		subject: `${publicId} query`,
-		scope: sourceCursorScope(
-			releaseId,
-			segments,
-			selectedSeries?.id ?? measureId,
-			source,
-			period,
-			areaCode,
-			geometry?.boundaryRelease,
-			include,
-			unitMode,
-			requestedFormat,
-		),
-	});
+	const page = paginate(
+		parsedUrl,
+		() => {
+			if (!areaCode) return observations.records;
+			return observations.records.filter(
+				(record) => record.areaCode === areaCode,
+			);
+		},
+		{
+			keyOf: (record) => record.areaCode,
+			subject: `${publicId} query`,
+			readFrom: areaCode ? undefined : observations.pageFrom,
+			scope: sourceCursorScope(
+				releaseId,
+				segments,
+				selectedSeries?.id ?? measureId,
+				source,
+				period,
+				areaCode,
+				geometry?.boundaryRelease,
+				include,
+				unitMode,
+				requestedFormat,
+			),
+		},
+	);
 	if ("problem" in page) return page.problem;
 	const { items: records, nextCursor } = page;
 	const recordsWithAreas =

@@ -107,12 +107,17 @@ export type Page<T> = { items: T[]; nextCursor: string | null };
  */
 export const paginate = <T>(
 	parsedUrl: URL,
-	items: Pageable<T>,
+	source: Pageable<T> | (() => Pageable<T>),
 	options: {
 		keyOf: (item: T) => string;
 		/** What is paged, such as `ranking`, for a cursor that names none of it. */
 		subject: string;
 		scope: string;
+		/** Reads starting at the cursor's key, including the key itself. */
+		readFrom?: (
+			key: string | undefined,
+			limit: number,
+		) => readonly T[] | undefined;
 	},
 ): Page<T> | { problem: ApiResponse } => {
 	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
@@ -125,6 +130,29 @@ export const paginate = <T>(
 	const cursor = readCursor(parsedUrl, options.scope);
 	if ("problem" in cursor) return cursor;
 	const { key } = cursor;
+	const invalidKey = () => ({
+		problem: invalidCursor(
+			`cursor is not valid for this ${options.subject}.`,
+		),
+	});
+	const start = key === undefined ? 0 : 1;
+	const bounded = options.readFrom?.(key, start + pageSize + 1);
+	if (bounded) {
+		if (start && (!bounded.length || options.keyOf(bounded[0]!) !== key))
+			return invalidKey();
+		const page = bounded.slice(start, start + pageSize);
+		return {
+			items: page,
+			nextCursor:
+				bounded.length > start + pageSize
+					? cursorFor(
+							options.scope,
+							options.keyOf(page[pageSize - 1]!),
+						)
+					: null,
+		};
+	}
+	const items = typeof source === "function" ? source() : source;
 	const offset =
 		key === undefined
 			? 0
@@ -132,12 +160,7 @@ export const paginate = <T>(
 					? items.positionOf(key)
 					: items.findIndex((item) => options.keyOf(item) === key)) +
 				1;
-	if (key !== undefined && offset === 0)
-		return {
-			problem: invalidCursor(
-				`cursor is not valid for this ${options.subject}.`,
-			),
-		};
+	if (key !== undefined && offset === 0) return invalidKey();
 	const page = items.slice(offset, offset + pageSize);
 	const last = page.at(-1);
 	return {

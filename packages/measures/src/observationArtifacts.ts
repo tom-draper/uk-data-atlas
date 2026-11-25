@@ -10,12 +10,33 @@ import { measureSeriesKeySourceKey } from "./measureDimensions.ts";
 export type ObservationArtifacts = {
 	measureObservations?: AnyMeasureObservationArtifact[];
 	seriesKey?: string;
+	indexed?: boolean;
 };
 
 const seriesObservations = new WeakMap<
 	AnyMeasureObservationArtifact[],
 	ReadonlyMap<string, AnyMeasureObservationArtifact>
 >();
+
+type IndexedObservationPeriod = {
+	contentHash: string;
+	numeric: true;
+	recordFor(areaCode: string): MeasureObservation | undefined;
+	pageFrom(
+		areaCode: string | undefined,
+		limit: number,
+	): MeasureObservation[] | undefined;
+};
+
+const indexedPeriods = new WeakMap<
+	object,
+	(period: string) => IndexedObservationPeriod | undefined
+>();
+
+export const registerIndexedPeriods = (
+	artifact: object,
+	read: (period: string) => IndexedObservationPeriod | undefined,
+) => indexedPeriods.set(artifact, read);
 
 export const registerSeriesObservations = (
 	artifacts: AnyMeasureObservationArtifact[],
@@ -47,19 +68,36 @@ export const observationsFor = (
 	| ({ artifact: string; contentHash: string } & {
 			readonly records: MeasureObservation[];
 			recordFor(areaCode: string): MeasureObservation | undefined;
+			pageFrom?: IndexedObservationPeriod["pageFrom"];
+			numeric?: true;
 	  })
 	| undefined => {
 	const all = artifacts.measureObservations ?? [];
 	const artifact = artifacts.seriesKey
 		? seriesObservationFor(all, artifacts.seriesKey, source)
 		: undefined;
-	const held = artifact?.periods.find(
+	if (!artifact) return undefined;
+	const name = observationArtifactName(measureId, source);
+	const indexed = artifacts.indexed
+		? indexedPeriods.get(artifact)?.(period)
+		: undefined;
+	if (indexed)
+		return {
+			artifact: name,
+			...indexed,
+			get records() {
+				return artifact.periods.find(
+					(candidate) => candidate.period === period,
+				)!.records;
+			},
+		};
+	const held = artifact.periods.find(
 		(candidate) => candidate.period === period,
 	);
-	if (!artifact || !held) return undefined;
+	if (!held) return undefined;
 	const lookup = periodRecordLookup(held);
 	return {
-		artifact: observationArtifactName(measureId, source),
+		artifact: name,
 		contentHash: artifact.contentHash,
 		get records() {
 			return held.records;

@@ -9,6 +9,9 @@ import type { LookupManifest } from "@uk-data-atlas/areas";
 import type { MeasureCompatibilityInventory } from "@uk-data-atlas/measures";
 import type { ValidationReport } from "@uk-data-atlas/catalogue/node";
 import { readPublicManifest } from "@uk-data-atlas/atlas-db";
+import { publicPath } from "@uk-data-atlas/atlas-db";
+import { readFileSync } from "node:fs";
+import { sha256 } from "@uk-data-atlas/artifacts";
 
 export const readAtlasRelease = (repositoryRoot: string): AtlasRelease =>
 	readPublicManifest<AtlasRelease>(
@@ -28,13 +31,23 @@ export const readValidationReport = (
 		"validation report",
 	);
 
-export const readExportManifest = (repositoryRoot: string): ExportManifest =>
-	readPublicManifest<ExportManifest>(
-		repositoryRoot,
-		"export-manifest.json",
-		"exports",
-		"export manifest",
-	);
+export const readExportManifest = (
+	repositoryRoot: string,
+	release?: AtlasRelease,
+) => {
+	const path = publicPath(repositoryRoot, "export-manifest.json");
+	const text = readFileSync(path, "utf8");
+	const manifest = JSON.parse(text) as ExportManifest;
+	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.exports))
+		throw new Error(`Invalid export manifest at ${path}`);
+	const expected = release?.artifacts.find(
+		({ id }) => id === "export-manifest",
+	)?.contentHash;
+	return {
+		manifest,
+		matchesRelease: expected !== undefined && sha256(text) === expected,
+	};
+};
 
 export const readLookupManifest = (repositoryRoot: string): LookupManifest =>
 	readPublicManifest<LookupManifest>(
