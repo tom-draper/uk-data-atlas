@@ -30,6 +30,7 @@ import {
 	writeSchemaDocs,
 	writeSeriesAttribution,
 	writeCrosswalkChains,
+	writeAreaPeriodChange,
 	writeSeriesCoverage,
 	writeSearchTable,
 } from "../storage/index.ts";
@@ -273,6 +274,13 @@ export function assembleAtlas(
 				// answer, before ANALYZE.
 				writeSeriesCoverage(database);
 				writeSeriesAttribution(database);
+				// After the ranking and the boundary change extents: the change
+				// in each measure on fixed boundaries, and how far a published
+				// change is a boundary move.
+				const changes = writeAreaPeriodChange(database);
+				buildLog.info(
+					`Area period changes: ${formatCount(changes.rows)} pairs, ${formatCount(changes.spans)} boundary spans, ${formatCount(changes.breaks)} method breaks`,
+				);
 			}
 			// After the crosswalks and their weights, which the events read.
 			// Dated by the ONS Code History Database where it has the change,
