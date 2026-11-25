@@ -66,7 +66,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "published-and-converted",
-		body: "series.method is 'published' for figures as the publisher released them, or 'converted' for figures the atlas moved onto a newer boundary release through a crosswalk. A converted series names its inputs in series_input, its route in series_crosswalk, and its rule, weight basis and quality in series_conversion: exact_share is the share of its values that came from regrouping whole areas (1 = no estimation), and coverage is the share of target areas that received a value. Converted values have status 'derived' (exact regrouping) or 'estimated' (split by a weight, with lower and upper bounds). series_gap says why a converted area or period has no value. A question about one area on one boundary release should usually use one method; when both exist, prefer published, and say when a figure is converted. A 'modelled' series is an estimate the atlas made from several sources, named by its model in series_model: model says what it is, the share-alike licence it carries (licence_id), and model_input what it read. The notional 2019 general election on the 2024 constituencies is modelled, with key suffix ~notional-open or ~notional-sharealike; a seat made of whole 2019 seats has 'derived' values, any other 'estimated' values with bounds. Each model also has notional valid-votes and majority on 2019's period, and party-vote-share-change (2024 share less notional 2019 share, in points, Reform against the Brexit Party) on 2024's; swing is half the difference of two parties' changes. Say when a figure is modelled, and do not mix the two notional models. A 'derived' series is a rate the atlas rebuilt from two counts on the same boundaries, as the sum of the numerator over the sum of the denominator, never an average of rates: series_input names both, and derived_from_id is the numerator series. A rate the publisher released on the same boundaries is preferred to a derived one, and a derived one to a converted one.",
+		body: "series.method is 'published' for figures as the publisher released them, or 'converted' for figures the atlas moved onto a newer boundary release through a crosswalk. A converted series names its inputs in series_input, its route in series_crosswalk, and its rule, weight basis and quality in series_conversion: exact_share is the share of its values that came from regrouping whole areas (1 = no estimation), and coverage is the share of target areas that received a value. Converted values have status 'derived' (exact regrouping) or 'estimated' (split by a weight, with lower and upper bounds). series_gap says why a converted area or period has no value. A question about one area on one boundary release should usually use one method; when both exist, prefer published, and say when a figure is converted. A 'modelled' series is an estimate the atlas made from several sources, named by its model in series_model: model says what it is, the share-alike licence it carries (licence_id), and model_input what it read. The notional 2019 general election on the 2024 constituencies is modelled, with key suffix ~notional-open or ~notional-sharealike; a seat made of whole 2019 seats has 'derived' values, any other 'estimated' values with bounds. Each model also has notional valid-votes and majority on 2019's period, and party-vote-share-change (2024 share less notional 2019 share, in points, Reform against the Brexit Party) on 2024's; swing is half the difference of two parties' changes. Say when a figure is modelled, and do not mix the two notional models. A 'derived' series is a rate the atlas rebuilt from two counts on the same boundaries, as the sum of the numerator over the sum of the denominator, never an average of rates: series_input names both, derived_from_id is the numerator series, and rate_input holds both counts of every value, the denominator's year (an earlier year when the numerator's is not held, flagged by earlier_year) and the accuracy of each. A rate the publisher released on the same boundaries is preferred to a derived one, and a derived one to a converted one.",
 	},
 	{
 		topic: "periods-and-status",
@@ -880,6 +880,32 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			note: "Anything else a reader should know.",
 		},
 	},
+	rate_input: {
+		audience: "reference",
+		description:
+			"The two counts behind each value of a rate the atlas rebuilt (series.method 'derived'): the numerator and the denominator on the same area of the same boundary release, where the denominator came from, and how accurate each is. The rate is per times numerator over denominator, so a rate for a larger area is the sum of its counts over the sum of its denominators, never an average of rates.",
+		columns: {
+			series_id: "The rebuilt rate series (series.id).",
+			area_version_id: "The area (area_version.id).",
+			period_id:
+				"The period of the numerator and of the rate (period.id).",
+			numerator:
+				"The count the rate is of, as the default view gives it.",
+			denominator:
+				"The population it is over: the default view's total, or the sum of the single years of age the rate names.",
+			denominator_dataset_id:
+				"The dataset of the denominator (dataset.id).",
+			denominator_period_id:
+				"The year of the denominator (period.id): the calendar year of the middle of the numerator's period, or the latest earlier year held.",
+			earlier_year:
+				"1 when the denominator is from an earlier year than the numerator's because that year is not held. A later year is never used.",
+			numerator_accuracy:
+				"How the numerator was got on these boundaries: 'published', 'regrouped', 'estimated' or 'modelled', as in v_area_period_change.",
+			denominator_accuracy: "As numerator_accuracy, for the denominator.",
+			accuracy:
+				"The worse of numerator_accuracy and denominator_accuracy: the accuracy of the rate.",
+		},
+	},
 	series_estimate: {
 		audience: "reference",
 		description:
@@ -1519,12 +1545,12 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			percent_change:
 				"change as a percentage of from_value's size. Null where from_value is 0, or where the measure is itself a percentage (change is then in percentage points).",
 			from_accuracy:
-				"How the earlier value was got on these boundaries. 'published': as published. 'regrouped': converted from whole areas. 'estimated': converted with at least one area split by weight (series_estimate). 'modelled': a model's estimate.",
+				"How the earlier value was got on these boundaries. 'published': as published. 'regrouped': converted from whole areas. 'estimated': converted with at least one area split by weight (series_estimate). 'modelled': a model's estimate. A rate the atlas rebuilt takes the worse of its numerator and denominator (rate_input).",
 			to_accuracy: "As from_accuracy, for the later value.",
 			accuracy:
 				"The worse of from_accuracy and to_accuracy, in the order published, regrouped, estimated, modelled.",
 			boundary_check:
-				"Whether published_change could be worked out. 'published': both ends were published for this code, so published_change is set. 'modelled': an end is modelled, so there is nothing published to compare. 'not-traced': an end is converted and its published counterpart is not known. 'code-not-published': the publisher had no area with this code at an end (a council created later, or a series published only for smaller areas). 'value-not-published': the code exists but the counterpart has no value for it in that period.",
+				"Whether published_change could be worked out. 'published': both ends were published for this code, so published_change is set. 'modelled': an end is modelled, so there is nothing published to compare. 'not-traced': an end is converted and its published counterpart is not known, or an end is a rate the atlas rebuilt, which has no published counterpart. 'code-not-published': the publisher had no area with this code at an end (a council created later, or a series published only for smaller areas). 'value-not-published': the code exists but the counterpart has no value for it in that period.",
 			from_published_value:
 				"The earlier value as published, on the boundaries of its own release. Null unless boundary_check is 'published'.",
 			to_published_value:
