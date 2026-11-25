@@ -13,6 +13,7 @@ import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/places/postcodeRoutes";
 import { validateCacheRelease } from "../src/cacheRelease";
 import {
 	errorFields,
+	requestErrorFields,
 	jsonLog,
 	readServeConfiguration,
 } from "../src/serverOptions";
@@ -90,14 +91,16 @@ if (cacheFailure) {
 }
 
 function startWorker() {
-	// An exception outside a request leaves the process in an unknown state, so it
-	// is logged where the request failures are and the process ends for its
-	// supervisor to restart.
+	let serving = false;
+	// Once requests can run, even a detached task's exception may carry input.
+	// Keep startup diagnostics for configuration and catalogue failures.
+	const fatalErrorFields = (error: unknown) =>
+		serving ? requestErrorFields(error) : errorFields(error);
 	process.on("uncaughtException", (error) => {
 		log({
 			level: "error",
 			event: "process.uncaught",
-			error: errorFields(error),
+			error: fatalErrorFields(error),
 		});
 		process.exit(1);
 	});
@@ -105,7 +108,7 @@ function startWorker() {
 		log({
 			level: "error",
 			event: "process.unhandled",
-			error: errorFields(reason),
+			error: fatalErrorFields(reason),
 		});
 		process.exit(1);
 	});
@@ -167,6 +170,7 @@ function startWorker() {
 	server.once("close", () => collector?.close());
 
 	server.listen(configuration.port, configuration.host, () => {
+		serving = true;
 		log({
 			level: "info",
 			event: "server.listening",

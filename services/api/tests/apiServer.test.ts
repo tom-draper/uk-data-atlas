@@ -189,13 +189,15 @@ test("identifies every response by its release and a request id", async (t) => {
 			route,
 			status,
 			requestId:
-				requestId === "client-trace-42" ? requestId : "generated",
+				requestId === sha256("client-trace-42")
+					? requestId
+					: "generated",
 		})),
 		[
 			{
 				route: "/v1/boundaries",
 				status: 200,
-				requestId: "client-trace-42",
+				requestId: sha256("client-trace-42"),
 			},
 			{ route: "/v1/boundaries", status: 200, requestId: "generated" },
 			{
@@ -207,6 +209,37 @@ test("identifies every response by its release and a request id", async (t) => {
 		],
 	);
 	assert.ok(logged.every((entry) => typeof entry.durationMs === "number"));
+});
+
+test("logs operation templates without raw location inputs", async (t) => {
+	const { get, logged } = await serve(t, { accessLog: true });
+	await get("/v1/postcodes/SW1A%201AA", {
+		headers: { "x-request-id": "SW1A1AA" },
+	});
+	await get("/v1/areas/ward/2023-05-uk-bgc/E05000001");
+	await get("/v1/areas:contains?lat=51.432123&lon=-0.123789");
+	await get("/v1/data/population/value?place=Private%20Place");
+	await get("/v1/areas:validate?geography=ward&release=2023-05-uk-bgc", {
+		method: "POST",
+		headers: { "content-type": "application/json" },
+		body: JSON.stringify({ values: ["E05000099"] }),
+	});
+	await get("/private/Unknown%20Place");
+	assert.deepEqual(
+		logged.map(({ route }) => route),
+		[
+			"/v1/postcodes/{postcode}",
+			"/v1/areas/{geography}/{release}/{code}",
+			"/v1/areas:contains",
+			"/v1/data/{measure-id}/value",
+			"/v1/areas:validate",
+			"unmatched",
+		],
+	);
+	assert.doesNotMatch(
+		JSON.stringify(logged),
+		/SW1A|E05000001|E05000099|Private|51\.432123|-0\.123789|Unknown|\bpath\b/,
+	);
 });
 
 test("refuses an undeclared query parameter and suggests the declared spelling", async (t) => {
@@ -230,7 +263,11 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 	const context = testContext({ openapiDocument, operationMatcher });
 	const failing = Object.defineProperty({ ...context }, "atlasRelease", {
 		get() {
-			if (broken) throw new Error("artifact went missing");
+			if (broken) {
+				const error = new Error("artifact went missing near SW1A 1AA");
+				error.name = "Private Place";
+				throw error;
+			}
 			return atlasRelease;
 		},
 	});
@@ -261,9 +298,10 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 	assert.equal(entry!.event, "request.failed");
 	assert.equal(entry!.requestId, body.requestId);
 	assert.equal(entry!.route, "/v1/boundaries");
-	assert.match(
-		(entry!.error as { stack: string }).stack,
-		/artifact went missing/,
+	assert.deepEqual(entry!.error, { kind: "exception" });
+	assert.doesNotMatch(
+		JSON.stringify(entry),
+		/artifact went missing|SW1A|Private Place/,
 	);
 	assert.equal(reported.length, 1);
 
@@ -1120,20 +1158,23 @@ test(
 		});
 		await new Promise((resolve) => setTimeout(resolve, 50));
 		assert.equal(
-			logged.some((entry) => entry.requestId === "interrupted-export"),
+			logged.some(
+				(entry) => entry.requestId === sha256("interrupted-export"),
+			),
 			false,
 		);
 		assert.equal((await get("/v1/boundaries")).status, 503);
 		download.destroy();
 		for (
 			let waited = 0;
-			!logged.some((entry) => entry.requestId === "interrupted-export") &&
-			waited < 2000;
+			!logged.some(
+				(entry) => entry.requestId === sha256("interrupted-export"),
+			) && waited < 2000;
 			waited += 20
 		)
 			await new Promise((resolve) => setTimeout(resolve, 20));
 		const cancelled = logged.filter(
-			(entry) => entry.requestId === "interrupted-export",
+			(entry) => entry.requestId === sha256("interrupted-export"),
 		);
 		assert.equal(cancelled.length, 1);
 		assert.equal(cancelled[0].status, 499);

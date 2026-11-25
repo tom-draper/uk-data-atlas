@@ -2366,16 +2366,20 @@ privacy rules. `/metrics` carries the same dimensions as
 
 ### Logs and errors
 
-`pnpm start` writes one JSON object per line to standard output. Each request
-is logged with its request id, method, operation template, path, status,
-duration, bytes and any problem `code`. A request that throws is answered
-`500` with a `requestId` and no internal detail, logged at `error` with its
-stack, and passed to `onError`, where an error tracker can be attached; the
-server keeps serving. A route answering `5xx` itself, such as a catalogue not
-built, is logged at `warn`. An exception outside a request is logged and ends
-the process for its supervisor to restart. A client's `X-Request-Id` is used
-when it is 1 to 128 letters, digits and `._:-`, so its logs and the server's
-line up.
+`pnpm start` writes one JSON object per line to standard output. Request logs
+carry the request id, method, operation template, status, duration, bytes and
+any problem `code`. They omit the concrete URL, query, body and request
+headers. A request that throws gets a `500` with a `requestId`. Its log entry
+includes a fixed error kind. The opt-in `onError` hook receives the original
+error and request metadata, including the concrete path and request id.
+Scrub these before forwarding them to an error tracker.
+A route returning `5xx` itself, such as an unavailable catalogue, is logged
+at `warn`. Once the worker is serving, fatal errors also log only the error
+kind before the worker exits.
+
+The response echoes a well-formed client `X-Request-Id`. To find it in the
+logs, search for `sha256:` followed by the lowercase hexadecimal SHA-256
+of that id. Server-generated ids appear verbatim.
 
 ### Limits
 

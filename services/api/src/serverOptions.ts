@@ -33,8 +33,8 @@ export type ServerOptions = {
 	/** Log every request, not only failures. */
 	accessLog?: boolean;
 	/**
-	 * Called with every exception a request raised, after it is logged and
-	 * answered 500: the place to forward it to an error tracker.
+	 * Opt-in exception hook. Scrub the original error and request metadata
+	 * before forwarding them to an error tracker.
 	 */
 	onError?: (
 		error: unknown,
@@ -322,3 +322,8 @@ export const errorFields = (error: unknown) =>
 	error instanceof Error
 		? { name: error.name, message: error.message, stack: error.stack }
 		: { name: "NonError", message: String(error) };
+
+/** Error names, messages and stack text can all contain caller inputs. */
+export const requestErrorFields = (error: unknown) => ({
+	kind: error instanceof Error ? "exception" : "non_error",
+});
