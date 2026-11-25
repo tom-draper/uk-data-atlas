@@ -111,6 +111,11 @@ const region = (code: string): OfficialPlace => ({
 	lookup: REGIONS,
 	code,
 });
+const combinedAuthority = (code: string): OfficialPlace => ({
+	kind: "combined-authority",
+	lookup: COMBINED_AUTHORITIES,
+	code,
+});
 const county = (code: string): OfficialPlace => ({
 	kind: "county",
 	lookup: COUNTIES,
@@ -138,11 +143,7 @@ export const OFFICIAL_PLACES: Record<string, OfficialPlace> = {
 	London: region("E12000007"),
 	"South East": region("E12000008"),
 	"South West": region("E12000009"),
-	"Greater Manchester": {
-		kind: "combined-authority",
-		lookup: COMBINED_AUTHORITIES,
-		code: "E47000001",
-	},
+	"Greater Manchester": combinedAuthority("E47000001"),
 	Gloucestershire: county("E10000013"),
 	Hertfordshire: county("E10000015"),
 	Norfolk: county("E10000020"),
