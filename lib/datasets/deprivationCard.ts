@@ -33,4 +33,11 @@ export interface DeprivationCardConfig extends DeprivationIndex {
 	headlineMeasure: string;
 	/** Present when the measures after the headline are domain scores. */
 	domains?: { attribution: string };
+	/** Earlier editions, listed beneath the latest and never as a trend. */
+	earlierEditions?: {
+		/** The record field holding each small area's published rank. */
+		rankField: string;
+		/** Each earlier edition with how many small areas it ranks. */
+		editions: { year: number; areaCount: number }[];
+	};
 }

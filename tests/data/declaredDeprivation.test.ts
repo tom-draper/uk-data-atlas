@@ -142,4 +142,15 @@ describe("deprivation cards", () => {
 		expect(definitionOf("imd").chart.deprivation?.domains).toBeDefined();
 		expect(definitionOf("wimd").chart.deprivation?.domains).toBeUndefined();
 	});
+
+	it("lists IMD 2015 beneath the English index only", () => {
+		expect(definitionOf("imd").chart.deprivation?.earlierEditions).toEqual({
+			rankField: "imdRank",
+			editions: [{ year: 2015, areaCount: 32844 }],
+		});
+		for (const type of ["wimd", "simd", "nimdm"])
+			expect(
+				definitionOf(type).chart.deprivation?.earlierEditions,
+			).toBeUndefined();
+	});
 });

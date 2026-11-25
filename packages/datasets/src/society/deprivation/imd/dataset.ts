@@ -371,6 +371,10 @@ export const imd = defineDataset<IMDDataset>({
 			domains: {
 				attribution: "MHCLG. English Indices of Deprivation 2025.",
 			},
+			earlierEditions: {
+				rankField: "imdRank",
+				editions: [{ year: 2015, areaCount: EDITIONS["2015"].areas }],
+			},
 		},
 		measures,
 		aggregation: {
