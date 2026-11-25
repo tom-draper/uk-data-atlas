@@ -11,7 +11,10 @@ import {
 } from "@/lib/datasets/deprivationEditions";
 import type { SelectedArea } from "@/lib/types/areas";
 
-const config = {
+type EditionsConfig = Parameters<typeof earlierEditionRows>[0]["config"];
+type EditionDatasets = Parameters<typeof earlierEditionRows>[0]["datasets"];
+
+const config: EditionsConfig = {
 	areaType: "lsoa",
 	summaryField: "ladStats",
 	decileField: "imdDecile",
@@ -19,7 +22,7 @@ const config = {
 		rankField: "imdRank",
 		editions: [{ year: 2015, areaCount: 32844 }],
 	},
-} as const;
+};
 
 // E01008162 kept its code from 2011 to 2021; E01024027 was split, so its
 // 2021 children such as E01034985 are new codes. E06000060 is an authority
@@ -48,7 +51,10 @@ const datasets = { "2015": edition2015, "2025": latest };
 const area = (type: SelectedArea["type"], code: string) =>
 	({ type, code, data: {} }) as unknown as SelectedArea;
 
-const rowsFor = (selectedArea: SelectedArea | null, sets = datasets) =>
+const rowsFor = (
+	selectedArea: SelectedArea | null,
+	sets: EditionDatasets = datasets,
+) =>
 	earlierEditionRows({ config, latest, datasets: sets, selectedArea });
 
 describe("earlier deprivation editions", () => {
