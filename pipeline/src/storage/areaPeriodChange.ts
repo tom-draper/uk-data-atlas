@@ -6,6 +6,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { STANDARD_RELEASES } from "../conversion/standardPlan.ts";
 import { MATERIAL_SHARE } from "./areaChangeExtent.ts";
+import { ensureRateTables } from "./countRates.ts";
 
 /**
  * How much an area changed between two periods on one set of boundaries, and
@@ -86,10 +87,14 @@ CREATE TABLE measure_break (
 	PRIMARY KEY (measure_id, dataset_id, period_id, kind)
 ) WITHOUT ROWID, STRICT;`;
 
+const periodOf = (side: "f" | "t") =>
+	`c.${side === "f" ? "from" : "to"}_period_id`;
+
 /**
  * The accuracy of one end, best first: `published` on these boundaries,
  * `regrouped` (converted, every value whole areas), `estimated` (converted
- * with a split, a `series_estimate` row) and `modelled`.
+ * with a split, a `series_estimate` row), `modelled`, and for a rate the
+ * atlas rebuilt the worse of its numerator and denominator (`rate_input`).
  */
 const endAccuracy = (side: "f" | "t") => `CASE ${side}s.method
     WHEN 'published' THEN 'published'
@@ -97,10 +102,10 @@ const endAccuracy = (side: "f" | "t") => `CASE ${side}s.method
       SELECT 1 FROM series_estimate e WHERE e.series_id = ${side}s.id
         AND e.area_version_id = c.area_version_id AND e.period_id = c.${side === "f" ? "from" : "to"}_period_id)
       THEN 'estimated' ELSE 'regrouped' END
+    WHEN 'derived' THEN coalesce((SELECT r.accuracy FROM rate_input r
+      WHERE r.series_id = ${side}s.id AND r.area_version_id = c.area_version_id
+        AND r.period_id = ${periodOf(side)}), 'modelled')
     ELSE 'modelled' END`;
-
-const periodOf = (side: "f" | "t") =>
-	`c.${side === "f" ? "from" : "to"}_period_id`;
 
 /** Whether a converted end has a published counterpart to compare with. */
 const traced = (side: "f" | "t") => `CASE ${side}s.method
@@ -421,6 +426,7 @@ export const writeAreaPeriodChange = (
 	database: DatabaseSync,
 ): AreaPeriodChangeSummary => {
 	database.exec(TABLES);
+	ensureRateTables(database);
 	writeMeasureBreaks(database);
 	writeCounterparts(database);
 	writeChanges(database, targetReleaseIds(database));
