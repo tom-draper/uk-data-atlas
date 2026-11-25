@@ -430,13 +430,20 @@ const pages = (table: ParquetTable): Buffer[] => {
 // percent of its size.
 const PAGE_GZIP: ZlibOptions = { level: 6 };
 
+// The gzip header's OS byte (the tenth) names the platform that wrote it, so
+// macOS would write 19 where Linux writes 3, and the same table would hash
+// differently. Pinning it to Unix keeps a file's bytes the same on every host.
+const GZIP_OS_BYTE = 9;
+const GZIP_OS_UNIX = 3;
+const pinOs = (page: Buffer): Buffer => {
+	page[GZIP_OS_BYTE] = GZIP_OS_UNIX;
+	return page;
+};
+const gzipPage = (body: Buffer): Buffer => pinOs(gzipSync(body, PAGE_GZIP));
+
 export const writeParquet = (table: ParquetTable): Buffer => {
 	const bodies = pages(table);
-	return assemble(
-		table,
-		bodies,
-		bodies.map((body) => gzipSync(body, PAGE_GZIP)),
-	);
+	return assemble(table, bodies, bodies.map(gzipPage));
 };
 
 /**
@@ -450,7 +457,9 @@ export const writeParquetAsync = async (
 	return assemble(
 		table,
 		bodies,
-		await Promise.all(bodies.map((body) => gzipAsync(body, PAGE_GZIP))),
+		(
+			await Promise.all(bodies.map((body) => gzipAsync(body, PAGE_GZIP)))
+		).map(pinOs),
 	);
 };
 
@@ -635,7 +644,7 @@ export class ParquetFileWriter {
 		const group = encodeRowGroup(
 			table,
 			bodies,
-			bodies.map((body) => gzipSync(body, PAGE_GZIP)),
+			bodies.map(gzipPage),
 			this.offset,
 		);
 		for (const chunk of group.chunks) writeFileSync(this.fd, chunk);
