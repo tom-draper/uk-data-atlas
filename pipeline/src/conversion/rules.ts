@@ -89,7 +89,11 @@ const REFUSALS: Readonly<Record<string, string>> = {
  */
 const MEASURE_REFUSALS: Readonly<Record<string, string>> = {
 	"claimant-rate":
-		"A ratio of claimants to residents aged 16 to 64. The claimants are held, but the 16 to 64 population is not held as a measure, so the rate cannot be rebuilt.",
+		"A ratio of claimants to residents aged 16 to 64. A rate is not converted from its parts: the atlas rebuilds it after conversion, as a derived series, on each release that holds the claimants and single years of age (pipeline/src/storage/countRates.ts).",
+	"recorded-crimes-per-1000-residents":
+		"Computed by the atlas on each release from the recorded crimes and the population held there (pipeline/src/storage/countRates.ts), so it is never converted.",
+	"public-ev-chargers-per-10000-residents":
+		"Computed by the atlas on each release from the chargers and the population held there (pipeline/src/storage/countRates.ts), so it is never converted.",
 	"children-in-relative-low-income-rate":
 		"A ratio of children in low income families to children under 16. The numerator is held, but the count of children under 16 is not held as a measure.",
 	"households-in-temporary-accommodation-rate":
