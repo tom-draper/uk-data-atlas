@@ -3,6 +3,7 @@ import type { ChartDatasetDefinition } from "@/lib/datasets";
 import { declaredRanking, formatDisplay } from "@/lib/datasets/declared";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import localAuthorityCounty from "@/lib/data/boundaries/localAuthorityCounty.json";
 import {
 	ATLAS_LOCATIONS,
 	ATLAS_MAPS,
@@ -63,6 +64,7 @@ export type MapRanking = {
 
 const RANKED_LEVELS = new Set<string>([
 	"localAuthority",
+	"countyAndUnitaryAuthority",
 	"ward",
 	"constituency",
 	"itl3",
@@ -105,6 +107,7 @@ export const LEVEL_NOUNS: Readonly<
 	Record<RankingLevel, { one: string; many: string }>
 > = {
 	localAuthority: { one: "local authority", many: "local authorities" },
+	countyAndUnitaryAuthority: { one: "council", many: "councils" },
 	ward: { one: "ward", many: "wards" },
 	constituency: { one: "constituency", many: "constituencies" },
 	itl3: { one: "area", many: "areas" },
@@ -118,6 +121,14 @@ export const rankedAreaNoun = (map: AtlasMap) =>
 export const RANKED_MAPS: readonly AtlasMap[] = ATLAS_MAPS.filter(
 	(map) => rankingSource(map) !== null,
 );
+
+/** Each county's districts; a unitary council is its own. */
+const COUNTY_DISTRICTS = Object.entries(
+	localAuthorityCounty as Record<string, string>,
+).reduce((counties, [district, county]) => {
+	counties.set(county, [...(counties.get(county) ?? []), district].sort());
+	return counties;
+}, new Map<string, string[]>());
 
 const editionYear = (key: string, edition: Edition) =>
 	edition.year ?? (/^\d{4}$/.test(key) ? Number(key) : null);
@@ -185,10 +196,14 @@ export function compileRanking(
 		: Object.entries(edition.data).flatMap(([code, record]) => {
 				const value = valueIn(edition, code);
 				if (value === null) return [];
+				const districts =
+					level === "countyAndUnitaryAuthority"
+						? COUNTY_DISTRICTS.get(code)
+						: undefined;
 				const district =
 					level === "ward"
 						? String(record.ladCode ?? "")
-						: (successorCouncil(code) ?? code);
+						: (districts?.[0] ?? successorCouncil(code) ?? code);
 				if (!district) return [];
 				return [
 					{
@@ -197,6 +212,9 @@ export function compileRanking(
 						district,
 						value,
 						record,
+						...(districts && districts.length > 1
+							? { within: districts }
+							: {}),
 					},
 				];
 			});

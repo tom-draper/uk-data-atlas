@@ -20,7 +20,12 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
  */
 
 export type RankingLevel =
-	"localAuthority" | "ward" | "constituency" | "itl3" | "icb";
+	| "localAuthority"
+	| "countyAndUnitaryAuthority"
+	| "ward"
+	| "constituency"
+	| "itl3"
+	| "icb";
 
 export type DataRecord = Record<string, unknown>;
 
