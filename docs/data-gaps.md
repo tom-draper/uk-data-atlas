@@ -62,7 +62,10 @@ enterprises and the NHS waiting-list data. IMD holds 2015 and 2025, with no
 2019 (the 2019 file is in the folder but not read). The 2015 edition is
 England only, on the 2011 LSOAs (32,844 areas). Its scores, ranks and deciles
 are not converted, because ranks and deciles are relative to the year's own
-England and cannot be summed or compared across editions. Its population
+England and cannot be summed or compared across editions. The deprivation
+card lists the 2015 decile and rank beneath 2025 for an LSOA whose code is
+unchanged since 2011, and the 2015 share in the most deprived tenth for an
+authority with the same code in both editions, never as a trend. Its population
 converts to 31,907 of the 35,672 2021 LSOAs and to coarser areas. Back-years
 are the cheapest data to add. Roadmap task 44 (change between periods on fixed
 boundaries) depends on them.
