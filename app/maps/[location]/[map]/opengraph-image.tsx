@@ -1,9 +1,5 @@
-import {
-	findAtlasLocation,
-	findAtlasMap,
-	locationLabel,
-} from "@/lib/atlas/pages";
-import { rankingTitle } from "@/lib/atlas/rankings";
+import { findAtlasLocation, locationLabel } from "@/lib/atlas/pages";
+import { findRanking, rankingTitle } from "@/lib/atlas/rankings";
 import { SHARE_CARD_SIZE, shareCard } from "@/lib/atlas/shareCard";
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 
@@ -15,14 +11,16 @@ type Params = Promise<{ location: string; map: string }>;
 async function resolve(params: Params) {
 	const slugs = await params;
 	const location = findAtlasLocation(slugs.location);
-	const map = findAtlasMap(slugs.map);
-	return location && map
-		? {
-				location,
-				map,
-				title: `${rankingTitle(map)} in ${locationLabel(location)}, ranked`,
-			}
-		: null;
+	const ranking = findRanking(slugs.map);
+	if (!location || !ranking) return null;
+	const { map, period } = ranking;
+	return {
+		location,
+		map,
+		// The map's figure is of its latest period.
+		latest: period === map.periods[0],
+		title: `${rankingTitle(map, period)} in ${locationLabel(location)}, ranked`,
+	};
 }
 
 export async function generateImageMetadata({ params }: { params: Params }) {
@@ -37,7 +35,9 @@ export default async function Image({ params }: { params: Params }) {
 	if (!page) return shareCard({ title: "UK Data Atlas" });
 	return shareCard({
 		title: page.title,
-		detail: atlasMapFigure(page.location, page.map),
+		detail: page.latest
+			? atlasMapFigure(page.location, page.map)
+			: undefined,
 		footer: `${page.map.source.source} · ukdataatlas.com`,
 	});
 }

@@ -9,7 +9,7 @@ import {
 	RankingSummary,
 	summaryPositions,
 } from "@/components/maps/RankingSummary";
-import { locationLabel } from "@/lib/atlas/pages";
+import { atlasHref, atlasVizFor, locationLabel } from "@/lib/atlas/pages";
 import {
 	barScale,
 	isLongRanking,
@@ -47,11 +47,14 @@ const LEADERS = 10;
 
 async function resolvePage(params: Params) {
 	const resolved = await resolveRanking(await params);
-	const { location, map, ranking } = resolved;
+	const { location, map, period, ranking } = resolved;
 	const plural = LEVEL_NOUNS[ranking.level].many;
-	const place = `${rankingTitle(map)} in ${locationLabel(location)}`;
+	const place = `${rankingTitle(map, period)} in ${locationLabel(location)}`;
 	const subject = `${place}: ${titleCase(plural)} Ranked`;
-	return { ...resolved, plural, subject, place };
+	// The map's figure is of its latest period.
+	const figure =
+		ranking.period === undefined ? atlasMapFigure(location, map) : null;
+	return { ...resolved, plural, subject, place, figure };
 }
 
 export async function generateMetadata({
@@ -59,8 +62,8 @@ export async function generateMetadata({
 }: {
 	params: Params;
 }): Promise<Metadata> {
-	const { location, map, areas, plural, place } = await resolvePage(params);
-	const figure = atlasMapFigure(location, map);
+	const { location, map, key, areas, plural, place, figure } =
+		await resolvePage(params);
 	const lead = `All ${areas.length} ${plural} in ${locationLabel(location)} ranked by ${midSentence(rankedValueLabel(map))}, from ${areas[0].name} to ${areas.at(-1)!.name}.`;
 	return pageMetadata({
 		// This segment has its own opengraph-image.
@@ -68,14 +71,23 @@ export async function generateMetadata({
 		// Short, so a search result is less likely to cut it off.
 		subject: `${place}, Ranked`,
 		description: figure ? `${figure} ${lead}` : lead,
-		path: `/maps/${location.slug}/${map.slug}`,
+		path: `/maps/${location.slug}/${key}`,
 	});
 }
 
 export default async function RankingPage({ params }: { params: Params }) {
 	const resolved = await resolvePage(params);
-	const { location, map, ranking, areas, plural, subject } = resolved;
-	const figure = atlasMapFigure(location, map);
+	const {
+		location,
+		map,
+		period,
+		key,
+		ranking,
+		areas,
+		plural,
+		subject,
+		figure,
+	} = resolved;
 	const nouns = LEVEL_NOUNS[ranking.level];
 	const columns = ranking.columns ?? [];
 	const heading = subject.split(": ");
@@ -94,6 +106,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 					subject,
 					areas.length,
 					rows.slice(0, LEADERS),
+					key,
 				)}
 			/>
 			<Navigation />
@@ -106,7 +119,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 								label: location.name,
 								href: `/maps/${location.slug}`,
 							},
-							{ label: rankingTitle(map) },
+							{ label: rankingTitle(map, period) },
 						]}
 					/>
 					<div className="max-w-[760px]">
@@ -146,7 +159,10 @@ export default async function RankingPage({ params }: { params: Params }) {
 							.
 						</p>
 						<Link
-							href={`/atlas/${location.slug}/${map.slug}`}
+							href={atlasHref(
+								location.name,
+								atlasVizFor(map, period),
+							)}
 							className="mt-6 inline-flex items-center rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white transition-colors hover:bg-slate-800"
 						>
 							Open the interactive map
@@ -172,7 +188,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 							total={areas.length}
 							url={
 								long
-									? `/data/rankings/${location.slug}/${map.slug}`
+									? `/data/rankings/${location.slug}/${key}`
 									: null
 							}
 							noun={plural}
@@ -183,7 +199,11 @@ export default async function RankingPage({ params }: { params: Params }) {
 						/>
 					</Card>
 
-					<RankingLinks location={location} map={map} />
+					<RankingLinks
+						location={location}
+						map={map}
+						period={period}
+					/>
 
 					<section className="mt-9 max-w-[760px]">
 						<h2 className="text-[13px] font-semibold tracking-wide text-slate-500">

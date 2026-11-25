@@ -6,6 +6,8 @@ import {
 	compileRanking,
 	hasRankingPage,
 	RANKED_MAPS,
+	rankedPeriods,
+	rankingKey,
 	rankingSource,
 } from "../lib/atlas/rankings";
 import type { Editions } from "../lib/atlas/rankingRecipes";
@@ -70,18 +72,18 @@ export async function serialiseRankings(): Promise<{
 				),
 			),
 		);
-		const ranking = compileRanking(
-			map,
-			await readEditions(source.file),
-			extra,
-		);
-		if (!ranking) continue;
-		const places = ATLAS_LOCATIONS.filter((location) =>
-			hasRankingPage(ranking, map, location),
-		).map((location) => location.slug);
-		if (places.length === 0) continue;
-		files.set(map.slug, `${JSON.stringify(ranking)}\n`);
-		pages[map.slug] = places;
+		const editions = await readEditions(source.file);
+		for (const period of rankedPeriods(map)) {
+			const ranking = compileRanking(map, editions, extra, period);
+			if (!ranking) continue;
+			const places = ATLAS_LOCATIONS.filter((location) =>
+				hasRankingPage(ranking, map, location),
+			).map((location) => location.slug);
+			if (places.length === 0) continue;
+			const key = rankingKey(map, period);
+			files.set(key, `${JSON.stringify(ranking)}\n`);
+			pages[key] = places;
+		}
 	}
 	return { files, pages: `${JSON.stringify(pages, null, "\t")}\n` };
 }

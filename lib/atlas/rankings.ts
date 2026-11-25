@@ -11,6 +11,7 @@ import {
 	type AtlasMap,
 	atlasMapTitle,
 	atlasVizFor,
+	findAtlasMap,
 } from "@/lib/atlas/pages";
 import {
 	councilName,
@@ -58,6 +59,8 @@ export type RankedColumn = { label: string; format: ColumnFormat };
 
 export type MapRanking = {
 	map: string;
+	/** The period ranked, where it is not the map's latest. */
+	period?: number;
 	level: RankingLevel;
 	columns?: RankedColumn[];
 	areas: RankedArea[];
@@ -123,6 +126,37 @@ export const RANKED_MAPS: readonly AtlasMap[] = ATLAS_MAPS.filter(
 	(map) => rankingSource(map) !== null,
 );
 
+/** The periods of a map that are ranked, latest first. */
+export function rankedPeriods(map: AtlasMap): readonly number[] {
+	return RANKING_RECIPES[map.slug]?.earlierPeriods
+		? map.periods
+		: map.periods.slice(0, 1);
+}
+
+const isLatest = (map: AtlasMap, period?: number) =>
+	period === undefined || period === map.periods[0];
+
+/**
+ * A ranking's key, its page's slug and file's name: the map's slug, with the
+ * year for an earlier period, "general-election-2019".
+ */
+export const rankingKey = (map: AtlasMap, period?: number) =>
+	isLatest(map, period) ? map.slug : `${map.slug}-${period}`;
+
+/** The map and period a ranking key names. */
+export function findRanking(
+	key: string,
+): { map: AtlasMap; period: number } | null {
+	const latest = findAtlasMap(key);
+	if (latest) return { map: latest, period: latest.periods[0]! };
+	const [, slug, year] = /^(.+)-(\d{4})$/.exec(key) ?? [];
+	const map = slug ? findAtlasMap(slug) : undefined;
+	const period = Number(year);
+	return map && rankedPeriods(map).includes(period) && !isLatest(map, period)
+		? { map, period }
+		: null;
+}
+
 /** Each county's districts; a unitary council is its own. */
 const COUNTY_DISTRICTS = Object.entries(
 	localAuthorityCounty as Record<string, string>,
@@ -149,11 +183,12 @@ export function compileRanking(
 	map: AtlasMap,
 	editions: Editions,
 	inputs: Readonly<Record<string, unknown>> = {},
+	period?: number,
 ): MapRanking | null {
 	const source = rankingSource(map);
 	if (!source) return null;
 	const { definition, recipe, level } = source;
-	const viz = atlasVizFor(map);
+	const viz = atlasVizFor(map, period);
 	const key =
 		Object.keys(editions).find(
 			(candidate) => editions[candidate]!.id === viz.datasetId,
@@ -264,6 +299,7 @@ export function compileRanking(
 
 	return {
 		map: map.slug,
+		...(isLatest(map, period) ? {} : { period: viz.datasetYear }),
 		level,
 		...(columns.length > 0
 			? {
@@ -318,7 +354,8 @@ export function areasWithin(
 
 /**
  * Whether a place has a ranking page for a map: the map's data reaches the
- * whole place, and the place has more than one area to rank.
+ * whole place, and the place has more than one area to rank. An earlier
+ * period is ranked only for the UK and its nations.
  */
 export function hasRankingPage(
 	ranking: MapRanking,
@@ -326,15 +363,18 @@ export function hasRankingPage(
 	location: AtlasLocation,
 ) {
 	return (
+		(ranking.period === undefined || location.members.length === 0) &&
 		location.countries.every((country) =>
 			map.countries.includes(country),
-		) && areasWithin(ranking, location).length > 1
+		) &&
+		areasWithin(ranking, location).length > 1
 	);
 }
 
 /** A ranking page's title for its map: "2024 General Election Results". */
-export const rankingTitle = (map: AtlasMap) =>
-	RANKING_RECIPES[map.slug]?.title ?? atlasMapTitle(map);
+export const rankingTitle = (map: AtlasMap, period?: number) =>
+	(isLatest(map, period) && RANKING_RECIPES[map.slug]?.title) ||
+	atlasMapTitle(map, period);
 
 /** What a ranking's value column measures, where the map's name is unclear. */
 export const rankedValueLabel = (map: AtlasMap) =>

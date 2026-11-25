@@ -155,8 +155,10 @@ export function rankingJsonLd(
 	areas: number,
 	/** The areas at the top of the ranking, highest first. */
 	leaders: readonly { name: string; href?: string }[] = [],
+	/** The page's ranking, where it is not the map's latest. */
+	key = map.slug,
 ) {
-	const path = `/maps/${location.slug}/${map.slug}`;
+	const path = `/maps/${location.slug}/${key}`;
 	return {
 		"@context": "https://schema.org",
 		"@graph": [
