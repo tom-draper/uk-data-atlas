@@ -126,7 +126,7 @@ test("a weighted mean is rebuilt over an additive weight it names, or carried", 
 	}
 });
 
-test("a refusal names what is not held where the measure has a specific reason", () => {
+test("a refusal names what is not held, or where the rate is rebuilt, where the measure has a specific reason", () => {
 	const rules = rulesOf([
 		measure(1, "claimant-rate", { statistic: "rate", aggregation: "none" }),
 		measure(2, "band-d-council-tax", {
@@ -134,7 +134,7 @@ test("a refusal names what is not held where the measure has a specific reason",
 			aggregation: "weighted_mean",
 		}),
 	]);
-	assert.match(rules.get("claimant-rate")!.reason, /16 to 64 population/);
+	assert.match(rules.get("claimant-rate")!.reason, /rebuilds it.*countRates/);
 	assert.match(
 		rules.get("band-d-council-tax")!.reason,
 		/no weight series is linked.*number of properties/,

@@ -2104,7 +2104,7 @@ export const schemaExamples: readonly SchemaExample[] = [
 		question:
 			"Why is the claimant rate not available on the 2026 ward boundaries?",
 		sql: "SELECT measure, geography, release, reason, explanation, dataset, source_release FROM v_coverage_missing WHERE measure = 'claimant-rate' AND geography = 'ward'",
-		expect: "Two rows, both refused-measure from claimant-count (published on 2024-05 and 2022-12 local authorities): the claimants are held but the 16 to 64 population is not held as a measure, so the rate cannot be rebuilt on wards.",
+		expect: "Two rows, both refused-measure from claimant-count (published on 2024-05 and 2022-12 local authorities): a rate is not converted from its parts, and the atlas rebuilds it only on releases that hold the claimants and single years of age, which the 2026 wards do not.",
 	},
 	{
 		id: "area-by-code",
