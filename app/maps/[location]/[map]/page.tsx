@@ -9,7 +9,7 @@ import {
 	RankingSummary,
 	summaryPositions,
 } from "@/components/maps/RankingSummary";
-import { atlasMapTitle, locationLabel } from "@/lib/atlas/pages";
+import { locationLabel } from "@/lib/atlas/pages";
 import {
 	barScale,
 	isLongRanking,
@@ -17,7 +17,11 @@ import {
 	resolveRanking,
 	SERVER_ROWS,
 } from "@/lib/atlas/rankingRows";
-import { LEVEL_NOUNS, rankedValueLabel } from "@/lib/atlas/rankings";
+import {
+	LEVEL_NOUNS,
+	rankedValueLabel,
+	rankingTitle,
+} from "@/lib/atlas/rankings";
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 import { JsonLd, rankingJsonLd } from "@/lib/atlas/structuredData";
 import { pageMetadata, titleCase } from "@/lib/site";
@@ -45,7 +49,7 @@ async function resolvePage(params: Params) {
 	const resolved = await resolveRanking(await params);
 	const { location, map, ranking } = resolved;
 	const plural = LEVEL_NOUNS[ranking.level].many;
-	const place = `${atlasMapTitle(map)} in ${locationLabel(location)}`;
+	const place = `${rankingTitle(map)} in ${locationLabel(location)}`;
 	const subject = `${place}: ${titleCase(plural)} Ranked`;
 	return { ...resolved, plural, subject, place };
 }
@@ -102,7 +106,7 @@ export default async function RankingPage({ params }: { params: Params }) {
 								label: location.name,
 								href: `/maps/${location.slug}`,
 							},
-							{ label: atlasMapTitle(map) },
+							{ label: rankingTitle(map) },
 						]}
 					/>
 					<div className="max-w-[760px]">
