@@ -161,6 +161,9 @@ export const OFFICIAL_PLACES: Record<string, OfficialPlace> = {
 	Norfolk: county("E10000020"),
 	Oxfordshire: county("E10000025"),
 	Suffolk: county("E10000029"),
+	Surrey: county("E10000030"),
+	Warwickshire: county("E10000031"),
+	Worcestershire: county("E10000034"),
 };
 
 /**
