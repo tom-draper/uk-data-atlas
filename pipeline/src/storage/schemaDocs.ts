@@ -50,7 +50,7 @@ export const schemaGuide: readonly GuideTopic[] = [
 	},
 	{
 		topic: "start-here",
-		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_crosswalk_chain_edge for old code to current code in one join, v_area_change for areas that were renamed, recoded, redrawn, split, merged, ended or created, v_area_change_extent for how much of each area's land and residents changed between releases, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
+		body: "atlas.sqlite holds UK statistics and the geography they are published on. Areas (councils, wards, constituencies, LSOAs and others) are in area and area_version, statistics are in observation, and crosswalks say how areas in one boundary release map onto another. Read schema_table for what each table is for, schema_column for every column, and schema_example for worked questions with tested SQL. Tables with audience 'core' are enough for most questions. The v_ views join the core tables into readable rows: v_coverage for what exists and how complete it is, v_observation_default for one safe value per quantity, area and period, v_observation for every statistic, v_series for what a dataset holds, v_area_version for areas, v_area_current for each area's latest name, v_crosswalk_edge and v_crosswalk_weight for crosswalks, v_crosswalk_chain_edge for old code to current code in one join, v_area_change for areas that were renamed, recoded, redrawn, split, merged, ended or created, v_area_change_extent for how much of each area's land and residents changed between releases, v_area_period_change for the change in a measure between two periods on fixed boundaries and how much of the change as published is a boundary move or a method break, v_contest and v_candidacy for elections, v_source_terms and v_election_terms for licences, v_series_attribution for every source, publisher and licence a series depends on (converted and modelled series included) and v_series_terms for whether a series is commercial-safe or ShareAlike with the attribution text to print. search is a full-text index over measures, datasets, dimension members, areas and places: SELECT kind, key, label FROM search WHERE search MATCH 'household*' ORDER BY rank.",
 	},
 	{
 		topic: "areas-and-releases",
@@ -1430,6 +1430,140 @@ export const schemaTables: Readonly<Record<string, TableDoc>> = {
 			to_version_id: "As area_change_extent.to_version_id.",
 			from_release_id: "The earlier release (area_release.id).",
 			to_release_id: "The later release (area_release.id).",
+		},
+	},
+	area_period_change: {
+		audience: "core",
+		description:
+			"The change in a quantity for an area between two periods, on the boundaries of the area's release. One row for each quantity, area and pair of periods where the default value (the rule of v_observation_default: the best-ranked series with an observation row) is a number at both ends. The pairs are each period with the next one and, where there are more than two, the first with the latest. The quantities are those of the standard release of each standard geography (local authorities, wards, constituencies, LSOAs), where every period is on the same boundaries and converted where it was not published on them, and of every release of the other geographies, whose values are on the boundaries they were published on. Ranks, categories, indices, interval half-widths and measures that are already a change are left out (NOT_COMPARED_OVER_TIME in packages/measures/src/seriesBreaks.ts). Read it through v_area_period_change.",
+		columns: {
+			quantity_id: "The quantity (quantity.id).",
+			area_version_id:
+				"The area on the boundaries the change is measured on (area_version.id).",
+			from_period_id: "The earlier period (period.id).",
+			to_period_id: "The later period (period.id).",
+			from_series_id:
+				"The series the earlier value is from: the best-ranked one with an observation row for the area and period (series.id).",
+			to_series_id: "The series the later value is from (series.id).",
+			from_value: "The earlier value, as v_observation_default gives it.",
+			to_value: "The later value, as v_observation_default gives it.",
+			adjacent:
+				"1 where no period with a value lies between the two, 0 for the first-to-latest pair.",
+		},
+	},
+	area_change_span: {
+		audience: "core",
+		description:
+			"How far an area's boundary moved between the two releases the ends of a change in area_period_change were published on, where those differ. Walks area_change_extent's same-code hops from the earlier area version to the later one. Written only for the version pairs v_area_period_change needs; a pair the same-code hops do not join has no row.",
+		columns: {
+			from_version_id:
+				"The area as published at the earlier end (area_version.id).",
+			to_version_id:
+				"The same code as published at the later end (area_version.id).",
+			hops: "Same-code steps of area_change_extent between the two.",
+			residents_lost:
+				"The largest residents_lost of any one hop (0 to 1). Shares are not added up over hops, so read it as at least this much moved.",
+			residents_gained: "The largest residents_gained of any one hop.",
+			land_lost:
+				"The largest land_lost of any hop that measures land. Null where none does.",
+			land_gained:
+				"The largest land_gained of any hop that measures land. Null where none does.",
+			materially_changed:
+				"1 where any of the four shares is 0.05 or more (the threshold of v_area_change_extent), 0 where the residents shares are known and all are under it, else null. Because GSS issues a new code for a material boundary change, same-code hops are almost never material.",
+		},
+	},
+	series_published_counterpart: {
+		audience: "reference",
+		description:
+			"For each converted series, what it was converted from, as published: the published series of the same dataset, measure and breakdown on the release it was converted from, or, where the converter summed published parts that have no published total (a population summed from single years of age), the number of parts. Read through series_input. A converted series with neither has no row, and v_area_period_change says 'not-traced' for it. Written at assembly.",
+		columns: {
+			series_id: "The converted series (series.id).",
+			published_series_id:
+				"The published series with the same dataset, measure and breakdown on the source release (series.id). Null where the series is a sum of parts.",
+			release_id:
+				"The release the series was converted from (area_release.id).",
+			parts: "Where the series sums published parts: how many (its series_input rows, every one a value input on release_id). Null where published_series_id is set.",
+		},
+	},
+	measure_break: {
+		audience: "core",
+		description:
+			"Method breaks: where a measure's series stops being comparable with itself over time, declared in SERIES_BREAKS (packages/measures/src/seriesBreaks.ts) and written for the measures, datasets and periods of this build. ASHE pay from 2021 (SOC 2020) and its smaller 2020 and 2021 samples; Scottish population estimates from mid-2022 (Scotland's 2022 census). A break is a flag and a note; its effect on a change is not estimated. v_area_period_change lists the breaks a change crosses.",
+		columns: {
+			measure_id: "The measure (measure.id).",
+			dataset_id:
+				"The dataset whose series the break applies to (dataset.id).",
+			period_id: "The period the break is at (period.id).",
+			kind: "'classification': the publisher recoded something every estimate is built from. 'sample': the survey ran on an unusual sample for the period. 'census': estimates are based on a different census from this period on.",
+			effect: "'spans': a change from a period starting before this one to this one or later crosses the break. 'touches': a change with this period at either end is affected.",
+			note: "The publisher's caveat.",
+		},
+	},
+	v_area_period_change: {
+		audience: "core",
+		description:
+			"View: area_period_change with the measure, area and periods, the change on fixed boundaries, and how much of the change as published comes from boundary moves and method breaks. Filter on measure, geography and area_code. Is Glasgow's population change real: SELECT from_period, to_period, change, published_change, boundary_effect, boundary_check, breaks FROM v_area_period_change WHERE measure = 'population' AND area_code = 'S12000049' AND span = 'adjacent'. Each published end is the counterpart series (series_published_counterpart) for the same code on its own release; a code that was not published there is said so (boundary_check), not guessed.",
+		columns: {
+			measure: "Measure slug.",
+			quantity: "Quantity key: the breakdown the values are for.",
+			geography: "Geography slug of the area's release.",
+			release: "The release whose boundaries the change is on.",
+			area_code: "Area code.",
+			area_name: "Area name in the release.",
+			from_period: "The earlier period's label.",
+			to_period: "The later period's label.",
+			span: "'adjacent': the period and the next one with a value. 'first-latest': the first and the latest.",
+			from_value: "The earlier value on these boundaries.",
+			to_value: "The later value on these boundaries.",
+			change: "to_value minus from_value: the change on fixed boundaries.",
+			percent_change:
+				"change as a percentage of from_value's size. Null where from_value is 0, or where the measure is itself a percentage (change is then in percentage points).",
+			from_accuracy:
+				"How the earlier value was got on these boundaries. 'published': as published. 'regrouped': converted from whole areas. 'estimated': converted with at least one area split by weight (series_estimate). 'modelled': a model's estimate.",
+			to_accuracy: "As from_accuracy, for the later value.",
+			accuracy:
+				"The worse of from_accuracy and to_accuracy, in the order published, regrouped, estimated, modelled.",
+			boundary_check:
+				"Whether published_change could be worked out. 'published': both ends were published for this code, so published_change is set. 'modelled': an end is modelled, so there is nothing published to compare. 'not-traced': an end is converted and its published counterpart is not known. 'code-not-published': the publisher had no area with this code at an end (a council created later, or a series published only for smaller areas). 'value-not-published': the code exists but the counterpart has no value for it in that period.",
+			from_published_value:
+				"The earlier value as published, on the boundaries of its own release. Null unless boundary_check is 'published'.",
+			to_published_value:
+				"The later value as published. Null as from_published_value.",
+			published_from_parts:
+				"1 where a published value is the sum of published parts (series_published_counterpart.parts), as for a population published only by single year of age.",
+			published_change:
+				"to_published_value minus from_published_value: the change a reader of the two publications would see.",
+			boundary_effect:
+				"published_change minus change: how much of the change as published comes from the boundary moving between the two releases. 0 where both ends were published on these boundaries. Null where published_change is null.",
+			materially_changed:
+				"Whether the area's boundary moved materially between the releases the ends were published on: 0 where they are the same release, else area_change_span.materially_changed. Null where an end's published release is unknown or the same-code hops do not join them.",
+			residents_lost:
+				"Share of residents the boundary moves took out of the area, from area_change_span. 0 on the same release.",
+			residents_gained: "As residents_lost, for residents brought in.",
+			land_lost:
+				"As residents_lost, for land. Null where no hop measures land.",
+			land_gained: "As land_lost, for land brought in.",
+			from_dataset: "Dataset slug of the earlier value's series.",
+			to_dataset: "Dataset slug of the later value's series.",
+			source_changed:
+				"1 where the two values come from different datasets, so part of the change may be a difference between sources.",
+			period_kind_changed:
+				"1 where the two periods are of different kinds (a census date and a mid-year, a year and a financial year).",
+			periods_overlap:
+				"1 where the later period starts before the earlier one ends, as with a calendar year and an overlapping financial year.",
+			breaks: "The method breaks the change crosses (measure_break), as '<kind> <period>' separated by '; '. Null where none.",
+			break_notes:
+				"The notes of those breaks, each a sentence, separated by a space.",
+			quantity_id: "As area_period_change.quantity_id.",
+			area_version_id: "As area_period_change.area_version_id.",
+			from_period_id: "As area_period_change.from_period_id.",
+			to_period_id: "As area_period_change.to_period_id.",
+			from_series_id: "As area_period_change.from_series_id.",
+			to_series_id: "As area_period_change.to_series_id.",
+			from_published_version_id:
+				"The area version the earlier value was published on (area_version.id): this area where published here, else the same code on the counterpart's release. Null where the code was not published there.",
+			to_published_version_id:
+				"As from_published_version_id, for the later value.",
 		},
 	},
 	crosswalk_weight_input: {
