@@ -11,7 +11,7 @@ const health = CHART_DATASET_DEFINITIONS.find(
 	(definition) => definition.type === "general-health",
 )!;
 
-const render = (selectedArea: SelectedArea | null) =>
+const render = (selectedArea: SelectedArea | null, location?: string) =>
 	renderToStaticMarkup(
 		createElement(
 			MapOptionsProvider,
@@ -36,6 +36,7 @@ const render = (selectedArea: SelectedArea | null) =>
 				aggregatedData: null,
 				year: 2021,
 				selectedArea,
+				location,
 				activeViz: null as never,
 				setActiveViz: () => {},
 				boundaryData: {} as never,
@@ -83,6 +84,20 @@ describe("value card outside the dataset's nations", () => {
 		const html = render(area("ward", "N08000101"));
 		expect(html).toContain(
 			"Not published in this form for Northern Ireland",
+		);
+	});
+});
+
+describe("value card on a place picked from Places", () => {
+	it("reads a Scottish city's council rather than saying there is no data", () => {
+		const html = render(null, "Glasgow");
+		expect(html).not.toContain("No data available");
+		expect(html).not.toContain("[2021]");
+	});
+
+	it("asks for a council where a place spans several", () => {
+		expect(render(null, "The Highlands")).toContain(
+			"Published for each council in Scotland",
 		);
 	});
 });
