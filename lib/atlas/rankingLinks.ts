@@ -6,6 +6,7 @@ import {
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { hasRankingFor } from "@/lib/atlas/rankingPages";
+import { rankedPeriods, rankingKey } from "@/lib/atlas/rankings";
 
 /**
  * A place's page links to every place within it, unless there are more than
@@ -52,9 +53,14 @@ const narrowest = (places: AtlasLocation[]) =>
  * The same map ranked for the places around this one: every place that
  * covers it, and the places it covers.
  */
-export function rankingsElsewhere(location: AtlasLocation, map: AtlasMap) {
+export function rankingsElsewhere(
+	location: AtlasLocation,
+	map: AtlasMap,
+	period?: number,
+) {
+	const key = rankingKey(map, period);
 	const ranked = ATLAS_LOCATIONS.filter((other) =>
-		hasRankingFor(other.slug, map.slug),
+		hasRankingFor(other.slug, key),
 	);
 	return {
 		wider: ranked.filter((other) => covers(other, location)).sort(bySize),
@@ -72,4 +78,16 @@ export const otherRankings = (location: AtlasLocation, map: AtlasMap) =>
 				other.slug !== map.slug &&
 				hasRankingFor(location.slug, other.slug),
 		),
+	);
+
+/** The map's other periods ranked for this place, latest first. */
+export const otherPeriods = (
+	location: AtlasLocation,
+	map: AtlasMap,
+	period?: number,
+) =>
+	rankedPeriods(map).filter(
+		(other) =>
+			rankingKey(map, other) !== rankingKey(map, period) &&
+			hasRankingFor(location.slug, rankingKey(map, other)),
 	);

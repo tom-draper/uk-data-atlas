@@ -3,16 +3,17 @@ import {
 	type AtlasLocation,
 	type AtlasMap,
 	findAtlasLocation,
-	findAtlasMap,
 } from "@/lib/atlas/pages";
 import { hasRankingFor, loadRanking } from "@/lib/atlas/rankingPages";
 import {
 	areasWithin,
 	COUNCIL_PLACES,
+	findRanking,
 	formatColumnValue,
 	formatRankedValue,
 	type MapRanking,
 	type RankedArea,
+	rankingKey,
 } from "@/lib/atlas/rankings";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import { loadPlaceIndex } from "@/lib/places/load";
@@ -64,15 +65,16 @@ export async function resolveRanking(params: {
 	map: string;
 }) {
 	const location = findAtlasLocation(params.location);
-	const map = findAtlasMap(params.map);
-	if (!location || !map || !hasRankingFor(location.slug, map.slug))
+	const found = findRanking(params.map);
+	const key = found && rankingKey(found.map, found.period);
+	if (!location || !found || !key || !hasRankingFor(location.slug, key))
 		notFound();
 	const [ranking, places] = await Promise.all([
-		loadRanking(map.slug),
+		loadRanking(key),
 		loadPlaceCodes(),
 	]);
 	const areas = areasWithin(ranking, location);
-	return { location, map, ranking, places, areas };
+	return { location, ...found, key, ranking, places, areas };
 }
 
 export function rankingRow(

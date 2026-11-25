@@ -103,6 +103,12 @@ export type RankingRecipe = {
 	rows?: (context: RankingContext) => RankingRow[];
 	columns?: readonly RankingColumn[];
 	/**
+	 * Whether the map's earlier periods are ranked too. Their areas may be
+	 * older boundaries, which today's councils do not neatly hold, so only
+	 * the UK and its nations rank them.
+	 */
+	earlierPeriods?: boolean;
+	/**
 	 * The ranking's title, where the map's latest period would mislead, as
 	 * when its areas come from different years.
 	 */

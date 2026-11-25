@@ -6,8 +6,12 @@ import {
 	type AtlasMap,
 	locationLabel,
 } from "@/lib/atlas/pages";
-import { rankingTitle } from "@/lib/atlas/rankings";
-import { otherRankings, rankingsElsewhere } from "@/lib/atlas/rankingLinks";
+import { rankingKey, rankingTitle } from "@/lib/atlas/rankings";
+import {
+	otherPeriods,
+	otherRankings,
+	rankingsElsewhere,
+} from "@/lib/atlas/rankingLinks";
 
 function LinkList({
 	links,
@@ -36,24 +40,38 @@ const headingClass = "text-[13px] font-semibold tracking-wide text-slate-500";
 export function RankingLinks({
 	location,
 	map,
+	period,
 }: {
 	location: AtlasLocation;
 	map: AtlasMap;
+	period?: number;
 }) {
-	const { wider, narrower } = rankingsElsewhere(location, map);
+	const key = rankingKey(map, period);
+	const { wider, narrower } = rankingsElsewhere(location, map, period);
 	const elsewhere = [...wider, ...narrower].map((place) => ({
-		href: `/maps/${place.slug}/${map.slug}`,
+		href: `/maps/${place.slug}/${key}`,
 		label: locationLabel(place),
 	}));
+	const years = otherPeriods(location, map, period).map((other) => ({
+		href: `/maps/${location.slug}/${rankingKey(map, other)}`,
+		label: rankingTitle(map, other),
+	}));
 	const sections = otherRankings(location, map);
-	if (elsewhere.length === 0 && sections.length === 0) return null;
+	if (elsewhere.length === 0 && years.length === 0 && sections.length === 0)
+		return null;
 
 	return (
 		<section className="mt-9 grid max-w-[1180px] gap-4">
+			{years.length > 0 && (
+				<Card className="p-5">
+					<h2 className={headingClass}>Other years</h2>
+					<LinkList links={years} />
+				</Card>
+			)}
 			{elsewhere.length > 0 && (
 				<Card className="p-5">
 					<h2 className={headingClass}>
-						{rankingTitle(map)} elsewhere
+						{rankingTitle(map, period)} elsewhere
 					</h2>
 					<LinkList links={elsewhere} />
 				</Card>
