@@ -12299,7 +12299,15 @@ paths:
             gives. \`summary\` gives the periods covered, the share converted and warnings. A value that
             cannot be combined, such as a median, is carried only where the area is unchanged. Periods
             that cannot be converted, such as a median for an area whose boundary changed or a release
-            with no crosswalk, are listed in \`gaps\` with a reason. Not with \`to\`.
+            with no crosswalk, are listed in \`gaps\` with a reason. Where the measure is a total or a
+            qualified value the atlas ranks, \`changes\` gives the change between adjacent periods and
+            from the first period to the latest with the area held on that release's boundaries, from
+            the atlas's default value in each period: the change, the percentage change, the accuracy
+            of each end, the change as published for the same area code where it is published at both
+            ends and the difference between the two (\`boundaryEffect\`), how much of the area's
+            residents and land moved, whether the source dataset or period kind changes, and the
+            publisher's method breaks it crosses. Ranks, deciles and measures that are already a
+            change are not compared. Not with \`to\`.
         - name: datasetId
           in: query
           required: false
@@ -22571,12 +22579,12 @@ components:
             data:
               $ref: "#/components/schemas/AtlasRelease"
 ",
-    "bytes": 636332,
+    "bytes": 637099,
     "headers": [
       "atlas-release: sha256:atlas-release",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/yaml",
-      "etag: "sha256-nWK9u5EwLXKhZmKJVvN66Wsm-YQiJLMBduaNFkTFs0c"",
+      "etag: "sha256-M6H3ILDdomsD76Kq04k7B-Tbx_9SLPiO0aBHThuMGgg"",
       "vary: accept-encoding",
     ],
     "status": 200,
