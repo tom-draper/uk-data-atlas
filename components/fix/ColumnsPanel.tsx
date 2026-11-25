@@ -3,8 +3,8 @@
 import { useId } from "react";
 import { Card } from "@/components/docs/Page";
 import { geographyLabel, releasesOf } from "@/lib/fix/releases";
-import type { Table } from "@/lib/fix/table";
 import type { BoundaryRelease, ReleaseRef } from "@/lib/fix/types";
+import type { Upload } from "@/lib/fix/upload";
 import { labelClass, selectClass } from "./ui";
 
 export interface ColumnChoice {
@@ -22,7 +22,7 @@ const AUTO = "auto";
  * release to check against.
  */
 export default function ColumnsPanel({
-	table,
+	source,
 	choice,
 	onChoice,
 	release,
@@ -30,8 +30,10 @@ export default function ColumnsPanel({
 	releases,
 	detectedGeography,
 	disabled,
+	onSheet,
+	onHeader,
 }: {
-	table: Table;
+	source: Upload;
 	choice: ColumnChoice;
 	onChoice: (choice: ColumnChoice) => void;
 	release: ReleaseRef | null;
@@ -39,8 +41,17 @@ export default function ColumnsPanel({
 	releases: BoundaryRelease[];
 	detectedGeography: string | null;
 	disabled: boolean;
+	onSheet: (sheet: number) => void;
+	onHeader: (row: number | null) => void;
 }) {
-	const ids = { area: useId(), parent: useId(), release: useId() };
+	const { sheet, sheets, table } = source;
+	const ids = {
+		area: useId(),
+		parent: useId(),
+		release: useId(),
+		header: useId(),
+		sheet: useId(),
+	};
 	const geographies = [...new Set(releases.map((r) => r.geography))].sort(
 		(a, b) => {
 			if (a === detectedGeography) return -1;
@@ -59,6 +70,70 @@ export default function ColumnsPanel({
 	return (
 		<Card className="p-4 sm:p-5">
 			<div className="grid gap-4 sm:grid-cols-3">
+				{sheets.length > 0 && (
+					<div>
+						<label htmlFor={ids.sheet} className={labelClass}>
+							Sheet
+						</label>
+						<select
+							id={ids.sheet}
+							className={selectClass}
+							value={sheet}
+							disabled={disabled}
+							onChange={(event) =>
+								onSheet(Number(event.target.value))
+							}
+						>
+							{sheets.map((entry, index) => (
+								<option key={index} value={index}>
+									{entry.name}
+									{entry.hidden ? " (hidden)" : ""}
+									{entry.empty ? " (empty)" : ""}
+								</option>
+							))}
+						</select>
+					</div>
+				)}
+				<div>
+					<label htmlFor={ids.header} className={labelClass}>
+						Header row
+					</label>
+					<select
+						id={ids.header}
+						className={selectClass}
+						value={table.headerRow ?? "none"}
+						disabled={disabled || table.headerOptions.length === 0}
+						onChange={(event) =>
+							onHeader(
+								event.target.value === "none"
+									? null
+									: Number(event.target.value),
+							)
+						}
+					>
+						<option value="none">First row is data</option>
+						{table.headerOptions.map((row, index) => (
+							<option key={index} value={index}>
+								{index + 1} ·{" "}
+								{row
+									.filter((cell) => cell.trim())
+									.slice(0, 3)
+									.map((cell) => {
+										const value = cell.trim();
+										return value.length > 28
+											? `${value.slice(0, 28)}…`
+											: value;
+									})
+									.join(" · ")}
+							</option>
+						))}
+					</select>
+					{table.headerOptions.length > 1 && (
+						<p className="mt-1 text-[12px] text-slate-500">
+							Counts non-empty rows.
+						</p>
+					)}
+				</div>
 				<div>
 					<label htmlFor={ids.area} className={labelClass}>
 						Area column
@@ -67,7 +142,7 @@ export default function ColumnsPanel({
 						id={ids.area}
 						className={selectClass}
 						value={choice.area ?? ""}
-						disabled={disabled}
+						disabled={disabled || table.headers.length === 0}
 						onChange={(event) => {
 							const area = Number(event.target.value);
 							onChoice({
@@ -200,7 +275,7 @@ export default function ColumnsPanel({
 
 			<div className="mt-5 overflow-x-auto rounded-md border border-slate-900/[0.07] bg-white/60">
 				<table className="w-full text-left text-[13px]">
-					<caption className="sr-only">
+					<caption className="px-3 py-2 text-left font-medium text-slate-700">
 						The first {Math.min(PREVIEW_ROWS, table.rows.length)}{" "}
 						rows of your file
 					</caption>
@@ -212,7 +287,7 @@ export default function ColumnsPanel({
 									scope="col"
 									className={`px-3 py-2 font-medium whitespace-nowrap ${index === choice.area ? "bg-slate-100 text-slate-900" : "text-slate-600"}`}
 								>
-									{header}
+									{header}{" "}
 									{index === choice.area && (
 										<span className="ml-1.5 rounded bg-slate-900 px-1.5 py-0.5 text-[11px] font-medium text-white">
 											area

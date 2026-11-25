@@ -17,17 +17,26 @@ export interface Table {
 	skippedLines: number;
 }
 
+export interface ParsedTable extends Table {
+	/** Index among non-empty rows, or null when the first row is data. */
+	headerRow: number | null;
+	headerOptions: string[][];
+}
+
 const looksLikeCode = (value: string) => /^[A-Za-z]\d{4,}$/.test(value.trim());
 
 /**
  * Reads CSV, or tab-separated text pasted from a spreadsheet, keeping every
  * cell exactly as written so a download gives the same values back.
  */
-export function readTable(text: string): Table {
-	const parsed = Papa.parse<string[]>(text.replace(/^\uFEFF/, ""), {
+export function parseTableLines(text: string): string[][] {
+	return Papa.parse<string[]>(text.replace(/^\uFEFF/, ""), {
 		skipEmptyLines: "greedy",
-	});
-	return tableFromLines(parsed.data);
+	}).data;
+}
+
+export function readTable(text: string): Table {
+	return tableFromLines(parseTableLines(text));
 }
 
 /**
@@ -35,31 +44,41 @@ export function readTable(text: string): Table {
  * squares the rows up beneath it. A pasted column with no header gets one,
  * so its first value is not lost. `extraRows` is rows already left out.
  */
-export function tableFromLines(all: string[][], extraRows = 0): Table {
+export function tableFromLines(
+	all: string[][],
+	extraRows = 0,
+	headerOverride?: number | null,
+): ParsedTable {
 	const lines = all.filter((row) => row.some((cell) => cell.trim()));
 	if (lines.length === 0)
 		return {
+			headerRow: null,
+			headerOptions: [],
 			headers: [],
 			rows: [],
 			droppedRows: extraRows,
 			skippedLines: 0,
 		};
 
-	let headerRow = detectHeaderRow(lines);
-	let headers = lines[headerRow];
-	let body = lines.slice(headerRow + 1);
-	if (headers.length === 1 && looksLikeCode(headers[0])) {
-		headerRow = 0;
-		headers = ["area"];
-		body = lines;
+	let headerRow = headerOverride;
+	if (headerRow === undefined) {
+		headerRow = detectHeaderRow(lines);
+		const header = lines[headerRow];
+		if (header.length === 1 && looksLikeCode(header[0])) headerRow = null;
 	}
+	const headers = headerRow === null ? [] : lines[headerRow];
+	const body = headerRow === null ? lines : lines.slice(headerRow + 1);
 
 	// A loop, not Math.max(...), which fails on very long tables.
 	let width = headers.length;
 	for (const row of body) if (row.length > width) width = row.length;
 	const named = Array.from(
 		{ length: width },
-		(_, index) => headers[index]?.trim() || `column ${index + 1}`,
+		(_, index) =>
+			headers[index]?.trim() ||
+			(headerRow === null && width === 1
+				? "area"
+				: `column ${index + 1}`),
 	);
 	const kept = Math.min(body.length, ROW_LIMIT);
 	const rows: string[][] = new Array(kept);
@@ -72,10 +91,12 @@ export function tableFromLines(all: string[][], extraRows = 0): Table {
 	}
 
 	return {
+		headerRow,
+		headerOptions: lines.slice(0, 20),
 		headers: named,
 		rows,
 		droppedRows: body.length - kept + extraRows,
-		skippedLines: headerRow,
+		skippedLines: headerRow ?? 0,
 	};
 }
 

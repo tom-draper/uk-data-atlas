@@ -1,9 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+	csvUpload,
 	MAX_BYTES,
 	readUpload,
 	UploadError,
+	withHeader,
 	withSheet,
 } from "@/lib/fix/upload";
 
@@ -13,6 +15,24 @@ const file = (name: string, type = "") =>
 	});
 
 describe("readUpload", () => {
+	it("can use the first pasted name as data or choose a different header", () => {
+		const upload = csvUpload(
+			"Brinkworth\n\nSouthwick\nPurton",
+			"pasted.csv",
+		);
+		expect(upload.table.headerRow).toBe(0);
+		expect(withHeader(upload, null).table).toMatchObject({
+			headerRow: null,
+			headers: ["area"],
+			rows: [["Brinkworth"], ["Southwick"], ["Purton"]],
+		});
+		expect(withHeader(upload, 1).table).toMatchObject({
+			headerRow: 1,
+			headers: ["Southwick"],
+			rows: [["Purton"]],
+		});
+	});
+
 	it("reads a CSV as a table with no sheets", async () => {
 		const upload = await readUpload(
 			new File(["code,n\nE06000022,1\n"], "a.csv"),

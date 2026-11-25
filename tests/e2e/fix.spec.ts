@@ -89,12 +89,33 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 	page,
 }) => {
 	await mockApi(page);
+	const validationRequests: string[] = [];
+	page.on("request", (request) => {
+		if (
+			request.method() === "POST" &&
+			request.url().includes("/areas:validate")
+		)
+			validationRequests.push(request.url());
+	});
 	await page.goto("/fix");
 
 	await page.getByRole("button", { name: "Try a sample" }).click();
 
 	await expect(page.getByLabel("Area column")).toHaveValue("0");
+	await expect(page.getByLabel("Header row")).toHaveValue("0");
+	const inputPreview = page.getByRole("table", {
+		name: "The first 5 rows of your file",
+	});
+	await expect(inputPreview).toContainText("E05013400");
+	await page.getByLabel("Area column").selectOption({ label: "ward_name" });
+	await expect(
+		inputPreview.getByRole("columnheader", { name: "ward_name area" }),
+	).toBeVisible();
+	await page.getByLabel("Area column").selectOption({ label: "ward_cd" });
 	const diagnosis = page.getByRole("region", { name: /What we found/ });
+	await expect(diagnosis).toBeHidden();
+	expect(validationRequests).toEqual([]);
+	await page.getByRole("button", { name: "Check areas" }).click();
 	await expect(diagnosis).toContainText(
 		"21 matched, 4 updated, 2 need review",
 	);
@@ -153,19 +174,44 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 	await expect(page.getByText("curl -sS -X POST")).toBeVisible();
 });
 
-test("a pasted column is checked too", async ({ page }) => {
+test("the first pasted name can be included by changing the header", async ({
+	page,
+}) => {
 	await mockApi(page);
+	await page.route(
+		"https://api.ukdataatlas.com/v1/areas:validate",
+		(route) => {
+			if (route.request().method() !== "POST") return route.fallback();
+			return route.fulfill({
+				headers: { "access-control-allow-origin": "*" },
+				json: { data: { likely: null, values: [] } },
+			});
+		},
+	);
 	await page.goto("/fix");
 
 	await page.getByText("Or paste a column").click();
 	await page
 		.getByLabel(/Area codes or names, one per line/)
-		.fill("E05013408\nE05013471");
-	await page.getByRole("button", { name: "Check pasted data" }).click();
-
+		.fill("Brinkworth\nSouthwick");
+	await page.getByRole("button", { name: "Preview pasted data" }).click();
+	await expect(page.getByLabel("Header row")).toHaveValue("0");
+	await page
+		.getByLabel("Header row")
+		.selectOption({ label: "First row is data" });
 	await expect(
-		page.getByRole("region", { name: /What we found/ }),
-	).toContainText("Wards, December 2024");
+		page.getByRole("table", { name: "The first 2 rows of your file" }),
+	).toContainText("Brinkworth");
+
+	const validation = page.waitForRequest(
+		(request) =>
+			request.url().endsWith("/areas:validate") &&
+			request.method() === "POST",
+	);
+	await page.getByRole("button", { name: "Check areas" }).click();
+	expect((await validation).postDataJSON()).toEqual({
+		values: ["Brinkworth", "Southwick"],
+	});
 });
 
 test("the download includes only the chosen worksheet", async ({ page }) => {
@@ -186,12 +232,16 @@ test("the download includes only the chosen worksheet", async ({ page }) => {
 		.setInputFiles("tests/fixtures/fix/spreadsheets/multi-sheet.xlsx");
 
 	const result = page.getByRole("region", { name: "What we found" });
+	await expect(page.getByLabel("Sheet", { exact: true })).toHaveValue("3");
+	await page.getByRole("button", { name: "Check areas" }).click();
 	await expect(result).toContainText(
 		"Only the “Claimants” sheet is included",
 	);
 	await page
 		.getByLabel("Sheet", { exact: true })
 		.selectOption({ label: "Lookup" });
+	await expect(result).toBeHidden();
+	await page.getByRole("button", { name: "Check areas" }).click();
 	await expect(result).toContainText("Only the “Lookup” sheet is included");
 	const download = page.waitForEvent("download");
 	await result.getByRole("button", { name: "Download checked file" }).click();
@@ -224,6 +274,7 @@ test("a download over the row limit shows how many rows are left out", async ({
 	});
 
 	const result = page.getByRole("region", { name: "What we found" });
+	await page.getByRole("button", { name: "Check areas" }).click();
 	await expect(result).toContainText("100,000 rows and all input columns");
 	await expect(result).toContainText(
 		"Partial download. The 100,000-row limit leaves out 1 row.",
@@ -236,6 +287,7 @@ test("the sample's codes move to the latest release, with their local authority"
 	await mockApi(page);
 	await page.goto("/fix");
 	await page.getByRole("button", { name: "Try a sample" }).click();
+	await page.getByRole("button", { name: "Check areas" }).click();
 
 	const update = page.getByRole("region", { name: /Update and add columns/ });
 	await update.getByText("Update and add columns", { exact: true }).click();
@@ -273,6 +325,7 @@ test("the sample's households add up to their local authority", async ({
 	await mockApi(page);
 	await page.goto("/fix");
 	await page.getByRole("button", { name: "Try a sample" }).click();
+	await page.getByRole("button", { name: "Check areas" }).click();
 
 	const convert = page.getByRole("region", {
 		name: /Convert to another geography/,
@@ -317,6 +370,7 @@ test("the sample's wards are mapped by status, or shaded by households", async (
 	await mockApi(page);
 	await page.goto("/fix");
 	await page.getByRole("button", { name: "Try a sample" }).click();
+	await page.getByRole("button", { name: "Check areas" }).click();
 
 	const map = page.locator('section[aria-labelledby="fix-map"]');
 	await expect(map.getByRole("img")).toBeHidden();
