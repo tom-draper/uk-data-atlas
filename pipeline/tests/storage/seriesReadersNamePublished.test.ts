@@ -21,6 +21,10 @@ const READS_EVERY_SERIES: Readonly<
 		queries: 1,
 		reason: "Every series has a stable id, whatever its method.",
 	},
+	"pipeline/src/storage/areaPeriodChange.ts": {
+		queries: 5,
+		reason: "A change pairs the default values whatever their method, a converted series finds its published counterpart by reading every series, and the view returns the method and accuracy of each end.",
+	},
 	"pipeline/src/storage/defaultObservation.ts": {
 		queries: 5,
 		reason: "The default view ranks every series by method itself, and reads them all to load their facts and to check that none is without a role or a rank.",
