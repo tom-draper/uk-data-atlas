@@ -338,6 +338,27 @@ export type DisplayDeprivation = {
 	 * record or from its summary's `domainScores`.
 	 */
 	domains?: { attribution: string };
+	/**
+	 * Earlier editions held in the same payload, each listed beneath the
+	 * latest as its own position in its own year. They are never drawn as a
+	 * trend, since each edition ranks its areas against each other at the
+	 * time.
+	 */
+	earlierEditions?: DisplayDeprivationEditions;
+};
+
+/**
+ * The earlier editions of a deprivation index. A small area is matched to an
+ * earlier edition only by an identical code: a statistical geography keeps its
+ * code only while its boundary is unchanged, so a split, merged or redrawn
+ * area has no match. A larger area shows only the edition's published share
+ * of its small areas in the most deprived tenth.
+ */
+export type DisplayDeprivationEditions = {
+	/** The record field holding each small area's published rank. */
+	rankField: string;
+	/** Each earlier edition with how many small areas it ranks. */
+	editions: { year: number; areaCount: number }[];
 };
 
 /**
