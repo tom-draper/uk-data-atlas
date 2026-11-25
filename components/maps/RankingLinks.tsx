@@ -4,9 +4,9 @@ import { rankingLinkClass } from "@/components/maps/RankingRowView";
 import {
 	type AtlasLocation,
 	type AtlasMap,
-	atlasMapTitle,
 	locationLabel,
 } from "@/lib/atlas/pages";
+import { rankingTitle } from "@/lib/atlas/rankings";
 import { otherRankings, rankingsElsewhere } from "@/lib/atlas/rankingLinks";
 
 function LinkList({
@@ -53,7 +53,7 @@ export function RankingLinks({
 			{elsewhere.length > 0 && (
 				<Card className="p-5">
 					<h2 className={headingClass}>
-						{atlasMapTitle(map)} elsewhere
+						{rankingTitle(map)} elsewhere
 					</h2>
 					<LinkList links={elsewhere} />
 				</Card>
@@ -74,7 +74,7 @@ export function RankingLinks({
 							<LinkList
 								links={section.maps.map((other) => ({
 									href: `/maps/${location.slug}/${other.slug}`,
-									label: atlasMapTitle(other),
+									label: rankingTitle(other),
 								}))}
 							/>
 						</div>

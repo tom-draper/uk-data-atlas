@@ -1,9 +1,9 @@
 import {
-	atlasMapTitle,
 	findAtlasLocation,
 	findAtlasMap,
 	locationLabel,
 } from "@/lib/atlas/pages";
+import { rankingTitle } from "@/lib/atlas/rankings";
 import { SHARE_CARD_SIZE, shareCard } from "@/lib/atlas/shareCard";
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 
@@ -20,7 +20,7 @@ async function resolve(params: Params) {
 		? {
 				location,
 				map,
-				title: `${atlasMapTitle(map)} in ${locationLabel(location)}, ranked`,
+				title: `${rankingTitle(map)} in ${locationLabel(location)}, ranked`,
 			}
 		: null;
 }

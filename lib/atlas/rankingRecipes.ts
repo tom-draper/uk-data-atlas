@@ -101,6 +101,11 @@ export type RankingRecipe = {
 	rows?: (context: RankingContext) => RankingRow[];
 	columns?: readonly RankingColumn[];
 	/**
+	 * The ranking's title, where the map's latest period would mislead, as
+	 * when its areas come from different years.
+	 */
+	title?: string;
+	/**
 	 * What the value column measures, where neither the dataset's declaration
 	 * nor the map's name says.
 	 */

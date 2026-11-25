@@ -9,6 +9,7 @@ import {
 	ATLAS_MAPS,
 	type AtlasLocation,
 	type AtlasMap,
+	atlasMapTitle,
 	atlasVizFor,
 } from "@/lib/atlas/pages";
 import {
@@ -329,6 +330,10 @@ export function hasRankingPage(
 		) && areasWithin(ranking, location).length > 1
 	);
 }
+
+/** A ranking page's title for its map: "2024 General Election Results". */
+export const rankingTitle = (map: AtlasMap) =>
+	RANKING_RECIPES[map.slug]?.title ?? atlasMapTitle(map);
 
 /** What a ranking's value column measures, where the map's name is unclear. */
 export const rankedValueLabel = (map: AtlasMap) =>
