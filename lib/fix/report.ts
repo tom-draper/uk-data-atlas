@@ -77,6 +77,7 @@ export function checkedTable(
 	table: Table,
 	diagnosis: Diagnosis,
 	area: number,
+	rowIndexes: Iterable<number> = table.rows.keys(),
 ): { headers: string[]; rows: string[][] } {
 	const byRow = new Map(diagnosis.results.map((r) => [r.row, r]));
 	const status = freeHeader(table.headers, "area_status");
@@ -87,7 +88,8 @@ export function checkedTable(
 		name,
 		...table.headers.slice(area + 1),
 	];
-	const rows = table.rows.map((row, index) => {
+	const rows = Array.from(rowIndexes, (index) => {
+		const row = table.rows[index];
 		const result = byRow.get(index);
 		return [
 			...row.slice(0, area + 1),
