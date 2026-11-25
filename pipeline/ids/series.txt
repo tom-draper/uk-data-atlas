@@ -5184,3 +5184,9 @@ workplace-income/gross-hourly-pay-change/localAuthority:2025-05-uk-bgc-v2/earnin
 workplace-income/gross-hourly-pay-change/localAuthority:2025-05-uk-bgc-v2/earnings-place=workplace/pay-statistic=mean~converted:localAuthority:2026-05-uk-bgc
 population-council-scotland/population/localAuthority:2023-12-uk-bgc/sex=all~converted:localAuthority:2026-05-uk-bgc
 population-district-ni/population/localAuthority:2023-12-uk-bgc/sex=all~converted:localAuthority:2026-05-uk-bgc
+claimant-count/claimants/localAuthority:2024-05-uk-bgc/age-group=16-plus~converted:localAuthority:2026-05-uk-bgc~rate:claimant-rate
+claimant-count-history/claimants/localAuthority:2023-12-uk-bgc/age-group=16-plus~rate:claimant-rate
+claimant-count-history/claimants/localAuthority:2023-12-uk-bgc/age-group=16-plus~converted:localAuthority:2026-05-uk-bgc~rate:claimant-rate
+crime/recorded-crimes/localAuthority:2026-05-uk-bgc/offence=total~rate:recorded-crimes-per-1000-residents
+crime/recorded-crimes/localAuthority:2022-12-uk-bgc-v2/offence=total~rate:recorded-crimes-per-1000-residents
+electric-vehicle-chargers/public-ev-chargers/localAuthority:2026-05-uk-bgc~rate:public-ev-chargers-per-10000-residents
