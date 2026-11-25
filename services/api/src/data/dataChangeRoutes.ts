@@ -11,7 +11,7 @@ import {
 	type ChangeBasis,
 } from "./change";
 import { sourceSeriesProvenance } from "./sourceExactProvenance.ts";
-import { paginate } from "../http/pagination";
+import { mismatchedCursor, paginate } from "../http/pagination";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
@@ -21,7 +21,7 @@ import {
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
-import { selectSourcePartition } from "./sourcePartition";
+import { selectSourcePartition, sourceCursorScope } from "./sourcePartition";
 import {
 	envelope,
 	invalidQuery,
@@ -279,6 +279,8 @@ export const handleDataChangeRoutes = ({
 
 	// One area, with its place among all of them: "rose 12%, fifth fastest".
 	const areaCode = area?.code ?? place?.code;
+	if (areaCode && parsedUrl.searchParams.get("cursor"))
+		return mismatchedCursor();
 	let records = ranked;
 	let nextCursor: string | null = null;
 	if (areaCode) {
@@ -302,7 +304,16 @@ export const handleDataChangeRoutes = ({
 		const page = paginate(parsedUrl, ranked, {
 			keyOf: (entry) => entry.areaCode,
 			subject: "change query",
-			scope: selectedSeries?.id,
+			scope: sourceCursorScope(
+				releaseId,
+				segments,
+				selectedSeries?.id ?? measureId,
+				source,
+				startPeriod,
+				endPeriod,
+				basis,
+				order,
+			),
 		});
 		if ("problem" in page) return page.problem;
 		records = page.items;

@@ -365,11 +365,11 @@ test("pages through every area a box meets", (t) => {
 		],
 	]);
 	const cache = new AreaGeometryCache(root, sources);
-	const get = (query: string) =>
+	const get = (query: string, bbox = "-3,53,1,56", release = registry) =>
 		route(
 			"GET",
-			`/v1/areas:intersects?bbox=-3,53,1,56&geography=ward&release=2025-01-en-ward&limit=1${query}`,
-			registry,
+			`/v1/areas:intersects?bbox=${bbox}&geography=ward&release=2025-01-en-ward&limit=1${query}`,
+			release,
 			geographyInventory,
 			areaLookup,
 			crosswalkInventory,
@@ -403,4 +403,17 @@ test("pages through every area a box meets", (t) => {
 	assert.equal(second.headers?.link, undefined);
 
 	assert.equal(get("&cursor=not-ours!").status, 400);
+	for (const refused of [
+		get(`&cursor=${cursor}`, "-3,53,2,56"),
+		get(`&cursor=${cursor}`, undefined, {
+			...registry,
+			contentHash: "sha256:next",
+		}),
+	]) {
+		assert.equal(refused.status, 400);
+		assert.equal(
+			"code" in refused.body && refused.body.code,
+			"invalid_cursor",
+		);
+	}
 });

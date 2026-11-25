@@ -165,7 +165,7 @@ export const dataRankingsMetadata = {
 							],
 						},
 						meta: {
-							nextCursor: "RTA1MDExNDAz",
+							nextCursor: "<opaque cursor>",
 						},
 					},
 				},

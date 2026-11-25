@@ -798,14 +798,14 @@ exports[`crosswalk reads keep their HTTP responses 1`] = `
     "status": 400,
   },
   "GET /v1/crosswalks/many-records/records?limit=2": {
-    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000","labels":["Seat 0"]},"targets":[{"code":"E15000","labels":[]}]},{"source":{"code":"E14001","labels":["Seat 1"]},"targets":[{"code":"E15001","labels":[]}]}],"meta":{"nextCursor":"RTE0MDAx"}}
+    "body": "{"apiVersion":"v1","atlasRelease":"sha256:registry","data":[{"source":{"code":"E14000","labels":["Seat 0"]},"targets":[{"code":"E15000","labels":[]}]},{"source":{"code":"E14001","labels":["Seat 1"]},"targets":[{"code":"E15001","labels":[]}]}],"meta":{"nextCursor":"WzEsIktVdGZBd20xcHNRTjFaTnFRankzS0VnOEV4VFNDMGtYdUM4NTFFM3RYMkUiLCJFMTQwMDEiXQ"}}
 ",
-    "bytes": 277,
+    "bytes": 347,
     "headers": [
       "atlas-release: sha256:registry",
       "cache-control: public, max-age=300, must-revalidate",
       "content-type: application/json",
-      "etag: "sha256-hNB7_-OtaTHFEP1TDsp0DXiaHmY1gRjZdyuaTEHHwa0"",
+      "etag: "sha256-i7R3EWmRkVAFKC8vWfvxwQxMac2DwvNck3235WT10DA"",
       "vary: accept-encoding",
     ],
     "status": 200,

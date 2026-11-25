@@ -21,6 +21,7 @@ import {
 	type CallerSelectedGeometry,
 } from "./sourceExactProvenance.ts";
 import { nextPageHref, paginate } from "../http/pagination";
+import { sourceCursorScope } from "./sourcePartition";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
@@ -248,7 +249,18 @@ export const handleDataRoutes = ({
 	const page = paginate(parsedUrl, matches, {
 		keyOf: (record) => record.areaCode,
 		subject: `${publicId} query`,
-		scope: selectedSeries?.id,
+		scope: sourceCursorScope(
+			releaseId,
+			segments,
+			selectedSeries?.id ?? measureId,
+			source,
+			period,
+			areaCode,
+			geometry?.boundaryRelease,
+			include,
+			unitMode,
+			requestedFormat,
+		),
 	});
 	if ("problem" in page) return page.problem;
 	const { items: records, nextCursor } = page;

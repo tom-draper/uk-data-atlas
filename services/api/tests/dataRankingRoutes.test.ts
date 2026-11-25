@@ -41,6 +41,18 @@ test("ranks one source-exact partition with stable cursors", () => {
 			},
 		],
 	);
+	const reordered = routeWithData(
+		`/v1/data/population/rankings?period=2022&geography=ward&codeYear=2023&limit=1&order=asc&cursor=${cursor}`,
+	);
+	assert.equal(reordered.status, 400);
+	assert.equal(
+		"code" in reordered.body && reordered.body.code,
+		"invalid_cursor",
+	);
+	const explicitDefaults = routeWithData(
+		`/v1/data/population/rankings?order=desc&datasetId=population&geography=ward&codeYear=2023&period=2022&cursor=${cursor}`,
+	);
+	assert.equal(explicitDefaults.status, 200);
 
 	assert.equal(
 		routeWithData(
@@ -54,4 +66,25 @@ test("ranks one source-exact partition with stable cursors", () => {
 		).status,
 		422,
 	);
+});
+
+test("rejects a ranking cursor for another period or operation", () => {
+	const query = "geography=localAuthority&codeYear=2023&limit=1";
+	const first = routeWithData(
+		`/v1/data/population/rankings?${query}&period=2022`,
+	);
+	assert.equal(first.status, 200);
+	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
+	assert.ok(cursor);
+	for (const path of [
+		`/v1/data/population/rankings?${query}&period=2023`,
+		`/v1/data/population?${query}&period=2022`,
+	]) {
+		const refused = routeWithData(`${path}&cursor=${cursor}`);
+		assert.equal(refused.status, 400);
+		assert.equal(
+			"code" in refused.body && refused.body.code,
+			"invalid_cursor",
+		);
+	}
 });

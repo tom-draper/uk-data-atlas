@@ -7,7 +7,6 @@ import {
 	compileLocationProjections,
 	LocationProjectionStore,
 } from "@uk-data-atlas/places";
-import { cursorFor } from "../src/http/pagination";
 import type { RouteContext } from "../src/runtime/index.ts";
 import type { CrosswalkInventory } from "@uk-data-atlas/relationships";
 import {
@@ -188,17 +187,27 @@ test("paginates location summaries without their geometry", () => {
 		[first.id],
 	);
 	assert.equal(body.data[0]!.geometry, undefined);
-	assert.equal(body.meta.nextCursor, cursorFor(first.id));
+	assert.ok(body.meta.nextCursor);
 
 	const next = routeRequest(
 		"GET",
-		`/v1/locations?limit=1&cursor=${cursorFor(first.id)}`,
+		`/v1/locations?limit=1&cursor=${body.meta.nextCursor}`,
 		context,
 	);
 	assert.equal(next.status, 200);
 	assert.deepEqual(
 		(next.body as { data: Array<{ id: string }> }).data.map(({ id }) => id),
 		[second.id],
+	);
+	const filtered = routeRequest(
+		"GET",
+		`/v1/locations?limit=1&q=${encodeURIComponent(first.id)}&cursor=${body.meta.nextCursor}`,
+		context,
+	);
+	assert.equal(filtered.status, 400);
+	assert.equal(
+		"code" in filtered.body && filtered.body.code,
+		"invalid_cursor",
 	);
 });
 

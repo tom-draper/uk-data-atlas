@@ -16,6 +16,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { sourceExactProvenance } from "./sourceExactProvenance.ts";
 import { paginate } from "../http/pagination";
+import { sourceCursorScope } from "./sourcePartition";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import {
 	envelope,
@@ -211,7 +212,15 @@ export const handleDataConversionRoutes = ({
 	const page = paginate(parsedUrl, converted.records, {
 		keyOf: (record) => record.areaCode,
 		subject: "conversion",
-		scope: selectedSeries?.id,
+		scope: sourceCursorScope(
+			releaseId,
+			segments,
+			selectedSeries?.id ?? measureId,
+			source,
+			period,
+			crosswalkId,
+			pathId,
+		),
 	});
 	if ("problem" in page) return page.problem;
 	const publicMeasure = publicSeriesMeasure(

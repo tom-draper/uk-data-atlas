@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { paginate } from "../http/pagination";
+import { cursorScope, mismatchedCursor, paginate } from "../http/pagination";
 import { envelope, problem, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 
@@ -53,6 +53,8 @@ export const handleCrosswalkRoutes = ({
 				"No crosswalk matches that identity.",
 			);
 		const source = parsedUrl.searchParams.get("source");
+		if (source !== null && parsedUrl.searchParams.get("cursor"))
+			return mismatchedCursor();
 		if (source !== null)
 			return {
 				status: 200,
@@ -66,6 +68,7 @@ export const handleCrosswalkRoutes = ({
 		const page = paginate(parsedUrl, crosswalk.records, {
 			keyOf: (record) => record.source.code,
 			subject: "crosswalk",
+			scope: cursorScope(releaseId, segments),
 		});
 		if ("problem" in page) return page.problem;
 		return {

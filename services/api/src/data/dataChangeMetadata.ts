@@ -141,7 +141,7 @@ export const dataChangeMetadata = {
 							],
 						},
 						meta: {
-							nextCursor: "RTA5MDAwMDAx",
+							nextCursor: "<opaque cursor>",
 						},
 					},
 				},

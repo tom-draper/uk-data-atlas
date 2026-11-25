@@ -1,5 +1,5 @@
 import { requireGeography } from "../runtime/index.ts";
-import { paginate } from "../http/pagination";
+import { cursorScope, paginate } from "../http/pagination";
 import { envelope, invalidQuery, type ApiResponse } from "../runtime/index.ts";
 import type { RouteRequestFor } from "../runtime/index.ts";
 import { areaNotFound } from "../runtime/index.ts";
@@ -69,6 +69,7 @@ export const handleAreaSearchRoutes = ({
 	const page = paginate(parsedUrl, matches, {
 		keyOf: (area) => area.id,
 		subject: "area query",
+		scope: cursorScope(releaseId, segments, geography, boundaryRelease),
 	});
 	if ("problem" in page) return page.problem;
 	return {

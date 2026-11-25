@@ -33,9 +33,10 @@ info:
 
     Representations and paging work the same way everywhere. A JSON response
     is the `Envelope`, and its `meta.nextCursor` carries the next page, or
-    `null` on the last. A cursor is opaque, belongs to the query that issued
-    it, and any other value is refused with `invalid_cursor`; `limit` is 1 to
-    500 unless an operation says otherwise. `format` chooses among a route's
+    `null` on the last. A cursor is opaque and belongs to the resolved query
+    and Atlas release that issued it. After an `invalid_cursor` response,
+    restart without a cursor. You can change the page size while paging.
+    `limit` is 1 to 500 unless an operation says otherwise. `format` chooses among a route's
     representations where it has more than one: `json`, `csv` or `ndjson` for
     observations, `csv` or `ndjson` for a lookup, served as
     `text/csv; charset=utf-8` and `application/x-ndjson; charset=utf-8`. A
@@ -5244,7 +5245,7 @@ paths:
                       status: derived
                       inputAreaCount: 12
                 meta:
-                  nextCursor: RTA2MDAwMDAx
+                  nextCursor: <opaque cursor>
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -5601,7 +5602,7 @@ paths:
                       rank: 1
                       tieCount: 1
                 meta:
-                  nextCursor: RTA1MDExNDAz
+                  nextCursor: <opaque cursor>
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -6397,7 +6398,7 @@ paths:
                       absoluteChange: 4203
                       relativeChange: 0.567
                 meta:
-                  nextCursor: RTA5MDAwMDAx
+                  nextCursor: <opaque cursor>
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -10845,7 +10846,8 @@ components:
         type: string
       description: >
         The `meta.nextCursor` of the previous page. A cursor is opaque and
-        belongs to the query that issued it.
+        belongs to the resolved query and Atlas release that issued it.
+        Start again without a cursor if either changes.
     PageLimit:
       name: limit
       in: query

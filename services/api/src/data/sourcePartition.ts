@@ -1,4 +1,9 @@
-import type { Measure } from "@uk-data-atlas/measures";
+import {
+	measureSeriesKeySourceKey,
+	type Measure,
+	type MeasureSource,
+} from "@uk-data-atlas/measures";
+import { cursorScope } from "../http/pagination";
 import { defaultSource, type DefaultedSource } from "./dataDefaults";
 import {
 	resolveObservations,
@@ -6,6 +11,20 @@ import {
 	type Resolution,
 } from "../observationResolution/observationPlan";
 import type { RouteContextFor } from "../runtime/index.ts";
+
+export const sourceCursorScope = (
+	releaseId: string,
+	segments: readonly string[],
+	seriesKey: string,
+	source: MeasureSource,
+	...selection: (string | number | null | undefined)[]
+) =>
+	cursorScope(
+		releaseId,
+		segments,
+		measureSeriesKeySourceKey(seriesKey, source),
+		...selection,
+	);
 
 type SourceQuery = {
 	period?: string | null;

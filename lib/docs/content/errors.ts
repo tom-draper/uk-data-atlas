@@ -70,8 +70,8 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 	invalid_cursor: {
 		status: 400,
 		meaning:
-			"The `cursor` wasn't issued by the API, or belongs to a different query.",
-		fix: "Start again from the first page, and only pass back the `nextCursor` you were given for the same query.",
+			"The `cursor` is invalid or belongs to a different query or Atlas release.",
+		fix: "Start again from the first page without a cursor.",
 	},
 	unknown_query_parameter: {
 		status: 400,
