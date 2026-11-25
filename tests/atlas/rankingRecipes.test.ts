@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { findAtlasMap } from "@/lib/atlas/pages";
+import { ATLAS_LOCATIONS, findAtlasMap } from "@/lib/atlas/pages";
 import {
+	areasWithin,
 	compileRanking,
 	formatColumnValue,
 	formatRankedValue,
@@ -142,6 +143,54 @@ describe("ranking recipes", () => {
 		});
 		expect(columns).toEqual(["Change since 2024"]);
 		expect(rows).toEqual([["Hartlepool", "£31,234", "+2.5%"]]);
+	});
+
+	it("ranks county and unitary councils, counties by their districts", () => {
+		const map = findAtlasMap("pupil-absence")!;
+		const council = (name: string, missed: number, persistent: number) => ({
+			name,
+			metrics: {
+				sessions: 1000,
+				overall: missed,
+				unauthorised: missed / 4,
+				enrolments: 100,
+				persistent,
+			},
+			value: missed / 10,
+		});
+		const editions: Editions = {
+			"2025": {
+				year: 2025,
+				data: {
+					E10000016: council("Kent", 60, 18),
+					E06000035: council("Medway", 75, 22),
+					E06000001: council("Hartlepool", 70, 20),
+				},
+			},
+		};
+		const ranking = compileRanking(map, editions)!;
+		expect(ranking.level).toBe("countyAndUnitaryAuthority");
+		expect(
+			ranking.areas.find((area) => area.code === "E10000016"),
+		).toMatchObject({
+			district: "E07000105",
+			within: expect.arrayContaining(["E07000116"]),
+		});
+		const kent = ATLAS_LOCATIONS.find(
+			(location) => location.slug === "kent",
+		)!;
+		expect(areasWithin(ranking, kent).map((area) => area.name)).toEqual([
+			"Medway",
+			"Kent",
+		]);
+		expect(table("pupil-absence", editions)).toEqual({
+			columns: ["Persistently absent", "Unauthorised absence"],
+			rows: [
+				["Medway", "7.5%", "22.0%", "1.9%"],
+				["Hartlepool", "7.0%", "20.0%", "1.8%"],
+				["Kent", "6.0%", "18.0%", "1.5%"],
+			],
+		});
 	});
 
 	it("adds census neighbourhoods up into their councils", () => {
