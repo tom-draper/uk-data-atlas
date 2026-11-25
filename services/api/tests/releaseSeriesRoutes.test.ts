@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { afterAll, test } from "vitest";
 import {
 	measureSeriesSourceKey,
+	readAreaPeriodChanges,
 	type StatisticsReadPath,
 } from "@uk-data-atlas/measures";
 import { reportRequest as routeRequest } from "./evidenceFixtures";
@@ -229,4 +230,138 @@ test("refuses a measure whose selector cannot be read on another release", () =>
 	});
 	assert.equal(response.status, 422);
 	assert.match(JSON.stringify(response.body), /category/);
+});
+
+/**
+ * The same atlas with v_area_period_change: population is a quantity whose
+ * age breakdown has its total in the series with no member, and Hartlepool
+ * has one adjacent change, published at both ends.
+ */
+const changesPath = join(root, "atlas-changes.sqlite");
+{
+	const changes = new DatabaseSync(databasePath);
+	changes.exec(`VACUUM INTO '${changesPath}'`);
+	changes.close();
+	const atlas = new DatabaseSync(changesPath);
+	atlas.exec(`
+		CREATE TABLE measure_dimension (measure_id INTEGER, dimension_id INTEGER, role TEXT, default_member_id INTEGER);
+		CREATE TABLE quantity (id INTEGER PRIMARY KEY, measure_id INTEGER, release_id INTEGER, key TEXT);
+		INSERT INTO dimension VALUES (1, 'age');
+		INSERT INTO measure_dimension VALUES (1, 1, 'breakdown', NULL);
+		INSERT INTO quantity VALUES (1, 1, 2, 'population/localAuthority:2026-05-uk-bgc');
+		CREATE TABLE fixture_change (quantity TEXT, area_code TEXT, from_period TEXT, to_period TEXT, from_period_id INTEGER, span TEXT, from_value REAL, to_value REAL, change REAL, percent_change REAL, from_accuracy TEXT, to_accuracy TEXT, accuracy TEXT, boundary_check TEXT, published_change REAL, boundary_effect REAL, materially_changed INTEGER, residents_lost REAL, residents_gained REAL, land_lost REAL, land_gained REAL, from_dataset TEXT, to_dataset TEXT, source_changed INTEGER, period_kind_changed INTEGER, periods_overlap INTEGER, breaks TEXT, break_notes TEXT);
+		INSERT INTO fixture_change VALUES
+			('population/localAuthority:2026-05-uk-bgc', 'E06000001', '2022', '2024', 1, 'first-latest', 92000, 93000, 1000, 1.0869565217391304, 'regrouped', 'published', 'regrouped', 'published', 1200, 200, 0, 0.01, 0.002, 0.001, 0, 'population-uk', 'population-uk', 0, 0, 0, NULL, NULL),
+			('population/localAuthority:2026-05-uk-bgc', 'E06000001', '2022', '2023', 1, 'adjacent', 92000, 92500, 500, 0.5434782608695652, 'regrouped', 'regrouped', 'regrouped', 'code-not-published', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'population-uk', 'population-uk', 0, 0, 0, 'census 2023', 'A note.');
+		CREATE VIEW v_area_period_change AS SELECT * FROM fixture_change;
+	`);
+	atlas.close();
+}
+
+test("adds the change on fixed boundaries, adjacent pairs first", () => {
+	const body = data(
+		get(`/v1/data/population/series?place=E06000001&${on}`, {
+			databasePath: changesPath,
+			readPath,
+		}),
+	);
+	const changes = body.changes as {
+		quantity: string;
+		pairs: Array<Record<string, unknown>>;
+	};
+	assert.equal(changes.quantity, "population/localAuthority:2026-05-uk-bgc");
+	assert.deepEqual(
+		changes.pairs.map((pair) => [pair.from, pair.to, pair.span]),
+		[
+			["2022", "2023", "adjacent"],
+			["2022", "2024", "first-latest"],
+		],
+	);
+	assert.deepEqual(changes.pairs[0]!.breaks, "census 2023");
+	assert.equal(changes.pairs[0]!.boundaryEffect, null);
+	assert.equal(changes.pairs[0]!.materiallyChanged, null);
+	assert.deepEqual(changes.pairs[1], {
+		from: "2022",
+		to: "2024",
+		span: "first-latest",
+		fromValue: 92000,
+		toValue: 93000,
+		change: 1000,
+		percentChange: 1.0869565217391304,
+		fromAccuracy: "regrouped",
+		toAccuracy: "published",
+		accuracy: "regrouped",
+		boundaryCheck: "published",
+		publishedChange: 1200,
+		boundaryEffect: 200,
+		materiallyChanged: false,
+		residentsLost: 0.01,
+		residentsGained: 0.002,
+		landLost: 0.001,
+		landGained: 0,
+		fromDataset: "population-uk",
+		toDataset: "population-uk",
+		sourceChanged: false,
+		periodKindChanged: false,
+		periodsOverlap: false,
+		breaks: null,
+		breakNotes: null,
+	});
+});
+
+test("leaves changes out of an atlas built without them", () => {
+	const body = data(get(`/v1/data/population/series?place=E06000001&${on}`));
+	assert.equal(body.changes, undefined);
+});
+
+test("reads no change for a part of a total, a ratio or an unknown quantity", () => {
+	const atlas = new DatabaseSync(changesPath, { readOnly: true });
+	const target = { geography: "localAuthority", release: "2026-05-uk-bgc" };
+	const part = {
+		datasetId: "population-uk",
+		measure: "population",
+		dimensions: {},
+		geography: "localAuthority",
+	};
+	try {
+		// Summing the age parts reads the total.
+		assert.equal(
+			readAreaPeriodChanges(
+				atlas,
+				{ parts: [{ ...part, sum: ["age"] }] },
+				target,
+				"E06000001",
+			)?.changes.length,
+			2,
+		);
+		assert.equal(
+			readAreaPeriodChanges(
+				atlas,
+				{ parts: [{ ...part, dimensions: { age: "0" } }] },
+				target,
+				"E06000001",
+			),
+			undefined,
+		);
+		assert.equal(
+			readAreaPeriodChanges(
+				atlas,
+				{ parts: [part], ratio: { parts: [part], scale: 100 } },
+				target,
+				"E06000001",
+			),
+			undefined,
+		);
+		assert.equal(
+			readAreaPeriodChanges(
+				atlas,
+				{ parts: [part] },
+				{ geography: "localAuthority", release: "2023-12-uk-bgc" },
+				"E06000001",
+			),
+			undefined,
+		);
+	} finally {
+		atlas.close();
+	}
 });

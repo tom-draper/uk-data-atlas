@@ -155,6 +155,37 @@ What is not detected: a reorganisation that keeps the code but moves the
 boundary is only visible through the crosswalk chain in `source.crosswalks`,
 not as a flag.
 
+## Change on fixed boundaries (#414)
+
+Where the measure is a total or a qualified value the atlas ranks, the
+response also carries `changes`: the change between each pair of adjacent
+periods, and from the first period to the latest, with the area held on the
+target release's boundaries. The rows come from `v_area_period_change` in
+`atlas.sqlite`, written at build time (task 44 in
+[the database roadmap](database-roadmap.md)). Nothing is computed when the
+request is served.
+
+- The values are the atlas's default value of the quantity
+  (`v_observation_default`) in each period, so a period can come from another
+  dataset than the series above it. `fromDataset`, `toDataset` and
+  `sourceChanged` say when it does.
+- `accuracy` is the worse of the two ends: `published`, `regrouped`
+  (converted from whole source areas), `estimated` (converted with a split)
+  or `modelled`.
+- `boundaryEffect` is the change as published for the same area code minus
+  the change on fixed boundaries. It is given only where the code is
+  published at both ends (`boundaryCheck: published`). Otherwise
+  `boundaryCheck` says why (`code-not-published`, `value-not-published`,
+  `modelled`, `not-traced`) and nothing is guessed.
+- `materiallyChanged` and the four shares say how much of the area's
+  residents and land moved between the two published versions of the code.
+- `breaks` and `breakNotes` name the publisher's method breaks the change
+  crosses or touches, as declared in `packages/measures/src/seriesBreaks.ts`.
+  A break is a flag. Its effect is not estimated.
+- Ranks, deciles, categories and measures that are already a change are not
+  compared, and a part of a breakdown (an age band, a tenure) has no
+  quantity, so neither carries `changes`.
+
 ## Proof
 
 - `tests/server/releaseSeries.test.ts` covers each path on a small database:
@@ -175,7 +206,11 @@ not as a flag.
   being a `missing-input` gap, and an official figure on the target being
   kept and never converted over.
 - `services/api/tests/releaseSeriesRoutes.test.ts` covers the route: 200s,
-  warnings, and the 400, 404 and 422 refusals.
+  warnings, and the 400, 404 and 422 refusals. It also covers `changes`:
+  adjacent pairs first, every field as the view gives it, none from an atlas
+  built without the view, and none for a part of a total or a ratio.
+- `pipeline/tests/storage/areaPeriodChange.test.ts` covers the table and the
+  view the changes are read from.
 - `services/api/tests/built/releaseSeries.test.ts` is the golden case on the
   built atlas:
     - Dearne South (E05016574), a ward made since 2024, has local election

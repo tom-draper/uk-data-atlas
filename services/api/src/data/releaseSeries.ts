@@ -6,6 +6,7 @@ import {
 	LOW_SERIES_COVERAGE,
 	measureSeriesKey,
 	measureSeriesKeySourceKey,
+	readAreaPeriodChanges,
 	readReleaseSeries,
 	type Measure,
 	type ReleaseSeries,
@@ -311,7 +312,7 @@ export const releaseSeriesResponse = ({
 				label,
 				cacheKey,
 			);
-			return series ? [{ datasetId: id, series }] : [];
+			return series ? [{ datasetId: id, spec, series }] : [];
 		});
 		if (read.length === 0)
 			return problem(
@@ -327,6 +328,13 @@ export const releaseSeriesResponse = ({
 		const defaulted =
 			candidates.length > 1 ? { datasetId: chosen.datasetId } : undefined;
 		const { series } = chosen;
+		const changes = readAreaPeriodChanges(
+			database,
+			chosen.spec,
+			target,
+			areaCode,
+			label,
+		);
 		if (series.values.length === 0 && series.gaps.length === 0)
 			return problem(
 				404,
@@ -360,6 +368,15 @@ export const releaseSeriesResponse = ({
 					period,
 					sources,
 				})),
+				...(changes
+					? {
+							changes: {
+								quantity: changes.quantity,
+								note: "Change between periods with the area held on this release's boundaries, from the atlas's default value of the quantity in each period, which can come from another dataset than the series above. boundaryEffect is the change as published for the same area code minus this change, where the code is published at both ends; boundaryCheck says why it is absent otherwise. breaks names the publisher's method breaks the change crosses. atlas.sqlite documents every field in schema_column for v_area_period_change.",
+								pairs: changes.changes,
+							},
+						}
+					: {}),
 			}),
 		};
 	} finally {
