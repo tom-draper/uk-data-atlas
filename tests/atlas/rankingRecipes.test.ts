@@ -4,8 +4,12 @@ import {
 	areasWithin,
 	compileRanking,
 	formatColumnValue,
+	findRanking,
 	formatRankedValue,
+	hasRankingPage,
+	rankingKey,
 	rankingSource,
+	rankingTitle,
 } from "@/lib/atlas/rankings";
 import type { Editions } from "@/lib/atlas/rankingRecipes";
 
@@ -288,6 +292,64 @@ describe("ranking recipes", () => {
 				["Harpurhey", "20.0%", "Conservative", "100", "–", "2024"],
 			],
 		});
+	});
+
+	it("ranks earlier general elections for the UK and its nations", () => {
+		const map = findAtlasMap("general-election")!;
+		const seat = (name: string, majority: number) => ({
+			constituencyName: name,
+			majority,
+			validVotes: 1000,
+			firstParty: "Con",
+		});
+		const editions: Editions = {
+			"2019": {
+				id: "general-election-2019",
+				year: 2019,
+				data: {
+					E14000530: seat("Old Seat", 300),
+					E14000531: seat("Other Old Seat", 100),
+				},
+			},
+			"2024": {
+				id: "general-election-2024",
+				year: 2024,
+				data: { E14001063: seat("New Seat", 50) },
+			},
+		};
+		const overlaps = {
+			releases: {
+				"2024-07-uk-bgc": {
+					E14000530: [{ code: "E08000003", weight: 1 }],
+					E14000531: [{ code: "E08000003", weight: 1 }],
+					E14001063: [{ code: "E08000003", weight: 1 }],
+				},
+			},
+		};
+		const inputs = { "constituency-lad-overlaps": overlaps };
+		const ranking = compileRanking(map, editions, inputs, 2019)!;
+		expect(ranking.period).toBe(2019);
+		expect(ranking.areas.map((area) => area.name)).toEqual([
+			"Old Seat",
+			"Other Old Seat",
+		]);
+		expect(compileRanking(map, editions, inputs)!.period).toBeUndefined();
+
+		const place = (slug: string) =>
+			ATLAS_LOCATIONS.find((location) => location.slug === slug)!;
+		expect(hasRankingPage(ranking, map, place("england"))).toBe(true);
+		expect(hasRankingPage(ranking, map, place("manchester"))).toBe(false);
+
+		expect(rankingKey(map, 2019)).toBe("general-election-2019");
+		expect(rankingKey(map, map.periods[0])).toBe("general-election");
+		expect(findRanking("general-election-2019")).toEqual({
+			map,
+			period: 2019,
+		});
+		expect(findRanking("general-election-2024")).toBeNull();
+		expect(findRanking("general-election-1997")).toBeNull();
+		expect(findRanking("local-election-2019")).toBeNull();
+		expect(rankingTitle(map, 2019)).toBe("2019 General Election Results");
 	});
 
 	it("adds census neighbourhoods up into their councils", () => {

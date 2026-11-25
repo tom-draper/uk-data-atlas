@@ -763,17 +763,20 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		format: gigawattHours,
 		columns: [changeSince("percent")],
 	},
-	"general-election": constituencyRecipe(
-		(record) => share(num(record.majority), num(record.validVotes)),
-		[
-			column("Winner", "text", (record) => {
-				const party = String(record.firstParty ?? "");
-				return party ? (PARTY_NAMES[party] ?? party) : null;
-			}),
-			column("Majority", "count", field("majority")),
-			column("Turnout", "percent", field("turnoutPercent")),
-		],
-	),
+	"general-election": {
+		...constituencyRecipe(
+			(record) => share(num(record.majority), num(record.validVotes)),
+			[
+				column("Winner", "text", (record) => {
+					const party = String(record.firstParty ?? "");
+					return party ? (PARTY_NAMES[party] ?? party) : null;
+				}),
+				column("Majority", "count", field("majority")),
+				column("Turnout", "percent", field("turnoutPercent")),
+			],
+		),
+		earlierPeriods: true,
+	},
 	"ghg-emissions": {
 		columns: [changeSince("percent"), changeSince("percent", "first")],
 	},
