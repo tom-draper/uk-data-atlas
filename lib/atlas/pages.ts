@@ -258,6 +258,12 @@ const NAMES_AFTER_THE: ReadonlySet<string> = new Set([
 	"Scottish Borders",
 	"Pembrokeshire Coast",
 	"Belfast Metropolitan Area",
+	"Liverpool City Region",
+	"Tees Valley",
+	"West of England",
+	"West Midlands Combined Authority",
+	"East Midlands Combined County Authority",
+	"North East Combined Authority",
 	"West of Northern Ireland",
 ]);
 
