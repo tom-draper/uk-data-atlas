@@ -10,8 +10,14 @@ import type { MeasureContext } from "@uk-data-atlas/measures";
 import { releaseKey } from "@uk-data-atlas/geography";
 
 type Measure = DataCatalog["measures"][number];
+type CoverageTarget = { geography: string; boundaryRelease: string };
+type ReviewedConversion = Omit<MeasureConversionPath, "crosswalk"> &
+	(
+		| Pick<MeasureConversionPath, "crosswalk">
+		| { path: { id: string; purpose: string; quality: string } }
+	);
 
-export type CoverageCountryPlan = {
+export type CoverageCountryPlan<Conversion = MeasureConversionPath> = {
 	country: Country;
 	/** Areas of the target release in this country. */
 	areaCount: number;
@@ -26,14 +32,14 @@ export type CoverageCountryPlan = {
 		periods: string[];
 	};
 	/** Or the conversion that reaches this country, where none is published. */
-	conversion?: MeasureConversionPath;
+	conversion?: Conversion;
 	reason: string;
 };
 
-export type CoveragePlan = {
+export type CoveragePlan<Conversion = MeasureConversionPath> = {
 	measure: { id: string; unit: string; aggregation: Measure["aggregation"] };
 	target: { geography: string; boundaryRelease: string; areaCount: number };
-	countries: CoverageCountryPlan[];
+	countries: CoverageCountryPlan<Conversion>[];
 	summary: {
 		areaCount: number;
 		coveredAreaCount: number;
@@ -83,6 +89,48 @@ const countriesOfRelease = (areas: ReadonlyMap<string, unknown>) => {
 	return held;
 };
 
+/** Coverage of the actual output of one reviewed conversion for one period. */
+export const reviewedCoveragePlan = (
+	measure: Measure,
+	target: CoverageTarget,
+	areas: ReadonlyMap<string, unknown>,
+	targetCodes: readonly string[],
+	conversion: ReviewedConversion,
+): CoveragePlan<ReviewedConversion> => {
+	const targetByCountry = countriesOfRelease(areas);
+	const covered = new Set(targetCodes.filter((code) => areas.has(code)));
+	const coveredByCountry = countriesOf(covered);
+	const routeId =
+		"path" in conversion ? conversion.path.id : conversion.crosswalk.id;
+	const countries = [...targetByCountry]
+		.sort(([left], [right]) => left.localeCompare(right))
+		.map(([country, codes]): CoverageCountryPlan<ReviewedConversion> => {
+			const coveredAreaCount = coveredByCountry.get(country)?.size ?? 0;
+			return {
+				country,
+				areaCount: codes.size,
+				coveredAreaCount,
+				status:
+					coveredAreaCount === codes.size
+						? "converted"
+						: coveredAreaCount > 0
+							? "partial"
+							: "missing",
+				...(coveredAreaCount > 0 ? { conversion } : {}),
+				reason: `${conversion.source.datasetId} reaches ${coveredAreaCount} of ${codes.size} areas in ${country} for ${conversion.source.period} through ${routeId}.`,
+			};
+		});
+	return summariseCoveragePlan(
+		measure,
+		target,
+		areas.size,
+		countries,
+		targetByCountry.unattributed.size,
+		covered.size,
+		"Coverage counts target areas reached by the selected conversion for this source and period.",
+	);
+};
+
 /**
  * What a measure can answer on one release, country by country.
  *
@@ -101,7 +149,7 @@ const countriesOfRelease = (areas: ReadonlyMap<string, unknown>) => {
 export const coveragePlan = (
 	context: MeasureContext,
 	measure: Measure,
-	target: { geography: string; boundaryRelease: string },
+	target: CoverageTarget,
 ): CoveragePlan | undefined => {
 	const { dataCatalog, measureCompatibilityInventory } = context;
 	if (!dataCatalog || !measureCompatibilityInventory) return undefined;
@@ -259,18 +307,38 @@ export const coveragePlan = (
 		(total, country) => total + country.coveredAreaCount,
 		0,
 	);
+	return summariseCoveragePlan(
+		measure,
+		target,
+		areas.size,
+		countries,
+		targetByCountry.unattributed.size,
+		coveredAreaCount,
+		"Each country is answered from the areas a source or conversion actually carries. A country with no source is reported missing; no value is estimated to fill it.",
+	);
+};
+
+const summariseCoveragePlan = <Conversion>(
+	measure: Measure,
+	target: CoverageTarget,
+	areaCount: number,
+	countries: CoverageCountryPlan<Conversion>[],
+	unattributedAreaCount: number,
+	coveredAreaCount: number,
+	note: string,
+): CoveragePlan<Conversion> => {
 	return {
 		measure: {
 			id: measure.id,
 			unit: measure.unit,
 			aggregation: measure.aggregation,
 		},
-		target: { ...target, areaCount: areas.size },
+		target: { ...target, areaCount },
 		countries,
 		summary: {
-			areaCount: areas.size,
+			areaCount,
 			coveredAreaCount,
-			unattributedAreaCount: targetByCountry.unattributed.size,
+			unattributedAreaCount,
 			countriesServed: countries
 				.filter((country) => country.coveredAreaCount > 0)
 				.map((country) => country.country),
@@ -278,6 +346,6 @@ export const coveragePlan = (
 				.filter((country) => country.coveredAreaCount === 0)
 				.map((country) => country.country),
 		},
-		note: "Each country is answered from the areas a source or conversion actually carries. A country with no source is reported missing; no value is estimated to fill it.",
+		note,
 	};
 };

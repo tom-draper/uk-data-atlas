@@ -157,6 +157,7 @@ test("gates a reviewed analysis pair on exact coverage and conservation", () => 
 			method: "exact",
 			inputRecordCount: 2,
 			outputRecordCount: 1,
+			targetCodes: ["E08000001"],
 			inputTotal: 100,
 			outputTotal: 100,
 		},
@@ -250,6 +251,7 @@ test("gates a reviewed path on exact coverage and conservation through every ste
 		method: "exact",
 		inputRecordCount: 2,
 		outputRecordCount: 1,
+		targetCodes: ["E12000002"],
 		inputTotal: 100,
 		outputTotal: 100,
 	});
