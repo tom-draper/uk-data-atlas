@@ -97,3 +97,5 @@ wimd-score
 wimd-rank
 wimd-decile
 party-vote-share-change
+recorded-crimes-per-1000-residents
+public-ev-chargers-per-10000-residents
