@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+import { readSpreadsheet } from "../../lib/fix/spreadsheet";
 
 /**
  * The sample flow on /fix, with the API answered from responses recorded
@@ -98,6 +99,18 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 		"21 matched, 4 updated, 2 need review",
 	);
 	await expect(diagnosis).toContainText("Wards, December 2024");
+	await expect(diagnosis).toContainText("1 row has multiple successors");
+	await expect(diagnosis).toContainText(
+		"1 unresolved row keeps its original value",
+	);
+	const preview = diagnosis.getByRole("table", { name: /Download preview/ });
+	await expect(
+		preview.getByRole("columnheader", { name: "original_code" }),
+	).toBeVisible();
+	const updated = preview.getByRole("row").filter({ hasText: "Brinkworth" });
+	await expect(updated.getByRole("cell").nth(0)).toHaveText("E05016249");
+	await expect(updated.getByRole("cell").nth(1)).toHaveText("E05013408");
+	await expect(preview).toContainText("split into E05016253, E05016254");
 	const issues = diagnosis.getByRole("button", { name: "Review issues" });
 	await expect(issues).toHaveAttribute("aria-expanded", "false");
 	await expect(diagnosis.getByText("Show 5 rows")).toBeHidden();
@@ -106,8 +119,10 @@ test("the sample shows what its wards are and what is wrong with them", async ({
 	await diagnosis
 		.getByRole("button", { name: "Download corrected file" })
 		.click();
-	expect((await correctedDownload).suggestedFilename()).toBe(
-		"sample-wards-corrected.csv",
+	const corrected = await correctedDownload;
+	expect(corrected.suggestedFilename()).toBe("sample-wards-corrected.csv");
+	expect(readFileSync((await corrected.path())!, "utf8")).toContain(
+		"E05016249,E05013408,Brinkworth,updated (was E05013408),",
 	);
 
 	await issues.click();
@@ -151,6 +166,68 @@ test("a pasted column is checked too", async ({ page }) => {
 	await expect(
 		page.getByRole("region", { name: /What we found/ }),
 	).toContainText("Wards, December 2024");
+});
+
+test("the download includes only the chosen worksheet", async ({ page }) => {
+	await mockApi(page);
+	await page.route(
+		"https://api.ukdataatlas.com/v1/areas:validate",
+		(route) => {
+			if (route.request().method() !== "POST") return route.fallback();
+			return route.fulfill({
+				headers: { "access-control-allow-origin": "*" },
+				json: { data: { likely: null, values: [] } },
+			});
+		},
+	);
+	await page.goto("/fix");
+	await page
+		.locator('input[type="file"]')
+		.setInputFiles("tests/fixtures/fix/spreadsheets/multi-sheet.xlsx");
+
+	const result = page.getByRole("region", { name: "What we found" });
+	await expect(result).toContainText(
+		"Only the “Claimants” sheet is included",
+	);
+	await page
+		.getByLabel("Sheet", { exact: true })
+		.selectOption({ label: "Lookup" });
+	await expect(result).toContainText("Only the “Lookup” sheet is included");
+	const download = page.waitForEvent("download");
+	await result.getByRole("button", { name: "Download checked file" }).click();
+	const file = await download;
+	const workbook = readSpreadsheet(
+		readFileSync((await file.path())!),
+		"xlsx",
+		10,
+	);
+	expect(workbook.sheets.map((sheet) => sheet.name)).toEqual(["Lookup"]);
+	expect(workbook.sheets[0].rows[1][0]).toBe("E06000022");
+});
+
+test("a download over the row limit shows how many rows are left out", async ({
+	page,
+}) => {
+	await mockApi(page);
+	await page.goto("/fix");
+	const sample = readFileSync(
+		"public/fix/sample-wards.csv",
+		"utf8",
+	).trimEnd();
+	const sampleRows = sample.split("\n").length - 1;
+	await page.locator('input[type="file"]').setInputFiles({
+		name: "large-wards.csv",
+		mimeType: "text/csv",
+		buffer: Buffer.from(
+			sample + "\n" + ",,1\n".repeat(100_001 - sampleRows),
+		),
+	});
+
+	const result = page.getByRole("region", { name: "What we found" });
+	await expect(result).toContainText("100,000 rows and all input columns");
+	await expect(result).toContainText(
+		"Partial download. The 100,000-row limit leaves out 1 row.",
+	);
 });
 
 test("the sample's codes move to the latest release, with their local authority", async ({

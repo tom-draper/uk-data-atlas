@@ -215,13 +215,38 @@ describe("correctedTable", () => {
 		);
 	});
 
-	it("puts the latest code in place of a retired one, and says what it was", () => {
+	it("puts the latest code in place of a retired one and keeps the original code", () => {
 		const row = byCode(corrected)("E05016249")[0];
 		expect(row.area_name).toBe("Brinkworth");
+		expect(row.original_code).toBe("E05013408");
 		expect(row.area_update).toMatch(/E05013408/);
 	});
 
-	it("leaves a code it cannot place as it was", () => {
-		expect(byCode(corrected)("E0513457")).toHaveLength(1);
+	it("preserves split and unresolved input codes", () => {
+		const row = byCode(corrected);
+		expect(row("E05013446")[0]).toMatchObject({
+			original_code: "E05013446",
+			area_update: "split into E05016253, E05016254",
+		});
+		expect(row("E0513457")[0]).toMatchObject({
+			original_code: "E0513457",
+			area_update: "not a valid code",
+		});
+	});
+
+	it("previews selected rows with the same cells and headers as the export", () => {
+		const input = {
+			...table,
+			headers: ["ward_cd", "original_code", "households"],
+		};
+		const exportTable = correctedTable(input, diagnosis, 0);
+		expect(exportTable.headers.slice(0, 2)).toEqual([
+			"ward_cd",
+			"original_code_2",
+		]);
+		expect(correctedTable(input, diagnosis, 0, [2, 11])).toEqual({
+			headers: exportTable.headers,
+			rows: [exportTable.rows[2], exportTable.rows[11]],
+		});
 	});
 });

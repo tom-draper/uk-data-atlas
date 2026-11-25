@@ -42,6 +42,8 @@ export interface ParentColumn {
 export interface UpdateOptions {
 	codes: CodeMode;
 	splits: SplitMode;
+	/** Keep the exact input code beside the corrected code. */
+	originalCode?: boolean;
 	/** Add the area's name in the latest release. */
 	name: boolean;
 	parents: ParentColumn[];
@@ -136,6 +138,7 @@ export function updatedTable(
 	diagnosis: Diagnosis,
 	area: number,
 	options: UpdateOptions,
+	rowIndexes: Iterable<number> = table.rows.keys(),
 ): { headers: string[]; rows: string[][] } {
 	const byRow = new Map(diagnosis.results.map((r) => [r.row, r]));
 	const updates = rowUpdates(diagnosis);
@@ -151,6 +154,7 @@ export function updatedTable(
 		return free;
 	};
 	const added: string[] = [];
+	if (options.originalCode) added.push(header("original_code"));
 	if (addCode) added.push(header(isCode ? "latest_code" : "area_code"));
 	if (options.name) added.push(header("area_name"));
 	for (const parent of options.parents)
@@ -164,6 +168,7 @@ export function updatedTable(
 		const update = updates.get(index) ?? { change: "empty", areas: [] };
 		const original = row[area] ?? "";
 		const out: string[] = [];
+		if (options.originalCode) out.push(original);
 		if (addCode) out.push(joined(areas.map((a) => a.code)));
 		if (options.name) out.push(joined(areas.map((a) => a.name)));
 		for (const parent of options.parents) {
@@ -190,13 +195,14 @@ export function updatedTable(
 	};
 
 	const rows: string[][] = [];
-	table.rows.forEach((row, index) => {
+	for (const index of rowIndexes) {
+		const row = table.rows[index];
 		const update = updates.get(index);
 		const areas = update?.areas ?? [];
 		if (update?.change === "split" && options.splits === "rows")
 			for (const each of areas) rows.push(cells(row, index, [each]));
 		else rows.push(cells(row, index, areas));
-	});
+	}
 
 	return {
 		headers: [
@@ -219,21 +225,29 @@ export function updatedCsv(
 }
 
 /**
- * The table fixed with the defaults, for the one-click download: retired
- * codes replaced by their successor and names turned into codes, with the
- * area's name and a note of what changed beside it. Without a release to
- * move to, the checked table: each area's status and name.
+ * The default download keeps original codes alongside their replacements.
+ * It adds codes for matched names, along with area names and update notes.
+ * If no release is available for corrections, it exports the checked table.
  */
 export function correctedTable(
 	table: Table,
 	diagnosis: Diagnosis,
 	area: number,
+	rowIndexes?: Iterable<number>,
 ): { headers: string[]; rows: string[][] } {
-	if (!diagnosis.latest) return checkedTable(table, diagnosis, area);
-	return updatedTable(table, diagnosis, area, {
-		codes: diagnosis.kind === "code" ? "replace" : "add",
-		splits: "list",
-		name: true,
-		parents: [],
-	});
+	if (!diagnosis.latest)
+		return checkedTable(table, diagnosis, area, rowIndexes);
+	return updatedTable(
+		table,
+		diagnosis,
+		area,
+		{
+			codes: diagnosis.kind === "code" ? "replace" : "add",
+			originalCode: diagnosis.kind === "code",
+			splits: "list",
+			name: true,
+			parents: [],
+		},
+		rowIndexes,
+	);
 }
