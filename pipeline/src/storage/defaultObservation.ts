@@ -324,6 +324,16 @@ CREATE TABLE series_preference (
 ) WITHOUT ROWID, STRICT;`;
 
 /**
+ * Drops the default view and its tables, so `writeDefaultObservation` can rank
+ * series added after it first ran.
+ */
+export const dropDefaultObservation = (database: DatabaseSync) =>
+	database.exec(`DROP VIEW IF EXISTS v_observation_default;
+DROP TABLE IF EXISTS series_preference;
+DROP TABLE IF EXISTS quantity;
+DROP TABLE IF EXISTS measure_dimension;`);
+
+/**
  * The columns of `v_observation`, then the series the value came from, the
  * quantity, and how many other series hold a row for the same quantity, area
  * and period. A series is passed over for an area and period only when it has
