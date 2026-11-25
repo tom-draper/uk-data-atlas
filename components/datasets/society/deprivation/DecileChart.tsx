@@ -1,4 +1,5 @@
 "use client";
+import type { ReactNode } from "react";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { ChartCard } from "@/components/ChartCard";
 import { useChartsLoading } from "@/components/ChartLoadingPlaceholder";
@@ -40,6 +41,8 @@ interface DecileChartProps {
 	colorValue?: boolean;
 	isActive: boolean;
 	onClick: () => void;
+	/** Shown beneath the value, such as earlier editions of the index. */
+	footer?: ReactNode;
 }
 
 export default function DecileChart({
@@ -55,6 +58,7 @@ export default function DecileChart({
 	colorValue = false,
 	isActive,
 	onClick,
+	footer,
 }: DecileChartProps) {
 	const chartsLoading = useChartsLoading();
 
@@ -80,6 +84,7 @@ export default function DecileChart({
 				valueColor={colorValue ? color : undefined}
 				secondaryColor={secondary ? color : undefined}
 			/>
+			{!chartsLoading && footer}
 		</ChartCard>
 	);
 }
