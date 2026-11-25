@@ -59,24 +59,23 @@ const ASHE_BREAKS: readonly SeriesBreak[] = [
 ];
 
 /** Declared breaks, by measure slug. */
-export const SERIES_BREAKS: Readonly<Record<string, readonly SeriesBreak[]>> =
-	{
-		"gross-annual-pay": ASHE_BREAKS,
-		"gross-hourly-pay": ASHE_BREAKS,
-		"ashe-jobs": ASHE_BREAKS,
-		population: [
-			{
-				period: "2022",
-				kind: "census",
-				effect: "spans",
-				datasets: [
-					"population-council-scotland",
-					"population-data-zone-scotland",
-				],
-				note: "Scotland's census was held in 2022, a year after the census in England, Wales and Northern Ireland, and Scottish population estimates from mid-2022 are based on it. A change across mid-2022 can include what the census corrected as well as change in the population.",
-			},
-		],
-	};
+export const SERIES_BREAKS: Readonly<Record<string, readonly SeriesBreak[]>> = {
+	"gross-annual-pay": ASHE_BREAKS,
+	"gross-hourly-pay": ASHE_BREAKS,
+	"ashe-jobs": ASHE_BREAKS,
+	population: [
+		{
+			period: "2022",
+			kind: "census",
+			effect: "spans",
+			datasets: [
+				"population-council-scotland",
+				"population-data-zone-scotland",
+			],
+			note: "Scotland's census was held in 2022, a year after the census in England, Wales and Northern Ireland, and Scottish population estimates from mid-2022 are based on it. A change across mid-2022 can include what the census corrected as well as change in the population.",
+		},
+	],
+};
 
 /**
  * Measures whose values are not compared between periods, with the reason.
