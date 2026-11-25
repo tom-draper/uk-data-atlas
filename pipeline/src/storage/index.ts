@@ -25,6 +25,7 @@ export * from "./areaChangeEvents.ts";
 export * from "./areaChangeExtent.ts";
 export * from "./defaultObservation.ts";
 export * from "./seriesAttribution.ts";
+export * from "./areaPeriodChange.ts";
 export * from "./seriesCoverage.ts";
 export * from "./crosswalkChains.ts";
 export * from "./areaChangeClassifier.ts";
