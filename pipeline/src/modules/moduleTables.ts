@@ -32,6 +32,20 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
 	{
+		table: "series_published_counterpart",
+		where: "series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	// Both ends in the module, so a module stays self-contained: a change
+	// whose ends come from datasets in two modules is only in the full atlas.
+	{
+		table: "area_period_change",
+		where: "from_series_id IN (SELECT id FROM temp.owned_series) AND to_series_id IN (SELECT id FROM temp.owned_series)",
+	},
+	{
+		table: "measure_break",
+		where: "dataset_id IN (SELECT id FROM temp.owned_dataset)",
+	},
+	{
 		table: "series_source",
 		where: "series_id IN (SELECT id FROM temp.owned_series)",
 	},
@@ -110,8 +124,8 @@ export const DATASET_TABLES: readonly ModuleTable[] = [
  * dataset stays in (`politics-sharealike`). `where` selects the rows under
  * the split's licence, from the temp tables `markLicensed` fills: the
  * elections polled in the split's date range, their contests
- * and candidacies, and the observations, coverage rows, gaps and area
- * relationships of the split's datasets in those elections' periods. A period is labelled with the
+ * and candidacies, and the observations, coverage rows, gaps, period
+ * changes (either end licensed) and area relationships of the split's datasets in those elections' periods. A period is labelled with the
  * election date, which is how the period-keyed rows are told apart. The
  * observations of a modelled series whose model is under the split's licence
  * (`licensed_modelled`, the share-alike notional estimates) go too, in every
@@ -142,6 +156,10 @@ export const LICENSED_ROW_TABLES: readonly ModuleTable[] = [
 	{
 		table: "series_estimate",
 		where: "series_id IN (SELECT id FROM temp.licensed_series) AND period_id IN (SELECT id FROM temp.licensed_period)",
+	},
+	{
+		table: "area_period_change",
+		where: "(from_series_id IN (SELECT id FROM temp.licensed_series) AND from_period_id IN (SELECT id FROM temp.licensed_period)) OR (to_series_id IN (SELECT id FROM temp.licensed_series) AND to_period_id IN (SELECT id FROM temp.licensed_period)) OR from_series_id IN (SELECT id FROM temp.licensed_modelled) OR to_series_id IN (SELECT id FROM temp.licensed_modelled)",
 	},
 	{
 		table: "series_gap",
