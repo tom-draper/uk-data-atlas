@@ -356,6 +356,13 @@ describe("ranking recipes", () => {
 						{ LAB: 600, LD: 400 },
 						"Cambridge",
 					),
+					// "&" for "and" in the district's name.
+					E58000700: division(
+						"Hythe",
+						"Unknown",
+						{ REF: 650, CON: 350 },
+						"Folkestone & Hythe",
+					),
 					// A district council's ward, ranked with its own.
 					E05011359: division("Clayton", "E08000003", {
 						LAB: 1000,
@@ -373,6 +380,7 @@ describe("ranking recipes", () => {
 			[
 				["Abbey", "E07000008"],
 				["Basildon Central", "E07000066"],
+				["Hythe", "E07000112"],
 				["Arbury", "E07000008"],
 				["Basildon East", "E07000066"],
 			],
