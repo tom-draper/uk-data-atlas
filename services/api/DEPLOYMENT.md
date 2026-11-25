@@ -182,8 +182,16 @@ Usage counts hold no personal data, by construction:
   writes `other` instead.
 
 The JSON access log (`ATLAS_ACCESS_LOG`) is separate from usage counts. It
-records each request's path, so a postcode lookup appears there; turn it off
-or keep it short-lived if that matters for your deployment.
+uses operation templates such as `/v1/postcodes/{postcode}` and labels unknown
+routes `unmatched`. Both access and request failure logs omit raw targets,
+query strings, bodies and exception text. Client-supplied request ids appear
+as `sha256:` followed by their lowercase hexadecimal SHA-256 digest.
+
+The bundled Nginx configuration gives the API host a separate access log
+with only timing, status and byte counts, including HTTP redirects. It
+discards API virtual-host error logs because Nginx can attach the request
+line to them. Use the proxy access log for upstream status and the API log
+for operation-level diagnostics.
 
 ## Measure request memory
 

@@ -189,6 +189,11 @@ systemctl enable --now certbot.timer
 Domain HTTP requests redirect to HTTPS. Direct IP HTTP requests continue to
 serve the website. Certificates and their private keys stay on the host.
 
+The API host writes proxy status, timing and byte counts to
+`/var/log/nginx/atlas-api-access.log`. Its virtual-host error logs are
+discarded because Nginx can include the request line. Consult the API journal
+for operation-level diagnostics.
+
 ## Updates and operation
 
 Build the intended revision, then refresh the Nginx archive links and restart

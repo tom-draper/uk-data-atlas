@@ -8,6 +8,7 @@ import { registerApiRoutes } from "./registerApiRoutes";
 import { sendFile } from "./http/sendFile";
 export { sendFile } from "./http/sendFile";
 import { randomUUID, timingSafeEqual } from "node:crypto";
+import { sha256 } from "@uk-data-atlas/artifacts";
 import { promisify } from "node:util";
 import { gzip } from "node:zlib";
 import {
@@ -46,6 +47,7 @@ import {
 	DEFAULT_MAX_QUEUED_REQUESTS,
 	DEFAULT_QUEUE_TIMEOUT_MS,
 	errorFields,
+	requestErrorFields,
 	type ServerOptions,
 } from "./serverOptions";
 
@@ -57,8 +59,8 @@ import {
  */
 export const OPERATIONS_PATHS = ["/healthz", "/readyz", "/metrics"] as const;
 
-// A client may send its own request id so its logs and ours line up; anything
-// that could break a log line is replaced with one of ours.
+// A well-formed client id can be echoed in a response. Log its fingerprint
+// because callers can put location identifiers in this header too.
 const REQUEST_ID = /^[A-Za-z0-9._:-]{1,128}$/;
 
 // Slow headers and bodies are cut off. Handlers run synchronously, so these
@@ -336,6 +338,7 @@ export const createApiServer = (
 		method: string;
 		startedAt: number;
 		requestId: string;
+		hasClientRequestId: boolean;
 		overloaded: boolean;
 		matched: MatchedOperation;
 		/** Health checks and scrapes are the operator's, not callers asking questions. */
@@ -356,6 +359,8 @@ export const createApiServer = (
 		overloaded: boolean,
 	) => {
 		const incomingId = request.headers["x-request-id"];
+		const hasClientRequestId =
+			typeof incomingId === "string" && REQUEST_ID.test(incomingId);
 		const target = request.url ?? "/";
 		const pathname = target.split("?", 1)[0]!;
 		const pipeline: Pipeline = {
@@ -365,12 +370,14 @@ export const createApiServer = (
 			pathname,
 			method: request.method ?? "GET",
 			startedAt: performance.now(),
-			requestId:
-				typeof incomingId === "string" && REQUEST_ID.test(incomingId)
-					? incomingId
-					: randomUUID(),
+			requestId: hasClientRequestId ? incomingId : randomUUID(),
+			hasClientRequestId,
 			overloaded,
-			matched: { route: pathname },
+			matched: {
+				route:
+					OPERATIONS_PATHS.find((path) => path === pathname) ??
+					"unmatched",
+			},
 			operational: false,
 			limitHeaders: {},
 		};
@@ -570,10 +577,11 @@ export const createApiServer = (
 					? pipeline.answered.body.code
 					: undefined;
 			return {
-				requestId,
+				requestId: pipeline.hasClientRequestId
+					? sha256(requestId)
+					: requestId,
 				method,
 				route: matched.route,
-				path: pathname,
 				status,
 				...(status !== response.statusCode && response.headersSent
 					? { httpStatus: response.statusCode }
@@ -598,7 +606,7 @@ export const createApiServer = (
 					level: "error",
 					event: "request.failed",
 					...entry,
-					error: errorFields(error),
+					error: requestErrorFields(error),
 				});
 			} catch {}
 			try {
@@ -701,17 +709,20 @@ export const createApiServer = (
 					metrics.observeUsage(event);
 					usage?.record(event);
 				} catch {}
-			const entry = entryFor(status, bytes);
 			if (pipeline.failure !== undefined)
-				reportFailure(pipeline.failure, entry);
+				reportFailure(pipeline.failure, entryFor(status, bytes));
 			else if (status >= 500)
 				log?.({
 					level: "warn",
 					event: "request.unavailable",
-					...entry,
+					...entryFor(status, bytes),
 				});
 			else if (options.accessLog)
-				log?.({ level: "info", event: "request", ...entry });
+				log?.({
+					level: "info",
+					event: "request",
+					...entryFor(status, bytes),
+				});
 		} catch (error) {
 			// Headers may be invalid or a client may disappear while bytes are being
 			// written. A response can no longer be made trustworthy here, so close it
