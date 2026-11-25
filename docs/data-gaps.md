@@ -201,8 +201,16 @@ collection.
 - 42 of 96 measures are refused for conversion.
 - `v_coverage_missing` has 861 rows and `series_gap` 284,927.
 - No `aggregated` series exist, so nothing is rolled up to parent areas
-  (task 26), and rates are not rebuilt from numerator and denominator
-  (task 27).
+  (task 26).
+- Only three rates are rebuilt from numerator and denominator (task 27): the
+  claimant rate, recorded crime per 1,000 residents and public EV chargers per
+  10,000 residents. The claimant rate is not rebuilt on the 2022-12 and 2024-05
+  authorities, whose population has no single years of age, and crime on
+  community safety partnerships has no population to divide by. The counts
+  marked `named` in `COUNT_DENOMINATORS` have a denominator but no rate yet.
+- The IMD 2025 population is not a mid-year estimate of 2025, so rates for
+  2025 in England and Wales use the 2024 estimate and say so in
+  `rate_input.earlier_year`.
 
 ### 3. Population on every release
 
@@ -340,7 +348,8 @@ What is still out of reach:
 - No GP practice to LSOA lookup (task 37).
 - Neighbours are computed at request time (task 38).
 - Population reaches every release only for the years held (task 41, see
-  above), and there are no per-person measures (task 42).
+  above). Every count names its denominator, but only three per-person rates
+  are built (task 42).
 - No release manifest or diff between releases (task 24).
 - Crosswalk weights lack Northern Ireland and Scottish dwellings (task 1).
 - A fixed-boundary change has no published comparison where the area's code
