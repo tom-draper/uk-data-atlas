@@ -34,7 +34,7 @@ const populationUk = (...codes: string[]): Editions => ({
 
 /** A ranking's rows as its table writes them. */
 function table(slug: string, editions: Editions, inputs = {}) {
-	const map = findAtlasMap(slug)!;
+	const map = findRanking(slug)!.map;
 	const ranking = compileRanking(map, editions, inputs)!;
 	return {
 		columns: ranking.columns?.map((column) => column.label),
@@ -292,6 +292,102 @@ describe("ranking recipes", () => {
 				["Harpurhey", "20.0%", "Conservative", "100", "–", "2024"],
 			],
 		});
+	});
+
+	it("ranks each county's divisions from its latest election", () => {
+		const division = (
+			name: string,
+			ladCode: string,
+			partyVotes: Record<string, number>,
+			ladName = "",
+		) => ({ wardName: name, ladCode, ladName, partyVotes });
+		const editions: Editions = {
+			"2017": {
+				year: 2017,
+				data: {
+					// Only its county, so no district to place it in.
+					E58000001: division("County Only", "E10000003", {
+						CON: 900,
+						LAB: 100,
+					}),
+				},
+			},
+			"2021": {
+				year: 2021,
+				data: {
+					// Cambridgeshire's earlier election, since superseded.
+					E58000002: division("Superseded", "E07000008", {
+						CON: 600,
+						LAB: 400,
+					}),
+					E58000400: division("Basildon Central", "E07000066", {
+						CON: 700,
+						LAB: 300,
+					}),
+					E58000401: division("Basildon East", "E07000066", {
+						LAB: 550,
+						CON: 450,
+					}),
+				},
+			},
+			"2023": {
+				year: 2023,
+				data: {
+					// A by-election, not Essex's latest election.
+					E58000401: division("Basildon East", "E07000066", {
+						REF: 800,
+						LAB: 200,
+					}),
+				},
+			},
+			"2025": {
+				year: 2025,
+				data: {
+					// By district name, the code left out.
+					E58000050: division(
+						"Abbey",
+						"Unknown",
+						{ GREEN: 900, LAB: 100 },
+						"Cambridge",
+					),
+					E58000051: division(
+						"Arbury",
+						"Unknown",
+						{ LAB: 600, LD: 400 },
+						"Cambridge",
+					),
+					// A district council's ward, ranked with its own.
+					E05011359: division("Clayton", "E08000003", {
+						LAB: 1000,
+						CON: 400,
+					}),
+				},
+			},
+		};
+		const ranking = compileRanking(
+			findRanking("county-election")!.map,
+			editions,
+		)!;
+		expect(ranking.level).toBe("division");
+		expect(ranking.areas.map((area) => [area.name, area.district])).toEqual(
+			[
+				["Abbey", "E07000008"],
+				["Basildon Central", "E07000066"],
+				["Arbury", "E07000008"],
+				["Basildon East", "E07000066"],
+			],
+		);
+		expect(table("county-election", editions).rows[0]).toEqual([
+			"Abbey",
+			"80.0%",
+			"Green",
+			"800",
+			"–",
+			"2025",
+		]);
+		expect(rankingTitle(findRanking("county-election")!.map)).toBe(
+			"Latest County Council Election Results",
+		);
 	});
 
 	it("ranks earlier general elections for the UK and its nations", () => {

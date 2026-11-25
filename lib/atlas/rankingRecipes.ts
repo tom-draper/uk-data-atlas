@@ -10,6 +10,7 @@ export {
 } from "@uk-data-atlas/catalogue/place-facts";
 import type { DisplayFormat } from "@uk-data-atlas/datasets";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import localAuthorityCounty from "@/lib/data/boundaries/localAuthorityCounty.json";
 
 /**
  * How a ranking page reads a map's data, where the map's own colouring is not
@@ -23,6 +24,7 @@ export type RankingLevel =
 	| "localAuthority"
 	| "countyAndUnitaryAuthority"
 	| "ward"
+	| "division"
 	| "constituency"
 	| "itl3"
 	| "icb";
@@ -591,13 +593,50 @@ const LOCAL_PARTY_NAMES: Readonly<Record<string, string>> = {
 const LOCAL_ELECTION_CYCLE = 3;
 
 /**
+ * An area's result, ranked by its majority as a share of the votes cast;
+ * null where it was uncontested, with no majority to rank.
+ */
+function electionRow(
+	code: string,
+	record: DataRecord,
+	winnerKey: string | undefined,
+	district: string,
+	year: number,
+): RankingRow | null {
+	const votes = Object.entries(
+		(record.partyVotes ?? {}) as Record<string, number>,
+	)
+		.filter(([, count]) => Number.isFinite(count) && count > 0)
+		.sort((a, b) => b[1] - a[1]);
+	if (votes.length < 2) return null;
+	const total = votes.reduce((sum, [, count]) => sum + count, 0);
+	const winner = winnerKey ?? votes[0]![0];
+	const majority = votes[0]![1] - votes[1]![1];
+	return {
+		code,
+		name: String(record.wardName ?? code),
+		district,
+		value: (majority / total) * 100,
+		record: {
+			winner: LOCAL_PARTY_NAMES[winner] ?? winner,
+			majority,
+			turnout: num(record.turnoutPercent) || null,
+			year: String(year),
+		},
+	};
+}
+
+const editionResults = (edition: DatedEdition) =>
+	(edition as DataRecord).results as Record<string, string> | undefined;
+
+/**
  * Each council's wards from its latest election, highest majority first.
  * A council electing by thirds or halves may not contest every ward in a
  * year, so wards contested in the years just before fill the gaps, unless
  * the latest election was on new boundaries: new ward codes follow the old,
  * so an earlier code below all of the latest ones names a ward since gone.
- * County council divisions are left out, as their elections are another
- * tier over the same places.
+ * County council divisions rank on their own, as another tier over the same
+ * places.
  */
 function localElectionRows(context: RankingContext): RankingRow[] {
 	const wardToLad = context.inputs["ward-lad"] as Record<string, string>;
@@ -605,8 +644,7 @@ function localElectionRows(context: RankingContext): RankingRow[] {
 	const councils = new Map<string, { year: number; lowest: string }>();
 	const rows = new Map<string, RankingRow>();
 	for (const edition of [...context.editions].reverse()) {
-		const results = (edition as DataRecord).results as
-			Record<string, string> | undefined;
+		const results = editionResults(edition);
 		for (const [code, record] of Object.entries(edition.data)) {
 			if (!/^[EW]05/.test(code) || rows.has(code)) continue;
 			const ladCode = String(record.ladCode ?? "");
@@ -627,31 +665,65 @@ function localElectionRows(context: RankingContext): RankingRow[] {
 				code < latest.lowest
 			)
 				continue;
-			const votes = Object.entries(
-				(record.partyVotes ?? {}) as Record<string, number>,
-			)
-				.filter(([, count]) => Number.isFinite(count) && count > 0)
-				.sort((a, b) => b[1] - a[1]);
-			// An uncontested ward has no majority to rank.
-			if (votes.length < 2) continue;
-			const total = votes.reduce((sum, [, count]) => sum + count, 0);
-			const winner = results?.[code] ?? votes[0]![0];
-			const majority = votes[0]![1] - votes[1]![1];
-			rows.set(code, {
+			const row = electionRow(
 				code,
-				name: String(record.wardName ?? code),
-				district: council,
-				value: (majority / total) * 100,
-				record: {
-					winner: LOCAL_PARTY_NAMES[winner] ?? winner,
-					majority,
-					turnout: num(record.turnoutPercent) || null,
-					year: String(edition.year),
-				},
-			});
+				record,
+				results?.[code],
+				council,
+				edition.year,
+			);
+			if (row) rows.set(code, row);
 		}
 	}
 	return [...rows.values()];
+}
+
+/**
+ * Each county council's divisions from its latest election, highest
+ * majority first. A county elects every division at once, so its latest
+ * election is the latest year holding most of its divisions; a by-election
+ * is not one. The results give a division's district by code or by name; a
+ * division with only its county, as in 2017, has no district to place it.
+ */
+function countyDivisionRows(context: RankingContext): RankingRow[] {
+	const countyOf = localAuthorityCounty as Record<string, string>;
+	const counties = new Map<string, Map<number, RankingRow[]>>();
+	for (const edition of context.editions) {
+		const results = editionResults(edition);
+		for (const [code, record] of Object.entries(edition.data)) {
+			if (!code.startsWith("E58")) continue;
+			const ladCode = String(record.ladCode ?? "");
+			const district = /^E0[6-9]\d{6}$/.test(ladCode)
+				? ladCode
+				: ladCode.startsWith("E10")
+					? ""
+					: councilNamed(String(record.ladName ?? ""));
+			const county = countyOf[district];
+			if (!county?.startsWith("E10")) continue;
+			const row = electionRow(
+				code,
+				record,
+				results?.[code],
+				district,
+				edition.year,
+			);
+			if (!row) continue;
+			const years = counties.get(county) ?? new Map();
+			years.set(edition.year, [...(years.get(edition.year) ?? []), row]);
+			counties.set(county, years);
+		}
+	}
+	return [...counties.values()].flatMap((years) => {
+		const most = Math.max(
+			...[...years.values()].map((rows) => rows.length),
+		);
+		const latest = Math.max(
+			...[...years].flatMap(([year, rows]) =>
+				rows.length * 2 > most ? [year] : [],
+			),
+		);
+		return years.get(latest)!;
+	});
 }
 
 // Recipes ------------------------------------------------------------------
@@ -664,6 +736,13 @@ const gigawattHours: DisplayFormat = {
 	round: true,
 	suffix: " GWh",
 };
+
+const LOCAL_ELECTION_COLUMNS: readonly RankingColumn[] = [
+	column("Winner", "text", (record) => String(record.winner)),
+	column("Majority", "count", field("majority")),
+	column("Turnout", "percent", field("turnout")),
+	column("Election", "text", (record) => String(record.year)),
+];
 
 export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 	"adult-social-care-activity": {
@@ -855,6 +934,15 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 			column("Female", "years", field("femaleBirthLE")),
 		],
 	},
+	"county-election": {
+		of: "local-election",
+		level: "division",
+		title: "Latest County Council Election Results",
+		label: "Majority as a share of votes",
+		format: percentOne,
+		rows: countyDivisionRows,
+		columns: LOCAL_ELECTION_COLUMNS,
+	},
 	"local-election": {
 		level: "ward",
 		inputs: ["ward-lad"],
@@ -862,12 +950,7 @@ export const RANKING_RECIPES: Readonly<Record<string, RankingRecipe>> = {
 		label: "Majority as a share of votes",
 		format: percentOne,
 		rows: localElectionRows,
-		columns: [
-			column("Winner", "text", (record) => String(record.winner)),
-			column("Majority", "count", field("majority")),
-			column("Turnout", "percent", field("turnout")),
-			column("Election", "text", (record) => String(record.year)),
-		],
+		columns: LOCAL_ELECTION_COLUMNS,
 	},
 	"nhs-waiting": {
 		level: "icb",
