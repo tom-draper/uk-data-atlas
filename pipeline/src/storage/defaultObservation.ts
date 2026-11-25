@@ -23,8 +23,9 @@ import {
  *   qualifier dimension. Only series at the default of every breakdown
  *   dimension are candidates for one.
  * - `series_preference` ranks the candidates of a quantity: published before
- *   aggregated before modelled before converted, then, for a modelled series,
- *   open before share-alike, then the declared dataset order of the measure.
+ *   aggregated before derived before modelled before converted, then, for a
+ *   modelled series, open before share-alike, then the declared dataset
+ *   order of the measure.
  *   A tie that is left holds values for the same area and period, so it fails
  *   the build and names the series. A tie between series that share no area
  *   and period is harmless and is ranked by series id.
@@ -34,6 +35,7 @@ import {
 export const METHOD_ORDER = [
 	"published",
 	"aggregated",
+	"derived",
 	"modelled",
 	"converted",
 ] as const;
