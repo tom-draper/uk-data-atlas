@@ -1,12 +1,11 @@
 import {
 	ATLAS_LOCATIONS,
-	ATLAS_MAPS,
 	type AtlasLocation,
 	type AtlasMap,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { hasRankingFor } from "@/lib/atlas/rankingPages";
-import { rankedPeriods, rankingKey } from "@/lib/atlas/rankings";
+import { RANKED_MAPS, rankedPeriods, rankingKey } from "@/lib/atlas/rankings";
 
 /**
  * A place's page links to every place within it, unless there are more than
@@ -73,7 +72,7 @@ export function rankingsElsewhere(
 /** The other maps ranked for this place, under the chart panel's sections. */
 export const otherRankings = (location: AtlasLocation, map: AtlasMap) =>
 	atlasMapSections(
-		ATLAS_MAPS.filter(
+		RANKED_MAPS.filter(
 			(other) =>
 				other.slug !== map.slug &&
 				hasRankingFor(location.slug, other.slug),
