@@ -21,6 +21,8 @@ import {
 	priorityOrder,
 	resolveLimits,
 	runSchedule,
+	searchPriorityOrder,
+	simulateSchedule,
 	stageMemoryMb,
 } from "@/pipeline/build-data-scheduler.mjs";
 
@@ -614,6 +616,119 @@ test("the longest chain starts first and the plan reports waves and a critical p
 	});
 	assert.deepEqual(skipped.waves, [["quick", "long-b"], ["long-c"]]);
 	assert.deepEqual([...blockersOf(stages).get("long-b")!], ["long-a"]);
+});
+
+// Longest work first starts `wide` and leaves `big` waiting for memory, so the
+// chain behind `big` finishes late. Starting `big` first gains 40 of 110.
+const tightStages = () => [
+	stage("big", [], { memoryMb: 80 }),
+	stage("after-big", ["big"], { memoryMb: 20 }),
+	stage("wide", [], { memoryMb: 60 }),
+	stage("chain-end", ["after-big"], { memoryMb: 20 }),
+	stage("small", [], { memoryMb: 20 }),
+	stage("tiny", [], { memoryMb: 40 }),
+];
+const tightWeights: Record<string, number> = {
+	big: 10,
+	"after-big": 10,
+	wide: 60,
+	"chain-end": 30,
+	small: 30,
+	tiny: 10,
+};
+const tightLimits = { jobs: 3, memoryMb: 100 };
+
+test("a replayed schedule picks the order that finishes soonest, the same every time", async () => {
+	const stages = tightStages();
+	const weightOf = (current: Stage) => tightWeights[current.name];
+	const plain = priorityOrder(stages, weightOf);
+	assert.equal(plain[0].name, "wide");
+	const plainMs = await simulateSchedule({
+		stages,
+		order: plain,
+		durationOf: weightOf,
+		...tightLimits,
+	});
+	assert.equal(plainMs, 110);
+	const found = await searchPriorityOrder({
+		stages,
+		weightOf,
+		...tightLimits,
+	});
+	assert.equal(found.plainMs, 110);
+	assert.equal(found.expectedMs, 70);
+	assert.equal(found.order[0].name, "big");
+	assert.equal(
+		await simulateSchedule({
+			stages,
+			order: found.order,
+			durationOf: weightOf,
+			...tightLimits,
+		}),
+		70,
+	);
+	const again = await searchPriorityOrder({
+		stages,
+		weightOf,
+		...tightLimits,
+	});
+	assert.deepEqual(
+		again.order.map(({ name }: Stage) => name),
+		found.order.map(({ name }: Stage) => name),
+	);
+	// With memory to spare nothing beats longest work first, which is kept.
+	const roomy = await searchPriorityOrder({
+		stages,
+		weightOf,
+		jobs: 3,
+		memoryMb: Infinity,
+	});
+	assert.equal(roomy.expectedMs, roomy.plainMs);
+	assert.deepEqual(roomy.order, plain);
+});
+
+test("a build replays the last timings to order its stages, and without them starts longest work first", async () => {
+	const root = mkdtempSync(join(tmpdir(), "atlas-build-order-"));
+	onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+	const started: string[] = [];
+	const execute = async (current: Stage) => {
+		started.push(current.name);
+		await sleep(tightWeights[current.name] * 5);
+		const file = join(root, `data/build/${current.name}/out.json`);
+		mkdirSync(dirname(file), { recursive: true });
+		writeFileSync(file, current.name);
+		return 0;
+	};
+	const createCache = () =>
+		createStageCache({
+			root,
+			stateFile: join(root, ".cache/stages.json"),
+			codeFiles: () => [],
+			environment: {},
+		});
+	const replayed = (log: string[]) =>
+		log.some((line) => line.startsWith("Stage order replays"));
+	const first = await build(tightStages(), {
+		argv: ["--jobs", "3"],
+		execute,
+		limits: tightLimits,
+		createCache,
+	});
+	assert.equal(first.status, 0);
+	// Without timings each stage weighs the same: the longest chain first.
+	assert.equal(started[0], "big");
+	assert.ok(!replayed(first.log));
+	started.length = 0;
+	const second = await build(tightStages(), {
+		argv: ["--jobs", "3", "--no-cache"],
+		execute,
+		limits: tightLimits,
+		createCache,
+	});
+	assert.equal(second.status, 0);
+	// By the recorded timings longest work first would start `wide`.
+	assert.equal(started[0], "big");
+	assert.ok(replayed(second.log));
 });
 
 test("a scheduler with nothing runnable and stages left reports them", async () => {

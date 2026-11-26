@@ -25,8 +25,12 @@ import {
 	priorityOrder,
 	resolveLimits,
 	runSchedule,
+	searchPriorityOrder,
 } from "./build-data-scheduler.mjs";
-import { buildLog } from "../packages/atlas-db/src/buildTiming.ts";
+import {
+	buildLog,
+	formatDuration,
+} from "../packages/atlas-db/src/buildTiming.ts";
 import { TRIAL_ENVIRONMENT } from "./src/lib/trialRun.ts";
 
 export { planBuild, resolveChecks };
@@ -163,7 +167,15 @@ export async function runBuild({
 				run,
 				jobs,
 				memoryMb: limits.memoryMb,
-				order: jobs > 1 ? priorityOrder(selected, weightOf) : selected,
+				order: await scheduleOrder({
+					selected,
+					toRun,
+					cache,
+					weightOf,
+					jobs,
+					memoryMb: limits.memoryMb,
+					log,
+				}),
 			});
 		}
 		logRunProblems({ log, ...state });
@@ -192,6 +204,39 @@ export async function runBuild({
 	} finally {
 		reportSummary(state.failed);
 	}
+}
+
+/**
+ * The order stages start in when several can run at once: the one that
+ * replays the last build's timings soonest. Without timings to replay, it is
+ * longest work first.
+ */
+async function scheduleOrder({
+	selected,
+	toRun,
+	cache,
+	weightOf,
+	jobs,
+	memoryMb,
+	log,
+}) {
+	if (jobs <= 1) return selected;
+	const timed = [...toRun].some((name) => {
+		const last = cache?.lastTiming(name);
+		return last && !last.failed;
+	});
+	if (!timed) return priorityOrder(selected, weightOf);
+	const { order, plainMs, expectedMs } = await searchPriorityOrder({
+		stages: selected,
+		weightOf,
+		jobs,
+		memoryMb,
+	});
+	if (expectedMs < plainMs)
+		log(
+			`Stage order replays the last timings in ${formatDuration(expectedMs)}, against ${formatDuration(plainMs)} for longest work first`,
+		);
+	return order;
 }
 
 const relayScript = fileURLToPath(

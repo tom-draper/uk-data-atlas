@@ -226,6 +226,119 @@ export function priorityOrder(stages, weightOf) {
 }
 
 /**
+ * How long `runSchedule` would take with this `order` if each stage took
+ * `durationOf(stage)` milliseconds, replayed on a virtual clock. Every stage
+ * runs, and a trial run is taken to find nothing to do.
+ *
+ * @param {{
+ *   stages: Array<{ name: string, dependencies: string[] }>,
+ *   order: Array<{ name: string }>,
+ *   durationOf: (stage: any) => number,
+ *   jobs: number,
+ *   memoryMb: number,
+ * }} options
+ */
+export async function simulateSchedule({
+	stages,
+	order,
+	durationOf,
+	jobs,
+	memoryMb,
+}) {
+	let now = 0;
+	let serial = 0;
+	let finished = false;
+	const pending = [];
+	const done = runSchedule({
+		stages,
+		order,
+		jobs,
+		memoryMb,
+		clock: () => now,
+		settle: () => true,
+		run: (stage) =>
+			new Promise((resolve) => {
+				pending.push({ end: now + durationOf(stage), serial, resolve });
+				serial += 1;
+			}),
+	}).then(() => {
+		finished = true;
+	});
+	// The scheduler reacts to a finished stage over several promise turns.
+	const settled = () => new Promise((resolve) => setImmediate(resolve));
+	await settled();
+	while (!finished && pending.length > 0) {
+		pending.sort((a, b) => a.end - b.end || a.serial - b.serial);
+		const next = pending.shift();
+		now = Math.max(now, next.end);
+		next.resolve(true);
+		await settled();
+	}
+	await done;
+	return now;
+}
+
+/**
+ * Searches for a priority order that finishes sooner than `priorityOrder`
+ * alone. Longest remaining work first ignores memory, so where the budget is
+ * tight a reserved stage can hold back a long one that would have fitted.
+ * Each try scales every stage's weight by a random factor and replays the
+ * schedule with `weightOf` as its duration. The seed is fixed, so the same
+ * timings always give the same order, and the plain order wins ties.
+ *
+ * @param {{
+ *   stages: Array<{ name: string, dependencies: string[] }>,
+ *   weightOf: (stage: any) => number,
+ *   jobs: number,
+ *   memoryMb: number,
+ *   tries?: number,
+ *   seed?: number,
+ * }} options
+ * @returns {Promise<{ order: any[], plainMs: number, expectedMs: number }>}
+ */
+export async function searchPriorityOrder({
+	stages,
+	weightOf,
+	jobs,
+	memoryMb,
+	tries = 300,
+	seed = 1,
+}) {
+	const replay = (order) =>
+		simulateSchedule({
+			stages,
+			order,
+			durationOf: weightOf,
+			jobs,
+			memoryMb,
+		});
+	let order = priorityOrder(stages, weightOf);
+	const plainMs = await replay(order);
+	let expectedMs = plainMs;
+	// Park-Miller: small, and the same sequence on every platform.
+	let state = seed;
+	const random = () => {
+		state = (state * 48271) % 2147483647;
+		return state / 2147483647;
+	};
+	for (let index = 0; index < tries; index += 1) {
+		const factors = new Map(
+			stages.map((stage) => [stage.name, 0.3 + 1.4 * random()]),
+		);
+		const candidate = priorityOrder(
+			stages,
+			(stage) => weightOf(stage) * factors.get(stage.name),
+		);
+		const candidateMs = await replay(candidate);
+		if (candidateMs < expectedMs) {
+			order = candidate;
+			expectedMs = candidateMs;
+		}
+	}
+	return { order, plainMs, expectedMs };
+}
+
+/**
  * How the stages that will run line up when only dependencies and conflicts
  * hold them back: the waves of stages that can start together, and the
  * longest chain by weight.

@@ -224,7 +224,11 @@ can select an unmeasured configuration, which the scheduler runs alone.
 `--jobs 1` runs one stage at a time in plan order.
 
 Stages start in order of the work still ahead of them. The scheduler excludes
-previous queue time from that estimate. When the next stage waits for resources,
+previous queue time from that estimate. That order ignores memory, so before
+it starts, a parallel build with recorded timings replays them on a virtual
+clock. It tries 300 orders, each with every stage's weight scaled by a seeded
+random factor, and keeps the one that finishes soonest. The plain order wins
+ties. When the next stage waits for resources,
 a smaller stage can start if it fits now and leaves enough room for the
 waiting stage to start as soon as existing jobs free the memory and slots it needs.
 Dependencies, `--jobs`, memory reservations and the stages that run alone
