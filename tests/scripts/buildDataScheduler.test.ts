@@ -537,6 +537,8 @@ test("boundary tiling uses two workers when the 8 GiB profile has its full budge
 	const reduced = configureStageMemory(tiles, 5119, {});
 	assert.equal(stageMemoryMb(reduced), 4096);
 	assert.deepEqual(reduced.workerEnvironment, { ATLAS_PRECOMPILE_JOBS: "1" });
+	// Either profile first tries its cached tiles in a small reservation.
+	assert.deepEqual(reduced.trial, { memoryMb: 512 });
 
 	const override = configureStageMemory(tiles, 4096, {
 		ATLAS_PRECOMPILE_JOBS: "2",

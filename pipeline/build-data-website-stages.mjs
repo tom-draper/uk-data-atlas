@@ -29,6 +29,8 @@ export const websiteStages = [
 		],
 		{
 			memoryMb: 5120,
+			// A cached build plans in 135 MB and reuses every release.
+			trial: { memoryMb: 512 },
 			compact: {
 				memoryMb: 4096,
 				variable: "ATLAS_PRECOMPILE_JOBS",

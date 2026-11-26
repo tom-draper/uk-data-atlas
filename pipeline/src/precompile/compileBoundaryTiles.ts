@@ -35,6 +35,7 @@ import { buildLog, elapsedSince, formatCount } from "@uk-data-atlas/atlas-db";
 import { readJson } from "../lib/json.ts";
 import { datasetConcurrency } from "./datasetConcurrency.mjs";
 import { runBoundaryTileJobs } from "./boundaryTilePool.ts";
+import { stopTrialIfWork } from "../lib/trialRun.ts";
 
 const COMPILED_POLYGON_RELEASES: Readonly<Record<string, number>> = {
 	"ward/2017-12-gb-bgc": 3,
@@ -302,6 +303,7 @@ export async function compileBoundaryTiles(): Promise<BoundaryResources> {
 		}
 		jobs.push({ label, asset });
 	}
+	stopTrialIfWork(jobs.length, "boundary tile releases");
 	// Nothing is published until every worker has succeeded. The parent writes
 	// worker results to scratch as they arrive to keep memory bounded.
 	await mkdir(dirname(manifestPath), { recursive: true });
