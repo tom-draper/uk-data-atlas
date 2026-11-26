@@ -4,7 +4,7 @@ import {
 	readAreaLineages,
 } from "../atlas/buildAtlasAssets.ts";
 import { buildAtlasSqlite } from "../atlas/buildAtlasSqlite.ts";
-import { readDirectPartsFor } from "../statistics/directSources.ts";
+import { loadDirectPartsFor } from "../statistics/directSources.ts";
 import { buildDataCatalog } from "../catalog/buildDataCatalog.ts";
 /**
  * Builds the browser's data in public/data: boundaries, the gazetteer, region
@@ -105,7 +105,7 @@ async function compileSelected(names: readonly string[]) {
 	}
 
 	await compileCatalogueDatasets(names);
-	buildAtlasSqlite(ROOT, { direct: await readDirectPartsFor(ROOT) });
+	buildAtlasSqlite(ROOT, { direct: await loadDirectPartsFor(ROOT) });
 	buildDataCatalog(ROOT);
 	assembleAtlas(ROOT);
 	buildAtlasAssets(ROOT, readAreaLineages(ROOT));

@@ -1,4 +1,7 @@
 import type { DirectPart } from "@uk-data-atlas/datasets";
 
-/** The rows of each dataset read straight from its sources, by type. */
-export type DirectParts = ReadonlyMap<string, readonly DirectPart[]>;
+/** Access to the normalized rows of each direct dataset, by type. */
+export type DirectParts = Pick<
+	ReadonlyMap<string, readonly DirectPart[]>,
+	"get" | "has"
+>;
