@@ -5,6 +5,7 @@ import {
 	blockersOf,
 	conflicts,
 	priorityOrder,
+	NEEDS_FULL_RUN,
 	runSchedule,
 	stageMemoryMb,
 } from "@/pipeline/build-data-scheduler.mjs";
@@ -15,6 +16,7 @@ type Stage = {
 	args: string[];
 	writes?: string[];
 	cpuSlots?: number;
+	trial?: { memoryMb: number };
 };
 
 const stage = (
@@ -37,6 +39,8 @@ type Run = {
 	took: Record<string, number>;
 	/** Stages whose command fails. */
 	failing?: string[];
+	/** Stages whose trial run finds work, so they run again in full. */
+	rebuilding?: string[];
 	order?: Stage[];
 };
 
@@ -50,11 +54,12 @@ async function replay({
 	memoryMb = Infinity,
 	took,
 	failing = [],
+	rebuilding = [],
 	order = stages,
 }: Run) {
 	let now = 0;
 	const blockers = blockersOf(stages);
-	const running = new Map<string, number>();
+	const running = new Map<string, { mb: number; slots: number }>();
 	const started = new Map<string, number>();
 	const ended = new Map<string, number>();
 	const waits = new Map<string, { queuedMs: number; memoryWaitMs: number }>();
@@ -62,7 +67,8 @@ async function replay({
 		end: number;
 		order: number;
 		name: string;
-		done: (succeeded: boolean) => void;
+		done: (outcome: boolean | typeof NEEDS_FULL_RUN) => void;
+		trial: boolean;
 	}> = [];
 	let serial = 0;
 	let peakMb = 0;
@@ -78,8 +84,9 @@ async function replay({
 		run: (
 			entry: Stage,
 			waited: { queuedMs: number; memoryWaitMs: number },
+			{ trial }: { trial: boolean },
 		) =>
-			new Promise<boolean>((resolve) => {
+			new Promise<boolean | typeof NEEDS_FULL_RUN>((resolve) => {
 				const { name } = entry;
 				waits.set(name, waited);
 				for (const before of blockers.get(name)!)
@@ -92,16 +99,26 @@ async function replay({
 						!conflicts(entry, byName.get(other)),
 						`${name} started beside ${other}, which it conflicts with`,
 					);
-				running.set(name, stageMemoryMb(entry));
+				running.set(
+					name,
+					trial
+						? { mb: entry.trial!.memoryMb, slots: 1 }
+						: {
+								mb: stageMemoryMb(entry),
+								slots: entry.cpuSlots ?? 1,
+							},
+				);
 				assert.ok(
-					[...running.keys()].reduce(
-						(slots, name) =>
-							slots + (byName.get(name)?.cpuSlots ?? 1),
+					[...running.values()].reduce(
+						(slots, entry) => slots + entry.slots,
 						0,
 					) <= jobs,
 					`${name} exceeded the job limit`,
 				);
-				const used = [...running.values()].reduce((a, b) => a + b, 0);
+				const used = [...running.values()].reduce(
+					(sum, entry) => sum + entry.mb,
+					0,
+				);
 				if (running.size > 1)
 					assert.ok(
 						used <= memoryMb,
@@ -114,6 +131,7 @@ async function replay({
 					order: serial++,
 					name,
 					done: resolve,
+					trial,
 				});
 			}),
 	});
@@ -134,6 +152,11 @@ async function replay({
 		const next = pending.shift()!;
 		now = Math.max(now, next.end);
 		running.delete(next.name);
+		if (next.trial && rebuilding.includes(next.name)) {
+			next.done(NEEDS_FULL_RUN);
+			await flush();
+			continue;
+		}
 		ended.set(next.name, now);
 		finished.add(next.name);
 		next.done(!failing.includes(next.name));
@@ -408,8 +431,18 @@ test("the real stage graph runs to the end at several budgets", async () => {
 			5 + (index % 7) * 11,
 		]),
 	);
-	for (const memoryMb of [2800, 5836, 12288]) {
-		const result = await replay({ stages, jobs: 12, memoryMb, took });
-		assert.equal(result.finished.size, stages.length);
-	}
+	const trials = stages
+		.filter((entry: Stage) => entry.trial)
+		.map((entry: Stage) => entry.name);
+	for (const memoryMb of [2800, 5836, 12288])
+		for (const rebuilding of [[], trials]) {
+			const result = await replay({
+				stages,
+				jobs: 12,
+				memoryMb,
+				took,
+				rebuilding,
+			});
+			assert.equal(result.finished.size, stages.length);
+		}
 });

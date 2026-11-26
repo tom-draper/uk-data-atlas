@@ -27,6 +27,7 @@ import {
 	runSchedule,
 } from "./build-data-scheduler.mjs";
 import { buildLog } from "../packages/atlas-db/src/buildTiming.ts";
+import { TRIAL_ENVIRONMENT } from "./src/lib/trialRun.ts";
 
 export { planBuild, resolveChecks };
 export { formatAssetTree } from "./build-data-report.mjs";
@@ -34,11 +35,11 @@ export { formatAssetTree } from "./build-data-report.mjs";
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 
 /**
- * @typedef {{ name: string, dependencies: string[], dependencyOutputs?: Record<string, string[]>, args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, memoryMb?: number, cpuSlots?: number, compact?: { memoryMb: number, variable: string, workers: number, normalWorkers?: number, normalBudgetMb?: number, memoryVariable?: string }, workerEnvironment?: Record<string, string>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
+ * @typedef {{ name: string, dependencies: string[], dependencyOutputs?: Record<string, string[]>, args: string[], check?: boolean, cacheable?: boolean, isCurrent?: () => boolean | Promise<boolean>, memoryMb?: number, cpuSlots?: number, trial?: { memoryMb: number }, compact?: { memoryMb: number, variable: string, workers: number, normalWorkers?: number, normalBudgetMb?: number, memoryVariable?: string }, workerEnvironment?: Record<string, string>, outputs?: string[], requiredOutputs?: string[], codeInputs?: string[], writes?: string[], rawInputs?: string[] | ((root: string) => string[] | { paths: string[], presence: string[] }) }} Stage
  * @param {{
  *   argv?: string[],
  *   stages?: Stage[],
- *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean }) => number | Promise<number>,
+ *   execute?: (stage: Stage, options: { verbose: boolean, prefixed: boolean, trial: boolean }) => number | Promise<number>,
  *   limits?: { jobs: number, memoryMb: number },
  *   log?: (line: string) => void,
  *   logError?: (message: string) => void,
@@ -202,9 +203,14 @@ const relayScript = fileURLToPath(
  * with the stage's name in front of each line when stages run at once. The
  * relay prefixes each line of stdout and stderr as it arrives.
  */
-function executeStage(stage, { verbose = false, prefixed = false } = {}) {
+function executeStage(
+	stage,
+	{ verbose = false, prefixed = false, trial = false } = {},
+) {
 	const env = { ...process.env, ...stage.workerEnvironment };
 	delete env.DATA_BUILD_RELAY_PREFIX;
+	delete env[TRIAL_ENVIRONMENT];
+	if (trial) env[TRIAL_ENVIRONMENT] = "1";
 	if (verbose) env.DATA_BUILD_VERBOSE = "1";
 	if (prefixed) env.DATA_BUILD_RELAY_PREFIX = `  [${stage.name}] `;
 	return new Promise((resolveStatus, reject) => {

@@ -471,16 +471,24 @@ export function createStageCache({
 		);
 	};
 
+	// A stage that is no longer running, whether or not it recorded anything.
+	const end = (name) => {
+		begun.delete(name);
+		watched.delete(name);
+		alongside.delete(name);
+	};
+
 	return {
 		lastTiming(name) {
 			return state.stages[name]?.timing ?? null;
 		},
 
+		/** A stage that stopped and recorded nothing is no longer running. */
+		end,
+
 		recordTiming(name, timing) {
 			// A stage with a timing is no longer running, even if it failed.
-			begun.delete(name);
-			watched.delete(name);
-			alongside.delete(name);
+			end(name);
 			state.stages[name] ??= { key: null, digest: null, outputs: {} };
 			state.stages[name].timing = timing;
 			save();
