@@ -94,7 +94,7 @@ export const apiStages = [
 		{
 			memoryMb: 6144,
 			compact: {
-				memoryMb: 4096,
+				memoryMb: 2176,
 				variable: "ATLAS_PRECOMPILE_JOBS",
 				workers: 1,
 				normalWorkers: 2,
@@ -135,7 +135,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-sqlite.ts",
 		],
 		{
-			memoryMb: 6400,
+			memoryMb: 4672,
 			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
@@ -399,7 +399,7 @@ export const apiStages = [
 				"crosswalk-weights": [crosswalkWeights],
 				"converted-series": [convertedSeries],
 			},
-			memoryMb: 3712,
+			memoryMb: 2880,
 			writes: [
 				"data/build/atlas.sqlite",
 				"data/build/atlas-build.sqlite",
@@ -840,7 +840,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-pages.ts",
 		],
 		{
-			memoryMb: 4096,
+			memoryMb: 3648,
 			writes: [
 				`${atlasAssets}/atlas-pages`,
 				`${atlasAssets}/atlas-pages.json`,
