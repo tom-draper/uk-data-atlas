@@ -94,7 +94,7 @@ export const apiStages = [
 		{
 			memoryMb: 6144,
 			compact: {
-				memoryMb: 2176,
+				memoryMb: 1920,
 				variable: "ATLAS_PRECOMPILE_JOBS",
 				workers: 1,
 				normalWorkers: 2,
@@ -135,7 +135,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-sqlite.ts",
 		],
 		{
-			memoryMb: 4672,
+			memoryMb: 4352,
 			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
@@ -160,7 +160,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-api-datasets.ts",
 		],
 		{
-			memoryMb: 1408,
+			memoryMb: 1216,
 			rawInputs: apiDatasetInputs,
 			writes: [`${artifacts}/source-data`],
 		},
@@ -188,7 +188,7 @@ export const apiStages = [
 		["boundary-registry", "derived-boundaries"],
 		["pipeline/src/stages/build-area-inventory.ts"],
 		{
-			memoryMb: 1600,
+			memoryMb: 1472,
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/areas`, `${artifacts}/area-inventory.json`],
 		},
@@ -221,7 +221,7 @@ export const apiStages = [
 		["area-inventory", "geometry-store", "api-datasets"],
 		["pipeline/src/stages/build-named-locations.ts"],
 		{
-			memoryMb: 2624,
+			memoryMb: 2240,
 			rawInputs: countyShapeInputs,
 			writes: [
 				`${artifacts}/location-geometries`,
@@ -242,7 +242,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-place-index.ts"],
 		{
-			memoryMb: 1984,
+			memoryMb: 1792,
 			rawInputs: [],
 			writes: [cachePart("place-index")],
 			requiredOutputs: [cachePart("place-index")],
@@ -253,7 +253,7 @@ export const apiStages = [
 		["assemble-atlas"],
 		["pipeline/src/stages/build-area-search-index.ts"],
 		{
-			memoryMb: 1792,
+			memoryMb: 1408,
 			rawInputs: [],
 			writes: [cachePart("area-search")],
 			requiredOutputs: [cachePart("area-search")],
@@ -264,7 +264,7 @@ export const apiStages = [
 		["sources"],
 		["pipeline/src/stages/build-postcode-index.ts"],
 		{
-			memoryMb: 1280,
+			memoryMb: 1344,
 			writes: [
 				"data/build/postcode-index.sqlite",
 				"data/build/postcode-index-build.sqlite",
@@ -292,7 +292,7 @@ export const apiStages = [
 		["datasets", "statistics-vocabulary"],
 		["pipeline/src/stages/build-data-catalog.ts"],
 		{
-			memoryMb: 1536,
+			memoryMb: 1472,
 			writes: [`${artifacts}/data-catalog.json`],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [`${artifacts}/data-catalog.json`],
@@ -309,7 +309,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-crosswalk-weights.ts",
 		],
 		{
-			memoryMb: 1280,
+			memoryMb: 1088,
 			rawInputs: crosswalkWeightInputs,
 			writes: ["data/build/crosswalk-weights"],
 			outputs: ["data/build/crosswalk-weights"],
@@ -348,7 +348,7 @@ export const apiStages = [
 				"crosswalk-weights": [crosswalkWeights],
 				"conversion-backtest": [conversionBacktest],
 			},
-			memoryMb: 2240,
+			memoryMb: 1984,
 			rawInputs: [],
 			writes: ["data/build/converted-series"],
 			outputs: ["data/build/converted-series"],
@@ -366,7 +366,7 @@ export const apiStages = [
 		["atlas-sqlite", "crosswalk-weights", "weight-atoms"],
 		["pipeline/src/stages/build-notional-elections.ts"],
 		{
-			memoryMb: 2304,
+			memoryMb: 1984,
 			rawInputs: [
 				"data/source/politics/local-elections/local-election/2017/leap-2017-05-04.csv",
 			],
@@ -440,7 +440,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-measure-compatibility.ts"],
 		{
-			memoryMb: 2496,
+			memoryMb: 2240,
 			rawInputs: [],
 			writes: [`${artifacts}/measure-compatibility.json`],
 		},
@@ -490,7 +490,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-postcode-areas.ts",
 		],
 		{
-			memoryMb: 2496,
+			memoryMb: 2176,
 			writes: ["data/build/postcode-areas-component"],
 			rawInputs: [],
 			outputs: ["data/build/postcode-areas-component"],
@@ -533,7 +533,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-weight-atoms.ts",
 		],
 		{
-			memoryMb: 1536,
+			memoryMb: 1024,
 			rawInputs: crosswalkWeightInputs,
 			writes: ["data/build/weight-atoms"],
 			outputs: ["data/build/weight-atoms"],
@@ -548,7 +548,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-crosswalk-inventory.ts",
 		],
 		{
-			memoryMb: 1344,
+			memoryMb: 1280,
 			writes: [
 				`${artifacts}/crosswalks`,
 				`${artifacts}/crosswalk-inventory.json`,
@@ -591,7 +591,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-analysis-geography-validation.ts"],
 		{
-			memoryMb: 1536,
+			memoryMb: 1728,
 			rawInputs: [],
 			writes: [`${geography}/analysis-geography-validation.json`],
 		},
@@ -617,7 +617,7 @@ export const apiStages = [
 		["named-locations", "crosswalk-inventory", "area-inventory"],
 		["pipeline/src/stages/build-location-projections.ts"],
 		{
-			memoryMb: 1920,
+			memoryMb: 1408,
 			rawInputs: [],
 			writes: ["data/build/location-projections"],
 		},
@@ -627,7 +627,7 @@ export const apiStages = [
 		["area-inventory", "crosswalk-inventory"],
 		["pipeline/src/stages/build-relationship-candidates.ts"],
 		{
-			memoryMb: 1856,
+			memoryMb: 1920,
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/relationship-candidates.json`],
 		},
@@ -651,7 +651,7 @@ export const apiStages = [
 		["area-inventory", "crosswalk-inventory", "named-locations"],
 		["pipeline/src/stages/build-lookup-manifest.ts"],
 		{
-			memoryMb: 1536,
+			memoryMb: 1152,
 			rawInputs: [],
 			writes: [`${artifacts}/lookup-manifest.json`],
 		},
@@ -706,7 +706,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-validation-report.ts"],
 		{
-			memoryMb: 2752,
+			memoryMb: 2432,
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
 		},
@@ -754,7 +754,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-evidence-documents.ts",
 		],
 		{
-			memoryMb: 3712,
+			memoryMb: 3392,
 			writes: [
 				`${artifacts}/documents`,
 				`${artifacts}/evidence-documents.json`,
@@ -776,7 +776,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-lookups.ts",
 		],
 		{
-			memoryMb: 1536,
+			memoryMb: 1408,
 			writes: [
 				`${atlasAssets}/atlas-lookups`,
 				`${atlasAssets}/atlas-lookups.json`,
@@ -840,7 +840,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-pages.ts",
 		],
 		{
-			memoryMb: 3648,
+			memoryMb: 3328,
 			writes: [
 				`${atlasAssets}/atlas-pages`,
 				`${atlasAssets}/atlas-pages.json`,
