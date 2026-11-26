@@ -754,7 +754,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-evidence-documents.ts",
 		],
 		{
-			memoryMb: 1536,
+			memoryMb: 3712,
 			writes: [
 				`${artifacts}/documents`,
 				`${artifacts}/evidence-documents.json`,
