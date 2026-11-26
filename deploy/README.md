@@ -64,6 +64,7 @@ writes the final manifest afterwards so a fresh build has the required inputs.
 the Next.js app from generated data.
 Stages whose inputs and outputs are unchanged since they last ran are skipped
 (see "One data build" in `ARCHITECTURE.md`); add `--no-cache` to run them all.
+Stages with their own caches still reuse unchanged results.
 To inspect the complete local data build without executing commands, run:
 
 ```sh
