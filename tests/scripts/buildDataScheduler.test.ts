@@ -33,6 +33,8 @@ type Stage = {
 	writes?: string[];
 	outputs?: string[];
 	check?: boolean;
+	memoryMb?: number;
+	trial?: { memoryMb: number };
 };
 
 const stage = (
@@ -71,7 +73,10 @@ const build = async (
 	options: {
 		argv?: string[];
 		limits?: { jobs: number; memoryMb: number };
-		execute: (stage: Stage) => Promise<number> | number;
+		execute: (
+			stage: Stage,
+			options: { trial?: boolean },
+		) => Promise<number> | number;
 		createCache?: () => ReturnType<typeof createStageCache>;
 	},
 ) => {
@@ -231,6 +236,74 @@ test("a failure starts no new stage, lets running ones finish and records them",
 	const next = cache();
 	assert.notEqual(next.lookup(stages[1], []), null);
 	assert.equal(next.lookup(stages[0], []), null);
+});
+
+test("a trial run reserves its small cost, and runs again in full only when it has work", async () => {
+	const stages = [
+		stage("tiles", [], { memoryMb: 6000, trial: { memoryMb: 500 } }),
+		stage("other", [], { memoryMb: 4000 }),
+	];
+	// Each build has its own cache, so no recorded timing reorders it.
+	const replay = async (tilesNeedWork: boolean) => {
+		const root = mkdtempSync(join(tmpdir(), "atlas-build-trial-"));
+		onTestFinished(() => rmSync(root, { recursive: true, force: true }));
+		const cache = () =>
+			createStageCache({
+				root,
+				stateFile: join(root, ".cache/stages.json"),
+				codeFiles: () => [],
+				environment: {},
+			});
+		const events: string[] = [];
+		const result = await build(stages, {
+			argv: ["--no-cache"],
+			limits: { jobs: 8, memoryMb: 7000 },
+			execute: async (current, { trial = false }) => {
+				const label = `${current.name}${trial ? " trial" : ""}`;
+				events.push(`start ${label}`);
+				await sleep(current.name === "other" ? 40 : 10);
+				events.push(`end ${label}`);
+				return trial && tilesNeedWork ? 75 : 0;
+			},
+			createCache: cache,
+		});
+		return { ...result, events, cache };
+	};
+	// A cache hit fits beside the other stage, and runs once.
+	const hit = await replay(false);
+	assert.equal(hit.status, 0, hit.errors.join("\n"));
+	assert.deepEqual(hit.events, [
+		"start tiles trial",
+		"start other",
+		"end tiles trial",
+		"end other",
+	]);
+	// With work to do it waits for its full memory, then runs alone.
+	const miss = await replay(true);
+	assert.equal(miss.status, 0, miss.errors.join("\n"));
+	assert.deepEqual(miss.events, [
+		"start tiles trial",
+		"start other",
+		"end tiles trial",
+		"end other",
+		"start tiles",
+		"end tiles",
+	]);
+	assert.ok(
+		miss.log.some((line) =>
+			/^tiles: has work to do after \S+, queued with its full memory$/.test(
+				line,
+			),
+		),
+		miss.log.join("\n"),
+	);
+	assert.notEqual(miss.cache().lookup(stages[0], []), null);
+	// Exit code 75 outside a trial is an ordinary failure.
+	const plain = await build([stage("plain")], {
+		limits: unlimited,
+		execute: async () => 75,
+	});
+	assert.equal(plain.status, 75);
 });
 
 test("a stage that throws is reported once the running stages finish", async () => {

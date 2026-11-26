@@ -1,4 +1,8 @@
-import { DEFAULT_STAGE_WEIGHT_MS } from "./build-data-scheduler.mjs";
+import {
+	DEFAULT_STAGE_WEIGHT_MS,
+	NEEDS_FULL_RUN,
+} from "./build-data-scheduler.mjs";
+import { TRIAL_EXIT_CODE } from "./src/lib/trialRun.ts";
 import { plural } from "./build-data-report.mjs";
 import {
 	formatCount,
@@ -49,6 +53,8 @@ export function createStageRunner({
 		log(`  Depends on: ${stage.dependencies.join(", ") || "none"}`);
 	};
 	const startedAtOf = new Map();
+	// Stages whose trial run found work, so the full run is the same stage.
+	const fullRuns = new Set();
 	// Queue time comes from the previous schedule, not the stage's own work.
 	const weightOf = (stage) => {
 		if (!toRun.has(stage.name)) return 0;
@@ -141,13 +147,28 @@ export function createStageRunner({
 		});
 		return total;
 	};
-	// Runs a stage's command and records it. Returns false when it failed.
-	// `waited` is how long the scheduler held the stage back.
-	const run = async (stage, waited = {}) => {
-		const dependencies = dependencyDigests(stage);
-		state.started += 1;
+	// A stage that changed files outside its declared writes fails the build.
+	const failUndeclared = (stage, undeclared, command, waited) => {
+		state.undeclaredStages.push(stage.name);
 		log(
-			`${stage.name}: running (${formatCount(state.started)} of ${formatCount(toRun.size)})`,
+			`${stage.name}: changed ${plural(undeclared.length, "file")} outside its declared writes`,
+		);
+		for (const path of undeclared.slice(0, 10)) log(`  ${path}`);
+		if (undeclared.length > 10)
+			log(`  and ${formatCount(undeclared.length - 10)} more`);
+		finishTiming(stage, command, waited, true);
+		state.failed = true;
+		state.failureStatus ??= 1;
+		return false;
+	};
+	// Runs a stage's command and records it. Returns false when it failed.
+	// `waited` is how long the scheduler held the stage back. A trial run
+	// that found work to do returns NEEDS_FULL_RUN and records nothing.
+	const run = async (stage, waited = {}, { trial = false } = {}) => {
+		const dependencies = dependencyDigests(stage);
+		if (!fullRuns.has(stage.name)) state.started += 1;
+		log(
+			`${stage.name}: running (${formatCount(state.started)} of ${formatCount(toRun.size)})${trial ? ", trying its cached results first" : ""}`,
 		);
 		if (verbose) logCommand(stage);
 		cache?.begin(stage, { audit: verifyOutputs });
@@ -157,6 +178,7 @@ export function createStageRunner({
 			status = await execute(stage, {
 				verbose,
 				prefixed: jobs > 1,
+				trial,
 			});
 		} catch (error) {
 			const command = performance.now() - commandStartedAt;
@@ -164,6 +186,18 @@ export function createStageRunner({
 			throw error;
 		}
 		const command = performance.now() - commandStartedAt;
+		if (trial && status === TRIAL_EXIT_CODE) {
+			// A trial stops before writing, so this only confirms it did.
+			const undeclared = cache?.undeclaredChanges(stage) ?? [];
+			if (undeclared.length)
+				return failUndeclared(stage, undeclared, command, waited);
+			cache?.end(stage.name);
+			fullRuns.add(stage.name);
+			log(
+				`${stage.name}: has work to do after ${formatDuration(command)}, queued with its full memory`,
+			);
+			return NEEDS_FULL_RUN;
+		}
 		if (status !== 0) {
 			logError(
 				`${stage.name} failed with exit code ${status} after ${formatDuration(command)}. Build stopped`,
@@ -177,19 +211,8 @@ export function createStageRunner({
 		// to another stage or to none, so it fails the build and is not
 		// recorded: its dependants would not see the change, and it must rerun.
 		const undeclared = cache?.undeclaredChanges(stage) ?? [];
-		if (undeclared.length) {
-			state.undeclaredStages.push(stage.name);
-			log(
-				`${stage.name}: changed ${plural(undeclared.length, "file")} outside its declared writes`,
-			);
-			for (const path of undeclared.slice(0, 10)) log(`  ${path}`);
-			if (undeclared.length > 10)
-				log(`  and ${formatCount(undeclared.length - 10)} more`);
-			finishTiming(stage, command, waited, true);
-			state.failed = true;
-			state.failureStatus ??= 1;
-			return false;
-		}
+		if (undeclared.length)
+			return failUndeclared(stage, undeclared, command, waited);
 		const digest = cache?.record(stage, dependencies, {
 			cacheable: stage.cacheable !== false,
 		});

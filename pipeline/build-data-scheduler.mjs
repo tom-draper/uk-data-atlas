@@ -66,6 +66,9 @@ export function stageMemoryMb(stage) {
 	return DEFAULT_STAGE_MEMORY_MB;
 }
 
+/** What `run` resolves to when a trial run found work: run it again in full. */
+export const NEEDS_FULL_RUN = "full";
+
 /** Apply calibrated worker limits only where the build needs a smaller profile. */
 export function configureStageMemory(stage, memoryMb, env, jobs = Infinity) {
 	const compact = stage.compact;
@@ -286,6 +289,11 @@ export function planWaves(stages, { runs, weightOf }) {
  * Smaller stages can backfill only if they fit now and would still leave room
  * whenever enough running stages finish to admit the blocked stage.
  *
+ * A stage with a `trial` reservation starts as a trial run at that smaller
+ * cost and one CPU slot: `run(stage, waited, { trial: true })`. It is usually
+ * a cache hit and finishes then. When `run` resolves to `NEEDS_FULL_RUN`, the
+ * stage queues again at its full cost, keeping the time it has waited.
+ *
  * On a failure no new stage starts, but stages already running finish and are
  * recorded. Killing them could leave half-written files, and their results
  * are worth keeping for the next build. A stage that throws does the same,
@@ -294,9 +302,9 @@ export function planWaves(stages, { runs, weightOf }) {
  * With one job this is the plan order, one stage at a time.
  *
  * @param {{
- *   stages: Array<{ name: string, dependencies: string[], args?: string[], memoryMb?: number, cpuSlots?: number }>,
+ *   stages: Array<{ name: string, dependencies: string[], args?: string[], memoryMb?: number, cpuSlots?: number, trial?: { memoryMb: number } }>,
  *   settle: (stage: any) => boolean,
- *   run: (stage: any, waited: { queuedMs: number, memoryWaitMs: number }) => Promise<boolean>,
+ *   run: (stage: any, waited: { queuedMs: number, memoryWaitMs: number }, options: { trial: boolean }) => Promise<boolean | typeof NEEDS_FULL_RUN>,
  *   jobs?: number,
  *   memoryMb?: number,
  *   order?: Array<{ name: string }>,
@@ -317,6 +325,12 @@ export async function runSchedule({
 	const running = new Map();
 	const decisions = new Map();
 	const queued = new Map();
+	// Stages whose trial run found work to do.
+	const fullRuns = new Set();
+	const isTrial = (stage) => !!stage.trial && !fullRuns.has(stage.name);
+	const costOf = (stage) =>
+		isTrial(stage) ? stage.trial.memoryMb : stageMemoryMb(stage);
+	const slotsOf = (stage) => (isTrial(stage) ? 1 : (stage.cpuSlots ?? 1));
 	let usedMb = 0;
 	let usedCpu = 0;
 	let lastTick = clock();
@@ -353,11 +367,11 @@ export async function runSchedule({
 				queued.set(name, {
 					queuedMs: 0,
 					memoryWaitMs: 0,
-					cpuSlots: stage.cpuSlots ?? 1,
+					cpuSlots: slotsOf(stage),
 				});
 			}
-			const cost = stageMemoryMb(stage);
-			const cpuSlots = stage.cpuSlots ?? 1;
+			const cost = costOf(stage);
+			const cpuSlots = slotsOf(stage);
 			const fitsMemory = running.size === 0 || usedMb + cost <= memoryMb;
 			if (
 				fitsMemory &&
@@ -377,8 +391,9 @@ export async function runSchedule({
 		return null;
 	};
 	const start = (stage) => {
-		const cost = stageMemoryMb(stage);
-		const cpuSlots = stage.cpuSlots ?? 1;
+		const trial = isTrial(stage);
+		const cost = costOf(stage);
+		const cpuSlots = slotsOf(stage);
 		tick();
 		const waited = queued.get(stage.name) ?? {
 			queuedMs: 0,
@@ -390,21 +405,33 @@ export async function runSchedule({
 		running.set(stage.name, { cost, cpuSlots });
 		running.get(stage.name).promise = (async () => {
 			try {
-				return await run(stage, {
-					queuedMs: waited.queuedMs,
-					memoryWaitMs: waited.memoryWaitMs,
-				});
+				return await run(
+					stage,
+					{
+						queuedMs: waited.queuedMs,
+						memoryWaitMs: waited.memoryWaitMs,
+					},
+					{ trial },
+				);
 			} catch (thrown) {
 				error ??= thrown;
 				return false;
 			}
-		})().then((succeeded) => {
+		})().then((outcome) => {
 			tick();
 			running.delete(stage.name);
 			usedMb -= cost;
 			usedCpu -= cpuSlots;
+			if (trial && outcome === NEEDS_FULL_RUN) {
+				fullRuns.add(stage.name);
+				queued.set(stage.name, {
+					...waited,
+					cpuSlots: slotsOf(stage),
+				});
+				return;
+			}
 			finished.add(stage.name);
-			if (!succeeded) stopped = true;
+			if (outcome !== true) stopped = true;
 		});
 	};
 	for (;;) {
