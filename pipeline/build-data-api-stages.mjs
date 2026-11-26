@@ -161,6 +161,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-api-datasets.ts",
 		],
 		{
+			memoryMb: 1408,
 			rawInputs: apiDatasetInputs,
 			writes: [`${artifacts}/source-data`],
 		},
@@ -188,7 +189,7 @@ export const apiStages = [
 		["boundary-registry", "derived-boundaries"],
 		["pipeline/src/stages/build-area-inventory.ts"],
 		{
-			memoryMb: 2432,
+			memoryMb: 1600,
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/areas`, `${artifacts}/area-inventory.json`],
 		},
@@ -221,7 +222,7 @@ export const apiStages = [
 		["area-inventory", "geometry-store", "api-datasets"],
 		["pipeline/src/stages/build-named-locations.ts"],
 		{
-			memoryMb: 3456,
+			memoryMb: 2624,
 			rawInputs: countyShapeInputs,
 			writes: [
 				`${artifacts}/location-geometries`,
@@ -242,7 +243,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-place-index.ts"],
 		{
-			memoryMb: 2368,
+			memoryMb: 1984,
 			rawInputs: [],
 			writes: [cachePart("place-index")],
 			requiredOutputs: [cachePart("place-index")],
@@ -309,6 +310,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-crosswalk-weights.ts",
 		],
 		{
+			memoryMb: 1280,
 			rawInputs: crosswalkWeightInputs,
 			writes: ["data/build/crosswalk-weights"],
 			outputs: ["data/build/crosswalk-weights"],
@@ -347,7 +349,7 @@ export const apiStages = [
 				"crosswalk-weights": [crosswalkWeights],
 				"conversion-backtest": [conversionBacktest],
 			},
-			memoryMb: 2816,
+			memoryMb: 2240,
 			rawInputs: [],
 			writes: ["data/build/converted-series"],
 			outputs: ["data/build/converted-series"],
@@ -439,7 +441,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-measure-compatibility.ts"],
 		{
-			memoryMb: 3584,
+			memoryMb: 2496,
 			rawInputs: [],
 			writes: [`${artifacts}/measure-compatibility.json`],
 		},
@@ -489,6 +491,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-postcode-areas.ts",
 		],
 		{
+			memoryMb: 2496,
 			writes: ["data/build/postcode-areas-component"],
 			rawInputs: [],
 			outputs: ["data/build/postcode-areas-component"],
@@ -546,6 +549,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-crosswalk-inventory.ts",
 		],
 		{
+			memoryMb: 1344,
 			writes: [
 				`${artifacts}/crosswalks`,
 				`${artifacts}/crosswalk-inventory.json`,
@@ -624,7 +628,7 @@ export const apiStages = [
 		["area-inventory", "crosswalk-inventory"],
 		["pipeline/src/stages/build-relationship-candidates.ts"],
 		{
-			memoryMb: 2688,
+			memoryMb: 1856,
 			rawInputs: areaInventoryInputs,
 			writes: [`${artifacts}/relationship-candidates.json`],
 		},
@@ -701,7 +705,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-validation-report.ts"],
 		{
-			memoryMb: 3968,
+			memoryMb: 2752,
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
 		},
