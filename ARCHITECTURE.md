@@ -511,7 +511,11 @@ cache, so servers read that. `assemble-cache` waits for `atlas-sqlite`,
 `pipeline/build-data-cache.mjs` stores the cache in
 `.cache/data-build/`. The scoped key format and the content-hash record format
 each invalidate old entries once.
-`--from` and `--no-cache` rerun the stages they select regardless.
+`--from` and `--no-cache` rerun the stages they select regardless. Stages
+still reuse their own checked results: datasets, boundary tiles, map
+resources, the geometry store and evidence documents rebuild only what their
+inputs or code changed. Only the export stage also regenerates everything
+under `--no-cache`.
 Moving stage commands to the repository root also invalidates cached stages
 once because the command is part of each key. The cache format remains at
 version 4. Each stage record also keeps its latest command and total duration and
