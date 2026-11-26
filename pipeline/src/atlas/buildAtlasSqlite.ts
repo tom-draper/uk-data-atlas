@@ -99,15 +99,13 @@ const statisticsInputs = (
 			);
 		const config = declared.get(entry.type);
 		if (config) {
-			// A dataset with direct parts has its rows from its sources; the
-			// compiled JSON is then only the manifest's and the check's.
-			const parts = direct.get(entry.type);
-			if (entry.direct && !parts)
+			const hasDirect = direct.has(entry.type);
+			if (entry.direct && !hasDirect)
 				throw new Error(
 					`${entry.type} has no compiled file and no direct rows`,
 				);
-			const statistics = parts
-				? directStatistics(config, parts, entry)
+			const statistics = hasDirect
+				? directStatistics(config, () => direct.get(entry.type)!, entry)
 				: declaredStatistics(config, read, entry);
 			if (
 				entry.type === "general-election" ||
@@ -177,7 +175,7 @@ export const buildAtlasSqlite = (
 		censusTables?: readonly CensusTable[];
 		/** The Scotland and Northern Ireland census tables stored, likewise. */
 		censusNationTables?: readonly CensusNationTable[];
-		/** Rows read straight from sources, by type; see `readDirectParts`. */
+		/** Access to normalized rows by dataset type. */
 		direct?: DirectParts;
 	} = {},
 ) => {

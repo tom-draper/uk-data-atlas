@@ -24,7 +24,7 @@ data/source/          raw sources, restored from the pinned data release
 data/build/
   datasets/
     dataset-manifest.json     one entry per catalogue dataset
-    <output>.json             one compiled payload per entry
+    direct-parts/             private normalized rows for atlas-sqlite
   │
   └──▶ atlas.sqlite
          ├──▶ API server
@@ -47,21 +47,23 @@ per dataset in `CATALOGUE_DATASET_DEFINITIONS`, in catalogue order.
 | Field         | Meaning                                                                                                                     |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `type`        | The dataset's id in the catalogue, e.g. `claimant-count`.                                                                   |
-| `output`      | Its payload file, `<output>.json` beside the manifest.                                                                      |
+| `output`      | The dataset's payload name, used to name its JSON files.                                                                    |
 | `source`      | Where the data comes from and its licence, from the definition.                                                             |
 | `contract`    | The ingestion contract the source was checked against.                                                                      |
 | `inputs[]`    | Each raw file read: `kind`, `path` under `data/source/`, `bytes`, `sha256`, and the file's size and mtime when it was read. |
 | `summary`     | `datasetCount`, `dataRecordCount` and `boundaryYears`, from validation.                                                     |
-| `compiled`    | The payload's `bytes` and `sha256`, and its mtime when written.                                                             |
+| `compiled`    | The compiled bytes and SHA-256 digest.                                                                                     |
 | `fingerprint` | A hash of the code that compiled it.                                                                                        |
 
-A payload is the dataset's compiled records, keyed by dataset id, with dense
-number maps stored as arrays (`@uk-data-atlas/catalogue/compactPayload`).
+For a direct-only dataset (`direct: true`), `compiled` describes the bytes and
+hash of `direct-parts/<output>.json`. SQLite reads those normalized rows and
+checks the hash against the manifest. Older manifests and out-of-date parts
+fall back to the source reader.
 
-A later run reuses a payload when its `fingerprint` is unchanged, every input
-still has the recorded size and mtime (or belongs to the pinned data release),
-and the payload still matches `compiled`. Otherwise the dataset is compiled
-again. `pnpm data:build --only datasets` builds this stage and its prerequisites.
+A later run reuses a dataset entry when its `fingerprint` is unchanged, every
+input still has the recorded size and mtime (or belongs to the pinned data
+release), and the normalized parts file has the expected size. `pnpm data:build
+--only datasets` builds this stage and its prerequisites.
 
 ## atlas-cache.sqlite
 

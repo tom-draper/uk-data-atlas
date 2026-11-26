@@ -129,9 +129,8 @@ export const apiStages = [
 			"location-projections",
 		],
 		[
-			// Every direct dataset's rows are read first and held while the
-			// database is written: it needs 3 to 3.5 GB, above V8's default heap
-			// on a machine with 8 GB.
+			// Leave room for planning, SQLite writes and reading direct sources
+			// when a normalized parts file is unavailable.
 			"--max-old-space-size=4096",
 			"pipeline/src/stages/build-atlas-sqlite.ts",
 		],

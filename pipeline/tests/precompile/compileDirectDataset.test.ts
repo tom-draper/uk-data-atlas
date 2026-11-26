@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { afterAll, expect, test, vi } from "vitest";
 import { landArea, definitionOf, sourceDir } from "@uk-data-atlas/datasets";
@@ -19,9 +25,18 @@ const paths = await vi.hoisted(async () => {
 	};
 });
 
-vi.mock("../../src/precompile/paths.ts", () => paths);
+vi.mock("../../src/precompile/paths.ts", async (importOriginal) => ({
+	...(await importOriginal<typeof import("../../src/precompile/paths.ts")>()),
+	...paths,
+}));
+vi.mock("../../src/precompile/fingerprint.mjs", () => ({
+	datasetFingerprints: async () => ({ "land-area": "fingerprint" }),
+}));
 
 import { compileDirectDataset } from "../../src/precompile/compileDirectDataset.ts";
+import { canReuseDataset } from "../../src/precompile/cache.ts";
+import { sha256Hex } from "../../src/lib/hash.ts";
+import { loadDirectPartsFor } from "../../src/statistics/directSources.ts";
 
 afterAll(() => rmSync(paths.ROOT, { recursive: true, force: true }));
 
@@ -48,5 +63,53 @@ test("direct land area records its source without a compiled payload", async () 
 	);
 	expect(existsSync(join(paths.COMPILED_DATASETS, "land-area.json"))).toBe(
 		false,
+	);
+	const privateParts = join(
+		paths.COMPILED_DATASETS,
+		"direct-parts",
+		"land-area.json",
+	);
+	const content = readFileSync(privateParts);
+	expect(result.compiled).toEqual({
+		bytes: content.length,
+		sha256: sha256Hex(content),
+	});
+	expect(
+		await canReuseDataset(result, definition, undefined, "fingerprint"),
+	).toEqual(result.compiled);
+	writeFileSync(
+		join(paths.COMPILED_DATASETS, "dataset-manifest.json"),
+		JSON.stringify({ datasets: [result] }),
+	);
+	const parts = await loadDirectPartsFor(paths.ROOT, ["land-area"]);
+	expect(parts.get("land-area")).toEqual(
+		JSON.parse(content.toString("utf8")),
+	);
+	const corrupt = Buffer.from(content);
+	corrupt[0] = 0;
+	writeFileSync(privateParts, corrupt);
+	expect(() => parts.get("land-area")).toThrow(
+		"normalized parts do not match the dataset manifest",
+	);
+	rmSync(privateParts);
+	expect(
+		await canReuseDataset(result, definition, undefined, "fingerprint"),
+	).toBeUndefined();
+	const fallback = await loadDirectPartsFor(paths.ROOT, ["land-area"]);
+	expect(fallback.get("land-area")).toEqual(
+		JSON.parse(content.toString("utf8")),
+	);
+	writeFileSync(privateParts, content);
+
+	writeFileSync(
+		join(source, "sam-lad-2024-12.csv"),
+		[
+			"ladCode,ladName,landHectares,extentHectares,inlandWaterHectares",
+			"E06000001,Example,1000,1000,0",
+			"",
+		].join("\n"),
+	);
+	await expect(loadDirectPartsFor(paths.ROOT, ["land-area"])).rejects.toThrow(
+		"its sources changed since the datasets stage read them",
 	);
 });
