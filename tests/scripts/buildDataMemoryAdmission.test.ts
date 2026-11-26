@@ -434,6 +434,7 @@ test("the real stage graph runs to the end at several budgets", async () => {
 	const trials = stages
 		.filter((entry: Stage) => entry.trial)
 		.map((entry: Stage) => entry.name);
+	assert.ok(trials.length > 0);
 	for (const memoryMb of [2800, 5836, 12288])
 		for (const rebuilding of [[], trials]) {
 			const result = await replay({

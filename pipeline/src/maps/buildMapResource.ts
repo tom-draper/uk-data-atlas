@@ -30,6 +30,7 @@ import {
 	formatCount,
 } from "@uk-data-atlas/atlas-db";
 import { readJsonSync } from "../lib/json.ts";
+import { stopTrialIfWork } from "../lib/trialRun.ts";
 
 /**
  * Compile every boundary release into a map resource: its tiles and the hashes and
@@ -101,10 +102,6 @@ export const buildMapResources = async (
 	) as Record<string, string>;
 	const assets = join(root, "data/build");
 	const directory = join(assets, "map-resources");
-	mkdirSync(directory, { recursive: true });
-	for (const name of readdirSync(directory))
-		if (name.startsWith(".staging-"))
-			rmSync(join(directory, name), { recursive: true, force: true });
 
 	const compiler = sha256(
 		COMPILER_SOURCES.map((path) =>
@@ -133,90 +130,99 @@ export const buildMapResources = async (
 	const resources: MapResourceDescriptor[] = [];
 	const unavailable: Unavailable[] = [];
 	const compiledIds = new Set<string>();
-	const jobs: Job[] = [];
+	const planned: Array<Omit<Job, "path">> = [];
 	const ordered: Array<{
 		id: string;
 		key: string;
 		result?: Result;
 		job?: number;
 	}> = [];
+	// Plan before writing anything, so a trial run that finds work stops
+	// with the directory as it was.
+	for (const identity of inventory.releases) {
+		if (identity.status !== "available") continue;
+		const { geography, id: boundaryRelease } = identity;
+		const release = registry.releases.find(
+			(candidate) =>
+				candidate.geography === geography &&
+				candidate.id === boundaryRelease,
+		);
+		if (!release)
+			throw new Error(
+				`No boundary release ${geography}/${boundaryRelease} to compile as a map resource.`,
+			);
+		const areas = readJsonSync(join(out, identity.artifact)) as {
+			areas: Array<{ code: string; name: string }>;
+		};
+		const names = new Map(
+			areas.areas.map((area) => [area.code, area.name]),
+		);
+		const id = releaseKey(geography, boundaryRelease);
+		const key = sha256(
+			JSON.stringify({
+				compiler,
+				geometry: geometryKeys[id] ?? null,
+				names: [...names].sort(([a], [b]) => a.localeCompare(b)),
+				release,
+			}),
+		);
+		const kept = previous[id];
+		// A full-tier download has no file: it is built from the geometry
+		// store when asked for.
+		const stored = (entry: { artifact?: string }) =>
+			!entry.artifact || existsSync(join(assets, entry.artifact));
+		if (
+			kept?.key === key &&
+			"descriptor" in kept &&
+			[kept.descriptor.tiles, ...kept.descriptor.features].every(stored)
+		) {
+			ordered.push({
+				id,
+				key,
+				result: { descriptor: kept.descriptor },
+			});
+			continue;
+		}
+		if (
+			kept?.key === key &&
+			"unavailable" in kept &&
+			(kept.unavailable.features ?? []).every(stored)
+		) {
+			ordered.push({
+				id,
+				key,
+				result: { unavailable: kept.unavailable },
+			});
+			continue;
+		}
+
+		const artifact = `map-resources/${geography}-${boundaryRelease}.pmtiles`;
+		const job = planned.length;
+		planned.push({
+			root,
+			release,
+			names: [...names],
+			artifact,
+			large: (identity.recordCount ?? 0) >= 100000,
+		});
+		ordered.push({ id, key, job });
+	}
+	stopTrialIfWork(planned.length, "map resources");
+
+	mkdirSync(directory, { recursive: true });
+	for (const name of readdirSync(directory))
+		if (name.startsWith(".staging-"))
+			rmSync(join(directory, name), { recursive: true, force: true });
 	const staging = mkdtempSync(join(directory, ".staging-"));
+	const jobs: Job[] = planned.map((job, index) => ({
+		...job,
+		path: join(staging, `${index}.pmtiles`),
+	}));
 	const oldState = existsSync(statePath)
 		? readFileSync(statePath)
 		: undefined;
 	const backups: Array<{ path: string; backup?: string }> = [];
 	try {
-		for (const identity of inventory.releases) {
-			if (identity.status !== "available") continue;
-			const { geography, id: boundaryRelease } = identity;
-			const release = registry.releases.find(
-				(candidate) =>
-					candidate.geography === geography &&
-					candidate.id === boundaryRelease,
-			);
-			if (!release)
-				throw new Error(
-					`No boundary release ${geography}/${boundaryRelease} to compile as a map resource.`,
-				);
-			const areas = readJsonSync(join(out, identity.artifact)) as {
-				areas: Array<{ code: string; name: string }>;
-			};
-			const names = new Map(
-				areas.areas.map((area) => [area.code, area.name]),
-			);
-			const id = releaseKey(geography, boundaryRelease);
-			const key = sha256(
-				JSON.stringify({
-					compiler,
-					geometry: geometryKeys[id] ?? null,
-					names: [...names].sort(([a], [b]) => a.localeCompare(b)),
-					release,
-				}),
-			);
-			const kept = previous[id];
-			// A full-tier download has no file: it is built from the geometry
-			// store when asked for.
-			const stored = (entry: { artifact?: string }) =>
-				!entry.artifact || existsSync(join(assets, entry.artifact));
-			if (
-				kept?.key === key &&
-				"descriptor" in kept &&
-				[kept.descriptor.tiles, ...kept.descriptor.features].every(
-					stored,
-				)
-			) {
-				ordered.push({
-					id,
-					key,
-					result: { descriptor: kept.descriptor },
-				});
-				continue;
-			}
-			if (
-				kept?.key === key &&
-				"unavailable" in kept &&
-				(kept.unavailable.features ?? []).every(stored)
-			) {
-				ordered.push({
-					id,
-					key,
-					result: { unavailable: kept.unavailable },
-				});
-				continue;
-			}
-
-			const artifact = `map-resources/${geography}-${boundaryRelease}.pmtiles`;
-			const job = jobs.length;
-			jobs.push({
-				root,
-				release,
-				names: [...names],
-				artifact,
-				path: join(staging, `${job}.pmtiles`),
-				large: (identity.recordCount ?? 0) >= 100000,
-			});
-			ordered.push({ id, key, job });
-		}
 		const results: Array<Result | undefined> = new Array(jobs.length);
 		let cursor = 0;
 		const publishReady = () => {
