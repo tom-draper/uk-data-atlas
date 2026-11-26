@@ -3,7 +3,12 @@ import { join, relative } from "path";
 import type { SourceArtifact } from "@uk-data-atlas/datasets";
 import { sha256FileHex, sha256Hex } from "../lib/hash.ts";
 import { datasetFingerprints, precompileFingerprints } from "./fingerprint.mjs";
-import { COMPILED_DATASETS, ROOT, SOURCE_DATA } from "./paths.ts";
+import {
+	COMPILED_DATASETS,
+	ROOT,
+	SOURCE_DATA,
+	directPartsDirectory,
+} from "./paths.ts";
 import type {
 	CatalogueDefinition,
 	CompiledOutput,
@@ -254,7 +259,13 @@ export const canReuseDataset = async (
 			)
 				return undefined;
 		}
-		// A dataset has no file: its hash is of the parts.
+		const parts = await stat(
+			join(
+				directPartsDirectory(COMPILED_DATASETS),
+				`${existing.output}.json`,
+			),
+		);
+		if (parts.size !== existing.compiled.bytes) return undefined;
 		return existing.compiled;
 	} catch {
 		return undefined;

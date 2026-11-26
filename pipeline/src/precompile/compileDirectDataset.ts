@@ -1,17 +1,15 @@
-import { rm } from "fs/promises";
+import { mkdir, rm } from "fs/promises";
 import { join } from "path";
 import { buildLog, msSince } from "@uk-data-atlas/atlas-db";
 import { validatePrecompiledDataset } from "@uk-data-atlas/datasets";
-import { directDigest } from "../statistics/directDigest.ts";
-import { COMPILED_DATASETS } from "./paths.ts";
+import { out } from "./output.ts";
+import { COMPILED_DATASETS, directPartsDirectory } from "./paths.ts";
 import { createTrackedReader } from "./trackedReader.ts";
 import type { CatalogueDefinition, ExistingManifestDataset } from "./types.ts";
 
 /**
- * The manifest entry of a dataset with no compiler (`direct.only`): its
- * sources are read once here for the inputs, the summary and a hash of the
- * parts, and no JSON is written. The `atlas-sqlite` stage reads them again for
- * the rows, and refuses to run if they no longer hash to this entry.
+ * Normalize a direct-only dataset once. The private parts file supplies
+ * rows to atlas-sqlite and its digest goes in the manifest.
  */
 export async function compileDirectDataset(
 	definition: CatalogueDefinition,
@@ -23,6 +21,22 @@ export async function compileDirectDataset(
 		throw new Error(`${definition.type} is not a direct-only dataset`);
 	const { reader, artifacts } = createTrackedReader();
 	const parts = await direct.read(reader);
+	// JSON would turn non-finite observations and bounds into nulls.
+	for (const part of parts)
+		for (const records of [
+			part.records,
+			...Object.values(part.recordSets ?? {}),
+		])
+			for (const { code, values } of records)
+				for (const { value, lower, upper } of values)
+					if (
+						(value !== null && !Number.isFinite(value)) ||
+						(lower !== undefined && !Number.isFinite(lower)) ||
+						(upper !== undefined && !Number.isFinite(upper))
+					)
+						throw new Error(
+							`${definition.type}: non-finite observation or bound for ${code}`,
+						);
 	// The same checks and summary a compiled dataset gets, run over the shape
 	// its payload would have: one entry per part, one record per area.
 	// The stub records below hold no fields, so `requiredDataFields` cannot be
@@ -66,7 +80,14 @@ export async function compileDirectDataset(
 	await rm(join(COMPILED_DATASETS, `${definition.precompiledFile}.json`), {
 		force: true,
 	});
-	const compiled = directDigest(parts);
+	const directory = directPartsDirectory(COMPILED_DATASETS);
+	await mkdir(directory, { recursive: true });
+	const { bytes, sha256 } = await out(
+		definition.precompiledFile,
+		parts,
+		directory,
+	);
+	const compiled = { bytes, sha256 };
 	buildLog.artifact("dataset", `${definition.precompiledFile} (rows)`, {
 		status: "read from source",
 		bytes: compiled.bytes,

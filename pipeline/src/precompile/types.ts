@@ -46,8 +46,8 @@ export type ExistingManifestDataset = {
 	fingerprint?: string;
 	inputTrackingVersion?: 1;
 	/**
-	 * Set when no compiled file exists: the rows are read straight from the
-	 * sources and `compiled` describes the parts they were read as.
+	 * Set when no compiled payload exists. `compiled` describes the
+	 * normalized parts the dataset reader produced.
 	 */
 	direct?: true;
 };
