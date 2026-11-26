@@ -666,6 +666,8 @@ export const apiStages = [
 		],
 		{
 			memoryMb: 8192,
+			// A cached build plans in 420 MB and reuses every release.
+			trial: { memoryMb: 800 },
 			compact: {
 				memoryMb: 5120,
 				variable: "ATLAS_MAP_RESOURCE_JOBS",

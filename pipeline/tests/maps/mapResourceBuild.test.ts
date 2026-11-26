@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -13,6 +14,7 @@ import { join, resolve } from "node:path";
 import { test } from "vitest";
 import { buildMapResources } from "../../src/maps/buildMapResource";
 import { buildGeometryStore } from "../../src/maps/buildGeometryStore";
+import { FullRunNeeded } from "../../src/lib/trialRun";
 
 test("map builds retain tiles, remove obsolete variants and reuse completed releases", async (t) => {
 	const root = mkdtempSync(join(tmpdir(), "atlas-map-build-"));
@@ -172,7 +174,24 @@ test("map builds retain tiles, remove obsolete variants and reuse completed rele
 	const state = readFileSync(
 		join(root, "data/build/map-resources/build-state.json"),
 	);
+	// A trial run of a cached build finishes as the build itself would. Once
+	// the tiles are gone it stops before writing, so the full run can follow.
+	t.onTestFinished(() => {
+		delete process.env.DATA_BUILD_TRIAL;
+	});
+	process.env.DATA_BUILD_TRIAL = "1";
+	assert.deepEqual(
+		(await buildMapResources(root)).resources,
+		first.resources,
+	);
 	rmSync(join(root, "data/build/map-resources"), { recursive: true });
+	await assert.rejects(buildMapResources(root), FullRunNeeded);
+	assert.ok(!existsSync(join(root, "data/build/map-resources")));
+	assert.deepEqual(
+		readFileSync(join(root, "data/build/artifacts/map-resources.json")),
+		manifest,
+	);
+	delete process.env.DATA_BUILD_TRIAL;
 	process.env.ATLAS_MAP_RESOURCE_JOBS = "2";
 	const parallel = await buildMapResources(root);
 	assert.deepEqual(parallel.resources, first.resources);
