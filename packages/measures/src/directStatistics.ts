@@ -34,7 +34,7 @@ import {
  */
 export function directStatistics(
 	config: DeclaredDataset,
-	parts: readonly DirectPart[],
+	parts: readonly DirectPart[] | (() => readonly DirectPart[]),
 	entry: DeclaredManifestEntry,
 ): (areas: AreaIndex) => StatisticsDataset {
 	const type = config.type;
@@ -126,7 +126,7 @@ export function directStatistics(
 			}) => void,
 			onElection?: (election: StatisticsElection) => void,
 		) {
-			for (const part of parts) {
+			for (const part of typeof parts === "function" ? parts() : parts) {
 				const context = `${type} ${part.key}`;
 				const header = headerOf(part.key);
 				const topPeriod: StatisticsPeriod = config.period

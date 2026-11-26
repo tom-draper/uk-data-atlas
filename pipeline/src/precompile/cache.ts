@@ -29,9 +29,13 @@ const splitSheetArtifactPath = (path: string): [string, string] => {
 };
 
 /** The file under data/ that a tracked source artifact was read from. */
-export const sourceInputPath = (kind: SourceArtifact["kind"], path: string) =>
+export const sourceInputPath = (
+	kind: SourceArtifact["kind"],
+	path: string,
+	directory = SOURCE_DATA,
+) =>
 	join(
-		SOURCE_DATA,
+		directory,
 		kind === "xlsxSheet" ||
 			kind === "xlsxSheetRows" ||
 			kind === "xlsxSheetSelectedRows" ||
