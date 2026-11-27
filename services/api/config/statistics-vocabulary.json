@@ -10343,7 +10343,7 @@
 			"label": "Scotland's Census 2022: Method of travel to work",
 			"members": [
 				{
-					"code": "all-people-aged-16-and-over-in-employment-the-week-before-the-census-including-full-time-students-if-they-gave-a-work-address-as-the-address-they-primarily-travel-to-for-work-or-study",
+					"code": "total",
 					"label": "All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)"
 				},
 				{
@@ -10485,7 +10485,7 @@
 			"label": "Scotland's Census 2022: Distance travelled to work",
 			"members": [
 				{
-					"code": "all-people-aged-16-and-over-in-employment-the-week-before-the-census-including-full-time-students-if-they-gave-a-work-address-as-the-address-they-primarily-travel-to-for-work-or-study",
+					"code": "total",
 					"label": "All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)"
 				},
 				{
