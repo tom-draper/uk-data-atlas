@@ -26,7 +26,7 @@ export const nationCensusUnit = (universe: string) => {
 	if (/^All (?:occupied )?household spaces$/.test(universe))
 		return "household spaces";
 	if (/^All (?:occupied )?households$/.test(universe)) return "households";
-	return "usual residents";
+	return "people";
 };
 
 export type StandaloneNationCensus = {

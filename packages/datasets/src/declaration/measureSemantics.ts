@@ -95,7 +95,7 @@ const UNIVERSE_MEASURES: Readonly<Record<string, readonly string[]>> = {
 	"usual-residents": [
 		"usual-residents",
 		...STANDALONE_NATION_CENSUS.filter(
-			({ universe }) => nationCensusUnit(universe) === "usual residents",
+			({ universe }) => nationCensusUnit(universe) === "people",
 		).map(({ dataset }) => dataset),
 	],
 	"usual-residents-16-plus": [
