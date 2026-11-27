@@ -126,11 +126,12 @@ The nation census archives are in
   occupation, socio-economic classification and migration. UV201 and the
   economic activity tables use Scotland-specific measures and definitions.
   UV204b uses the publisher's all-age, all-sex counts.
-- **Scottish follow-ups.** Additional age and sex cross-tabulations, travel to
-  work or study (UV701 to UV704b), and armed forces veteran tables (UV901 and
-  UV902) are staged. The cross-tabulations require their own dimension
-  modelling. Scotland's disclosure dashes are read as zero. Published cells
-  can differ from separately reported totals.
+- **Scottish follow-ups.** UV104b, UV106b, UV201b, UV202b, UV205b to UV212b,
+  UV301b to UV303b, UV501b, UV603b and UV604b cross age or sex with another
+  topic and need dimension modelling. Travel to work or study (UV701 to
+  UV704b) and armed forces veteran tables (UV901 and UV902) remain staged.
+  Scotland's disclosure dashes are read as zero. Published cells can differ
+  from separately reported totals.
 - **Northern Ireland 2021.** MS-A01, MS-A09, MS-E01, MS-E02 and MS-E04 are
   compiled from the data-zone sheets. A14 repeats A01's resident counts
   alongside area and density. Density needs an area denominator and cannot
@@ -139,9 +140,12 @@ The nation census archives are in
   phase 1 to 3 tables supply published district counts for population,
   identity, health, housing, qualifications and labour. MS-A05 is covered by
   MS-A09. MS-E10 includes the household categories, while the vehicle total
-  and average have a different unit. Workbooks without a district or
-  data-zone sheet, census travel tables and supplemental archives remain
-  staged.
+  and average have a different unit. The following workbooks lack a district
+  or data-zone sheet and need separate geography or historical-series handling:
+  phase 1 A03, A04, A06, A11 to A13, A17, A19, A21, B16, B20, B22, B24 and
+  E03, phase 2 B11, D05 to D16 and E07, and phase 3 A27, A28, B04, B25, C01,
+  C02, F01 to F03, H03, H04 and K02. Census travel tables I01 to I04 and
+  supplemental archives remain staged.
 - Nation count conversions are checked series by series against their
   published totals on the 2026-05 authorities. Coarser publisher counts, where
   supplied, can be independently disclosure controlled. Mid-year estimates
