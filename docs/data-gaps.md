@@ -21,14 +21,13 @@ Many measures cover England only, or England and Wales only.
   additional dwellings and NHS waiting lists.
 - England and Wales only: `population`, `recorded-crimes`,
   `people-in-employment` and the ward house prices.
-- England and Wales, with Scotland (2022) and Northern Ireland (2021) for the
-  census tables compiled so far: `usual-residents`, `households`, age in
-  five-year bands, general health, tenure and household composition. Each
-  nation counts as at its own census day, so they are separate periods of the
-  same measure. Scotland also publishes finer categories England and Wales do
-  not (single years from 15 to 19, dependent children by number, shared
-  equity), which are measures with Scotland as their only source. Section 5
-  lists what is left.
+- Census coverage includes usual residents and households across the UK.
+  Scotland 2022 adds detailed age, sex, housing, health, disability, caring,
+  identity, language, qualifications, employment and migration tables.
+  Northern Ireland 2021 adds age and sex, household size and spaces, and
+  district-level tenure and 44 other district tables. The census year follows
+  each nation's census day.
+  Nation-specific categories retain their published definitions (section 5).
 - ASHE pay covers England, Wales and Scotland, from 2012 to 2025. Northern
   Ireland is not in these ONS tables, which publish no authority rows for it.
 
@@ -50,9 +49,6 @@ Sources to collect:
   statistics.gov.scot now redirects to data.gov.scot, which has no direct
   file for the council-area series, and the PSNI statistics pages link no
   downloadable tables. The OpenDataNI monthly file ends in December 2021.
-- Seven census tables for Scotland (2022) and Northern Ireland (2021) are
-  compiled onto their data zones (section 5 lists the rest, which are staged
-  but not compiled).
 
 ### 2. Earlier years
 
@@ -117,42 +113,50 @@ These sit in `data/source/_staging`:
 - household economic activity
 - local labour market indicators
 
-The Scotland and Northern Ireland census folders have moved out of `_staging`
-to `data/source/population/population-estimates`, because five Scottish tables
-(UV101b, UV102b, UV302, UV404 and UV113) and two Northern Ireland tables
-(MS-A01 and MS-E01) are compiled. The rest of both folders is left:
+The nation census archives are in
+`data/source/population/population-estimates`:
 
-- Scotland's Census 2022 (`census-2022-scotland-data-zone`, 76 tables on the
-  2022 data zones), apart from the five above. Ethnic group (UV201) and
-  economic activity are defined differently from England and Wales, so they
-  are not compiled. Where Scotland publishes a category more finely or
-  differently, it is published as a measure of its own and never summed or
-  matched to an England and Wales one: ages 15, 16 to 17 and 18 to 19 (in
-  place of 15 to 19), shared equity, owned with a mortgage excluding shared
-  equity, and council and housing association renting as one social rented
-  figure. In household composition, the dependent-children categories are split
-  into one and two or more, and the other household types into one, two or
-  more, all full-time students, all aged 66 and over, and the rest. The England
-  and Wales parents of these (15 to 19, owned with a mortgage, social rented
-  from a council, and so on) have no Scottish value. The other UV tables are not
-  read.
-- The Northern Ireland Census 2021 main statistics
-  (`census-2021-northern-ireland`), apart from MS-A01 and MS-E01. A09, A14,
-  E02 and E04 have categories to match, and some tables have no data zone
-  sheet. The phase 2, phase 3 and supplemental archives are not read. The
-  Northern Ireland household default is the household composition total,
-  because no tenure table is compiled for it.
-- Scotland's disclosure control shows a small count as a dash, read here as
-  zero. UV101b supports this, with households equal to all people in 5,818 of
-  5,844 data zones and higher in the rest, but NRS does not state it. Neither
-  nation's tables add to their totals, so the sums are not checked.
-- Conversion backtests for the nation tables cannot be built. The Scotland
-  and Northern Ireland census tables are published on data zones alone, so
-  no census figure on a coarser release exists to test against, and a
-  mid-year estimate on councils is a different count under another period.
-  A data zone nests in its council, so the route is exact, and
-  `builtNationCensus.test.ts` checks that every table keeps every count on the
-  2026-05 authorities (`CENSUS_TABLES` in `backtestCases.ts` explains why).
+- **Scotland 2022.** UV101b, UV102b, UV113, UV302 and UV404 share measures
+  only where the published categories agree. New standalone data-zone tables
+  cover single-year age, sex totals from UV102b, marital status, household
+  composition and lifestage, ethnicity and identity, country of birth,
+  religion, passports, language, care, disability, long-term conditions,
+  accommodation, tenure of residents, vehicles, household size, heating,
+  bedrooms, qualifications, economic activity, hours worked, industry,
+  occupation, socio-economic classification and migration. UV201 and the
+  economic activity tables use Scotland-specific measures and definitions.
+  UV204b uses the publisher's all-age, all-sex counts.
+- **Scottish follow-ups.** Additional age and sex cross-tabulations, travel to
+  work or study (UV701 to UV704b), and armed forces veteran tables (UV901 and
+  UV902) are staged. The cross-tabulations require their own dimension
+  modelling. Scotland's disclosure dashes are read as zero. Published cells
+  can differ from separately reported totals.
+- **Northern Ireland 2021.** MS-A01, MS-A09, MS-E01, MS-E02 and MS-E04 are
+  compiled from the data-zone sheets. A14 repeats A01's resident counts
+  alongside area and density. Density needs an area denominator and cannot
+  be summed to councils. MS-E15 provides household tenure on the 11 local
+  government districts and supplies the household default there. Another 44
+  phase 1 to 3 tables supply published district counts for population,
+  identity, health, housing, qualifications and labour. MS-A05 is covered by
+  MS-A09. MS-E10 includes the household categories, while the vehicle total
+  and average have a different unit. Workbooks without a district or
+  data-zone sheet, census travel tables and supplemental archives remain
+  staged.
+- Nation count conversions are checked series by series against their
+  published totals on the 2026-05 authorities. Coarser publisher counts, where
+  supplied, can be independently disclosure controlled. Mid-year estimates
+  use a different reference date.
+- The ONS ethnic group by age and sex workbook combines Cornwall with the Isles
+  of Scilly and the City of London with Westminster. Those counts need explicit
+  composite geographies before the complete table can be compiled. Household
+  economic activity A1(LA) is an Annual Population Survey release for 2025.
+
+New standalone count measure keys use the dataset slug plus a category suffix,
+for example `census-2022-scotland-uv102b-sex-female`,
+`census-2022-scotland-uv405-all-occupied-households` and
+`census-2021-ni-e04-household-spaces-without-usual-residents`. MS-E15 uses the
+existing `tenure-total` measure and the `tenure-ni-*` keys for rental categories
+specific to Northern Ireland.
 
 The `commuting` and `vehicles` folders under `data/source/transport` also have
 no measures in default coverage. Compiling the staged files needs no new
@@ -359,8 +363,8 @@ What is still out of reach:
 
 ## Where to start
 
-1. Compile the rest of the staged Scotland and Northern Ireland census
-   tables (section 5), and the other staged census and population files.
+1. Review the remaining census tables and composite ONS geographies in
+   section 5, then compile the other staged population files.
 2. Police Scotland and PSNI recorded crime, once a direct download is found.
 3. Collect official predecessor lookups to link the Scottish data-zone and
    Senedd constituency events, and add the 2001 Scottish data-zone inventory.
