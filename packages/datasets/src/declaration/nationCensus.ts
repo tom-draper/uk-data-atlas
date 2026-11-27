@@ -3157,7 +3157,11 @@ export const STANDALONE_NATION_CENSUS: readonly StandaloneNationCensus[] = [
 			"This Scottish table uses the publisher’s employment and study definitions for census week.",
 		],
 		categories: [
-			"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+			[
+				"total",
+				"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+				"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+			],
 			"Work mainly at or from home",
 			"Driving a car or van",
 			"Passenger in a car or van",
@@ -3223,7 +3227,11 @@ export const STANDALONE_NATION_CENSUS: readonly StandaloneNationCensus[] = [
 			"This Scottish table uses the publisher’s employment and study definitions for census week.",
 		],
 		categories: [
-			"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+			[
+				"total",
+				"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+				"All people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study)",
+			],
 			"Mainly work from home",
 			"Less than 2km",
 			"2km to less than 5km",
