@@ -22,6 +22,13 @@ export const SDC =
 export const NI_SDC =
 	"NISRA applies statistical disclosure control to the 2021 census tables.";
 
+export const nationCensusUnit = (universe: string) => {
+	if (/^All (?:occupied )?household spaces$/.test(universe))
+		return "household spaces";
+	if (/^All (?:occupied )?households$/.test(universe)) return "households";
+	return "usual residents";
+};
+
 export type StandaloneNationCensus = {
 	dataset: string;
 	nation: "scotland" | "northern-ireland";

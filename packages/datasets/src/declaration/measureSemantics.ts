@@ -1,4 +1,5 @@
 import type { MeasureUnit } from "./measureUnits.ts";
+import { nationCensusUnit, STANDALONE_NATION_CENSUS } from "./nationCensus.ts";
 import type { MeasureStatistic, StatisticsMeasure } from "./vocabulary.ts";
 
 /** Population or entity base of a measure. Unknown is kept for compatibility only: the
@@ -51,6 +52,7 @@ export const MEASURE_UNIVERSES = [
 	[36, "seats", "Parliamentary seats"],
 	[37, "contests", "Election contests"],
 	[38, "band-d-equivalent-dwellings", "Band D equivalent dwellings"],
+	[39, "household-spaces", "Household spaces"],
 ] as const;
 
 /**
@@ -90,18 +92,29 @@ const UNIVERSE_MEASURES: Readonly<Record<string, readonly string[]>> = {
 		"recorded-crimes-per-1000-residents",
 		"public-ev-chargers-per-10000-residents",
 	],
-	"usual-residents": ["usual-residents"],
+	"usual-residents": [
+		"usual-residents",
+		...STANDALONE_NATION_CENSUS.filter(
+			({ universe }) => nationCensusUnit(universe) === "usual residents",
+		).map(({ dataset }) => dataset),
+	],
 	"usual-residents-16-plus": [
 		"usual-residents-16-plus",
 		"people-in-employment",
 	],
 	households: [
 		"households",
+		...STANDALONE_NATION_CENSUS.filter(
+			({ universe }) => nationCensusUnit(universe) === "households",
+		).map(({ dataset }) => dataset),
 		"fuel-poor-households",
 		"fuel-poverty-rate",
 		"households-in-temporary-accommodation",
 		"households-in-temporary-accommodation-rate",
 	],
+	"household-spaces": STANDALONE_NATION_CENSUS.filter(
+		({ universe }) => nationCensusUnit(universe) === "household spaces",
+	).map(({ dataset }) => dataset),
 	dwellings: ["net-additional-dwellings"],
 	pupils: [
 		"attainment-8",

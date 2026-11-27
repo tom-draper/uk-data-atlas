@@ -5,6 +5,7 @@ import {
 	NI_SDC,
 	STANDALONE_NATION_CENSUS,
 	nationCensusTitle,
+	nationCensusUnit,
 	type StandaloneNationCensus,
 } from "@uk-data-atlas/datasets";
 import type { DatasetTopic, SourceName } from "@uk-data-atlas/datasets";
@@ -116,7 +117,7 @@ const standalone = (table: StandaloneNationCensus): CensusNationTable => {
 			measure: table.dataset,
 			measurePrefix: table.dataset,
 			dimension: table.dataset,
-			unit: "count",
+			unit: nationCensusUnit(table.universe),
 			categories: [],
 		},
 	};
