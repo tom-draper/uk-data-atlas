@@ -135,7 +135,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-sqlite.ts",
 		],
 		{
-			memoryMb: 4352,
+			memoryMb: 2944,
 			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
