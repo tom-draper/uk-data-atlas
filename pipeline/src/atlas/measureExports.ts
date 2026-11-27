@@ -16,7 +16,7 @@ import {
 } from "../statistics/exportDownloadReuse.ts";
 import { measureStatisticsSelections } from "../statistics/measureStatisticsSelections.ts";
 import { statisticsArtifactReader } from "../statistics/statisticsArtifacts.ts";
-import { compileMeasureSourceExports } from "./exportManifest.ts";
+import { createMeasureSourceExporter } from "./exportManifest.ts";
 
 export type ExportWork = {
 	catalog: DataCatalog;
@@ -47,61 +47,61 @@ export async function compileMeasureExports(work: ExportWork) {
 			catalog,
 			work.readPath,
 		);
-		for (
-			let index = Atomics.add(cursor, 0, 1);
-			index < catalog.measures.length;
-			index = Atomics.add(cursor, 0, 1)
-		) {
-			const measure = catalog.measures[index]!;
-			const sources = compileMeasureSourceExports(
-				measure,
-				readArtifact,
-				(content, entry, artifact, unit, seriesKey) => {
-					downloadCount++;
-					if (writerKey === undefined)
-						return compileObservationDownloads(
-							publicDirectory,
-							entry,
-							artifact,
-							unit,
-							seriesKey,
-						);
-					const stem = `exports/${entry.id}`;
-					const key = sha256Hex(
-						JSON.stringify([
-							writerKey,
-							entry,
-							unit,
-							seriesKey,
-							sha256Hex(content),
-						]),
-					);
-					const prior = previous[stem];
-					if (
-						prior?.key === key &&
-						usableDownload(publicDirectory, prior, stem)
-					) {
-						reused++;
-						rmSync(join(publicDirectory, `${stem}.csv`), {
-							force: true,
-						});
-						cache.push([stem, prior]);
-						return prior.formats;
-					}
-					const formats = compileObservationDownloads(
+		const compileSourceExports = createMeasureSourceExporter(
+			readArtifact,
+			(content, entry, artifact, unit, seriesKey) => {
+				downloadCount++;
+				if (writerKey === undefined)
+					return compileObservationDownloads(
 						publicDirectory,
 						entry,
 						artifact,
 						unit,
 						seriesKey,
 					);
-					cache.push([
-						stem,
-						cacheDownload(publicDirectory, key, formats),
-					]);
-					return formats;
-				},
-			);
+				const stem = `exports/${entry.id}`;
+				const key = sha256Hex(
+					JSON.stringify([
+						writerKey,
+						entry,
+						unit,
+						seriesKey,
+						sha256Hex(content),
+					]),
+				);
+				const prior = previous[stem];
+				if (
+					prior?.key === key &&
+					usableDownload(publicDirectory, prior, stem)
+				) {
+					reused++;
+					rmSync(join(publicDirectory, `${stem}.csv`), {
+						force: true,
+					});
+					cache.push([stem, prior]);
+					return prior.formats;
+				}
+				const formats = compileObservationDownloads(
+					publicDirectory,
+					entry,
+					artifact,
+					unit,
+					seriesKey,
+				);
+				cache.push([
+					stem,
+					cacheDownload(publicDirectory, key, formats),
+				]);
+				return formats;
+			},
+		);
+		for (
+			let index = Atomics.add(cursor, 0, 1);
+			index < catalog.measures.length;
+			index = Atomics.add(cursor, 0, 1)
+		) {
+			const measure = catalog.measures[index]!;
+			const sources = compileSourceExports(measure);
 			const selection = measureStatisticsSelections(
 				database,
 				measure,
