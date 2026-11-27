@@ -206,28 +206,28 @@
 		},
 		"gross-annual-pay": {
 			"label": "Gross annual pay",
-			"description": "Gross annual pay of employees, from the Annual Survey of Hours and Earnings.",
+			"description": "Gross annual pay of employees, from the Annual Survey of Hours and Earnings. Annual pay covers employees in the same job for more than a year. From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with earlier years. Estimates for 2020 and 2021 come from a smaller sample and include furloughed employees, and the publisher advises caution with them. The 2025 figures are provisional.",
 			"unit": "gbp per year",
 			"valueKind": "amount",
 			"aggregation": "none"
 		},
 		"gross-annual-pay-change": {
 			"label": "Change in gross annual pay",
-			"description": "Percentage change in gross annual pay on the previous year.",
+			"description": "Percentage change in gross annual pay on the previous year, as the tables publish it. The tables leave it blank for 2018 to 2022. It is not adjusted for changes in the make-up of the workforce.",
 			"unit": "percent",
 			"valueKind": "rate",
 			"aggregation": "none"
 		},
 		"gross-hourly-pay": {
 			"label": "Gross hourly pay",
-			"description": "Gross hourly pay of employees, excluding overtime, from the Annual Survey of Hours and Earnings.",
+			"description": "Gross hourly pay of employees, including overtime, from the Annual Survey of Hours and Earnings. From 2021 the survey codes occupations to SOC 2020 instead of SOC 2010, which changes the weights every estimate is built from, so 2021 onward is not directly comparable with earlier years. Estimates for 2020 and 2021 come from a smaller sample and include furloughed employees, and the publisher advises caution with them. The 2025 figures are provisional.",
 			"unit": "gbp per hour",
 			"valueKind": "amount",
 			"aggregation": "none"
 		},
 		"gross-hourly-pay-change": {
 			"label": "Change in gross hourly pay",
-			"description": "Percentage change in gross hourly pay on the previous year.",
+			"description": "Percentage change in gross hourly pay on the previous year, as the tables publish it. The tables leave it blank for 2018 to 2022. It is not adjusted for changes in the make-up of the workforce.",
 			"unit": "percent",
 			"valueKind": "rate",
 			"aggregation": "none"
@@ -685,6 +685,13 @@
 			"description": "Children in year 6 who are overweight or obese, as a percentage of those measured.",
 			"unit": "percent",
 			"valueKind": "share",
+			"aggregation": "none"
+		},
+		"party-vote-share-change": {
+			"label": "Change in party vote share",
+			"description": "A party's share of the valid votes less its share at the previous general election, in percentage points. On redrawn seats the previous share is a notional estimate.",
+			"unit": "percentage points",
+			"valueKind": "rate",
 			"aggregation": "none"
 		}
 	},
