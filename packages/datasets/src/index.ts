@@ -229,3 +229,5 @@ export { declaredLifeExpectancySeries } from "./health/life-expectancy/life-expe
 export { medianPaySeries } from "./data/income/statistics.ts";
 export { homelessnessSeries } from "./housing/homelessness/homelessness/dataset.ts";
 export { travelToWorkSeries } from "./transport/commuting/travel-to-work/dataset.ts";
+
+export * from "./declaration/nationCensus.ts";

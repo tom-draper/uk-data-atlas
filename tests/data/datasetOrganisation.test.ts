@@ -58,7 +58,6 @@ const THIN_TOPIC_ALLOWLIST: Record<string, Exception> = {
 			"public-finance",
 			"planning",
 			"homelessness",
-			"qualifications",
 			"crime-and-justice",
 			"local-elections",
 			"air-quality",

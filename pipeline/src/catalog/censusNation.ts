@@ -13,7 +13,7 @@ import type {
 } from "@uk-data-atlas/catalogue/node";
 import { countriesFor } from "@uk-data-atlas/catalogue/node";
 import { sha256Hex } from "../lib/hash.ts";
-import { CENSUS_NATION_AREAS } from "../statistics/censusNationSource.ts";
+import { censusNationGeography } from "../statistics/censusNationSource.ts";
 import {
 	CENSUS_NATION_TABLES,
 	censusNationArtifactName,
@@ -61,7 +61,7 @@ export const compileCensusNation = (
 	const tables: MeasureTableArtifact[] = [];
 	const inputs = new Map<string, DatasetCatalogueEntry["inputs"][number]>();
 	for (const table of tablesToCompile) {
-		const { boundaryYear } = CENSUS_NATION_AREAS[table.nation];
+		const { geography, boundaryYear } = censusNationGeography(table);
 		const path = `${sourceDir(table.folder)}/${table.archive}`;
 		if (!inputs.has(path)) {
 			const content = readFileSync(
@@ -82,7 +82,7 @@ export const compileCensusNation = (
 				censusTableSelector(
 					artifactId,
 					table.dataset,
-					"dataZone",
+					geography,
 					boundaryYear,
 					String(table.year),
 				)!,
@@ -123,7 +123,7 @@ export const compileCensusNation = (
 		const source: MeasureSource = {
 			datasetId: table.dataset,
 			periods: [String(table.year)],
-			sourceGeography: { type: "dataZone", boundaryYear },
+			sourceGeography: { type: geography, boundaryYear },
 			observationArtifact: artifact.id,
 			coverage: {
 				kind: "partial",
@@ -131,7 +131,9 @@ export const compileCensusNation = (
 					artifact.records.map(([areaCode]) => ({ areaCode })),
 				),
 				recordCount: artifact.records.length,
-				note: nation.coverage,
+				note: table.districts
+					? "Published on Northern Ireland’s 11 local government districts."
+					: nation.coverage,
 			},
 		};
 		const only = new Map(

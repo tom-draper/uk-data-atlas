@@ -296,6 +296,7 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 					"housing-tenure",
 					"census-2021-ts003",
 					"census-2022-scotland-uv113",
+					"census-2021-ni-e15",
 					"census-2021-ni-e01",
 					"fuel-poverty",
 					"car-availability",

@@ -354,6 +354,8 @@ const CENSUS_NATION_ARCHIVES = {
 	"census-2022-scotland-data-zone": ["Datazone2022.zip"],
 	"census-2021-northern-ireland": [
 		"census-2021-main-statistics-for-northern-ireland-phase-1-all-tables.zip",
+		"census-2021-main-statistics-for-northern-ireland-phase-2-all-tables.zip",
+		"census-2021-main-statistics-for-northern-ireland-phase-3-all-tables.zip",
 	],
 };
 
