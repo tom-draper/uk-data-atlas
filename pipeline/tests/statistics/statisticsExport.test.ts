@@ -19,7 +19,10 @@ import {
 	observationArtifactName,
 } from "@uk-data-atlas/measures";
 import { type StatisticsReadPath } from "@uk-data-atlas/measures";
-import { compileMeasureDownloads } from "../../src/statistics/measureDownloads";
+import {
+	compileMeasureDownloads,
+	compileUncachedMeasureDownloads,
+} from "../../src/statistics/measureDownloads";
 import { gunzipSync } from "node:zlib";
 import { measureStatisticsSelections } from "../../src/statistics/measureStatisticsSelections";
 import type { Measure } from "@uk-data-atlas/catalogue/node";
@@ -710,6 +713,20 @@ test("exports identical sorted canonical rows in CSV and Parquet", async () => {
 				.rows,
 		);
 		const firstGzip = readFileSync(join(directory, csvDownload.artifact));
+		assert.deepEqual(
+			await compileUncachedMeasureDownloads(
+				db,
+				directory,
+				"rented-homes",
+				chosen,
+				directory,
+			),
+			downloads,
+		);
+		assert.deepEqual(
+			readFileSync(join(directory, csvDownload.artifact)),
+			firstGzip,
+		);
 		assert.equal(await buildDownloads(cached), cached);
 		const updatedWriter = await buildDownloads(cached, "updated-writer");
 		assert.notEqual(updatedWriter.key, cached.key);

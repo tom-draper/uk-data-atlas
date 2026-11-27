@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { sha256FileHex } from "../lib/hash.ts";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
+import type { ObservationDownload } from "@uk-data-atlas/catalogue/node";
 import type { DatabaseSync, SQLOutputValue } from "node:sqlite";
 import {
 	readStatisticsExport,
@@ -75,6 +76,44 @@ export async function compileMeasureDownloads(
 		key = hash.digest("hex");
 		if (key === previous.key) return previous;
 	}
+	const formats = await writeMeasureDownloads(
+		publicDirectory,
+		measure,
+		scratch,
+		columns,
+		key ? rows() : trackRows(seed),
+	);
+	return cacheDownload(publicDirectory, key ?? seed.digest("hex"), formats);
+}
+
+export function compileUncachedMeasureDownloads(
+	database: DatabaseSync,
+	publicDirectory: string,
+	measure: string,
+	selection: readonly StatisticsSelection[],
+	scratch: string,
+): Promise<ObservationDownload[]> {
+	const { columns, rows } = readStatisticsExport(
+		database,
+		measure,
+		selection,
+	);
+	return writeMeasureDownloads(
+		publicDirectory,
+		measure,
+		scratch,
+		columns,
+		rows(),
+	);
+}
+
+async function writeMeasureDownloads(
+	publicDirectory: string,
+	measure: string,
+	scratch: string,
+	columns: ReturnType<typeof readStatisticsExport>["columns"],
+	rows: Iterable<SQLOutputValue[]>,
+): Promise<ObservationDownload[]> {
 	mkdirSync(join(publicDirectory, "exports", "measures"), {
 		recursive: true,
 	});
@@ -83,11 +122,7 @@ export async function compileMeasureDownloads(
 		const csv = join(temporary, "rows.csv");
 		const parquet = join(temporary, "rows.parquet");
 		const compressed = join(temporary, "rows.csv.gz");
-		const count = writeStatisticsExport(
-			{ csv, parquet },
-			columns,
-			key ? rows() : trackRows(seed),
-		);
+		const count = writeStatisticsExport({ csv, parquet }, columns, rows);
 		if (!count)
 			throw new Error(`${measure}: no canonical observation rows`);
 		const csvHash = await sha256FileHex(csv);
@@ -104,7 +139,7 @@ export async function compileMeasureDownloads(
 		const parquetBytes = statSync(parquet).size;
 		renameSync(compressed, join(publicDirectory, csvArtifact));
 		renameSync(parquet, join(publicDirectory, parquetArtifact));
-		return cacheDownload(publicDirectory, key ?? seed.digest("hex"), [
+		return [
 			{
 				format: "csv",
 				artifact: csvArtifact,
@@ -120,7 +155,7 @@ export async function compileMeasureDownloads(
 				bytes: parquetBytes,
 				contentHash: `sha256:${parquetHash}`,
 			},
-		]);
+		];
 	} finally {
 		rmSync(temporary, { recursive: true, force: true });
 	}
