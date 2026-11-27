@@ -62,14 +62,24 @@ export const statisticsArtifactReader = (
 				);
 	for (const name of Object.keys(readPath.observations))
 		throw new Error(`Artifact ${name} has no statistics read path.`);
+	// A measure table's text depends on its selector alone, and every
+	// measure of the table names the same one: 220 measures share 21 tables,
+	// about 17 MB of text, which would otherwise be rebuilt for each.
+	const tables = new Map<string, string>();
 	return (measureId: string, source: MeasureSource) => {
 		const selector = selectorFor(measureId, source);
 		const identity = byId.get(measureId)!.series!;
-		return rebuildStatisticsObservationText(database, selector, {
-			measureId: measureSeriesKey(identity),
-			sourceGeography: source.sourceGeography,
-			periods: source.periods,
-		});
+		const rebuild = () =>
+			rebuildStatisticsObservationText(database, selector, {
+				measureId: measureSeriesKey(identity),
+				sourceGeography: source.sourceGeography,
+				periods: source.periods,
+			});
+		if (!("kind" in selector)) return rebuild();
+		const key = JSON.stringify(selector);
+		let text = tables.get(key);
+		if (text === undefined) tables.set(key, (text = rebuild()));
+		return text;
 	};
 };
 
