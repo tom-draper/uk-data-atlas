@@ -3106,4 +3106,41 @@ export const STANDALONE_NATION_CENSUS: readonly StandaloneNationCensus[] = [
 			"Lived elsewhere one year ago outside Northern Ireland",
 		],
 	},
+	{
+		...SCOTLAND,
+		dataset: "census-2022-scotland-uv901",
+		table: "UV901",
+		title: "UK Armed Forces veterans",
+		entry: "Table UV901 - UK Armed Forces veterans.csv",
+		topic: "population-estimates",
+		universe: "All people aged 16 and over",
+		notes: [
+			SDC,
+			"This table uses the publisher’s definition of UK armed forces veterans.",
+		],
+		categories: [
+			"All people aged 16 and over",
+			"UK Armed Forces veteran",
+			"Not a UK Armed Forces veteran",
+		],
+	},
+
+	{
+		...SCOTLAND,
+		dataset: "census-2022-scotland-uv902",
+		table: "UV902",
+		title: "UK Armed Forces veterans - Households",
+		entry: "Table UV902 - UK Armed Forces veterans - Households.csv",
+		topic: "population-estimates",
+		universe: "All households",
+		notes: [
+			SDC,
+			"This table uses the publisher’s definition of UK armed forces veterans.",
+		],
+		categories: [
+			["Total", "All households"],
+			"Household contains at least one UK Armed Forces veteran",
+			"Household contains no UK Armed Forces veterans",
+		],
+	},
 ];
