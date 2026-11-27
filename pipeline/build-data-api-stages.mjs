@@ -135,7 +135,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-sqlite.ts",
 		],
 		{
-			memoryMb: 2944,
+			memoryMb: 3264,
 			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [
@@ -706,7 +706,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-validation-report.ts"],
 		{
-			memoryMb: 1920,
+			memoryMb: 1984,
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
 		},
