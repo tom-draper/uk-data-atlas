@@ -171,3 +171,13 @@ census-2021-ni-h06
 census-2021-ni-h09
 census-2021-ni-k01
 census-2021-ni-e15
+census-2022-scotland-uv901
+census-2022-scotland-uv902
+census-2022-scotland-uv701
+census-2022-scotland-uv702
+census-2022-scotland-uv703
+census-2022-scotland-uv704
+census-2021-ni-i01
+census-2021-ni-i02
+census-2021-ni-i03
+census-2021-ni-i04
