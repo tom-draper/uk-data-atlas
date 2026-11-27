@@ -4,6 +4,7 @@ import {
 	SDC,
 	NI_SDC,
 	STANDALONE_NATION_CENSUS,
+	nationCensusCategory,
 	nationCensusTitle,
 	nationCensusUnit,
 	type StandaloneNationCensus,
@@ -89,19 +90,7 @@ const ew = (table: string): CensusTable => {
 
 const standalone = (table: StandaloneNationCensus): CensusNationTable => {
 	const title = nationCensusTitle(table);
-	const categories = table.categories.map(
-		(category): CensusNationTable["categories"][number] => {
-			if (typeof category !== "string" && category.length === 3)
-				return category;
-			const [source, label] =
-				typeof category === "string" ? [category, category] : category;
-			const suffix = label
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, "-")
-				.replace(/^-|-$/g, "");
-			return [suffix, source, label];
-		},
-	);
+	const categories = table.categories.map(nationCensusCategory);
 	if (
 		new Set(categories.map(([suffix]) => suffix)).size !== categories.length
 	)

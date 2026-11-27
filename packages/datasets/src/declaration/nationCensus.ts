@@ -49,6 +49,20 @@ export type StandaloneNationCensus = {
 	notes: readonly string[];
 };
 
+/** The stable member code and publisher heading for a census category. */
+export const nationCensusCategory = (
+	category: StandaloneNationCensus["categories"][number],
+): readonly [suffix: string, source: string, label: string] => {
+	if (typeof category !== "string" && category.length === 3) return category;
+	const [source, label] =
+		typeof category === "string" ? [category, category] : category;
+	const suffix = label
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-|-$/g, "");
+	return [suffix, source, label];
+};
+
 export const nationCensusTitle = (table: StandaloneNationCensus) =>
 	`${table.nation === "scotland" ? "Scotland's Census" : "Northern Ireland Census"} ${table.year}: ${table.title}`;
 
