@@ -26,6 +26,19 @@ export const CENSUS_NATION_AREAS = {
 	},
 } as const;
 
+export const censusNationGeography = (table: CensusNationTable) =>
+	table.districts
+		? {
+				geography: "localAuthority" as const,
+				pattern: /^N09\d{6}$/,
+				count: 11,
+				boundaryYear: 2021,
+			}
+		: {
+				geography: "dataZone" as const,
+				...CENSUS_NATION_AREAS[table.nation],
+			};
+
 const MAX_BUFFER = 512 * 1024 * 1024;
 
 /** One file from inside a zip, which `unzip` streams without extracting. */
@@ -91,7 +104,7 @@ const checked = (
 ) => {
 	if (byArea.size !== expected)
 		throw new Error(
-			`${table.dataset}: ${byArea.size} data zones, expected ${expected}`,
+			`${table.dataset}: ${byArea.size} ${table.districts ? "districts" : "data zones"}, expected ${expected}`,
 		);
 	return sorted(
 		[...byArea].map(([code, row]) => {
@@ -106,21 +119,23 @@ const checked = (
 };
 
 /**
- * A Northern Ireland workbook's `DZ` sheet: a heading row naming each
- * category, then a row per data zone.
+ * A Northern Ireland workbook's DZ or LGD sheet has a header and one row
+ * per area. Workbooks that repeat the table as percentages have a second
+ * header after the count rows.
  */
 export const northernIrelandRecords = (
 	rows: readonly (readonly string[])[],
 	table: CensusNationTable,
 ): [string, ...number[]][] => {
-	const { pattern, count: expected } =
-		CENSUS_NATION_AREAS["northern-ireland"];
+	const { pattern, count: expected } = censusNationGeography(table);
 	const header = rows.findIndex(
 		(row) => row[1]?.trim().toLowerCase() === "geography code",
 	);
 	if (header === -1)
 		throw new Error(`${table.dataset}: no heading row with Geography code`);
-	const headings = rows[header]!.map((cell) => cell.trim());
+	const headings = rows[header]!.map((cell) =>
+		cell.replace(/\s+/g, " ").trim(),
+	);
 	const columns = table.categories.map(([, key]) => {
 		const column = headings.indexOf(key);
 		if (column === -1)
@@ -130,6 +145,7 @@ export const northernIrelandRecords = (
 	const byArea = new Map<string, number[]>();
 	for (const row of rows.slice(header + 1)) {
 		const code = row[1]?.trim() ?? "";
+		if (code.toLowerCase() === "geography code") break;
 		if (!pattern.test(code)) continue;
 		if (byArea.has(code))
 			throw new Error(`${table.dataset}: ${code} repeats`);
@@ -146,8 +162,8 @@ export const northernIrelandRecords = (
 	return checked(table, byArea, expected);
 };
 
-/** The workbook's data zone sheet as rows of text, read through `unzip`. */
-const dataZoneSheet = (workbook: Buffer) => {
+/** The workbook's requested sheet as rows of text, read through `unzip`. */
+const readWorkbookSheet = (workbook: Buffer, name: string) => {
 	// `unzip` needs a file to open, and the workbook is one inside another zip.
 	const directory = mkdtempSync(join(tmpdir(), "census-ni-"));
 	try {
@@ -157,7 +173,7 @@ const dataZoneSheet = (workbook: Buffer) => {
 		const sheet = findSheetPath(
 			part("xl/workbook.xml"),
 			part("xl/_rels/workbook.xml.rels"),
-			"DZ",
+			name,
 		);
 		return sheetRows(
 			part(sheet),
@@ -169,7 +185,7 @@ const dataZoneSheet = (workbook: Buffer) => {
 };
 
 /**
- * A nation table's counts by data zone, in area code order, one count per
+ * A nation table's counts in area code order, one count per
  * category in the table's category order, with a fingerprint of the file they
  * came from. Not checked to add to the total: both nations apply statistical
  * disclosure control, so the cells need not.
@@ -190,6 +206,12 @@ export const censusNationRecords = (
 		records:
 			table.nation === "scotland"
 				? scotlandRecords(bytes.toString("utf8"), table)
-				: northernIrelandRecords(dataZoneSheet(bytes), table),
+				: northernIrelandRecords(
+						readWorkbookSheet(
+							bytes,
+							table.districts ? "LGD" : "DZ",
+						),
+						table,
+					),
 	};
 };

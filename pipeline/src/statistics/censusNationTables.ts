@@ -1,3 +1,14 @@
+import {
+	SCOTLAND,
+	NORTHERN_IRELAND,
+	SDC,
+	NI_SDC,
+	STANDALONE_NATION_CENSUS,
+	nationCensusCategory,
+	nationCensusTitle,
+	nationCensusUnit,
+	type StandaloneNationCensus,
+} from "@uk-data-atlas/datasets";
 import type { DatasetTopic, SourceName } from "@uk-data-atlas/datasets";
 import {
 	CENSUS_SMALL_AREA_TABLES,
@@ -5,11 +16,11 @@ import {
 } from "./censusSmallAreaTables.ts";
 
 /**
- * The census tables of Scotland (2022) and Northern Ireland (2021) that count
- * the same thing as an England and Wales table, on data zones.
+ * The census tables of Scotland (2022) and Northern Ireland (2021) on data
+ * zones or local government districts.
  *
- * A table is here only where its universe and its reference date agree with
- * the England and Wales table it joins. A category the England and Wales
+ * A joined table uses the same universe as its England and Wales
+ * counterpart. A category the England and Wales
  * table also publishes borrows its suffix, label and member from it, so the
  * measure it feeds is the same measure and the two nations' series differ only
  * in the dataset and the geography. A category the nations define differently
@@ -18,6 +29,8 @@ import {
  * by number, shared equity) or differently (Scotland's combined social
  * renting) it carries its own label and is published as a measure and member
  * of its own, nested under the England and Wales category it refines.
+ *
+ * Standalone tables retain their publisher's category vocabulary.
  *
  * Scotland's census day was 20 March 2022. Northern Ireland's and England and
  * Wales's was 21 March 2021.
@@ -40,7 +53,18 @@ export type CensusNationTable = {
 	topic: DatasetTopic;
 	related?: readonly DatasetTopic[];
 	/** The England and Wales table whose measures these categories join. */
-	joins: CensusTable;
+	joins: Pick<
+		CensusTable,
+		| "table"
+		| "measure"
+		| "measurePrefix"
+		| "dimension"
+		| "unit"
+		| "categories"
+	>;
+	standalone?: true;
+	/** NISRA table published on 2014 local government districts. */
+	districts?: true;
 	/** What the publisher counts, in the publisher's words. */
 	universe: string;
 	/**
@@ -64,23 +88,29 @@ const ew = (table: string): CensusTable => {
 	return found;
 };
 
-const SCOTLAND = {
-	nation: "scotland",
-	folder: "census-2022-scotland-data-zone",
-	archive: "Datazone2022.zip",
-	year: 2022,
-} as const;
-
-const NORTHERN_IRELAND = {
-	nation: "northern-ireland",
-	folder: "census-2021-northern-ireland",
-	archive:
-		"census-2021-main-statistics-for-northern-ireland-phase-1-all-tables.zip",
-	year: 2021,
-} as const;
-
-const SDC =
-	"Scotland's Census 2022 applies statistical disclosure control, so cells need not add to their totals. The files show a small count removed as a dash, read here as zero.";
+const standalone = (table: StandaloneNationCensus): CensusNationTable => {
+	const title = nationCensusTitle(table);
+	const categories = table.categories.map(nationCensusCategory);
+	if (
+		new Set(categories.map(([suffix]) => suffix)).size !== categories.length
+	)
+		throw new Error(`${table.dataset}: duplicate category keys`);
+	return {
+		...table,
+		categories,
+		title,
+		description: `${title}. Table ${table.table}. Universe: ${table.universe}.`,
+		standalone: true,
+		joins: {
+			table: table.table,
+			measure: table.dataset,
+			measurePrefix: table.dataset,
+			dimension: table.dataset,
+			unit: nationCensusUnit(table.universe),
+			categories: [],
+		},
+	};
+};
 
 export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 	{
@@ -342,6 +372,71 @@ export const CENSUS_NATION_TABLES: readonly CensusNationTable[] = [
 			"NISRA applies statistical disclosure control to the 2021 census tables.",
 		],
 	},
+	...STANDALONE_NATION_CENSUS.map(standalone),
+	{
+		...NORTHERN_IRELAND,
+		dataset: "census-2021-ni-e15",
+		table: "MS-E15",
+		title: "Northern Ireland Census 2021 household tenure",
+		description:
+			"NISRA table MS-E15 counts households by tenure on Census Day, 21 March 2021.",
+		entry: "census-2021-ms-e15.xlsx",
+		archive: NORTHERN_IRELAND.archive.replace("phase-1", "phase-2"),
+		districts: true,
+		topic: "housing-stock",
+		joins: ew("ts054"),
+		universe: "All households.",
+		categories: [
+			["total", "All households"],
+			["owned-outright", "Owner occupied: Owns outright"],
+			[
+				"ni-owned-with-mortgage",
+				"Owner occupied: Owns with a mortgage or loan",
+				"Northern Ireland: Owns with a mortgage or loan",
+			],
+			["shared-ownership", "Shared ownership: Part-owns and part-rents"],
+			[
+				"ni-housing-executive",
+				"Social rented: Northern Ireland Housing Executive",
+				"Social rented from the Northern Ireland Housing Executive",
+			],
+			[
+				"ni-housing-association",
+				"Social rented: Housing association or charitable trust",
+				"Social rented from a housing association or charitable trust",
+			],
+			[
+				"ni-private-landlord",
+				"Private rented: Private landlord",
+				"Private rented from a landlord in Northern Ireland",
+			],
+			[
+				"ni-letting-agency",
+				"Private rented: Letting agency",
+				"Private rented from a letting agency in Northern Ireland",
+			],
+			[
+				"ni-private-employer",
+				"Private rented: Employer of a household member",
+				"Private rented from a household member's employer in Northern Ireland",
+			],
+			[
+				"ni-private-relative-or-friend",
+				"Private rented: Relative or friend of a household member",
+				"Private rented from a household member's relative or friend in Northern Ireland",
+			],
+			[
+				"ni-private-other",
+				"Private rented: Other",
+				"Other private rented accommodation in Northern Ireland",
+			],
+			["rent-free", "Lives rent free"],
+		],
+		notes: [
+			NI_SDC,
+			"Published on the 11 local government districts. The social and private rental categories retain NISRA's splits.",
+		],
+	},
 ];
 
 /**
@@ -363,11 +458,12 @@ export const censusNationMembers = (table: CensusNationTable) =>
 		return { [table.joins.dimension]: category[3] ?? suffix };
 	});
 
-/** The artifact name of a nation table on its data zones. */
+/** The artifact name of a nation table on its published geography. */
 export const censusNationArtifactName = (
 	table: CensusNationTable,
 	boundaryYear: number,
-) => `${table.dataset}-data-zone-${boundaryYear}-table`;
+) =>
+	`${table.dataset}-${table.districts ? "local-authority" : "data-zone"}-${boundaryYear}-table`;
 
 /** The categories only the nation publishes, each with the label of its measure. */
 export const censusNationOnlyCategories = (table: CensusNationTable) =>

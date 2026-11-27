@@ -343,22 +343,24 @@ export class ObservationCache {
 		databasePath: string,
 		artifactName: string,
 	): ObservationCacheEntry {
-		const path = `${databasePath}:${artifactName}`;
+		const source = this.statistics.get(`${databasePath}:${artifactName}`);
+		if (!source)
+			throw new Error(`Missing statistics selector for ${artifactName}.`);
+		const { selector, artifact } = source;
+		const path =
+			"kind" in selector
+				? `${databasePath}:table:${selector.id}`
+				: `${databasePath}:${artifactName}`;
 		this.dropReplaced(databasePath);
 		let entry = this.entries.get(path);
 		if (entry) {
 			this.entries.delete(path);
 			this.entries.set(path, entry);
 		} else {
-			const statistics = this.statistics.get(path);
-			if (!statistics)
-				throw new Error(
-					`Missing statistics selector for ${artifactName}.`,
-				);
 			const text = readStatisticsObservationText(
 				databasePath,
-				statistics.selector,
-				statistics.artifact,
+				selector,
+				artifact,
 			);
 			entry = {
 				text,

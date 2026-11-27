@@ -1,5 +1,9 @@
 import { join } from "node:path";
-import { periods, sourceDir } from "@uk-data-atlas/datasets";
+import {
+	periods,
+	sourceDir,
+	type StatisticsMeasure,
+} from "@uk-data-atlas/datasets";
 import type {
 	AreaIndex,
 	StatisticsDataset,
@@ -8,12 +12,13 @@ import type {
 } from "@uk-data-atlas/measures";
 import { readJsonSync } from "../lib/json.ts";
 import {
-	CENSUS_NATION_AREAS,
+	censusNationGeography,
 	censusNationRecords,
 } from "./censusNationSource.ts";
 import {
 	CENSUS_NATION_TABLES,
 	censusNationMembers,
+	censusNationOnlyCategories,
 	type CensusNationTable,
 } from "./censusNationTables.ts";
 import {
@@ -23,12 +28,9 @@ import {
 } from "./censusSmallAreaStatistics.ts";
 
 /**
- * The Scotland (2022) and Northern Ireland (2021) census tables as statistics
- * rows: one dataset per table, one series per category on the nation's data
- * zones. Each category is the series of the England and Wales table it joins,
- * so it feeds the same measure; only the dataset, the geography and the census
- * day differ. Like the England and Wales tables, these follow the declared
- * datasets, whose measures and members they share.
+ * Each publisher table is a dataset with one count series per category.
+ * Matching categories reuse the England and Wales vocabulary. Standalone
+ * tables have their own measure and dimension.
  */
 export function censusNationStatistics(
 	repositoryRoot: string,
@@ -45,26 +47,58 @@ export function censusNationStatistics(
 				"meta.json",
 			),
 		) as Meta;
-		const measure = stored.measures.get(table.joins.measure);
+		const measure: StatisticsMeasure | undefined = table.standalone
+			? {
+					slug: table.joins.measure,
+					label: table.title,
+					description: table.description,
+					unit: table.joins.unit,
+					statistic: "count",
+					aggregation: "sum",
+				}
+			: stored.measures.get(table.joins.measure);
 		if (!measure)
 			throw new Error(
 				`${table.dataset}: ${table.joins.measure} is not a stored measure`,
 			);
 		const members = censusNationMembers(table);
 		const period = periods.census(table.year);
-		const release = areas.release(
-			"dataZone",
-			CENSUS_NATION_AREAS[table.nation].boundaryYear,
-		);
+		const { geography, boundaryYear } = censusNationGeography(table);
+		const release = areas.release(geography, boundaryYear);
 		const series: StatisticsSeries[] = members.map((each) => ({
 			measure: measure.slug,
 			release,
 			members: each,
 		}));
-		const dimensions = censusDimensions(
-			stored.dimensions,
-			members.flatMap((each) => Object.keys(each)),
-		);
+		const dimensions = table.standalone
+			? [
+					{
+						slug: table.joins.dimension,
+						label: table.title,
+						members: table.categories.map(([code, , label]) => ({
+							code,
+							label: label ?? code,
+						})),
+					},
+				]
+			: censusDimensions(
+					stored.dimensions,
+					members.flatMap((each) => Object.keys(each)),
+				);
+		if (table.dataset === "census-2021-ni-e15") {
+			const tenure = dimensions.find(({ slug }) => slug === "tenure");
+			if (!tenure) throw new Error("Census tenure dimension is missing");
+			const held = new Set(tenure.members.map(({ code }) => code));
+			dimensions[dimensions.indexOf(tenure)] = {
+				...tenure,
+				members: [
+					...tenure.members,
+					...censusNationOnlyCategories(table)
+						.filter(({ suffix }) => !held.has(suffix))
+						.map(({ suffix, label }) => ({ code: suffix, label })),
+				],
+			};
+		}
 		const { fingerprint, records } = censusNationRecords(
 			repositoryRoot,
 			table,

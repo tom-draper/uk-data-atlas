@@ -12,6 +12,11 @@
  *   several ways.
  */
 
+import {
+	nationCensusCategory,
+	STANDALONE_NATION_CENSUS,
+} from "@uk-data-atlas/datasets";
+
 /**
  * A measure's dimension plays one of two roles.
  * - `breakdown`: its members split a total. The default series is the one at
@@ -104,6 +109,19 @@ const MOBILE_COVERAGE = {
 /** Every measure that needs a reviewed declaration, by measure slug. */
 export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 	{
+		...Object.fromEntries(
+			STANDALONE_NATION_CENSUS.map(({ dataset, categories }) => [
+				dataset,
+				{
+					dimensions: {
+						[dataset]: breakdown(
+							"The first category is the published total for the table's universe.",
+							nationCensusCategory(categories[0]!)[0],
+						),
+					},
+				},
+			]),
+		),
 		area: {
 			dimensions: {
 				surface: qualifier(
@@ -296,6 +314,7 @@ export const MEASURE_PREFERENCES: Readonly<Record<string, MeasurePreference>> =
 					"housing-tenure",
 					"census-2021-ts003",
 					"census-2022-scotland-uv113",
+					"census-2021-ni-e15",
 					"census-2021-ni-e01",
 					"fuel-poverty",
 					"car-availability",

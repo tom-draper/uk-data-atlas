@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import type { CaseHop } from "./backtestCases.ts";
+import { CENSUS_TABLES, type CaseHop } from "./backtestCases.ts";
 import { MAX_CHAIN_HOPS } from "./chains.ts";
 import { CONVERTED_PLAN, PERSONS, type PlanEntry } from "./convertedPlan.ts";
 import { stepsOf, type Resolver } from "./pinnedRoutes.ts";
@@ -35,6 +35,11 @@ export const STANDARD_RELEASES = [
  * areas to the latest authorities through every boundary change, takes seven.
  */
 export const MAX_ROUTE_HOPS = 7;
+
+const NATION_CENSUS_DATASETS = new Set<string>(
+	CENSUS_TABLES.nations.map(({ dataset }) => dataset),
+);
+const NATION_CENSUS_TARGETS = [...STANDARD_RELEASES, "country:2025-12-uk-bgc"];
 
 /** Why a published series is not offered a standard release at all. */
 export type PlanSkipReason =
@@ -131,12 +136,12 @@ export const planStandardReleases = (
 		return `${geography}:${release}`;
 	};
 	const found = new Map<string, Route | undefined>();
-	const routeBetween = (from: number, to: number) => {
-		const key = `${from}>${to}`;
+	const routeBetween = (from: number, to: number, maxHops: number) => {
+		const key = `${from}>${to}|${maxHops}`;
 		if (!found.has(key))
 			found.set(
 				key,
-				bestRoute(resolver.router.routes(from, to, MAX_ROUTE_HOPS)),
+				bestRoute(resolver.router.routes(from, to, maxHops)),
 			);
 		return found.get(key);
 	};
@@ -151,7 +156,18 @@ export const planStandardReleases = (
 		const ruled = measures.get(group.measure);
 		if (!ruled) throw new Error(`No measure ${group.measure}`);
 		const source = releaseName(group.releaseId);
-		for (const target of targets) {
+		// The eleven unchanged NI districts need eight steps from 2021 to 2026.
+		const maxHops =
+			NATION_CENSUS_DATASETS.has(group.dataset) &&
+			source === "localAuthority:2021-12-uk-bgc"
+				? 8
+				: MAX_ROUTE_HOPS;
+		const groupTargets =
+			targets === STANDARD_RELEASES &&
+			NATION_CENSUS_DATASETS.has(group.dataset)
+				? NATION_CENSUS_TARGETS
+				: targets;
+		for (const target of groupTargets) {
 			if (target === source) continue;
 			const skip = (reason: PlanSkipReason) =>
 				skips.push({
@@ -171,7 +187,11 @@ export const planStandardReleases = (
 			);
 			const route = pin
 				? undefined
-				: routeBetween(group.releaseId, resolver.releaseId(target));
+				: routeBetween(
+						group.releaseId,
+						resolver.releaseId(target),
+						maxHops,
+					);
 			if (!pin && !route) {
 				skip("no-route");
 				continue;

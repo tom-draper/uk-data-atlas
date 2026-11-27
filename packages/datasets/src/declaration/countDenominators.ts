@@ -1,4 +1,5 @@
 import { measure } from "./measures.ts";
+import { STANDALONE_NATION_CENSUS } from "./nationCensus.ts";
 
 /**
  * What each count is a count of, out of. Every additive count the atlas holds
@@ -81,6 +82,16 @@ const LATER =
 	"Not built yet. The numerator and denominator are both held, and building it is listed as remaining work under task 27 in docs/database-roadmap.md.";
 
 export const COUNT_DENOMINATORS: Readonly<Record<string, CountDenominator>> = {
+	...Object.fromEntries(
+		STANDALONE_NATION_CENSUS.map(({ dataset, universe }) => [
+			dataset,
+			{
+				kind: "named",
+				denominator: of(dataset, universe),
+				reason: "The matching denominator is the publisher's universe total. Select it from the table's categories before dividing.",
+			},
+		]),
+	),
 	claimants: {
 		kind: "rebuilt",
 		denominator: residents({ from: 16, to: 64 }),

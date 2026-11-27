@@ -3,11 +3,7 @@ import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import {
-	tableMeasureObservations,
-	measureSeriesKey,
-	measureSeriesSourceKey,
-} from "@uk-data-atlas/measures";
+import { tableMeasureObservations } from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -55,29 +51,14 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 				buildArtifactPath(repositoryRoot, "boundary-releases.json"),
 			),
 			artifacts,
-			new Map(
-				dataCatalog.measures.flatMap((measure) =>
-					measure.sources.map((source) => {
-						if (!measure.series)
-							throw new Error(
-								`Missing series identity for ${measure.id}.`,
-							);
-						const artifact: unknown = JSON.parse(
-							readArtifact(measure.id, source),
-						);
-						const selected = isMeasureTable(artifact)
-							? tableMeasureObservations(
-									artifact,
-									measureSeriesKey(measure.series),
-								)
-							: (artifact as AnyMeasureObservationArtifact);
-						return [
-							measureSeriesSourceKey(measure.series, source),
-							selected,
-						] as const;
-					}),
-				),
-			),
+			(measureId, source, seriesKey) => {
+				const artifact: unknown = JSON.parse(
+					readArtifact(measureId, source),
+				);
+				return isMeasureTable(artifact)
+					? tableMeasureObservations(artifact, seriesKey)
+					: (artifact as AnyMeasureObservationArtifact);
+			},
 		);
 		const outputPath = join(publicDirectory, "measure-compatibility.json");
 		writeFileSync(

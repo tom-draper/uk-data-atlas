@@ -1,3 +1,4 @@
+import { STANDALONE_NATION_CENSUS, nationCensusTitle } from "./nationCensus.ts";
 import { DECLARED_GUIDES } from "./declaredGuides.ts";
 import type { DatasetTopic } from "./taxonomy.ts";
 
@@ -36,6 +37,22 @@ export interface DatasetGuide {
 
 /** Guides of datasets with no declaration. */
 const UNDECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
+	...Object.fromEntries(
+		STANDALONE_NATION_CENSUS.map((table) => [
+			table.dataset,
+			{
+				title: nationCensusTitle(table),
+				topic: table.topic,
+				about: `${table.title} among ${table.universe.toLowerCase()}. Publisher table ${table.table}.`,
+			},
+		]),
+	),
+	"census-2021-ni-e15": {
+		title: "Northern Ireland Census 2021 household tenure",
+		topic: "housing-stock",
+		about: "NISRA counts of all households by tenure on Census Day 2021.",
+	},
+
 	"census-2021-ts001": {
 		title: "Census 2021 usual residents by residence type",
 		topic: "population-estimates",

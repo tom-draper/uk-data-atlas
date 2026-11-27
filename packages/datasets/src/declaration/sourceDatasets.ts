@@ -1,3 +1,4 @@
+import { STANDALONE_NATION_CENSUS } from "./nationCensus.ts";
 import { DECLARED_DATASET_SOURCES } from "./declaredSources.ts";
 
 /**
@@ -57,12 +58,22 @@ const UNDECLARED_DATASET_SOURCES: readonly DatasetSource[] = [
 			"census-2022-scotland-uv302",
 			"census-2022-scotland-uv404",
 			"census-2022-scotland-uv113",
+			...STANDALONE_NATION_CENSUS.filter(
+				({ nation }) => nation === "scotland",
+			).map(({ dataset }) => dataset),
 		],
 		"One NRS archive of the census tables on data zones, so it feeds a dataset for each table it is read for.",
 	],
 	[
 		"population/population-estimates/census-2021-northern-ireland",
-		["census-2021-ni-a01", "census-2021-ni-e01"],
+		[
+			"census-2021-ni-a01",
+			"census-2021-ni-e01",
+			"census-2021-ni-e15",
+			...STANDALONE_NATION_CENSUS.filter(
+				({ nation }) => nation === "northern-ireland",
+			).map(({ dataset }) => dataset),
+		],
 		"NISRA publishes the census main statistics as archives of workbooks, so one folder feeds a dataset for each table it is read for.",
 	],
 ];

@@ -27,6 +27,7 @@ const countUnits = new Set([
 	"clients",
 	"dwellings",
 	"enterprises",
+	"household spaces",
 	"households",
 	"jobs",
 	"offences",

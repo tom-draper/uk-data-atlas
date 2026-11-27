@@ -1,3 +1,4 @@
+import { CENSUS_NATION_TABLES } from "../statistics/censusNationTables.ts";
 import type { ConversionBasis } from "./crosswalkSteps.ts";
 import type { SeriesSelector } from "./seriesValues.ts";
 
@@ -141,25 +142,24 @@ const ALL_BASES: ConversionBasis[] = [
 ];
 
 /**
- * The England and Wales census tables, published on LSOAs and on MSOAs. The
- * Scotland tables (UV101b, UV102b, UV113, UV302, UV404) and the Northern
- * Ireland tables (A01, E01) are published on data zones alone, so no census
- * figure on a coarser release exists to test against, and they have no case
- * here. A mid-year estimate on councils is a different count (census day, not
- * mid-year) and is held under another period, so it would measure the
- * difference between the two counts and not the conversion. A data zone nests
- * in its council, so that route is exact; `builtNationCensus.test.ts` checks
- * that it keeps every count.
+ * England and Wales has corresponding LSOA and MSOA census tables for
+ * backtesting. Nation files either lack a comparable coarser sheet, or publish
+ * separately disclosure-controlled counts on coarser areas. Mid-year
+ * estimates use a different reference date. The nation conservation test
+ * checks the 2026-05 authority conversion series by series.
  */
-const CENSUS_TABLES: Array<[string, string]> = [
-	["census-2021-ts001", "usual-residents"],
-	["census-2021-ts003", "households"],
-	["census-2021-ts007a", "usual-residents"],
-	["census-2021-ts021", "usual-residents"],
-	["census-2021-ts037", "usual-residents"],
-	["census-2021-ts054", "households"],
-	["census-2021-ts066", "usual-residents-16-plus"],
-];
+export const CENSUS_TABLES = {
+	englandAndWales: [
+		["census-2021-ts001", "usual-residents"],
+		["census-2021-ts003", "households"],
+		["census-2021-ts007a", "usual-residents"],
+		["census-2021-ts021", "usual-residents"],
+		["census-2021-ts037", "usual-residents"],
+		["census-2021-ts054", "households"],
+		["census-2021-ts066", "usual-residents-16-plus"],
+	] as const,
+	nations: CENSUS_NATION_TABLES,
+};
 
 /** The cases, given the slugs of the crosswalks they pin. */
 export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
@@ -184,16 +184,18 @@ export const backtestCases = (x: CaseSlugs): BacktestCase[] => {
 	// The population series are single years of age, so a total is their sum.
 	const allAges = /\/sex=all$/;
 	return [
-		...CENSUS_TABLES.map(([dataset, measure]): BacktestCase => ({
-			id: `noise-${dataset}`,
-			title: `${dataset} LSOA to MSOA`,
-			kind: "noise",
-			source: { dataset, measure, release: LSOA },
-			truth: { dataset, measure, release: MSOA },
-			route: [hop(x.lsoaToMsoa)],
-			bases: ["population"],
-			family: "census",
-		})),
+		...CENSUS_TABLES.englandAndWales.map(
+			([dataset, measure]): BacktestCase => ({
+				id: `noise-${dataset}`,
+				title: `${dataset} LSOA to MSOA`,
+				kind: "noise",
+				source: { dataset, measure, release: LSOA },
+				truth: { dataset, measure, release: MSOA },
+				route: [hop(x.lsoaToMsoa)],
+				bases: ["population"],
+				family: "census",
+			}),
+		),
 		{
 			id: "regroup-census-lsoa-la-2023",
 			title: "Census ethnic group, LSOA to local authority 2023",

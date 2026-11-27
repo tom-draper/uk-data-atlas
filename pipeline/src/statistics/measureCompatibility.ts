@@ -86,7 +86,13 @@ export const compileMeasureCompatibility = (
 	dataCatalog: DataCatalog,
 	boundaryRegistry: BoundaryRegistry,
 	areaArtifacts: AreaReleaseArtifact[],
-	measureObservations: ReadonlyMap<string, AnyMeasureObservationArtifact>,
+	measureObservations:
+		| ReadonlyMap<string, AnyMeasureObservationArtifact>
+		| ((
+				measureId: string,
+				source: MeasureSource,
+				seriesKey: string,
+		  ) => AnyMeasureObservationArtifact),
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -97,17 +103,30 @@ export const compileMeasureCompatibility = (
 			artifact,
 		]),
 	);
+	const observationHashes = new Map<string, string>(
+		typeof measureObservations === "function"
+			? []
+			: Array.from(measureObservations, ([key, artifact]) => [
+					key,
+					artifact.contentHash,
+				]),
+	);
 	const sourcesFor = (measure: (typeof dataCatalog.measures)[number]) =>
 		measure.sources.map((source) => {
 			if (!measure.series)
 				throw new Error(`Missing series identity for ${measure.id}.`);
-			const codes = sourceCodes(
-				measure.id,
-				source,
-				measureObservations.get(
-					measureSeriesSourceKey(measure.series, source),
-				),
-			);
+			const key = measureSeriesSourceKey(measure.series, source);
+			const observations =
+				typeof measureObservations === "function"
+					? measureObservations(
+							measure.id,
+							source,
+							measureSeriesKey(measure.series),
+						)
+					: measureObservations.get(key);
+			if (observations)
+				observationHashes.set(key, observations.contentHash);
+			const codes = sourceCodes(measure.id, source, observations);
 			const candidates = boundaryRegistry.releases
 				.filter(
 					(release) =>
@@ -169,11 +188,9 @@ export const compileMeasureCompatibility = (
 		// Keyed by partition: a measure published at several source
 		// geographies has one artifact for each, and each must be recorded.
 		measureObservations: Object.fromEntries(
-			[...measureObservations]
-				.map(([key, observations]) => [key, observations.contentHash])
-				.sort(([left], [right]) =>
-					String(left).localeCompare(String(right)),
-				),
+			[...observationHashes].sort(([left], [right]) =>
+				String(left).localeCompare(String(right)),
+			),
 		),
 		areaArtifacts: areaArtifactHashes,
 	};

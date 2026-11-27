@@ -497,4 +497,13 @@ export const MEASURE_UNITS: readonly MeasureUnit[] = [
 		currency: null,
 		symbol: null,
 	},
+	{
+		id: 54,
+		slug: "household-spaces",
+		label: "household spaces",
+		kind: "count",
+		scale: 1,
+		currency: null,
+		symbol: null,
+	},
 ];

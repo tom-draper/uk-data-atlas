@@ -1,3 +1,4 @@
+import { STANDALONE_NATION_CENSUS } from "./nationCensus.ts";
 /**
  * The one place themes, foundation parts and topics are defined. Ids, labels,
  * descriptions and display order are never repeated elsewhere. The rules for
@@ -176,6 +177,9 @@ const SPLIT_MODULE_DEFINITIONS = [
 			"census-2022-scotland-uv113",
 			"census-2021-ni-a01",
 			"census-2021-ni-e01",
+			...STANDALONE_NATION_CENSUS.filter(
+				({ topic }) => topic === "population-estimates",
+			).map(({ dataset }) => dataset),
 		],
 		requires: [],
 	},

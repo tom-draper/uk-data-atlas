@@ -13,7 +13,7 @@ This file is generated from the module manifest. Do not edit it.
 | Release | test |
 | Kind | theme |
 | Always included | No, choose it as needed |
-| Datasets | 4 |
+| Datasets | 12 |
 | Core compatibility | \`atlas-core-2\` |
 | Manifest schema version | 1 |
 | Manifest | \`sqlite/atlas-transport.manifest.json\` |
@@ -28,6 +28,14 @@ Not built yet. The module database \`sqlite/atlas-transport.sqlite\`, its Parque
 
 How people travel to work.
 
+- **Northern Ireland Census 2021: Distance travelled to study** (\`census-2021-ni-i04\`): Distance travelled to study among all usual residents of primary school age and over in full-time education. Publisher table MS-I04.
+- **Northern Ireland Census 2021: Distance travelled to work** (\`census-2021-ni-i03\`): Distance travelled to work among all usual residents aged 16 and over (excluding full-time students) in employment. Publisher table MS-I03.
+- **Northern Ireland Census 2021: Method of travel to study** (\`census-2021-ni-i02\`): Method of travel to study among all usual residents of primary school age and over in full-time education. Publisher table MS-I02.
+- **Northern Ireland Census 2021: Method of travel to work** (\`census-2021-ni-i01\`): Method of travel to work among all usual residents aged 16 and over (excluding full-time students) in employment. Publisher table MS-I01.
+- **Scotland's Census 2022: Distance travelled to place of study** (\`census-2022-scotland-uv704\`): Distance travelled to place of study among all people aged 4 and over studying the week before the census. Publisher table UV704.
+- **Scotland's Census 2022: Distance travelled to work** (\`census-2022-scotland-uv703\`): Distance travelled to work among all people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study). Publisher table UV703.
+- **Scotland's Census 2022: Method of travel to work** (\`census-2022-scotland-uv701\`): Method of travel to work among all people aged 16 and over in employment the week before the census (including full-time students if they gave a work address as the address they primarily travel to for work or study). Publisher table UV701.
+- **Scotland's Census 2022: Method of travel to work or study** (\`census-2022-scotland-uv702\`): Method of travel to work or study among all occupied households. Publisher table UV702.
 - **Travel to Work** (\`travel-to-work\`): How people in work usually travel to their job, by car, public transport, bike or on foot, and how many worked mainly from home, from the 2021 Census.
 
 ### Vehicles (\`vehicles\`)
@@ -51,6 +59,14 @@ Road collisions and casualties.
 
 | Source | Publisher | Licence |
 | --- | --- | --- |
+| [Source census-2021-ni-i04](https://example.org/census-2021-ni-i04) | Publisher census-2021-ni-i04 | Open Government Licence v3.0 |
+| [Source census-2021-ni-i03](https://example.org/census-2021-ni-i03) | Publisher census-2021-ni-i03 | Open Government Licence v3.0 |
+| [Source census-2021-ni-i02](https://example.org/census-2021-ni-i02) | Publisher census-2021-ni-i02 | Open Government Licence v3.0 |
+| [Source census-2021-ni-i01](https://example.org/census-2021-ni-i01) | Publisher census-2021-ni-i01 | Open Government Licence v3.0 |
+| [Source census-2022-scotland-uv704](https://example.org/census-2022-scotland-uv704) | Publisher census-2022-scotland-uv704 | Open Government Licence v3.0 |
+| [Source census-2022-scotland-uv703](https://example.org/census-2022-scotland-uv703) | Publisher census-2022-scotland-uv703 | Open Government Licence v3.0 |
+| [Source census-2022-scotland-uv701](https://example.org/census-2022-scotland-uv701) | Publisher census-2022-scotland-uv701 | Open Government Licence v3.0 |
+| [Source census-2022-scotland-uv702](https://example.org/census-2022-scotland-uv702) | Publisher census-2022-scotland-uv702 | Open Government Licence v3.0 |
 | [Source travel-to-work](https://example.org/travel-to-work) | Publisher travel-to-work | Open Government Licence v3.0 |
 | [Source car-availability](https://example.org/car-availability) | Publisher car-availability | Open Government Licence v3.0 |
 | [Source electric-vehicle-chargers](https://example.org/electric-vehicle-chargers) | Publisher electric-vehicle-chargers | Open Government Licence v3.0 |
@@ -59,6 +75,14 @@ Road collisions and casualties.
 ## Attribution
 
 - Contains data from Publisher car-availability.
+- Contains data from Publisher census-2021-ni-i01.
+- Contains data from Publisher census-2021-ni-i02.
+- Contains data from Publisher census-2021-ni-i03.
+- Contains data from Publisher census-2021-ni-i04.
+- Contains data from Publisher census-2022-scotland-uv701.
+- Contains data from Publisher census-2022-scotland-uv702.
+- Contains data from Publisher census-2022-scotland-uv703.
+- Contains data from Publisher census-2022-scotland-uv704.
 - Contains data from Publisher electric-vehicle-chargers.
 - Contains data from Publisher road-collisions.
 - Contains data from Publisher travel-to-work.
