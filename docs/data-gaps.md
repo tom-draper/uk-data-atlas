@@ -23,9 +23,10 @@ Many measures cover England only, or England and Wales only.
   `people-in-employment` and the ward house prices.
 - Census coverage includes usual residents and households across the UK.
   Scotland 2022 adds detailed age, sex, housing, health, disability, caring,
-  identity, language, qualifications, employment and migration tables.
+  identity, language, qualifications, employment, migration, commuting and
+  armed forces veteran tables.
   Northern Ireland 2021 adds age and sex, household size and spaces, and
-  district-level tenure and 44 other district tables. The census year follows
+  district-level tenure and 48 other district tables. The census year follows
   each nation's census day.
   Nation-specific categories retain their published definitions (section 5).
 - ASHE pay covers England, Wales and Scotland, from 2012 to 2025. Northern
@@ -123,29 +124,30 @@ The nation census archives are in
   religion, passports, language, care, disability, long-term conditions,
   accommodation, tenure of residents, vehicles, household size, heating,
   bedrooms, qualifications, economic activity, hours worked, industry,
-  occupation, socio-economic classification and migration. UV201 and the
+  occupation, socio-economic classification, migration, travel to work or
+  study and armed forces veteran status. UV201 and the
   economic activity tables use Scotland-specific measures and definitions.
   UV204b uses the publisher's all-age, all-sex counts.
 - **Scottish follow-ups.** UV104b, UV106b, UV201b, UV202b, UV205b to UV212b,
   UV301b to UV303b, UV501b, UV603b and UV604b cross age or sex with another
-  topic and need dimension modelling. Travel to work or study (UV701 to
-  UV704b) and armed forces veteran tables (UV901 and UV902) remain staged.
+  topic and need dimension modelling. UV701b, UV703b and UV704b also need
+  dimensions for their published travel cross-tabulations.
   Scotland's disclosure dashes are read as zero. Published cells can differ
   from separately reported totals.
 - **Northern Ireland 2021.** MS-A01, MS-A09, MS-E01, MS-E02 and MS-E04 are
   compiled from the data-zone sheets. A14 repeats A01's resident counts
   alongside area and density. Density needs an area denominator and cannot
   be summed to councils. MS-E15 provides household tenure on the 11 local
-  government districts and supplies the household default there. Another 44
+  government districts and supplies the household default there. Another 48
   phase 1 to 3 tables supply published district counts for population,
-  identity, health, housing, qualifications and labour. MS-A05 is covered by
+  identity, health, housing, qualifications, labour and travel. MS-A05 is covered by
   MS-A09. MS-E10 includes the household categories, while the vehicle total
   and average have a different unit. The following workbooks lack a district
   or data-zone sheet and need separate geography or historical-series handling:
   phase 1 A03, A04, A06, A11 to A13, A17, A19, A21, B16, B20, B22, B24 and
   E03, phase 2 B11, D05 to D16 and E07, and phase 3 A27, A28, B04, B25, C01,
-  C02, F01 to F03, H03, H04 and K02. Census travel tables I01 to I04 and
-  supplemental archives remain staged.
+  C02, F01 to F03, H03, H04 and K02. MS-I01 to MS-I04 supply the published travel counts.
+  Supplemental archives remain staged.
 - Nation count conversions are checked series by series against their
   published totals on the 2026-05 authorities. The atlas also aggregates
   those source counts to countries. Independently disclosure-controlled
