@@ -121,6 +121,18 @@ describe("writeAreaPeriodChange", () => {
 		);
 	});
 
+	test("does not fall back when the preferred observation has a null value", () => {
+		const { database } = fixture(
+			"INSERT INTO observation VALUES (3, 20, 1, NULL)",
+		);
+		const pairs = rows(
+			database,
+			"measure = 'population' AND area_code = 'E06000001'",
+		).map((row) => [row.from_period, row.to_period]);
+		assert.deepEqual(pairs, [["2020", "2021"]]);
+		database.close();
+	});
+
 	test("leaves out ranks, changes and releases that are not targets", () => {
 		const { database } = fixture();
 		const measures = database
