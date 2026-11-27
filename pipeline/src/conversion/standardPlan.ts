@@ -131,12 +131,12 @@ export const planStandardReleases = (
 		return `${geography}:${release}`;
 	};
 	const found = new Map<string, Route | undefined>();
-	const routeBetween = (from: number, to: number) => {
-		const key = `${from}>${to}`;
+	const routeBetween = (from: number, to: number, maxHops: number) => {
+		const key = `${from}>${to}|${maxHops}`;
 		if (!found.has(key))
 			found.set(
 				key,
-				bestRoute(resolver.router.routes(from, to, MAX_ROUTE_HOPS)),
+				bestRoute(resolver.router.routes(from, to, maxHops)),
 			);
 		return found.get(key);
 	};
@@ -151,6 +151,12 @@ export const planStandardReleases = (
 		const ruled = measures.get(group.measure);
 		if (!ruled) throw new Error(`No measure ${group.measure}`);
 		const source = releaseName(group.releaseId);
+		// The eleven unchanged NI districts need eight steps from 2021 to 2026.
+		const maxHops =
+			group.dataset.startsWith("census-2021-ni-") &&
+			source === "localAuthority:2021-12-uk-bgc"
+				? 8
+				: MAX_ROUTE_HOPS;
 		for (const target of targets) {
 			if (target === source) continue;
 			const skip = (reason: PlanSkipReason) =>
@@ -171,7 +177,11 @@ export const planStandardReleases = (
 			);
 			const route = pin
 				? undefined
-				: routeBetween(group.releaseId, resolver.releaseId(target));
+				: routeBetween(
+						group.releaseId,
+						resolver.releaseId(target),
+						maxHops,
+					);
 			if (!pin && !route) {
 				skip("no-route");
 				continue;
