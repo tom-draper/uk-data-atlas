@@ -114,8 +114,10 @@ These sit in `data/source/_staging`:
 - household economic activity
 - local labour market indicators
 
-The nation census archives are in
-`data/source/population/population-estimates`:
+The 110 compiled nation census datasets use National Records of Scotland and
+Northern Ireland Statistics and Research Agency archives under
+`data/source/population/population-estimates`. Both source records carry Open
+Government Licence v3.0 and publisher attribution in `meta.json`.
 
 - **Scotland 2022.** UV101b, UV102b, UV113, UV302 and UV404 share measures
   only where the published categories agree. New standalone data-zone tables
@@ -140,14 +142,14 @@ The nation census archives are in
   be summed to councils. MS-E15 provides household tenure on the 11 local
   government districts and supplies the household default there. Another 48
   phase 1 to 3 tables supply published district counts for population,
-  identity, health, housing, qualifications, labour and travel. MS-A05 is covered by
-  MS-A09. MS-E10 includes the household categories, while the vehicle total
+  identity, health, housing, qualifications, labour and travel. MS-A09 covers
+  MS-A05. MS-E10 includes the household categories, while the vehicle total
   and average have a different unit. The following workbooks lack a district
   or data-zone sheet and need separate geography or historical-series handling:
   phase 1 A03, A04, A06, A11 to A13, A17, A19, A21, B16, B20, B22, B24 and
   E03, phase 2 B11, D05 to D16 and E07, and phase 3 A27, A28, B04, B25, C01,
-  C02, F01 to F03, H03, H04 and K02. MS-I01 to MS-I04 supply the published travel counts.
-  Supplemental archives remain staged.
+  C02, F01 to F03, H03, H04 and K02. MS-I01 to MS-I04 supply the published
+  travel counts. Supplemental archives remain staged.
 - Nation count conversions are checked series by series against their
   published totals on the 2026-05 authorities. The atlas also aggregates
   those source counts to countries. Independently disclosure-controlled
