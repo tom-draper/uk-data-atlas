@@ -44,6 +44,15 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		repositoryRoot,
 		dataCatalog,
 	);
+	// Measures of one table share its text, so parse it once rather than
+	// holding a copy of the table for each of them.
+	const parsed = new Map<string, unknown>();
+	const parse = (text: string) => {
+		let artifact = parsed.get(text);
+		if (artifact === undefined)
+			parsed.set(text, (artifact = JSON.parse(text)));
+		return artifact;
+	};
 	try {
 		const report = compileValidationReport({
 			boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
@@ -86,9 +95,7 @@ export const buildValidationReport = (repositoryRoot: string) => {
 						throw new Error(
 							`No catalogue source for export ${entry.id}.`,
 						);
-					const artifact: unknown = JSON.parse(
-						readArtifact(measure.id, source),
-					);
+					const artifact = parse(readArtifact(measure.id, source));
 					return [
 						entry.id,
 						isMeasureTable(artifact)
