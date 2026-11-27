@@ -18,6 +18,7 @@ import {
 import {
 	CENSUS_NATION_TABLES,
 	censusNationMembers,
+	censusNationOnlyCategories,
 	type CensusNationTable,
 } from "./censusNationTables.ts";
 import {
@@ -84,6 +85,20 @@ export function censusNationStatistics(
 					stored.dimensions,
 					members.flatMap((each) => Object.keys(each)),
 				);
+		if (table.dataset === "census-2021-ni-e15") {
+			const tenure = dimensions.find(({ slug }) => slug === "tenure");
+			if (!tenure) throw new Error("Census tenure dimension is missing");
+			const held = new Set(tenure.members.map(({ code }) => code));
+			dimensions[dimensions.indexOf(tenure)] = {
+				...tenure,
+				members: [
+					...tenure.members,
+					...censusNationOnlyCategories(table)
+						.filter(({ suffix }) => !held.has(suffix))
+						.map(({ suffix, label }) => ({ code: suffix, label })),
+				],
+			};
+		}
 		const { fingerprint, records } = censusNationRecords(
 			repositoryRoot,
 			table,
