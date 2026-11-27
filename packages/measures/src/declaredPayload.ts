@@ -211,26 +211,28 @@ export function rebuildFromDeclaration(
 		return left < right ? -1 : left > right ? 1 : 0;
 	});
 
+	// A series' observations are read when a field first owns it, so a series
+	// no field places (such as one on a geography no part is on) is never read.
 	const observed = new Map<number, Observation[]>();
-	for (const row of database
-		.prepare(
-			`SELECT o.series_id AS series, a.code, coalesce(k.key, a.code) AS key,
-				coalesce(n.name, v.name) AS name, p.label AS period,
-				o.value, o.lower, o.upper, st.slug AS status
-			FROM series s
-			JOIN observation o ON o.series_id = s.id
-			JOIN area_version v ON v.id = o.area_version_id
-			JOIN area a ON a.id = v.area_id
-			JOIN period p ON p.id = o.period_id
-			JOIN status st ON st.id = o.status_id
-			LEFT JOIN dataset_area_name n ON n.dataset_id = s.dataset_id AND n.area_version_id = v.id
-			LEFT JOIN dataset_area_key k ON k.dataset_id = s.dataset_id AND k.area_version_id = v.id
-			WHERE s.dataset_id = ? AND s.method = 'published' ORDER BY a.code`,
-		)
-		.all(dataset)) {
-		const list = observed.get(Number(row.series)) ?? [];
-		observed.set(Number(row.series), list);
-		list.push({
+	const observationQuery = database.prepare(
+		`SELECT coalesce(k.key, a.code) AS key,
+			coalesce(n.name, v.name) AS name, p.label AS period,
+			o.value, o.lower, o.upper, st.slug AS status
+		FROM observation o
+		JOIN series s ON s.id = o.series_id
+		JOIN area_version v ON v.id = o.area_version_id
+		JOIN area a ON a.id = v.area_id
+		JOIN period p ON p.id = o.period_id
+		JOIN status st ON st.id = o.status_id
+		LEFT JOIN dataset_area_name n ON n.dataset_id = s.dataset_id AND n.area_version_id = v.id
+		LEFT JOIN dataset_area_key k ON k.dataset_id = s.dataset_id AND k.area_version_id = v.id
+		WHERE o.series_id = ? AND s.method = 'published'
+		ORDER BY a.code, o.area_version_id, o.period_id`,
+	);
+	const observationsOf = (series: number) => {
+		let list = observed.get(series);
+		if (list) return list;
+		list = observationQuery.all(series).map((row) => ({
 			code: String(row.key),
 			name: String(row.name),
 			period: String(row.period),
@@ -238,11 +240,19 @@ export function rebuildFromDeclaration(
 			lower: row.lower as number | null,
 			upper: row.upper as number | null,
 			status: String(row.status),
-		});
-	}
-	const labels = [
-		...new Set([...observed.values()].flat().map((row) => row.period)),
-	];
+		}));
+		observed.set(series, list);
+		return list;
+	};
+	const labels = database
+		.prepare(
+			`SELECT DISTINCT p.label AS period FROM series s
+			JOIN observation o ON o.series_id = s.id
+			JOIN period p ON p.id = o.period_id
+			WHERE s.dataset_id = ? AND s.method = 'published' ORDER BY p.label`,
+		)
+		.all(dataset)
+		.map((row) => String(row.period));
 	const result: Record<string, Json> = {};
 	for (const { key, header, optional } of spec.parts(labels)) {
 		const context = `${slug} ${key}`;
@@ -369,6 +379,25 @@ export function rebuildFromDeclaration(
 					? parse(field.status.path)
 					: undefined;
 				const tuples = new Map<string, Map<string, string>>();
+				/** The key a period label is bound as, found once per label. */
+				const periodKeys = new Map<string, string>();
+				const periodKeyOf = (label: string) => {
+					let key = periodKeys.get(label);
+					if (key !== undefined) return key;
+					key = field.period
+						? (spec.periodKeys ?? []).find(
+								(candidate) =>
+									field.period!(candidate, full).label ===
+									label,
+							)
+						: label;
+					if (key === undefined)
+						throw new Error(
+							`${context}: period ${label} has no key`,
+						);
+					periodKeys.set(label, key);
+					return key;
+				};
 				for (const one of series) {
 					if (owner.get(one.id) !== field) continue;
 					const bound = new Map<string, string>();
@@ -394,36 +423,25 @@ export function rebuildFromDeclaration(
 						} else bound.set(name, own);
 					}
 					tuples.set(JSON.stringify([...bound]), new Map(bound));
-					for (const row of observed.get(one.id) ?? []) {
-						const own = new Map(bound);
-						let period = field.at?.label ?? top;
+					for (const row of observationsOf(one.id)) {
+						// A field bound to no period holds one: the part's.
+						if (
+							!periodBound &&
+							row.period !== (field.at?.label ?? top)
+						)
+							continue;
+						// Unbound, the bindings are the series' own, already a tuple.
+						const own = periodBound ? new Map(bound) : bound;
 						if (periodBound) {
-							let periodKey = row.period;
-							if (field.period) {
-								const found = (spec.periodKeys ?? []).find(
-									(candidate) =>
-										field.period!(candidate, full).label ===
-										row.period,
-								);
-								if (found === undefined)
-									throw new Error(
-										`${context}: period ${row.period} has no key`,
-									);
-								periodKey = found;
-							}
+							const periodKey = periodKeyOf(row.period);
 							own.set("period", periodKey);
-							period = row.period;
-						}
-						if (row.period !== period) continue;
-						const target = record(row.code, row.name);
-						if (periodBound) {
 							let known = observedIn.get(row.code);
 							if (!known)
 								observedIn.set(row.code, (known = new Set()));
-							known.add(own.get("period")!);
+							known.add(periodKey);
+							tuples.set(JSON.stringify([...own]), own);
 						}
-						const tuple = JSON.stringify([...own]);
-						tuples.set(tuple, own);
+						const target = record(row.code, row.name);
 						place(target, fill(segments, own), row.value, arrays);
 						if (lower)
 							place(target, fill(lower, own), row.lower, arrays);
