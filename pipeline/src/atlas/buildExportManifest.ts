@@ -104,14 +104,17 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		availableParallelism(),
 		Math.max(1, catalog.measures.length),
 	);
-	const writerKey = writerFingerprint();
-	const useCache = process.env.DATA_BUILD_NO_CACHE !== "1";
+	const writerKey =
+		process.env.DATA_BUILD_NO_CACHE === "1"
+			? undefined
+			: writerFingerprint();
 	const cachePath = resolve(
 		repositoryRoot,
 		process.env.DATA_BUILD_CACHE_DIR ?? ".cache/data-build",
 		"measure-exports.json",
 	);
-	const previous = useCache ? readExportCache(cachePath, writerKey) : {};
+	const previous =
+		writerKey === undefined ? {} : readExportCache(cachePath, writerKey);
 	const exportsDirectory = join(publicDirectory, "exports");
 	mkdirSync(exportsDirectory, { recursive: true });
 	const scratch = mkdtempSync(join(exportsDirectory, ".measure-exports-"));
@@ -153,7 +156,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 		const staged = join(scratch, "export-manifest.json");
 		writeFileSync(staged, `${JSON.stringify(manifest, null, "\t")}\n`);
 		renameSync(staged, outputPath);
-		if (useCache) {
+		if (writerKey !== undefined) {
 			mkdirSync(dirname(cachePath), { recursive: true });
 			const tempCache = mkdtempSync(
 				join(dirname(cachePath), ".exports-"),
@@ -179,7 +182,7 @@ export const buildExportManifest = async (repositoryRoot: string) => {
 			exportCount: manifest.exports.length,
 			reused: batches.reduce((count, batch) => count + batch.reused, 0),
 			downloadCount: batches.reduce(
-				(count, batch) => count + batch.cache.length,
+				(count, batch) => count + batch.downloadCount,
 				0,
 			),
 			workerCount,

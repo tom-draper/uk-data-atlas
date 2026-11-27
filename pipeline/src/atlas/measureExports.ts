@@ -5,7 +5,10 @@ import { isMainThread, parentPort, workerData } from "node:worker_threads";
 import type { DataCatalog, StatisticsReadPath } from "@uk-data-atlas/measures";
 import { sha256Hex } from "../lib/hash.ts";
 import { compileObservationDownloads } from "../statistics/observationDownloads.ts";
-import { compileMeasureDownloads } from "../statistics/measureDownloads.ts";
+import {
+	compileMeasureDownloads,
+	compileUncachedMeasureDownloads,
+} from "../statistics/measureDownloads.ts";
 import {
 	cacheDownload,
 	usableDownload,
@@ -21,7 +24,7 @@ export type ExportWork = {
 	databasePath: string;
 	publicDirectory: string;
 	scratch: string;
-	writerKey: string;
+	writerKey: string | undefined;
 	previous: Record<string, CachedDownload>;
 	cursor: Int32Array<SharedArrayBuffer>;
 };
@@ -37,6 +40,7 @@ export async function compileMeasureExports(work: ExportWork) {
 	const cache: Array<[string, CachedDownload]> = [];
 	const results = [];
 	let reused = 0;
+	let downloadCount = 0;
 	try {
 		const readArtifact = statisticsArtifactReader(
 			database,
@@ -53,6 +57,15 @@ export async function compileMeasureExports(work: ExportWork) {
 				measure,
 				readArtifact,
 				(content, entry, artifact, unit, seriesKey) => {
+					downloadCount++;
+					if (writerKey === undefined)
+						return compileObservationDownloads(
+							publicDirectory,
+							entry,
+							artifact,
+							unit,
+							seriesKey,
+						);
 					const stem = `exports/${entry.id}`;
 					const key = sha256Hex(
 						JSON.stringify([
@@ -99,22 +112,36 @@ export async function compileMeasureExports(work: ExportWork) {
 			if (selection) {
 				const stem = `exports/measures/${measure.id}`;
 				const prior = previous[stem];
-				const record = await compileMeasureDownloads(
-					database,
-					publicDirectory,
-					measure.id,
-					selection,
-					work.scratch,
-					writerKey,
-					prior,
-				);
-				if (record === prior) reused++;
-				cache.push([stem, record]);
+				downloadCount++;
+				const record =
+					writerKey === undefined
+						? {
+								formats: await compileUncachedMeasureDownloads(
+									database,
+									publicDirectory,
+									measure.id,
+									selection,
+									work.scratch,
+								),
+							}
+						: await compileMeasureDownloads(
+								database,
+								publicDirectory,
+								measure.id,
+								selection,
+								work.scratch,
+								writerKey,
+								prior,
+							);
+				if ("key" in record) {
+					if (record === prior) reused++;
+					cache.push([stem, record]);
+				}
 				canonical = { measureId: measure.id, formats: record.formats };
 			}
 			results.push({ index, sources, canonical });
 		}
-		return { results, cache, reused };
+		return { results, cache, reused, downloadCount };
 	} catch (error) {
 		Atomics.store(cursor, 0, catalog.measures.length);
 		throw error;
