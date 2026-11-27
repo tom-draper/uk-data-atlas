@@ -72,10 +72,11 @@ export const compileObservationDownloads = (
 		const index = artifact.measures.indexOf(seriesKey);
 		if (index === -1)
 			throw new Error(`${artifact.id} does not serve ${entry.measureId}`);
-		for (const [areaCode, ...cells] of artifact.records)
+		const column = index + 1;
+		for (const row of artifact.records)
 			add(artifact.period, {
-				areaCode,
-				value: cells[index] ?? null,
+				areaCode: row[0],
+				value: (row[column] as number | null | undefined) ?? null,
 				status: "observed",
 			});
 	} else {
