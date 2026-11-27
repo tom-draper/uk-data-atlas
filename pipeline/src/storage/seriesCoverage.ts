@@ -288,16 +288,24 @@ export const writeSeriesCoverage = (
 	writeAreaNations(database);
 	try {
 		database.exec(`
+WITH release_counts AS (
+  SELECT release_id, count(*) AS areas
+  FROM area_version WHERE in_inventory = 1 GROUP BY release_id
+), coverage AS (
+  SELECT o.series_id, o.period_id, count(*) AS areas,
+    sum(o.has_value) AS areas_with_value, rtrim(${countriesSql}, ',') AS countries
+  FROM (SELECT series_id, period_id, area_version_id,
+          value IS NOT NULL OR category_id IS NOT NULL AS has_value
+        FROM observation) o
+  JOIN temp.area_nation n ON n.area_version_id = o.area_version_id
+  GROUP BY o.series_id, o.period_id
+)
 INSERT INTO series_coverage (series_id, period_id, areas, areas_with_value, release_areas, countries)
-SELECT o.series_id, o.period_id, count(*), sum(o.has_value),
-  (SELECT count(*) FROM area_version v WHERE v.release_id = s.release_id AND v.in_inventory = 1),
-  rtrim(${countriesSql}, ',')
-FROM (SELECT series_id, period_id, area_version_id,
-        value IS NOT NULL OR category_id IS NOT NULL AS has_value
-      FROM observation) o
-JOIN series s ON s.id = o.series_id
-JOIN temp.area_nation n ON n.area_version_id = o.area_version_id
-GROUP BY o.series_id, o.period_id`);
+SELECT c.series_id, c.period_id, c.areas, c.areas_with_value,
+  coalesce(r.areas, 0), c.countries
+FROM coverage c
+JOIN series s ON s.id = c.series_id
+LEFT JOIN release_counts r ON r.release_id = s.release_id`);
 	} finally {
 		database.exec("DROP TABLE temp.area_nation");
 	}
