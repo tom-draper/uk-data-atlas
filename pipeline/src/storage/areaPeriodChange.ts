@@ -339,21 +339,22 @@ SELECT q.id FROM quantity q JOIN measure m ON m.id = q.measure_id
 WHERE q.release_id IN (${releases.join(", ") || "NULL"})
   AND m.statistic NOT IN (${NOT_COMPARED_STATISTICS.map(literal).join(", ")})
   AND m.slug NOT IN (${Object.keys(NOT_COMPARED_OVER_TIME).map(literal).join(", ") || "''"})`);
+	// Probe for a better-ranked observation by its key before sorting periods.
+	// A better-ranked NULL still wins, so the probe must include it.
 	database.exec(`
 CREATE TEMP TABLE compared_value AS
-SELECT quantity_id, area_version_id, period_id, series_id, value,
-  row_number() OVER w AS n, count(*) OVER (PARTITION BY quantity_id, area_version_id) AS total
-FROM (
-  SELECT sp.quantity_id, o.area_version_id, o.period_id, o.series_id, o.value,
-    p.start_date, p.end_date,
-    row_number() OVER (PARTITION BY sp.quantity_id, o.area_version_id, o.period_id
-      ORDER BY sp.rank) AS pick
-  FROM temp.compared_quantity cq
-  JOIN series_preference sp ON sp.quantity_id = cq.id
-  JOIN observation o ON o.series_id = sp.series_id
-  JOIN period p ON p.id = o.period_id)
-WHERE pick = 1 AND value IS NOT NULL
-WINDOW w AS (PARTITION BY quantity_id, area_version_id ORDER BY start_date, end_date, period_id)`);
+SELECT sp.quantity_id, o.area_version_id, o.period_id, o.series_id, o.value,
+  row_number() OVER w AS n, count(*) OVER (PARTITION BY sp.quantity_id, o.area_version_id) AS total
+FROM temp.compared_quantity cq
+JOIN series_preference sp ON sp.quantity_id = cq.id
+JOIN observation o ON o.series_id = sp.series_id
+JOIN period p ON p.id = o.period_id
+WHERE o.value IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM series_preference better
+  JOIN observation ob ON ob.series_id = better.series_id
+    AND ob.area_version_id = o.area_version_id AND ob.period_id = o.period_id
+  WHERE better.quantity_id = sp.quantity_id AND better.rank < sp.rank)
+WINDOW w AS (PARTITION BY sp.quantity_id, o.area_version_id ORDER BY p.start_date, p.end_date, o.period_id)`);
 	database.exec(`
 INSERT INTO area_period_change
 SELECT a.quantity_id, a.area_version_id, a.period_id, b.period_id,
