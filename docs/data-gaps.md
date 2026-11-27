@@ -147,8 +147,9 @@ The nation census archives are in
   C02, F01 to F03, H03, H04 and K02. Census travel tables I01 to I04 and
   supplemental archives remain staged.
 - Nation count conversions are checked series by series against their
-  published totals on the 2026-05 authorities. Coarser publisher counts, where
-  supplied, can be independently disclosure controlled. Mid-year estimates
+  published totals on the 2026-05 authorities. The atlas also aggregates
+  those source counts to countries. Independently disclosure-controlled
+  publisher totals can differ from these aggregates. Mid-year estimates
   use a different reference date.
 - The ONS ethnic group by age and sex workbook combines Cornwall with the Isles
   of Scilly and the City of London with Westminster. Those counts need explicit

@@ -1,5 +1,5 @@
 import type { DatabaseSync } from "node:sqlite";
-import type { CaseHop } from "./backtestCases.ts";
+import { CENSUS_TABLES, type CaseHop } from "./backtestCases.ts";
 import { MAX_CHAIN_HOPS } from "./chains.ts";
 import { CONVERTED_PLAN, PERSONS, type PlanEntry } from "./convertedPlan.ts";
 import { stepsOf, type Resolver } from "./pinnedRoutes.ts";
@@ -35,6 +35,11 @@ export const STANDARD_RELEASES = [
  * areas to the latest authorities through every boundary change, takes seven.
  */
 export const MAX_ROUTE_HOPS = 7;
+
+const NATION_CENSUS_DATASETS = new Set<string>(
+	CENSUS_TABLES.nations.map(({ dataset }) => dataset),
+);
+const NATION_CENSUS_TARGETS = [...STANDARD_RELEASES, "country:2025-12-uk-bgc"];
 
 /** Why a published series is not offered a standard release at all. */
 export type PlanSkipReason =
@@ -153,11 +158,16 @@ export const planStandardReleases = (
 		const source = releaseName(group.releaseId);
 		// The eleven unchanged NI districts need eight steps from 2021 to 2026.
 		const maxHops =
-			group.dataset.startsWith("census-2021-ni-") &&
+			NATION_CENSUS_DATASETS.has(group.dataset) &&
 			source === "localAuthority:2021-12-uk-bgc"
 				? 8
 				: MAX_ROUTE_HOPS;
-		for (const target of targets) {
+		const groupTargets =
+			targets === STANDARD_RELEASES &&
+			NATION_CENSUS_DATASETS.has(group.dataset)
+				? NATION_CENSUS_TARGETS
+				: targets;
+		for (const target of groupTargets) {
 			if (target === source) continue;
 			const skip = (reason: PlanSkipReason) =>
 				skips.push({
