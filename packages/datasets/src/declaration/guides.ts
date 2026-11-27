@@ -44,9 +44,6 @@ const UNDECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 				title: nationCensusTitle(table),
 				topic: table.topic,
 				about: `${table.title} among ${table.universe.toLowerCase()}. Publisher table ${table.table}.`,
-				publishedOn: table.districts
-					? "Local government districts"
-					: "Data zones",
 			},
 		]),
 	),
@@ -54,7 +51,6 @@ const UNDECLARED_GUIDES: Readonly<Record<string, DatasetGuide>> = {
 		title: "Northern Ireland Census 2021 household tenure",
 		topic: "housing-stock",
 		about: "NISRA counts of all households by tenure on Census Day 2021.",
-		publishedOn: "Local government districts",
 	},
 
 	"census-2021-ts001": {
