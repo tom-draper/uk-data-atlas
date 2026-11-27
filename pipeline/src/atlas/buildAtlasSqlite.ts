@@ -252,26 +252,34 @@ export const buildAtlasSqlite = (
 			);
 		return artifact;
 	};
-	const artifacts = projectionInventory.shards.map((shard) => {
-		const artifact = readProjectionArtifact(shard);
-		if (
-			!("projections" in artifact) ||
-			!Array.isArray(artifact.projections) ||
-			artifact.projections.length !== shard.recordCount
-		)
-			throw new Error(`Invalid member projections in ${shard.artifact}`);
-		return artifact;
-	});
-	const parentArtifacts = projectionInventory.parentShards.map((shard) => {
-		const artifact = readProjectionArtifact(shard);
-		if (
-			!("parentProjections" in artifact) ||
-			!Array.isArray(artifact.parentProjections) ||
-			artifact.parentProjections.length !== shard.recordCount
-		)
-			throw new Error(`Invalid parent projections in ${shard.artifact}`);
-		return artifact;
-	});
+	// Read only to write the projections part: held from here, they would be
+	// the largest thing this stage keeps while it writes the tables.
+	const readArtifacts = () =>
+		projectionInventory.shards.map((shard) => {
+			const artifact = readProjectionArtifact(shard);
+			if (
+				!("projections" in artifact) ||
+				!Array.isArray(artifact.projections) ||
+				artifact.projections.length !== shard.recordCount
+			)
+				throw new Error(
+					`Invalid member projections in ${shard.artifact}`,
+				);
+			return artifact;
+		});
+	const readParentArtifacts = () =>
+		projectionInventory.parentShards.map((shard) => {
+			const artifact = readProjectionArtifact(shard);
+			if (
+				!("parentProjections" in artifact) ||
+				!Array.isArray(artifact.parentProjections) ||
+				artifact.parentProjections.length !== shard.recordCount
+			)
+				throw new Error(
+					`Invalid parent projections in ${shard.artifact}`,
+				);
+			return artifact;
+		});
 	/** The documents the API and the build load whole, kept beside the database. */
 	function* storedPayloads() {
 		yield ["terrain-catalogue", payload] as const;
@@ -302,51 +310,59 @@ export const buildAtlasSqlite = (
 		}
 	}
 	const registry = readBuildBoundaryRegistry(repositoryRoot);
-	const tables = {
-		...areaTables(artifactDirectory(repositoryRoot), ids, registry),
-		...boundaryReleaseTables(registry, ids),
-		...crosswalkTables(artifactDirectory(repositoryRoot), ids),
-		...namedLocationTables(artifactDirectory(repositoryRoot), ids),
-		...statisticsTables(
-			[
-				...statisticsInputs(
-					directory,
-					manifest.datasets,
-					{
-						...UNSTORED_DATASETS,
-						...unstored,
-					},
-					direct,
+	// Written in a call of its own, so the statistics it registers, the
+	// largest thing this stage holds, are free before the payloads are rebuilt.
+	const writeBase = () => {
+		const tables = {
+			...areaTables(artifactDirectory(repositoryRoot), ids, registry),
+			...boundaryReleaseTables(registry, ids),
+			...crosswalkTables(artifactDirectory(repositoryRoot), ids),
+			...namedLocationTables(artifactDirectory(repositoryRoot), ids),
+			...statisticsTables(
+				[
+					...statisticsInputs(
+						directory,
+						manifest.datasets,
+						{
+							...UNSTORED_DATASETS,
+							...unstored,
+						},
+						direct,
+					),
+					// After the declared datasets, whose measures and members
+					// the census tables share.
+					...censusSmallAreaStatistics(repositoryRoot, censusTables),
+					...censusNationStatistics(
+						repositoryRoot,
+						censusNationTables,
+					),
+				],
+				ids,
+				new Map(
+					manifest.datasets.map((entry) => [
+						entry.output,
+						{
+							type: entry.type,
+							sha256: entry.compiled.sha256,
+							bytes: entry.compiled.bytes,
+							payloadId: servedFromRows(entry.type)
+								? null
+								: `dataset:${entry.output}`,
+						},
+					]),
 				),
-				// After the declared datasets, whose measures and members
-				// the census tables share.
-				...censusSmallAreaStatistics(repositoryRoot, censusTables),
-				...censusNationStatistics(repositoryRoot, censusNationTables),
-			],
-			ids,
-			new Map(
-				manifest.datasets.map((entry) => [
-					entry.output,
-					{
-						type: entry.type,
-						sha256: entry.compiled.sha256,
-						bytes: entry.compiled.bytes,
-						payloadId: servedFromRows(entry.type)
-							? null
-							: `dataset:${entry.output}`,
-					},
-				]),
 			),
-		),
-		...datasetCoverageGapTables(directory, manifest.datasets, direct),
-		...licenceTables(registry, ids),
-		...crosswalkInputSourceTables(repositoryRoot, ids),
+			...datasetCoverageGapTables(directory, manifest.datasets, direct),
+			...licenceTables(registry, ids),
+			...crosswalkInputSourceTables(repositoryRoot, ids),
+		};
+		writeSqliteIndex(
+			path,
+			{ schemaVersion: String(ATLAS_SCHEMA_VERSION) },
+			{ ...tables, payload: payloadTable(storedPayloads()) },
+		);
 	};
-	writeSqliteIndex(
-		path,
-		{ schemaVersion: String(ATLAS_SCHEMA_VERSION) },
-		{ ...tables, payload: payloadTable(storedPayloads()) },
-	);
+	writeBase();
 	const written = new DatabaseSync(path, { readOnly: true });
 	try {
 		if (Number(written.prepare(AREA_GEOGRAPHY_MISMATCH).get()?.n) !== 0)
@@ -364,8 +380,8 @@ export const buildAtlasSqlite = (
 			component: "projections",
 			write: (database) => {
 				const tables = locationProjectionTables({
-					artifacts,
-					parentArtifacts,
+					artifacts: readArtifacts(),
+					parentArtifacts: readParentArtifacts(),
 				});
 				for (const name of Object.keys(tables))
 					database.exec(`DROP TABLE IF EXISTS ${name}`);
