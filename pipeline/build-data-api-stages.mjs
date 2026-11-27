@@ -706,7 +706,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-validation-report.ts"],
 		{
-			memoryMb: 2432,
+			memoryMb: 1920,
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
 		},
