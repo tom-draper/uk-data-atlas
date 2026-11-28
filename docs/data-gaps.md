@@ -182,33 +182,40 @@ collection.
   2022 output-area linkage, not data zone 2011 to 2022. The data-zone
   crosswalk is derived and checked against councils in a built test. The 2001
   Scottish data-zone edition is absent from the atlas.
-- County electoral divisions, integrated care boards, sub-ICB locations and
-  fire and rescue authorities still have no events. Their crosswalks connect
-  different geographies, so they cannot supply changes between editions.
-- Very few events elsewhere: Scottish Parliament constituencies have 2 and
-  ITL1 has 1.
+- County electoral divisions 2023 to 2025 and integrated care boards 2023 to
+  2026 are linked through derived postcode-overlap crosswalks: 124 and 3
+  events. The 2017 divisions are names only, with no route. Sub-ICB locations
+  and fire and rescue authorities still have no events: their crosswalks
+  connect different geographies, so they cannot supply changes between
+  editions.
+- Local authorities 2009 have 380 recodings to the GSS codes, linked through
+  the postcode overlap.
+- Very few events elsewhere: Senedd constituencies have 3 and ITL1 has 1.
 - Legal dates matched: LSOA 1,625 of 6,418, MSOA 225 of 1,025, local
-  authority 35 of 53, parish 283 of 380. ITL and Scottish Parliament
-  constituencies have none. Everything else keeps its edition date.
+  authority 36 of 433, parish 283 of 380, Scottish Parliament constituency 46
+  of 48. ITL, data zones, county electoral divisions and integrated care
+  boards have none. Everything else keeps its edition date.
 - Still ended or created because the database has no successor: 88 ward
-  endings and 87 creations, 20 parish endings or creations, and 41 output
-  areas created.
+  endings and 87 creations, 20 parish endings or creations, 41 output areas
+  and 6 constituencies created, and the 2 empty Glasgow data zones of 2011
+  ended.
 - An event is a point in time. `area_version` validity is only known for the
   four recorded polling dates (task 3).
 - How much each area changed between releases (`area_change_extent`, task 34) has gaps:
-    - Land is null on 49,365 of 679,310 rows. No pair with only an official
+    - Land is null on 58,951 of 689,562 rows. No pair with only an official
       lookup has measured land: local authorities 2009 to 2011, 2022-12 to
-      2023-05 and 2024-12 to 2025-05, LSOA 2011 to 2021 (34,629 rows), Scottish
-      Parliament and Senedd constituencies 2022 to 2026. Most code-changing
-      splits and merges elsewhere also lack an `area` weight.
-    - 16 releases have a later vintage but no one-hop route to it, so have no
+      2023-05 and 2024-12 to 2025-05, LSOA 2001 to 2011 splits, LSOA 2011 to
+      2021 (34,629 rows), Scottish Parliament and Senedd constituencies 2022
+      to 2026. Most code-changing splits and merges elsewhere also lack an
+      `area` weight.
+    - 13 releases have a later vintage but no one-hop route to it, so have no
       rows: constituency 2022-12-uk-bgc, county electoral division
-      2017-05-en-names and 2023-05-en-bgc, data zone 2011-12-sc-bfc and 2021-ni,
-      historical constituency 1918, 1945, 1950, 1955, 1974, 1983 and 1997,
-      integrated care board 2023-04-en-bgc, LSOA 2011-12-w-bgc, NHS England
-      region 2022-07-en-bgc, ward 2019-12-gb-bgc.
-    - LSOA 2001 to 2011 runs through extent continuity only, so splits there
-      have no successor row.
+      2017-05-en-names, data zone 2021-ni, historical constituency 1918, 1945,
+      1950, 1955, 1974, 1983 and 1997, LSOA 2011-12-w-bgc, NHS England region
+      2022-07-en-bgc, ward 2019-12-gb-bgc. Constituency 2022-12, LSOA
+      2011-12-w and ward 2019-12-gb still reach the current release through
+      crosswalk chains.
+    - The 171 LSOAs of 2001 that merged in 2011 have no successor row.
 
 ### 2. Conversion and rollup
 
