@@ -306,7 +306,7 @@ export const apiStages = [
 		["datasets", "statistics-vocabulary"],
 		["pipeline/src/stages/build-data-catalog.ts"],
 		{
-			memoryMb: 1472,
+			memoryMb: 1408,
 			writes: [`${artifacts}/data-catalog.json`],
 			rawInputs: censusSmallAreaInputs,
 			requiredOutputs: [`${artifacts}/data-catalog.json`],
@@ -362,7 +362,7 @@ export const apiStages = [
 				"crosswalk-weights": [crosswalkWeights],
 				"conversion-backtest": [conversionBacktest],
 			},
-			memoryMb: 1984,
+			memoryMb: 1664,
 			rawInputs: [],
 			writes: ["data/build/converted-series"],
 			outputs: ["data/build/converted-series"],
@@ -380,7 +380,7 @@ export const apiStages = [
 		["atlas-sqlite", "crosswalk-weights", "weight-atoms"],
 		["pipeline/src/stages/build-notional-elections.ts"],
 		{
-			memoryMb: 1984,
+			memoryMb: 1344,
 			rawInputs: [
 				"data/source/politics/local-elections/local-election/2017/leap-2017-05-04.csv",
 			],
