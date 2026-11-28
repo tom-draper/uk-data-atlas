@@ -278,7 +278,7 @@ test("the legal date rate counts events by geography", () => {
 	]);
 });
 
-test("publisher replacements record only inventory changes when the crosswalk measures overlap", () => {
+test("a postcode overlap between editions links the change a publisher replacement would only end and create", () => {
 	const { db, v } = fixture();
 	db.exec(`
 		UPDATE geography SET slug = 'seneddConstituency';
@@ -306,20 +306,11 @@ test("publisher replacements record only inventory changes when the crosswalk me
 		]),
 		[
 			[
-				"created",
-				undefined,
-				"B2",
-				0,
-				"publisher-statement",
-				"2026-05-07",
-				"legal",
-			],
-			[
-				"ended",
+				"recoded",
 				"B",
-				undefined,
-				0,
-				"publisher-statement",
+				"B2",
+				1,
+				"postcode-overlap",
 				"2026-05-01",
 				"edition",
 			],

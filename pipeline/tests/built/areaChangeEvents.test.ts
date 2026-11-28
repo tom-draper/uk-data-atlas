@@ -294,9 +294,15 @@ test("the Code History Database dates most events of the geographies it covers",
 	assert.ok(rates.outputArea! > 0.9, `output area ${rates.outputArea}`);
 	assert.ok(rates.parish! > 0.8, `parish ${rates.parish}`);
 	assert.ok(rates.constituency! > 0.7, `constituency ${rates.constituency}`);
+	// The postcode overlap links the 2026 Scottish Parliament constituencies to
+	// their predecessors, and the database dates their new codes.
+	assert.ok(
+		rates.scottishParliamentaryConstituency! > 0.9,
+		`Scottish Parliament ${rates.scottishParliamentaryConstituency}`,
+	);
 	// The database does not cover these, so they keep their edition dates.
 	assert.equal(rates.itl3, 0);
-	assert.equal(rates.scottishParliamentaryConstituency, 0);
+	assert.equal(rates.dataZone, 0);
 });
 
 test("ward changes are mostly splits, merges and redistributions, not ended and created pairs", () => {

@@ -296,3 +296,18 @@ population
 households
 dwellings
 postcodes
+@countyElectoralDivision	2023-05-en-bgc	2025-05-en-bgc
+population
+households
+dwellings
+postcodes
+@dataZone	2011-12-sc-bfc	2022-sc-bfc
+population
+households
+dwellings
+postcodes
+@integratedCareBoard	2023-04-en-bgc	2026-04-en-bgc
+population
+households
+dwellings
+postcodes

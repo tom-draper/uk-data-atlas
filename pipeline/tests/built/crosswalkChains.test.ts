@@ -232,7 +232,6 @@ test("every older release reaches the current one, bar the releases no carrying 
 		[
 			"countyElectoralDivision|2017-05-en-names",
 			"countyElectoralDivision|2023-05-en-bgc",
-			"dataZone|2011-12-sc-bfc",
 			"dataZone|2021-ni",
 			"historicalConstituency|1918-uk",
 			"historicalConstituency|1945-uk",

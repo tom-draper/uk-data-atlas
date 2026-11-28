@@ -176,11 +176,12 @@ collection.
 ### 1. Change events (`area_change_event`)
 
 - The Scottish 2011 to 2022 data-zone replacement and the 2026 Senedd
-  replacement now have ended and created events. The six data-zone crosswalks
-  connect to other geographies. The Senedd crosswalk between editions measures
-  postcode overlap. Both transitions still need official predecessor lookups
-  to show splits, merges or other linked changes. The 2001 Scottish data-zone
-  edition is absent from the atlas.
+  replacement are linked through postcode-overlap crosswalks (basis
+  `postcode-overlap`), so their splits and merges are measured from residents,
+  not recorded. Neither publisher has a predecessor lookup: NRS publishes only
+  2022 output-area linkage, not data zone 2011 to 2022. The data-zone
+  crosswalk is derived and checked against councils in a built test. The 2001
+  Scottish data-zone edition is absent from the atlas.
 - County electoral divisions, integrated care boards, sub-ICB locations and
   fire and rescue authorities still have no events. Their crosswalks connect
   different geographies, so they cannot supply changes between editions.
