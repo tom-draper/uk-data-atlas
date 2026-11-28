@@ -10,6 +10,7 @@ import {
 } from "./betterRoute.ts";
 import {
 	convertEntry,
+	createConversionObservationReader,
 	readErrorFactors,
 	STATUS_ESTIMATED,
 	type ConvertedSeries,
@@ -338,6 +339,7 @@ export const buildConvertedSeries = (
 		const context = {
 			database,
 			resolver,
+			observations: createConversionObservationReader(database),
 			rules: new Map(
 				rules.map(({ measure, rule }) => [measure.slug, rule]),
 			),

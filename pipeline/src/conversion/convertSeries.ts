@@ -198,6 +198,7 @@ export type SkipReason =
 export type ConversionContext = {
 	database: DatabaseSync;
 	resolver: Resolver;
+	observations?: ReturnType<typeof createConversionObservationReader>;
 	/** The rule of each measure, by slug. */
 	rules: ReadonlyMap<string, ConversionRule>;
 	factors: ErrorFactors;
@@ -216,6 +217,7 @@ const periodsPublished = (
 	database: DatabaseSync,
 	entry: PlanEntry,
 	release: number,
+	periodsOf: (series: number) => readonly PeriodRow[],
 ) => {
 	const published = new Map<string, Set<number>>();
 	for (const series of publishedSeries(database, {
@@ -224,8 +226,7 @@ const periodsPublished = (
 		release,
 	})) {
 		const held = published.get(series.members) ?? new Set<number>();
-		for (const period of periodsOfSeries(database, series.id))
-			held.add(period.id);
+		for (const period of periodsOf(series.id)) held.add(period.id);
 		published.set(series.members, held);
 	}
 	return published;
@@ -277,25 +278,71 @@ export const totalKey = (parts: readonly SeriesRow[]) => {
  * them holds an observed value for the area. An area any part lacks is left
  * out, so converting it reports the targets it feeds as a missing input.
  */
+type ObservedValue = readonly [area: number, value: number];
+
+/** Reuse published observations when several targets read the same series. */
+export const createConversionObservationReader = (database: DatabaseSync) => {
+	const readValues = database.prepare(
+		"SELECT area_version_id AS area, value FROM observation WHERE series_id = ? AND period_id = ? AND value IS NOT NULL AND status_id = ?",
+	);
+	readValues.setReturnArrays(true);
+	const valuesByPeriod = new Map<string, readonly ObservedValue[]>();
+	const periodsBySeries = new Map<number, readonly PeriodRow[]>();
+	// Bound both the retained values and the number of empty or small results.
+	const maxValues = 500_000;
+	const maxPeriods = 8192;
+	let storedValues = 0;
+	return {
+		values(series: number, period: number) {
+			const key = `${series}|${period}`;
+			const cached = valuesByPeriod.get(key);
+			if (cached) {
+				valuesByPeriod.delete(key);
+				valuesByPeriod.set(key, cached);
+				return cached;
+			}
+			const rows = readValues.all(
+				series,
+				period,
+				STATUS_OBSERVED,
+			) as unknown as readonly ObservedValue[];
+			if (rows.length > maxValues) return rows;
+			while (
+				storedValues + rows.length > maxValues ||
+				valuesByPeriod.size >= maxPeriods
+			) {
+				const [oldest, values] = valuesByPeriod.entries().next().value!;
+				valuesByPeriod.delete(oldest);
+				storedValues -= values.length;
+			}
+			valuesByPeriod.set(key, rows);
+			storedValues += rows.length;
+			return rows;
+		},
+		periods(series: number) {
+			let periods = periodsBySeries.get(series);
+			if (!periods) {
+				periods = periodsOfSeries(database, series);
+				periodsBySeries.set(series, periods);
+			}
+			return periods;
+		},
+	};
+};
+
 const summedValues = (
-	database: DatabaseSync,
+	readObserved: (series: number, period: number) => readonly ObservedValue[],
 	parts: readonly SeriesRow[],
 	period: number,
 ) => {
 	const sums = new Map<number, { value: number; count: number }>();
-	const statement = database.prepare(
-		"SELECT area_version_id AS area, value FROM observation WHERE series_id = ? AND period_id = ? AND value IS NOT NULL AND status_id = ?",
-	);
 	for (const part of parts)
-		for (const row of statement.all(part.id, period, STATUS_OBSERVED) as {
-			area: number;
-			value: number;
-		}[]) {
-			const held = sums.get(row.area);
+		for (const [area, value] of readObserved(part.id, period)) {
+			const held = sums.get(area);
 			if (held) {
-				held.value += row.value;
+				held.value += value;
 				held.count += 1;
-			} else sums.set(row.area, { value: row.value, count: 1 });
+			} else sums.set(area, { value, count: 1 });
 		}
 	return startValues(
 		[...sums]
@@ -305,24 +352,6 @@ const summedValues = (
 };
 
 /** Only observed values are converted. A flagged or empty one is a missing input. */
-const observedValues = (
-	database: DatabaseSync,
-	series: number,
-	period: number,
-) =>
-	startValues(
-		(
-			database
-				.prepare(
-					"SELECT area_version_id AS area, value FROM observation WHERE series_id = ? AND period_id = ? AND value IS NOT NULL AND status_id = ?",
-				)
-				.all(series, period, STATUS_OBSERVED) as {
-				area: number;
-				value: number;
-			}[]
-		).map((row) => [row.area, row.value] as const),
-	);
-
 const plain = (values: ReadonlyMap<number, CarriedValue>) =>
 	new Map([...values].map(([area, carried]) => [area, carried.value]));
 
@@ -383,6 +412,10 @@ function* convertSources(
 	entry: PlanEntry,
 ): Generator<ConvertedSeries> {
 	const { database, resolver } = context;
+	const observationReader =
+		context.observations ?? createConversionObservationReader(database);
+	const observedValues = (series: number, period: number) =>
+		startValues(observationReader.values(series, period));
 	const basis = entry.basis ?? "population";
 	const from = resolver.releaseId(entry.source.release);
 	const to = resolver.releaseId(entry.target);
@@ -414,7 +447,7 @@ function* convertSources(
 		: undefined;
 	const onTarget = entry.total
 		? undefined
-		: periodsPublished(database, entry, to);
+		: periodsPublished(database, entry, to, observationReader.periods);
 	const skip = (source: SeriesRow, reason: SkipReason) =>
 		context.skipped?.(entry, source, reason);
 	// A period the target publishes stays native there. Only the others are
@@ -423,9 +456,9 @@ function* convertSources(
 	const sources = seriesOf(entry.source.measure).filter((series) => {
 		if (entry.members && !entry.members.test(series.members)) return false;
 		const native = officialTotal ?? onTarget!.get(series.members);
-		const periods = periodsOfSeries(database, series.id).filter(
-			(period) => !native?.has(period.id),
-		);
+		const periods = observationReader
+			.periods(series.id)
+			.filter((period) => !native?.has(period.id));
 		if (periods.length > 0) {
 			periodsToConvert.set(series, periods);
 			return true;
@@ -544,7 +577,7 @@ function* convertSources(
 		const gaps: SeriesGap[] = [];
 		convertSums(
 			periods,
-			(period) => summedValues(database, sources, period),
+			(period) => summedValues(observationReader.values, sources, period),
 			membersOfKey(key),
 			observations,
 			gaps,
@@ -572,7 +605,7 @@ function* convertSources(
 		if (rule.rule === "sum") {
 			convertSums(
 				periods,
-				(period) => observedValues(database, source.id, period),
+				(period) => observedValues(source.id, period),
 				source.members,
 				observations,
 				gaps,
@@ -588,7 +621,7 @@ function* convertSources(
 
 		if (rule.rule === "carry") {
 			for (const period of periods) {
-				const values = observedValues(database, source.id, period.id);
+				const values = observedValues(source.id, period.id);
 				const converted = convertThroughSteps(steps, values);
 				// The share of a source area that reaches the target: 1 only
 				// where every edge on the way takes the whole of it.
@@ -649,8 +682,8 @@ function* convertSources(
 			for (const period of periods) {
 				const rebuilt = convertWeightedMeans(
 					steps,
-					plain(observedValues(database, source.id, period.id)),
-					plain(observedValues(database, weight.id, period.id)),
+					plain(observedValues(source.id, period.id)),
+					plain(observedValues(weight.id, period.id)),
 				);
 				for (const [area, value] of rebuilt.values)
 					observations.push({
@@ -698,11 +731,10 @@ function* convertSources(
 		}
 		const check = { compared: 0, maxDifference: 0 };
 		for (const period of periods) {
-			const top = observedValues(database, numerator.id, period.id);
-			const bottom = observedValues(database, denominator.id, period.id);
+			const top = observedValues(numerator.id, period.id);
+			const bottom = observedValues(denominator.id, period.id);
 			// The same rebuild on the source areas, against what was published there.
 			for (const [area, published] of observedValues(
-				database,
 				source.id,
 				period.id,
 			)) {
