@@ -47,19 +47,25 @@ const sourceCodes = (
 
 const candidateFor = (
 	source: Set<string>,
-	artifact: AreaReleaseArtifact,
+	candidate: ReadonlySet<string>,
 	release: BoundaryRegistry["releases"][number],
 ): CompatibilityCandidate => {
-	const candidate = new Set(artifact.areas.map((area) => area.code));
 	const unmatchedSource = new Set(
 		[...source].filter((code) => !candidate.has(code)),
 	);
-	const candidateOnly = new Set(
-		[...candidate].filter((code) => !source.has(code)),
-	);
 	const matchingCodeCount = source.size - unmatchedSource.size;
+	const candidateOnlyCodeCount = candidate.size - matchingCodeCount;
+	const candidateOnlyCodeSample: string[] = [];
+	// Candidate codes are already sorted, so only visit enough to fill the sample.
+	if (candidateOnlyCodeCount > 0) {
+		const sampleSize = Math.min(20, candidateOnlyCodeCount);
+		for (const code of candidate) {
+			if (!source.has(code)) candidateOnlyCodeSample.push(code);
+			if (candidateOnlyCodeSample.length === sampleSize) break;
+		}
+	}
 	const status: CompatibilityStatus =
-		unmatchedSource.size === 0 && candidateOnly.size === 0
+		unmatchedSource.size === 0 && candidateOnlyCodeCount === 0
 			? "exact-code-set"
 			: unmatchedSource.size === 0
 				? "code-set-compatible"
@@ -67,7 +73,7 @@ const candidateFor = (
 					? "no-code-overlap"
 					: "partial-code-overlap";
 	return {
-		boundaryRelease: artifact.boundaryRelease,
+		boundaryRelease: release.id,
 		title: release.title,
 		coverageCountries: release.coverage.countries,
 		status,
@@ -77,8 +83,8 @@ const candidateFor = (
 		matchedSourceShare: matchingCodeCount / source.size,
 		unmatchedSourceCodeCount: unmatchedSource.size,
 		unmatchedSourceCodeSample: sample(unmatchedSource),
-		candidateOnlyCodeCount: candidateOnly.size,
-		candidateOnlyCodeSample: sample(candidateOnly),
+		candidateOnlyCodeCount,
+		candidateOnlyCodeSample,
 	};
 };
 
@@ -97,10 +103,10 @@ export const compileMeasureCompatibility = (
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
 	}
-	const artifactsByIdentity = new Map(
+	const codesByRelease = new Map(
 		areaArtifacts.map((artifact) => [
 			releaseKey(artifact.geography, artifact.boundaryRelease),
-			artifact,
+			new Set(artifact.areas.map((area) => area.code).sort()),
 		]),
 	);
 	const observationHashes = new Map<string, string>(
@@ -135,11 +141,11 @@ export const compileMeasureCompatibility = (
 							String(source.sourceGeography.boundaryYear),
 				)
 				.flatMap((release) => {
-					const artifact = artifactsByIdentity.get(
+					const candidate = codesByRelease.get(
 						releaseKey(release.geography, release.id),
 					);
-					return artifact
-						? [candidateFor(codes, artifact, release)]
+					return candidate
+						? [candidateFor(codes, candidate, release)]
 						: [];
 				})
 				.sort((left, right) =>

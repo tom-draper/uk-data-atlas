@@ -3,7 +3,10 @@ import {
 	isMeasureTable,
 	type AnyMeasureObservationArtifact,
 } from "@uk-data-atlas/catalogue/node";
-import { tableMeasureObservations } from "@uk-data-atlas/measures";
+import {
+	tableMeasureObservations,
+	type MeasureTableArtifact,
+} from "@uk-data-atlas/measures";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaInventory, AreaReleaseArtifact } from "@uk-data-atlas/areas";
@@ -44,6 +47,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		repositoryRoot,
 		dataCatalog,
 	);
+	const tables = new Map<string, MeasureTableArtifact>();
 	try {
 		const compatibility = compileMeasureCompatibility(
 			dataCatalog,
@@ -52,12 +56,14 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 			),
 			artifacts,
 			(measureId, source, seriesKey) => {
-				const artifact: unknown = JSON.parse(
-					readArtifact(measureId, source),
-				);
-				return isMeasureTable(artifact)
-					? tableMeasureObservations(artifact, seriesKey)
-					: (artifact as AnyMeasureObservationArtifact);
+				const text = readArtifact(measureId, source);
+				const table = tables.get(text);
+				if (table) return tableMeasureObservations(table, seriesKey);
+				const artifact: unknown = JSON.parse(text);
+				if (!isMeasureTable(artifact))
+					return artifact as AnyMeasureObservationArtifact;
+				tables.set(text, artifact);
+				return tableMeasureObservations(artifact, seriesKey);
 			},
 		);
 		const outputPath = join(publicDirectory, "measure-compatibility.json");
