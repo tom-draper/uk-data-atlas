@@ -35,7 +35,7 @@ CREATE TABLE area_change_event (
 	date_basis TEXT NOT NULL CHECK (date_basis IN ('edition', 'legal')),
 	edition_date TEXT NOT NULL,
 	source TEXT NOT NULL CHECK (source IN ('crosswalk', 'publisher')),
-	basis TEXT NOT NULL CHECK (basis IN ('official-lookup', 'extent-continuity', 'clean-containment', 'publisher-statement')),
+	basis TEXT NOT NULL CHECK (basis IN ('official-lookup', 'extent-continuity', 'clean-containment', 'postcode-overlap', 'publisher-statement')),
 	crosswalk_id INTEGER REFERENCES crosswalk(id),
 	CHECK ((source = 'crosswalk') = (crosswalk_id IS NOT NULL)),
 	PRIMARY KEY (id)
@@ -83,15 +83,18 @@ export type ChangeEvent = {
 
 /**
  * How an event's successors were found: a publisher's lookup, a geometric
- * comparison of two releases (extent-continuity, clean-containment), or a
- * publisher's predecessor statement. An event with any link from a lookup is
- * `official-lookup`; one made only of an extent-continuity crosswalk's
- * redrawn or realigned areas is `extent-continuity`.
+ * comparison of two releases (extent-continuity, clean-containment), the
+ * residents of postcodes placed in both releases (postcode-overlap, for a pair
+ * no lookup or comparison covers), or a publisher's predecessor statement. An
+ * event with any link from a lookup is `official-lookup`; one made only of an
+ * extent-continuity crosswalk's redrawn or realigned areas is
+ * `extent-continuity`.
  */
 export const CHANGE_BASES = [
 	"official-lookup",
 	"extent-continuity",
 	"clean-containment",
+	"postcode-overlap",
 	"publisher-statement",
 ] as const;
 export type ChangeBasis = (typeof CHANGE_BASES)[number];
@@ -113,14 +116,22 @@ export type IdentityCrosswalk = {
 
 const countryOf = (code: string) => code.slice(0, 1);
 
+/** Which of two crosswalks for one change to use: the lower wins. */
+const preference = ({ method }: { method: string }) =>
+	method === "official-lookup" ? 0 : method === "postcode-overlap" ? 2 : 1;
+
 /**
  * The identity crosswalks that say what changed over time. A publisher's
  * lookup between two releases of one geography that declares no purpose is an
- * identity crosswalk, as the relationship resolver reads it. A crosswalk whose
- * two releases share an edition date links variants of one edition (a filtered
- * copy, a reissue), not a change. Where several crosswalks reach one release
- * from reissues of the same edition, the official lookup is used, else the
- * lowest id.
+ * identity crosswalk, as the relationship resolver reads it. A postcode
+ * overlap between two releases of one geography is used too, but only for a
+ * pair nothing better covers: it is derived, and its links are the shares of
+ * residents above the crosswalk's minimum, so it can show a split or merge
+ * where no publisher has. A crosswalk whose two releases share an edition date
+ * links variants of one edition (a filtered copy, a reissue), not a change.
+ * Where several crosswalks reach one release from reissues of the same
+ * edition, the official lookup is used, then any identity crosswalk, then a
+ * postcode overlap, each by lowest id.
  */
 export function selectIdentityCrosswalks(
 	database: DatabaseSync,
@@ -136,7 +147,7 @@ export function selectIdentityCrosswalks(
 			JOIN geography g ON g.slug = fr.geography
 			JOIN boundary_release_edition fe ON fe.release_id = fr.id
 			JOIN boundary_release_edition te ON te.release_id = tr.id
-			WHERE (c.purpose = 'identity' OR (c.purpose IS NULL AND c.method = 'official-lookup'))
+			WHERE (c.purpose = 'identity' OR (c.purpose IS NULL AND c.method IN ('official-lookup', 'postcode-overlap')))
 				AND fr.geography = tr.geography AND fe.edition_from < te.edition_from
 			ORDER BY c.id`,
 		)
@@ -157,11 +168,7 @@ export function selectIdentityCrosswalks(
 		};
 		const key = `${crosswalk.toReleaseId}|${crosswalk.fromEdition}`;
 		const held = chosen.get(key);
-		if (
-			!held ||
-			(held.method !== "official-lookup" &&
-				crosswalk.method === "official-lookup")
-		)
+		if (!held || preference(crosswalk) < preference(held))
 			chosen.set(key, crosswalk);
 	}
 	return [...chosen.values()].sort((a, b) => a.id - b.id);
