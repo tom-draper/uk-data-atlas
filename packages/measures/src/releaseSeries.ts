@@ -230,6 +230,53 @@ const publishedOf = (database: SqlReader, part: ReleaseSeriesPart) => {
 	return kept;
 };
 
+const publishedCache = new WeakMap<object, Map<string, SeriesRow[]>>();
+const cachedPublishedOf = (
+	database: SqlReader,
+	cacheKey: object | undefined,
+	part: ReleaseSeriesPart,
+) => {
+	if (!cacheKey) return publishedOf(database, part);
+	let cache = publishedCache.get(cacheKey);
+	if (!cache) publishedCache.set(cacheKey, (cache = new Map()));
+	const key = JSON.stringify([
+		part.datasetId,
+		part.measure,
+		part.geography,
+		part.dimensions,
+		part.sum,
+	]);
+	const held = cache.get(key);
+	if (held !== undefined) return held;
+
+	const published = publishedOf(database, part);
+	// Requests can select different dimension members within one generation.
+	if (cache.size >= 256) cache.delete(cache.keys().next().value!);
+	cache.set(key, published);
+	return published;
+};
+
+type PeriodMetadata = { label: string; start: string };
+const periodMetadataCache = new WeakMap<object, Map<number, PeriodMetadata>>();
+const periodMetadataOf = (
+	database: SqlReader,
+	cacheKey: object | undefined,
+) => {
+	const held = cacheKey && periodMetadataCache.get(cacheKey);
+	if (held) return held;
+	const periods = new Map(
+		database
+			.prepare("SELECT id, label, start_date AS start FROM period")
+			.all()
+			.map((row) => [
+				Number(row.id),
+				{ label: String(row.label), start: String(row.start) },
+			]),
+	);
+	if (cacheKey) periodMetadataCache.set(cacheKey, periods);
+	return periods;
+};
+
 /** What one part signature holds for one period. */
 type Cell =
 	| {
@@ -279,7 +326,7 @@ type Quantity = {
 /** Every value and gap the parts hold for the area on the target. */
 const readQuantity = (
 	database: SqlReader,
-	cacheKey: object,
+	cacheKey: object | undefined,
 	parts: ReleaseSeriesPart[],
 	target: { id: number; key: string },
 	area: number,
@@ -287,7 +334,7 @@ const readQuantity = (
 	const seen = new Set<number>();
 	const published: SeriesRow[] = [];
 	for (const part of parts)
-		for (const row of publishedOf(database, part))
+		for (const row of cachedPublishedOf(database, cacheKey, part))
 			if (!seen.has(row.id)) {
 				seen.add(row.id);
 				published.push(row);
@@ -393,9 +440,11 @@ const readQuantity = (
 		}
 		// The periods the source holds that reached the area neither as a value
 		// nor as a recorded gap.
-		const left = periodsOf(database, cacheKey, series.id).filter(
-			(period) => !reached.has(period),
-		);
+		const left = periodsOf(
+			database,
+			cacheKey ?? database,
+			series.id,
+		).filter((period) => !reached.has(period));
 		if (left.length === 0) continue;
 		const why = made
 			? [{ release: series.release, reason: "no-source-value" }]
@@ -640,7 +689,7 @@ export const readReleaseSeries = (
 	target: { geography: string; release: string },
 	areaCode: string,
 	periodLabel: (stored: string) => string = (stored) => stored,
-	cacheKey: object = database,
+	cacheKey?: object,
 ): ReleaseSeries | undefined => {
 	const release = database
 		.prepare(
@@ -660,18 +709,7 @@ export const readReleaseSeries = (
 	if (!areaRow) return undefined;
 	const area = Number(areaRow.id);
 	const areaId = Number(areaRow.areaId);
-	const labels = new Map(
-		database
-			.prepare("SELECT id, label FROM period")
-			.all()
-			.map((row) => [Number(row.id), String(row.label)]),
-	);
-	const starts = new Map(
-		database
-			.prepare("SELECT id, start_date AS start FROM period")
-			.all()
-			.map((row) => [Number(row.id), String(row.start)]),
-	);
+	const periodMetadata = periodMetadataOf(database, cacheKey);
 	const value = readQuantity(
 		database,
 		cacheKey,
@@ -745,10 +783,14 @@ export const readReleaseSeries = (
 	}
 	const ordered = [...periods].sort(
 		(a, b) =>
-			(starts.get(a) ?? "").localeCompare(starts.get(b) ?? "") || a - b,
+			(periodMetadata.get(a)?.start ?? "").localeCompare(
+				periodMetadata.get(b)?.start ?? "",
+			) || a - b,
 	);
 	for (const periodId of ordered) {
-		const period = periodLabel(labels.get(periodId) ?? String(periodId));
+		const period = periodLabel(
+			periodMetadata.get(periodId)?.label ?? String(periodId),
+		);
 		const top = value.cells.get(periodId);
 		const bottom = denominator?.cells.get(periodId);
 		const gap = (sources: ReleaseGap["sources"]) =>

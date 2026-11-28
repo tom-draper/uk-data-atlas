@@ -156,6 +156,8 @@ export function buildPlaceTrends(
 						spec,
 						{ geography: "localAuthority", release: place.release },
 						place.code,
+						undefined,
+						database,
 					);
 					if (
 						series &&
@@ -174,6 +176,8 @@ export function buildPlaceTrends(
 							specOf(dataset, declaration),
 							{ geography: "localAuthority", release },
 							place.code,
+							undefined,
+							database,
 						);
 						values = new Map(
 							(series?.values ?? [])
