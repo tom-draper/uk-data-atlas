@@ -438,6 +438,8 @@ export const apiStages = [
 		["assemble-atlas"],
 		["pipeline/src/stages/build-modules.ts"],
 		{
+			// Most resident memory here is reclaimable SQLite file pages.
+			memoryMb: 512,
 			rawInputs: [],
 			writes: ["data/build/modules"],
 			outputs: ["data/build/modules"],
@@ -521,6 +523,8 @@ export const apiStages = [
 		["postcode-index", "assemble-atlas"],
 		["pipeline/src/stages/build-postcode-counts.ts"],
 		{
+			// Shard validation holds a single district, and DuckDB aggregates area sets.
+			memoryMb: 608,
 			rawInputs: [],
 			writes: [cachePart("postcode-counts")],
 			requiredOutputs: [cachePart("postcode-counts")],
