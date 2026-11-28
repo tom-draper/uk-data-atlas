@@ -91,6 +91,8 @@ test("a split needs every weight, and weights that sum to 1", () => {
 	const split = carrySource(crosswalk, [
 		row(10, { weight: 0.25 }),
 		row(11, { weight: 0.75 }),
+		// Measured empty: it carries nothing.
+		row(12, { weight: 0 }),
 	]);
 	assert.ok("edges" in split);
 	assert.deepEqual(
