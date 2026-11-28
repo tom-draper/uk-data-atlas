@@ -11,6 +11,7 @@ import {
 	type PostcodeAreaColumn,
 } from "@uk-data-atlas/geography";
 import type { PostcodeIndexArtifact } from "@uk-data-atlas/geography";
+import type { SQLOutputValue } from "node:sqlite";
 
 /** The `meta` key and value that mark the postcode area table layout. */
 export const POSTCODE_AREA_LAYOUT_KEY = "postcodeAreaLayout";
@@ -126,21 +127,34 @@ export function preparePostcodeAreaDistrictReader(
 ) {
 	const columns = postcodeAreaColumns(artifact);
 	const fallbacks = distanceFallbacks(database);
+	// Read only the area and distance of each release, in pairs, so SQLite
+	// doesn't have to build a wide named object for every postcode.
+	const fields = columns.flatMap(({ area, distance }) => [
+		`s."${area}"`,
+		`p."${distance}"`,
+	]);
 	const readRows = database.prepare(
-		`SELECT p.*, s.* FROM ${table} p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE ${postcodeDistrictWhere} ORDER BY p.postcode`,
+		`SELECT ${fields.length ? fields.join(", ") : "p.postcode"} FROM ${table} p JOIN postcode_area_set s ON s.id = p.area_set_id WHERE ${postcodeDistrictWhere} ORDER BY p.postcode`,
 	);
+	readRows.setReturnArrays(true);
 	const findCode = database.prepare(
 		"SELECT a.code FROM area_version v JOIN area a ON a.id = v.area_id WHERE v.id = ?",
 	);
+	const codes = new Map<number, string>();
 	const readMatches = database.prepare(
-		"SELECT * FROM postcode_area_match WHERE district = ? AND release_position = ? ORDER BY postcode_position, position",
+		"SELECT release_position, postcode_position, area_id, containment, distance_cm FROM postcode_area_match WHERE district = ? ORDER BY release_position, postcode_position, position",
 	);
 	return (district: string, postcodeShard: string): string => {
 		const rows = readRows.all(
 			district,
 			`${district}\x7f`,
 			district.length + 3,
-		);
+		) as unknown as SQLOutputValue[][];
+		const matchesByRelease: ReturnType<typeof readMatches.all>[] = [];
+		for (const match of readMatches.all(district))
+			(matchesByRelease[Number(match.release_position)] ??= []).push(
+				match,
+			);
 		const resolved = new Map<number, number[]>();
 		const distancesOf = (position: number): number[] => {
 			let distances = resolved.get(position);
@@ -148,8 +162,9 @@ export function preparePostcodeAreaDistrictReader(
 			const column = columns[position]!;
 			const fallback = fallbacks.get(position) ?? null;
 			const base = fallback === null ? undefined : distancesOf(fallback);
+			const distanceIndex = position * 2 + 1;
 			distances = rows.map((row, at) => {
-				const value = row[column.distance];
+				const value = row[distanceIndex];
 				if (value !== null) return Number(value);
 				if (!base)
 					throw new Error(`Missing postcode distance ${column.key}`);
@@ -160,17 +175,22 @@ export function preparePostcodeAreaDistrictReader(
 		};
 		const releases: PostcodeAreasShard["releases"] = {};
 		for (const [position, column] of columns.entries()) {
-			const matches = readMatches.all(district, position);
+			const areaIndex = position * 2;
+			const matches = matchesByRelease[position] ?? [];
 			const ids = new Set<number>();
 			for (const row of rows)
-				if (row[column.area] !== null)
-					ids.add(Number(row[column.area]));
+				if (row[areaIndex] !== null) ids.add(Number(row[areaIndex]));
 			for (const match of matches) ids.add(Number(match.area_id));
 			const areaCodes = new Map<number, string>();
 			for (const id of ids) {
-				const code = findCode.get(id)?.code;
-				if (typeof code !== "string")
-					throw new Error(`Missing postcode area ${id}`);
+				let code = codes.get(id);
+				if (code === undefined) {
+					const resolved = findCode.get(id)?.code;
+					if (typeof resolved !== "string")
+						throw new Error(`Missing postcode area ${id}`);
+					code = resolved;
+					codes.set(id, code);
+				}
 				areaCodes.set(id, code);
 			}
 			const sorted = [...areaCodes].sort((a, b) =>
@@ -189,11 +209,11 @@ export function preparePostcodeAreaDistrictReader(
 			releases[column.key] = {
 				codes: sorted.map(([, code]) => code),
 				area: rows.map((row, at) =>
-					row[column.area] === null
+					row[areaIndex] === null
 						? several[at]
 							? SEVERAL
 							: NONE
-						: codePositions.get(Number(row[column.area]))!,
+						: codePositions.get(Number(row[areaIndex]))!,
 				),
 				distanceCm: distancesOf(position),
 				...(matches.length ? { several } : {}),
