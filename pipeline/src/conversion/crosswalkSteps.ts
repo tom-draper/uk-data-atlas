@@ -230,14 +230,17 @@ export const carrySource = (
 	if (Math.abs(total - 1) > WEIGHT_SUM_TOLERANCE)
 		return { blocked: "weights-do-not-sum", targets };
 	// Dividing by the total takes out the rounding, so a count is conserved.
+	// A part measured empty (weight 0) carries nothing, so it has no edge.
 	return {
-		edges: rows.map((row) => ({
-			to: row.t,
-			weight: row.weight! / total,
-			risk: splitRisk(row.weight! / total),
-			pruned: 0,
-			crosswalk: crosswalk.id,
-		})),
+		edges: rows
+			.filter((row) => row.weight! > 0)
+			.map((row) => ({
+				to: row.t,
+				weight: row.weight! / total,
+				risk: splitRisk(row.weight! / total),
+				pruned: 0,
+				crosswalk: crosswalk.id,
+			})),
 	};
 };
 

@@ -54,15 +54,19 @@ const near = (found: number | undefined, expected: number) =>
 test("overlap, weight and shares come from the atoms in both areas of an edge", () => {
 	const rows = weighEdges(measures([10, 20, 30, 40]), from, to, edges);
 	const population = rows.filter((row) => row.basis === "population");
-	// B to Y is exact and B to X holds nothing, so neither has a row.
+	// B to Y is exact, so it has no row. B to X holds nothing, but B holds
+	// something, so the edge is measured empty.
 	assert.deepEqual(
-		population.map((row) => [row.fromVersion, row.toVersion]),
+		population.map((row) => [row.fromVersion, row.toVersion, row.weight]),
 		[
-			[65, 88],
-			[65, 89],
+			[65, 88, 10 / 30],
+			[65, 89, 20 / 30],
+			[66, 88, 0],
 		],
 	);
-	const [ax, ay] = population;
+	const [ax, ay, bx] = population;
+	assert.equal(bx!.sourceShare, 0);
+	assert.equal(bx!.targetShare, 0);
 	near(ax!.overlap, 10);
 	near(ax!.weight, 10 / 30);
 	near(ax!.sourceShare, 10 / 30);
@@ -77,6 +81,21 @@ test("overlap, weight and shares come from the atoms in both areas of an edge", 
 	const postcodes = rows.filter((row) => row.basis === "postcodes");
 	near(postcodes[0]!.weight, 1 / 2);
 	near(postcodes[0]!.targetShare, 1 / 2);
+});
+
+test("an edge has no row where its source holds nothing or an area is not placed", () => {
+	const empty: Placement = {
+		codes: ["A", "B", "C"],
+		area: Int32Array.from([0, 0, 1, -1]),
+	};
+	const rows = weighEdges(measures([10, 20, 30, 40]), empty, to, [
+		// C holds no atom.
+		edge("C", "X"),
+		edge("C", "Y"),
+		// Z is not placed in the later release.
+		edge("A", "Z"),
+	]);
+	assert.deepEqual(rows, []);
 });
 
 test("a source's weights sum over all its edges, exact or not", () => {

@@ -68,9 +68,12 @@ export const pairTotals = (
  * areas, `sourceShare` and `targetShare` that overlap as a share of everything
  * in the source and in the target (so in areas the other side does not hold),
  * and `weight` the overlap as a share of the overlaps of all the source's
- * edges, which sum to 1. Only edges that are not exact are returned, and an
- * edge with nothing in its overlap has no row. A basis in `own` is the
- * crosswalk's already: it is left alone.
+ * edges, which sum to 1. Only edges that are not exact are returned. An edge
+ * with nothing in its overlap weighs 0 where its source holds something on
+ * that basis and both its areas are placed, so a split with an empty part (a
+ * sliver of a lookup with no postcodes) is still weighed in full. An edge
+ * whose source holds nothing, or whose area is not placed, has no row. A basis
+ * in `own` is the crosswalk's already: it is left alone.
  */
 export const weighEdges = (
 	measures: Record<Measure, Float64Array>,
@@ -102,18 +105,22 @@ export const weighEdges = (
 	const rows: WeightRow[] = [];
 	for (const [at, edge] of edges.entries()) {
 		const hit = found[at];
-		if (edge.exact || !hit?.pair) continue;
+		if (edge.exact || !hit) continue;
+		const total = totals.get(edge.fromVersion);
 		for (const [m, basis] of MEASURES.entries()) {
-			const overlap = hit.pair[m]!;
-			if (own.has(basis) || !(overlap > 0)) continue;
+			const overlap = hit.pair?.[m] ?? 0;
+			const held = total?.[m] ?? 0;
+			if (own.has(basis) || !(held > 0)) continue;
 			rows.push({
 				fromVersion: edge.fromVersion,
 				toVersion: edge.toVersion,
 				basis,
-				weight: overlap / totals.get(edge.fromVersion)![m]!,
+				weight: overlap / held,
 				overlap,
 				sourceShare: overlap / sources[hit.a * COUNT + m]!,
-				targetShare: overlap / targets[hit.b * COUNT + m]!,
+				// An empty target would divide nothing by nothing.
+				targetShare:
+					overlap > 0 ? overlap / targets[hit.b * COUNT + m]! : 0,
 			});
 		}
 	}
