@@ -134,7 +134,7 @@ export function assembleAtlas(
 					.prepare("ATTACH DATABASE ? AS notional_component")
 					.run(notionalPath(root));
 			database.exec(
-				"PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
+				"PRAGMA cache_size = -65536; PRAGMA mmap_size = 2147483648; PRAGMA foreign_keys = OFF; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN",
 			);
 			const insertStored = build.prepare(
 				"INSERT OR REPLACE INTO payload (id, payload) VALUES (?, ?)",

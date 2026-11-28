@@ -5,6 +5,9 @@ export function checkDatabase(
 	database: DatabaseSync,
 	check: "integrity_check" | "quick_check" = "integrity_check",
 ) {
+	// Both checks revisit pages across indexes and foreign keys. Map the
+	// completed file so SQLite can reuse the OS page cache for those reads.
+	database.exec("PRAGMA mmap_size = 2147483648");
 	const groups = new Map<
 		string,
 		{ child: string; parent: string; count: number; examples: string[] }

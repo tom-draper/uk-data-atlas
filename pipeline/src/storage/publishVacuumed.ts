@@ -76,6 +76,7 @@ export function publishVacuumed(
 	try {
 		const source = new DatabaseSync(workPath);
 		try {
+			source.exec("PRAGMA mmap_size = 2147483648");
 			source.prepare("VACUUM INTO ?").run(temporary);
 		} finally {
 			source.close();

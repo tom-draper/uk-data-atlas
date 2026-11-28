@@ -95,6 +95,8 @@ export const openStatisticsArtifactReader = (
 		{ readOnly: true },
 	);
 	try {
+		// These build readers repeatedly visit observations in series order.
+		database.exec("PRAGMA mmap_size = 2147483648");
 		return {
 			database,
 			readArtifact: statisticsArtifactReader(database, catalog, readPath),
