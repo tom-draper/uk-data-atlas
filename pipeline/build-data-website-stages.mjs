@@ -71,7 +71,13 @@ export const websiteStages = [
 	),
 	stage(
 		"website-datasets",
-		["atlas-sqlite", "assemble-atlas", "website-tiles", "website-lookups"],
+		[
+			"atlas-sqlite",
+			"dataset-cache",
+			"assemble-atlas",
+			"website-tiles",
+			"website-lookups",
+		],
 		[
 			"--import",
 			"tsx",

@@ -15,7 +15,7 @@ import {
 } from "@uk-data-atlas/measures";
 import { writeCachePart } from "../storage/index.ts";
 import { servedFromRows } from "@uk-data-atlas/catalogue/node";
-import { datasetPayloadStep } from "../storage/index.ts";
+import { writeDatasetPayloads } from "../storage/index.ts";
 import {
 	payloadTable,
 	writeSqliteIndex,
@@ -168,6 +168,7 @@ export const buildAtlasSqlite = (
 			? []
 			: CENSUS_NATION_TABLES,
 		direct = new Map(),
+		writeDatasetCache = true,
 	}: {
 		unstored?: Readonly<
 			Record<string, { reason: string; topic: DatasetTopic }>
@@ -177,6 +178,8 @@ export const buildAtlasSqlite = (
 		censusNationTables?: readonly CensusNationTable[];
 		/** Access to normalized rows by dataset type. */
 		direct?: DirectParts;
+		/** Scheduled builds generate the datasets part in a separate stage. */
+		writeDatasetCache?: boolean;
 	} = {},
 ) => {
 	const directory = join(repositoryRoot, "data/build");
@@ -396,9 +399,7 @@ export const buildAtlasSqlite = (
 		},
 		{ canonical: path },
 	);
-	writeCachePart(repositoryRoot, datasetPayloadStep(path), {
-		canonical: path,
-	});
+	if (writeDatasetCache) writeDatasetPayloads(repositoryRoot, path);
 	// Nothing in this process may keep a part about to be read as new.
 	closeAllReadOnlyDatabases();
 
