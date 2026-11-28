@@ -10,6 +10,7 @@ if (isMainModule(import.meta.url)) {
 	const root = resolve(dirname(scriptPath), "../../..");
 	const path = buildAtlasSqlite(root, {
 		direct: await loadDirectPartsFor(root),
+		writeDatasetCache: false,
 	});
 	buildLog.info(`Wrote shared atlas database to ${repoPath(path)}`);
 }

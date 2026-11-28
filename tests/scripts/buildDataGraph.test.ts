@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { stageScope } from "@/pipeline/build-data-cache.mjs";
 import { buildDataStages } from "@/pipeline/build-data-graph.mjs";
+import { planBuild } from "@/pipeline/build-data-select.mjs";
 
 type Stage = {
 	name: string;
@@ -9,6 +10,7 @@ type Stage = {
 	cacheable?: boolean;
 	exclusive?: boolean;
 	requiredOutputs?: string[];
+	dependencyOutputs?: Record<string, string[]>;
 	shared?: string[];
 	scratch?: string[];
 	finishedBy?: string;
@@ -94,6 +96,7 @@ test("each stage that builds a cache component writes a part of its own, which a
 		return found;
 	};
 	const parts = {
+		"dataset-cache": "datasets",
 		"place-index": "place-index",
 		"area-search-index": "area-search",
 		"postcode-counts": "postcode-counts",
@@ -118,16 +121,28 @@ test("each stage that builds a cache component writes a part of its own, which a
 	]);
 	// Nothing reads the assembled cache before it is published.
 	assert.ok(find("documents").dependencies.includes("assemble-cache"));
-	// The base build leaves its two components in parts of its own, and the
-	// cache is not among the files it writes.
+	// The base build owns the projections part. Dataset payload consumers
+	// wait for their own part, and other base consumers can start sooner.
 	const base = find("atlas-sqlite");
 	assert.deepEqual(base.writes, [
 		"data/build/atlas-base.sqlite",
 		"data/build/atlas-base-build.sqlite",
 		"data/build/atlas-cache-parts/projections.sqlite",
-		"data/build/atlas-cache-parts/datasets.sqlite",
 	]);
 	assert.ok(find("assemble-cache").dependencies.includes("atlas-sqlite"));
+	assert.deepEqual(find("dataset-cache").dependencyOutputs, {
+		"atlas-sqlite": [
+			"data/build/atlas-base.sqlite",
+			"data/build/atlas-base-build.sqlite",
+		],
+	});
+	assert.ok(find("atlas-pages").dependencies.includes("dataset-cache"));
+	assert.ok(find("website-datasets").dependencies.includes("dataset-cache"));
+	assert.ok(
+		!planBuild(stages, undefined, ["assemble-atlas"]).some(
+			(stage) => stage.name === "dataset-cache",
+		),
+	);
 });
 
 test("no stage is left uncacheable except the sources download", () => {

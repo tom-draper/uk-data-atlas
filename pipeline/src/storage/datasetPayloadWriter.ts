@@ -14,7 +14,7 @@ import { writeCachePart, type CacheStep } from "./atlasCacheWriter.ts";
  * database at `canonical`. Level 9 writes no mtime or name, so one build
  * always stores the same bytes.
  */
-export const datasetPayloadStep = (canonical: string): CacheStep => ({
+const datasetPayloadStep = (canonical: string): CacheStep => ({
 	component: "datasets",
 	write: (cache) => {
 		cache.exec(
@@ -56,8 +56,8 @@ export const datasetPayloadStep = (canonical: string): CacheStep => ({
 	},
 });
 
-/** Write the datasets part from the canonical database in a build tree. */
-export const writeDatasetPayloads = (root: string) => {
-	const canonical = join(root, "data/build/atlas.sqlite");
-	return writeCachePart(root, datasetPayloadStep(canonical));
-};
+/** Write the datasets part from the selected atlas and its build metadata. */
+export const writeDatasetPayloads = (
+	root: string,
+	canonical = join(root, "data/build/atlas.sqlite"),
+) => writeCachePart(root, datasetPayloadStep(canonical), { canonical });

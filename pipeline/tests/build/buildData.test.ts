@@ -160,6 +160,7 @@ const apiOrder = [
 	"named-locations",
 	"location-projections",
 	"atlas-sqlite",
+	"dataset-cache",
 	"statistics-vocabulary",
 	"data-catalog",
 	"statistics-read-path",
@@ -230,7 +231,12 @@ test("the parity checks join the real graph when CI, DATA_BUILD_VERIFY or --veri
 			before.forEach((name) =>
 				assert.ok(planned.indexOf(check) > planned.indexOf(name)),
 			);
-		after("verify-dataset-payloads", "datasets", "atlas-sqlite");
+		after(
+			"verify-dataset-payloads",
+			"datasets",
+			"atlas-sqlite",
+			"dataset-cache",
+		);
 		after("verify-postcode-areas", "postcode-areas", "geometry-store");
 		assert.equal(planned.filter((name) => checks.includes(name)).length, 2);
 	}
@@ -357,6 +363,7 @@ test("crosswalk rebuild refreshes SQLite and downstream consumers", (context) =>
 		"crosswalk-inventory",
 		"location-projections",
 		"atlas-sqlite",
+		"dataset-cache",
 		"statistics-vocabulary",
 		"data-catalog",
 		"statistics-read-path",
@@ -457,7 +464,7 @@ test("the first failing stage returns its exit code and stops the build", (conte
 		/^Error: relationship-paths failed with exit code 23 after \S+\. Build stopped$/m,
 	);
 	assert.match(result.stdout, /^Data build failed after /m);
-	assert.equal(build.commands().length, 8);
+	assert.equal(build.commands().length, 9);
 	assert.deepEqual(build.commands().at(-1), [
 		"pipeline/src/stages/build-relationship-paths.ts",
 	]);

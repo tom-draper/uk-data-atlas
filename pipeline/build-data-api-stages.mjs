@@ -35,7 +35,8 @@ const cachePart = (component) =>
 	`data/build/atlas-cache-parts/${component}.sqlite`;
 const atlasBase = "data/build/atlas-base.sqlite";
 const atlasBaseMetadata = "data/build/atlas-base-build.sqlite";
-const atlasBaseCacheParts = [cachePart("projections"), cachePart("datasets")];
+const projectionCache = cachePart("projections");
+const datasetCache = cachePart("datasets");
 const crosswalkWeights =
 	"data/build/crosswalk-weights/crosswalk-weights.sqlite";
 const conversionBacktest =
@@ -136,13 +137,26 @@ export const apiStages = [
 		],
 		{
 			memoryMb: 3264,
-			writes: [atlasBase, atlasBaseMetadata, ...atlasBaseCacheParts],
+			writes: [atlasBase, atlasBaseMetadata, projectionCache],
 			rawInputs: censusSmallAreaInputs,
-			requiredOutputs: [
-				atlasBase,
-				atlasBaseMetadata,
-				...atlasBaseCacheParts,
-			],
+			requiredOutputs: [atlasBase, atlasBaseMetadata, projectionCache],
+		},
+	),
+	stage(
+		"dataset-cache",
+		["atlas-sqlite"],
+		[
+			"--max-old-space-size=1024",
+			"pipeline/src/stages/build-dataset-cache.ts",
+		],
+		{
+			memoryMb: 1536,
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase, atlasBaseMetadata],
+			},
+			writes: [datasetCache],
+			rawInputs: [],
+			requiredOutputs: [datasetCache],
 		},
 	),
 	// A check stage: it reads the cache `assemble-cache` wrote and compares each
@@ -793,6 +807,7 @@ export const apiStages = [
 		"assemble-cache",
 		[
 			"atlas-sqlite",
+			"dataset-cache",
 			"assemble-atlas",
 			"place-index",
 			"area-search-index",
@@ -800,7 +815,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/assemble-cache.ts"],
 		{
-			dependencyOutputs: { "atlas-sqlite": atlasBaseCacheParts },
+			dependencyOutputs: { "atlas-sqlite": [projectionCache] },
 			writes: [atlasCache],
 			rawInputs: [],
 			requiredOutputs: [atlasCache],
@@ -823,6 +838,7 @@ export const apiStages = [
 		[
 			"geography-catalogues",
 			"atlas-sqlite",
+			"dataset-cache",
 			"assemble-atlas",
 			"api-datasets",
 			"boundary-registry",
