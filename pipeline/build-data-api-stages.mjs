@@ -244,18 +244,16 @@ export const apiStages = [
 			],
 		},
 	),
+	// Search indexes read the base inventories. Assembly adds postcode-only
+	// areas outside those inventories.
 	stage(
 		"place-index",
-		[
-			"geography-catalogues",
-			"assemble-atlas",
-			"atlas-sqlite",
-			"boundary-registry",
-			"area-inventory",
-			"named-locations",
-		],
+		["atlas-sqlite", "boundary-registry"],
 		["pipeline/src/stages/build-place-index.ts"],
 		{
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase, atlasBaseMetadata],
+			},
 			memoryMb: 1792,
 			rawInputs: [],
 			writes: [cachePart("place-index")],
@@ -264,9 +262,12 @@ export const apiStages = [
 	),
 	stage(
 		"area-search-index",
-		["assemble-atlas"],
+		["atlas-sqlite"],
 		["pipeline/src/stages/build-area-search-index.ts"],
 		{
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase, atlasBaseMetadata],
+			},
 			memoryMb: 1408,
 			rawInputs: [],
 			writes: [cachePart("area-search")],
