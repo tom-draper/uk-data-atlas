@@ -9,7 +9,7 @@ import { readJsonSync } from "../lib/json.ts";
 /**
  * Download an ONS Open Geography Portal lookup table as GeoJSON, with the
  * meta.json every source under data/ carries. The feature service returns at
- * most a thousand rows a request, so the table is paged in ObjectId order and
+ * most a thousand rows a request, so the table is paged in object id order and
  * written in that order, which keeps a re-download byte-identical when the
  * publisher has not changed it.
  */
@@ -60,10 +60,14 @@ export const fetchOnsLookup = async (
 	);
 	if (typeof count !== "number")
 		throw new Error(`${source.service}: no row count`);
+	// Most layers name their object id ObjectId; older ones name it FID.
+	const { objectIdField } = await fetchJson(`${layer}?f=json`);
+	if (typeof objectIdField !== "string")
+		throw new Error(`${source.service}: no object id field`);
 	const features: Feature[] = [];
 	for (let offset = 0; offset < count; offset += PAGE) {
 		const page = await fetchJson(
-			`${layer}/query?where=1%3D1&outFields=*&orderByFields=ObjectId&resultOffset=${offset}&resultRecordCount=${PAGE}&f=geojson`,
+			`${layer}/query?where=1%3D1&outFields=*&orderByFields=${objectIdField}&resultOffset=${offset}&resultRecordCount=${PAGE}&f=geojson`,
 		);
 		if (!Array.isArray(page.features))
 			throw new Error(
@@ -78,7 +82,7 @@ export const fetchOnsLookup = async (
 	return writeLookup(repositoryRoot, source, {
 		features,
 		sourceUrl: `${layer}/query?where=1%3D1&outFields=*&f=geojson`,
-		note: `Exported from the ONS Open Geography Portal feature service, ${count} rows paged in ObjectId order.`,
+		note: `Exported from the ONS Open Geography Portal feature service, ${count} rows paged in ${objectIdField} order.`,
 		retrieved,
 	});
 };
