@@ -787,19 +787,16 @@ export const apiStages = [
 	),
 	stage(
 		"atlas-lookups",
-		[
-			"geography-catalogues",
-			"atlas-sqlite",
-			"area-inventory",
-			"crosswalk-inventory",
-			"relationship-paths",
-		],
+		["atlas-sqlite", "relationship-paths"],
 		[
 			"--max-old-space-size=3072",
 			"pipeline/src/stages/build-atlas-lookups.ts",
 		],
 		{
-			memoryMb: 1408,
+			dependencyOutputs: {
+				"atlas-sqlite": [atlasBase, atlasBaseMetadata],
+			},
+			memoryMb: 1216,
 			writes: [
 				`${atlasAssets}/atlas-lookups`,
 				`${atlasAssets}/atlas-lookups.json`,
@@ -865,7 +862,7 @@ export const apiStages = [
 			"pipeline/src/stages/build-atlas-pages.ts",
 		],
 		{
-			memoryMb: 3328,
+			memoryMb: 3200,
 			writes: [
 				`${atlasAssets}/atlas-pages`,
 				`${atlasAssets}/atlas-pages.json`,
