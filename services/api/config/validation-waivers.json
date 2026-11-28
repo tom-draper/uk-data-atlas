@@ -2,6 +2,20 @@
 	"schemaVersion": 1,
 	"waivers": [
 		{
+			"check": "targets-present",
+			"reason": "S01010206 (Petershill - 04) and S01010226 (Sighthill - 02), Glasgow, hold no residents: their population in the atlas is 0, so the postcode overlap has nothing to share between 2022 data zones.",
+			"resources": [
+				"crosswalks/data-zone-2011-12-sc-bfc-to-2022-sc-bfc-postcode-overlap"
+			]
+		},
+		{
+			"check": "postcode-overlap-coverage",
+			"reason": "The two sources without a target, S01010206 and S01010226 in Glasgow, hold no residents (population 0).",
+			"resources": [
+				"crosswalks/data-zone-2011-12-sc-bfc-to-2022-sc-bfc-postcode-overlap"
+			]
+		},
+		{
 			"check": "source-names-consistent",
 			"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source.",
 			"resources": [
