@@ -1129,6 +1129,52 @@
 			}
 		},
 		{
+			"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-official-lookup",
+			"input": "lookups/lsoa-changes/2001-to-2011-ew/LSOA01_LSOA11_LAD11_EW_LU_ddfe1cd1c2784c9b991cded95bc915a9.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc",
+				"codeProperty": "LSOA01CD",
+				"nameProperty": "LSOA01NM"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			},
+			"changeProperty": "CHGIND"
+		},
+		{
+			"id": "lsoa-2001-12-ew-bgc-v2-to-2011-12-ew-bgc-v3-official-lookup",
+			"input": "lookups/lsoa-changes/2001-to-2011-ew/LSOA01_LSOA11_LAD11_EW_LU_ddfe1cd1c2784c9b991cded95bc915a9.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc-v2",
+				"codeProperty": "LSOA01CD",
+				"nameProperty": "LSOA01NM"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			},
+			"changeProperty": "CHGIND"
+		},
+		{
 			"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
 			"input": "lookups/lsoa-changes/2011-to-2021-ew/LSOA11_LSOA21_LAD22_EW_LU_v5.geojson",
 			"method": "official-lookup",

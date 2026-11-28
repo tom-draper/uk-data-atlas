@@ -56,6 +56,13 @@
 		"temporalCoverage": "2025-04-01"
 	},
 	{
+		"service": "LSOA01_LSOA11_LAD11_EW_LU_ddfe1cd1c2784c9b991cded95bc915a9",
+		"directory": "lsoa-changes/2001-to-2011-ew",
+		"title": "2001 LSOA to 2011 LSOA changes (England and Wales)",
+		"description": "Official ONS best-fit lookup from 2001 Lower Layer Super Output Areas to 2011 LSOAs, with a change indicator: U unchanged, S split, M merged, X a complex redistribution, best-fitted by the 2001 LSOA's centroid.",
+		"temporalCoverage": "2011-03-27"
+	},
+	{
 		"service": "LSOA11_LSOA21_LAD22_EW_LU_v5",
 		"directory": "lsoa-changes/2011-to-2021-ew",
 		"title": "2011 LSOA to 2021 LSOA changes (England and Wales)",
