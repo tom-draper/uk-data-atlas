@@ -2907,6 +2907,27 @@
 			"sliverWidthM": 100
 		},
 		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-2025-05-en-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.01
+			},
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2025-05-en-bgc"
+			}
+		},
+		{
 			"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-history",
 			"input": "lookups/ward-history/2025-12-uk/ONS_Code_History_Database_June_2026.geojson",
 			"method": "official-lookup",
