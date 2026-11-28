@@ -28,7 +28,7 @@ export const writeSqliteIndex = (
 	const database = new DatabaseSync(temporary);
 	try {
 		database.exec(
-			`PRAGMA foreign_keys = ON; PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
+			`PRAGMA cache_size = -65536; PRAGMA foreign_keys = ON; PRAGMA page_size = ${pageSize}; PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; BEGIN;`,
 		);
 		database.exec(
 			"CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT, WITHOUT ROWID",
