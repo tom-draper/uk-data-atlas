@@ -287,25 +287,28 @@ export const writeSeriesCoverage = (
 	database.exec(TABLE);
 	writeAreaNations(database);
 	try {
-		database.exec(`
-WITH release_counts AS (
-  SELECT release_id, count(*) AS areas
-  FROM area_version WHERE in_inventory = 1 GROUP BY release_id
-), coverage AS (
-  SELECT o.series_id, o.period_id, count(*) AS areas,
-    sum(o.has_value) AS areas_with_value, rtrim(${countriesSql}, ',') AS countries
-  FROM (SELECT series_id, period_id, area_version_id,
-          value IS NOT NULL OR category_id IS NOT NULL AS has_value
-        FROM observation) o
-  JOIN temp.area_nation n ON n.area_version_id = o.area_version_id
-  GROUP BY o.series_id, o.period_id
-)
+		const releaseCounts = new Map(
+			database
+				.prepare(
+					"SELECT release_id, count(*) AS areas FROM area_version WHERE in_inventory = 1 GROUP BY release_id",
+				)
+				.all()
+				.map(({ release_id, areas }) => [release_id, areas]),
+		);
+		// The observation primary key starts with series_id. Read each series
+		// in key order and group its periods in a small, independent sort.
+		const insert = database.prepare(`
 INSERT INTO series_coverage (series_id, period_id, areas, areas_with_value, release_areas, countries)
-SELECT c.series_id, c.period_id, c.areas, c.areas_with_value,
-  coalesce(r.areas, 0), c.countries
-FROM coverage c
-JOIN series s ON s.id = c.series_id
-LEFT JOIN release_counts r ON r.release_id = s.release_id`);
+SELECT o.series_id, o.period_id, count(*),
+  sum(o.value IS NOT NULL OR o.category_id IS NOT NULL), ?, rtrim(${countriesSql}, ',')
+FROM observation o
+JOIN temp.area_nation n ON n.area_version_id = o.area_version_id
+WHERE o.series_id = ?
+GROUP BY o.period_id`);
+		for (const { id, release_id } of database
+			.prepare("SELECT id, release_id FROM series ORDER BY id")
+			.iterate())
+			insert.run(releaseCounts.get(release_id) ?? 0, id!);
 	} finally {
 		database.exec("DROP TABLE temp.area_nation");
 	}
