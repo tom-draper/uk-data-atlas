@@ -19,6 +19,7 @@ import { measureSourceFindings } from "./measureSourceFindings.ts";
 export const compileValidationReport = (
 	inputs: ValidationInputs,
 ): ValidationReport => {
+	const observationHashes = new WeakMap<object, string>();
 	const assessed: Array<{
 		id: string;
 		kind: ValidationResource["kind"];
@@ -55,7 +56,11 @@ export const compileValidationReport = (
 			.map((entry) => ({
 				id: `exports/${entry.id}`,
 				kind: "measure-source" as const,
-				findings: measureSourceFindings(inputs, entry),
+				findings: measureSourceFindings(
+					inputs,
+					entry,
+					observationHashes,
+				),
 			})),
 	];
 

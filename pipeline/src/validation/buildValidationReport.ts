@@ -17,6 +17,7 @@ import {
 import {
 	measureSeriesKey,
 	tableMeasureObservations,
+	type MeasureTableArtifact,
 } from "@uk-data-atlas/measures";
 import { compileValidationReport } from "./compileValidationReport.ts";
 import { readMeasureTotals, readValidationWaivers } from "./inputs.ts";
@@ -44,15 +45,12 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		repositoryRoot,
 		dataCatalog,
 	);
-	// Measures of one table share its text, so parse it once rather than
-	// holding a copy of the table for each of them.
-	const parsed = new Map<string, unknown>();
-	const parse = (text: string) => {
-		let artifact = parsed.get(text);
-		if (artifact === undefined)
-			parsed.set(text, (artifact = JSON.parse(text)));
-		return artifact;
-	};
+	// Keep parsed shared tables. Release individual artifacts and projected
+	// columns once their findings have been compiled.
+	const tables = new Map<string, MeasureTableArtifact>();
+	const measures = new Map(
+		dataCatalog.measures.map((measure) => [measure.id, measure]),
+	);
 	try {
 		const report = compileValidationReport({
 			boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
@@ -78,37 +76,36 @@ export const buildValidationReport = (repositoryRoot: string) => {
 			),
 			dataCatalog,
 			exportManifest,
-			observationArtifacts: Object.fromEntries(
-				exportManifest.exports.map((entry) => {
-					const measure = dataCatalog.measures.find(
-						(candidate) => candidate.id === entry.measureId,
+			readObservationArtifact: (entry) => {
+				const measure = measures.get(entry.measureId);
+				const source = measure?.sources.find(
+					(candidate) =>
+						candidate.datasetId === entry.datasetId &&
+						candidate.sourceGeography.type ===
+							entry.sourceGeography.type &&
+						candidate.sourceGeography.boundaryYear ===
+							entry.sourceGeography.boundaryYear,
+				);
+				if (!measure || !source)
+					throw new Error(
+						`No catalogue source for export ${entry.id}.`,
 					);
-					const source = measure?.sources.find(
-						(candidate) =>
-							candidate.datasetId === entry.datasetId &&
-							candidate.sourceGeography.type ===
-								entry.sourceGeography.type &&
-							candidate.sourceGeography.boundaryYear ===
-								entry.sourceGeography.boundaryYear,
-					);
-					if (!measure || !source)
-						throw new Error(
-							`No catalogue source for export ${entry.id}.`,
-						);
-					const artifact = parse(readArtifact(measure.id, source));
-					return [
-						entry.id,
-						isMeasureTable(artifact)
-							? tableMeasureObservations(
-									artifact,
-									measure.series
-										? measureSeriesKey(measure.series)
-										: measure.id,
-								)
-							: (artifact as AnyMeasureObservationArtifact),
-					];
-				}),
-			),
+				const text = readArtifact(measure.id, source);
+				let table = tables.get(text);
+				if (!table) {
+					const artifact: unknown = JSON.parse(text);
+					if (!isMeasureTable(artifact))
+						return artifact as AnyMeasureObservationArtifact;
+					tables.set(text, artifact);
+					table = artifact;
+				}
+				return tableMeasureObservations(
+					table,
+					measure.series
+						? measureSeriesKey(measure.series)
+						: measure.id,
+				);
+			},
 			...readMeasureTotals(
 				join(configDirectory(repositoryRoot), "measure-totals.json"),
 			),
