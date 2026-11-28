@@ -109,6 +109,27 @@
 			}
 		},
 		{
+			"id": "integrated-care-board-2023-04-en-bgc-to-2026-04-en-bgc-postcode-overlap",
+			"method": "postcode-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents (England and Wales) and Census 2022 usual residents (Scotland), shared between postcodes",
+				"date": "2021-03-21",
+				"minimumShare": 0.01
+			},
+			"from": {
+				"geography": "integratedCareBoard",
+				"boundaryRelease": "2023-04-en-bgc"
+			},
+			"to": {
+				"geography": "integratedCareBoard",
+				"boundaryRelease": "2026-04-en-bgc"
+			}
+		},
+		{
 			"id": "local-authority-2023-12-uk-bgc-to-local-health-board-2023-12-w-bgc-official-lookup",
 			"input": "lookups/local-authority-to-local-health-board/2023-12-w/UA23_LHB23_WA_LU.geojson",
 			"method": "official-lookup",
