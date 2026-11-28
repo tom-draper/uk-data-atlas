@@ -241,7 +241,6 @@ test("every older release reaches the current one, bar the releases no carrying 
 			"historicalConstituency|1974-uk",
 			"historicalConstituency|1983-uk",
 			"historicalConstituency|1997-uk",
-			"integratedCareBoard|2023-04-en-bgc",
 			"nhsEnglandRegion|2022-07-en-bgc",
 		],
 	);
