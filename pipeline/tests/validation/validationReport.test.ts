@@ -428,12 +428,10 @@ const inputs = (
 				}),
 			),
 		},
-		observationArtifacts: Object.fromEntries(
-			observationArtifacts.map((artifact) => [
-				`${artifact.measureId}-observations`,
-				artifact,
-			]),
-		),
+		readObservationArtifact: (entry) =>
+			observationArtifacts.find(
+				(artifact) => entry.id === `${artifact.measureId}-observations`,
+			),
 		measureTotals: overrides.measureTotals ?? [
 			{ measureId: "cars-total", components: ["cars-none", "cars-some"] },
 		],

@@ -15,6 +15,7 @@ import type { GeometrySourceRegistry } from "@uk-data-atlas/geometry";
 import type { RelationshipCandidateInventory } from "@uk-data-atlas/relationships";
 import {
 	VALIDATION_CHECKS,
+	type BulkExport,
 	type ValidationCheckId,
 	type ExportManifest,
 } from "@uk-data-atlas/catalogue/node";
@@ -66,8 +67,7 @@ export type ValidationInputs = {
 	geographyInventory: GeographyInventory;
 	dataCatalog: DataCatalog;
 	exportManifest: ExportManifest;
-	/** Observation artifacts keyed by the id of the export that serves them. */
-	observationArtifacts: Record<string, ObservationArtifact>;
+	readObservationArtifact(entry: BulkExport): ObservationArtifact | undefined;
 	measureTotals: MeasureTotal[];
 	measureTotalsHash: string;
 	waivers: ValidationWaiver[];

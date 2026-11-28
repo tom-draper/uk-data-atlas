@@ -36,7 +36,7 @@ const totalFinding = (
 	const problems: string[] = [];
 	const components = total.components.flatMap((id) => {
 		const entry = exportFor(inputs, id, source);
-		const artifact = entry && inputs.observationArtifacts[entry.id];
+		const artifact = entry && inputs.readObservationArtifact(entry);
 		if (!artifact) {
 			problems.push(
 				`${id} has no partition from ${source.datasetId} on ${describeGeography(source.sourceGeography)}`,
@@ -137,8 +137,9 @@ const totalFinding = (
 export const measureSourceFindings = (
 	inputs: ValidationInputs,
 	entry: BulkExport,
+	observationHashes: WeakMap<object, string>,
 ): Finding[] => {
-	const artifact = inputs.observationArtifacts[entry.id];
+	const artifact = inputs.readObservationArtifact(entry);
 	const measure = inputs.dataCatalog.measures.find(
 		(candidate) => candidate.id === entry.measureId,
 	);
@@ -166,7 +167,15 @@ export const measureSourceFindings = (
 
 	const table = observationTableOf(artifact);
 	const storedArtifact = table ?? artifact;
-	const { contentHash: storedHash, ...content } = storedArtifact;
+	const storedHash = storedArtifact.contentHash;
+	// Every measure projected from a table references the same parsed table.
+	// Check its serialized contents once while still checking each export.
+	let computedHash = observationHashes.get(storedArtifact);
+	if (computedHash === undefined) {
+		const { contentHash: _storedHash, ...content } = storedArtifact;
+		computedHash = sha256(JSON.stringify(content));
+		observationHashes.set(storedArtifact, computedHash);
+	}
 	const contentHash = artifact.contentHash;
 	const repeated = periods.flatMap((period) => {
 		const seen = new Set<string>();
@@ -180,8 +189,7 @@ export const measureSourceFindings = (
 	const latestCount = periods.at(-1)?.records.length ?? 0;
 	const periodIds = periods.map((period) => period.period);
 	const integrityProblems = [
-		storedHash === contentHash &&
-		sha256(JSON.stringify(content)) === storedHash
+		storedHash === contentHash && computedHash === storedHash
 			? undefined
 			: "its content does not reproduce its hash",
 		entry.contentHash === contentHash

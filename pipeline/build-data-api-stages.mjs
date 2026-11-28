@@ -718,9 +718,12 @@ export const apiStages = [
 			"data-catalog",
 			"export-manifest",
 		],
-		["pipeline/src/stages/build-validation-report.ts"],
+		[
+			"--max-old-space-size=1024",
+			"pipeline/src/stages/build-validation-report.ts",
+		],
 		{
-			memoryMb: 1984,
+			memoryMb: 1472,
 			rawInputs: [],
 			writes: [`${artifacts}/validation-report.json`],
 		},
