@@ -299,9 +299,11 @@ export const writeSeriesCoverage = (
 		// in key order and group its periods in a small, independent sort.
 		const insert = database.prepare(`
 INSERT INTO series_coverage (series_id, period_id, areas, areas_with_value, release_areas, countries)
-SELECT o.series_id, o.period_id, count(*),
-  sum(o.value IS NOT NULL OR o.category_id IS NOT NULL), ?, rtrim(${countriesSql}, ',')
-FROM observation o
+SELECT o.series_id, o.period_id, count(*), sum(o.has_value), ?, rtrim(${countriesSql}, ',')
+FROM (
+  SELECT series_id, period_id, area_version_id, value IS NOT NULL OR category_id IS NOT NULL AS has_value
+  FROM observation
+) o
 JOIN temp.area_nation n ON n.area_version_id = o.area_version_id
 WHERE o.series_id = ?
 GROUP BY o.period_id`);
