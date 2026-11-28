@@ -49,11 +49,15 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 		dataCatalog,
 	);
 	try {
+		const reviewedMeasures = new Set(
+			analysisGeographies.supports.map(({ measureId }) => measureId),
+		);
 		const observations = new Map<
 			string,
 			AnyMeasureObservationArtifact | MeasureTableArtifact
 		>();
-		for (const measure of dataCatalog.measures)
+		for (const measure of dataCatalog.measures) {
+			if (!reviewedMeasures.has(measure.id)) continue;
 			for (const source of measure.sources) {
 				const name = observationArtifactName(measure.id, source);
 				if (!observations.has(name))
@@ -64,6 +68,7 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 							| MeasureTableArtifact,
 					);
 			}
+		}
 		const inventory = validateAnalysisGeographies(
 			analysisGeographies,
 			dataCatalog,

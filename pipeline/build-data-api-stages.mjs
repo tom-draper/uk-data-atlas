@@ -492,11 +492,12 @@ export const apiStages = [
 	stage(
 		"postcode-areas",
 		[
-			"geography-catalogues",
 			"atlas-sqlite",
 			"postcode-index",
+			"boundary-registry",
 			"area-inventory",
 			"geometry-store",
+			"geometry-source-registry",
 			"measure-compatibility",
 		],
 		[
@@ -605,7 +606,7 @@ export const apiStages = [
 		],
 		["pipeline/src/stages/build-analysis-geography-validation.ts"],
 		{
-			memoryMb: 1728,
+			memoryMb: 1024,
 			rawInputs: [],
 			writes: [`${geography}/analysis-geography-validation.json`],
 		},
