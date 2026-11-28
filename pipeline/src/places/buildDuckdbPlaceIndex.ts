@@ -1,30 +1,23 @@
 import { compileDuckdbPlaceIndex } from "./duckdbPlaceIndex.ts";
 import { writeCacheTables } from "../storage/index.ts";
+import { atlasBaseDatabasePath } from "@uk-data-atlas/atlas-db";
 
 import {
 	readAreaLookup,
 	readSqliteAreaInventory as readAreaInventory,
 } from "@uk-data-atlas/areas";
 import { readSqliteNamedLocationInventory as readNamedLocationInventory } from "@uk-data-atlas/places";
-import { readGeographyCatalogue } from "@uk-data-atlas/catalogue/node";
-import type { BoundaryRegistry } from "@uk-data-atlas/catalogue";
 import { placeIndexTables } from "../storage/index.ts";
-
-const readBoundaryRegistry = (repositoryRoot: string) =>
-	readGeographyCatalogue<BoundaryRegistry>(
-		repositoryRoot,
-		"boundary-releases",
-		"releases",
-		"boundary registry",
-	);
+import { readBuildBoundaryRegistry } from "../geographies/buildBoundaryRegistry.ts";
 
 export const buildDuckdbPlaceIndex = async (repositoryRoot: string) => {
-	const areaInventory = readAreaInventory(repositoryRoot);
+	const databasePath = atlasBaseDatabasePath(repositoryRoot);
+	const areaInventory = readAreaInventory(repositoryRoot, databasePath);
 	const index = await compileDuckdbPlaceIndex(
-		readAreaLookup(repositoryRoot, areaInventory),
-		readNamedLocationInventory(repositoryRoot),
+		readAreaLookup(repositoryRoot, areaInventory, undefined, databasePath),
+		readNamedLocationInventory(repositoryRoot, databasePath),
 		areaInventory.contentHash,
-		readBoundaryRegistry(repositoryRoot),
+		readBuildBoundaryRegistry(repositoryRoot),
 	);
 	const tables = placeIndexTables(index);
 	const outputPath = writeCacheTables(repositoryRoot, "place-index", tables);
